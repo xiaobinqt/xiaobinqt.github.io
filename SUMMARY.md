@@ -1,6 +1,6 @@
 # Summary
 
-+ [首页](README.md)
++ [Resume](README.md)
 
 + golang
   + [dd](go/test.md)
