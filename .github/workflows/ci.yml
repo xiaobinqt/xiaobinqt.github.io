@@ -1,12 +1,44 @@
 name: xiaobinqt.github.io
 
-on: [ push ]
+on: #在main分支上进行push时触发
+  push:
+    branches:
+      - main
 
 jobs:
-  my_build:
+  main-to-gh-pages:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Save PR number
+      - name: checkout main
+        uses: actions/checkout@v2
+        with:
+          ref: main
+
+      - name: install nodejs
+        uses: actions/setup-node@v1
+
+      - name: configue gitbook
         run: |
-          echo "111111111111111111111"
+          npm install -g gitbook-cli          
+          gitbook install
+          gitbook build
+
+      - name: push _book to branch gh-pages
+        env:
+          TOKEN: ${{ secrets.TOKEN }}
+          REF: github.com/${{github.repository}}
+          MYEMAIL: 15209272743@163.com
+          MYNAME: ${{github.repository_owner}}
+        run: |
+          cd _book
+          git config --global user.email "${MYEMAIL}"
+          git config --global user.name "${MYNAME}"
+          git init
+          git remote add origin https://${REF}
+          git add . 
+          git commit -m "Updated By Github Actions With Build ${{github.run_number}} of ${{github.workflow}} For Github Pages"
+          git branch -M main
+          git push --force --quiet "https://${TOKEN}@${REF}" main:gh-pages
+
 
