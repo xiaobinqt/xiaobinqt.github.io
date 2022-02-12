@@ -1,16 +1,20 @@
 # Summary
 
-+ [Resume](README.md)
++ [resume](README.md)
 
 + golang
-  + [dd](go/test.md)
+  + [备忘录](go/memo.md)
+  + [new 和 make 的区别](go/new_make_difference.md)
 
 + php
   + [1](php/1.md)
-+ python 
+
++ python
   + [2](python/2.md)
 
-
++ 杂项
+  
+  
 
 
 
