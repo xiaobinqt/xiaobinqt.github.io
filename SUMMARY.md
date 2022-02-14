@@ -9,7 +9,7 @@
   + context
     + [context](go/context/ctx.md)
   + [new 和 make 的区别](go/new_make_difference.md)
-  + [go 协程为什么快](go/gmp_model.md)
+  + [GMP 模型](go/gmp_model.md)
 
 
 + php
