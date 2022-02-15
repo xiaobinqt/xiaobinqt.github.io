@@ -10,6 +10,7 @@
     + [context](go/context/ctx.md)
   + [new 和 make 的区别](go/new_make_difference.md)
   + [GMP 模型](go/gmp_model.md)
+  + [break,goto,continue label 区别](go/break_continue_goto_label.md)
 
 
 + php
