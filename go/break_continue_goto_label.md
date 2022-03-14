@@ -25,7 +25,7 @@ next:
 	for _, v := range matrix {
 		for _, v1 := range matrix {
 			if v > v1 {
-				continue next // 终止当前循环，跳到继续下一次循环
+				continue next // 终止当前循环，跳到 label 继续下一次循环
 			}
 		}
 		min = v
