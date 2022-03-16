@@ -1,6 +1,4 @@
 ---
-weight: 2
-
 title: "常见缓存淘汰策略"
 
 date: 2020-03-05T16:30:05+08:00
@@ -11,17 +9,15 @@ draft: false
 
 author: "xiaobinqt"
 
-authorLink: "https://dillonzq.com"
-
-description: "了解如何在 LoveIt 主题中快速, 直观地创建和组织内容."
+description: "常见缓存淘汰策略，淘汰策略的实现，FIFO，LRU，LFU"
 
 resources:
 
 - name: "featured-image"
   src: "featured-image.jpg"
 
-tags: ["content", "Markdown"]
-categories: ["documentation"]
+tags: ["golang"]
+categories: ["tech","golang"]
 
 lightgallery: true
 
@@ -47,4 +43,6 @@ Least Frequently Used(LFU)，最少使用，也就是淘汰缓存中访问频率
 
 ## LRU
 
-Least Recently Used(LRU)，最近最少使用，相对于仅考虑时间因素的 FIFO 和仅考虑访问频率的 LFU，LRU 算法可以认为是相对平衡的 一种淘汰算法。LRU 认为，如果
+Least Recently Used(LRU)，最近最少使用，相对于仅考虑时间因素的 FIFO 和仅考虑访问频率的 LFU，LRU 算法可以认为是相对平衡的 一种淘汰算法。LRU
+认为，如果数据最近被访问过，那么将来被访问的概率也会更高。LRU 算法的实现非常简单，维护一个队列，如果某条记录被访问了， 则移动到队尾，那么队首则是最近最少访问的数据，淘汰该条记录即可。
+

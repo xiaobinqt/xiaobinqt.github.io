@@ -1,9 +1,9 @@
 ---
-title: "First_post1"
+title: "Old_palss"
 
-date: 2022-03-16T14:12:42+08:00
+date: 2022-03-16T17:56:15+08:00
 
-lastmod: 2022-03-16T14:12:42+08:00
+lastmod: 2022-03-16T17:56:15+08:00
 
 draft: false
 
@@ -14,8 +14,8 @@ resources:
 - name: ""
   src: ""
 
-tags: ["content"]
-categories: ["ddd"]
+tags: ["golang"]
+categories: ["tech","golang"]
 lightgallery: true
 
 toc:
@@ -25,4 +25,3 @@ math:
 enable: true
 ---
 
-# ddddd
