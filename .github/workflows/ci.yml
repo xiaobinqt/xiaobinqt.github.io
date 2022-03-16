@@ -1,44 +1,29 @@
-name: xiaobinqt.github.io
-
-on: #在main分支上进行push时触发
-  push:
-    branches:
+name: hugo CI
+on:
+  push: # push的时候触发
+    branches: # 那些分支需要触发
       - main
-
 jobs:
-  main-to-gh-pages:
-    runs-on: ubuntu-latest
-
+  build:
+    runs-on: ubuntu-latest # 镜像市场
     steps:
-      - name: checkout main
-        uses: actions/checkout@v2
+      - name: checkout # 步骤的名称
+        uses: actions/checkout@v1 #软件市场的名称
+        with: # 参数
+          submodules: true
+
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v2.2.2
         with:
-          ref: main
+          hugo-version: '0.64.1'
+          #extended: true
 
-      - name: install nodejs
-        uses: actions/setup-node@v1
+      - name: Build
+        run: hugo -D
 
-      - name: configue gitbook
-        run: |
-          npm install -g gitbook-cli          
-          gitbook install
-          gitbook build
-
-      - name: push _book to branch gh-pages
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v2.5.1
         env:
-          TOKEN: ${{ secrets.TOKEN }}
-          REF: github.com/${{github.repository}}
-          MYEMAIL: 15209272743@163.com
-          MYNAME: ${{github.repository_owner}}
-        run: |
-          cd _book
-          git config --global user.email "${MYEMAIL}"
-          git config --global user.name "${MYNAME}"
-          git init
-          git remote add origin https://${REF}
-          git add . 
-          git commit -m "Updated By Github Actions With Build ${{github.run_number}} of ${{github.workflow}} For Github Pages"
-          git branch -M main
-          git push --force --quiet "https://${TOKEN}@${REF}" main:gh-pages
-
+          ACTIONS_DEPLOY_KEY: ${{ secrets.TOKEN }}
+          PUBLISH_DIR: ./public
 
