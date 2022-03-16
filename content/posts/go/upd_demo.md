@@ -1,4 +1,29 @@
-# golang udp 示例
+---
+title: "golang udp 示例"
+
+date: 2021-04-01T21:55:54+08:00
+
+lastmod: 2022-03-16T21:55:54+08:00
+
+draft: false
+
+author: "xiaobinqt"
+description: ""
+resources:
+
+- name: ""
+  src: ""
+
+tags: ["golang"]
+categories: ["golang"]
+lightgallery: true
+
+toc:
+auto: false
+
+math:
+enable: true
+---
 
 ## server
 

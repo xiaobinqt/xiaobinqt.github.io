@@ -1,4 +1,31 @@
-# ajax 在请求时携带 cookie 信息
+---
+title: "ajax 在请求时携带 cookie 信息"
+
+date: 2022-03-01T21:57:41+08:00
+
+lastmod: 2022-03-16T21:57:41+08:00
+
+draft: false
+
+author: "xiaobinqt"
+description: ""
+resources:
+
+- name: ""
+  src: ""
+
+tags: ["web","ajax","cookie"]
+categories: ["web"]
+lightgallery: true
+
+toc:
+auto: false
+
+math:
+enable: true
+---
+
+
 
 最近有个需求在使用 $.ajax 时需要把 cookie 信息也带着，google 下发现可以这么写：
 
@@ -22,3 +49,5 @@ $.ajax({
 });
 
 ```
+
+
