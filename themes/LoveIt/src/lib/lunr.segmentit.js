@@ -1,4 +1,4 @@
-import {Segment, useDefault} from 'segmentit';
+import { Segment, useDefault } from 'segmentit';
 
 const segmentit = useDefault(new Segment());
 lunr.segmentit = segmentit;

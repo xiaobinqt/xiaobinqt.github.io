@@ -1,10 +1,13 @@
 ---
-weight: 4 title: "Markdown 基本语法"
-date: 2019-12-01T21:57:40+08:00 lastmod: 2020-01-01T16:45:40+08:00 draft: false author: "Dillon"
+weight: 4
+title: "Markdown 基本语法"
+date: 2019-12-01T21:57:40+08:00
+lastmod: 2020-01-01T16:45:40+08:00
+draft: false
+author: "Dillon"
 authorLink: "https://dillonzq.com"
 description: "这篇文章展示了基本的 Markdown 语法和格式."
 resources:
-
 - name: "featured-image"
   src: "featured-image.png"
 
@@ -18,10 +21,11 @@ lightgallery: true
 
 <!--more-->
 
-{{< admonition >}} 这篇文章借鉴了一篇很棒的[来自 Grav 的文章](http://learn.getgrav.org/content/markdown).
+{{< admonition >}}
+这篇文章借鉴了一篇很棒的[来自 Grav 的文章](http://learn.getgrav.org/content/markdown).
 
-如果你想了解 **Loveit** 主题的扩展 Markdown 语法, 请阅读[扩展 Markdown 语法页面](../theme-documentation-content#extended-markdown-syntax). {{<
-/admonition >}}
+如果你想了解 **Loveit** 主题的扩展 Markdown 语法, 请阅读[扩展 Markdown 语法页面](../theme-documentation-content#extended-markdown-syntax).
+{{< /admonition >}}
 
 事实上, 编写 Web 内容很麻烦. [WYSIWYG]^(所见即所得) 编辑器帮助减轻了这一任务. 但通常会导致代码太糟, 或更糟糕的是, 网页也会很丑.
 
@@ -58,13 +62,9 @@ John Gruber, Markdown 的作者如是说:
 
 ```markdown
 ## h2 标题
-
 ### h3 标题
-
 #### h4 标题
-
 ##### h5 标题
-
 ###### h6 标题
 ```
 
@@ -78,7 +78,8 @@ John Gruber, Markdown 的作者如是说:
 <h6>h6 标题</h6>
 ```
 
-{{< admonition note "标题 ID" >}} 要添加自定义标题 ID, 请在与标题相同的行中将自定义 ID 放在花括号中:
+{{< admonition note "标题 ID" >}}
+要添加自定义标题 ID, 请在与标题相同的行中将自定义 ID 放在花括号中:
 
 ```markdown
 ### 一个很棒的标题 {#custom-id}
@@ -89,7 +90,6 @@ John Gruber, Markdown 的作者如是说:
 ```html
 <h3 id="custom-id">一个很棒的标题</h3>
 ```
-
 {{< /admonition >}}
 
 ## 2 注释
@@ -110,7 +110,8 @@ John Gruber, Markdown 的作者如是说:
 
 ## 3 水平线
 
-HTML 中的 `<hr>` 标签是用来在段落元素之间创建一个 "专题间隔" 的. 使用 Markdown, 你可以用以下方式创建一个 `<hr>` 标签:
+HTML 中的 `<hr>` 标签是用来在段落元素之间创建一个 "专题间隔" 的.
+使用 Markdown, 你可以用以下方式创建一个 `<hr>` 标签:
 
 * `___`: 三个连续的下划线
 * `---`: 三个连续的破折号
@@ -129,17 +130,15 @@ ___
 如下段落:
 
 ```markdown
-Lorem ipsum dolor sit amet, graecis denique ei vel, at duo primis mandamus. Et legere ocurreret pri, animal tacimates
-complectitur ad cum. Cu eum inermis inimicus efficiendi. Labore officiis his ex, soluta officiis concludaturque ei qui,
-vide sensibus vim ad.
+Lorem ipsum dolor sit amet, graecis denique ei vel, at duo primis mandamus. Et legere ocurreret pri,
+animal tacimates complectitur ad cum. Cu eum inermis inimicus efficiendi. Labore officiis his ex,
+soluta officiis concludaturque ei qui, vide sensibus vim ad.
 ```
 
 输出的 HTML 看起来像这样:
 
 ```html
-<p>Lorem ipsum dolor sit amet, graecis denique ei vel, at duo primis mandamus. Et legere ocurreret pri, animal tacimates
-    complectitur ad cum. Cu eum inermis inimicus efficiendi. Labore officiis his ex, soluta officiis concludaturque ei
-    qui, vide sensibus vim ad.</p>
+<p>Lorem ipsum dolor sit amet, graecis denique ei vel, at duo primis mandamus. Et legere ocurreret pri, animal tacimates complectitur ad cum. Cu eum inermis inimicus efficiendi. Labore officiis his ex, soluta officiis concludaturque ei qui, vide sensibus vim ad.</p>
 ```
 
 可以使用一个空白行进行**换行**.
@@ -209,7 +208,6 @@ _渲染为斜体_
 输出的 HTML 看起来像这样:
 
 ```html
-
 <del>这段文本带有删除线.</del>
 ```
 
@@ -260,26 +258,28 @@ _渲染为斜体_
 输出的 HTML 看起来像这样:
 
 ```html
-
 <blockquote>
-    <p>
-        <strong>Fusion Drive</strong> combines a hard drive with a flash storage (solid-state drive) and presents it as
-        a single logical volume with the space of both drives combined.
-    </p>
+  <p>
+    <strong>Fusion Drive</strong> combines a hard drive with a flash storage (solid-state drive) and presents it as a single logical volume with the space of both drives combined.
+  </p>
 </blockquote>
 ```
 
 引用也可以嵌套:
 
 ```markdown
-> Donec massa lacus, ultricies a ullamcorper in, fermentum sed augue. Nunc augue augue, aliquam non hendrerit ac, commodo vel nisi.
->> Sed adipiscing elit vitae augue consectetur a gravida nunc vehicula. Donec auctor odio non est accumsan facilisis. Aliquam id turpis in dolor tincidunt mollis ac eu diam.
+> Donec massa lacus, ultricies a ullamcorper in, fermentum sed augue.
+Nunc augue augue, aliquam non hendrerit ac, commodo vel nisi.
+>> Sed adipiscing elit vitae augue consectetur a gravida nunc vehicula. Donec auctor
+odio non est accumsan facilisis. Aliquam id turpis in dolor tincidunt mollis ac eu diam.
 ```
 
 呈现的输出效果如下:
 
-> Donec massa lacus, ultricies a ullamcorper in, fermentum sed augue. Nunc augue augue, aliquam non hendrerit ac, commodo vel nisi.
->> Sed adipiscing elit vitae augue consectetur a gravida nunc vehicula. Donec auctor odio non est accumsan facilisis. Aliquam id turpis in dolor tincidunt mollis ac eu diam.
+> Donec massa lacus, ultricies a ullamcorper in, fermentum sed augue.
+Nunc augue augue, aliquam non hendrerit ac, commodo vel nisi.
+>> Sed adipiscing elit vitae augue consectetur a gravida nunc vehicula. Donec auctor
+odio non est accumsan facilisis. Aliquam id turpis in dolor tincidunt mollis ac eu diam.
 
 ## 8 列表
 
@@ -291,9 +291,7 @@ _渲染为斜体_
 
 ```markdown
 * 一项内容
-
 - 一项内容
-
 + 一项内容
 ```
 
@@ -305,10 +303,10 @@ _渲染为斜体_
 * Integer molestie lorem at massa
 * Facilisis in pretium nisl aliquet
 * Nulla volutpat aliquam velit
-    * Phasellus iaculis neque
-    * Purus sodales ultricies
-    * Vestibulum laoreet porttitor sem
-    * Ac tristique libero volutpat at
+  * Phasellus iaculis neque
+  * Purus sodales ultricies
+  * Vestibulum laoreet porttitor sem
+  * Ac tristique libero volutpat at
 * Faucibus porta lacus fringilla vel
 * Aenean sit amet erat nunc
 * Eget porttitor lorem
@@ -321,10 +319,10 @@ _渲染为斜体_
 * Integer molestie lorem at massa
 * Facilisis in pretium nisl aliquet
 * Nulla volutpat aliquam velit
-    * Phasellus iaculis neque
-    * Purus sodales ultricies
-    * Vestibulum laoreet porttitor sem
-    * Ac tristique libero volutpat at
+  * Phasellus iaculis neque
+  * Purus sodales ultricies
+  * Vestibulum laoreet porttitor sem
+  * Ac tristique libero volutpat at
 * Faucibus porta lacus fringilla vel
 * Aenean sit amet erat nunc
 * Eget porttitor lorem
@@ -332,23 +330,22 @@ _渲染为斜体_
 输出的 HTML 看起来像这样:
 
 ```html
-
 <ul>
-    <li>Lorem ipsum dolor sit amet</li>
-    <li>Consectetur adipiscing elit</li>
-    <li>Integer molestie lorem at massa</li>
-    <li>Facilisis in pretium nisl aliquet</li>
-    <li>Nulla volutpat aliquam velit
-        <ul>
-            <li>Phasellus iaculis neque</li>
-            <li>Purus sodales ultricies</li>
-            <li>Vestibulum laoreet porttitor sem</li>
-            <li>Ac tristique libero volutpat at</li>
-        </ul>
-    </li>
-    <li>Faucibus porta lacus fringilla vel</li>
-    <li>Aenean sit amet erat nunc</li>
-    <li>Eget porttitor lorem</li>
+  <li>Lorem ipsum dolor sit amet</li>
+  <li>Consectetur adipiscing elit</li>
+  <li>Integer molestie lorem at massa</li>
+  <li>Facilisis in pretium nisl aliquet</li>
+  <li>Nulla volutpat aliquam velit
+    <ul>
+      <li>Phasellus iaculis neque</li>
+      <li>Purus sodales ultricies</li>
+      <li>Vestibulum laoreet porttitor sem</li>
+      <li>Ac tristique libero volutpat at</li>
+    </ul>
+  </li>
+  <li>Faucibus porta lacus fringilla vel</li>
+  <li>Aenean sit amet erat nunc</li>
+  <li>Eget porttitor lorem</li>
 </ul>
 ```
 
@@ -381,20 +378,20 @@ _渲染为斜体_
 输出的 HTML 看起来像这样:
 
 ```html
-
 <ol>
-    <li>Lorem ipsum dolor sit amet</li>
-    <li>Consectetur adipiscing elit</li>
-    <li>Integer molestie lorem at massa</li>
-    <li>Facilisis in pretium nisl aliquet</li>
-    <li>Nulla volutpat aliquam velit</li>
-    <li>Faucibus porta lacus fringilla vel</li>
-    <li>Aenean sit amet erat nunc</li>
-    <li>Eget porttitor lorem</li>
+  <li>Lorem ipsum dolor sit amet</li>
+  <li>Consectetur adipiscing elit</li>
+  <li>Integer molestie lorem at massa</li>
+  <li>Facilisis in pretium nisl aliquet</li>
+  <li>Nulla volutpat aliquam velit</li>
+  <li>Faucibus porta lacus fringilla vel</li>
+  <li>Aenean sit amet erat nunc</li>
+  <li>Eget porttitor lorem</li>
 </ol>
 ```
 
-{{< admonition tip >}} 如果你对每一项使用 `1.`, Markdown 将自动为每一项编号. 例如:
+{{< admonition tip >}}
+如果你对每一项使用 `1.`, Markdown 将自动为每一项编号. 例如:
 
 ```markdown
 1. Lorem ipsum dolor sit amet
@@ -416,11 +413,13 @@ _渲染为斜体_
 1. Nulla volutpat aliquam velit
 1. Faucibus porta lacus fringilla vel
 1. Aenean sit amet erat nunc
-1. Eget porttitor lorem {{< /admonition >}}
+1. Eget porttitor lorem
+{{< /admonition >}}
 
 ### 任务列表
 
-任务列表使你可以创建带有复选框的列表. 要创建任务列表, 请在任务列表项之前添加破折号 (`-`) 和带有空格的方括号 (`[ ]`). 要选择一个复选框，请在方括号之间添加 x (`[x]`).
+任务列表使你可以创建带有复选框的列表.
+要创建任务列表, 请在任务列表项之前添加破折号 (`-`) 和带有空格的方括号 (`[ ]`). 要选择一个复选框，请在方括号之间添加 x (`[x]`).
 
 ```markdown
 - [x] Write the press release
@@ -452,7 +451,7 @@ _渲染为斜体_
 
 ```html
 <p>
-    在这个例子中, <code>&lt;section&gt;&lt;/section&gt;</code> 会被包裹成 <strong>代码</strong>.
+  在这个例子中, <code>&lt;section&gt;&lt;/section&gt;</code> 会被包裹成 <strong>代码</strong>.
 </p>
 ```
 
@@ -477,7 +476,6 @@ _渲染为斜体_
 输出的 HTML 看起来像这样:
 
 ```html
-
 <pre>
   <code>
     // Some comments
@@ -493,17 +491,14 @@ _渲染为斜体_
 使用 "围栏" <code>```</code> 来生成一段带有语言属性的代码块.
 
 {{< highlight markdown >}}
-
 ```markdown
 Sample text here...
 ```
-
 {{< / highlight >}}
 
 输出的 HTML 看起来像这样:
 
 ```html
-
 <pre language-html>
   <code>Sample text here...</code>
 </pre>
@@ -519,56 +514,55 @@ Sample text here...
 例如, 在以下 JavaScript 代码中应用语法高亮:
 
 {{< highlight markdown >}}
-
 ```js
 grunt.initConfig({
-    assemble: {
-        options: {
-            assets: 'docs/assets',
-            data: 'src/data/*.{json,yml}',
-            helpers: 'src/custom-helpers.js',
-            partials: ['src/partials/**/*.{hbs,md}']
-        },
-        pages: {
-            options: {
-                layout: 'default.hbs'
-            },
-            files: {
-                './': ['src/templates/pages/index.hbs']
-            }
-        }
+  assemble: {
+    options: {
+      assets: 'docs/assets',
+      data: 'src/data/*.{json,yml}',
+      helpers: 'src/custom-helpers.js',
+      partials: ['src/partials/**/*.{hbs,md}']
+    },
+    pages: {
+      options: {
+        layout: 'default.hbs'
+      },
+      files: {
+        './': ['src/templates/pages/index.hbs']
+      }
     }
+  }
 };
 ```
-
 {{< / highlight >}}
 
 呈现的输出效果如下:
 
 ```js
 grunt.initConfig({
-    assemble: {
-        options: {
-            assets: 'docs/assets',
-            data: 'src/data/*.{json,yml}',
-            helpers: 'src/custom-helpers.js',
-            partials: ['src/partials/**/*.{hbs,md}']
-        },
-        pages: {
-            options: {
-                layout: 'default.hbs'
-            },
-            files: {
-                './': ['src/templates/pages/index.hbs']
-            }
-        }
+  assemble: {
+    options: {
+      assets: 'docs/assets',
+      data: 'src/data/*.{json,yml}',
+      helpers: 'src/custom-helpers.js',
+      partials: ['src/partials/**/*.{hbs,md}']
+    },
+    pages: {
+      options: {
+        layout: 'default.hbs'
+      },
+      files: {
+        './': ['src/templates/pages/index.hbs']
+      }
     }
+  }
 };
 ```
 
 {{< admonition >}}
-**Hugo** 文档中的 [语法高亮页面](https://gohugo.io/content-management/syntax-highlighting/) 介绍了有关语法高亮的更多信息, 包括语法高亮的 shortcode. {{<
-/admonition >}}
+**Hugo** 文档中的 [语法高亮页面](https://gohugo.io/content-management/syntax-highlighting/) 介绍了有关语法高亮的更多信息,
+包括语法高亮的 shortcode.
+{{< /admonition >}}
 
 ## 10 表格
 
@@ -593,32 +587,32 @@ grunt.initConfig({
 输出的 HTML 看起来像这样:
 
 ```html
-
 <table>
-    <thead>
+  <thead>
     <tr>
-        <th>Option</th>
-        <th>Description</th>
+      <th>Option</th>
+      <th>Description</th>
     </tr>
-    </thead>
-    <tbody>
+  </thead>
+  <tbody>
     <tr>
-        <td>data</td>
-        <td>path to data files to supply the data that will be passed into templates.</td>
-    </tr>
-    <tr>
-        <td>engine</td>
-        <td>engine to be used for processing templates. Handlebars is the default.</td>
+      <td>data</td>
+      <td>path to data files to supply the data that will be passed into templates.</td>
     </tr>
     <tr>
-        <td>ext</td>
-        <td>extension to be used for dest files.</td>
+      <td>engine</td>
+      <td>engine to be used for processing templates. Handlebars is the default.</td>
     </tr>
-    </tbody>
+    <tr>
+      <td>ext</td>
+      <td>extension to be used for dest files.</td>
+    </tr>
+  </tbody>
 </table>
 ```
 
-{{< admonition note "文本右对齐或居中对齐" >}} 在任何标题下方的破折号右侧添加冒号将使该列的文本右对齐.
+{{< admonition note "文本右对齐或居中对齐" >}}
+在任何标题下方的破折号右侧添加冒号将使该列的文本右对齐.
 
 在任何标题下方的破折号两边添加冒号将使该列的对齐文本居中.
 
@@ -637,7 +631,6 @@ grunt.initConfig({
 | data   | path to data files to supply the data that will be passed into templates. |
 | engine | engine to be used for processing templates. Handlebars is the default. |
 | ext    | extension to be used for dest files. |
-
 {{< /admonition >}}
 
 ## 11 链接 {#links}
@@ -688,43 +681,46 @@ grunt.initConfig({
 
 ```markdown
 ## Table of Contents
-
-* [Chapter 1](#chapter-1)
-* [Chapter 2](#chapter-2)
-* [Chapter 3](#chapter-3)
+  * [Chapter 1](#chapter-1)
+  * [Chapter 2](#chapter-2)
+  * [Chapter 3](#chapter-3)
 ```
 
 将跳转到这些部分:
 
 ```markdown
 ## Chapter 1 <a id="chapter-1"></a>
-
 Content for chapter one.
 
 ## Chapter 2 <a id="chapter-2"></a>
-
 Content for chapter one.
 
 ## Chapter 3 <a id="chapter-3"></a>
-
 Content for chapter one.
 ```
 
-{{< admonition >}} 定位标记的位置几乎是任意的. 因为它们并不引人注目, 所以它们通常被放在同一行了. {{< /admonition >}}
+{{< admonition >}}
+定位标记的位置几乎是任意的. 因为它们并不引人注目, 所以它们通常被放在同一行了.
+{{< /admonition >}}
 
 ## 12 脚注
 
-脚注使你可以添加注释和参考, 而不会使文档正文混乱. 当你创建脚注时, 会在添加脚注引用的位置出现带有链接的上标编号. 读者可以单击链接以跳至页面底部的脚注内容.
+脚注使你可以添加注释和参考, 而不会使文档正文混乱.
+当你创建脚注时, 会在添加脚注引用的位置出现带有链接的上标编号.
+读者可以单击链接以跳至页面底部的脚注内容.
 
-要创建脚注引用, 请在方括号中添加插入符号和标识符 (`[^1]`). 标识符可以是数字或单词, 但不能包含空格或制表符. 标识符仅将脚注引用与脚注本身相关联 - 在脚注输出中, 脚注按顺序编号.
+要创建脚注引用, 请在方括号中添加插入符号和标识符 (`[^1]`).
+标识符可以是数字或单词, 但不能包含空格或制表符.
+标识符仅将脚注引用与脚注本身相关联 - 在脚注输出中, 脚注按顺序编号.
 
-在中括号内使用插入符号和数字以及用冒号和文本来添加脚注内容 (`[^1]：这是一段脚注`). 你不一定要在文档末尾添加脚注. 可以将它们放在除列表, 引用和表格等元素之外的任何位置.
+在中括号内使用插入符号和数字以及用冒号和文本来添加脚注内容 (`[^1]：这是一段脚注`).
+你不一定要在文档末尾添加脚注. 可以将它们放在除列表, 引用和表格等元素之外的任何位置.
 
 ```markdown
-这是一个数字脚注[^1]. 这是一个带标签的脚注[^label]
+这是一个数字脚注[^1].
+这是一个带标签的脚注[^label]
 
 [^1]: 这是一个数字脚注
-
 [^label]: 这是一个带标签的脚注
 ```
 
@@ -733,7 +729,6 @@ Content for chapter one.
 这是一个带标签的脚注[^label]
 
 [^1]: 这是一个数字脚注
-
 [^label]: 这是一个带标签的脚注
 
 ## 13 图片
@@ -771,4 +766,5 @@ Content for chapter one.
 [id]: https://octodex.github.com/images/dojocat.jpg  "The Dojocat"
 
 {{< admonition tip >}}
-**LoveIt** 主题提供了一个包含更多功能的 [图片的 shortcode](../theme-documentation-extended-shortcodes#image). {{< /admonition >}}
+**LoveIt** 主题提供了一个包含更多功能的 [图片的 shortcode](../theme-documentation-extended-shortcodes#image).
+{{< /admonition >}}

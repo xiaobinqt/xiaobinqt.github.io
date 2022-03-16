@@ -32,11 +32,11 @@
      * This example returns an object, but the module
      * can return a function as the exported value.
      */
-    return function (lunr) {
+    return function(lunr) {
         /* provides utilities for the included stemmers */
         lunr.stemmerSupport = {
-            Among: function (s, substring_i, result, method) {
-                this.toCharArray = function (s) {
+            Among: function(s, substring_i, result, method) {
+                this.toCharArray = function(s) {
                     var sLength = s.length, charArr = new Array(sLength);
                     for (var i = 0; i < sLength; i++)
                         charArr[i] = s.charCodeAt(i);
@@ -52,15 +52,15 @@
                 this.result = result;
                 this.method = method;
             },
-            SnowballProgram: function () {
+            SnowballProgram: function() {
                 var current;
                 return {
-                    bra: 0,
-                    ket: 0,
-                    limit: 0,
-                    cursor: 0,
-                    limit_backward: 0,
-                    setCurrent: function (word) {
+                    bra : 0,
+                    ket : 0,
+                    limit : 0,
+                    cursor : 0,
+                    limit_backward : 0,
+                    setCurrent : function(word) {
                         current = word;
                         this.cursor = 0;
                         this.limit = word.length;
@@ -68,12 +68,12 @@
                         this.bra = this.cursor;
                         this.ket = this.limit;
                     },
-                    getCurrent: function () {
+                    getCurrent : function() {
                         var result = current;
                         current = null;
                         return result;
                     },
-                    in_grouping: function (s, min, max) {
+                    in_grouping : function(s, min, max) {
                         if (this.cursor < this.limit) {
                             var ch = current.charCodeAt(this.cursor);
                             if (ch <= max && ch >= min) {
@@ -86,7 +86,7 @@
                         }
                         return false;
                     },
-                    in_grouping_b: function (s, min, max) {
+                    in_grouping_b : function(s, min, max) {
                         if (this.cursor > this.limit_backward) {
                             var ch = current.charCodeAt(this.cursor - 1);
                             if (ch <= max && ch >= min) {
@@ -99,7 +99,7 @@
                         }
                         return false;
                     },
-                    out_grouping: function (s, min, max) {
+                    out_grouping : function(s, min, max) {
                         if (this.cursor < this.limit) {
                             var ch = current.charCodeAt(this.cursor);
                             if (ch > max || ch < min) {
@@ -114,7 +114,7 @@
                         }
                         return false;
                     },
-                    out_grouping_b: function (s, min, max) {
+                    out_grouping_b : function(s, min, max) {
                         if (this.cursor > this.limit_backward) {
                             var ch = current.charCodeAt(this.cursor - 1);
                             if (ch > max || ch < min) {
@@ -129,7 +129,7 @@
                         }
                         return false;
                     },
-                    eq_s: function (s_size, s) {
+                    eq_s : function(s_size, s) {
                         if (this.limit - this.cursor < s_size)
                             return false;
                         for (var i = 0; i < s_size; i++)
@@ -138,7 +138,7 @@
                         this.cursor += s_size;
                         return true;
                     },
-                    eq_s_b: function (s_size, s) {
+                    eq_s_b : function(s_size, s) {
                         if (this.cursor - this.limit_backward < s_size)
                             return false;
                         for (var i = 0; i < s_size; i++)
@@ -148,9 +148,8 @@
                         this.cursor -= s_size;
                         return true;
                     },
-                    find_among: function (v, v_size) {
-                        var i = 0, j = v_size, c = this.cursor, l = this.limit, common_i = 0, common_j = 0,
-                            first_key_inspected = false;
+                    find_among : function(v, v_size) {
+                        var i = 0, j = v_size, c = this.cursor, l = this.limit, common_i = 0, common_j = 0, first_key_inspected = false;
                         while (true) {
                             var k = i + ((j - i) >> 1), diff = 0, common = common_i < common_j
                                 ? common_i
@@ -194,9 +193,8 @@
                                 return 0;
                         }
                     },
-                    find_among_b: function (v, v_size) {
-                        var i = 0, j = v_size, c = this.cursor, lb = this.limit_backward, common_i = 0, common_j = 0,
-                            first_key_inspected = false;
+                    find_among_b : function(v, v_size) {
+                        var i = 0, j = v_size, c = this.cursor, lb = this.limit_backward, common_i = 0, common_j = 0, first_key_inspected = false;
                         while (true) {
                             var k = i + ((j - i) >> 1), diff = 0, common = common_i < common_j
                                 ? common_i
@@ -240,7 +238,7 @@
                                 return 0;
                         }
                     },
-                    replace_s: function (c_bra, c_ket, s) {
+                    replace_s : function(c_bra, c_ket, s) {
                         var adjustment = s.length - (c_ket - c_bra), left = current
                             .substring(0, c_bra), right = current.substring(c_ket);
                         current = left + s + right;
@@ -251,30 +249,30 @@
                             this.cursor = c_bra;
                         return adjustment;
                     },
-                    slice_check: function () {
+                    slice_check : function() {
                         if (this.bra < 0 || this.bra > this.ket || this.ket > this.limit
                             || this.limit > current.length)
                             throw ("faulty slice operation");
                     },
-                    slice_from: function (s) {
+                    slice_from : function(s) {
                         this.slice_check();
                         this.replace_s(this.bra, this.ket, s);
                     },
-                    slice_del: function () {
+                    slice_del : function() {
                         this.slice_from("");
                     },
-                    insert: function (c_bra, c_ket, s) {
+                    insert : function(c_bra, c_ket, s) {
                         var adjustment = this.replace_s(c_bra, c_ket, s);
                         if (c_bra <= this.bra)
                             this.bra += adjustment;
                         if (c_bra <= this.ket)
                             this.ket += adjustment;
                     },
-                    slice_to: function () {
+                    slice_to : function() {
                         this.slice_check();
                         return current.substring(this.bra, this.ket);
                     },
-                    eq_v_b: function (s) {
+                    eq_v_b : function(s) {
                         return this.eq_s_b(s.length, s);
                     }
                 };
@@ -282,11 +280,11 @@
         };
 
         lunr.trimmerSupport = {
-            generateTrimmer: function (wordCharacters) {
+            generateTrimmer: function(wordCharacters) {
                 var startRegex = new RegExp("^[^" + wordCharacters + "]+")
                 var endRegex = new RegExp("[^" + wordCharacters + "]+$")
 
-                return function (token) {
+                return function(token) {
                     // for lunr version 2
                     if (typeof token.update === "function") {
                         return token.update(function (s) {

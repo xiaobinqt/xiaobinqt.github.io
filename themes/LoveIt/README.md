@@ -9,8 +9,7 @@ English README | [简体中文说明](https://github.com/dillonzq/LoveIt/blob/ma
 
 > **LoveIt** is a **clean**, **elegant** but **advanced** blog theme for [Hugo](https://gohugo.io/).
 
-It is based on the original [LeaveIt Theme](https://github.com/liuzc/LeaveIt)
-and [KeepIt Theme](https://github.com/Fastbyte01/KeepIt).
+It is based on the original [LeaveIt Theme](https://github.com/liuzc/LeaveIt) and [KeepIt Theme](https://github.com/Fastbyte01/KeepIt).
 
 Since the three themes have a similar look, if you have questions about their differences,
 read [Why choose LoveIt](#why-choose-loveit) so that you can choose the one that works best for you.
@@ -19,8 +18,7 @@ read [Why choose LoveIt](#why-choose-loveit) so that you can choose the one that
 
 ## [Demo Site](https://hugoloveit.com/)
 
-To see this theme in action, here is a live [demo site](https://hugoloveit.com/) which is rendered with **LoveIt**
-theme.
+To see this theme in action, here is a live [demo site](https://hugoloveit.com/) which is rendered with **LoveIt** theme.
 
 ## Why choose LoveIt
 
@@ -43,17 +41,18 @@ Compared to the original LeaveIt theme and the KeepIt theme, the LoveIt theme ha
 * **Diagram syntax** shortcode supported by [mermaid](https://github.com/knsv/mermaid)
 * **Interactive data visualization** shortcode supported by [ECharts](https://echarts.apache.org/)
 * **Mapbox** shortcode supported by [Mapbox GL JS](https://docs.mapbox.com/mapbox-gl-js)
-* Embedded **music player** supported by [APlayer](https://github.com/MoePlayer/APlayer)
-  and [MetingJS](https://github.com/metowolf/MetingJS)
+* Embedded **music player** supported by [APlayer](https://github.com/MoePlayer/APlayer) and [MetingJS](https://github.com/metowolf/MetingJS)
 * **Bilibili** player supported
 * Kinds of **admonitions** shortcode supported
 * Custom style shortcodes supported
 * **CDN** for all third-party libraries supported
 * ...
 
-In short, if you prefer the design language and freedom of the LoveIt theme, if you want to use the extended Font
-Awesome icons conveniently, if you want to embed mathematical formulas, flowcharts, music or Bilibili videos in your
-posts, the LoveIt theme may be more suitable for you.
+In short,
+if you prefer the design language and freedom of the LoveIt theme,
+if you want to use the extended Font Awesome icons conveniently,
+if you want to embed mathematical formulas, flowcharts, music or Bilibili videos in your posts,
+the LoveIt theme may be more suitable for you.
 
 I hope you will LoveIt ❤️!
 
@@ -61,8 +60,7 @@ I hope you will LoveIt ❤️!
 
 ### Performance and SEO
 
-* Optimized for **performance**: 99/100 on mobile and 100/100 on desktop
-  in [Google PageSpeed Insights](https://developers.google.com/speed/pagespeed/insights)
+* Optimized for **performance**: 99/100 on mobile and 100/100 on desktop in [Google PageSpeed Insights](https://developers.google.com/speed/pagespeed/insights)
 * Optimized SEO performance with a correct **SEO SCHEMA** based on JSON-LD
 * **[Google Analytics](https://analytics.google.com/analytics)** supported
 * **[Fathom Analytics](https://usefathom.com/)** supported
@@ -108,8 +106,7 @@ I hope you will LoveIt ❤️!
 * **Diagrams** shortcode supported by [mermaid](https://github.com/knsv/mermaid)
 * **Interactive data visualization** shortcode supported by [ECharts](https://echarts.apache.org/)
 * **Mapbox** shortcode supported by [Mapbox GL JS](https://docs.mapbox.com/mapbox-gl-js)
-* **Music player** shortcode supported by [APlayer](https://github.com/MoePlayer/APlayer)
-  and [MetingJS](https://github.com/metowolf/MetingJS)
+* **Music player** shortcode supported by [APlayer](https://github.com/MoePlayer/APlayer) and [MetingJS](https://github.com/metowolf/MetingJS)
 * **Bilibili player** shortcode
 * Kinds of **admonitions** shortcode
 * **Custom style** shortcode
@@ -155,8 +152,7 @@ All feedback is welcome! Head over to the [issue tracker](https://github.com/dil
 
 ## License
 
-LoveIt is licensed under the **MIT** license. Check
-the [LICENSE file](https://github.com/dillonzq/LoveIt/blob/master/LICENSE) for details.
+LoveIt is licensed under the **MIT** license. Check the [LICENSE file](https://github.com/dillonzq/LoveIt/blob/master/LICENSE) for details.
 
 Thanks to the authors of following resources included in the theme:
 

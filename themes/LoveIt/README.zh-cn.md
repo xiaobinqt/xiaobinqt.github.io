@@ -47,15 +47,15 @@
 * 支持所有第三方库的 **CDN**
 * ...
 
-所以，如果你更偏好 LoveIt 主题的设计语言和自由度，如果你想便捷地使用扩展的 Font Awesome 图标，如果你想在文章内嵌数学公式、流程图、音乐或是 Bilibili 视频， 那么，LoveIt 主题可能是更适合你。 希望你会
-LoveIt ❤️!
+所以，如果你更偏好 LoveIt 主题的设计语言和自由度，如果你想便捷地使用扩展的 Font Awesome 图标，如果你想在文章内嵌数学公式、流程图、音乐或是 Bilibili 视频，
+那么，LoveIt 主题可能是更适合你。
+希望你会 LoveIt ❤️!
 
 ## 特性
 
 ### 性能和 SEO
 
-* **性能**优化：在 [Google PageSpeed Insights](https://developers.google.com/speed/pagespeed/insights) 中， 99/100 的移动设备得分和
-  100/100 的桌面设备得分
+* **性能**优化：在 [Google PageSpeed Insights](https://developers.google.com/speed/pagespeed/insights) 中， 99/100 的移动设备得分和 100/100 的桌面设备得分
 * 使用基于 JSON-LD 格式 的 **SEO SCHEMA** 文件进行 SEO 优化
 * 支持 **[Google Analytics](https://analytics.google.com/analytics)**
 * 支持 **[Fathom Analytics](https://usefathom.com/)**
@@ -101,8 +101,7 @@ LoveIt ❤️!
 * 支持基于 [mermaid](https://github.com/knsv/mermaid) 的**图表** shortcode
 * 支持基于 [ECharts](https://echarts.apache.org/) 的**交互式数据可视化** shortcode
 * 支持基于 [Mapbox GL JS](https://docs.mapbox.com/mapbox-gl-js) 的 **Mapbox** shortcode
-* 支持基于 [APlayer](https://github.com/MoePlayer/APlayer) 和 [MetingJS](https://github.com/metowolf/MetingJS) 的**音乐播放器**
-  shortcode
+* 支持基于 [APlayer](https://github.com/MoePlayer/APlayer) 和 [MetingJS](https://github.com/metowolf/MetingJS) 的**音乐播放器** shortcode
 * 支持 **Bilibili 视频** shortcode
 * 支持多种**注释**的 shortcode
 * 支持**自定义样式**的 shortcode
