@@ -1,4 +1,30 @@
-# break，continue，goto label 的区别
+---
+title: "golang break，continue，goto label 的区别"
+
+date: 2022-02-16T21:41:27+08:00
+
+lastmod: 2022-03-16T21:41:27+08:00
+
+draft: false
+
+author: "xiaobinqt"
+description: ""
+resources:
+
+- name: ""
+  src: ""
+
+tags: ["golang"]
+categories: ["golang"]
+lightgallery: true
+
+toc:
+auto: false
+
+math:
+enable: true
+---
+
 
 在 php 中可以直接在 break 和 continue 后加 num ，比如 `break 2`或 `continue 2`。
 
@@ -100,3 +126,4 @@ next:
 }
 
 ```
+

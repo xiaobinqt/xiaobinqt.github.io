@@ -1,4 +1,29 @@
-# make 和 new 的区别
+---
+title: "golang make 和 new 的区别"
+
+date: 2021-06-21T21:54:20+08:00
+
+lastmod: 2022-03-16T21:54:20+08:00
+
+draft: false
+
+author: "xiaobinqt"
+description: ""
+resources:
+
+- name: ""
+  src: ""
+
+tags: ["golang"]
+categories: ["golang"]
+lightgallery: true
+
+toc:
+auto: false
+
+math:
+enable: true
+---
 
 ## 总结
 
@@ -10,6 +35,9 @@
 
 + [make、new操作](https://github.com/astaxie/build-web-application-with-golang/blob/master/zh/02.2.md#makenew%E6%93%8D%E4%BD%9C)
 + [Go make 和 new的区别](https://www.cnblogs.com/vincenshen/p/9356974.html)
+
+
+
 
 
 
