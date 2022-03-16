@@ -16,7 +16,7 @@ resources:
 - name: ""
   src: ""
 
-tags: ["essays","随笔","旧人"]
+tags: ["随笔","旧人"]
 categories: ["essays"]
 lightgallery: true
 
@@ -26,6 +26,8 @@ auto: false
 math:
 enable: true
 ---
+
+有些人朋友是会一辈子在心里的，哪怕几年也不会见一面，吃一顿饭。
 
 <!--more-->
 

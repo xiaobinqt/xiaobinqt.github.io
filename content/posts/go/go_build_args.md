@@ -1,4 +1,29 @@
-# go build 常用命令
+---
+title: "go build 常用命令"
+
+date: 2022-03-16T21:01:50+08:00
+
+lastmod: 2022-03-16T21:01:50+08:00
+
+draft: false
+
+author: "xiaobinqt"
+description: "go build 常用命令"
+resources:
+
+- name: ""
+  src: ""
+
+tags: ["golang"]
+categories: ["golang"]
+lightgallery: true
+
+toc:
+auto: false
+
+math:
+enable: true
+---
 
 ## 常用编译参数
 
