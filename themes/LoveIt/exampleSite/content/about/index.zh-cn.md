@@ -1,11 +1,12 @@
 ---
 title: "关于 LoveIt"
-date: 2019-08-02T11:04:49+08:00 draft: false
+date: 2019-08-02T11:04:49+08:00
+draft: false
 
 lightgallery: true
 
 math:
-enable: true
+  enable: true
 ---
 
 {{< style "img { height: 1.25rem; }" >}}
@@ -26,8 +27,7 @@ enable: true
 
 #### 性能和 SEO
 
-* :(fas fa-rocket fa-fw): **性能**优化：在 [Google PageSpeed Insights](https://developers.google.com/speed/pagespeed/insights)
-  中， [99]/[100] 的移动设备得分和 [100]/[100] 的桌面设备得分
+* :(fas fa-rocket fa-fw): **性能**优化：在 [Google PageSpeed Insights](https://developers.google.com/speed/pagespeed/insights) 中， [99]/[100] 的移动设备得分和 [100]/[100] 的桌面设备得分
 * :(fab fa-searchengin fa-fw): 使用基于 JSON-LD 格式 的 **SEO SCHEMA** 文件进行 SEO 优化
 * :(fab fa-google fa-fw): 支持 **[Google Analytics](https://analytics.google.com/analytics)**
 * :(far fa-chart-bar fa-fw): 支持 **[Fathom Analytics](https://usefathom.com/)**
@@ -73,8 +73,7 @@ enable: true
 * :(fas fa-project-diagram fa-fw): 支持基于 [mermaid](https://github.com/knsv/mermaid) 的**图表** shortcode
 * :(fas fa-chart-pie fa-fw): 支持基于 [ECharts](https://echarts.apache.org/) 的**交互式数据可视化** shortcode
 * :(fas fa-map-marked-alt fa-fw): 支持基于 [Mapbox GL JS](https://docs.mapbox.com/mapbox-gl-js) 的 **Mapbox** shortcode
-* :(fas fa-music fa-fw): 支持基于 [APlayer](https://github.com/MoePlayer/APlayer)
-  和 [MetingJS](https://github.com/metowolf/MetingJS) 的**音乐播放器** shortcode
+* :(fas fa-music fa-fw): 支持基于 [APlayer](https://github.com/MoePlayer/APlayer) 和 [MetingJS](https://github.com/metowolf/MetingJS) 的**音乐播放器** shortcode
 * :(fas fa-video fa-fw): 支持 **Bilibili 视频** shortcode
 * :(far fa-bell fa-fw): 支持多种**注释**的 shortcode
 * :(fas fa-align-left fa-fw): 支持**自定义样式**的 shortcode

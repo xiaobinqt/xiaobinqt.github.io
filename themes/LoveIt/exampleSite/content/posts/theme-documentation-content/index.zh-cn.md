@@ -1,10 +1,13 @@
 ---
-weight: 2 title: "主题文档 - 内容"
-date: 2020-03-05T16:30:05+08:00 lastmod: 2020-03-05T16:30:05+08:00 draft: false author: "Dillon"
+weight: 2
+title: "主题文档 - 内容"
+date: 2020-03-05T16:30:05+08:00
+lastmod: 2020-03-05T16:30:05+08:00
+draft: false
+author: "Dillon"
 authorLink: "https://dillonzq.com"
 description: "了解如何在 LoveIt 主题中快速, 直观地创建和组织内容."
 resources:
-
 - name: "featured-image"
   src: "featured-image.jpg"
 
@@ -14,8 +17,9 @@ categories: ["documentation"]
 lightgallery: true
 
 toc:
-auto: false math:
-enable: true
+  auto: false
+math:
+  enable: true
 ---
 
 了解如何在 **LoveIt** 主题中快速, 直观地创建和组织内容.
@@ -30,22 +34,25 @@ enable: true
 * 保持简单的静态页面存放在 `content` 目录, 例如: `content/about.md`
 * 本地资源组织
 
-{{< admonition note "本地资源引用" >}} {{< version 0.2.10 >}}
+{{< admonition note "本地资源引用" >}}
+{{< version 0.2.10 >}}
 
 有三种方法来引用**图片**和**音乐**等本地资源:
 
-1.
-使用[页面包](https://gohugo.io/content-management/page-bundles/)中的[页面资源](https://gohugo.io/content-management/page-resources/)
-. 你可以使用适用于 `Resources.GetMatch` 的值或者直接使用相对于当前页面目录的文件路径来引用页面资源.
-2. 将本地资源放在 **assets** 目录中, 默认路径是 `/assets`. 引用资源的文件路径是相对于 assets 目录的.
-3. 将本地资源放在 **static** 目录中, 默认路径是 `/static`. 引用资源的文件路径是相对于 static 目录的.
+1. 使用[页面包](https://gohugo.io/content-management/page-bundles/)中的[页面资源](https://gohugo.io/content-management/page-resources/).
+   你可以使用适用于 `Resources.GetMatch` 的值或者直接使用相对于当前页面目录的文件路径来引用页面资源.
+2. 将本地资源放在 **assets** 目录中, 默认路径是 `/assets`.
+   引用资源的文件路径是相对于 assets 目录的.
+3. 将本地资源放在 **static** 目录中, 默认路径是 `/static`.
+   引用资源的文件路径是相对于 static 目录的.
 
 引用的**优先级**符合以上的顺序.
 
-在这个主题中的很多地方可以使用上面的本地资源引用, 例如 **链接**, **图片**, `image` shortcode, `music` shortcode 和**前置参数**中的部分参数.
+在这个主题中的很多地方可以使用上面的本地资源引用,
+例如 **链接**, **图片**, `image` shortcode, `music` shortcode 和**前置参数**中的部分参数.
 
-页面资源或者 **assets** 目录中的[图片处理](https://gohugo.io/content-management/image-processing/)会在未来的版本中得到支持. 非常酷的功能! :(far
-fa-grin-squint fa-fw):
+页面资源或者 **assets** 目录中的[图片处理](https://gohugo.io/content-management/image-processing/)会在未来的版本中得到支持.
+非常酷的功能! :(far fa-grin-squint fa-fw):
 {{< /admonition >}}
 
 ## 2 前置参数 {#front-matter}
@@ -53,8 +60,9 @@ fa-grin-squint fa-fw):
 **Hugo** 允许你在文章内容前面添加 `yaml`, `toml` 或者 `json` 格式的前置参数.
 
 {{< admonition >}}
-**不是所有**的以下前置参数都必须在你的每篇文章中设置. 只有在文章的参数和你的 [网站设置](../theme-documentation-basics#site-configuration) 中的 `page`
-部分不一致时才有必要这么做. {{< /admonition >}}
+**不是所有**的以下前置参数都必须在你的每篇文章中设置.
+只有在文章的参数和你的 [网站设置](../theme-documentation-basics#site-configuration) 中的 `page` 部分不一致时才有必要这么做.
+{{< /admonition >}}
 
 这是一个前置参数例子:
 
@@ -69,10 +77,10 @@ author: ""
 authorLink: ""
 description: ""
 license: ""
-images: [ ]
+images: []
 
-tags: [ ]
-categories: [ ]
+tags: []
+categories: []
 featuredImage: ""
 featuredImagePreview: ""
 
@@ -106,25 +114,24 @@ comment:
   # ...
 library:
   css:
-  # someCSS = "some.css"
-  # 位于 "assets/"
-  # 或者
-  # someCSS = "https://cdn.example.com/some.css"
+    # someCSS = "some.css"
+    # 位于 "assets/"
+    # 或者
+    # someCSS = "https://cdn.example.com/some.css"
   js:
-  # someJS = "some.js"
-  # 位于 "assets/"
-  # 或者
-  # someJS = "https://cdn.example.com/some.js"
+    # someJS = "some.js"
+    # 位于 "assets/"
+    # 或者
+    # someJS = "https://cdn.example.com/some.js"
 seo:
-  images: [ ]
+  images: []
   # ...
 ---
 ```
 
 * **title**: 文章标题.
 * **subtitle**: {{< version 0.2.0 >}} 文章副标题.
-* **date**: 这篇文章创建的日期时间. 它通常是从文章的前置参数中的 `date` 字段获取的, 但是也可以在 [网站配置](../theme-documentation-basics#site-configuration)
-  中设置.
+* **date**: 这篇文章创建的日期时间. 它通常是从文章的前置参数中的 `date` 字段获取的, 但是也可以在 [网站配置](../theme-documentation-basics#site-configuration) 中设置.
 * **lastmod**: 上次修改内容的日期时间.
 * **draft**: 如果设为 `true`, 除非 `hugo` 命令使用了 `--buildDrafts`/`-D` 参数, 这篇文章不会被渲染.
 * **author**: 文章作者.
@@ -148,35 +155,30 @@ seo:
 * **linkToMarkdown**: 如果设为 `true`, 内容的页脚将显示指向原始 Markdown 文件的链接.
 * **rssFullText**: {{< version 0.2.4 >}} 如果设为 `true`, 在 RSS 中将会显示全文内容.
 
-* **toc**: {{< version 0.2.9 changed >}} 和 [网站配置](../theme-documentation-basics#site-configuration) 中的 `params.page.toc`
-  部分相同.
+* **toc**: {{< version 0.2.9 changed >}} 和 [网站配置](../theme-documentation-basics#site-configuration) 中的 `params.page.toc` 部分相同.
 * **code**: {{< version 0.2.0 >}} 和 [网站配置](../theme-documentation-basics#site-configuration) 中的 `params.page.code` 部分相同.
-* **math**: {{< version 0.2.0 changed >}} 和 [网站配置](../theme-documentation-basics#site-configuration)
-  中的 `params.page.math` 部分相同.
-* **mapbox**: {{< version 0.2.0 >}} 和 [网站配置](../theme-documentation-basics#site-configuration) 中的 `params.page.mapbox`
-  部分相同.
+* **math**: {{< version 0.2.0 changed >}} 和 [网站配置](../theme-documentation-basics#site-configuration) 中的 `params.page.math` 部分相同.
+* **mapbox**: {{< version 0.2.0 >}} 和 [网站配置](../theme-documentation-basics#site-configuration) 中的 `params.page.mapbox` 部分相同.
 * **share**: 和 [网站配置](../theme-documentation-basics#site-configuration) 中的 `params.page.share` 部分相同.
-* **comment**: {{< version 0.2.0 changed >}} 和 [网站配置](../theme-documentation-basics#site-configuration)
-  中的 `params.page.comment` 部分相同.
-* **library**: {{< version 0.2.7 >}} 和 [网站配置](../theme-documentation-basics#site-configuration) 中的 `params.page.library`
-  部分相同.
+* **comment**: {{< version 0.2.0 changed >}} 和 [网站配置](../theme-documentation-basics#site-configuration) 中的 `params.page.comment` 部分相同.
+* **library**: {{< version 0.2.7 >}} 和 [网站配置](../theme-documentation-basics#site-configuration) 中的 `params.page.library` 部分相同.
 * **seo**: {{< version 0.2.10 >}} 和 [网站配置](../theme-documentation-basics#site-configuration) 中的 `params.page.seo` 部分相同.
 
-{{< admonition tip >}} {{< version 0.2.10 >}}
+{{< admonition tip >}}
+{{< version 0.2.10 >}}
 
 **featuredImage** 和 **featuredImagePreview** 支持[本地资源引用](#contents-organization)的完整用法.
 
-如果带有在前置参数中设置了 `name: featured-image` 或 `name: featured-image-preview` 属性的页面资源, 没有必要在设置 `featuredImage`
-或 `featuredImagePreview`:
+如果带有在前置参数中设置了 `name: featured-image` 或 `name: featured-image-preview` 属性的页面资源,
+没有必要在设置 `featuredImage` 或 `featuredImagePreview`:
 
 ```yaml
 resources:
-  - name: featured-image
-    src: featured-image.jpg
-  - name: featured-image-preview
-    src: featured-image-preview.jpg
+- name: featured-image
+  src: featured-image.jpg
+- name: featured-image-preview
+  src: featured-image-preview.jpg
 ```
-
 {{< /admonition >}}
 
 ## 3 内容摘要
@@ -191,8 +193,7 @@ resources:
 
 你可以通过在 [网站配置](../theme-documentation-basics#site-configuration) 中设置 `summaryLength` 来自定义摘要长度.
 
-如果您要使用 [CJK]^(中文/日语/韩语) 语言创建内容, 并且想使用 Hugo 的自动摘要拆分功能，请在 [网站配置](../theme-documentation-basics#site-configuration)
-中将 `hasCJKLanguage` 设置为 `true`.
+如果您要使用 [CJK]^(中文/日语/韩语) 语言创建内容, 并且想使用 Hugo 的自动摘要拆分功能，请在 [网站配置](../theme-documentation-basics#site-configuration) 中将 `hasCJKLanguage` 设置为 `true`.
 
 ### 手动摘要拆分
 
@@ -200,7 +201,9 @@ resources:
 
 摘要分隔符之前的内容将用作该文章的摘要.
 
-{{< admonition >}} 请小心输入`<!--more-->` ; 即全部为小写且没有空格. {{< /admonition >}}
+{{< admonition >}}
+请小心输入`<!--more-->` ; 即全部为小写且没有空格.
+{{< /admonition >}}
 
 ### 前置参数摘要
 
@@ -221,7 +224,9 @@ resources:
 3. 如果文章前置参数中有摘要变量, 那么将以该值作为摘要.
 4. 按照自动摘要拆分方法.
 
-{{< admonition >}} 不建议在摘要内容中包含富文本块元素, 这会导致渲染错误. 例如代码块, 图片, 表格等. {{< /admonition >}}
+{{< admonition >}}
+不建议在摘要内容中包含富文本块元素, 这会导致渲染错误. 例如代码块, 图片, 表格等.
+{{< /admonition >}}
 
 ## 4 Markdown 基本语法
 
@@ -242,7 +247,9 @@ resources:
 在你的 [网站配置](../theme-documentation-basics#site-configuration) 中的 `[params.math]` 下面设置属性 `enable = true`,
 并在文章的前置参数中设置属性 `math: true`来启用数学公式的自动渲染.
 
-{{< admonition tip >}} 有一份 [$ \KaTeX $ 中支持的 $ \TeX $ 函数](https://katex.org/docs/supported.html) 清单. {{< /admonition >}}
+{{< admonition tip >}}
+有一份 [$ \KaTeX $ 中支持的 $ \TeX $ 函数](https://katex.org/docs/supported.html) 清单.
+{{< /admonition >}}
 
 #### 公式块
 
@@ -272,8 +279,9 @@ $ c = \pm\sqrt{a^2 + b^2} $ 和 \\( f(x)=\int_{-\infty}^{\infty} \hat{f}(\xi) e^
 
 $ c = \pm\sqrt{a^2 + b^2} $ 和 \\( f(x)=\int_{-\infty}^{\infty} \hat{f}(\xi) e^{2 \pi i \xi x} d \xi \\)
 
-{{< admonition tip >}} 你可以在 [网站配置](../theme-documentation-basics#site-configuration) 中自定义公式块和行内公式的分割符. {{< /admonition >
-}}
+{{< admonition tip >}}
+你可以在 [网站配置](../theme-documentation-basics#site-configuration) 中自定义公式块和行内公式的分割符.
+{{< /admonition >}}
 
 #### Copy-tex
 
@@ -337,7 +345,8 @@ $$ \ce{Hg^2+ ->[I-] HgI2 ->[I-] [Hg^{II}I4]^2-} $$
 
 ### Font Awesome {#fontawesome}
 
-**LoveIt** 主题使用 [Font Awesome](https://fontawesome.com/) 作为图标库. 你同样可以在文章中轻松使用这些图标.
+**LoveIt** 主题使用 [Font Awesome](https://fontawesome.com/) 作为图标库.
+你同样可以在文章中轻松使用这些图标.
 
 从 [Font Awesome 网站](https://fontawesome.com/icons?d=gallery) 上获取所需的图标 `class`.
 
@@ -355,7 +364,8 @@ $$ \ce{Hg^2+ ->[I-] HgI2 ->[I-] [Hg^{II}I4]^2-} $$
 
 ### 转义字符 {#escape-character}
 
-在某些特殊情况下 (编写这个主题文档时 :(far fa-grin-squint-tears):), 你的文章内容会与 Markdown 的基本或者扩展语法冲突, 并且无法避免.
+在某些特殊情况下 (编写这个主题文档时 :(far fa-grin-squint-tears):),
+你的文章内容会与 Markdown 的基本或者扩展语法冲突, 并且无法避免.
 
 转义字符语法可以帮助你渲染出想要的内容:
 
@@ -373,8 +383,9 @@ $$ \ce{Hg^2+ ->[I-] HgI2 ->[I-] [Hg^{II}I4]^2-} $$
 
 **{?:}joy{?:}** 而不是 **:joy:**
 
-{{< admonition tip >}} 这个方法可以间接解决一个还未解决的 **[Hugo 的 issue](https://github.com/gohugoio/hugo/issues/4978)**. {{<
-/admonition >}}
+{{< admonition tip >}}
+这个方法可以间接解决一个还未解决的 **[Hugo 的 issue](https://github.com/gohugoio/hugo/issues/4978)**.
+{{< /admonition >}}
 
 另一个例子是:
 
