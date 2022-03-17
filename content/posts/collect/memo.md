@@ -1,4 +1,29 @@
-# 备忘录
+---
+title: "书籍/工具收藏"
+
+date: 2021-10-17T09:44:38+08:00
+
+lastmod: 2022-03-17T09:44:38+08:00
+
+draft: false
+
+author: "xiaobinqt"
+description: ""
+resources:
+
+- name: ""
+  src: ""
+
+tags: ["备忘录"]
+categories: ["收藏"]
+lightgallery: true
+
+toc:
+auto: false
+
+math:
+enable: true
+---
 
 ## 在线书籍
 
@@ -6,6 +31,7 @@
 + [Mastering_Go](https://www.kancloud.cn/cloud001/golang/1601804)
 + [golang 修养之路](https://www.kancloud.cn/aceld/golang/1858955)
 + [Go语言101](https://gfw.go101.org)
++ [PHP扩展开发及内核应用](https://github.com/walu/phpbook)
 
 ## 工具收藏
 
@@ -14,4 +40,3 @@
 ## 文章收藏
 
 + [go1.16 embed 用法](https://zhuanlan.zhihu.com/p/351931501)
-
