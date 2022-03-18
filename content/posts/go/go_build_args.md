@@ -37,9 +37,9 @@ enable: true
 | -w               | 去掉DWARF调试信息，得到的程序就不能用gdb调试了                                                                                                                         |
 | -s               | 去掉符号表,panic时候的stack trace就没有任何文件名/行号信息了，这个等价于普通C/C++程序被strip的效果                                                                                     |
 | -X               | 设置包中的变量值                                                                                                                                            |
-| -gcflags "-N -l" | 编译目标程序的时候会嵌入运行时(runtime)的二进制，禁止优化和内联可以让运行时(runtime)中的函数变得更容易调试。gcflags 其实是给go编译器传入参数，也就是传给go tool compile的参数，因此可以用`go tool compile --help`查看所有可用的参数 |
+| `-gcflags "-N -l"` | 编译目标程序的时候会嵌入运行时(runtime)的二进制，禁止优化和内联可以让运行时(runtime)中的函数变得更容易调试。gcflags 其实是给go编译器传入参数，也就是传给go tool compile的参数，因此可以用`go tool compile --help`查看所有可用的参数 |
 | -ldflags         | 给go链接器传入参数，实际是给go tool link的参数，可以用`go tool link --help`查看可用的参数。                                                                                     |
-| -ldflags '-extldflags "-static"'        | 静态编译                                                                                                                                                |
+| `-ldflags '-extldflags "-static"' `       | 静态编译                                                                                                                                                |
 
 ## 交叉编译
 
@@ -57,8 +57,8 @@ $GOARM默认是6，对于不支持VFP使用软件运算的老版本ARM平台要�
 
 示例
 
-```go
-GOARM= 7 GOARCH = arm GOOS = linux go build -v -o fca
+```shell
+GOARM=7 GOARCH=arm GOOS=linux go build -v -o fca
 ```
 
 ## 参考
@@ -66,3 +66,4 @@ GOARM= 7 GOARCH = arm GOOS = linux go build -v -o fca
 + [golang编译时的参数传递（gcflags, ldflags）](https://studygolang.com/articles/23900)
 + [Golang交叉编译（跨平台编译）简述](https://blog.csdn.net/hx7013/article/details/91489642)
 + [交叉编译Go程序](https://holmesian.org/golang-cross-compile)
++ [ARM flags GOARM](https://github.com/goreleaser/goreleaser/issues/36)
