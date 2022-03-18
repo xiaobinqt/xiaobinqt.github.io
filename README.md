@@ -2,7 +2,7 @@
 
 ## 关于我
 
-目前主要从事 Golang / PHP 相关的开发。连接 python 和 web 开发。
+目前主要从事 Golang / PHP 相关的开发。了解 python 和 web 前端。
 
 ## 联系我
 

@@ -16,7 +16,7 @@ resources:
 - name: ""
   src: ""
 
-tags: ["随笔","旧人"]
+tags: ["随笔"]
 categories: ["essays"]
 lightgallery: true
 
