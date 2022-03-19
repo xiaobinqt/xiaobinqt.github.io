@@ -14,7 +14,7 @@ resources:
 - name: ""
   src: ""
 
-tags: ["javascript","node"]
+tags: ["web","node"]
 categories: ["web"]
 lightgallery: true
 

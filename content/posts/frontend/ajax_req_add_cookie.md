@@ -14,7 +14,7 @@ resources:
 - name: ""
   src: ""
 
-tags: ["web","ajax","cookie"]
+tags: ["web"]
 categories: ["web"]
 lightgallery: true
 

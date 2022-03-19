@@ -14,7 +14,7 @@ resources:
 - name: ""
   src: ""
 
-tags: ["google","开发者工具"]
+tags: ["开发者工具"]
 categories: ["developer"]
 lightgallery: true
 
