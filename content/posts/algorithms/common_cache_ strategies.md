@@ -16,8 +16,8 @@ resources:
 - name: "featured-image"
   src: "featured-image.jpg"
 
-tags: ["golang"]
-categories: ["tech","golang"]
+tags: ["algorithms","算法"]
+categories: ["algorithms"]
 
 lightgallery: true
 
