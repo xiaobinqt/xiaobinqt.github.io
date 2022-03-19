@@ -8,6 +8,10 @@
 + [golang 修养之路](https://www.kancloud.cn/aceld/golang/1858955)
 + [Go语言101](https://gfw.go101.org)
 + [PHP扩展开发及内核应用](https://github.com/walu/phpbook)
++ [JavaScript 标准参考教程](https://javascript.ruanyifeng.com/)
++ [ES6 入门教程](https://es6.ruanyifeng.com)
++ [JavaScript 教程](https://wangdoc.com/javascript/)
++ [网道](https://wangdoc.com/)
 
 ## 工具收藏
 
