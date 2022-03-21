@@ -29,7 +29,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/xiaobinqt.cn\/http_glance\/"
-        },"image": ["https:\/\/xiaobinqt.cn\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "http","wordcount":  3570 ,
+        },"image": ["https:\/\/xiaobinqt.cn\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "http","wordcount":  5347 ,
         "url": "https:\/\/xiaobinqt.cn\/http_glance\/","datePublished": "2022-03-17T10:47:43+08:00","dateModified": "2022-03-17T10:47:43+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "xxxx","logo": {
@@ -111,8 +111,8 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">http入门笔记</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>xiaobinqt</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/network/"><i class="far fa-folder fa-fw"></i>network</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-03-17">2022-03-17</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 3570 字&nbsp;
-                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 8 分钟&nbsp;</div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-03-17">2022-03-17</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 5347 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 11 分钟&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
                     <span>目录</span>
@@ -151,6 +151,18 @@
         </li>
         <li><a href="#osi-网络分层模型">OSI 网络分层模型</a></li>
         <li><a href="#两个分层模型的对应关系">两个分层模型的对应关系</a></li>
+      </ul>
+    </li>
+    <li><a href="#http协议核心">http协议核心</a>
+      <ul>
+        <li><a href="#常用头字段">常用头字段</a>
+          <ul>
+            <li><a href="#注意事项">注意事项</a></li>
+            <li><a href="#分类">分类</a></li>
+          </ul>
+        </li>
+        <li><a href="#请求方式">请求方式</a></li>
+        <li><a href="#状态码">状态码</a></li>
       </ul>
     </li>
   </ul>
@@ -346,7 +358,225 @@ WebSocket、HTTPDNS 等。这些协议相互交织，构成了一个协议网，
     </figure></p>
 <p>所谓的“四层负载均衡”就是指工作在传输层上，基于 TCP/IP 协议的特性，例如 IP 地址、端口号等实现对后端服务器的负载均衡。</p>
 <p>所谓的“七层负载均衡”就是指工作在应用层上，看到的是 HTTP 协议，解析 HTTP 报文里的 URI、主机名、资源类型等数据，再用适当的策略转发给后端服务器。</p>
-<p>有一个辨别四层和七层比较好的（但不是绝对的）小窍门，“两个凡是”：<strong>凡是由操作系统负责处理的就是四层或四层以下</strong>，否则，<strong>凡是需要由应用程序（也就是你自己写代码）负责处理的就是七层</strong>。</p></div><div class="post-footer" id="post-footer">
+<p>有一个辨别四层和七层比较好的（但不是绝对的）小窍门，“两个凡是”：<strong>凡是由操作系统负责处理的就是四层或四层以下</strong>，否则，<strong>凡是需要由应用程序（也就是你自己写代码）负责处理的就是七层</strong>。</p>
+<h2 id="http协议核心">http协议核心</h2>
+<p>由于 HTTP 是在 TCP/IP 协议之上的，而 TCP/IP 协议负责底层的具体传输工作，所以 http 在传输方面不用太操心，TCP/IP 会去解决，所以 HTTP 关心的就只有他所传输的报文内容，又因为 HTTP
+是“纯文本”的，包括头信息都是 ASCII 码的文本，不用借助程序解析可以直接阅读。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220321/619a6b063a5e4ced936d156d155f3fed.png?imageView2/0/interlace/1/q/50%7cimageslim" title="http报文" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220321/619a6b063a5e4ced936d156d155f3fed.png?imageView2/0/interlace/1/q/50|imageslim" data-sub-html="<h2> </h2><p>http报文</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220321/619a6b063a5e4ced936d156d155f3fed.png?imageView2/0/interlace/1/q/50%7cimageslim"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220321/619a6b063a5e4ced936d156d155f3fed.png?imageView2/0/interlace/1/q/50%7cimageslim, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220321/619a6b063a5e4ced936d156d155f3fed.png?imageView2/0/interlace/1/q/50%7cimageslim 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220321/619a6b063a5e4ced936d156d155f3fed.png?imageView2/0/interlace/1/q/50%7cimageslim 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220321/619a6b063a5e4ced936d156d155f3fed.png?imageView2/0/interlace/1/q/50|imageslim" />
+    </a><figcaption class="image-caption"> </figcaption>
+    </figure></p>
+<h3 id="常用头字段">常用头字段</h3>
+<h4 id="注意事项">注意事项</h4>
+<ul>
+<li>字段名不区分大小写，例如“Host”也可以写成“host”，但首字母大写的可读性更好；</li>
+<li>字段名里不允许出现空格，可以使用连字符“-”，但不能使用下划线“_”。例如，“test-name”是合法的字段名，而“test name”“test_name”是不正确的字段名；</li>
+<li>字段名后面必须紧接着“:”，不能有空格，而“:”后的字段值前可以有多个空格；</li>
+</ul>
+<h4 id="分类">分类</h4>
+<ul>
+<li>通用字段：在请求头和响应头里都可以出现；</li>
+<li>请求字段：仅能出现在请求头里，进一步说明请求信息或者额外的附加条件；</li>
+<li>响应字段：仅能出现在响应头里，补充说明响应报文的信息；</li>
+<li>实体字段：它实际上属于通用字段，但专门描述 body 的额外信息。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Host</code></td>
+<td>请求字段</td>
+<td>唯一一个 HTTP/1.1 规范里要求<strong>必须出现</strong>的字段，如果请求头里没有 Host，那这就是一个错误的报文。Host 字段告诉服务器这个请求应该由哪个主机来处理</td>
+</tr>
+<tr>
+<td><code>User-Agent</code></td>
+<td>请求字段</td>
+<td>描述发起 HTTP 请求的客户端，服务器可以依据它来返回最合适此浏览器显示的页面</td>
+</tr>
+<tr>
+<td><code>Date</code></td>
+<td>通用字段</td>
+<td>表示 HTTP 报文创建的时间，客户端可以使用这个时间再搭配其他字段决定缓存策略</td>
+</tr>
+<tr>
+<td><code>Server</code></td>
+<td>响应字段</td>
+<td>告诉客户端当前正在提供 Web 服务的软件名称和版本号</td>
+</tr>
+<tr>
+<td><code>Content-Length</code></td>
+<td>实体字段</td>
+<td>报文里 body 的长度，也就是请求头或响应头空行后面数据的长度。服务器看到这个字段，就知道了后续有多少数据，可以直接接收。如果没有这个字段，那么 body 就是不定长的，需要使用 chunked 方式分段传输</td>
+</tr>
+</tbody>
+</table>
+<h3 id="请求方式">请求方式</h3>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220321/c113e062fccf4d18959dc52d90e59c1b.png?imageView2/0/interlace/1/q/50%7cimageslim" title="请求方式" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220321/c113e062fccf4d18959dc52d90e59c1b.png?imageView2/0/interlace/1/q/50|imageslim" data-sub-html="<h2> </h2><p>请求方式</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220321/c113e062fccf4d18959dc52d90e59c1b.png?imageView2/0/interlace/1/q/50%7cimageslim"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220321/c113e062fccf4d18959dc52d90e59c1b.png?imageView2/0/interlace/1/q/50%7cimageslim, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220321/c113e062fccf4d18959dc52d90e59c1b.png?imageView2/0/interlace/1/q/50%7cimageslim 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220321/c113e062fccf4d18959dc52d90e59c1b.png?imageView2/0/interlace/1/q/50%7cimageslim 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220321/c113e062fccf4d18959dc52d90e59c1b.png?imageView2/0/interlace/1/q/50|imageslim" />
+    </a><figcaption class="image-caption"> </figcaption>
+    </figure></p>
+<table>
+<thead>
+<tr>
+<th>方式</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td>获取资源，可以理解为读取或者下载数据</td>
+</tr>
+<tr>
+<td>HEAD</td>
+<td>获取资源的元信息，不会返回请求的实体数据，只会传回响应头</td>
+</tr>
+<tr>
+<td>POST</td>
+<td>向资源提交数据，相当于写入或上传数据</td>
+</tr>
+<tr>
+<td>PUT</td>
+<td>类似 POST</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td>删除资源</td>
+</tr>
+<tr>
+<td>CONNECT</td>
+<td>建立特殊的连接隧道</td>
+</tr>
+<tr>
+<td>OPTIONS</td>
+<td>列出可对资源实行的方法</td>
+</tr>
+<tr>
+<td>TRACE</td>
+<td>追踪请求 - 响应的传输路径</td>
+</tr>
+</tbody>
+</table>
+<h3 id="状态码">状态码</h3>
+<table>
+<thead>
+<tr>
+<th>状态码</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>1×x</code></td>
+<td>提示信息，表示目前是协议处理的中间状态，还需要后续的操作</td>
+</tr>
+<tr>
+<td><code>2××</code></td>
+<td>成功，报文已经收到并被正确处理</td>
+</tr>
+<tr>
+<td><code>3××</code></td>
+<td>重定向，资源位置发生变动，需要客户端重新发送请求</td>
+</tr>
+<tr>
+<td><code>4××</code></td>
+<td>客户端错误，请求报文有误，服务器无法处理</td>
+</tr>
+<tr>
+<td><code>5××</code></td>
+<td>服务器错误，服务器在处理请求时内部发生了错误</td>
+</tr>
+</tbody>
+</table>
+<p>一些常用状态码说明</p>
+<table>
+<thead>
+<tr>
+<th>status code</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>301</td>
+<td>永久重定向，含义是此次请求的资源已经不存在了，需要改用改用新的 URI 再次访问</td>
+</tr>
+<tr>
+<td>302</td>
+<td>临时重定向，意思是请求的资源还在，但需要暂时用另一个 URI 来访问。比如，你的网站升级到了 HTTPS，原来的 HTTP 不打算用了，这就是“永久”的，所以要配置 301 跳转，把所有的 HTTP 流量都切换到 HTTPS。 再比如，今天夜里网站后台要系统维护，服务暂时不可用，这就属于“临时”的，可以配置成 302 跳转，把流量临时切换到一个静态通知页面，浏览器看到这个 302 就知道这只是暂时的情况，不会做缓存优化，第二天还会访问原来的地址。</td>
+</tr>
+<tr>
+<td>304</td>
+<td>Not Modified，它用于 If-Modified-Since 等条件请求，表示资源未修改，用于缓存控制。它不具有通常的跳转含义，但可以理解成“重定向已到缓存的文件”（即“缓存重定向”）</td>
+</tr>
+<tr>
+<td>405</td>
+<td>不允许使用某些方法操作资源，例如不允许 POST 只能 GET</td>
+</tr>
+<tr>
+<td>406</td>
+<td>Not Acceptable 资源无法满足客户端请求的条件，例如请求中文但只有英文</td>
+</tr>
+<tr>
+<td>408</td>
+<td>Request Timeout：请求超时，服务器等待了过长的时间</td>
+</tr>
+<tr>
+<td>409</td>
+<td>Conflict：多个请求发生了冲突，可以理解为多线程并发时的竞态</td>
+</tr>
+<tr>
+<td>413</td>
+<td>Request Entity Too Large：请求报文里的 body 太大</td>
+</tr>
+<tr>
+<td>414</td>
+<td>Request-URI Too Long：请求行里的 URI 太大</td>
+</tr>
+<tr>
+<td>429</td>
+<td>Too Many Requests 客户端发送了太多的请求，通常是由于服务器的限连策略</td>
+</tr>
+<tr>
+<td>431</td>
+<td>Request Header Fields Too Large 请求头某个字段或总体太大</td>
+</tr>
+<tr>
+<td>500</td>
+<td>Internal Server Error 与 400 类似，也是一个通用的错误码，服务器究竟发生了什么错误我们是不知道的。不过对于服务器来说这应该算是好事，通常不应该把服务器内部的详细信息，例如出错的函数调用栈告诉外界。虽然不利于调试，但能够防止黑客的窥探或者分析</td>
+</tr>
+<tr>
+<td>501</td>
+<td>Not Implemented 表示客户端请求的功能还不支持，这个错误码比 500 要温和一些，和“即将开业，敬请期待”的意思差不多，不过具体什么时候“开业”就不好说了</td>
+</tr>
+<tr>
+<td>502</td>
+<td>Bad Gateway”通常是服务器作为网关或者代理时返回的错误码，表示服务器自身工作正常，访问后端服务器时发生了错误，但具体的错误原因也是不知道的</td>
+</tr>
+<tr>
+<td>503</td>
+<td>Service Unavailable 表示服务器当前很忙，暂时无法响应服务，我们上网时有时候遇到的“网络服务正忙，请稍后重试”的提示信息就是状态码 503</td>
+</tr>
+</tbody>
+</table></div><div class="post-footer" id="post-footer">
     <div class="post-info">
         <div class="post-info-line">
             <div class="post-info-mod">
