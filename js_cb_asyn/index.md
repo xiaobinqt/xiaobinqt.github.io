@@ -19,9 +19,61 @@ JS的执行模式是单线程的，当有多个任务时必须排队执行，优
 
 ## Promise
 
-### 单个 promise
+Promise 对象代表一个**异步操作**，`then()` 第一个参数是成功`resolve`的回调函数，第二个参数是失败`reject`的回调函数，当不写第二个
+`then()` 参数时，可以用 `catch()` 捕获 `reject` 异常。
 
-### 多个 promise
+### 使用
+
+```javascript
+var p1 = new Promise(function (resolve, reject) {
+    // resolve('成功');
+    reject("失败")
+});
+p1.then(function (res) {
+    console.log("第一个fn: ", res)
+}, function (res) {
+    console.log("第二个 fn: ", res)
+});
+```
+
+resolve和reject除了正常的值外，还可能是另一个promise实例。
+
+```javascript
+const p1 = new Promise(function (resolve, reject) {
+    resolve(1)
+});
+
+const p2 = new Promise(function (resolve, reject) {
+    // ...
+    resolve(p1);
+})
+
+p2.then(function (res) {
+    console.log(res)
+}, function (res) {
+
+})
+```
+
+用 catch 捕获 reject 异常
+
+```javascript
+var p1 = new Promise(function (resolve, reject) {
+    // todo...
+    reject(111111)
+});
+
+
+p1.then(function (res) {
+    console.log("第一个fn: ", res)
+}).catch(function (err) {
+    console.log("err :", err)
+}).finally(function () {
+    console.log("finally exec...")
+})
+```
+
+### 执行顺序
 
 ## async/await的用法和理解
 
@@ -65,6 +117,7 @@ console.log('end')
 + [Javascript异步编程的4种方法](http://www.ruanyifeng.com/blog/2012/12/asynchronous%EF%BC%BFjavascript.html)
 + [JavaScript 运行机制详解：再谈Event Loop](https://www.ruanyifeng.com/blog/2014/10/event-loop.html)
 + [async 函数的含义和用法](http://www.ruanyifeng.com/blog/2015/05/async.html)
++ [JS执行——Promise](https://www.jianshu.com/p/b16e7c9e1f9f)
 + [你真的了解回调?](https://mp.weixin.qq.com/s?__biz=MzI4OTc3NDgzNQ==&mid=2247484695&idx=1&sn=57b4e00a6929784ae9c5026cc71f46ef)
 + [回调地狱](https://mp.weixin.qq.com/s?__biz=MzI4OTc3NDgzNQ==&mid=2247484700&idx=1&sn=0a840596519263dd8baa1e4a0f265151)
-
++ [js中微任务和宏任务的区别](https://blog.csdn.net/namechenfl/article/details/99623700)
