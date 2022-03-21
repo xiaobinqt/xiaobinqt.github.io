@@ -130,7 +130,7 @@ test();
 console.log('end')
 ```
 
-![运行结果](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220318/77b8072751844d84a1f96272c46b7735.png?imageView2/0/interlace/1/q/50|imageslim ' ')
+![运行结果](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220321/370858b72be740ddabd37996d1ada207.png?imageView2/0/interlace/1/q/50|imageslim ' ')
 
 ## 宏任务和微任务
 
