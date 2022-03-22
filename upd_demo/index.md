@@ -1,4 +1,4 @@
-# golang udp 示例
+# golang udp 简单使用
 
 
 ## server
@@ -91,6 +91,6 @@ func main() {
 
 ```
 
-## 代码地址
+## 源码
 
 [源码地址](https://github.com/xiaobinqt/go.src/tree/master/dev/udp)
