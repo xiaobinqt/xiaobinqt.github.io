@@ -77,7 +77,6 @@
 
 ![image](https://cdn.xiaobinqt.cn/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20181007215500.jpg " ")
 
-![image](http://qiniu.xiaobinqt.cn/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20181007215505.jpg " ")
-
+![image](https://cdn.xiaobinqt.cn/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20181007215505.jpg " ")
 
 
