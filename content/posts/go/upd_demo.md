@@ -1,5 +1,5 @@
 ---
-title: "golang udp 示例"
+title: "golang udp 简单使用"
 
 date: 2021-04-01T21:55:54+08:00
 
@@ -115,6 +115,6 @@ func main() {
 
 ```
 
-## 代码地址
+## 源码
 
 [源码地址](https://github.com/xiaobinqt/go.src/tree/master/dev/udp)
