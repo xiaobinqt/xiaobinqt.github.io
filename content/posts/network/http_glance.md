@@ -16,7 +16,7 @@ resources:
 - name: ""
   src: ""
 
-tags: ["http"]
+tags: ["network"]
 categories: ["network"]
 lightgallery: true
 
