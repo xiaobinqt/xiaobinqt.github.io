@@ -36,6 +36,7 @@ enable: true
 + [ES6 入门教程](https://es6.ruanyifeng.com)
 + [JavaScript 教程](https://wangdoc.com/javascript/)
 + [网道](https://wangdoc.com/)
++ [PHP编程之道](https://phptherightway.golaravel.com/)
 
 ## 工具收藏
 
