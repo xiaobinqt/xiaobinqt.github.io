@@ -62,7 +62,7 @@ commit id 可以通过`git log`命令查看，格式化log可以使用`git log -
 |--------------------------------|-----------|
 |  git reflog --date=local --all &#124; grep dev | 查看 dev 分支是基于哪个分支创建的|
 
-{{< admonition type=tip title="Tips" open=true >}}
+{{< admonition type=tip title="Tip" open=true >}}
 
 markdown 表格中使用 `|` 可以使用`&#124;`
 
@@ -118,7 +118,7 @@ git rm 有 2 个常用命令：
 git rm -r --cached 文件/文件夹名字
 ```
 
-{{< admonition type=tip open=true title="Tips" >}}
+{{< admonition type=tip open=true title="Tip" >}}
 
 先手动删除文件，然后使用`git rm <file>`和`git add<file>`效果是一样的。
 
