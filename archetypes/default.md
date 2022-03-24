@@ -9,10 +9,8 @@ draft: false
 
 author: "xiaobinqt"
 description: ""
-resources:
 
-- name: ""
-  src: ""
+reproduce: false
 
 tags: [""]
 categories: [""]
