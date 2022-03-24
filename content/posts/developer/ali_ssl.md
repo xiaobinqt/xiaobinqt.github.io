@@ -14,7 +14,7 @@ resources:
 - name: ""
   src: ""
 
-tags: ["系统"]
+tags: ["开发者工具"]
 categories: ["developer"]
 lightgallery: true
 
