@@ -1,4 +1,4 @@
-# go build 常用命令
+# go 常用命令
 
 
 ## 常用编译参数
@@ -37,9 +37,14 @@ $GOARM默认是6，对于不支持VFP使用软件运算的老版本ARM平台要�
 GOARM=7 GOARCH=arm GOOS=linux go build -v -o fca
 ```
 
+## go mod
+
+// TODO
+
 ## 参考
 
 + [golang编译时的参数传递（gcflags, ldflags）](https://studygolang.com/articles/23900)
 + [Golang交叉编译（跨平台编译）简述](https://blog.csdn.net/hx7013/article/details/91489642)
 + [交叉编译Go程序](https://holmesian.org/golang-cross-compile)
 + [ARM flags GOARM](https://github.com/goreleaser/goreleaser/issues/36)
++ [go mod使用](https://www.jianshu.com/p/760c97ff644c)
