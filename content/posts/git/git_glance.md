@@ -7,6 +7,8 @@ lastmod: 2022-03-23T17:40:29+08:00
 
 draft: false
 
+featuredImage: "https://cdn.xiaobinqt.cn/xiaobinqt.io/20220324/c4b622f71a954f5492654749f5bb2aef.png?imageView2/0/interlace/1/q/50|imageslim"
+
 author: "xiaobinqt"
 description: "git使用，git，git基本操作，git clone,git push,git remote,.gitignore,git pull,git status,git add,git commit,git
 log,git diff,git rebase,git merge,git stash,git rebase,git rebase --continue,git rebase --skip,git rebase --abort,git"
@@ -83,7 +85,7 @@ commit id 可以通过`git log`命令查看，格式化log可以使用`git log -
 |--------------------------------|-----------|
 |  git reflog --date=local --all &#124; grep dev | 查看 dev 分支是基于哪个分支创建的|
 
-{{< admonition type=tip title="Tip" open=true >}}
+{{< admonition type=tip title="Tips" open=true >}}
 
 markdown 表格中使用 `|` 可以使用`&#124;`
 
@@ -139,7 +141,7 @@ git rm 有 2 个常用命令：
 git rm -r --cached 文件/文件夹名字
 ```
 
-{{< admonition type=tip open=true title="Tip" >}}
+{{< admonition type=tip open=true title="Tips" >}}
 
 先手动删除文件，然后使用`git rm <file>`和`git add<file>`效果是一样的。
 
