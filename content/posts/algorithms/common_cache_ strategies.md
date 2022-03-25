@@ -16,7 +16,7 @@ resources:
 - name: "featured-image"
   src: "featured-image.jpg"
 
-tags: [算法"]
+tags: ["算法"]
 categories: ["algorithms"]
 
 lightgallery: true
