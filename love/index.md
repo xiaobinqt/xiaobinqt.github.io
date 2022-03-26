@@ -7,7 +7,7 @@
 
 
 <script>
-      var countDownDate=new Date('2018-01-05T23:00:00').getTime();
+      var countDownDate=new Date('2019-09-17T21:21:00').getTime();
         window.setInterval(function(){
         var distance=new Date().getTime()-countDownDate;var days=Math.floor(distance/(1000*60*60*24));
         var hours=Math.floor((distance%(1000*60*60*24))/(1000*60*60));
