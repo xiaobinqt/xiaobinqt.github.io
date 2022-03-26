@@ -10,6 +10,8 @@ draft: false
 author: "xiaobinqt"
 description: ""
 
+featuredImage: ""
+
 reproduce: false
 
 tags: [""]
