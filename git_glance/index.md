@@ -205,7 +205,9 @@ git cherry-pick <commid_1> <commit_2>
 
 `HEAD`严格来说不是指向提交，而是指向某个分支，如master分支，master才是指向提交的，所以，HEAD指向的就是当前分支。
 
-![head](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220324/a82292b2e5824a6298d3e53ac5819eb8.png?imageView2/0/interlace/1/q/50|imageslim 'head')
+[//]: # (![head]&#40;https://cdn.xiaobinqt.cn/xiaobinqt.io/20220324/a82292b2e5824a6298d3e53ac5819eb8.png?imageView2/0/interlace/1/q/50|imageslim 'head'&#41;)
+
+![HEAD](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220326/ba117f59220d497f9dae512afe902ed4.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'HEAD')
 
 在合并分支时如果出现冲突，Git用`<<<<<<<`，`=======`，`>>>>>>>`标记出不同分支的内容。
 
