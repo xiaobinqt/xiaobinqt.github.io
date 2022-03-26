@@ -20,6 +20,6 @@ hugo 在渲染时默认是不支持标题中的emoji的（有的主题也许是�
 
 修改 `themes/LoveIt/layouts/_default/summary.html` 文件文件中的 title 的渲染方式为 `{{ .Title | emojify }}`。
 
-
 ## 参考
+
 + [Hugo should render emojis in page titles if enableEmoji = true](https://github.com/gohugoio/hugo/issues/7171)
