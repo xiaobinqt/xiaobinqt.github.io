@@ -12,7 +12,7 @@ enable: true
 
 <br><br><br>
 
-## 缘起 
+## 缘起
 
 大学毕业后，为了混口饭吃，便利用自己了解的一点编程知识开始码农之路。大学学的是通信工程，非计算机专业，编程之路困难重重，但好歹自己有自知之明，笨人多努力，相信通过自己的努力，可以让自己的编程技术更加完善。
 
@@ -50,7 +50,9 @@ enable: true
 
 + 微信：
 
-![wechat](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220319/d5616bfc809a45608437f9cc94b14044.jpg?imageView2/0/interlace/1/q/50|imageslim "个人微信")
+{{< image
+src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220319/d5616bfc809a45608437f9cc94b14044.jpg?imageView2/0/interlace/1/q/50|imageslim"
+caption="个人微信" class="wb-wechat">}}
 
 
 ***
