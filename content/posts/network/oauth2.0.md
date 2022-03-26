@@ -11,7 +11,7 @@ reproduce: true
 
 author: "xiaobinqt"
 
-description: ""
+description: "OAuth2.0,第三方登录,令牌,TOKEN,授权码,权限"
 resources:
 
 - name: ""

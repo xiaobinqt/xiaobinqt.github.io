@@ -10,11 +10,7 @@ draft: false
 fontawesome: true
 
 author: "xiaobinqt"
-description: "http入门"
-resources:
-
-- name: ""
-  src: ""
+description: "HTTP,HTTP协议,超文本传输协议,互联网,TCP/IP,Transmission Control Protocol,传输控制协议,ISO"
 
 tags: ["network"]
 categories: ["network"]
