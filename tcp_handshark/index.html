@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>TCP连接管理 - xiaobinqt&#39;s blog</title><meta name="Description" content="tcp, tcp连接管理,三次握手,四次挥手,为什么建立连接需要三次握手,为什么不能用两次握手进行连接,SYN,FIN,ACK,PSH,SYN_SENT,SYN_RECV,ESTABLISHED,FIN_WAIT_1,FIN_WAIT_2,CLOSE_WAIT,LAST_ACK,TIME_WAIT,CLOSE"><meta property="og:title" content="TCP连接管理" />
+<meta property="og:description" content="tcp, tcp连接管理,三次握手,四次挥手,为什么建立连接需要三次握手,为什么不能用两次握手进行连接,SYN,FIN,ACK,PSH,SYN_SENT,SYN_RECV,ESTABLISHED,FIN_WAIT_1,FIN_WAIT_2,CLOSE_WAIT,LAST_ACK,TIME_WAIT,CLOSE" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://xiaobinqt.cn/tcp_handshark/" /><meta property="og:image" content="https://xiaobinqt.cn/logo.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-03-21T17:09:37+08:00" />
+<meta property="article:modified_time" content="2022-03-26T17:09:37+08:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://xiaobinqt.cn/logo.png"/>
+
+<meta name="twitter:title" content="TCP连接管理"/>
+<meta name="twitter:description" content="tcp, tcp连接管理,三次握手,四次挥手,为什么建立连接需要三次握手,为什么不能用两次握手进行连接,SYN,FIN,ACK,PSH,SYN_SENT,SYN_RECV,ESTABLISHED,FIN_WAIT_1,FIN_WAIT_2,CLOSE_WAIT,LAST_ACK,TIME_WAIT,CLOSE"/>
+<meta name="application-name" content="xiaobinqt">
+<meta name="apple-mobile-web-app-title" content="xiaobinqt"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c">
+<link rel="stylesheet" href="//at.alicdn.com/t/font_3267767_nzwpo5kwtd.css"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://xiaobinqt.cn/tcp_handshark/" /><link rel="prev" href="https://xiaobinqt.cn/js_cb_asyn/" /><link rel="next" href="https://xiaobinqt.cn/hugo_title_support_emoji/" /><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "TCP连接管理",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/xiaobinqt.cn\/tcp_handshark\/"
+        },"image": ["https:\/\/xiaobinqt.cn\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "network","wordcount":  3907 ,
+        "url": "https:\/\/xiaobinqt.cn\/tcp_handshark\/","datePublished": "2022-03-21T17:09:37+08:00","dateModified": "2022-03-26T17:09:37+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+            "@type": "Organization",
+            "name": "xxxx","logo": {
+                    "@type": "ImageObject",
+                    "url": "https:\/\/xiaobinqt.cn\/images\/avatar.png",
+                    "width":  528 ,
+                    "height":  560 
+                }},"author": {
+                "@type": "Person",
+                "name": "xiaobinqt"
+            },"description": "tcp, tcp连接管理,三次握手,四次挥手,为什么建立连接需要三次握手,为什么不能用两次握手进行连接,SYN,FIN,ACK,PSH,SYN_SENT,SYN_RECV,ESTABLISHED,FIN_WAIT_1,FIN_WAIT_2,CLOSE_WAIT,LAST_ACK,TIME_WAIT,CLOSE"
+    }
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="xiaobinqt&#39;s blog"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>萧十一郎</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/about/"> 关于 </a><a class="menu-item" href="/links/"> 友链 </a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="xiaobinqt&#39;s blog"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>萧十一郎</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/about/" title="">关于</a><a class="menu-item" href="/links/" title="">友链</a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">目录</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">TCP连接管理</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author">
+                    <i class="custom-icon iconfont icon-weibiaoti-"></i>
+                </span>&nbsp;<span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>xiaobinqt</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/network/"><i class="far fa-folder fa-fw"></i>network</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-03-21">2022-03-21</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 3907 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 8 分钟&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#名词解释">名词解释</a></li>
+    <li><a href="#三次握手">三次握手</a>
+      <ul>
+        <li><a href="#第一次握手">第一次握手</a>
+          <ul>
+            <li><a href="#客户端">客户端</a></li>
+          </ul>
+        </li>
+        <li><a href="#第二次握手">第二次握手</a>
+          <ul>
+            <li><a href="#服务端">服务端</a></li>
+          </ul>
+        </li>
+        <li><a href="#第三次握手">第三次握手</a>
+          <ul>
+            <li><a href="#客户端-1">客户端</a></li>
+            <li><a href="#服务端-1">服务端</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#四次挥手">四次挥手</a>
+      <ul>
+        <li><a href="#第一次挥手">第一次挥手</a>
+          <ul>
+            <li><a href="#客户端-2">客户端</a></li>
+          </ul>
+        </li>
+        <li><a href="#第二次挥手">第二次挥手</a>
+          <ul>
+            <li><a href="#服务端-2">服务端</a></li>
+            <li><a href="#客户端-3">客户端</a></li>
+          </ul>
+        </li>
+        <li><a href="#第三次挥手">第三次挥手</a>
+          <ul>
+            <li><a href="#服务端-3">服务端</a></li>
+          </ul>
+        </li>
+        <li><a href="#第四次挥手">第四次挥手</a>
+          <ul>
+            <li><a href="#客户端-4">客户端</a></li>
+            <li><a href="#服务端-4">服务端</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#常见问题">常见问题</a></li>
+    <li><a href="#参考">参考</a></li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h2 id="名词解释">名词解释</h2>
+<table>
+<thead>
+<tr>
+<th>名词</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SYN</td>
+<td>同步序号，用于建立连接过程，在连接请求中，SYN=1 和 ACK=0 表示该数据段没有使用捎带的确认域，而连接应答捎带一个确认，即 SYN=1 和 ACK=1</td>
+</tr>
+<tr>
+<td>FIN</td>
+<td>finish 标志，用于释放连接，为 1 时表示发送方已经没有数据发送了，即关闭本方数据流</td>
+</tr>
+<tr>
+<td>ACK</td>
+<td>确认序号标志，为 1 时表示确认号有效，为 0 表示报文中不含确认信息，忽略确认号字段</td>
+</tr>
+<tr>
+<td>PSH</td>
+<td>push 标志，为 1 表示是带有 push 标志的数据，指示接收方在接收到该报文段以后，应尽快将这个报文段交给应用程序，而不是在缓冲区排队</td>
+</tr>
+<tr>
+<td>RST</td>
+<td>重置连接标志，用于重置由于主机崩溃或其他原因而出现错误的连接。或者用于拒绝非法的报文段和拒绝连接请求</td>
+</tr>
+<tr>
+<td>序列号 seq</td>
+<td>占 4 个字节，用来标记数据段的顺序，TCP 把连接中发送的所有数据字节都编上一个序号，第一个字节的编号由本地随机产生；给字节编上序号后，就给每一个报文段指派一个序号；序列号 seq 就是这个报文段中的第一个字节的数据编号</td>
+</tr>
+<tr>
+<td>确认号 ack</td>
+<td>占 4 个字节，期待收到对方下一个报文段的第一个数据字节的序号；序列号表示报文段携带数据的第一个字节的编号；而确认号指的是期望接收到下一个字节的编号；因此当前报文段最后一个字节的编号 +1 （<code>ACK</code>会占一个序号）即为确认号</td>
+</tr>
+</tbody>
+</table>
+<div class="details admonition info open">
+        <div class="details-summary admonition-title">
+            <i class="icon fas fa-info-circle fa-fw"></i>Info<i class="details-icon fas fa-angle-right fa-fw"></i>
+        </div>
+        <div class="details-content">
+            <div class="admonition-content"><code>ACK</code>、<code>SYN</code> 和 <code>FIN</code> 这些大写的单词表示标志位，其值要么是 1，要么是 0；<code>ack</code>、<code>seq</code> 小写的单词表示序号。</div>
+        </div>
+    </div>
+<p><code>ACK</code> 是可能与 <code>SYN</code>，<code>FIN</code> 等同时使用的。比如 <code>SYN</code>和<code>ACK</code>可能同时为 1，它表示的就是建立连接之后的响应搜索 如果只是单个的一个<code>SYN</code>，它表示的只是建立连接。</p>
+<p><code>SYN</code>与<code>FIN</code>是不会同时为 1 的，因为前者表示的是建立连接，而后者表示的是断开连接。</p>
+<p><code>RST</code>一般是在<code>FIN</code>之后才会出现为 1 的情况，表示的是连接重置。</p>
+<p>一般，当出现<code>FIN</code>包或<code>RST</code>包时，便认为客户端与服务器端断开了连接；而当出现<code>SYN</code>和<code>SYN＋ACK</code>包时，我们认为客户端与服务器建立了一个连接。</p>
+<p><code>PSH</code>为 1 的情况，一般只出现在<code>DATA</code>内容不为 0 的包中，也就是说<code>PSH</code>为1表示的是有真正的 TCP 数据包内容被传递。</p>
+<h2 id="三次握手">三次握手</h2>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220326/43c6821afd6d4a9fadcceb9e98c228b9.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="三次握手" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220326/43c6821afd6d4a9fadcceb9e98c228b9.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>三次握手</h2><p>三次握手</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220326/43c6821afd6d4a9fadcceb9e98c228b9.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220326/43c6821afd6d4a9fadcceb9e98c228b9.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220326/43c6821afd6d4a9fadcceb9e98c228b9.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220326/43c6821afd6d4a9fadcceb9e98c228b9.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220326/43c6821afd6d4a9fadcceb9e98c228b9.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" />
+    </a><figcaption class="image-caption">三次握手</figcaption>
+    </figure></p>
+<h3 id="第一次握手">第一次握手</h3>
+<h4 id="客户端">客户端</h4>
+<p>主动打开（active open），向服务端发送 <code>SYN</code> 报文段<code>SYN=1, SN=client_isn, OPT=client_mss</code>，请求建立连接。</p>
+<p><code>client_isn</code> 是客户端初始序号，动态生成，用于实现可靠传输，<code>client_sn-client_isn</code> 等于客户端已发送字节数。</p>
+<p><code>SYN</code> 报文段虽然不能携带数据，但是会消耗一个序号（相当于发送了1个字节的有效数据），下次客户端再向服务端发送的报文段中 <code>SN=client_isn+1</code>。 除了 <code>SYN</code> 报文段和 <code>ACK-SYN</code>
+报文段，其他所有后续报文段的序号 <code>SN</code> 值都等于上次接收的 <code>ACK</code> 报文段中的确认号 <code>AN</code> 值。</p>
+<p><code>client_mss</code> 是客户端最大报文段长度，在 <code>TCP</code> 首部的选项和填充部分，会在客户端与服务端的 <code>MSS</code> 中选择一个较小值使用。</p>
+<p>客户端变为 <code>SYN_SENT</code> 状态，然后等待服务端 <code>ACK</code> 报文段。</p>
+<h3 id="第二次握手">第二次握手</h3>
+<h4 id="服务端">服务端</h4>
+<p>接收来自客户端的 <code>SYN</code> 报文段，得知客户端发送能力正常。</p>
+<p>被动打开<code>passive open</code>，向客户端发送 <code>SYN-ACK </code>报文段<code>ACK=1, AN=client_isn+1, SYN=1, SN=server_isn, OPT=server_mss</code>
+，应答来自客户端的建立连接请求并向客户端发起建立连接请求。</p>
+<p><code>SN=server_isn</code> 是服务端初始序号，<code>ACK-SYN</code> 报文段虽然不能携带数据，但是会消耗一个序号（相当于发送了1个字节的有效数据），下次服务端再向客户端发送的报文中 <code>SN=server_isn+1</code> 。</p>
+<p><code>OPT=server_mss</code> 是服务端最大报文段长度。</p>
+<p><code>AN=client_isn+1</code> 是确认号，表明服务端接下来要开始接收来自客户端的第 <code>client_isn+1</code> 个字节的有效数据。</p>
+<p>服务端变为 <code>SYN_RCVD</code> 状态，并等待客户端 <code>ACK</code> 报文段。</p>
+<h3 id="第三次握手">第三次握手</h3>
+<h4 id="客户端-1">客户端</h4>
+<p>接收来自服务端的 <code>SYN-ACK</code> 报文段，得知服务端发送能力和接收能力都正常。</p>
+<p>向客户端发送 <code>ACK</code> 报文段<code>ACK=1, AN=server_isn+1, SN=client_isn+1, MESSAGE=message</code>，应答来自服务端的建立连接请求。</p>
+<p><code>SN=client_isn+1</code> 是序号，表明当前报文段发送的有效数据首字节是从请求建立连接到现在为止客户端向服务端发送的第 <code>(client_isn+1)-clien_isn+1=2</code> 个字节的有效数据。</p>
+<p>有效数据：一般有效数据指的是应用层的报文数据，不过 <code>SYN</code> 报文段、 <code>ACK-SYN</code> 报文段和 <code>FIN</code> 报文段虽然没有携带报文数据，但认为发送了1个字节的有效数据。</p>
+<p><code>AN=server_isn+1</code> 是确认号，表明客户端接下来要开始接收来自服务端的第 <code>server_isn+1</code> 个字节的有效数据。</p>
+<p><code>MESSAGE=message</code> 此时可以在报文段中携带客户端到服务端的报文数据；该 <code>ACK</code> 报文段消耗的序号个数等于 <code>message_length</code>（注意 <code>message_length</code>
+可以等于0，即不携带有效数据，此时 <code>ACK</code>报文段不消耗序号），下次客户端再向服务端发送的报文段中 <code>SN=client_isn+1+message_length</code> 。</p>
+<p>客户端变为 <code>ESTABLISHED</code> 状态，<code>client——&gt;server</code> 数据流建立。</p>
+<h4 id="服务端-1">服务端</h4>
+<p>接收来自客户端的 <code>ACK</code> 报文段，得知客户端接收能力正常。</p>
+<p>变为 <code>ESTABLISHED</code> 状态，<code>server——&gt;client</code> 数据流也建立。</p>
+<h2 id="四次挥手">四次挥手</h2>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220326/dd8453fee5ce45579e5022be5763923d.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="TCP四次挥手" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220326/dd8453fee5ce45579e5022be5763923d.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>TCP四次挥手</h2><p>TCP四次挥手</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220326/dd8453fee5ce45579e5022be5763923d.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220326/dd8453fee5ce45579e5022be5763923d.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220326/dd8453fee5ce45579e5022be5763923d.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220326/dd8453fee5ce45579e5022be5763923d.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220326/dd8453fee5ce45579e5022be5763923d.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" />
+    </a><figcaption class="image-caption">TCP四次挥手</figcaption>
+    </figure></p>
+<p>断开连接前，客户端和服务端都处于 <code>ESTABLISHED</code> 状态，两者谁都可以先发起断开连接请求。以下假设客户端先发起断开连接请求。</p>
+<h3 id="第一次挥手">第一次挥手</h3>
+<h4 id="客户端-2">客户端</h4>
+<p>向服务端发送 <code>FIN</code> 报文段<code>FIN=1, SN=client_sn</code>，请求断开连接。</p>
+<p><code>SN=client_sn</code>是序号，表明当前报文段发送的有效数据首字节是从请求建立连接到现在为止客户端向服务端发送的第 <code>client_sn-clien_isn+1</code> 个字节的有效数据。</p>
+<p><code>FIN</code> 报文段虽然不能携带数据，但是会消耗一个序号（相当于发送了1个字节的有效数据），下次客户端再向服务端发送的报文中 <code>SN=client_isn+1</code> 。</p>
+<p>客户端变为 <code>FIN_WAIT1</code> 状态，等待服务端 <code>ACK</code> 报文段。</p>
+<h3 id="第二次挥手">第二次挥手</h3>
+<h4 id="服务端-2">服务端</h4>
+<p>接收来自客户端的 <code>FIN</code> 报文段。</p>
+<p>向客户端发送 <code>ACK</code> 报文段<code>ACK=1, AN=client_sn+1, SN=server_sn_wave2</code>，应答客户端的断开连接请求。</p>
+<p><code>SN=server_sn_wave2</code> 是序号，表明当前报文段发送的有效数据首字节是从请求建立连接到现在为止服务端向客户端发送的第 <code>server_sn_wave2-client_isn+1</code> 个字节的有效数据。</p>
+<p><code>AN=client_sn+1</code> 是确认号，表明服务端接下来要开始接收来自客户端的第 <code>client_sn+1</code> 个字节的有效数据。</p>
+<p>此时服务端变为 <code>CLOSE_WAIT</code> 状态。</p>
+<h4 id="客户端-3">客户端</h4>
+<p>接收来自服务端的 <code>ACK</code> 包。</p>
+<p>变为 <code>FIN_WAIT2</code> 状态，等待服务端关闭连接请求<code>FIN</code>报文段。</p>
+<h3 id="第三次挥手">第三次挥手</h3>
+<h4 id="服务端-3">服务端</h4>
+<p>（服务端想断开连接时）向客户端发送 <code>FIN</code> 报文段<code>FIN=1, SN=server_sn</code>，请求断开连接。</p>
+<p><code>SN=server_sn</code> 是序号，表明当前报文段发送的有效数据首字节是从请求建立连接到现在为止服务端向客户端发送的第 <code>server_sn-clien_isn+1</code> 个字节的有效数据。</p>
+<p><code>FIN</code> 报文段虽然不能携带数据，但是会消耗一个序号（相当于发送了1个字节的有效数据），下次服务端再向客户端发送的报文中 <code>SN=client_isn+2</code> （若断开连接成功，则服务端不会再向客户端发送下一个报文段）。</p>
+<p>第二次挥手和第三次挥手之间，服务端又向客户端发送了 <code>server_sn - server_sn_wave2</code> 个字节的有效数据。</p>
+<p>服务端变为 <code>LAST_ACK</code> 状态，等待客户端的 <code>ACK</code> 报文段。</p>
+<h3 id="第四次挥手">第四次挥手</h3>
+<h4 id="客户端-4">客户端</h4>
+<p>接收来自服务端的 <code>FIN</code> 报文段。</p>
+<p>向服务端发送 <code>ACK</code> 报文段<code>ACK=1, AN=server_sn+1, SN=client_sn+1</code>，应答服务端断开连接请求。
+<code>client_sn+1</code> 是序号，表明当前报文段发送的有效数据首字节是从请求建立连接到现在为止客户端向客户端发送的第 <code>client_isn+1)-clien_isn+1</code> 个字节的有效数据。<code>AN=server_sn+1</code>
+是确认号，表明服务端接下来要开始接收来自客户端的第 <code>client_sn+1</code> 个字节的有效数据。</p>
+<p>客户端变为 <code>TIME_WAIT</code> 状态，等待2MSL时间后进入 <code>CLOSED</code> 状态，至此 <code>client——&gt;server</code> 数据流被关闭。</p>
+<h4 id="服务端-4">服务端</h4>
+<p>接收来自客户端的 <code>ACK</code> 报文段。</p>
+<p>变为 <code>CLOSED</code> 状态，至此 <code>server——&gt;client</code> 数据流被关闭。</p>
+<div class="details admonition info open">
+        <div class="details-summary admonition-title">
+            <i class="icon fas fa-info-circle fa-fw"></i>Tips<i class="details-icon fas fa-angle-right fa-fw"></i>
+        </div>
+        <div class="details-content">
+            <div class="admonition-content">当收到对方的<code>FIN</code>报文时，仅仅表示对方不再发送数据了但是还能接收数据。</div>
+        </div>
+    </div>
+<h2 id="常见问题">常见问题</h2>
+<ul>
+<li>❓ 为什么建立连接需要“三次”握手</li>
+</ul>
+<p>客户端和服务端之间建立的TCP是全双工通信，双方都要确保对方发送能力和接收能力正常。</p>
+<p>一次握手后，服务端得知客户端发送能力正常。</p>
+<p>二次握手后，客户端得知服务端接收能力和发送能力正常。</p>
+<p>三次握手后，服务端得知客户端接收能力正常。</p>
+<ul>
+<li>❓ 为什么第四次挥手时要等待2MSL的时间再进入CLOSED状态</li>
+</ul>
+<p>MSL（Maximum Segment Lifetime，报文段最大生存时间）是一个未被接受的报文段在网络中被丢弃前存活的最大时间。</p>
+<p><strong>保证建立新连接时网络中不存在上次连接时发送的数据包</strong>，进入 <code>CLOSED</code> 状态意味着可以建立新连接，等待 &gt;MSL 的时间再进入 <code>CLOSED</code>
+状态可以保证建立新连接后，网络中不会存在上次连接时发送出去的数据包。若网络中同时存在发送端在两次连接中发出的数据包，对接收端接收数据可能会有影响。</p>
+<p><strong>保证第四次挥手发送的 <code>ACK</code> 能到达接收端</strong>，第四次挥手发送的 <code>ACK</code> 可能会出现丢包，另一端接收不到 <code>ACK</code> 会重新发送 <code>FIN</code>。等待 2MSL 的时间可以应对该情况，重发 <code>ACK</code> ，保证另一端能正常关闭连接。</p>
+<ul>
+<li>❓ 已经建立了连接，客户端突然出现故障怎么办</li>
+</ul>
+<p>TCP 设有一个保活计时器，客户端如果出现故障，服务器不能一直等下去，白白浪费资源。服务器每收到一次客户端的请求后都会重新复位这个计时器，时间通常是设置为 2 小时，若两小时还没有收到客户端的任何数据，服务器就会发送一个探测报文段，以后每隔
+75 秒钟发送一次。若一连发送 10 个探测报文仍然没反应， 服务器就认为客户端出了故障，接着就关闭连接。</p>
+<ul>
+<li>❓ 为什么不能用两次握手进行连接</li>
+</ul>
+<p>三次握手完成两个重要的功能，既要双方做好发送数据的准备工作（双方都知道彼此已准备好），也要允许双方就初始序列号进行协商，这个序列号在握手过程中被发送和确认。</p>
+<p>现在把三次握手改成仅需要两次握手，死锁是可能发生的。</p>
+<p>比如，计算机 S 和 C 之间的通信，假定 C 给 S 发送一个连接请求分组，S 收到了这个分组，并发送了确认应答分组。按照两次握手的协定，S 认为连接已经成功地建立了，可以开始发送数据分组。 可是，C 在 S
+的应答分组在传输中被丢失的情况下，将不知道 S 是否已准备好，不知道 S 建立什么样的序列号，C 甚至怀疑 S 是否收到自己的连接请求分组。在这种情况下，C 认为连接还未建立成功，将忽略 S 发来的任何数据分 组，只等待连接确认应答分组，而
+S 在发出的分组超时后，重复发送同样的分组，这样就形成了死锁。</p>
+<h2 id="参考">参考</h2>
+<ul>
+<li><a href="http://www.javashuo.com/article/p-shnnqhql-so.html" target="_blank" rel="noopener noreffer">计算机网络——TCP连接管理（三次握手和四次挥手）</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/53374516" target="_blank" rel="noopener noreffer">“三次握手，四次挥手”你真的懂吗？</a></li>
+<li><a href="https://blog.csdn.net/qq_38950316/article/details/81087809" target="_blank" rel="noopener noreffer">TCP的三次握手与四次挥手理解及面试题（很全面）</a></li>
+<li><a href="https://blog.csdn.net/paincupid/article/details/79726795" target="_blank" rel="noopener noreffer">TCP报文格式详解</a></li>
+<li><a href="http://www.javashuo.com/article/p-onzxytxb-bv.html" target="_blank" rel="noopener noreffer">面试官，不要再问我三次握手和四次挥手</a></li>
+</ul>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2022-03-26</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/tcp_handshark/index.md" target="_blank">阅读原始文档</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="分享到 Twitter" data-sharer="twitter" data-url="https://xiaobinqt.cn/tcp_handshark/" data-title="TCP连接管理" data-hashtags="network"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="https://xiaobinqt.cn/tcp_handshark/" data-hashtag="network"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Hacker News" data-sharer="hackernews" data-url="https://xiaobinqt.cn/tcp_handshark/" data-title="TCP连接管理"><i class="fab fa-hacker-news fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Line" data-sharer="line" data-url="https://xiaobinqt.cn/tcp_handshark/" data-title="TCP连接管理"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/line.svg"></i></a><a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="https://xiaobinqt.cn/tcp_handshark/" data-title="TCP连接管理"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="分享到 百度" data-sharer="baidu" data-url="https://xiaobinqt.cn/tcp_handshark/" data-title="TCP连接管理"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/baidu.svg"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/network/">network</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a target="_blank" href="/js_cb_asyn/" class="prev" rel="prev" title="JS运行机制"><i class="fas fa-angle-left fa-fw"></i>JS运行机制</a>
+            <a target="_blank" href="/hugo_title_support_emoji/" class="next" rel="next" title="hugo主题标题支持emoji😄">hugo主题标题支持emoji😄<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+<div id="comments"></div></article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2018 - 2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">xiaobinqt</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span><span class="icp-splitter">&nbsp;|&nbsp;</span><br class="icp-br"/>
+                    <span class="icp"><a href='https://beian.miit.gov.cn/' target='_blank'>京ICP备16062974号-1</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery.js@1.2.0/dist/css/lightgallery.min.css"><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.37.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/algoliasearch@4.2.0/dist/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lightgallery.js@1.2.0/dist/js/lightgallery.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lg-thumbnail.js@1.2.0/dist/lg-thumbnail.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lg-zoom.js@1.2.0/dist/lg-zoom.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.4.0/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{},"lightGallery":{"actualSize":false,"exThumbImage":"data-thumbnail","hideBarsDelay":2000,"selector":".lightgallery","speed":400,"thumbContHeight":80,"thumbWidth":80,"thumbnail":true},"search":{"algoliaAppID":"PASDMWALPK","algoliaIndex":"index.zh-cn","algoliaSearchKey":"b42948e51daaa93df92381c8e2ac0f93","highlightTag":"em","maxResultLength":20,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>
