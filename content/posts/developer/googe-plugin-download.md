@@ -8,7 +8,7 @@ lastmod: 2022-03-16T20:21:27+08:00
 draft: false
 
 author: "xiaobinqt"
-description: "将google浏览器插件下载到本地"
+description: "Google,浏览器插件,插件下载"
 resources:
 
 - name: ""
