@@ -8,7 +8,7 @@ lastmod: 2022-03-21T17:50:59+08:00
 draft: false
 
 author: "xiaobinqt"
-description: ""
+description: "HUGO,hugo主题标题支持emoji,emoji表情"
 resources:
 
 - name: ""
@@ -44,6 +44,6 @@ hugo 在渲染时默认是不支持标题中的emoji的（有的主题也许是�
 
 修改 `themes/LoveIt/layouts/_default/summary.html` 文件文件中的 title 的渲染方式为 `{{ .Title | emojify }}`。
 
-
 ## 参考
+
 + [Hugo should render emojis in page titles if enableEmoji = true](https://github.com/gohugoio/hugo/issues/7171)
