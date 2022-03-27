@@ -45,3 +45,4 @@ enable: true
 ## 文章收藏
 
 + [go1.16 embed 用法](https://zhuanlan.zhihu.com/p/351931501)
++ [Go常见面试题【由浅入深】2022版](https://zhuanlan.zhihu.com/p/471490292)
