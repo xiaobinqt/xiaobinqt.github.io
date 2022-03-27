@@ -10,12 +10,16 @@ jobs:
       - name: checkout # 步骤的名称
         uses: actions/checkout@v1 #软件市场的名称
 
-      - name: Find and Replace
-        uses: jacobtomlinson/gha-find-replace@v2
-        with:
-          find: "COMMENT_AppID_XXX"
-          replace: "pr3YACjaoH88gmobUILiGzHJ-gzGzoHsz"
-          include: "config.toml"
+      #      - name: Find and Replace
+      #        uses: jacobtomlinson/gha-find-replace@v2
+      #        with:
+      #          find: "COMMENT_AppID_XXX"
+      #          replace: "pr3YACjaoH88gmobUILiGzHJ-gzGzoHsz"
+      #          include: "config.toml"
+
+      - name: Replace config.toml
+        run: |
+          echo ${{ secrets.CONFIG }} > config.toml
 
       - name: cat verfidy # 验证下替换是否成功
         run: |
