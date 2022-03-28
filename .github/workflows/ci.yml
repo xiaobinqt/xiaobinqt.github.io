@@ -26,10 +26,6 @@ jobs:
           replace: ${{ secrets.COMMEN_APP_KEY }}
           include: "config.toml"
 
-      - name: cat verfidy # 验证下替换是否成功
-        run: |
-          cat config.toml
-
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v2
         with:
@@ -38,6 +34,10 @@ jobs:
 
       - name: Build
         run: hugo
+
+      - name: My Verify # 验证下替换是否成功
+        run: |
+          cat public/index.json
 
       # algolia 索引
       - uses: rxrw/algolia-index-uploader@v1
