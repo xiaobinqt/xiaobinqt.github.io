@@ -18,8 +18,7 @@ tags: ["随笔"]
 categories: ["essays"]
 lightgallery: true
 
-toc:
-auto: false
+toc: false
 
 math:
 enable: true
