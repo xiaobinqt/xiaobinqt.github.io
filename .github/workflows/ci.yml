@@ -12,18 +12,32 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Replace comment appid
+      - name: Replace valine comment appid
         uses: jacobtomlinson/gha-find-replace@v2
         with:
           find: "COMMENT_AppID_XXX"
-          replace: ${{ secrets.COMMENT_APP_ID }}
+          replace: ${{ secrets.VALINE_COMMENT_APP_ID }}
           include: "config.toml"
 
-      - name: Replace comment appkey
+      - name: Replace valine comment appkey
         uses: jacobtomlinson/gha-find-replace@v2
         with:
           find: "COMMENT_AppKey_XXX"
-          replace: ${{ secrets.COMMEN_APP_KEY }}
+          replace: ${{ secrets.VALINE_COMMEN_APP_KEY }}
+          include: "config.toml"
+
+      - name: Replace vlgolia app id
+        uses: jacobtomlinson/gha-find-replace@v2
+        with:
+          find: "VLGOLIA_APP_ID_XXX"
+          replace: ${{ secrets.VALINE_COMMENT_APP_ID }}
+          include: "config.toml"
+
+      - name: Replace vlgolia app search key
+        uses: jacobtomlinson/gha-find-replace@v2
+        with:
+          find: "VLGOLIA_SEARCH_API_KEY_XXX"
+          replace: ${{ secrets.ALGOLIA_SEARCH_API_KEY }}
           include: "config.toml"
 
       - name: Setup Hugo
@@ -43,12 +57,11 @@ jobs:
       - uses: rxrw/algolia-index-uploader@v1
         with:
           index_path: public/index.json
-          algolia_index_id: U8I48S9K50
-          algolia_index_name: blog
-          algolia_index_admin_key: 37c83723f2f817858bced8d58e052fe0
+          algolia_index_id: ${{ secrets.VALINE_COMMENT_APP_ID }}
+          algolia_index_name: xiaobinqt.io
+          algolia_index_admin_key: ${{ secrets.ALGOLIA_ADMIN_API_KEY }}
 
-
-      - name: Deploy
+      - name: Deploy to github pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           personal_token: ${{ secrets.TOKEN }} # personal_token 这里新建一个 https://github.com/settings/tokens
