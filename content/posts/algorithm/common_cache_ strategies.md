@@ -17,7 +17,7 @@ resources:
   src: "featured-image.jpg"
 
 tags: ["算法"]
-categories: ["algorithms"]
+categories: ["算法与数学"]
 
 lightgallery: true
 

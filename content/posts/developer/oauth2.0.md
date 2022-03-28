@@ -17,8 +17,8 @@ resources:
 - name: ""
   src: ""
 
-tags: ["web"]
-categories: ["web"]
+tags: ["web","oauth"]
+categories: ["开发者手册"]
 lightgallery: true
 
 toc:
