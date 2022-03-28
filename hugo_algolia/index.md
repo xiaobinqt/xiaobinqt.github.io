@@ -13,6 +13,12 @@
 
 ![algolia_index_id 填的值](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220328/0ed8a58ed9f1463694010a159d14ba85.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'algolia_index_id 填的值')
 
+上传成功后可以去 [algolia 官网](https://www.algolia.com/)查看效果：
+
+`Settings -> Applications -> 进入到应用 -> Search -> Browse`
+
+![上传索引效果](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220328/18b9576e62ec41e69b4ddcab80eefaec.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '上传索引效果')
+
 ## 参考
 
 + [Algolia Hosts unreachable](https://stackoverflow.com/questions/45883334/algolia-hosts-unreachable)
