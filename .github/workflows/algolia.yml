@@ -1,18 +1,21 @@
-name: Algolia upload
-on:
-  push: # push的时候触发
-    branches: # 那些分支需要触发
-      - main
-jobs:
-  build:
-    runs-on: ubuntu-latest # 镜像市场
-    steps:
-      - name: checkout # 步骤的名称
-        uses: actions/checkout@v1 #软件市场的名称
+name: algolia-upload
 
-      - uses: rxrw/algolia-index-uploader@v1
+on:
+  - push
+
+jobs:
+  upload_hugo_algolia_index:
+    runs-on: ubuntu-latest
+    name: Upload Hugo Algolia Index
+    steps:
+      - uses: actions/checkout@v2
         with:
-          index_path: "public/index.json"
-          algolia_index_id: "U8I48S9K50"
-          algolia_index_name: "blog"
-          algolia_index_admin_key: "37c83723f2f817858bced8d58e052fe0"
+          fetch-depth: 0
+      - uses: aoudiamoncef/hugo-algolia-uploader@main
+        with:
+          # Such as `LAHZOUZT15`. Required
+          app_id: xiaobin2
+          # You can store token in your project's 'Setting > Secrets' and reference the name here. Such as ${{ secrets.ALGOLIA_ADMIN_KEY }} . Required
+          admin_key: 37c83723f2f817858bced8d58e052fe0
+          # The index name. Required
+          index_name: blog
