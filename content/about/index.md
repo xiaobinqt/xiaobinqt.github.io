@@ -4,6 +4,8 @@ date: 2022-03-06T11:04:49+08:00
 
 draft: false
 
+description: "xiaobinqt's personal website,xiaobinqt,程序员,程序猿,xiaobinqt@163.com"
+
 lightgallery: true
 
 math:
