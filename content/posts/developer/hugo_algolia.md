@@ -33,7 +33,7 @@ enable: true
 
 我用的 action
 插件是[Algolia Index Uploader](https://github.com/marketplace/actions/algolia-index-uploader)，找了半天发现是参数 `algolia_index_id`
-写的有问题：
+写的有问题:disappointed_relieved:：
 
 ![algolia_index_id 填的值](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220328/0ed8a58ed9f1463694010a159d14ba85.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'algolia_index_id 填的值')
 
