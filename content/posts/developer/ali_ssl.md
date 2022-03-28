@@ -14,8 +14,8 @@ resources:
 - name: ""
   src: ""
 
-tags: ["开发者工具"]
-categories: ["developer"]
+tags: ["ssl","aliyun"]
+categories: ["开发者手册"]
 lightgallery: true
 
 toc:

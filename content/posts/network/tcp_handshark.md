@@ -17,8 +17,8 @@ resources:
 - name: ""
   src: ""
 
-tags: ["network"]
-categories: ["network"]
+tags: ["tcp"]
+categories: ["理解计算机"]
 lightgallery: true
 
 toc:
