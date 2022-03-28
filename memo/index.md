@@ -13,6 +13,8 @@
 + [JavaScript 教程](https://wangdoc.com/javascript/)
 + [网道](https://wangdoc.com/)
 + [PHP编程之道](https://phptherightway.golaravel.com/)
++ [gairuo](https://www.gairuo.com/)
++ [Kubernetes 文档](https://kubernetes.io/zh/docs/home/)
 
 ## 工具收藏
 
