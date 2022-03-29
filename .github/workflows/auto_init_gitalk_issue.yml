@@ -1,0 +1,20 @@
+name: Initialization Gitalk
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.8
+      - name: Run script
+        run: |
+          pip install -r requirements.txt
+          python init-gitalk.py 'https://xiaobinqt.github.io' 'https://xiaobinqt.github.io/sitemap.xml' ${{ secrets.GITALK_TOKEN }} 'xiaobinqt' 'xiaobinqt.github.io'
