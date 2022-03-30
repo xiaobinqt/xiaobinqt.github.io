@@ -33,12 +33,12 @@ enable: true
 
 ## 解决方法
 
-用浏览器打开[chrome://net-internals/#hsts](chrome://net-internals/#hsts) 这个页面，在最下面的 **Delete domain security policies**
+用 Google 浏览器打开[chrome://net-internals/#hsts](chrome://net-internals/#hsts) 这个页面，在最下面的 **Delete domain security policies**
 填上需要禁止跳转的网站，然后点击**Delete**。
 
 ![Delete domain security policies](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220330/1dfabae20c7d4e3fb31303c1f99334fa.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'Delete domain security policies')
 
-这里有个需要**注意**的地方是，如果我们的网址是 `http://g.xiaobinqt.cn:8000`，那么就需要在这里填上 `xiaobinqt.cn`。
+这里有个需要**注意**的地方是，如果我们的网址是 `http://g.xiaobinqt.cn:8000`，那么`Domain` 的值填的是 `xiaobinqt.cn`。
 
 ## 参考
 
