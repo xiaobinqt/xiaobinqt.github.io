@@ -1,9 +1,9 @@
 ---
 title: "windows 重做系统"
 
-date: 2018-10-07T22:13:09+08:00
+date: 2018-10-07
 
-lastmod: 2022-03-16T22:13:09+08:00
+lastmod: 2022-03-16
 
 draft: false
 

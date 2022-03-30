@@ -1,9 +1,9 @@
 ---
 title: "JavaScript heap out of memory"
 
-date: 2022-03-16T21:59:30+08:00
+date: 2022-03-16
 
-lastmod: 2022-03-16T21:59:30+08:00
+lastmod: 2022-03-16
 
 draft: false
 

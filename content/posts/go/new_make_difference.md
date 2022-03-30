@@ -1,9 +1,9 @@
 ---
 title: "golang make 和 new 的区别"
 
-date: 2021-06-21T21:54:20+08:00
+date: 2021-06-21
 
-lastmod: 2022-03-16T21:54:20+08:00
+lastmod: 2022-03-16
 
 draft: false
 
