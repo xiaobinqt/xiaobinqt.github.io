@@ -1,9 +1,9 @@
 ---
 title: "hugo主题标题支持emoji:smile:"
 
-date: 2022-03-21T17:50:59+08:00
+date: 2022-03-21
 
-lastmod: 2022-03-21T17:50:59+08:00
+lastmod: 2022-03-21
 
 draft: false
 

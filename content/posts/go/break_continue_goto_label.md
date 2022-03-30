@@ -1,9 +1,9 @@
 ---
 title: "golang break，continue，goto label 的区别"
 
-date: 2022-02-16T21:41:27+08:00
+date: 2022-02-16
 
-lastmod: 2022-03-16T21:41:27+08:00
+lastmod: 2022-03-16
 
 draft: false
 

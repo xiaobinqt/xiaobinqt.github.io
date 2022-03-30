@@ -1,9 +1,9 @@
 ---
 title: "github PR 简单使用"
 
-date: 2021-04-29T23:28:36+08:00
+date: 2021-04-29
 
-lastmod: 2022-03-18T23:28:36+08:00
+lastmod: 2022-03-18
 
 draft: false
 

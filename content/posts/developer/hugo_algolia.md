@@ -1,9 +1,9 @@
 ---
 title: "hugo algolia Unreachable hosts"
 subtitle: ""
-date: 2022-03-28T15:21:55+08:00
+date: 2022-03-28
 
-lastmod: 2022-03-28T15:21:55+08:00
+lastmod: 2022-03-28
 
 draft: false
 

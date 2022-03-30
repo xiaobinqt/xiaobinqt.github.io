@@ -1,9 +1,9 @@
 ---
 title: "go GMP 模型"
 
-date: 2022-03-16T21:04:27+08:00
+date: 2022-03-16
 
-lastmod: 2022-03-16T21:04:27+08:00
+lastmod: 2022-03-16
 
 draft: false
 

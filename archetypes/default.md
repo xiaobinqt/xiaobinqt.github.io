@@ -1,9 +1,12 @@
 ---
 title: "{{ replace .Name "-" " " | title }}"
 subtitle: ""
-date: {{ .Date }}
 
-lastmod: {{ .Date }}
+init_date: "{{ .Date }}"
+
+date: {{ .Date | time.Format "2006-01-02" }}
+
+lastmod: {{ .Date | time.Format "2006-01-02" }}
 
 draft: false
 

@@ -1,9 +1,9 @@
 ---
 title: "golang udp 简单使用"
 
-date: 2021-04-01T21:55:54+08:00
+date: 2021-04-01
 
-lastmod: 2022-03-16T21:55:54+08:00
+lastmod: 2022-03-16
 
 draft: false
 

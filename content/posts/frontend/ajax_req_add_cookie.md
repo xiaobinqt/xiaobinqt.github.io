@@ -1,9 +1,9 @@
 ---
 title: "ajax 在请求时携带 cookie 信息"
 
-date: 2022-03-01T21:57:41+08:00
+date: 2022-03-01
 
-lastmod: 2022-03-16T21:57:41+08:00
+lastmod: 2022-03-16
 
 draft: false
 

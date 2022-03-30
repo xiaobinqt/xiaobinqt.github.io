@@ -1,9 +1,9 @@
 ---
 title: "一致性 hash"
 
-date: 2022-01-15T22:01:59+08:00
+date: 2022-01-15
 
-lastmod: 2022-03-16T22:01:59+08:00
+lastmod: 2022-03-16
 
 draft: false
 

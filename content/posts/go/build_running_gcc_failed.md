@@ -1,9 +1,9 @@
 ---
 title: "running gcc failed: exit status 1"
 
-date: 2022-02-10T21:43:33+08:00
+date: 2022-02-10
 
-lastmod: 2022-03-16T21:43:33+08:00
+lastmod: 2022-03-16
 
 draft: false
 
