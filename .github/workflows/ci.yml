@@ -12,39 +12,13 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Replace valine comment appid
-        uses: jacobtomlinson/gha-find-replace@v2
-        with:
-          find: "COMMENT_AppID_XXX"
-          replace: ${{ secrets.VALINE_COMMENT_APP_ID }}
-          include: "config.toml"
-
-      - name: Replace valine comment appkey
-        uses: jacobtomlinson/gha-find-replace@v2
-        with:
-          find: "COMMENT_AppKey_XXX"
-          replace: ${{ secrets.VALINE_COMMEN_APP_KEY }}
-          include: "config.toml"
-
-      - name: Replace vlgolia app id
-        uses: jacobtomlinson/gha-find-replace@v2
-        with:
-          find: "VLGOLIA_APP_ID_XXX"
-          replace: ${{ secrets.VLGOLIA_APP_ID }}
-          include: "config.toml"
-
-      - name: Replace vlgolia app search key
-        uses: jacobtomlinson/gha-find-replace@v2
-        with:
-          find: "VLGOLIA_SEARCH_API_KEY_XXX"
-          replace: ${{ secrets.ALGOLIA_SEARCH_API_KEY }}
-          include: "config.toml"
-
-      - name: gitalk 配置替换
+      - name: 配置参数替换
         uses: falnyr/replace-env-vars-action@master
         env:
           GITALK_CLIENT_ID: 47b15de6c2d8a0f8d707
-          GITALK_SECRET: c3f1c26b8aabcebe558e8ba9e7f513a20dd0140d
+          GITALK_SECRET: ${{ secrets.GITALK_TOKEN }}
+          VLGOLIA_SEARCH_API_KEY_XXX: ${{ secrets.ALGOLIA_SEARCH_API_KEY }}
+          VLGOLIA_APP_ID_XXX: ${{ secrets.VLGOLIA_APP_ID }}
         with:
           filename: config.toml
 
@@ -57,10 +31,6 @@ jobs:
 
       - name: Build
         run: hugo
-
-      - name: My Verify # 验证下替换是否成功
-        run: |
-          cat public/index.json
 
       # algolia 索引
       - uses: rxrw/algolia-index-uploader@v1
