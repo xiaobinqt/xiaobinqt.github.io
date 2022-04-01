@@ -149,6 +149,7 @@ module.exports = function (RED) {
         });
     }
 
+    // 注册一个节点 sum,注册的节点不能重复也就是说同一个 node-red 项目不能有 2 个 registerType sum 节点
     RED.nodes.registerType("sum", Sum);
 }
 ```
