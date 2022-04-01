@@ -8,7 +8,7 @@ lastmod: 2022-03-16
 draft: false
 
 author: "xiaobinqt"
-description: ""
+description: "一致性Hash,hash算法,数据倾斜"
 resources:
 
 - name: ""

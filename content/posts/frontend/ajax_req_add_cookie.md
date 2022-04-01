@@ -8,7 +8,7 @@ lastmod: 2022-03-16
 draft: false
 
 author: "xiaobinqt"
-description: ""
+description: "Ajax 在请求时携带 cookie 信息,cookie 信息会被添加到请求头中,Cookie"
 resources:
 
 - name: ""

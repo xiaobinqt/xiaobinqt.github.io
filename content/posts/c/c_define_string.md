@@ -8,7 +8,7 @@ lastmod: 2022-03-17
 draft: false
 
 author: "xiaobinqt"
-description: ""
+description: "C语言定义字符串的方法,C语言，字符串"
 resources:
 
 - name: ""
