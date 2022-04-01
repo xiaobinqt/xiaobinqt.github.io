@@ -32,7 +32,16 @@ jobs:
       - name: Build
         run: hugo
 
-      # algolia 索引
+      - name: set up python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.x' # Version range or exact version of a Python version to use, using SemVer's version range syntax
+          architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
+
+      - name: gitalk issue init
+        run: python init-gitalk-issue.py ${{ secrets.GITALK_TOKEN }} xiaobinqt xiaobinqt.github.io
+
+        # algolia 索引
       - uses: rxrw/algolia-index-uploader@v1
         with:
           index_path: public/index.json

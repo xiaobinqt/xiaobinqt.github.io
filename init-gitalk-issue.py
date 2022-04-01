@@ -1,5 +1,4 @@
 import json
-import signal
 import sys
 import time
 
@@ -10,32 +9,51 @@ site_url = "https://xiaobinqt.github.io"
 if len(sys.argv) != 4:
     print("Usage:")
     print(sys.argv[0], "token username repo_name")
-    sys.exit()
+    sys.exit(1)
+
+# issue 的 body 就是文章的 URL
 
 token = sys.argv[1]
 username = sys.argv[2]
 repo_name = sys.argv[3]
-issue_titles = []  ## issue 的标题
-post_complex_titles = []  # 所有文章的标题组合
+issue_map = dict()  ## [issue_body] = {"issue_number": issue_number, "issue_title": issue_title}
+posts_map = dict()  # [post_url] = {"post_uri":uri,"post_date":date,"post_title":title}
 
 
-# print("token: %s ,username: %s repo_name: %s" % (token, username, repo_name))
-
-def quit(signum, frame):
-    print('stop ................')
-    sys.exit(1)
-
-
-def get_issues(token, username, repo_name):
-    for i in range(1, 150):  # 15000 个 issue 基本够用了
-        issues, ret = get_issue(i)
+def get_all_gitalk_issues(token, username, repo_name):
+    for i in range(1, 150):  # 15000 个 issue 基本够用了,不够可以再加
+        _, ret = get_issues_page(i)
         time.sleep(2)
         if ret == -1:
             break
 
 
+## 删除的文章不管....
+## 文章 title 修改了的文章该怎么处理？ 标题可能修改,但是 uri 不变,issue 的 body 是文章地址,只要文章地址不变，就可以直接 update issue title
+## uri 如果也变了，相当于是文件的重命名了，这时只能去手动 update issue title 了?.....
+def update_issue(issue_number, title):
+    if title == "":
+        return
+
+    url = 'https://api.github.com/repos/%s/%s/issues/%d' % (username, repo_name, issue_number)
+    print("update_issue url: %s" % url)
+    data = {
+        'title': title,
+    }
+    print("create_issue req json: %s" % json.dumps(data))
+    r = requests.patch(url, data=json.dumps(data), headers={
+        "Authorization": "token %s" % token,
+    }, verify=False)
+
+    if r.status_code == 200:
+        print("update_issue success")
+    else:
+        print("update_issue fail, status_code: %d,title: %s,issue_number: %d" %
+              (r.status_code, title, issue_number))
+
+
 # 获取所有 label 为 gitalk 的 issue
-def get_issue(page=1):
+def get_issues_page(page=1):
     url = 'https://api.github.com/repos/%s/%s/issues?labels=Gitalk&per_page=100&page=%d' % (username, repo_name, page)
     print("get_issues url: %s" % url)
     r = requests.get(url, headers={
@@ -44,34 +62,39 @@ def get_issue(page=1):
     })
 
     if r.json() == []:
-        return (issue_titles, -1)
+        return (issue_map, -1)
 
     for issue in r.json():
-        if issue['title'] not in issue_titles and issue["title"] != "":
-            issue_titles.append(issue['title'])
+        if issue['body'] not in issue_map and issue["body"] != "":
+            issue_map[issue['body']] = {
+                "issue_number": issue['number'],
+                "issue_title": issue['title']
+            }
 
-    return (issue_titles, 0)
+    return (issue_map, 0)
 
 
 # 通过 public/index.json 获取所有的文章
-def get_titles():
+def get_post_titles():
     with open(file='public/index.json', mode='r', encoding='utf-8') as f:
         file_data = f.read()
         if file_data == "" or file_data == [] or file_data == {}:
-            return post_complex_titles
+            return posts_map
 
         file_data = json.loads(file_data)
         for data in file_data:
-            complex_title = "%s_XXX_%s_XXX_%s" % (data['title'], data['uri'], data['date'])
-            if complex_title not in post_complex_titles:
-                post_complex_titles.append(complex_title)
+            key = "%s%s" % (site_url, data['uri'])
+            if key not in posts_map:
+                posts_map[key] = {
+                    "post_uri": data['uri'],
+                    "post_date": data['date'],
+                    "post_title": data['title']
+                }
 
-    return post_complex_titles
+    return posts_map
 
 
 def create_issue(title="", uri="", date=""):
-    signal.signal(signal.SIGINT, quit)
-    signal.signal(signal.SIGTERM, quit)
     if title == "":
         return
 
@@ -98,36 +121,22 @@ def create_issue(title="", uri="", date=""):
 
 # 创建 gitalk 创建 issue,如果 issue 已经存在，则不创建
 def init_gitalk():
-    for complex_title in post_complex_titles:
-        title = complex_title.split("_XXX_")[0]
-        uri = complex_title.split("_XXX_")[1]
-        date = complex_title.split("_XXX_")[2]
-        if title not in issue_titles:
-            print("title: %s issue 不存在,创建..." % title)
-            create_issue(title, uri, date)
+    for post_url, item in posts_map.items():
+        ## 标题被修改了
+        if post_url in issue_map and item['post_title'] != issue_map[post_url]['issue_title']:
+            update_issue(issue_map[post_url]["issue_number"], item['post_title'])
+        elif post_url not in issue_map:  # 新增的文章
+            print("title: [%s] , body [%s] issue 不存在,创建..." % (item["post_title"], post_url))
+            create_issue(item["post_title"], item["post_uri"], item["post_date"])
             time.sleep(2)
 
 
-# def main():
-#     # 暂停5分钟，主要是为了等待 vercel 编译新的文章
-#     print('sleep 300s for waiting hugo build...')
-#     time.sleep(300)
-#     session = requests.Session()
-#     session.auth = (username, token)
-#     session.headers = {
-#         'Accept': 'application/vnd.github.v3+json',
-#         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.59 Safari/537.36 Edg/85.0.564.30'
-#     }
-#
-#     existing_comments = get_comments(session=session)
-#     post_urls = get_posts()
-#     not_initialized = list(set(post_urls) ^ set(existing_comments))
-#
-#     init_gitalk(session=session, not_initialized=not_initialized)
-#
-#
-# main()
-
-
 if __name__ == "__main__":
-    create_issue("禁止Google浏览器强制跳转https", "/stop_chrome_auto_redirect_2_https/", "2022-03-29")
+    # create_issue("禁止Google浏览器强制跳转https", "/stop_chrome_auto_redirect_2_https/", "2022-03-29")
+    # get_all_gitalk_issues(token, username, repo_name)
+    # print(issue_titles_map)
+
+    ## 执行....
+    get_all_gitalk_issues(token, username, repo_name)
+    get_post_titles()
+    init_gitalk()
