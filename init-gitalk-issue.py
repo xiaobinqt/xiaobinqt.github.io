@@ -23,7 +23,7 @@ posts_map = dict()  # [post_url] = {"post_uri":uri,"post_date":date,"post_title"
 def get_all_gitalk_issues(token, username, repo_name):
     for i in range(1, 150):  # 15000 个 issue 基本够用了,不够可以再加
         _, ret = get_issues_page(i)
-        time.sleep(2)
+        time.sleep(5)
         if ret == -1:
             break
 
@@ -111,12 +111,12 @@ def create_issue(title="", uri="", date=""):
     print("create_issue req json: %s" % json.dumps(data))
     r = requests.post(url, data=json.dumps(data), headers={
         "Authorization": "token %s" % token,
-    }, verify=False)
+    })
 
     if r.status_code == 201:
         print("create_issue success")
     else:
-        print("create_issue fail, status_code: %d,title: %s" % r.status_code, title)
+        print("create_issue fail, status_code: %d,title: %s,req url: %s \n" % (r.status_code, title, url))
 
 
 # 创建 gitalk 创建 issue,如果 issue 已经存在，则不创建
@@ -128,7 +128,8 @@ def init_gitalk():
         elif post_url not in issue_map:  # 新增的文章
             print("title: [%s] , body [%s] issue 不存在,创建..." % (item["post_title"], post_url))
             create_issue(item["post_title"], item["post_uri"], item["post_date"])
-            time.sleep(2)
+            # 延迟 5 秒，防止 github api 请求过于频繁： https://docs.github.com/en/rest/guides/best-practices-for-integrators#dealing-with-secondary-rate-limits
+            time.sleep(5)
 
 
 if __name__ == "__main__":
