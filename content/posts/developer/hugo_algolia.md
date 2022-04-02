@@ -15,7 +15,7 @@ featuredImage: ""
 reproduce: false
 
 tags: ["hugo","algolia"]
-categories: ["开发者手册"]
+categories: ["hugo"]
 lightgallery: true
 
 toc:
