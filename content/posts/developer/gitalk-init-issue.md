@@ -53,7 +53,9 @@ enable: true
 
 ![public index.json](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220402/e224ac9d408e4dea972caecabecec8ba.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'public index.json')
 
-所以这里我就没有研究其他的主题有没有类似的功能，但是应该有解决方案。
+其他的主题可以使用 sitemap.xml 来获取所有的文章信息，hugo 在 build 时会生成 sitemap.xml 文件。
+
+![sitemap.xml](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220402/f59bb44ee8924b639a949bb494a40b9c.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'sitemap.xml')
 
 ### issue 如何初始化
 
