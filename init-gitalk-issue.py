@@ -61,6 +61,10 @@ def get_issues_page(page=1):
         "Accept": "application/vnd.github.v3+json"
     })
 
+    if r.status_code != 200:
+        print("get_issues_page fail, status_code: %d" % r.status_code)
+        sys.exit(2)
+
     if r.json() == []:
         return (issue_map, -1)
 
