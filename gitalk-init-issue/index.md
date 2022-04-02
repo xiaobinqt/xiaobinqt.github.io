@@ -6,7 +6,7 @@
 
 ![no issus](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220401/e360635c7d7b4e5b931306af6c0455cd.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'no issus')
 
-个人觉得这件事情非常麻烦，看了下 Gitalk 在初始化评论时发出的网络请求后写了一个用于自动化初始评论的 python 脚本。
+个人觉得这件事情非常麻烦，看了下 Gitalk 在初始化评论时发出的网络请求后，写了一个用于自动化初始评论的 python 脚本。
 
 ![创建 issue 的请求](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220401/be1fd41847d1449c8287f4a7820a35e1.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '创建 issue 的请求')
 
