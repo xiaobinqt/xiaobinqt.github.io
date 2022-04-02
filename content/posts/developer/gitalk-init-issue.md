@@ -18,7 +18,7 @@ featuredImage: ""
 reproduce: false
 
 tags: ["gitalk","python","hugo"]
-categories: ["hugo","python"]
+categories: ["hugo"]
 lightgallery: true
 
 toc:
