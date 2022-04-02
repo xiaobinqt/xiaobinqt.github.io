@@ -1,9 +1,8 @@
 # Gitalk 初始化 issue
 
 
-## 痛点
 
-在用 Gitalk 作为个人博客评论系统时，发现有个痛点是，每篇文章必须手动初始化一个 issue 或是是登录 github 后，把文章一个一个点开界面去初始化 issue，不然就会出现以下的提示
+在用 Gitalk 作为个人博客评论系统时，发现有个恶心的点是，每篇文章必须手动初始化一个 issue 或是登录 github 后，把文章一个一个点开界面去初始化 issue，不然就会出现以下的提示
 
 ![no issus](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220401/e360635c7d7b4e5b931306af6c0455cd.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'no issus')
 
