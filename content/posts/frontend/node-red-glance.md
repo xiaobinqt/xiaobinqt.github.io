@@ -18,7 +18,7 @@ featuredImage: ""
 reproduce: false
 
 tags: ["low-code", "node-red"]
-categories: ["node-red"]
+categories: ["开发者手册"]
 lightgallery: true
 
 toc:

@@ -18,7 +18,9 @@ enable: true
 
 很喜欢电影[《五亿探长雷洛传》](https://zh.wikipedia.org/wiki/%E4%BA%94%E5%84%84%E6%8E%A2%E9%95%B7%E9%9B%B7%E6%B4%9B%E5%82%B3)，电影一开头，由潮州迁居香港的青年雷洛，为了生计，投考香港警察，面试官问他，为什么要当警察，他回答，为了吃饭。
 
-![为了吃饭](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220401/0fab5cacd5f04b109eba61f29acebe4a.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '为了吃饭')
+[//]: # (![为了吃饭]&#40;https://cdn.xiaobinqt.cn/xiaobinqt.io/20220401/0fab5cacd5f04b109eba61f29acebe4a.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '为了吃饭'&#41;)
+
+![为了吃饭](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220403/b6b538a1eff54d8bbfe30c07a064a550.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '为了吃饭')
 
 大学毕业后，为了吃饭，便利用自己了解的一点编程知识开始码农之路。大学学的是通信工程，非计算机专业，编程之路困难重重，但好歹自己有自知之明，笨人多努力，相信通过自己的努力，可以让自己的编程技术更加完善。
 
