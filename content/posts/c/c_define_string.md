@@ -15,7 +15,7 @@ resources:
   src: ""
 
 tags: ["c语言"]
-categories: ["c语言"]
+categories: ["开发者手册"]
 lightgallery: true
 
 toc:

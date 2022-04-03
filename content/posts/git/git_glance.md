@@ -14,7 +14,7 @@ description: "git使用，git，git基本操作，git clone,git push,git remote,
 log,git diff,git rebase,git merge,git stash,git rebase,git rebase --continue,git rebase --skip,git rebase --abort,git"
 
 tags: ["git"]
-categories: ["git"]
+categories: ["开发者手册"]
 lightgallery: true
 
 toc:
