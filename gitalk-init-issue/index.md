@@ -55,6 +55,7 @@ path 的 md5 格式
 ## python 脚本实现
 
 ```python
+import hashlib
 import json
 import sys
 import time
@@ -161,12 +162,15 @@ def create_issue(title="", uri="", date=""):
 
     url = 'https://api.github.com/repos/%s/%s/issues' % (username, repo_name)
     print("create_issue title: %s uri: %s date: %s" % (title, uri, date))
+    m = hashlib.md5()
+    m.update(uri.encode('utf-8'))
+    urlmd5 = m.hexdigest()
     data = {
         'title': title,
         'body': '%s%s' % (site_url, uri),
         'labels': [
             'Gitalk',
-            "%sT00:00:00Z" % date
+            urlmd5
         ]
     }
     print("create_issue req json: %s" % json.dumps(data))
