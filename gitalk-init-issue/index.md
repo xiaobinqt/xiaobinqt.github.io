@@ -10,7 +10,7 @@
 
 ![创建 issue 的请求](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220401/be1fd41847d1449c8287f4a7820a35e1.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '创建 issue 的请求')
 
-labels 第一个参数是 Gitalk，第二个参数是文章的发布时间，呃，感觉改成文章的 path 会更好，但是 **github label 的最大长度是 50 个字符**,所以把 path md5 会更好。我看了下源码修改成了 URL
+labels 第一个参数是 Gitalk，第二个参数是文章的发布时间，呃，感觉改成文章的 path 会更好，但是 **github label 的最大长度是 50 个字符**，所以把 path md5 会更好。我看了下源码修改成了 URL
 path 的 md5 格式
 
 `themes/LoveIt/layouts/partials/comment.html`
