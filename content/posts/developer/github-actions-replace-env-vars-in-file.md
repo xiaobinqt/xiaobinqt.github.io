@@ -18,7 +18,7 @@ featuredImage: ""
 reproduce: false
 
 tags: ["github-actions"]
-categories: ["开发者工具"]
+categories: ["开发者手册"]
 lightgallery: true
 
 toc:
