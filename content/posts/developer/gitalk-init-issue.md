@@ -238,7 +238,7 @@ if __name__ == "__main__":
 
 在 github Actions 中执行：
 
-![github actions build](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220402/4bc6208078ba455da3e46b13d17b7786.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'github actions build')
+![github actions build](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220404/0cfea81fd2804aeca5099c364779dda8.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'github actions build')
 
 完整的 Action
 文件可以参考 [https://github.com/xiaobinqt/xiaobinqt.github.io/blob/main/.github/workflows/ci.yml](https://github.com/xiaobinqt/xiaobinqt.github.io/blob/main/.github/workflows/ci.yml)
