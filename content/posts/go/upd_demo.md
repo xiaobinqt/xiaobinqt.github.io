@@ -8,7 +8,7 @@ lastmod: 2022-03-16
 draft: false
 
 author: "xiaobinqt"
-description: ""
+description: "golang upd 简单使用,UDP,HTTP"
 resources:
 
 - name: ""

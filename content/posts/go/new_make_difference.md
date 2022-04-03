@@ -8,7 +8,7 @@ lastmod: 2022-03-16
 draft: false
 
 author: "xiaobinqt"
-description: ""
+description: "go make 和 new 的区别,golang make,golang new,defference with golang make and new"
 resources:
 
 - name: ""

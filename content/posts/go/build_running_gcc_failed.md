@@ -8,7 +8,7 @@ lastmod: 2022-03-16
 draft: false
 
 author: "xiaobinqt"
-description: ""
+description: "running gcc failed: exit status 1"
 resources:
 
 - name: ""

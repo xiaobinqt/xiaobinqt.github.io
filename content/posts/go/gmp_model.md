@@ -8,7 +8,7 @@ lastmod: 2022-03-16
 draft: false
 
 author: "xiaobinqt"
-description: ""
+description: "golang GMP 模型,go 数学模型,GMP,进程,线程,协程,goroutine,go 调度器,golang调度器"
 resources:
 
 - name: ""

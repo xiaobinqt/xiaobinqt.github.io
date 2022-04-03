@@ -8,7 +8,7 @@ lastmod: 2022-03-16
 draft: false
 
 author: "xiaobinqt"
-description: ""
+description: "golang grpc,golang,rpc,grpc,grpc 入门"
 resources:
 
 - name: ""
