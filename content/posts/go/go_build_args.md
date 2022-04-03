@@ -8,7 +8,7 @@ lastmod: 2022-03-16
 draft: false
 
 author: "xiaobinqt"
-description: "go build 常用命令"
+description: "go build 常用命令,golang,编译,go 编译"
 resources:
 
 - name: ""

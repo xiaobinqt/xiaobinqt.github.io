@@ -8,7 +8,7 @@ lastmod: 2022-03-18
 draft: false
 
 author: "xiaobinqt"
-description: ""
+description: "JS运行机制,javascript异步运行机制,js异步同步,js Promise,js catch reject,js执行顺讯,async/await,js微任务和宏任务"
 resources:
 
 - name: ""
