@@ -48,7 +48,20 @@ Github Actions 是个好东西:grinning:，最近在使用的时候有个需求�
 
 我在项目中是这样使用的：
 
-![配置文件](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220402/d22b9da243814abd93a51e6ae826a4ab.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '配置文件')
+![配置文件](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220403/6633fcb2192f433f9be187f77fb26406.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '配置文件')
 
-![action 中替换](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220402/b9098ec71b84420a89bb53bbcecb29ea.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'action 中替换')
+![action 中替换](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220403/df8850a8418643188140bf0fd9c1095d.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'action 中替换')
+
+
+[//]: # (![action 中替换]&#40;https://cdn.xiaobinqt.cn/xiaobinqt.io/20220402/b9098ec71b84420a89bb53bbcecb29ea.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'action 中替换'&#41;)
+
+[//]: # ()
+
+[//]: # (![action 中替换]&#40;https://cdn.xiaobinqt.cn/xiaobinqt.io/20220402/76085f2e078a411da17bbce7dbea970a.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15&#41;)
+
+[//]: # ()
+
+
+
+
 
