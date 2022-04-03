@@ -6,9 +6,18 @@
 
 ![no issus](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220401/e360635c7d7b4e5b931306af6c0455cd.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'no issus')
 
-个人觉得这件事情非常麻烦，看了下 Gitalk 在初始化评论时发出的网络请求后，写了一个用于自动化初始评论的 python 脚本。
+个人觉得这件事情非常麻烦，**Gitalk 使用 labels 来映射 issuse**，可以看下我用的主题 Gitalk 在初始化评论时发出的网络请求
 
 ![创建 issue 的请求](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220401/be1fd41847d1449c8287f4a7820a35e1.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '创建 issue 的请求')
+
+labels 第一个参数是 Gitalk，第二个参数是文章的发布时间，呃，感觉改成文章的 path 会更好，但是 **github label 的最大长度是 50 个字符**,所以把 path md5 会更好。我看了下源码修改成了 URL
+path 的 md5 格式
+
+`themes/LoveIt/layouts/partials/comment.html`
+
+![comment id](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220404/94a28c0aa1fd4f44a034b1dce2087af4.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'comment id')
+
+初始工作做完，就可以写脚本了。
 
 ## 分析
 
@@ -31,10 +40,10 @@
 
 ### issue 如何初始化
 
-![issue内容](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220402/d0f1697653ed4ae380054bc2a7badfb2.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15)
+![issue内容](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220404/3f28b1b6486e44cfbeeef571bfded6f2.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'issue内容')
 
-我分析了下我使用的 [LoveIt](https://github.com/dillonzq/LoveIt) 主题默认创建的 issue 内容，如上截图:point_up_2:。body 是文章的 URL，title
-是文章标题，labels 有 Gitalk 和文章的发布时间两个。那么问题就简单了，我们只需要给每篇文章初始化一个这样的 issue 就可以了。
+如上截图:point_up_2:是我创建的 issue 内容。body 是文章的 URL，title 是文章标题，labels 有 Gitalk 和文章的 URL path 的 md5
+两个。那么问题就简单了，我们只需要给每篇文章初始化一个这样的 issue 就可以了。
 
 固定文章的 URL 为唯一标识，组成两个 map ，map 键就是文章的 URL。一个 map 是 github 已存在的 issue 暂定为 `issue_map`，一个 map 是我们所有文章的 map 暂定为 `posts_map`
 ，URL 在 `posts_map`
@@ -200,10 +209,11 @@ if __name__ == "__main__":
 
 ![github actions build](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220402/4bc6208078ba455da3e46b13d17b7786.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'github actions build')
 
-完整的 Action 文件可以参考 [https://github.com/xiaobinqt/xiaobinqt.github.io/blob/main/.github/workflows/ci.yml](https://github.com/xiaobinqt/xiaobinqt.github.io/blob/main/.github/workflows/ci.yml)
+完整的 Action
+文件可以参考 [https://github.com/xiaobinqt/xiaobinqt.github.io/blob/main/.github/workflows/ci.yml](https://github.com/xiaobinqt/xiaobinqt.github.io/blob/main/.github/workflows/ci.yml)
 
 ## 参考
 
 + [自动初始化 Gitalk 和 Gitment 评论](https://draveness.me/git-comments-initialize/)
-
++ [利用 Github Action 自动初始化 Gitalk 评论之Python篇](https://www.lshell.com/post/use-github-action-and-python-to-automatically-initialize-gitalk-comments/)
 
