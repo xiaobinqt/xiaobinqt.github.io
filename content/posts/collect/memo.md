@@ -41,6 +41,8 @@ enable: true
 + [Kubernetes 文档](https://kubernetes.io/zh/docs/home/)
 + [Uber Go 语言编码规范](https://github.com/xxjwxc/uber_go_guide_cn)
 + [地鼠文档](https://www.topgoer.cn/)
++ [面向信仰编程](https://draveness.me/)
++ [煎鱼](https://eddycjy.com/)
 
 ## 工具收藏
 
@@ -49,4 +51,3 @@ enable: true
 ## 文章收藏
 
 + [go1.16 embed 用法](https://zhuanlan.zhihu.com/p/351931501)
-+ [Go常见面试题【由浅入深】2022版](https://zhuanlan.zhihu.com/p/471490292)
