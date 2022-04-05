@@ -140,10 +140,14 @@ def init_gitalk():
             time.sleep(5)
 
 
+def get_uri_md5(uri):
+    m = hashlib.md5()
+    m.update(uri.encode('utf-8'))
+    return m.hexdigest()
+
+
 if __name__ == "__main__":
-    # create_issue("禁止Google浏览器强制跳转https", "/stop_chrome_auto_redirect_2_https/", "2022-03-29")
-    # get_all_gitalk_issues(token, username, repo_name)
-    # print(issue_titles_map)
+    # print(get_uri_md5("/gmp-model/"))
 
     ## 执行....
     get_all_gitalk_issues(token, username, repo_name)
