@@ -77,7 +77,7 @@ path 的 md5 格式
 中存在但是 `issue_map` 不存在的就是**新增**
 。URL 在 `posts_map` 和 `issue_map` 中都存在但是 `posts_map` 中的标题跟 `issue_map` 中的标题不相同可能就是文章标题被修改了。
 
-对于新的 URL 我的做法是承认它是新文章，或是旧文章的 URL 被修改了那只能去 github 手动修改 issue body 为新的 URL。
+对于新的 URL 我的做法是承认它是新文章，或是旧文章的 URL 被修改了那只能去 github 手动修改 issue body 为新的 URL, label 为新的 uri 的 md5 值。
 
 ## python 脚本实现
 
@@ -224,16 +224,19 @@ def init_gitalk():
             time.sleep(5)
 
 
+def get_uri_md5(uri):
+    m = hashlib.md5()
+    m.update(uri.encode('utf-8'))
+    return m.hexdigest()
+
+
 if __name__ == "__main__":
-    # create_issue("禁止Google浏览器强制跳转https", "/stop_chrome_auto_redirect_2_https/", "2022-03-29")
-    # get_all_gitalk_issues(token, username, repo_name)
-    # print(issue_titles_map)
+    # print(get_uri_md5("/gmp-model/"))
 
     ## 执行....
     get_all_gitalk_issues(token, username, repo_name)
     get_post_titles()
     init_gitalk()
-
 ```
 
 在 github Actions 中执行：
