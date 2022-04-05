@@ -91,7 +91,7 @@ M：Machine，系统线程。
 
 ## 调度流程
 
-![调度流程](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220405/d5ea09dbdcf14a1d88ba7e952e2b9df9.png '调度流程')
+![调度流程](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220405/3ce52556ebc74dcfaf5771cfacb4e218.png '调度流程')
 
 1. 当我们执行 `go func()` 时，实际上就是创建一个全新的 Goroutine，我们称它为 G。
 
