@@ -8,7 +8,7 @@ lastmod: 2022-03-16
 draft: false
 
 author: "xiaobinqt"
-description: "golang GMP 模型,go 数学模型,GMP,进程,线程,协程,goroutine,go 调度器,golang调度器"
+description: "golang GMP 模型,go 数学模型,GMP,进程,线程,协程,goroutine,go 调度器,golang调度器,go协程调度模型"
 resources:
 
 reproduce: true
@@ -114,7 +114,7 @@ M：Machine，系统线程。
 
 ## 调度流程
 
-![调度流程](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220405/d5ea09dbdcf14a1d88ba7e952e2b9df9.png '调度流程')
+![调度流程](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220405/3ce52556ebc74dcfaf5771cfacb4e218.png '调度流程')
 
 1. 当我们执行 `go func()` 时，实际上就是创建一个全新的 Goroutine，我们称它为 G。
 
