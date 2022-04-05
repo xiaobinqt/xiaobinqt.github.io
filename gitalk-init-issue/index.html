@@ -31,7 +31,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/xiaobinqt.github.io\/gitalk-init-issue\/"
-        },"image": ["https:\/\/xiaobinqt.github.io\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "gitalk, python, hugo","wordcount":  1632 ,
+        },"image": ["https:\/\/xiaobinqt.github.io\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "gitalk, python, hugo","wordcount":  1599 ,
         "url": "https:\/\/xiaobinqt.github.io\/gitalk-init-issue\/","datePublished": "2022-04-01T00:00:00+00:00","dateModified": "2022-04-01T00:00:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "xxxx","logo": {
@@ -113,7 +113,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">Gitalk 初始化 issue</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>xiaobinqt</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/hugo/"><i class="far fa-folder fa-fw"></i>hugo</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-04-01">2022-04-01</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1632 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-04-01">2022-04-01</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1599 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 4 分钟&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
@@ -222,7 +222,7 @@ path 的 md5 格式</p>
 ，URL 在 <code>posts_map</code>
 中存在但是 <code>issue_map</code> 不存在的就是<strong>新增</strong>
 。URL 在 <code>posts_map</code> 和 <code>issue_map</code> 中都存在但是 <code>posts_map</code> 中的标题跟 <code>issue_map</code> 中的标题不相同可能就是文章标题被修改了。</p>
-<p>对于新的 URL 我的做法是承认它是新文章，或是旧文章的 URL 被修改了那只能去 github 手动修改 issue body 为新的 URL。</p>
+<p>对于新的 URL 我的做法是承认它是新文章，或是旧文章的 URL 被修改了那只能去 github 手动修改 issue body 为新的 URL, label 为新的 uri 的 md5 值。</p>
 <h2 id="python-脚本实现">python 脚本实现</h2>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -377,6 +377,10 @@ path 的 md5 格式</p>
 </span><span class="lnt">149
 </span><span class="lnt">150
 </span><span class="lnt">151
+</span><span class="lnt">152
+</span><span class="lnt">153
+</span><span class="lnt">154
+</span><span class="lnt">155
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">hashlib</span>
@@ -521,10 +525,14 @@ path 的 md5 格式</p>
 </span></span><span class="line"><span class="cl">            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">get_uri_md5</span><span class="p">(</span><span class="n">uri</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">m</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">m</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">uri</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">m</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&#34;__main__&#34;</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">    <span class="c1"># create_issue(&#34;禁止Google浏览器强制跳转https&#34;, &#34;/stop_chrome_auto_redirect_2_https/&#34;, &#34;2022-03-29&#34;)</span>
-</span></span><span class="line"><span class="cl">    <span class="c1"># get_all_gitalk_issues(token, username, repo_name)</span>
-</span></span><span class="line"><span class="cl">    <span class="c1"># print(issue_titles_map)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># print(get_uri_md5(&#34;/gmp-model/&#34;))</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="c1">## 执行....</span>
 </span></span><span class="line"><span class="cl">    <span class="n">get_all_gitalk_issues</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">repo_name</span><span class="p">)</span>
