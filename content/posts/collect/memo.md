@@ -43,6 +43,8 @@ enable: true
 + [地鼠文档](https://www.topgoer.cn/)
 + [面向信仰编程](https://draveness.me/)
 + [煎鱼](https://eddycjy.com/)
++ [xargin](https://www.xargin.com/)
++ [go Standard library](https://pkg.go.dev/std)
 
 ## 工具收藏
 
