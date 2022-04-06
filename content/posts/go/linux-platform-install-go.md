@@ -4,7 +4,7 @@ subtitle: "Linux Platform Install Go"
 
 init_date: "2022-04-06T11:27:04+08:00"
 
-date: 2022-04-06
+date: 2020-08-12
 
 lastmod: 2022-04-06
 
