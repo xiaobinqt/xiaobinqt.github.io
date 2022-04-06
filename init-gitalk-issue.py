@@ -147,7 +147,7 @@ def get_uri_md5(uri):
 
 
 if __name__ == "__main__":
-    # print(get_uri_md5("/gmp-model/"))
+    # print(get_uri_md5("/new-make-difference/"))
 
     ## 执行....
     get_all_gitalk_issues(token, username, repo_name)
