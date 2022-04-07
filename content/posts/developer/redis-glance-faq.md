@@ -13,7 +13,7 @@ draft: false
 author: "xiaobinqt"
 description: "Redis, Redis 数据结构,redis 缓存击穿,redis 布隆过滤器,redis 淘汰机制,redis 持久化机制,redis 分布式缓存"
 
-featuredImage: ""
+featuredImage: "https://cdn.xiaobinqt.cn/xiaobinqt.io/20220407/2ecceb8af82e4695938c77dcc452eba2.png"
 
 reproduce: false
 
@@ -27,6 +27,7 @@ auto: false
 math:
 enable: true
 ---
+
 
 Redis 是一个使用 C 语言开发的数据库，与传统数据库不同的是 Redis 的数据是存在内存中的，我们把这种数据库叫做内存数据库。因为在内存中，所以读写速度非常快，因此 Redis 被广泛应用于缓存方向。
 
