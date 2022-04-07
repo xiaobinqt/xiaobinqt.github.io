@@ -11,7 +11,7 @@ lastmod: 2022-04-06
 draft: false
 
 author: "xiaobinqt"
-description: ""
+description: "golang GC 原理,Go 垃圾回收,Go 垃圾标记清除算法,golang 三色标记法,golang 屏障机制,go 垃圾回收算法,go 插入/删除屏障,golang 混合写屏障,垃圾回收 STW,STW"
 
 featuredImage: "https://cdn.xiaobinqt.cn/xiaobinqt.io/20220407/e9a10f9b61de47f8bdf2db1d0bb22bb2.png"
 
