@@ -5,8 +5,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="robots" content="noodp" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
-        <title>Go GC 原理 - xiaobinqt&#39;s blog</title><meta name="Description" content="xiaobinqt 擅长php,golang,go,服务器相关,Laravel5.5&#43;/Lumen,等方面的知识,xiaobinqt关注架构,elasticsearch,linux,php,mysql,redis,go领域."><meta property="og:title" content="Go GC 原理" />
-<meta property="og:description" content="垃圾回收（Garbage Collection，GC）是编程语言中提供的自动的内存管理机制，自动释放不需要的内存对象，让出存储器资源。GC 过程" />
+        <title>Go GC 原理 - xiaobinqt&#39;s blog</title><meta name="Description" content="golang GC 原理,Go 垃圾回收,Go 垃圾标记清除算法,golang 三色标记法,golang 屏障机制,go 垃圾回收算法,go 插入/删除屏障,golang 混合写屏障,垃圾回收 STW,STW"><meta property="og:title" content="Go GC 原理" />
+<meta property="og:description" content="golang GC 原理,Go 垃圾回收,Go 垃圾标记清除算法,golang 三色标记法,golang 屏障机制,go 垃圾回收算法,go 插入/删除屏障,golang 混合写屏障,垃圾回收 STW,STW" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://xiaobinqt.github.io/go-gc/" /><meta property="og:image" content="https://xiaobinqt.github.io/logo.png"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2022-04-06T00:00:00+00:00" />
@@ -16,7 +16,7 @@
 <meta name="twitter:image" content="https://xiaobinqt.github.io/logo.png"/>
 
 <meta name="twitter:title" content="Go GC 原理"/>
-<meta name="twitter:description" content="垃圾回收（Garbage Collection，GC）是编程语言中提供的自动的内存管理机制，自动释放不需要的内存对象，让出存储器资源。GC 过程"/>
+<meta name="twitter:description" content="golang GC 原理,Go 垃圾回收,Go 垃圾标记清除算法,golang 三色标记法,golang 屏障机制,go 垃圾回收算法,go 插入/删除屏障,golang 混合写屏障,垃圾回收 STW,STW"/>
 <meta name="application-name" content="xiaobinqt">
 <meta name="apple-mobile-web-app-title" content="xiaobinqt"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c">
 <link rel="stylesheet" href="//at.alicdn.com/t/font_3267767_nzwpo5kwtd.css">
@@ -42,7 +42,7 @@
                 }},"author": {
                 "@type": "Person",
                 "name": "xiaobinqt"
-            },"description": ""
+            },"description": "golang GC 原理,Go 垃圾回收,Go 垃圾标记清除算法,golang 三色标记法,golang 屏障机制,go 垃圾回收算法,go 插入/删除屏障,golang 混合写屏障,垃圾回收 STW,STW"
     }
     </script></head>
     <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
@@ -124,7 +124,7 @@
         data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220407/e9a10f9b61de47f8bdf2db1d0bb22bb2.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220407/e9a10f9b61de47f8bdf2db1d0bb22bb2.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220407/e9a10f9b61de47f8bdf2db1d0bb22bb2.png 2x"
         data-sizes="auto"
         alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220407/e9a10f9b61de47f8bdf2db1d0bb22bb2.png"
-        title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220407/e9a10f9b61de47f8bdf2db1d0bb22bb2.png" /></div><div class="details toc" id="toc-static"  kept="">
+        title="golang GC 原理,Go 垃圾回收,Go 垃圾标记清除算法,golang 三色标记法,golang 屏障机制,go 垃圾回收算法,go 插入/删除屏障,golang 混合写屏障,垃圾回收 STW,STW" /></div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
                     <span>目录</span>
                     <span><i class="details-icon fas fa-angle-right"></i></span>
