@@ -23,6 +23,7 @@
 + [go Standard library](https://pkg.go.dev/std)
 + [alblue](http://alblue.cn/tags/go)
 + [刘丹冰aceld](https://www.kancloud.cn/@aceld)
++ [床长人工智能教程](https://www.captainbed.net/)
 
 ## 工具收藏
 
