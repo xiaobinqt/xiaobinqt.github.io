@@ -5,6 +5,8 @@
 
 ![基本概念](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220324/287032d97f2b4f7982abfcf4a28c802e.png?imageView2/0/interlace/1/q/50|imageslim '基本概念')
 
+![git work](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220412/32a4a02c84184c078b859fa8b16e63da.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'git work')
+
 ## .gitignore文件
 
 ```gitignore
@@ -190,16 +192,16 @@ git cherry-pick <commid_1> <commit_2>
 
 可以多次stash，恢复的时候，先用git stash list查看，然后恢复指定的stash。
 
-| cmd | 说明                                                                                                                                                            |
-|---|---------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|`git stash save "save message"`  | 执行存储时，添加备注，方便查找，只有git stash 也要可以的，但查找时不方便识别                                                                                                                   |
-| `git stash list`  | 查看stash了哪些存储                                                                                                                                                  |
-| `git stash show` | 显示做了哪些改动，默认show第一个存储,如果要显示其他存贮，后面加 stash@{$num}，比如第二个 git stash show stash@{1}                                                                                |
-| `git stash show -p` | 显示第一个存储的改动，如果想显示其他存存储，命令：`git stash show  stash@{$num}`  -p ，比如第二个：`git stash show  stash@{1} -p`                                                             |
-| `git stash apply` | 应用某个存储，但不会把存储从存储列表中删除，默认使用第一个存储，即stash@{0}，如果要使用其他个，`git stash apply stash@{$num}` ， 比如第二个：`git stash apply stash@{1}`                                        |
-|`git stash pop` | 命令恢复之前缓存的工作目录，将缓存堆栈中的对应stash删除，并将对应修改应用到当前的工作目录下，默认为第一个stash，即stash@{0}，如果要应用并删除其他stash，命令：`git stash pop stash@{$num}` ，比如应用并删除第二个：`git stash pop stash@{1}` |
-| `git stash drop stash@{$num}` | 丢弃stash@{$num}存储，从列表中删除这个存储                                                                                                                                   |
-|`git stash clear` | 删除所有缓存的stash                                                                                                                                                  |
+| cmd <div style="width: 200px;"> | 说明                                                                                                                                                            |
+|---------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `git stash save "save message"` | 执行存储时，添加备注，方便查找，只有git stash 也要可以的，但查找时不方便识别                                                                                                                   |
+| `git stash list`                | 查看stash了哪些存储                                                                                                                                                  |
+| `git stash show`                | 显示做了哪些改动，默认show第一个存储,如果要显示其他存贮，后面加 stash@{$num}，比如第二个 git stash show stash@{1}                                                                                |
+| `git stash show -p`             | 显示第一个存储的改动，如果想显示其他存存储，命令：`git stash show  stash@{$num}`  -p ，比如第二个：`git stash show  stash@{1} -p`                                                             |
+| `git stash apply`               | 应用某个存储，但不会把存储从存储列表中删除，默认使用第一个存储，即stash@{0}，如果要使用其他个，`git stash apply stash@{$num}` ， 比如第二个：`git stash apply stash@{1}`                                        |
+| `git stash pop`                 | 命令恢复之前缓存的工作目录，将缓存堆栈中的对应stash删除，并将对应修改应用到当前的工作目录下，默认为第一个stash，即stash@{0}，如果要应用并删除其他stash，命令：`git stash pop stash@{$num}` ，比如应用并删除第二个：`git stash pop stash@{1}` |
+| `git stash drop stash@{$num}`   | 丢弃stash@{$num}存储，从列表中删除这个存储                                                                                                                                   |
+| `git stash clear`               | 删除所有缓存的stash                                                                                                                                                  |
 
 ## 分支管理
 
@@ -215,13 +217,13 @@ git cherry-pick <commid_1> <commit_2>
 
 ### Fast forward
 
-通常，合并分支时，如果可能，git会用Fast forward模式，但这种模式下，删除分支后，会丢掉分支信息。
+通常，合并分支时，如果可能，git 会用 Fast forward 模式，但这种模式下，删除分支后，会丢掉分支信息。
 
-可以使用`--no-ff`强制禁用Fast forward模式，git就会在merge时生成一个新的commit，这样，从分支历史上就可以看出分支信息。
+可以使用`--no-ff`强制禁用 Fast forward 模式，git就会在merge时生成一个新的 commit，这样，从分支历史上就可以看出分支信息。
 
 ![git merge --no-ff](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220324/38fbc059693942a69c7db82476275fed.png?imageView2/0/interlace/1/q/50|imageslim 'git merge --no-ff')
 
-因为本次合并要创建一个新的commit，所以加上-m参数，把commit描述写进去。
+因为本次合并要创建一个新的 commit，所以加上 `-m` 参数，把 commit 描述写进去。
 
 ![分支历史](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220324/ff5c6a084f18472ab52ecf5b62d754e3.png?imageView2/0/interlace/1/q/50|imageslim '分支历史')
 
@@ -241,6 +243,17 @@ tag 是基于某个分支下的某次 commit。如只执行 `git tag v1.0`，那
 |`git push origin --tags` |一次性推送全部尚未推送到远程的本地标签 | 
 |`git push origin :refs/tags/<tagname>` | 删除一个远程标签| 
 
+## FAQ
+
+### pull 和 fetch 区别
+
+`git fetch` 是将远程主机的最新内容拉到本地，用户检查后决定是否合并到分支中。
+
+`git pull` 是将远程主机的最新内容**拉下来直接合并**，可以理解成，`git pull = git fetch + git merge`。在 merge 合并时如果产生冲突需要手动解决。
+
+> 尽量不要用 `git pull`，用 `git fetch` 和 `git merge` 代替 `git pull`。
+> 将 `fetch` 和 `merge` 放到一个命令里的另外一个弊端是，本地工作目录在未经确认的情况下就会被远程分支更新。
+
 ## 参考
 
 + [git-fast-version-control](https://git-scm.com/book/zh/v2/%E8%B5%B7%E6%AD%A5-%E5%85%B3%E4%BA%8E%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6)
@@ -248,4 +261,5 @@ tag 是基于某个分支下的某次 commit。如只执行 `git tag v1.0`，那
 + [Git Cheat Sheet](https://liaoxuefeng.gitee.io/resource.liaoxuefeng.com/git/git-cheat-sheet.pdf)
 + [git cherry-pick 教程](http://www.ruanyifeng.com/blog/2020/04/git-cherry-pick.html)
 + [git stash 用法总结和注意点](https://www.cnblogs.com/zndxall/archive/2018/09/04/9586088.html)
++ [详解git pull和git fetch的区别](https://blog.csdn.net/weixin_41975655/article/details/82887273)
 
