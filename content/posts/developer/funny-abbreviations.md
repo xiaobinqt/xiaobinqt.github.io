@@ -11,7 +11,7 @@ lastmod: 2022-04-07
 draft: false
 
 author: "xiaobinqt"
-description: "缩写,"
+description: "缩写,SGTM,PR,LGTM,WIP,QPS,FD,OOM,TTL"
 
 featuredImage: ""
 

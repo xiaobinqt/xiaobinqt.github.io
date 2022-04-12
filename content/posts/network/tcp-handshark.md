@@ -10,8 +10,8 @@ draft: false
 reproduce: true
 
 author: ""
-description: "tcp,
-tcp连接管理,三次握手,四次挥手,为什么建立连接需要三次握手,为什么不能用两次握手进行连接,SYN,FIN,ACK,PSH,SYN_SENT,SYN_RECV,ESTABLISHED,FIN_WAIT_1,FIN_WAIT_2,CLOSE_WAIT,LAST_ACK,TIME_WAIT,CLOSE"
+description: "
+tcp,tcp连接管理,三次握手,四次挥手,为什么建立连接需要三次握手,为什么不能用两次握手进行连接,SYN,FIN,ACK,PSH,SYN_SENT,SYN_RECV,ESTABLISHED,FIN_WAIT_1,FIN_WAIT_2,CLOSE_WAIT,LAST_ACK,TIME_WAIT,CLOSE"
 resources:
 
 - name: ""
