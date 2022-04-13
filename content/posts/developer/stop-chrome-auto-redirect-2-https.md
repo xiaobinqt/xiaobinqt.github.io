@@ -1,6 +1,7 @@
 ---
 title: "禁止Google浏览器强制跳转https"
 subtitle: "How to Stop Chrome from Automatically Redirecting to https"
+
 date: 2022-03-29
 
 lastmod: 2022-03-30
