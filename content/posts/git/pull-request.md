@@ -1,11 +1,11 @@
 ---
-title: "github PR 简单使用"
+title: "github pull request"
 subtitle: "how to use github pull request"
 date: 2021-04-29
 
-lastmod: 2022-03-18
+lastmod: 2022-4-13
 
-draft: false
+draft: false 
 
 author: "xiaobinqt"
 description: "xiaobinqt,github PR,PR,pull request,如何使用 PR, Can’t automatically merge "
@@ -25,8 +25,15 @@ math:
 enable: true
 ---
 
+[//]: # (xiaobinqt.github.io)
+
+## 总览
+
 之前在 CSDN 上写过一篇关于 RP 的笔记 [github fork PR 的简单使用](https://blog.csdn.net/xiaobinqt/article/details/116277126)
 ，那篇文章写的比较随意且不是用命令行操作的，大部分操作都是基于 IDE，所以想着重新整理下那篇文章，同时也复习下 git 常用命令。
+
+![pull request](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/cc120b7593074d3d8b2ff9adf3e13c64.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'pull request')
+
 
 ## 模拟场景
 
@@ -120,7 +127,7 @@ push 成功后再 github 项目下可以看到成功提示
 
 对于 `lovenarcissus` 开发者来说，也是先 fork 项目再 clone 项目到本地。
 
-可以看到 `lovenarcissus` fork 后的项目是有 xiaobinqt.txt 这个文件的，这样验证了 xiaobinqt 开发者成功向远程仓库提交了代码。这里默认已经 clone 到了本地仓库。
+可以看到 `lovenarcissus` fork 后的项目是有 xiaobinqt.txt 这个文件的，同时也验证了 xiaobinqt 开发者成功向远程仓库提交了代码。这里默认已经 clone 到了本地仓库。
 
 ![lovenarcissus fork](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220412/91c9b6dd2c614ff28d7d73751bbe59b8.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'lovenarcissus fork')
 
@@ -203,7 +210,7 @@ vim 打开冲突文件 xiaobinqt.txt 解决冲突
 
 ![解决冲突后的文件](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/e5f0185bb84548a98ad33d1a23d7f5c2.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '解决冲突后的文件')
 
-以下是解决这次冲突的具体步骤：
+以下:point_down:是解决这次冲突的具体步骤：
 
 ![解决冲突具体步骤](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/f54a92110ac345c68c327ed16f6aea47.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '解决冲突具体步骤')
 
