@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>Redis 缓存击穿、缓存穿透、缓存雪崩 - xiaobinqt&#39;s blog</title><meta name="Description" content="xiaobinqt,Redis 缓存击穿,缓存穿透,缓存雪崩,Redis"><meta property="og:title" content="Redis 缓存击穿、缓存穿透、缓存雪崩" />
+<meta property="og:description" content="xiaobinqt,Redis 缓存击穿,缓存穿透,缓存雪崩,Redis" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://xiaobinqt.github.io/redis-break-pierce-avalanche/" /><meta property="og:image" content="https://xiaobinqt.github.io/logo.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-04-13T00:00:00+00:00" />
+<meta property="article:modified_time" content="2022-04-13T00:00:00+00:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://xiaobinqt.github.io/logo.png"/>
+
+<meta name="twitter:title" content="Redis 缓存击穿、缓存穿透、缓存雪崩"/>
+<meta name="twitter:description" content="xiaobinqt,Redis 缓存击穿,缓存穿透,缓存雪崩,Redis"/>
+<meta name="application-name" content="xiaobinqt">
+<meta name="apple-mobile-web-app-title" content="xiaobinqt"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c">
+<link rel="stylesheet" href="//at.alicdn.com/t/font_3267767_nzwpo5kwtd.css">
+<script src="https://cdn.bootcss.com/blueimp-md5/1.1.0/js/md5.min.js"></script><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://xiaobinqt.github.io/redis-break-pierce-avalanche/" /><link rel="prev" href="https://xiaobinqt.github.io/go-gc/" /><link rel="next" href="https://xiaobinqt.github.io/hot100/" /><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Redis 缓存击穿、缓存穿透、缓存雪崩",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/xiaobinqt.github.io\/redis-break-pierce-avalanche\/"
+        },"image": ["https:\/\/xiaobinqt.github.io\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "redis","wordcount":  2332 ,
+        "url": "https:\/\/xiaobinqt.github.io\/redis-break-pierce-avalanche\/","datePublished": "2022-04-13T00:00:00+00:00","dateModified": "2022-04-13T00:00:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+            "@type": "Organization",
+            "name": "xxxx","logo": {
+                    "@type": "ImageObject",
+                    "url": "https:\/\/xiaobinqt.github.io\/images\/avatar.png",
+                    "width":  528 ,
+                    "height":  560 
+                }},"author": {
+                "@type": "Person",
+                "name": "xiaobinqt"
+            },"description": "xiaobinqt,Redis 缓存击穿,缓存穿透,缓存雪崩,Redis"
+    }
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="xiaobinqt&#39;s blog"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>萧十一郎</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/about/"> 关于 </a><a class="menu-item" href="/links/"> 友链 </a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="xiaobinqt&#39;s blog"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>萧十一郎</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/about/" title="">关于</a><a class="menu-item" href="/links/" title="">友链</a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">目录</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">Redis 缓存击穿、缓存穿透、缓存雪崩</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author">
+                    <i class="custom-icon iconfont icon-weibiaoti-"></i>
+                </span>&nbsp;&nbsp;<span class="post-category">收录于 <a href="/categories/%E5%BC%80%E5%8F%91%E8%80%85%E6%89%8B%E5%86%8C/"><i class="far fa-folder fa-fw"></i>开发者手册</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-04-13">2022-04-13</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2332 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 5 分钟&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#缓存击穿">缓存击穿</a>
+      <ul>
+        <li><a href="#解决方案">解决方案</a>
+          <ul>
+            <li><a href="#过期时间随机值">过期时间➕随机值</a></li>
+            <li><a href="#预热">预热</a></li>
+            <li><a href="#使用锁">使用锁</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#缓存穿透">缓存穿透</a>
+      <ul>
+        <li><a href="#解决方案-1">解决方案</a>
+          <ul>
+            <li><a href="#缓存无效的-key">缓存无效的 key</a></li>
+            <li><a href="#布隆过滤器">布隆过滤器</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#缓存雪崩">缓存雪崩</a>
+      <ul>
+        <li><a href="#缓存大量数据同时过期">缓存大量数据同时过期</a>
+          <ul>
+            <li><a href="#过期时间添加随机值">过期时间添加随机值</a></li>
+            <li><a href="#接口限流">接口限流</a></li>
+          </ul>
+        </li>
+        <li><a href="#redis-故障">Redis 故障</a>
+          <ul>
+            <li><a href="#服务熔断和限流">服务熔断和限流</a></li>
+            <li><a href="#高可用缓存集群">高可用缓存集群</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#参考">参考</a></li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h2 id="缓存击穿">缓存击穿</h2>
+<p>高并发流量，访问的这个数据是热点数据，请求的数据在 DB 中存在，但是 Redis 存的那一份已经过期，后端需要从 DB 从加载数据并写到 Redis。</p>
+<p>总结起来就是：单一热点数据、高并发、数据失效。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/10c8c8557c8b41ea967c82617bef1814.png" title="缓存击穿" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/10c8c8557c8b41ea967c82617bef1814.png" data-sub-html="<h2>缓存击穿</h2><p>缓存击穿</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/10c8c8557c8b41ea967c82617bef1814.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/10c8c8557c8b41ea967c82617bef1814.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/10c8c8557c8b41ea967c82617bef1814.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/10c8c8557c8b41ea967c82617bef1814.png 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/10c8c8557c8b41ea967c82617bef1814.png" />
+    </a><figcaption class="image-caption">缓存击穿</figcaption>
+    </figure></p>
+<h3 id="解决方案">解决方案</h3>
+<h4 id="过期时间随机值">过期时间➕随机值</h4>
+<p>对于热点数据，我们不设置过期时间，这样就可以把请求都放在缓存中处理，充分把 Redis 高吞吐量性能利用起来。或者过期时间再加一个随机值。</p>
+<p>设计缓存的过期时间时，使用公式：<strong>过期时间 = baes 时间 + 随机时间</strong>。</p>
+<p>即相同业务数据写缓存时，在基础过期时间之上，再加一个随机的过期时间，让数据在未来一段时间内慢慢过期，避免瞬时全部过期，对 DB 造成过大压力。</p>
+<h4 id="预热">预热</h4>
+<p>预先把热门数据提前存入 Redis 中，并设热门数据的过期时间超大值。</p>
+<h4 id="使用锁">使用锁</h4>
+<p>当发现缓存失效的时候，不是立即从数据库加载数据。</p>
+<p>而是先获取分布式锁，获取锁成功才执行数据库查询和写数据到缓存的操作，获取锁失败，则说明当前有线程在执行数据库查询操作，当前线程睡眠一段时间再重试。这样只让一个请求去数据库读取数据。</p>
+<h2 id="缓存穿透">缓存穿透</h2>
+<p>数据库本就没有这个数据，请求直奔数据库，缓存系统形同虚设。</p>
+<p>大量请求的 key 根本<font color="red"><strong>不存在于缓存中也不存在数据库</strong></font>，导致请求直接到了数据库上，根本没有经过缓存这一层，对数据库造成压力而影响正常服务。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/19352698c9c047d4a635c3e561b8293b.png" title="缓存穿透" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/19352698c9c047d4a635c3e561b8293b.png" data-sub-html="<h2>缓存穿透</h2><p>缓存穿透</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/19352698c9c047d4a635c3e561b8293b.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/19352698c9c047d4a635c3e561b8293b.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/19352698c9c047d4a635c3e561b8293b.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/19352698c9c047d4a635c3e561b8293b.png 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/19352698c9c047d4a635c3e561b8293b.png" />
+    </a><figcaption class="image-caption">缓存穿透</figcaption>
+    </figure></p>
+<h3 id="解决方案-1">解决方案</h3>
+<p>最基本的首先就是做好参数校验，一些不合法的参数请求直接抛出异常信息返回给客户端。</p>
+<h4 id="缓存无效的-key">缓存无效的 key</h4>
+<p>如果<strong>缓存和数据库都查不到</strong>某个 key 的数据就写一个到 Redis 中去并设置过期时间。这种方式可以解决请求的 key 变化不频繁的情况，如果黑客恶意攻击，每次构建不同的请求 key，会导致 Redis 中缓存大量无效的 key
+。这种方案并不能从根本上解决此问题。如果非要用这种方式来解决穿透问题的话，应该尽量将无效的 key 的过期时间设置短一点比如 1 分钟。</p>
+<h4 id="布隆过滤器">布隆过滤器</h4>
+<p>布隆过滤器是一个非常神奇的数据结构，通过它我们可以非常方便地判断一个给定数据是否存在于海量数据中。我们需要的仅仅就是判断 key 是否合法。</p>
+<p>具体是这样做的：把所有可能存在的请求的值都存放在布隆过滤器中，当用户请求过来，先判断用户发来的请求的值是否存在于布隆过滤器中。不存在的话，直接返回请求参数错误信息给客户端，存在的话再走其他的判断流程。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220407/c81922434bf5420c94e349e07980054b.png" title="布隆过滤器" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220407/c81922434bf5420c94e349e07980054b.png" data-sub-html="<h2>布隆过滤器</h2><p>布隆过滤器</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220407/c81922434bf5420c94e349e07980054b.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220407/c81922434bf5420c94e349e07980054b.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220407/c81922434bf5420c94e349e07980054b.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220407/c81922434bf5420c94e349e07980054b.png 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220407/c81922434bf5420c94e349e07980054b.png" />
+    </a><figcaption class="image-caption">布隆过滤器</figcaption>
+    </figure></p>
+<p>需要注意的是布隆过滤器可能会存在误判的情况。</p>
+<p><strong>布隆过滤器说某个元素存在，小概率会误判。布隆过滤器说某个元素不在，这个元素一定不在</strong>。</p>
+<p>这是因为，当一个元素加入布隆过滤器中的时候，会进行如下操作：</p>
+<ol>
+<li>使用布隆过滤器中的哈希函数对元素值进行计算，得到哈希值（有几个哈希函数得到几个哈希值）。</li>
+<li>根据得到的哈希值，在位数组中把对应下标的值置为 1。</li>
+</ol>
+<p>当需要判断一个元素是否存在于布隆过滤器的时候，会进行如下操作：</p>
+<ol>
+<li>对给定元素再次进行相同的哈希计算；</li>
+<li>得到值之后判断位数组中的每个元素是否都为 1，如果值都为 1，那么说明这个值在布隆过滤器中，如果存在一个值不为 1，说明该元素不在布隆过滤器中。</li>
+</ol>
+<p>然而，一定会出现这样一种情况：不同的字符串可能哈希出来的位置相同。我们可以适当增加位数组大小或者调整我们的哈希函数来降低概率。</p>
+<h2 id="缓存雪崩">缓存雪崩</h2>
+<p>缓存在同一时间大面积的失效，后面的请求都直接落到了数据库上，造成数据库短时间内承受大量请求。或是有一些被大量访问数据（热点缓存）在某一时刻大面积失效，导致对应的请求直接落到了数据库上。</p>
+<p>而出现该原因主要有两种：</p>
+<ul>
+<li>大量热点数据同时过期，导致大量请求需要查询数据库并写到缓存。</li>
+<li>Redis 故障宕机，缓存系统异常。</li>
+</ul>
+<h3 id="缓存大量数据同时过期">缓存大量数据同时过期</h3>
+<p>数据保存在缓存系统并设置了过期时间，但是由于在同时一刻，大量数据同时过期。系统就把请求全部打到数据库获取数据，并发量大的话就会导致数据库压力激增。</p>
+<p><font color="red"><strong>缓存雪崩是发生在大量数据同时失效的场景，而缓存击穿是在某个热点数据失效的场景，这是他们最大的区别</strong></font>。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/12a33b5773ef4e36be2c71a94b93df11.png" title="缓存大量数据同时过期" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/12a33b5773ef4e36be2c71a94b93df11.png" data-sub-html="<h2>缓存大量数据同时过期</h2><p>缓存大量数据同时过期</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/12a33b5773ef4e36be2c71a94b93df11.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/12a33b5773ef4e36be2c71a94b93df11.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/12a33b5773ef4e36be2c71a94b93df11.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/12a33b5773ef4e36be2c71a94b93df11.png 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/12a33b5773ef4e36be2c71a94b93df11.png" />
+    </a><figcaption class="image-caption">缓存大量数据同时过期</figcaption>
+    </figure></p>
+<h4 id="过期时间添加随机值">过期时间添加随机值</h4>
+<p>要避免给大量的数据设置一样的过期时间，过期时间 = baes 时间+ 随机时间（较小的随机数，比如随机增加 1~5 分钟）。</p>
+<p>这样一来，就不会导致同一时刻热点数据全部失效，同时过期时间差别也不会太大，既保证了相近时间失效，又能满足业务需求。</p>
+<h4 id="接口限流">接口限流</h4>
+<p>当访问的不是核心数据的时候，在查询的方法上加上接口限流保护。比如设置 10000 req/s。如果访问的是核心数据接口，缓存不存在允许从数据库中查询并设置到缓存中。这样的话，只有部分请求会发送到数据库，减少了压力。</p>
+<p><strong>限流，就是指，我们在业务系统的请求入口前端控制每秒进入系统的请求数，避免过多的请求被发送到数据库</strong>。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/340401972fac48f391fa6906a9444eac.png" title="限流" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/340401972fac48f391fa6906a9444eac.png" data-sub-html="<h2>限流</h2><p>限流</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/340401972fac48f391fa6906a9444eac.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/340401972fac48f391fa6906a9444eac.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/340401972fac48f391fa6906a9444eac.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/340401972fac48f391fa6906a9444eac.png 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/340401972fac48f391fa6906a9444eac.png" />
+    </a><figcaption class="image-caption">限流</figcaption>
+    </figure></p>
+<h3 id="redis-故障">Redis 故障</h3>
+<p>一旦 Redis 故障或宕机，会导致大量请求打到数据库，从而发生缓存雪崩。对于 Redis 故障，主要有以下两种解决方案。</p>
+<h4 id="服务熔断和限流">服务熔断和限流</h4>
+<p>在业务系统中，针对高并发的使用服务熔断来有损提供服务从而保证系统的可用性。</p>
+<p>服务熔断就是当从缓存获取数据发现异常，则直接返回错误数据给前端，防止所有流量打到数据库导致宕机。</p>
+<p>服务熔断和限流属于在发生了缓存雪崩，如何降低雪崩对数据库造成的影响的方案。</p>
+<h4 id="高可用缓存集群">高可用缓存集群</h4>
+<p>缓存系统一定要构建一套 Redis 高可用集群，比如 <a href="" rel="">Redis 哨兵集群 TODO</a> 或者 <a href="" rel="">Redis Cluster 集群 TODO</a>，如果 Redis
+的主节点故障宕机了，从节点还可以切换成为主节点，继续提供缓存服务，避免了由于缓存实例宕机而导致的缓存雪崩问题。</p>
+<h2 id="总结">总结</h2>
+<ul>
+<li>缓存穿透指的是数据库本就没有这个数据，请求直奔数据库，缓存系统形同虚设。</li>
+<li>缓存击穿（失效）指的是数据库有数据，缓存本应该也有数据，但是缓存过期了，Redis 这层流量防护屏障被击穿了，请求直奔数据库。</li>
+<li>缓存雪崩指的是大量的热点数据无法在 Redis 缓存中处理（大面积热点数据缓存失效、Redis 宕机），流量全部打到数据库，导致数据库极大压力。</li>
+</ul>
+<h2 id="参考">参考</h2>
+<ul>
+<li><a href="https://mp.weixin.qq.com/s?__biz=Mzg5NDY2MDk4Mw==&amp;mid=2247488270&amp;idx=1&amp;sn=03674abcaa78b027bd12aaafd5a2f6e2" target="_blank" rel="noopener noreffer">Redis 缓存击穿（失效）、缓存穿透、缓存雪崩怎么解决？</a></li>
+</ul>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2022-04-13</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/redis-break-pierce-avalanche/index.md" target="_blank">阅读原始文档</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="分享到 Twitter" data-sharer="twitter" data-url="https://xiaobinqt.github.io/redis-break-pierce-avalanche/" data-title="Redis 缓存击穿、缓存穿透、缓存雪崩" data-hashtags="redis"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="https://xiaobinqt.github.io/redis-break-pierce-avalanche/" data-hashtag="redis"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Hacker News" data-sharer="hackernews" data-url="https://xiaobinqt.github.io/redis-break-pierce-avalanche/" data-title="Redis 缓存击穿、缓存穿透、缓存雪崩"><i class="fab fa-hacker-news fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Line" data-sharer="line" data-url="https://xiaobinqt.github.io/redis-break-pierce-avalanche/" data-title="Redis 缓存击穿、缓存穿透、缓存雪崩"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/line.svg"></i></a><a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="https://xiaobinqt.github.io/redis-break-pierce-avalanche/" data-title="Redis 缓存击穿、缓存穿透、缓存雪崩"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="分享到 百度" data-sharer="baidu" data-url="https://xiaobinqt.github.io/redis-break-pierce-avalanche/" data-title="Redis 缓存击穿、缓存穿透、缓存雪崩"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/baidu.svg"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/redis/">redis</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a target="_blank" href="/go-gc/" class="prev" rel="prev" title="Go GC 原理"><i class="fas fa-angle-left fa-fw"></i>Go GC 原理</a>
+            <a target="_blank" href="/hot100/" class="next" rel="next" title="LeetCode 热题 HOT 100">LeetCode 热题 HOT 100<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+<div id="comments"><div id="gitalk" class="comment"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://github.com/gitalk/gitalk"></a>Gitalk</a>.
+            </noscript></div></article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2018 - 2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">xiaobinqt</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span><span class="icp-splitter">&nbsp;|&nbsp;</span><br class="icp-br"/>
+                    <span class="icp"><a href='https://beian.miit.gov.cn/' target='_blank'>京ICP备16062974号-1</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery.js@1.2.0/dist/css/lightgallery.min.css"><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.37.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/algoliasearch@4.2.0/dist/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lightgallery.js@1.2.0/dist/js/lightgallery.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lg-thumbnail.js@1.2.0/dist/lg-thumbnail.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lg-zoom.js@1.2.0/dist/lg-zoom.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.4.0/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"gitalk":{"admin":["xiaobinqt"],"clientID":"47b15de6c2d8a0f8d707","clientSecret":"c70556c8b3a3b38ea7c72e539ff3b37d5bc1b4f3","id":"fcb660b181489d962b44249270eaefcd","owner":"xiaobinqt","repo":"xiaobinqt.github.io","title":"Redis 缓存击穿、缓存穿透、缓存雪崩"}},"lightGallery":{"actualSize":false,"exThumbImage":"data-thumbnail","hideBarsDelay":2000,"selector":".lightgallery","speed":400,"thumbContHeight":80,"thumbWidth":80,"thumbnail":true},"search":{"algoliaAppID":"CPNWIDNX0Y","algoliaIndex":"xiaobinqt.io","algoliaSearchKey":"80b84de0ebc766371dd27cd3e651c41e","highlightTag":"em","maxResultLength":20,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

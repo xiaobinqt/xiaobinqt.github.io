@@ -31,7 +31,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/xiaobinqt.github.io\/redis-glance-faq\/"
-        },"image": ["https:\/\/xiaobinqt.github.io\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "redis","wordcount":  3908 ,
+        },"image": ["https:\/\/xiaobinqt.github.io\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "redis","wordcount":  2926 ,
         "url": "https:\/\/xiaobinqt.github.io\/redis-glance-faq\/","datePublished": "2021-02-20T00:00:00+00:00","dateModified": "2022-04-07T00:00:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "xxxx","logo": {
@@ -113,8 +113,8 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">Redis 学习笔记</h1><h2 class="single-subtitle">Redis study notes and FAQ</h2><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>xiaobinqt</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E5%BC%80%E5%8F%91%E8%80%85%E6%89%8B%E5%86%8C/"><i class="far fa-folder fa-fw"></i>开发者手册</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-02-20">2021-02-20</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 3908 字&nbsp;
-                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 8 分钟&nbsp;</div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-02-20">2021-02-20</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2926 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 6 分钟&nbsp;</div>
         </div><div class="featured-image"><img
         class="lazyload"
         src="/svg/loading.min.svg"
@@ -161,21 +161,6 @@
             <li><a href="#aof">AOF</a></li>
           </ul>
         </li>
-      </ul>
-    </li>
-    <li><a href="#缓存穿透">缓存穿透</a>
-      <ul>
-        <li><a href="#解决办法">解决办法</a>
-          <ul>
-            <li><a href="#缓存无效的-key">缓存无效的 key</a></li>
-            <li><a href="#布隆过滤器">布隆过滤器</a></li>
-          </ul>
-        </li>
-      </ul>
-    </li>
-    <li><a href="#缓存雪崩">缓存雪崩</a>
-      <ul>
-        <li><a href="#解决办法-1">解决办法</a></li>
       </ul>
     </li>
     <li><a href="#参考">参考</a></li>
@@ -374,58 +359,6 @@ appendonly.aof。</p>
 <p>为了兼顾数据和写入性能，可以考虑 <code>appendfsync everysec</code> 选项 ，让 Redis 每秒同步一次 AOF 文件，Redis 性能几乎没受到任何影响。
 这样即使出现系统崩溃，用户最多只会丢失一秒之内产生的数据。</p>
 </blockquote>
-<h2 id="缓存穿透">缓存穿透</h2>
-<p>大量请求的 key 根本不存在于缓存中，导致请求直接到了数据库上，根本没有经过缓存这一层，对数据库造成压力。</p>
-<h3 id="解决办法">解决办法</h3>
-<p>最基本的首先就是做好参数校验，一些不合法的参数请求直接抛出异常信息返回给客户端。</p>
-<h4 id="缓存无效的-key">缓存无效的 key</h4>
-<p>如果<strong>缓存和数据库都查不到</strong>某个 key 的数据就写一个到 Redis 中去并设置过期时间。这种方式可以解决请求的 key 变化不频繁的情况，如果黑客恶意攻击，每次构建不同的请求 key，会导致 Redis 中缓存大量无效的 key
-。这种方案并不能从根本上解决此问题。如果非要用这种方式来解决穿透问题的话，应该尽量将无效的 key 的过期时间设置短一点比如 1 分钟。</p>
-<h4 id="布隆过滤器">布隆过滤器</h4>
-<p>布隆过滤器是一个非常神奇的数据结构，通过它我们可以非常方便地判断一个给定数据是否存在于海量数据中。我们需要的仅仅就是判断 key 是否合法。</p>
-<p>具体是这样做的：把所有可能存在的请求的值都存放在布隆过滤器中，当用户请求过来，先判断用户发来的请求的值是否存在于布隆过滤器中。不存在的话，直接返回请求参数错误信息给客户端，存在的话再走其他的判断流程。</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220407/c81922434bf5420c94e349e07980054b.png" title="布隆过滤器" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220407/c81922434bf5420c94e349e07980054b.png" data-sub-html="<h2>布隆过滤器</h2><p>布隆过滤器</p>">
-        <img
-            class="lazyload"
-            src="/svg/loading.min.svg"
-            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220407/c81922434bf5420c94e349e07980054b.png"
-            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220407/c81922434bf5420c94e349e07980054b.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220407/c81922434bf5420c94e349e07980054b.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220407/c81922434bf5420c94e349e07980054b.png 2x"
-            data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220407/c81922434bf5420c94e349e07980054b.png" />
-    </a><figcaption class="image-caption">布隆过滤器</figcaption>
-    </figure></p>
-<p>需要注意的是布隆过滤器可能会存在误判的情况。</p>
-<p><strong>布隆过滤器说某个元素存在，小概率会误判。布隆过滤器说某个元素不在，这个元素一定不在</strong>。</p>
-<p>这是因为，当一个元素加入布隆过滤器中的时候，会进行如下操作：</p>
-<ol>
-<li>使用布隆过滤器中的哈希函数对元素值进行计算，得到哈希值（有几个哈希函数得到几个哈希值）。</li>
-<li>根据得到的哈希值，在位数组中把对应下标的值置为 1。</li>
-</ol>
-<p>当需要判断一个元素是否存在于布隆过滤器的时候，会进行如下操作：</p>
-<ol>
-<li>对给定元素再次进行相同的哈希计算；</li>
-<li>得到值之后判断位数组中的每个元素是否都为 1，如果值都为 1，那么说明这个值在布隆过滤器中，如果存在一个值不为 1，说明该元素不在布隆过滤器中。</li>
-</ol>
-<p>然而，一定会出现这样一种情况：不同的字符串可能哈希出来的位置相同。我们可以适当增加位数组大小或者调整我们的哈希函数来降低概率。</p>
-<h2 id="缓存雪崩">缓存雪崩</h2>
-<p>缓存在同一时间大面积的失效，后面的请求都直接落到了数据库上，造成数据库短时间内承受大量请求。或是有一些被大量访问数据（热点缓存）在某一时刻大面积失效，导致对应的请求直接落到了数据库上。</p>
-<h3 id="解决办法-1">解决办法</h3>
-<ul>
-<li>
-<p>针对 Redis 服务不可用的情况：</p>
-<ol>
-<li>采用 Redis 集群，避免单机出现问题整个缓存服务都没办法使用。</li>
-<li>限流，避免同时处理大量的请求。</li>
-</ol>
-</li>
-<li>
-<p>针对热点缓存失效的情况：</p>
-<ol>
-<li>设置不同的失效时间比如随机设置缓存的失效时间。</li>
-<li>缓存永不失效。</li>
-</ol>
-</li>
-</ul>
 <h2 id="参考">参考</h2>
 <ul>
 <li><a href="http://redisdoc.com/index.html" target="_blank" rel="noopener noreffer">Redis 命令参考</a></li>
