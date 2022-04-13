@@ -300,7 +300,7 @@ db.col.update({'title':'MongoDB 教程'},{$set:{'title':'MongoDB'}})
 
 ## globalsign/mgo 使用
 
-`globalsign/mgo` 是 Go 的 MongoDB 驱动，也是我现在维护的项目用的驱动，在这里简单介绍一下。
+[globalsign/mgo](https://github.com/globalsign/mgo) 是 Go 的 MongoDB 驱动，也是我现在维护的项目用的驱动，在这里简单介绍一下。
 
 ```go
 package main
