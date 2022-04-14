@@ -14,7 +14,7 @@ resources:
 - name: ""
   src: ""
 
-tags: ["ssl","aliyun"]
+tags: ["SSL","aliyun"]
 categories: ["开发者手册"]
 lightgallery: true
 
