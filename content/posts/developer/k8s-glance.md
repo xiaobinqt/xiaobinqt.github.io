@@ -11,9 +11,9 @@ lastmod: 2022-04-14
 draft: false
 
 author: "xiaobinqt"
-description: ""
+description: "xiaobinqt,Kubernetes 核心概念，什么是 k8s,k8s 自动化容器平台"
 
-featuredImage: "xiaobinqt,Kubernetes 核心概念，什么是 k8s,k8s 自动化容器平台"
+featuredImage: ""
 
 reproduce: true
 
