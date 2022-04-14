@@ -1,5 +1,5 @@
 ---
-title: "go GMP 模型"
+title: "Go GMP 模型"
 
 date: 2022-03-16
 
