@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>Go interface - xiaobinqt&#39;s blog</title><meta name="Description" content="go interface,golang 使用 interface,接口和实例的相互转换,接口的实现,接口是否实现了某个接口"><meta property="og:title" content="Go interface" />
+<meta property="og:description" content="go interface,golang 使用 interface,接口和实例的相互转换,接口的实现,接口是否实现了某个接口" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://xiaobinqt.github.io/go-interface/" /><meta property="og:image" content="https://xiaobinqt.github.io/logo.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2020-06-18T00:00:00+00:00" />
+<meta property="article:modified_time" content="2022-04-14T00:00:00+00:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://xiaobinqt.github.io/logo.png"/>
+
+<meta name="twitter:title" content="Go interface"/>
+<meta name="twitter:description" content="go interface,golang 使用 interface,接口和实例的相互转换,接口的实现,接口是否实现了某个接口"/>
+<meta name="application-name" content="xiaobinqt">
+<meta name="apple-mobile-web-app-title" content="xiaobinqt"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c">
+<link rel="stylesheet" href="//at.alicdn.com/t/font_3267767_nzwpo5kwtd.css">
+<script src="https://cdn.bootcss.com/blueimp-md5/1.1.0/js/md5.min.js"></script><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://xiaobinqt.github.io/go-interface/" /><link rel="prev" href="https://xiaobinqt.github.io/common-cache-strategies/" /><link rel="next" href="https://xiaobinqt.github.io/linux-platform-install-go/" /><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Go interface",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/xiaobinqt.github.io\/go-interface\/"
+        },"image": ["https:\/\/xiaobinqt.github.io\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "golang","wordcount":  2051 ,
+        "url": "https:\/\/xiaobinqt.github.io\/go-interface\/","datePublished": "2020-06-18T00:00:00+00:00","dateModified": "2022-04-14T00:00:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+            "@type": "Organization",
+            "name": "xxxx","logo": {
+                    "@type": "ImageObject",
+                    "url": "https:\/\/xiaobinqt.github.io\/images\/avatar.png",
+                    "width":  528 ,
+                    "height":  560 
+                }},"author": {
+                "@type": "Person",
+                "name": "xiaobinqt"
+            },"description": "go interface,golang 使用 interface,接口和实例的相互转换,接口的实现,接口是否实现了某个接口"
+    }
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="xiaobinqt&#39;s blog"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>萧十一郎</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/about/"> 关于 </a><a class="menu-item" href="/links/"> 友链 </a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="xiaobinqt&#39;s blog"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>萧十一郎</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/about/" title="">关于</a><a class="menu-item" href="/links/" title="">友链</a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">目录</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">Go interface</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>xiaobinqt</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/golang/"><i class="far fa-folder fa-fw"></i>golang</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-06-18">2020-06-18</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2051 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 5 分钟&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#定义">定义</a></li>
+    <li><a href="#用途">用途</a>
+      <ul>
+        <li><a href="#实现多态">实现多态</a></li>
+        <li><a href="#隐藏具体实现">隐藏具体实现</a></li>
+        <li><a href="#解耦依赖">解耦依赖</a></li>
+      </ul>
+    </li>
+    <li><a href="#faq">FAQ</a>
+      <ul>
+        <li><a href="#var-_-interface--typenil">var _ Interface = (*Type)(nil)</a></li>
+        <li><a href="#实例接口相互转换">实例、接口相互转换</a></li>
+        <li><a href="#接口是否实现了某个接口">接口是否实现了某个接口</a></li>
+      </ul>
+    </li>
+    <li><a href="#参考">参考</a></li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h2 id="定义">定义</h2>
+<ul>
+<li>interface 可以表示任意一种类型</li>
+<li>interface 是接口的方法集合，只要实现了接口中的所有方法，那么就认为实现了这个接口</li>
+</ul>
+<h2 id="用途">用途</h2>
+<h3 id="实现多态">实现多态</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">animal</span> <span class="kd">interface</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">Say</span><span class="p">()</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">Color</span><span class="p">()</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Cat</span> <span class="kd">struct</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="nx">Cat</span><span class="p">)</span> <span class="nf">Say</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="s">&#34;i am a cat&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="nx">Cat</span><span class="p">)</span> <span class="nf">Color</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="s">&#34;i am black&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Dog</span> <span class="kd">struct</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <span class="nx">Dog</span><span class="p">)</span> <span class="nf">Say</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="s">&#34;i am a dog&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <span class="nx">Dog</span><span class="p">)</span> <span class="nf">Color</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="s">&#34;i am white&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Car</span> <span class="kd">struct</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">introduceSelf</span><span class="p">(</span><span class="nx">input</span> <span class="nx">animal</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">input</span><span class="p">.</span><span class="nf">Say</span><span class="p">()</span> <span class="o">+</span> <span class="s">&#34; and &#34;</span> <span class="o">+</span> <span class="nx">input</span><span class="p">.</span><span class="nf">Color</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">c</span> <span class="o">:=</span> <span class="nx">Cat</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">d</span> <span class="o">:=</span> <span class="nx">Dog</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">introduceSelf</span><span class="p">(</span><span class="nx">c</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">introduceSelf</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">// car 没有实现 animal 接口
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">//car := Car{}
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">//introduceSelf(car)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="隐藏具体实现">隐藏具体实现</h3>
+<p>以 go 中的 <code>context</code> 包为例，<code>context.Context()</code> 是一个接口：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span><span class="lnt">78
+</span><span class="lnt">79
+</span><span class="lnt">80
+</span><span class="lnt">81
+</span><span class="lnt">82
+</span><span class="lnt">83
+</span><span class="lnt">84
+</span><span class="lnt">85
+</span><span class="lnt">86
+</span><span class="lnt">87
+</span><span class="lnt">88
+</span><span class="lnt">89
+</span><span class="lnt">90
+</span><span class="lnt">91
+</span><span class="lnt">92
+</span><span class="lnt">93
+</span><span class="lnt">94
+</span><span class="lnt">95
+</span><span class="lnt">96
+</span><span class="lnt">97
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// A Context carries a deadline, a cancellation signal, and other values across
+</span></span></span><span class="line"><span class="cl"><span class="c1">// API boundaries.
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1">// Context&#39;s methods may be called by multiple goroutines simultaneously.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">Context</span> <span class="kd">interface</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// Deadline returns the time when work done on behalf of this context
+</span></span></span><span class="line"><span class="cl"><span class="c1">// should be canceled. Deadline returns ok==false when no deadline is
+</span></span></span><span class="line"><span class="cl"><span class="c1">// set. Successive calls to Deadline return the same results.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nf">Deadline</span><span class="p">()</span> <span class="p">(</span><span class="nx">deadline</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span><span class="p">,</span> <span class="nx">ok</span> <span class="kt">bool</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// Done returns a channel that&#39;s closed when work done on behalf of this
+</span></span></span><span class="line"><span class="cl"><span class="c1">// context should be canceled. Done may return nil if this context can
+</span></span></span><span class="line"><span class="cl"><span class="c1">// never be canceled. Successive calls to Done return the same value.
+</span></span></span><span class="line"><span class="cl"><span class="c1">// The close of the Done channel may happen asynchronously,
+</span></span></span><span class="line"><span class="cl"><span class="c1">// after the cancel function returns.
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1">// WithCancel arranges for Done to be closed when cancel is called;
+</span></span></span><span class="line"><span class="cl"><span class="c1">// WithDeadline arranges for Done to be closed when the deadline
+</span></span></span><span class="line"><span class="cl"><span class="c1">// expires; WithTimeout arranges for Done to be closed when the timeout
+</span></span></span><span class="line"><span class="cl"><span class="c1">// elapses.
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1">// Done is provided for use in select statements:
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1">//  // Stream generates values with DoSomething and sends them to out
+</span></span></span><span class="line"><span class="cl"><span class="c1">//  // until DoSomething returns an error or ctx.Done is closed.
+</span></span></span><span class="line"><span class="cl"><span class="c1">//  func Stream(ctx context.Context, out chan&lt;- Value) error {
+</span></span></span><span class="line"><span class="cl"><span class="c1">//  	for {
+</span></span></span><span class="line"><span class="cl"><span class="c1">//  		v, err := DoSomething(ctx)
+</span></span></span><span class="line"><span class="cl"><span class="c1">//  		if err != nil {
+</span></span></span><span class="line"><span class="cl"><span class="c1">//  			return err
+</span></span></span><span class="line"><span class="cl"><span class="c1">//  		}
+</span></span></span><span class="line"><span class="cl"><span class="c1">//  		select {
+</span></span></span><span class="line"><span class="cl"><span class="c1">//  		case &lt;-ctx.Done():
+</span></span></span><span class="line"><span class="cl"><span class="c1">//  			return ctx.Err()
+</span></span></span><span class="line"><span class="cl"><span class="c1">//  		case out &lt;- v:
+</span></span></span><span class="line"><span class="cl"><span class="c1">//  		}
+</span></span></span><span class="line"><span class="cl"><span class="c1">//  	}
+</span></span></span><span class="line"><span class="cl"><span class="c1">//  }
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1">// See https://blog.golang.org/pipelines for more examples of how to use
+</span></span></span><span class="line"><span class="cl"><span class="c1">// a Done channel for cancellation.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nf">Done</span><span class="p">()</span> <span class="o">&lt;-</span><span class="kd">chan</span> <span class="kd">struct</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// If Done is not yet closed, Err returns nil.
+</span></span></span><span class="line"><span class="cl"><span class="c1">// If Done is closed, Err returns a non-nil error explaining why:
+</span></span></span><span class="line"><span class="cl"><span class="c1">// Canceled if the context was canceled
+</span></span></span><span class="line"><span class="cl"><span class="c1">// or DeadlineExceeded if the context&#39;s deadline passed.
+</span></span></span><span class="line"><span class="cl"><span class="c1">// After Err returns a non-nil error, successive calls to Err return the same error.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nf">Err</span><span class="p">()</span> <span class="kt">error</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// Value returns the value associated with this context for key, or nil
+</span></span></span><span class="line"><span class="cl"><span class="c1">// if no value is associated with key. Successive calls to Value with
+</span></span></span><span class="line"><span class="cl"><span class="c1">// the same key returns the same result.
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1">// Use context values only for request-scoped data that transits
+</span></span></span><span class="line"><span class="cl"><span class="c1">// processes and API boundaries, not for passing optional parameters to
+</span></span></span><span class="line"><span class="cl"><span class="c1">// functions.
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1">// A key identifies a specific value in a Context. Functions that wish
+</span></span></span><span class="line"><span class="cl"><span class="c1">// to store values in Context typically allocate a key in a global
+</span></span></span><span class="line"><span class="cl"><span class="c1">// variable then use that key as the argument to context.WithValue and
+</span></span></span><span class="line"><span class="cl"><span class="c1">// Context.Value. A key can be any type that supports equality;
+</span></span></span><span class="line"><span class="cl"><span class="c1">// packages should define keys as an unexported type to avoid
+</span></span></span><span class="line"><span class="cl"><span class="c1">// collisions.
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1">// Packages that define a Context key should provide type-safe accessors
+</span></span></span><span class="line"><span class="cl"><span class="c1">// for the values stored using that key:
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 	// Package user defines a User type that&#39;s stored in Contexts.
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 	package user
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 	import &#34;context&#34;
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 	// User is the type of value stored in the Contexts.
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 	type User struct {...}
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 	// key is an unexported type for keys defined in this package.
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 	// This prevents collisions with keys defined in other packages.
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 	type key int
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 	// userKey is the key for user.User values in Contexts. It is
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 	// unexported; clients use user.NewContext and user.FromContext
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 	// instead of using this key directly.
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 	var userKey key
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 	// NewContext returns a new Context that carries value u.
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 	func NewContext(ctx context.Context, u *User) context.Context {
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 		return context.WithValue(ctx, userKey, u)
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 	}
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 	// FromContext returns the User value stored in ctx, if any.
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 	func FromContext(ctx context.Context) (*User, bool) {
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 		u, ok := ctx.Value(userKey).(*User)
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 		return u, ok
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 	}
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nf">Value</span><span class="p">(</span><span class="nx">key</span> <span class="kd">interface</span><span class="p">{})</span> <span class="kd">interface</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>WithCancel</code> 和 <code>WithValue</code> 返回的第一个参数都是 context，但是各自返回的 <code>Context</code> 结构体又不是一样的：</p>
+<p><code>WithCancel</code> 返回结构体为 <code>cancelCtx</code></p>
+<p><code>WithValue</code> 返回的结构体为 <code>valueCtx</code></p>
+<p>这样的话尽管返回的都是 <code>context</code>，但是具体实现却不一样，实现了功能的多样化。</p>
+<h3 id="解耦依赖">解耦依赖</h3>
+<p>下面的示例👇，如果缓存从 Redis 换成了 MemoryCache, 我们只需要修改 MemoryCache 的实现和初始化的地方，而不需要修改 Redis 的实现，这样就解耦了依赖，更加灵活。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Cache</span> <span class="kd">interface</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">GetValue</span><span class="p">(</span><span class="nx">key</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 假设这是redis客户端
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">Redis</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="nx">Redis</span><span class="p">)</span> <span class="nf">GetValue</span><span class="p">(</span><span class="nx">key</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">string</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nb">panic</span><span class="p">(</span><span class="s">&#34;not implement&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 假设这是自定义的一个缓存器
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">MemoryCache</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">m</span> <span class="nx">MemoryCache</span><span class="p">)</span> <span class="nf">GetValue</span><span class="p">(</span><span class="nx">key</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">string</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nb">panic</span><span class="p">(</span><span class="s">&#34;not implement&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 通过接口实现：检查用户是否有权限的功能
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">AuthExpire</span><span class="p">(</span><span class="nx">token</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">cache</span> <span class="nx">Cache</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">res</span> <span class="o">:=</span> <span class="nx">cache</span><span class="p">.</span><span class="nf">GetValue</span><span class="p">(</span><span class="nx">token</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">res</span> <span class="o">==</span> <span class="s">&#34;&#34;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="kc">false</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// 正常处理
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="k">return</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">token</span> <span class="o">:=</span> <span class="s">&#34;test&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">cache</span> <span class="o">:=</span> <span class="nx">Redis</span><span class="p">{}</span> <span class="c1">//	cache := MemoryCache{},修改这一句即可
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nf">AuthExpire</span><span class="p">(</span><span class="nx">token</span><span class="p">,</span> <span class="nx">cache</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="faq">FAQ</h2>
+<h3 id="var-_-interface--typenil">var _ Interface = (*Type)(nil)</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">var _ <span class="nv">Person</span> <span class="o">=</span> <span class="o">(</span>*Student<span class="o">)(</span>nil<span class="o">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>以上☝️的语句：将空值 <code>nil</code> 转换为 <code>*Student</code> 类型，再转换为 <code>Person</code> 接口，如果转换失败，说明 <code>Student</code> 并没有实现 <code>Person</code> 接口的所有方法。</p>
+<p>这是<strong>确保接口被实现</strong>常用的方式。即利用强制类型转换，确保 struct Student 实现了接口 Person。这样 IDE 和编译期间就可以检查，而不是等到使用的时候。</p>
+<h3 id="实例接口相互转换">实例、接口相互转换</h3>
+<p>实例可以强制类型转换为接口，接口也可以强制类型转换为实例。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">package main
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">import <span class="s2">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">type</span> Student struct <span class="o">{</span>
+</span></span><span class="line"><span class="cl">	name string
+</span></span><span class="line"><span class="cl">	age  int
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">type</span> Person interface <span class="o">{</span>
+</span></span><span class="line"><span class="cl">	getName<span class="o">()</span> string
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func <span class="o">(</span>stu *Student<span class="o">)</span> getName<span class="o">()</span> string <span class="o">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> stu.name
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func <span class="o">(</span>stu *Student<span class="o">)</span> getAge<span class="o">()</span> int <span class="o">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> stu.age
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func main<span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">	var s *Student <span class="o">=</span> <span class="p">&amp;</span>Student<span class="o">{</span>
+</span></span><span class="line"><span class="cl">		name: <span class="s2">&#34;narcissus&#34;</span>,
+</span></span><span class="line"><span class="cl">		age:  20,
+</span></span><span class="line"><span class="cl">	<span class="o">}</span>
+</span></span><span class="line"><span class="cl">	var p <span class="nv">Person</span> <span class="o">=</span> <span class="p">&amp;</span>Student<span class="o">{</span>
+</span></span><span class="line"><span class="cl">		name: <span class="s2">&#34;Tom&#34;</span>,
+</span></span><span class="line"><span class="cl">		age:  18,
+</span></span><span class="line"><span class="cl">	<span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	stu :<span class="o">=</span> p.<span class="o">(</span>*Student<span class="o">)</span> // 接口转为实例
+</span></span><span class="line"><span class="cl">	fmt.Println<span class="o">(</span>stu.getName<span class="o">()</span>, <span class="s2">&#34;---&#34;</span>, stu.getAge<span class="o">())</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	var pp <span class="nv">Person</span> <span class="o">=</span> <span class="o">(</span>*Student<span class="o">)(</span>s<span class="o">)</span> // 实例转为接口
+</span></span><span class="line"><span class="cl">	// var _ <span class="nv">Person</span> <span class="o">=</span> s           // 实例转为接口
+</span></span><span class="line"><span class="cl">	fmt.Println<span class="o">(</span>pp.getName<span class="o">())</span> // 这里不能调用 pp.getAge<span class="o">()</span> 因为 Person 接口中没有 getAge<span class="o">()</span> 方法
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>通过运行后的打印结果👇可知，结果复合预期。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/a5a29410ab9b42d1a3ce7d18bbe83263.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="运行打印" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/a5a29410ab9b42d1a3ce7d18bbe83263.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>运行打印</h2><p>运行打印</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/a5a29410ab9b42d1a3ce7d18bbe83263.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/a5a29410ab9b42d1a3ce7d18bbe83263.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/a5a29410ab9b42d1a3ce7d18bbe83263.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/a5a29410ab9b42d1a3ce7d18bbe83263.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/a5a29410ab9b42d1a3ce7d18bbe83263.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" />
+    </a><figcaption class="image-caption">运行打印</figcaption>
+    </figure></p>
+<h3 id="接口是否实现了某个接口">接口是否实现了某个接口</h3>
+<p><a href="https://github.com/golang/go/blob/d2552037426fe5a190c74172562d897d921fe311/src/net/http/server.go#L3047" target="_blank" rel="noopener noreffer">http/server.go</a>
+中有这样的判断语句：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">		rw, err :<span class="o">=</span> l.Accept<span class="o">()</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> err !<span class="o">=</span> nil <span class="o">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">select</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">case</span> &lt;-srv.getDoneChan<span class="o">()</span>:
+</span></span><span class="line"><span class="cl">				<span class="k">return</span> ErrServerClosed
+</span></span><span class="line"><span class="cl">			default:
+</span></span><span class="line"><span class="cl">			<span class="o">}</span>
+</span></span><span class="line"><span class="cl">			<span class="k">if</span> ne, ok :<span class="o">=</span> err.<span class="o">(</span>net.Error<span class="o">)</span><span class="p">;</span> ok <span class="o">&amp;&amp;</span> ne.Temporary<span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">				<span class="k">if</span> <span class="nv">tempDelay</span> <span class="o">==</span> <span class="m">0</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">					<span class="nv">tempDelay</span> <span class="o">=</span> <span class="m">5</span> * time.Millisecond
+</span></span><span class="line"><span class="cl">				<span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">					tempDelay *<span class="o">=</span> <span class="m">2</span>
+</span></span><span class="line"><span class="cl">				<span class="o">}</span>
+</span></span><span class="line"><span class="cl">				<span class="k">if</span> max :<span class="o">=</span> <span class="m">1</span> * time.Second<span class="p">;</span> tempDelay &gt; max <span class="o">{</span>
+</span></span><span class="line"><span class="cl">					<span class="nv">tempDelay</span> <span class="o">=</span> max
+</span></span><span class="line"><span class="cl">				<span class="o">}</span>
+</span></span><span class="line"><span class="cl">				srv.logf<span class="o">(</span><span class="s2">&#34;http: Accept error: %v; retrying in %v&#34;</span>, err, tempDelay<span class="o">)</span>
+</span></span><span class="line"><span class="cl">				time.Sleep<span class="o">(</span>tempDelay<span class="o">)</span>
+</span></span><span class="line"><span class="cl">				<span class="k">continue</span>
+</span></span><span class="line"><span class="cl">			<span class="o">}</span>
+</span></span><span class="line"><span class="cl">			<span class="k">return</span> err
+</span></span><span class="line"><span class="cl">		<span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>ne, ok := err.(net.Error)</code> 就是判断 <code>err</code> 变量是不是 <code>err.Error</code> 接口类型：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// An Error represents a network error.
+</span></span><span class="line"><span class="cl">type Error interface {
+</span></span><span class="line"><span class="cl">	error
+</span></span><span class="line"><span class="cl">	Timeout() bool   // Is the error a timeout?
+</span></span><span class="line"><span class="cl">	Temporary() bool // Is the error temporary?
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>以下示例自定了一个 <code>MyError</code> 接口验证以上推断：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">MyError</span> <span class="kd">interface</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">Msg</span><span class="p">()</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">myErrorStruct</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">errMsg</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">e</span> <span class="o">*</span><span class="nx">myErrorStruct</span><span class="p">)</span> <span class="nf">Msg</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">e</span><span class="p">.</span><span class="nx">errMsg</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">myNew</span><span class="p">(</span><span class="nx">msg</span> <span class="kt">string</span><span class="p">)</span> <span class="nx">MyError</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="o">&amp;</span><span class="nx">myErrorStruct</span><span class="p">{</span><span class="nx">errMsg</span><span class="p">:</span> <span class="nx">msg</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">err1</span> <span class="o">:=</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;error&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">e1</span><span class="p">,</span> <span class="nx">ok1</span> <span class="o">:=</span> <span class="nx">err1</span><span class="p">.(</span><span class="nx">MyError</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;e1 = &#34;</span><span class="p">,</span> <span class="nx">e1</span><span class="p">,</span> <span class="s">&#34;ok1 = &#34;</span><span class="p">,</span> <span class="nx">ok1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">err2</span> <span class="o">:=</span> <span class="nf">myNew</span><span class="p">(</span><span class="s">&#34;我是一个错误&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">e2</span><span class="p">,</span> <span class="nx">ok2</span> <span class="o">:=</span> <span class="nx">err2</span><span class="p">.(</span><span class="nx">MyError</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;e2 = %#v ,,ok2: %t&#34;</span><span class="p">,</span> <span class="nx">e2</span><span class="p">,</span> <span class="nx">ok2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>从 👇 运行打印结果来看，符合预期。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/cb78ee48a0624ea28fbcbb350216e41a.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
+        data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/cb78ee48a0624ea28fbcbb350216e41a.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/cb78ee48a0624ea28fbcbb350216e41a.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/cb78ee48a0624ea28fbcbb350216e41a.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
+        data-sizes="auto"
+        alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/cb78ee48a0624ea28fbcbb350216e41a.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
+        title="运行结果" /></p>
+<h2 id="参考">参考</h2>
+<ul>
+<li><a href="https://github.com/uber-go/guide/issues/25" target="_blank" rel="noopener noreffer">Consider adding &ldquo;var _ Interface = (*Type)(nil)&rdquo; to the list of recommendations</a></li>
+<li><a href="https://github.com/geektutu/7days-golang/issues/10" target="_blank" rel="noopener noreffer">类似var _ PeerPicker = (*HTTPPool)(nil)这种设计目的是什么</a></li>
+</ul>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2022-04-14</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/go-interface/index.md" target="_blank">阅读原始文档</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="分享到 Twitter" data-sharer="twitter" data-url="https://xiaobinqt.github.io/go-interface/" data-title="Go interface" data-hashtags="golang"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="https://xiaobinqt.github.io/go-interface/" data-hashtag="golang"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Hacker News" data-sharer="hackernews" data-url="https://xiaobinqt.github.io/go-interface/" data-title="Go interface"><i class="fab fa-hacker-news fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Line" data-sharer="line" data-url="https://xiaobinqt.github.io/go-interface/" data-title="Go interface"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/line.svg"></i></a><a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="https://xiaobinqt.github.io/go-interface/" data-title="Go interface"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="分享到 百度" data-sharer="baidu" data-url="https://xiaobinqt.github.io/go-interface/" data-title="Go interface"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/baidu.svg"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/golang/">golang</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a target="_blank" href="/common-cache-strategies/" class="prev" rel="prev" title="常见缓存淘汰策略"><i class="fas fa-angle-left fa-fw"></i>常见缓存淘汰策略</a>
+            <a target="_blank" href="/linux-platform-install-go/" class="next" rel="next" title="Linux 环境下安装 Go">Linux 环境下安装 Go<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+<div id="comments"><div id="gitalk" class="comment"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://github.com/gitalk/gitalk"></a>Gitalk</a>.
+            </noscript></div></article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2018 - 2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">xiaobinqt</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span><span class="icp-splitter">&nbsp;|&nbsp;</span><br class="icp-br"/>
+                    <span class="icp"><a href='https://beian.miit.gov.cn/' target='_blank'>京ICP备16062974号-1</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery.js@1.2.0/dist/css/lightgallery.min.css"><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.37.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/algoliasearch@4.2.0/dist/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lightgallery.js@1.2.0/dist/js/lightgallery.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lg-thumbnail.js@1.2.0/dist/lg-thumbnail.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lg-zoom.js@1.2.0/dist/lg-zoom.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.4.0/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"gitalk":{"admin":["xiaobinqt"],"clientID":"47b15de6c2d8a0f8d707","clientSecret":"c70556c8b3a3b38ea7c72e539ff3b37d5bc1b4f3","id":"a3091f61f9f2903983701bdd5f105d56","owner":"xiaobinqt","repo":"xiaobinqt.github.io","title":"Go interface"}},"lightGallery":{"actualSize":false,"exThumbImage":"data-thumbnail","hideBarsDelay":2000,"selector":".lightgallery","speed":400,"thumbContHeight":80,"thumbWidth":80,"thumbnail":true},"search":{"algoliaAppID":"CPNWIDNX0Y","algoliaIndex":"xiaobinqt.io","algoliaSearchKey":"80b84de0ebc766371dd27cd3e651c41e","highlightTag":"em","maxResultLength":20,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>
