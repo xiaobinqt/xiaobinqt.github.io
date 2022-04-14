@@ -11,7 +11,7 @@ lastmod: {{ .Date | time.Format "2006-01-02" }}
 draft: false
 
 author: "xiaobinqt"
-description: ""
+description: "xiaobinqt"
 
 featuredImage: ""
 
