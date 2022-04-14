@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>k8s 核心概念 - xiaobinqt&#39;s blog</title><meta name="Description" content="xiaobinqt 擅长php,golang,go,服务器相关,Laravel5.5&#43;/Lumen,等方面的知识,xiaobinqt关注架构,elasticsearch,linux,php,mysql,redis,go领域."><meta property="og:title" content="k8s 核心概念" />
+<meta property="og:description" content="什么是 Kubernetes Kubernetes（k8s）是自动化容器操作的开源平台，这些操作包括部署，调度和节点集群间扩展。如果你曾经用过 Docker 容器技术部署容器，" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://xiaobinqt.github.io/k8s-glance/" /><meta property="og:image" content="https://xiaobinqt.github.io/logo.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-04-02T00:00:00+00:00" />
+<meta property="article:modified_time" content="2022-04-14T00:00:00+00:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://xiaobinqt.github.io/logo.png"/>
+
+<meta name="twitter:title" content="k8s 核心概念"/>
+<meta name="twitter:description" content="什么是 Kubernetes Kubernetes（k8s）是自动化容器操作的开源平台，这些操作包括部署，调度和节点集群间扩展。如果你曾经用过 Docker 容器技术部署容器，"/>
+<meta name="application-name" content="xiaobinqt">
+<meta name="apple-mobile-web-app-title" content="xiaobinqt"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c">
+<link rel="stylesheet" href="//at.alicdn.com/t/font_3267767_nzwpo5kwtd.css">
+<script src="https://cdn.bootcss.com/blueimp-md5/1.1.0/js/md5.min.js"></script><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://xiaobinqt.github.io/k8s-glance/" /><link rel="prev" href="https://xiaobinqt.github.io/gitalk-init-issue/" /><link rel="next" href="https://xiaobinqt.github.io/github-actions-replace-env-vars-in-file/" /><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "k8s 核心概念",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/xiaobinqt.github.io\/k8s-glance\/"
+        },"image": ["https:\/\/xiaobinqt.github.io\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "k8s","wordcount":  2339 ,
+        "url": "https:\/\/xiaobinqt.github.io\/k8s-glance\/","datePublished": "2022-04-02T00:00:00+00:00","dateModified": "2022-04-14T00:00:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+            "@type": "Organization",
+            "name": "xxxx","logo": {
+                    "@type": "ImageObject",
+                    "url": "https:\/\/xiaobinqt.github.io\/images\/avatar.png",
+                    "width":  528 ,
+                    "height":  560 
+                }},"author": {
+                "@type": "Person",
+                "name": "xiaobinqt"
+            },"description": ""
+    }
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="xiaobinqt&#39;s blog"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>萧十一郎</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/about/"> 关于 </a><a class="menu-item" href="/links/"> 友链 </a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="xiaobinqt&#39;s blog"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>萧十一郎</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/about/" title="">关于</a><a class="menu-item" href="/links/" title="">友链</a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">目录</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">k8s 核心概念</h1><h2 class="single-subtitle">Kubernetes Core Concepts</h2><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author">
+                    <i class="custom-icon iconfont icon-weibiaoti-"></i>
+                </span>&nbsp;&nbsp;<span class="post-category">收录于 <a href="/categories/%E5%BC%80%E5%8F%91%E8%80%85%E6%89%8B%E5%86%8C/"><i class="far fa-folder fa-fw"></i>开发者手册</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-04-02">2022-04-02</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2339 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 5 分钟&nbsp;</div>
+        </div><div class="featured-image"><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="xiaobinqt,Kubernetes%20%e6%a0%b8%e5%bf%83%e6%a6%82%e5%bf%b5%ef%bc%8c%e4%bb%80%e4%b9%88%e6%98%af%20k8s,k8s%20%e8%87%aa%e5%8a%a8%e5%8c%96%e5%ae%b9%e5%99%a8%e5%b9%b3%e5%8f%b0"
+        data-srcset="xiaobinqt%2cKubernetes%20%e6%a0%b8%e5%bf%83%e6%a6%82%e5%bf%b5%ef%bc%8c%e4%bb%80%e4%b9%88%e6%98%af%20k8s%2ck8s%20%e8%87%aa%e5%8a%a8%e5%8c%96%e5%ae%b9%e5%99%a8%e5%b9%b3%e5%8f%b0, xiaobinqt%2cKubernetes%20%e6%a0%b8%e5%bf%83%e6%a6%82%e5%bf%b5%ef%bc%8c%e4%bb%80%e4%b9%88%e6%98%af%20k8s%2ck8s%20%e8%87%aa%e5%8a%a8%e5%8c%96%e5%ae%b9%e5%99%a8%e5%b9%b3%e5%8f%b0 1.5x, xiaobinqt%2cKubernetes%20%e6%a0%b8%e5%bf%83%e6%a6%82%e5%bf%b5%ef%bc%8c%e4%bb%80%e4%b9%88%e6%98%af%20k8s%2ck8s%20%e8%87%aa%e5%8a%a8%e5%8c%96%e5%ae%b9%e5%99%a8%e5%b9%b3%e5%8f%b0 2x"
+        data-sizes="auto"
+        alt="xiaobinqt,Kubernetes 核心概念，什么是 k8s,k8s 自动化容器平台"
+        title="xiaobinqt,Kubernetes 核心概念，什么是 k8s,k8s 自动化容器平台" /></div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#什么是-kubernetes">什么是 Kubernetes</a></li>
+    <li><a href="#集群">集群</a></li>
+    <li><a href="#pod">Pod</a></li>
+    <li><a href="#lable">Lable</a></li>
+    <li><a href="#replication-controller">Replication Controller</a></li>
+    <li><a href="#service">Service</a></li>
+    <li><a href="#node">Node</a></li>
+    <li><a href="#kubernetes-master">Kubernetes Master</a></li>
+    <li><a href="#参考">参考</a></li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h2 id="什么是-kubernetes">什么是 Kubernetes</h2>
+<p>Kubernetes（k8s）是自动化容器操作的开源平台，这些操作包括部署，调度和节点集群间扩展。如果你曾经用过 Docker 容器技术部署容器，那么可以将 Docker 看成 Kubernetes
+内部使用的低级别组件。Kubernetes 不仅仅支持 Docker，还支持 Rocket，这是另一种容器技术。 使用 Kubernetes 可以：</p>
+<ul>
+<li>自动化容器的部署和复制</li>
+<li>随时扩展或收缩容器规模</li>
+<li>将容器组织成组，并且提供容器间的负载均衡</li>
+<li>很容易地升级应用程序容器的新版本</li>
+<li>提供容器弹性，如果容器失效就替换它，等等&hellip;</li>
+</ul>
+<p>实际上，使用 Kubernetes 只需一个部署文件，使用一条命令就可以部署多层容器（前端，后台等）的完整集群：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">kubectl create -f single-config-file.yaml
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>kubectl 是和 Kubernetes API 交互的命令行程序。</p>
+<h2 id="集群">集群</h2>
+<p>集群是一组节点，这些节点可以是物理服务器或者虚拟机，之上安装了 Kubernetes 平台。下图展示这样的集群。注意该图为了强调核心概念有所简化。这里可以看到一个典型的 Kubernetes 架构图。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/0ce2d13e9dd3467782c89d74b3c5d9d2.png" title="集群架构" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/0ce2d13e9dd3467782c89d74b3c5d9d2.png" data-sub-html="<h2>集群架构</h2><p>集群架构</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/0ce2d13e9dd3467782c89d74b3c5d9d2.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/0ce2d13e9dd3467782c89d74b3c5d9d2.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/0ce2d13e9dd3467782c89d74b3c5d9d2.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/0ce2d13e9dd3467782c89d74b3c5d9d2.png 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/0ce2d13e9dd3467782c89d74b3c5d9d2.png" />
+    </a><figcaption class="image-caption">集群架构</figcaption>
+    </figure></p>
+<p>上图可以看到如下组件，使用特别的图标表示Service和Label：</p>
+<ul>
+<li>Pod</li>
+<li>Container（容器）</li>
+<li>Label <img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/3edd10f36368462890623a79905b9f45.png"
+        data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/3edd10f36368462890623a79905b9f45.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/3edd10f36368462890623a79905b9f45.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/3edd10f36368462890623a79905b9f45.png 2x"
+        data-sizes="auto"
+        alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/3edd10f36368462890623a79905b9f45.png"
+        title="label" />（标签）</li>
+<li>Replication Controller（复制控制器）</li>
+<li>Service <img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/2de24a183c174deca2bd5163fcd02588.png"
+        data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/2de24a183c174deca2bd5163fcd02588.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/2de24a183c174deca2bd5163fcd02588.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/2de24a183c174deca2bd5163fcd02588.png 2x"
+        data-sizes="auto"
+        alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/2de24a183c174deca2bd5163fcd02588.png"
+        title="Service" />（服务）</li>
+<li>Node（节点）</li>
+<li>Kubernetes Master（Kubernetes主节点）</li>
+</ul>
+<h2 id="pod">Pod</h2>
+<p>Pod（上图绿色方框）安排在节点上，包含一组容器和卷。同一个Pod里的容器共享同一个网络命名空间，可以使用localhost互相通信。Pod是短暂的，不是持续性实体。你可能会有这些问题：</p>
+<ul>
+<li>如果Pod是短暂的，那么我怎么才能持久化容器数据使其能够跨重启而存在呢？ 是的，Kubernetes支持卷的概念，因此可以使用持久化的卷类型。</li>
+<li>是否手动创建Pod，如果想要创建同一个容器的多份拷贝，需要一个个分别创建出来么？可以手动创建单个Pod，但是也可以使用Replication Controller使用Pod模板创建出多份拷贝，下文会详细介绍。</li>
+<li>如果Pod是短暂的，那么重启时IP地址可能会改变，那么怎么才能从前端容器正确可靠地指向后台容器呢？这时可以使用Service，下文会详细介绍。</li>
+</ul>
+<h2 id="lable">Lable</h2>
+<p>正如图所示，一些Pod有Label（<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/3edd10f36368462890623a79905b9f45.png"
+        data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/3edd10f36368462890623a79905b9f45.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/3edd10f36368462890623a79905b9f45.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/3edd10f36368462890623a79905b9f45.png 2x"
+        data-sizes="auto"
+        alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/3edd10f36368462890623a79905b9f45.png"
+        title="label" />）。一个
+Label 是 attach 到 Pod 的一对键/值对，用来传递用户定义的属性。比如，你可能创建了一个“tier”和“app”标签，通过 Label（<strong>tier=frontend , app=myapp</strong>
+）来标记前端 Pod 容器，使用 Label（<strong>tier=backend, app=myapp</strong>）标记后台 Pod 。然后可以使用 Selectors 选择带有特定 Label 的 Pod，并且将 Service 或者
+Replication Controller 应用到上面。</p>
+<h2 id="replication-controller">Replication Controller</h2>
+<p>是否手动创建 Pod ，如果想要创建同一个容器的多份拷贝，需要一个个分别创建出来么，能否将 Pods 划到逻辑组里？</p>
+<p>Replication Controller 确保任意时间都有指定数量的 Pod “副本”在运行。如果为某个 Pod 创建了 Replication Controller 并且指定3个副本，它会创建 3 个
+Pod，并且持续监控它们。如果某个 Pod 不响应，那么 Replication Controller 会替换它，保持总数为3.如下面的动画所示：</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/03d07039d9fc80c0f692d6176f65936e.gif" title="Replication Controller" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/03d07039d9fc80c0f692d6176f65936e.gif" data-sub-html="<h2>Replication Controller</h2><p>Replication Controller</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/03d07039d9fc80c0f692d6176f65936e.gif"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/03d07039d9fc80c0f692d6176f65936e.gif, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/03d07039d9fc80c0f692d6176f65936e.gif 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/03d07039d9fc80c0f692d6176f65936e.gif 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/03d07039d9fc80c0f692d6176f65936e.gif" />
+    </a><figcaption class="image-caption">Replication Controller</figcaption>
+    </figure></p>
+<p>如果之前不响应的Pod恢复了，现在就有4个Pod了，那么Replication Controller会将其中一个终止保持总数为3。如果在运行中将副本总数改为5，Replication
+Controller会立刻启动2个新Pod，保证总数为5。还可以按照这样的方式缩小Pod，这个特性在执行滚动升级时很有用。</p>
+<p>当创建Replication Controller时，需要指定两个东西：</p>
+<ol>
+<li>
+<p>Pod模板：用来创建Pod副本的模板</p>
+</li>
+<li>
+<p>Label：Replication Controller需要监控的Pod的标签。</p>
+</li>
+</ol>
+<p>现在已经创建了Pod的一些副本，那么在这些副本上如何均衡负载呢？我们需要的是Service。</p>
+<h2 id="service">Service</h2>
+<p>如果Pods是短暂的，那么重启时IP地址可能会改变，怎么才能从前端容器正确可靠地指向后台容器呢？</p>
+<p>Service 是定义一系列 Pod 以及访问这些 Pod 的策略的一层抽象。Service 通过 Label 找到 Pod 组。因为 Service 是抽象的，所以在图表里通常看不到它们的存在，这也就让这一概念更难以理解。</p>
+<p>现在，假定有 2 个后台 Pod，并且定义后台 Service 的名称为 ‘backend-service’ ，lable 选择器为（<strong>tier=backend, app=myapp</strong>）。backend-service 的
+Service 会完成如下两件重要的事情：</p>
+<ul>
+<li>会为 Service 创建一个本地集群的DNS入口，因此前端Pod只需要DNS查找主机名为 ‘backend-service’，就能够解析出前端应用程序可用的IP地址。</li>
+<li>现在前端已经得到了后台服务的 IP 地址，但是它应该访问 2 个后台Pod的哪一个呢？Service 在这 2 个后台 Pod 之间提供透明的负载均衡，会将请求分发给其中的任意一个（如下面的动画所示）。通过每个 Node
+上运行的代理（kube-proxy）完成。</li>
+</ul>
+<p>下述动画展示了 Service 的功能。注意该图作了很多简化。如果不进入网络配置，那么达到透明的负载均衡目标所涉及的底层网络和路由相对先进。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/e7a273fcdc03d2417b354b60c253552f.gif" title="service" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/e7a273fcdc03d2417b354b60c253552f.gif" data-sub-html="<h2>service</h2><p>service</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/e7a273fcdc03d2417b354b60c253552f.gif"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/e7a273fcdc03d2417b354b60c253552f.gif, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/e7a273fcdc03d2417b354b60c253552f.gif 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/e7a273fcdc03d2417b354b60c253552f.gif 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/e7a273fcdc03d2417b354b60c253552f.gif" />
+    </a><figcaption class="image-caption">service</figcaption>
+    </figure></p>
+<p>有一个特别类型的Kubernetes Service，称为 &lsquo;LoadBalancer&rsquo; ，作为外部负载均衡器使用，在一定数量的 Pod 之间均衡流量。比如，对于负载均衡Web流量很有用。</p>
+<h2 id="node">Node</h2>
+<p>节点（上图橘色方框）是物理或者虚拟机器，作为Kubernetes worker，通常称为 Minion。每个节点都运行如下 Kubernetes 关键组件：</p>
+<ul>
+<li>Kubelet：是主节点代理。</li>
+<li>Kube-proxy：Service 使用其将链接路由到 Pod，如上文所述。</li>
+<li>Docker 或 Rocket：Kubernetes 使用的容器技术来创建容器。</li>
+</ul>
+<h2 id="kubernetes-master">Kubernetes Master</h2>
+<p>集群拥有一个Kubernetes Master（紫色方框）。Kubernetes Master提供集群的独特视角，并且拥有一系列组件，比如Kubernetes API Server。API
+Server提供可以用来和集群交互的REST端点。master节点包括用来创建和复制Pod的Replication Controller。</p>
+<h2 id="参考">参考</h2>
+<ul>
+<li><a href="http://www.dockone.io/article/932" target="_blank" rel="noopener noreffer">十分钟带你理解Kubernetes核心概念</a></li>
+</ul>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2022-04-14</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/k8s-glance/index.md" target="_blank">阅读原始文档</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="分享到 Twitter" data-sharer="twitter" data-url="https://xiaobinqt.github.io/k8s-glance/" data-title="k8s 核心概念" data-hashtags="k8s"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="https://xiaobinqt.github.io/k8s-glance/" data-hashtag="k8s"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Hacker News" data-sharer="hackernews" data-url="https://xiaobinqt.github.io/k8s-glance/" data-title="k8s 核心概念"><i class="fab fa-hacker-news fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Line" data-sharer="line" data-url="https://xiaobinqt.github.io/k8s-glance/" data-title="k8s 核心概念"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/line.svg"></i></a><a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="https://xiaobinqt.github.io/k8s-glance/" data-title="k8s 核心概念" data-image="xiaobinqt,Kubernetes 核心概念，什么是 k8s,k8s 自动化容器平台"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="分享到 百度" data-sharer="baidu" data-url="https://xiaobinqt.github.io/k8s-glance/" data-title="k8s 核心概念"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/baidu.svg"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/k8s/">k8s</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a target="_blank" href="/gitalk-init-issue/" class="prev" rel="prev" title="Gitalk 初始化 issue"><i class="fas fa-angle-left fa-fw"></i>Gitalk 初始化 issue</a>
+            <a target="_blank" href="/github-actions-replace-env-vars-in-file/" class="next" rel="next" title="Github Actions replace env vars in file">Github Actions replace env vars in file<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+<div id="comments"><div id="gitalk" class="comment"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://github.com/gitalk/gitalk"></a>Gitalk</a>.
+            </noscript></div></article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2018 - 2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">xiaobinqt</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span><span class="icp-splitter">&nbsp;|&nbsp;</span><br class="icp-br"/>
+                    <span class="icp"><a href='https://beian.miit.gov.cn/' target='_blank'>京ICP备16062974号-1</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery.js@1.2.0/dist/css/lightgallery.min.css"><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.37.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/algoliasearch@4.2.0/dist/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lightgallery.js@1.2.0/dist/js/lightgallery.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lg-thumbnail.js@1.2.0/dist/lg-thumbnail.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lg-zoom.js@1.2.0/dist/lg-zoom.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.4.0/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"gitalk":{"admin":["xiaobinqt"],"clientID":"47b15de6c2d8a0f8d707","clientSecret":"c70556c8b3a3b38ea7c72e539ff3b37d5bc1b4f3","id":"cdb83d044201cf14558d6785de116774","owner":"xiaobinqt","repo":"xiaobinqt.github.io","title":"k8s 核心概念"}},"lightGallery":{"actualSize":false,"exThumbImage":"data-thumbnail","hideBarsDelay":2000,"selector":".lightgallery","speed":400,"thumbContHeight":80,"thumbWidth":80,"thumbnail":true},"search":{"algoliaAppID":"CPNWIDNX0Y","algoliaIndex":"xiaobinqt.io","algoliaSearchKey":"80b84de0ebc766371dd27cd3e651c41e","highlightTag":"em","maxResultLength":20,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>
