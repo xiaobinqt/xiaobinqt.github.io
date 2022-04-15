@@ -28,13 +28,13 @@ math:
 enable: true
 ---
 
-[//]: # (author： xiaobinqt)
+<!-- author： xiaobinqt -->
+<!-- email： xiaobinqt@163.com -->
+<!-- https://xiaobinqt.github.io -->
+<!-- https://www.xiaobinqt.cn -->
 
-[//]: # (email： xiaobinqt@163.com)
 
-[//]: # (https://xiaobinqt.github.io)
 
-[//]: # (https://www.xiaobinqt.cn)
 
 
 
