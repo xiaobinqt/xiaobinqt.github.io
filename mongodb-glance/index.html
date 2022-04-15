@@ -10,7 +10,7 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://xiaobinqt.github.io/mongodb-glance/" /><meta property="og:image" content="https://xiaobinqt.github.io/logo.png"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2021-04-14T00:00:00+00:00" />
-<meta property="article:modified_time" content="2022-05-13T00:00:00+00:00" />
+<meta property="article:modified_time" content="2022-04-15T00:00:00+00:00" />
 
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://xiaobinqt.github.io/logo.png"/>
@@ -31,8 +31,8 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/xiaobinqt.github.io\/mongodb-glance\/"
-        },"image": ["https:\/\/xiaobinqt.github.io\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "mongodb","wordcount":  2619 ,
-        "url": "https:\/\/xiaobinqt.github.io\/mongodb-glance\/","datePublished": "2021-04-14T00:00:00+00:00","dateModified": "2022-05-13T00:00:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+        },"image": ["https:\/\/xiaobinqt.github.io\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "mongodb","wordcount":  3131 ,
+        "url": "https:\/\/xiaobinqt.github.io\/mongodb-glance\/","datePublished": "2021-04-14T00:00:00+00:00","dateModified": "2022-04-15T00:00:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "xxxx","logo": {
                     "@type": "ImageObject",
@@ -113,8 +113,8 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">Mongodb 学习笔记</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>xiaobinqt</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E5%BC%80%E5%8F%91%E8%80%85%E6%89%8B%E5%86%8C/"><i class="far fa-folder fa-fw"></i>开发者手册</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-04-14">2021-04-14</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2619 字&nbsp;
-                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 6 分钟&nbsp;</div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-04-14">2021-04-14</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 3131 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 7 分钟&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
                     <span>目录</span>
@@ -138,6 +138,7 @@
     <li><a href="#faq">FAQ</a>
       <ul>
         <li><a href="#空库不显示">空库不显示</a></li>
+        <li><a href="#定长表">定长表</a></li>
       </ul>
     </li>
     <li><a href="#参考">参考</a></li>
@@ -1003,7 +1004,99 @@
             alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/2d55f00bf1dc4aff97f652b8d0fbceaa.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" />
     </a><figcaption class="image-caption">显示新建的库</figcaption>
     </figure></p>
-<h2 id="参考">参考</h2>
+<h3 id="定长表">定长表</h3>
+<p>最近有个需求是，需要某个集合实现只保留固定数量的记录，自动淘汰老旧数据。</p>
+<p>通过创建集合的命令 <code>db.createCollection(name, options)</code> 可知，有个可选的 options 参数：</p>
+<p>参数说明：</p>
+<ul>
+<li>name: 要创建的集合名称</li>
+<li>options: 可选参数, 指定有关内存大小及索引的选项</li>
+</ul>
+<p>options 可以是如下参数：</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>类型  <div style="width: 40px;"></th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>capped</td>
+<td>布尔</td>
+<td>（可选）如果为 true，则创建固定集合。固定集合是指有着固定大小的集合，当达到最大值时，它会自动覆盖最早的文档。当该值为 true 时，必须指定 size 参数。</td>
+</tr>
+<tr>
+<td>autoIndexId</td>
+<td>布尔</td>
+<td><font color="red">3.2 之后不再支持该参数。</font>（可选）如为 true，自动在 <code>_id</code> 字段创建索引。默认为 false。</td>
+</tr>
+<tr>
+<td>size</td>
+<td>数值</td>
+<td>（可选）为固定集合指定一个最大值，即<strong>字节数</strong>。如果 capped 为 true，也需要指定该字段。</td>
+</tr>
+<tr>
+<td>max</td>
+<td>数值</td>
+<td>（可选）指定固定集合中包含文档的最大数量。</td>
+</tr>
+</tbody>
+</table>
+<p>如果是新建一个集合，这种方式肯定是可以的，但是如果要同步老数据呢？</p>
+<p>比如我有一个集合 <code>daily_report</code> 集合，里面有一些老数据：</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/97a6089b1a6c4100ae85c2cb84e34dcb.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="daily_report 集合" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/97a6089b1a6c4100ae85c2cb84e34dcb.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>daily_report 集合</h2><p>daily_report 集合</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/97a6089b1a6c4100ae85c2cb84e34dcb.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/97a6089b1a6c4100ae85c2cb84e34dcb.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/97a6089b1a6c4100ae85c2cb84e34dcb.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/97a6089b1a6c4100ae85c2cb84e34dcb.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/97a6089b1a6c4100ae85c2cb84e34dcb.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" />
+    </a><figcaption class="image-caption">daily_report 集合</figcaption>
+    </figure></p>
+<p>我的想法是，将 <code>daily_report</code> 重命名为 <code>daily_report_bak</code>，新建集合 <code>daily_report</code>，就 <code>daily_report_bak</code> 数据同步到 <code>daily_report</code>。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220415/2bef2b5958ff474c8892b3feb41435dd.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="流程" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220415/2bef2b5958ff474c8892b3feb41435dd.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>流程</h2><p>流程</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220415/2bef2b5958ff474c8892b3feb41435dd.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220415/2bef2b5958ff474c8892b3feb41435dd.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220415/2bef2b5958ff474c8892b3feb41435dd.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220415/2bef2b5958ff474c8892b3feb41435dd.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220415/2bef2b5958ff474c8892b3feb41435dd.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" />
+    </a><figcaption class="image-caption">流程</figcaption>
+    </figure></p>
+<p>重命名集合：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">db.daily_report.renameCollection<span class="o">(</span><span class="s2">&#34;daily_report_bak&#34;</span><span class="o">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>新建集合：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">db.createCollection<span class="o">(</span><span class="s2">&#34;daily_report&#34;</span>, <span class="o">{</span>capped:true,size:6142800,max:4<span class="o">})</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>该集合最大值字节数为：6142800字节 = 6142800B ≈ 6000KB ≈ 5M 。</p>
+<p>该集合中包含文档的最大数量为 4 条。</p>
+<p>同步旧数据</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">db.daily_report_bak.find<span class="o">()</span>.forEach<span class="o">(</span><span class="k">function</span><span class="o">(</span>doc<span class="o">){</span>db.daily_report.insert<span class="o">(</span>doc<span class="o">)})</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="参考">参考</h2>
 <ul>
 <li><a href="https://www.runoob.com/mongodb/mongodb-tutorial.html" target="_blank" rel="noopener noreffer">MongoDB 教程</a></li>
 <li><a href="http://cw.hubwiz.com/card/c/543b2f3cf86387171814c026/1/1/1/" target="_blank" rel="noopener noreffer">MongoDB高级查询</a></li>
@@ -1015,7 +1108,7 @@
     <div class="post-info">
         <div class="post-info-line">
             <div class="post-info-mod">
-                <span>更新于 2022-05-13</span>
+                <span>更新于 2022-04-15</span>
             </div>
             <div class="post-info-license"></div>
         </div>

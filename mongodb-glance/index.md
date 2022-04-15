@@ -429,6 +429,58 @@ func main() {
 
 ![显示新建的库](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/2d55f00bf1dc4aff97f652b8d0fbceaa.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '显示新建的库')
 
+### 定长表
+
+最近有个需求是，需要某个集合实现只保留固定数量的记录，自动淘汰老旧数据。
+
+通过创建集合的命令 `db.createCollection(name, options)` 可知，有个可选的 options 参数：
+
+参数说明：
+
++ name: 要创建的集合名称
++ options: 可选参数, 指定有关内存大小及索引的选项
+
+options 可以是如下参数：
+
+| 字段       | 类型  <div style="width: 40px;"> | 描述                                                                                 |
+|----------|--------------------------------|------------------------------------------------------------------------------------|
+| capped   | 布尔                             | （可选）如果为 true，则创建固定集合。固定集合是指有着固定大小的集合，当达到最大值时，它会自动覆盖最早的文档。当该值为 true 时，必须指定 size 参数。 |
+| autoIndexId | 布尔                             | <font color="red">3.2 之后不再支持该参数。</font>（可选）如为 true，自动在 `_id` 字段创建索引。默认为 false。     |
+| size     | 数值                             | （可选）为固定集合指定一个最大值，即**字节数**。如果 capped 为 true，也需要指定该字段。                               |
+| max      | 数值                             | （可选）指定固定集合中包含文档的最大数量。                                                              |
+
+如果是新建一个集合，这种方式肯定是可以的，但是如果要同步老数据呢？
+
+比如我有一个集合 `daily_report` 集合，里面有一些老数据：
+
+![daily_report 集合](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/97a6089b1a6c4100ae85c2cb84e34dcb.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'daily_report 集合')
+
+我的想法是，将 `daily_report` 重命名为 `daily_report_bak`，新建集合 `daily_report`，就 `daily_report_bak` 数据同步到 `daily_report`。
+
+![流程](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220415/2bef2b5958ff474c8892b3feb41435dd.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '流程')
+
+重命名集合：
+
+```shell
+db.daily_report.renameCollection("daily_report_bak")
+```
+
+新建集合：
+
+```shell
+db.createCollection("daily_report", {capped:true,size:6142800,max:4})
+```
+
+该集合最大值字节数为：6142800字节 = 6142800B ≈ 6000KB ≈ 5M 。
+
+该集合中包含文档的最大数量为 4 条。
+
+同步旧数据
+
+```shell
+db.daily_report_bak.find().forEach(function(doc){db.daily_report.insert(doc)})
+```
+
 ## 参考
 
 + [MongoDB 教程](https://www.runoob.com/mongodb/mongodb-tutorial.html)
