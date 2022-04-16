@@ -13,7 +13,7 @@ draft: false
 author: "xiaobinqt"
 description: "mongodb , mongodb 概念,mongodb 查询语句,golang 操作 mongodb,globalsign/mgo 使用"
 
-featuredImage: ""
+featuredImage: "https://cdn.xiaobinqt.cn/xiaobinqt.io/20220416/73b2a45bdf9440789438ea68af47fb95.png"
 
 reproduce: false
 
@@ -473,7 +473,7 @@ options 可以是如下参数：
 |----------|--------------------------------|------------------------------------------------------------------------------------|
 | capped   | 布尔                             | （可选）如果为 true，则创建固定集合。固定集合是指有着固定大小的集合，当达到最大值时，它会自动覆盖最早的文档。当该值为 true 时，必须指定 size 参数。 |
 | autoIndexId | 布尔                             | <font color="red">3.2 之后不再支持该参数。</font>（可选）如为 true，自动在 `_id` 字段创建索引。默认为 false。     |
-| size     | 数值                             | （可选）为固定集合指定一个最大值，即**字节数**。如果 capped 为 true，也需要指定该字段。                               |
+| size     | 数值                             | （可选）为固定集合指定一个最大值，即 **字节数** 。如果 capped 为 true，也需要指定该字段。                             |
 | max      | 数值                             | （可选）指定固定集合中包含文档的最大数量。                                                              |
 
 如果是新建一个集合，这种方式肯定是可以的，但是如果要同步老数据呢？
