@@ -1,5 +1,5 @@
 ---
-title: "书籍/工具收藏"
+title: "电子书/工具收藏"
 
 date: 2021-10-17
 
@@ -15,7 +15,7 @@ resources:
   src: ""
 
 tags: ["备忘录"]
-categories: ["收藏"]
+categories: ["开发者手册"]
 lightgallery: true
 
 toc:
