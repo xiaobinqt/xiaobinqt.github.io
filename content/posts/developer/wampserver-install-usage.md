@@ -17,7 +17,7 @@ featuredImage: ""
 
 reproduce: false
 
-tags: ["wampserver"]
+tags: ["wampserver","php"]
 categories: ["开发者手册"]
 lightgallery: true
 
