@@ -14,7 +14,7 @@ reproduce: true
 author: "xiaobinqt"
 description: "HTTP,HTTP协议,超文本传输协议,互联网,TCP/IP,Transmission Control Protocol,传输控制协议,ISO"
 
-tags: ["http"]
+tags: ["http/https"]
 categories: ["理解计算机"]
 lightgallery: true
 
