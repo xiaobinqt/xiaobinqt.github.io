@@ -5,7 +5,7 @@ date: 2022-02-17
 
 lastmod: 2022-03-17
 
-draft: false
+draft: true
 
 author: "xiaobinqt"
 description: "C语言定义字符串的方法,C语言，字符串"
