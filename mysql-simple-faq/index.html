@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>mysql 常见问题 - xiaobinqt&#39;s blog</title><meta name="Description" content="xiaobinqt, mysql 常见问题,主键和 unique 的区别,什么是 mysql 结束符,什么是 mysql 外键,什么是 ZEROFILL 显示宽度,limit offset 的区别,mysql 判断语句,mysql 循环语句,mysql DUPLICATE KEY UPDATE 用法,mysql 变量"><meta property="og:title" content="mysql 常见问题" />
+<meta property="og:description" content="xiaobinqt, mysql 常见问题,主键和 unique 的区别,什么是 mysql 结束符,什么是 mysql 外键,什么是 ZEROFILL 显示宽度,limit offset 的区别,mysql 判断语句,mysql 循环语句,mysql DUPLICATE KEY UPDATE 用法,mysql 变量" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://xiaobinqt.github.io/mysql-simple-faq/" /><meta property="og:image" content="https://xiaobinqt.github.io/logo.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2019-10-03T00:00:00+00:00" />
+<meta property="article:modified_time" content="2022-04-20T00:00:00+00:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://xiaobinqt.github.io/logo.png"/>
+
+<meta name="twitter:title" content="mysql 常见问题"/>
+<meta name="twitter:description" content="xiaobinqt, mysql 常见问题,主键和 unique 的区别,什么是 mysql 结束符,什么是 mysql 外键,什么是 ZEROFILL 显示宽度,limit offset 的区别,mysql 判断语句,mysql 循环语句,mysql DUPLICATE KEY UPDATE 用法,mysql 变量"/>
+<meta name="application-name" content="xiaobinqt">
+<meta name="apple-mobile-web-app-title" content="xiaobinqt"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c">
+<link rel="stylesheet" href="//at.alicdn.com/t/font_3267767_nzwpo5kwtd.css">
+<script src="https://cdn.bootcss.com/blueimp-md5/1.1.0/js/md5.min.js"></script><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://xiaobinqt.github.io/mysql-simple-faq/" /><link rel="prev" href="https://xiaobinqt.github.io/mysql-data-type/" /><link rel="next" href="https://xiaobinqt.github.io/funny-abbreviations/" /><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "mysql 常见问题",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/xiaobinqt.github.io\/mysql-simple-faq\/"
+        },"image": ["https:\/\/xiaobinqt.github.io\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "mysql","wordcount":  3111 ,
+        "url": "https:\/\/xiaobinqt.github.io\/mysql-simple-faq\/","datePublished": "2019-10-03T00:00:00+00:00","dateModified": "2022-04-20T00:00:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+            "@type": "Organization",
+            "name": "xxxx","logo": {
+                    "@type": "ImageObject",
+                    "url": "https:\/\/xiaobinqt.github.io\/images\/avatar.png",
+                    "width":  528 ,
+                    "height":  560 
+                }},"author": {
+                "@type": "Person",
+                "name": "xiaobinqt"
+            },"description": "xiaobinqt, mysql 常见问题,主键和 unique 的区别,什么是 mysql 结束符,什么是 mysql 外键,什么是 ZEROFILL 显示宽度,limit offset 的区别,mysql 判断语句,mysql 循环语句,mysql DUPLICATE KEY UPDATE 用法,mysql 变量"
+    }
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="xiaobinqt&#39;s blog"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>萧十一郎</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/about/"> 关于 </a><a class="menu-item" href="/links/"> 友链 </a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="xiaobinqt&#39;s blog"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>萧十一郎</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/about/" title="">关于</a><a class="menu-item" href="/links/" title="">友链</a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">目录</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">mysql 常见问题</h1><h2 class="single-subtitle">Mysql FAQ</h2><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>xiaobinqt</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/mysql/"><i class="far fa-folder fa-fw"></i>mysql</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2019-10-03">2019-10-03</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 3111 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 7 分钟&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#主键和-unique-的区别">主键和 <code>UNIQUE</code> 的区别</a></li>
+    <li><a href="#结束符">结束符</a></li>
+    <li><a href="#什么是外键">什么是外键</a>
+      <ul>
+        <li><a href="#示例">示例</a></li>
+      </ul>
+    </li>
+    <li><a href="#zerofill">ZEROFILL</a>
+      <ul>
+        <li><a href="#注意">注意</a></li>
+      </ul>
+    </li>
+    <li><a href="#limitoffset-区别">limit、offset 区别</a></li>
+    <li><a href="#常用函数">常用函数</a>
+      <ul>
+        <li><a href="#文本处理函数">文本处理函数</a></li>
+        <li><a href="#时间处理函数">时间处理函数</a></li>
+        <li><a href="#数值处理函数">数值处理函数</a></li>
+      </ul>
+    </li>
+    <li><a href="#count-函数">COUNT 函数</a></li>
+    <li><a href="#查询">查询</a></li>
+    <li><a href="#判断语句">判断语句</a>
+      <ul>
+        <li><a href="#if-then">if then</a></li>
+        <li><a href="#case-when">case when</a></li>
+      </ul>
+    </li>
+    <li><a href="#循环语句">循环语句</a>
+      <ul>
+        <li><a href="#while">WHILE</a></li>
+        <li><a href="#repeat">REPEAT</a></li>
+        <li><a href="#loop">LOOP</a></li>
+      </ul>
+    </li>
+    <li><a href="#duplicate-key-update">DUPLICATE KEY UPDATE</a></li>
+    <li><a href="#自定义变量">自定义变量</a>
+      <ul>
+        <li><a href="#单个变量">单个变量</a></li>
+        <li><a href="#多个变量">多个变量</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><!-- author： xiaobinqt -->
+<!-- email： xiaobinqt@163.com -->
+<!-- https://xiaobinqt.github.io -->
+<!-- https://www.xiaobinqt.cn -->
+<h2 id="主键和-unique-的区别">主键和 <code>UNIQUE</code> 的区别</h2>
+<p>主键和<code>UNIQUE</code>约束都能保证某个列或者列组合的唯一性，但是：</p>
+<ul>
+<li>
+<p>一张表中只能定义一个主键，却可以定义多个<code>UNIQUE</code>约束！</p>
+</li>
+<li>
+<p>主键列不允许存放<code>NULL</code>，而声明了<code>UNIQUE</code>属性的列可以存放<code>NULL</code>，而且<code>NULL</code>可以重复地出现在多条记录中。</p>
+</li>
+</ul>
+<h2 id="结束符">结束符</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">delimiter EOF  <span class="c1"># 将结束符改为 EOF</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/fdd2e38117284a7f8b46ba3af60c26c9.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="修改结束符" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/fdd2e38117284a7f8b46ba3af60c26c9.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>修改结束符</h2><p>修改结束符</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/fdd2e38117284a7f8b46ba3af60c26c9.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/fdd2e38117284a7f8b46ba3af60c26c9.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/fdd2e38117284a7f8b46ba3af60c26c9.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/fdd2e38117284a7f8b46ba3af60c26c9.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/fdd2e38117284a7f8b46ba3af60c26c9.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" />
+    </a><figcaption class="image-caption">修改结束符</figcaption>
+    </figure></p>
+<p>由☝️图可知，将默认的结束符从 <code>;</code> 改为 <code>EOF</code>。</p>
+<h2 id="什么是外键">什么是外键</h2>
+<p>如果<code>A</code>表中的某个列或者某些列依赖与<code>B</code>表中的某个列或者某些列，那么就称<code>A</code>表为子表，<code>B</code>表为父表。子表和父表可以使用外键来关联起来。</p>
+<p><strong>父表中被子表依赖的列或者列组合必须建立索引</strong>，如果该列或者列组合已经是主键或者有<code>UNIQUE</code>属性，那么也就被默认建立了索引。</p>
+<p>定义外键的语法：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">CONSTRAINT</span><span class="w"> </span><span class="p">[</span><span class="err">外键名称</span><span class="p">]</span><span class="w"> </span><span class="k">FOREIGN</span><span class="w"> </span><span class="k">KEY</span><span class="p">(</span><span class="err">列</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="err">列</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="p">...)</span><span class="w"> </span><span class="k">REFERENCES</span><span class="w"> </span><span class="err">父表名</span><span class="p">(</span><span class="err">父列</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="err">父列</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="p">...);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="示例">示例</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">student_score</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nb">number</span><span class="w">  </span><span class="nb">INT</span><span class="p">,</span><span class="w"> </span><span class="c1">-- 学号
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">    </span><span class="n">subject</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">30</span><span class="p">),</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">score</span><span class="w">   </span><span class="n">TINYINT</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="nb">number</span><span class="p">,</span><span class="w"> </span><span class="n">subject</span><span class="p">),</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">CONSTRAINT</span><span class="w"> </span><span class="k">FOREIGN</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="nb">number</span><span class="p">)</span><span class="w"> </span><span class="k">REFERENCES</span><span class="w"> </span><span class="n">student_info</span><span class="w"> </span><span class="p">(</span><span class="nb">number</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>☝️ 如上，在对<code>student_score</code>表插入数据的时候，MySQL都会检查插入的学号是否能在<code>student_info</code>表中找到，如果找不到则会报错，因为<code>student_score</code>表中的<code>number</code>
+列依赖于<code>student_info</code>表的<code>number</code>列，也就是，如果没有这个学生，何来成绩？</p>
+<h2 id="zerofill">ZEROFILL</h2>
+<p>对于<strong>无符号整数类型</strong>的列，可以在查询数据的时候让数字左边补 0，如果想实现这个效果需要给该列加一个<code>ZEROFILL</code>属性：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">zerofill_table</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">i1</span><span class="w"> </span><span class="nb">INT</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="w"> </span><span class="n">UNSIGNED</span><span class="w"> </span><span class="n">ZEROFILL</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">i2</span><span class="w"> </span><span class="nb">INT</span><span class="w"> </span><span class="n">UNSIGNED</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>INT后边的<code>(5)</code>，这个 5 就是显示宽度，默认是10，也就是 <code>INT</code> 也 <code>INT(10)</code> 效果是一样的。</p>
+<h3 id="注意">注意</h3>
+<ul>
+<li>该列必须是整数类型</li>
+<li>该列必须有 <code>UNSIGNED ZEROFILL</code>的属性</li>
+<li>该列的实际值的位数必须小于显示宽度</li>
+<li>在创建表的时候，如果声明了<code>ZEROFILL</code>属性的列没有声明<code>UNSIGNED</code>属性，MySQL会为该列自动生成<code>UNSIGNED</code>属性</li>
+<li><strong>显示宽度并不会影响实际类型的实际存储空间</strong></li>
+<li>对于没有声明<code>ZEROFILL</code>属性的列，显示宽度没有任何作用，只有在查询声明了<code>ZEROFILL</code>属性的列时，显示宽度才会起作用，否则可以忽略显示宽度这个东西的存在。</li>
+</ul>
+<h2 id="limitoffset-区别">limit、offset 区别</h2>
+<blockquote>
+<p>从 0 开始计数，第1条记录在 MYSQL 中是第 0 条。</p>
+</blockquote>
+<p>limit 和 offset 都可以用来限制查询条数，一般用做分页。</p>
+<ul>
+<li>当 limit 后面跟一个参数的时候，该参数表示要取的数据的数量</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">select</span><span class="o">*</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="k">limit</span><span class="w"> </span><span class="mi">3</span><span class="w"> 
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>表示直接取前三条数据。</p>
+<ul>
+<li>当 limit 后面跟两个参数的时候，第一个数表示<strong>开始行</strong>，后一位表示要取的数量，例如</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="k">limit</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>从 0 行开始计算，取第 1 - 3 条数据，也就是取 1,2,3 三条数据。</p>
+<ul>
+<li>当 limit 和 offset 组合使用的时候，limit 后面只能有一个参数，表示要取的的数量，offset 表示开始行。</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="k">limit</span><span class="w"> </span><span class="mi">3</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">offset</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>从 0 行开始计算，取第 1 - 3 条数据，也就是取 1,2,3 三条数据。</p>
+<h2 id="常用函数">常用函数</h2>
+<h3 id="文本处理函数">文本处理函数</h3>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>调用示例</th>
+<th>示例结果</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>LEFT</code></td>
+<td><code>LEFT('abc123', 3)</code></td>
+<td><code>abc</code></td>
+<td>给定字符串从左边取指定长度的子串</td>
+</tr>
+<tr>
+<td><code>RIGHT</code></td>
+<td><code>RIGHT('abc123', 3)</code></td>
+<td><code>123</code></td>
+<td>给定字符串从右边取指定长度的子串</td>
+</tr>
+<tr>
+<td><code>LENGTH</code></td>
+<td><code>LENGTH('abc')</code></td>
+<td><code>3</code></td>
+<td>给定字符串的长度</td>
+</tr>
+<tr>
+<td><code>LOWER</code></td>
+<td><code>LOWER('ABC')</code></td>
+<td><code>abc</code></td>
+<td>给定字符串的小写格式</td>
+</tr>
+<tr>
+<td><code>UPPER</code></td>
+<td><code>UPPER('abc')</code></td>
+<td><code>ABC</code></td>
+<td>给定字符串的大写格式</td>
+</tr>
+<tr>
+<td><code>LTRIM</code></td>
+<td><code>LTRIM(' abc')</code></td>
+<td><code>abc</code></td>
+<td>给定字符串左边空格去除后的格式</td>
+</tr>
+<tr>
+<td><code>RTRIM</code></td>
+<td><code>RTRIM('abc ')</code></td>
+<td><code>abc</code></td>
+<td>给定字符串右边空格去除后的格式</td>
+</tr>
+<tr>
+<td><code>SUBSTRING</code></td>
+<td><code>SUBSTRING('abc123', 2, 3)</code></td>
+<td><code>bc1</code></td>
+<td>给定字符串从指定位置截取指定长度的子串</td>
+</tr>
+<tr>
+<td><code>CONCAT </code></td>
+<td><code>CONCAT('abc', '123', 'xyz')</code></td>
+<td><code>abc123xyz</code></td>
+<td>将给定的各个字符串拼接成一个新字符串</td>
+</tr>
+</tbody>
+</table>
+<h3 id="时间处理函数">时间处理函数</h3>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>调用示例</th>
+<th>示例结果</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NOW</code></td>
+<td><code>NOW()</code></td>
+<td><code>2019-08-16 17:10:43</code></td>
+<td>返回当前日期和时间</td>
+</tr>
+<tr>
+<td><code>CURDATE</code></td>
+<td><code>CURDATE()</code></td>
+<td><code>2019-08-16</code></td>
+<td>返回当前日期</td>
+</tr>
+<tr>
+<td><code>CURTIME</code></td>
+<td><code>CURTIME()</code></td>
+<td><code>17:10:43</code></td>
+<td>返回当前时间</td>
+</tr>
+<tr>
+<td><code>DATE</code></td>
+<td><code>DATE('2019-08-16 17:10:43')</code></td>
+<td><code>2019-08-16</code></td>
+<td>将给定日期和时间值的日期提取出来</td>
+</tr>
+<tr>
+<td><code>DATE_ADD</code></td>
+<td><code>DATE_ADD('2019-08-16 17:10:43', INTERVAL 2 DAY)</code></td>
+<td><code>2019-08-18 17:10:43</code></td>
+<td>将给定的日期和时间值添加指定的时间间隔</td>
+</tr>
+<tr>
+<td><code>DATE_SUB</code></td>
+<td><code>DATE_SUB('2019-08-16 17:10:43', INTERVAL 2 DAY)</code></td>
+<td><code>2019-08-14 17:10:43</code></td>
+<td>将给定的日期和时间值减去指定的时间间隔</td>
+</tr>
+<tr>
+<td><code>DATEDIFF</code></td>
+<td><code>DATEDIFF('2019-08-16', '2019-08-17')</code></td>
+<td><code>-1</code></td>
+<td>返回两个日期之间的天数（负数代表前一个参数代表的日期比较小）</td>
+</tr>
+<tr>
+<td><code>DATE_FORMAT</code></td>
+<td><code>DATE_FORMAT(NOW(),'%m-%d-%Y')</code></td>
+<td><code>08-16-2019</code></td>
+<td>用给定的格式显示日期和时间</td>
+</tr>
+</tbody>
+</table>
+<p>常见时间单位</p>
+<table>
+<thead>
+<tr>
+<th>时间单位</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MICROSECOND</code></td>
+<td>毫秒</td>
+</tr>
+<tr>
+<td><code>SECOND</code></td>
+<td>秒</td>
+</tr>
+<tr>
+<td><code>MINUTE</code></td>
+<td>分钟</td>
+</tr>
+<tr>
+<td><code>HOUR</code></td>
+<td>小时</td>
+</tr>
+<tr>
+<td><code>DAY</code></td>
+<td>天</td>
+</tr>
+<tr>
+<td><code>WEEK</code></td>
+<td>星期</td>
+</tr>
+<tr>
+<td><code>MONTH</code></td>
+<td>月</td>
+</tr>
+<tr>
+<td><code>QUARTER</code></td>
+<td>季度</td>
+</tr>
+<tr>
+<td><code>YEAR</code></td>
+<td>年</td>
+</tr>
+</tbody>
+</table>
+<h3 id="数值处理函数">数值处理函数</h3>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>调用示例</th>
+<th>示例结果</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ABS</code></td>
+<td><code>ABS(-1)</code></td>
+<td><code>1</code></td>
+<td>取绝对值</td>
+</tr>
+<tr>
+<td><code>Pi</code></td>
+<td><code>PI()</code></td>
+<td><code>3.141593</code></td>
+<td>返回圆周率</td>
+</tr>
+<tr>
+<td><code>COS</code></td>
+<td><code>COS(PI())</code></td>
+<td><code>-1</code></td>
+<td>返回一个角度的余弦</td>
+</tr>
+<tr>
+<td><code>EXP</code></td>
+<td><code>EXP(1)</code></td>
+<td><code>2.718281828459045</code></td>
+<td>返回e的指定次方</td>
+</tr>
+<tr>
+<td><code>MOD</code></td>
+<td><code>MOD(5,2)</code></td>
+<td><code>1</code></td>
+<td>返回除法的余数</td>
+</tr>
+<tr>
+<td><code>RAND</code></td>
+<td><code>RAND()</code></td>
+<td><code>0.7537623539136372</code></td>
+<td>返回一个随机数</td>
+</tr>
+<tr>
+<td><code>SIN</code></td>
+<td><code>SIN(PI()/2)</code></td>
+<td><code>1</code></td>
+<td>返回一个角度的正弦</td>
+</tr>
+<tr>
+<td><code>SQRT</code></td>
+<td><code>SQRT(9)</code></td>
+<td><code>3</code></td>
+<td>返回一个数的平方根</td>
+</tr>
+<tr>
+<td><code>TAN</code></td>
+<td><code>TAN(0)</code></td>
+<td><code>0</code></td>
+<td>返回一个角度的正切</td>
+</tr>
+</tbody>
+</table>
+<h2 id="count-函数">COUNT 函数</h2>
+<p>COUNT函数使用来统计<strong>行数</strong>的，有下边两种使用方式：</p>
+<ul>
+<li>
+<p><code>COUNT(*)</code>：对表中行的数目进行计数，不管列的值是不是NULL。</p>
+</li>
+<li>
+<p><code>COUNT(列名)</code>：对特定的列进行计数，会忽略掉该列为NULL的行。</p>
+</li>
+</ul>
+<p><strong>两者的区别是会不会忽略统计列的值为NULL的行</strong>。</p>
+<h2 id="查询">查询</h2>
+<p><code>where</code> 竟然可以这么写😇</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="n">edge</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">where</span><span class="w"> </span><span class="p">(</span><span class="n">ip</span><span class="p">,</span><span class="w"> </span><span class="k">mode</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;192.168.50.101&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>in</code> 竟然可以这么写😂</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="n">edge</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">where</span><span class="w"> </span><span class="p">(</span><span class="n">ip</span><span class="p">,</span><span class="w"> </span><span class="k">mode</span><span class="p">)</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="p">(</span><span class="k">select</span><span class="w"> </span><span class="s1">&#39;192.168.50.101&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="判断语句">判断语句</h2>
+<h3 id="if-then">if then</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">IF 表达式 THEN
+</span></span><span class="line"><span class="cl">    处理语句列表
+</span></span><span class="line"><span class="cl"><span class="o">[</span>ELSEIF 表达式 THEN
+</span></span><span class="line"><span class="cl">    处理语句列表<span class="o">]</span>
+</span></span><span class="line"><span class="cl">... <span class="c1"># 这里可以有多个ELSEIF语句</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>ELSE
+</span></span><span class="line"><span class="cl">    处理语句列表<span class="o">]</span>
+</span></span><span class="line"><span class="cl">END IF<span class="p">;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="case-when">case when</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">CASE WHEN 表达式 THEN 处理语句
+</span></span><span class="line"><span class="cl">    <span class="k">else</span> 表达式 end 
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl"><span class="c1">## 或者    </span>
+</span></span><span class="line"><span class="cl">CASE when 表达式 <span class="k">then</span> 处理语句
+</span></span><span class="line"><span class="cl">    when 表达式 <span class="k">then</span> 处理语句
+</span></span><span class="line"><span class="cl">    ... 可以与多个 when 表达式 <span class="k">then</span> 处理语句
+</span></span><span class="line"><span class="cl">   END
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>示例：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="k">select</span> *, 
+</span></span><span class="line"><span class="cl">	CASE WHEN <span class="nv">name</span><span class="o">=</span><span class="s1">&#39;大彬&#39;</span> THEN <span class="s1">&#39;角色1&#39;</span> 
+</span></span><span class="line"><span class="cl">    <span class="k">else</span> <span class="s1">&#39;角色2&#39;</span> end as processed_name ,
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> when <span class="nv">status</span> <span class="o">=</span> <span class="m">1</span> <span class="k">then</span> <span class="s1">&#39;已处理&#39;</span>
+</span></span><span class="line"><span class="cl">    when <span class="nv">status</span> <span class="o">=</span> <span class="m">0</span> <span class="k">then</span> <span class="s1">&#39;未处理&#39;</span>
+</span></span><span class="line"><span class="cl">    when <span class="nv">status</span> <span class="o">=</span> <span class="m">2</span> <span class="k">then</span> <span class="s1">&#39;待处理&#39;</span> end as processed_status
+</span></span><span class="line"><span class="cl">    from user<span class="p">;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="循环语句">循环语句</h2>
+<h3 id="while">WHILE</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">WHILE 表达式 DO
+</span></span><span class="line"><span class="cl">    处理语句列表
+</span></span><span class="line"><span class="cl">END WHILE<span class="p">;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="repeat">REPEAT</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">REPEAT
+</span></span><span class="line"><span class="cl">    处理语句列表
+</span></span><span class="line"><span class="cl">UNTIL 表达式 END REPEAT<span class="p">;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="loop">LOOP</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">LOOP
+</span></span><span class="line"><span class="cl">    处理语句列表
+</span></span><span class="line"><span class="cl">END LOOP<span class="p">;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>在使用 <code>LOOP</code> 时可以使用<code>RETURN</code>语句直接让函数结束就可以达到停止循环的效果，也可以使用<code>LEAVE</code>语句，不过使用<code>LEAVE</code>时，需要先在<code>LOOP</code>语句前边放置一个所谓的标记。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">CREATE FUNCTION sum_all<span class="o">(</span>n INT UNSIGNED<span class="o">)</span>
+</span></span><span class="line"><span class="cl">RETURNS INT
+</span></span><span class="line"><span class="cl">BEGIN
+</span></span><span class="line"><span class="cl">    DECLARE result INT DEFAULT 0<span class="p">;</span>
+</span></span><span class="line"><span class="cl">    DECLARE i INT DEFAULT 1<span class="p">;</span>
+</span></span><span class="line"><span class="cl">    flag:LOOP
+</span></span><span class="line"><span class="cl">        IF i &gt; n THEN
+</span></span><span class="line"><span class="cl">            LEAVE flag<span class="p">;</span>
+</span></span><span class="line"><span class="cl">        END IF<span class="p">;</span>
+</span></span><span class="line"><span class="cl">        SET <span class="nv">result</span> <span class="o">=</span> result + i<span class="p">;</span>
+</span></span><span class="line"><span class="cl">        SET <span class="nv">i</span> <span class="o">=</span> i + 1<span class="p">;</span>
+</span></span><span class="line"><span class="cl">    END LOOP flag<span class="p">;</span>
+</span></span><span class="line"><span class="cl">    RETURN result<span class="p">;</span>
+</span></span><span class="line"><span class="cl">END
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>☝️示例中，在<code>LOOP</code>语句前加了一个<code>flag:</code>，相当于为这个循环打了一个名叫<code>flag</code>的标记，然后在对应的<code>END LOOP</code>语句后边也把这个标记名<code>flag</code>
+给写上了。在存储函数的函数体中使用<code>LEAVE flag</code>语句来结束<code>flag</code>这个标记所代表的循环。</p>
+<blockquote>
+<p>标记主要是为了可以跳到指定的语句中</p>
+</blockquote>
+<h2 id="duplicate-key-update">DUPLICATE KEY UPDATE</h2>
+<p>对于<strong>主键</strong>或者有<strong>唯一性约束</strong>的列或列组合来说，新插入的记录如果和表中已存在的记录重复的话，我们可以选择的策略不仅仅是忽略（<code>INSERT IGNORE</code>）该条记录的插入，也可以选择更新这条重复的旧记录。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="o">`</span><span class="n">t</span><span class="o">`</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">`</span><span class="n">idt</span><span class="o">`</span><span class="w">   </span><span class="nb">int</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="n">AUTO_INCREMENT</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">`</span><span class="n">phone</span><span class="o">`</span><span class="w"> </span><span class="nb">char</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span><span class="w">    </span><span class="k">DEFAULT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">`</span><span class="n">name</span><span class="o">`</span><span class="w">  </span><span class="nb">varchar</span><span class="p">(</span><span class="mi">45</span><span class="p">)</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="o">`</span><span class="n">idt</span><span class="o">`</span><span class="p">),</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">UNIQUE</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="o">`</span><span class="n">idt_UNIQUE</span><span class="o">`</span><span class="w"> </span><span class="p">(</span><span class="o">`</span><span class="n">idt</span><span class="o">`</span><span class="p">),</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">UNIQUE</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="o">`</span><span class="n">phone_UNIQUE</span><span class="o">`</span><span class="w"> </span><span class="p">(</span><span class="o">`</span><span class="n">phone</span><span class="o">`</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">)</span><span class="w"> </span><span class="n">ENGINE</span><span class="o">=</span><span class="n">InnoDB</span><span class="w"> </span><span class="n">AUTO_INCREMENT</span><span class="o">=</span><span class="mi">2</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="n">CHARSET</span><span class="o">=</span><span class="n">utf8</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>如上表，<code>idt</code> 是唯一主键，<code>phone</code> 是 UNIQUE 唯一约束。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/1ba316643e874fcb9e90dcaa9b333f60.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="图1" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/1ba316643e874fcb9e90dcaa9b333f60.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>图1</h2><p>图1</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/1ba316643e874fcb9e90dcaa9b333f60.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/1ba316643e874fcb9e90dcaa9b333f60.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/1ba316643e874fcb9e90dcaa9b333f60.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/1ba316643e874fcb9e90dcaa9b333f60.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/1ba316643e874fcb9e90dcaa9b333f60.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" />
+    </a><figcaption class="image-caption">图1</figcaption>
+    </figure></p>
+<p>表里有条记录 <code>phone = 15212124125</code>，<code>name = '吴彦祖'</code>，现在再添加一条记录，phone 跟 <code>name = '吴彦祖'</code> 是一样的，但是 <code>name='宋江'</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="p">(</span><span class="n">phone</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;15212124125&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;宋江&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">DUPLICATE</span><span class="w"> </span><span class="k">KEY</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">UPDATE</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;宋江&#39;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">-- 对于批量插入可以这么写，`VALUES(列名)`的形式来引用待插入记录中对应列的值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="p">(</span><span class="n">phone</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;15212124125&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;宋江&#39;</span><span class="p">),</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">       </span><span class="p">(</span><span class="s1">&#39;15212124126&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;李逵&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">DUPLICATE</span><span class="w"> </span><span class="k">KEY</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">UPDATE</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="o">`</span><span class="n">name</span><span class="o">`</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>结果：</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/6998e509ee9f4c3eacb72f9c5b42080b.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="图2" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/6998e509ee9f4c3eacb72f9c5b42080b.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>图2</h2><p>图2</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/6998e509ee9f4c3eacb72f9c5b42080b.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/6998e509ee9f4c3eacb72f9c5b42080b.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/6998e509ee9f4c3eacb72f9c5b42080b.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/6998e509ee9f4c3eacb72f9c5b42080b.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/6998e509ee9f4c3eacb72f9c5b42080b.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" />
+    </a><figcaption class="image-caption">图2</figcaption>
+    </figure></p>
+<p>由结果可知，phone 电话的值没有改变，但是 name 被修改成了宋江。</p>
+<p>也就是说，如果 <code>t</code> 表中已经存在 <code>phone</code> 的列值为 <code>15212124125</code> 的记录（因为 <code>phone</code>列具有<code>UNIQUE</code>约束），那么就把该记录的 <code>name</code>列更新为<code>'宋江'</code>。</p>
+<p>对于那些是主键或者具有UNIQUE约束的列或者列组合来说，如果表中已存在的记录中有与待插入记录在这些列或者列组合上重复的值，我们可以使用VALUES(列名)的形式来引用待插入记录中对应列的值</p>
+<h2 id="自定义变量">自定义变量</h2>
+<h3 id="单个变量">单个变量</h3>
+<p>设置单个变量可以使用 <code>SET</code> 关键字。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/7d7a7bc57efa43e1ba30412b76c53917.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="设置单个变量" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/7d7a7bc57efa43e1ba30412b76c53917.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>设置单个变量</h2><p>设置单个变量</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/7d7a7bc57efa43e1ba30412b76c53917.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/7d7a7bc57efa43e1ba30412b76c53917.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/7d7a7bc57efa43e1ba30412b76c53917.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/7d7a7bc57efa43e1ba30412b76c53917.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/7d7a7bc57efa43e1ba30412b76c53917.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" />
+    </a><figcaption class="image-caption">设置单个变量</figcaption>
+    </figure></p>
+<h3 id="多个变量">多个变量</h3>
+<p>设置多个变量可以使用 <code>INTO</code> 关键字。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/9c894c060ac34628abd1b9071d4e7e27.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="设置多个变量" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/9c894c060ac34628abd1b9071d4e7e27.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>设置多个变量</h2><p>设置多个变量</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/9c894c060ac34628abd1b9071d4e7e27.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/9c894c060ac34628abd1b9071d4e7e27.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/9c894c060ac34628abd1b9071d4e7e27.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/9c894c060ac34628abd1b9071d4e7e27.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/9c894c060ac34628abd1b9071d4e7e27.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" />
+    </a><figcaption class="image-caption">设置多个变量</figcaption>
+    </figure></p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2022-04-20</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/mysql-simple-faq/index.md" target="_blank">阅读原始文档</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="分享到 Twitter" data-sharer="twitter" data-url="https://xiaobinqt.github.io/mysql-simple-faq/" data-title="mysql 常见问题" data-hashtags="mysql"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="https://xiaobinqt.github.io/mysql-simple-faq/" data-hashtag="mysql"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Hacker News" data-sharer="hackernews" data-url="https://xiaobinqt.github.io/mysql-simple-faq/" data-title="mysql 常见问题"><i class="fab fa-hacker-news fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Line" data-sharer="line" data-url="https://xiaobinqt.github.io/mysql-simple-faq/" data-title="mysql 常见问题"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/line.svg"></i></a><a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="https://xiaobinqt.github.io/mysql-simple-faq/" data-title="mysql 常见问题"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="分享到 百度" data-sharer="baidu" data-url="https://xiaobinqt.github.io/mysql-simple-faq/" data-title="mysql 常见问题"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/baidu.svg"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/mysql/">mysql</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a target="_blank" href="/mysql-data-type/" class="prev" rel="prev" title="mysql 常见数据类型"><i class="fas fa-angle-left fa-fw"></i>mysql 常见数据类型</a>
+            <a target="_blank" href="/funny-abbreviations/" class="next" rel="next" title="那些迷之缩写">那些迷之缩写<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+<div id="comments"><div id="gitalk" class="comment"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://github.com/gitalk/gitalk"></a>Gitalk</a>.
+            </noscript></div></article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2018 - 2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">xiaobinqt</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span><span class="icp-splitter">&nbsp;|&nbsp;</span><br class="icp-br"/>
+                    <span class="icp"><a href='https://beian.miit.gov.cn/' target='_blank'>京ICP备16062974号-1</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery.js@1.2.0/dist/css/lightgallery.min.css"><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.37.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/algoliasearch@4.2.0/dist/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lightgallery.js@1.2.0/dist/js/lightgallery.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lg-thumbnail.js@1.2.0/dist/lg-thumbnail.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lg-zoom.js@1.2.0/dist/lg-zoom.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.4.0/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"gitalk":{"admin":["xiaobinqt"],"clientID":"47b15de6c2d8a0f8d707","clientSecret":"c70556c8b3a3b38ea7c72e539ff3b37d5bc1b4f3","id":"8579b80f05795ba801f272904717ec6e","owner":"xiaobinqt","repo":"xiaobinqt.github.io","title":"mysql 常见问题"}},"lightGallery":{"actualSize":false,"exThumbImage":"data-thumbnail","hideBarsDelay":2000,"selector":".lightgallery","speed":400,"thumbContHeight":80,"thumbWidth":80,"thumbnail":true},"search":{"algoliaAppID":"CPNWIDNX0Y","algoliaIndex":"xiaobinqt.io","algoliaSearchKey":"80b84de0ebc766371dd27cd3e651c41e","highlightTag":"em","maxResultLength":20,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>
