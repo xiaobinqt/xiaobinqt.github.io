@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>mysql 存储程序 - xiaobinqt&#39;s blog</title><meta name="Description" content="xiaobinqt,mysql 存储程序,mysql 存储函数,存储过程,触发器,事件,mysql 游标,什么是游标,mysql 局部变量和自定义变量"><meta property="og:title" content="mysql 存储程序" />
+<meta property="og:description" content="xiaobinqt,mysql 存储程序,mysql 存储函数,存储过程,触发器,事件,mysql 游标,什么是游标,mysql 局部变量和自定义变量" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://xiaobinqt.github.io/mysql-stored-routine/" /><meta property="og:image" content="https://xiaobinqt.github.io/logo.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2020-10-08T00:00:00+00:00" />
+<meta property="article:modified_time" content="2022-04-20T00:00:00+00:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://xiaobinqt.github.io/logo.png"/>
+
+<meta name="twitter:title" content="mysql 存储程序"/>
+<meta name="twitter:description" content="xiaobinqt,mysql 存储程序,mysql 存储函数,存储过程,触发器,事件,mysql 游标,什么是游标,mysql 局部变量和自定义变量"/>
+<meta name="application-name" content="xiaobinqt">
+<meta name="apple-mobile-web-app-title" content="xiaobinqt"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c">
+<link rel="stylesheet" href="//at.alicdn.com/t/font_3267767_nzwpo5kwtd.css">
+<script src="https://cdn.bootcss.com/blueimp-md5/1.1.0/js/md5.min.js"></script><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://xiaobinqt.github.io/mysql-stored-routine/" /><link rel="prev" href="https://xiaobinqt.github.io/linux-platform-install-go/" /><link rel="next" href="https://xiaobinqt.github.io/what-is-https/" /><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "mysql 存储程序",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/xiaobinqt.github.io\/mysql-stored-routine\/"
+        },"image": ["https:\/\/xiaobinqt.github.io\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "mysql","wordcount":  3529 ,
+        "url": "https:\/\/xiaobinqt.github.io\/mysql-stored-routine\/","datePublished": "2020-10-08T00:00:00+00:00","dateModified": "2022-04-20T00:00:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+            "@type": "Organization",
+            "name": "xxxx","logo": {
+                    "@type": "ImageObject",
+                    "url": "https:\/\/xiaobinqt.github.io\/images\/avatar.png",
+                    "width":  528 ,
+                    "height":  560 
+                }},"author": {
+                "@type": "Person",
+                "name": "xiaobinqt"
+            },"description": "xiaobinqt,mysql 存储程序,mysql 存储函数,存储过程,触发器,事件,mysql 游标,什么是游标,mysql 局部变量和自定义变量"
+    }
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="xiaobinqt&#39;s blog"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>萧十一郎</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/about/"> 关于 </a><a class="menu-item" href="/links/"> 友链 </a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="xiaobinqt&#39;s blog"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>萧十一郎</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/about/" title="">关于</a><a class="menu-item" href="/links/" title="">友链</a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">目录</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">mysql 存储程序</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>xiaobinqt</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/mysql/"><i class="far fa-folder fa-fw"></i>mysql</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-10-08">2020-10-08</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 3529 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 8 分钟&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#总览">总览</a></li>
+    <li><a href="#存储函数">存储函数</a>
+      <ul>
+        <li><a href="#示例">示例</a></li>
+      </ul>
+    </li>
+    <li><a href="#局部变量和自定义变量">局部变量和自定义变量</a></li>
+    <li><a href="#存储过程">存储过程</a>
+      <ul>
+        <li><a href="#示例-1">示例</a></li>
+      </ul>
+    </li>
+    <li><a href="#存储过程的参数前缀">存储过程的参数前缀</a></li>
+    <li><a href="#存储过程和存储函数的区别">存储过程和存储函数的区别</a></li>
+    <li><a href="#游标">游标</a>
+      <ul>
+        <li><a href="#示例-2">示例</a></li>
+      </ul>
+    </li>
+    <li><a href="#触发器和事件">触发器和事件</a></li>
+    <li><a href="#触发器">触发器</a>
+      <ul>
+        <li><a href="#示例-3">示例</a></li>
+        <li><a href="#注意事项">注意事项</a></li>
+      </ul>
+    </li>
+    <li><a href="#事件">事件</a>
+      <ul>
+        <li><a href="#某个时间点执行">某个时间点执行</a></li>
+        <li><a href="#每隔一段时间执行">每隔一段时间执行</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><!-- author： xiaobinqt -->
+<!-- email： xiaobinqt@163.com -->
+<!-- https://xiaobinqt.github.io -->
+<!-- https://www.xiaobinqt.cn -->
+<h2 id="总览">总览</h2>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/e92bc705bec14bcba089f2a8848359b2.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="存储程序" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/e92bc705bec14bcba089f2a8848359b2.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>存储程序</h2><p>存储程序</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/e92bc705bec14bcba089f2a8848359b2.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/e92bc705bec14bcba089f2a8848359b2.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/e92bc705bec14bcba089f2a8848359b2.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/e92bc705bec14bcba089f2a8848359b2.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/e92bc705bec14bcba089f2a8848359b2.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" />
+    </a><figcaption class="image-caption">存储程序</figcaption>
+    </figure></p>
+<p>存储程序可以封装一些语句，然后给用户提供一种简单的方式来调用这个存储程序，从而间接地执行某些语句。根据调用方式的不同，可以把存储程序分为<code>存储例程</code>、<code>触发器</code>和<code>事件</code>，存储例程又分为<code>存储函数</code>和<code>存储过程</code>，如☝️
+上图。</p>
+<h2 id="存储函数">存储函数</h2>
+<p>存储函数<strong>只有一个返回值</strong>，可以从 mysql 内置的函数理解，所有 mysql 内置的函数都是只有一个返回值，比如：</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/b1bfc8c3ac9a45dea2dfdc1fb901e54f.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="mysql 内置函数" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/b1bfc8c3ac9a45dea2dfdc1fb901e54f.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>mysql 内置函数</h2><p>mysql 内置函数</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/b1bfc8c3ac9a45dea2dfdc1fb901e54f.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/b1bfc8c3ac9a45dea2dfdc1fb901e54f.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/b1bfc8c3ac9a45dea2dfdc1fb901e54f.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/b1bfc8c3ac9a45dea2dfdc1fb901e54f.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/b1bfc8c3ac9a45dea2dfdc1fb901e54f.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" />
+    </a><figcaption class="image-caption">mysql 内置函数</figcaption>
+    </figure></p>
+<p>存储函数很好理解，就是一个函数，跟普通函数一样有<code>函数名</code>，<code>函数体</code>，<code>参数列表</code>和<code>返回值</code>。创建存储函数语句如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">CREATE</span><span class="w"> </span><span class="k">FUNCTION</span><span class="w"> </span><span class="err">存储函数名称</span><span class="p">([</span><span class="err">参数列表</span><span class="p">])</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">RETURNS</span><span class="w"> </span><span class="err">返回值类型</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">BEGIN</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="err">函数体内容</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">END</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><table>
+<thead>
+<tr>
+<th>CMD</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SHOW FUNCTION STATUS [LIKE 需要匹配的函数名]</code></td>
+<td>查看所有存储函数</td>
+</tr>
+<tr>
+<td><code>SHOW CREATE FUNCTION 函数名</code></td>
+<td>查看某个存储函数</td>
+</tr>
+<tr>
+<td><code>DROP FUNCTION 函数名</code></td>
+<td>删除某个存储函数</td>
+</tr>
+</tbody>
+</table>
+<h3 id="示例">示例</h3>
+<p>现在写一个存储函数，输入用户名 <code>name</code>，返回用户手机号 <code>phone</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">CREATE</span><span class="w"> </span><span class="k">FUNCTION</span><span class="w"> </span><span class="n">get_phone</span><span class="p">(</span><span class="n">qname</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="w"> </span><span class="p">(</span><span class="mi">45</span><span class="p">))</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">RETURNS</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">BEGIN</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">RETURN</span><span class="w"> </span><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="n">phone</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">from</span><span class="w"> </span><span class="n">t</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">where</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">qname</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">END</span><span class="w"> </span><span class="n">EOF</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>存储函数的调用跟普通函数的调用也是一样的👇</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/fbbd1bb4c54341368ccda472619df5d2.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="效果" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/fbbd1bb4c54341368ccda472619df5d2.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>效果</h2><p>效果</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/fbbd1bb4c54341368ccda472619df5d2.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/fbbd1bb4c54341368ccda472619df5d2.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/fbbd1bb4c54341368ccda472619df5d2.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/fbbd1bb4c54341368ccda472619df5d2.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/fbbd1bb4c54341368ccda472619df5d2.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" />
+    </a><figcaption class="image-caption">效果</figcaption>
+    </figure></p>
+<h2 id="局部变量和自定义变量">局部变量和自定义变量</h2>
+<p>在存储函数中可以使用局部变量和自定义变量，二者的区别是，局部变量用 <code>DECLARE</code> 申明，不用加 <code>@</code>符，局部变量随着函数调用结束，变量销毁且只能在存储函数中使用。自定义变量需要加 <code>@</code> 符，且可以在函数外调用。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">CREATE FUNCTION get_phone<span class="o">(</span>qname VARCHAR <span class="o">(</span>45<span class="o">))</span>
+</span></span><span class="line"><span class="cl">    RETURNS VARCHAR<span class="o">(</span>11<span class="o">)</span>
+</span></span><span class="line"><span class="cl">BEGIN
+</span></span><span class="line"><span class="cl">    DECLARE ph varchar<span class="o">(</span>11<span class="o">)</span> default <span class="s2">&#34;&#34;</span><span class="p">;</span> <span class="c1"># 局部变量</span>
+</span></span><span class="line"><span class="cl">    SET @ii <span class="o">=</span> 100<span class="p">;</span> <span class="c1"># 自定义变量</span>
+</span></span><span class="line"><span class="cl">    SET <span class="nv">ph</span> <span class="o">=</span> <span class="o">(</span><span class="k">select</span> phone from t where <span class="nv">name</span> <span class="o">=</span> qname<span class="o">)</span><span class="p">;</span> <span class="c1"># 给局部变量赋值</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    RETURN  ph <span class="p">;</span>
+</span></span><span class="line"><span class="cl">END EOF
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/40c4689ff9214887a6cfd46c761df53d.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="局部变量和自定义变量" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/40c4689ff9214887a6cfd46c761df53d.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>局部变量和自定义变量</h2><p>局部变量和自定义变量</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/40c4689ff9214887a6cfd46c761df53d.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/40c4689ff9214887a6cfd46c761df53d.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/40c4689ff9214887a6cfd46c761df53d.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/40c4689ff9214887a6cfd46c761df53d.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/40c4689ff9214887a6cfd46c761df53d.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" />
+    </a><figcaption class="image-caption">局部变量和自定义变量</figcaption>
+    </figure></p>
+<p>☝️ 可知，在存储函数<code>get_phone</code>中有一个局部变量 <code>ph</code>和自定义变量 <code>@ii</code>，函数调用结束后 <code>@ii</code> 被赋值为<code>100</code> 且可以在函数执行完后访问，但是 <code>@ph</code> 是空的。</p>
+<h2 id="存储过程">存储过程</h2>
+<p>存储函数侧重于执行某些语句并<strong>返回一个值</strong>，而存储过程更侧重于单纯的去执行这些语句。存储过程的定义<strong>不需要声明返回值类型</strong>。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">CREATE</span><span class="w"> </span><span class="k">PROCEDURE</span><span class="w"> </span><span class="err">存储过程名称</span><span class="p">([</span><span class="err">参数列表</span><span class="p">])</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">BEGIN</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="err">需要执行的语句</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">END</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>调用存储过程使用 <code>CALL</code> 关键字。</p>
+<table>
+<thead>
+<tr>
+<th>CMD</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SHOW PROCEDURE STATUS [LIKE 需要匹配的存储过程名称]</code></td>
+<td>查看所有存储过程</td>
+</tr>
+<tr>
+<td><code>SHOW CREATE PROCEDURE 存储过程名称</code></td>
+<td>查看某个存储过程</td>
+</tr>
+<tr>
+<td><code>DROP PROCEDURE 存储过程名称</code></td>
+<td>删除某个存储过程</td>
+</tr>
+</tbody>
+</table>
+<h3 id="示例-1">示例</h3>
+<p>以下示例定义了一个 <code>my_operate</code> 的存储过程：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">CREATE PROCEDURE my_operate<span class="o">(</span>pname varchar <span class="o">(</span>45<span class="o">))</span>
+</span></span><span class="line"><span class="cl">BEGIN
+</span></span><span class="line"><span class="cl">     SELECT * FROM t<span class="p">;</span>
+</span></span><span class="line"><span class="cl">     INSERT INTO t<span class="o">(</span>phone, name<span class="o">)</span> VALUES<span class="o">(</span><span class="s2">&#34;15214254125&#34;</span>, <span class="s2">&#34;卢俊义&#34;</span><span class="o">)</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">     SELECT * FROM t<span class="p">;</span>
+</span></span><span class="line"><span class="cl">     SELECT * from t where <span class="nv">name</span> <span class="o">=</span> pname<span class="p">;</span>
+</span></span><span class="line"><span class="cl">END EOF
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/283408a351b74a758648f47b08fa347c.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="存储过程" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/283408a351b74a758648f47b08fa347c.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>存储过程</h2><p>存储过程</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/283408a351b74a758648f47b08fa347c.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/283408a351b74a758648f47b08fa347c.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/283408a351b74a758648f47b08fa347c.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/283408a351b74a758648f47b08fa347c.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/283408a351b74a758648f47b08fa347c.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" />
+    </a><figcaption class="image-caption">存储过程</figcaption>
+    </figure></p>
+<p>☝️ <code>my_operate</code> 定义并执行了 4 条 sql，完美诠释了存储过程更侧重于单纯的去执行这些语句。</p>
+<h2 id="存储过程的参数前缀">存储过程的参数前缀</h2>
+<p>存储过程在定义参数的时候可以选择添加一些前缀👇，如果不写，<strong>默认的前缀是<code>IN</code></strong>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">参数类型 <span class="o">[</span>IN <span class="p">|</span> OUT <span class="p">|</span> INOUT<span class="o">]</span> 参数名 数据类型
+</span></span></code></pre></td></tr></table>
+</div>
+</div><table>
+<thead>
+<tr>
+<th>前缀   <div style="width: 55px;"></th>
+<th>实际参数是否必须是变量</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>IN</code></td>
+<td>否</td>
+<td>用于调用者向存储过程传递数据，如果<code>IN</code>参数在过程中被修改，调用者不可见。</td>
+</tr>
+<tr>
+<td><code>OUT</code></td>
+<td>是</td>
+<td>用于把存储过程运行过程中产生的数据赋值给<code>OUT</code>参数，存储过程执行结束后，调用者可以访问到<code>OUT</code>参数。</td>
+</tr>
+<tr>
+<td><code>INOUT</code></td>
+<td>是</td>
+<td>综合<code>IN</code>和<code>OUT</code>的特点，既可以用于调用者向存储过程传递数据，也可以用于存放存储过程中产生的数据以供调用者使用。</td>
+</tr>
+</tbody>
+</table>
+<p>👇以下的示例，综合了 <code>in</code>，<code>out</code>，<code>inout</code> 参数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">CREATE PROCEDURE my_arg<span class="o">(</span>
+</span></span><span class="line"><span class="cl">            in pname varchar <span class="o">(</span>45<span class="o">)</span>,
+</span></span><span class="line"><span class="cl">            out ophone char<span class="o">(</span>11<span class="o">)</span>,
+</span></span><span class="line"><span class="cl">            inout io_name varchar<span class="o">(</span>45<span class="o">)</span>
+</span></span><span class="line"><span class="cl">          <span class="o">)</span>
+</span></span><span class="line"><span class="cl">BEGIN
+</span></span><span class="line"><span class="cl">     SELECT * FROM t<span class="p">;</span>
+</span></span><span class="line"><span class="cl">     INSERT INTO t<span class="o">(</span>phone, name<span class="o">)</span> VALUES<span class="o">(</span><span class="s2">&#34;15225632145&#34;</span>, <span class="s2">&#34;公孙胜&#34;</span><span class="o">)</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">     SELECT * FROM t<span class="p">;</span>
+</span></span><span class="line"><span class="cl">     SELECT phone from t where <span class="nv">name</span> <span class="o">=</span> pname into ophone<span class="p">;</span>
+</span></span><span class="line"><span class="cl">     SET <span class="nv">pname</span> <span class="o">=</span> <span class="s2">&#34;公孙胜&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">     SET <span class="nv">io_name</span> <span class="o">=</span> <span class="s2">&#34;公孙胜&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">END EOF
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/c792415cd0e1476eb60c2f831a4f2fa6.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="综合示例" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/c792415cd0e1476eb60c2f831a4f2fa6.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>综合示例</h2><p>综合示例</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/c792415cd0e1476eb60c2f831a4f2fa6.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/c792415cd0e1476eb60c2f831a4f2fa6.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/c792415cd0e1476eb60c2f831a4f2fa6.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/c792415cd0e1476eb60c2f831a4f2fa6.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/c792415cd0e1476eb60c2f831a4f2fa6.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" />
+    </a><figcaption class="image-caption">综合示例</figcaption>
+    </figure></p>
+<p>由☝️可以看出，虽然在存储过程中修改了 <code>pname</code> 的值为 <code>公孙胜</code>，但是并<strong>没有生效</strong>，值依然是最初的<code>宋江</code>。<code>IN</code>参数只能被用于读取，对它赋值是不会被调用者看到的。</p>
+<p><code>out</code> 参数 <code>ophone</code> 最初是空的，通过存储过程赋值成功为<code>公孙胜</code>。</p>
+<p><code>inout</code> 参数 <code>io_name</code> 最初是空的，通过存储过程赋值成功为<code>公孙胜</code>，这里如果 <code>io_name</code> 不为空，也会被修改为<code>公孙胜</code>。</p>
+<h2 id="存储过程和存储函数的区别">存储过程和存储函数的区别</h2>
+<ul>
+<li>存储函数在定义时需要显式用<code>RETURNS</code>语句标明返回的数据类型，而且在函数体中必须使用<code>RETURN</code>语句来显式指定返回的值，而存储过程不需要。</li>
+<li>存储函数只支持<code>IN</code>参数，而存储过程支持<code>IN</code>参数、<code>OUT</code>参数、和<code>INOUT</code>参数。</li>
+<li>存储函数<font style="color:red"><strong>只能返回一个值</strong></font>，而存储过程可以通过设置多个<code>OUT</code>参数或者<code>INOUT</code>参数来返回多个结果。</li>
+<li>存储函数执行过程中产生的结果集并<strong>不会</strong>被显示到客户端，而存储过程执行过程中产生的结果集<strong>会</strong>被显示到客户端。</li>
+<li>存储函数直接在表达式中调用，而存储过程只能通过<code>CALL</code>语句来显式调用。</li>
+</ul>
+<h2 id="游标">游标</h2>
+<p>游标是为了方便访问结果集中的某一条记录，可以理解成循环。如果某个结果集中有 10 条记录，使用游标后，会一条一条的去访问这 10 条记录。</p>
+<p>游标可以在存储函数和存储过程中使用。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/71873b26746f48f69a00761f46d21328.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="cursor" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/71873b26746f48f69a00761f46d21328.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>cursor</h2><p>cursor</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/71873b26746f48f69a00761f46d21328.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/71873b26746f48f69a00761f46d21328.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/71873b26746f48f69a00761f46d21328.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/71873b26746f48f69a00761f46d21328.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/71873b26746f48f69a00761f46d21328.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" />
+    </a><figcaption class="image-caption">cursor</figcaption>
+    </figure></p>
+<p>使用游标分为 4 步：</p>
+<ol>
+<li>创建游标：<code>DECLARE 游标名称 CURSOR FOR 查询语句;</code></li>
+<li>打开游标：<code>OPEN 游标名称;</code></li>
+<li>通过游标访问记录</li>
+<li>关闭游标：<code>CLOSE 游标名称;</code></li>
+</ol>
+<blockquote>
+<p>不显式的使用<code>CLOSE</code>语句关闭游标的话，在该存储函数或存储过程执行完之后会自动关闭游标。</p>
+</blockquote>
+<p>可以使用👇来获取结果集中的记录：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">FETCH 游标名 INTO 变量1, 变量2, ... 变量n
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="示例-2">示例</h3>
+<p>🤑以下创建一个存储过程，在存储过程中使用游标。</p>
+<p>创建游标<code>t_cursor</code>，游标执行语句为 <code>SELECT phone, name FROM t</code>。</p>
+<p><code>DECLARE CONTINUE HANDLER FOR NOT FOUND 处理语句;</code> 的作用是结果集遍历结束后会自动执行这句，这里也可以使用 <code>WHILE</code> 循环遍历，但是 <code>while</code>
+有个弊端是需要提前知道结束条件，比如结果集的总数是多少。这样写的好处是直接遍历，遍历结束自动处理，将 <code>done</code> 变量设置为 <code>1</code>，也就是说只要 <code>done = 1</code> 就说明遍历结束了，利用 <code>LEAVE</code> 关键字跳出循环。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">CREATE PROCEDURE my_cursor<span class="o">()</span>
+</span></span><span class="line"><span class="cl">BEGIN
+</span></span><span class="line"><span class="cl">    DECLARE v_phone char<span class="o">(</span>11<span class="o">)</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    DECLARE v_name varchar<span class="o">(</span>45<span class="o">)</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    DECLARE <span class="k">done</span> INT DEFAULT 0<span class="p">;</span>
+</span></span><span class="line"><span class="cl">    DECLARE t_cursor CURSOR FOR SELECT <span class="sb">`</span>phone<span class="sb">`</span>, <span class="sb">`</span>name<span class="sb">`</span> FROM t<span class="p">;</span>
+</span></span><span class="line"><span class="cl">    DECLARE CONTINUE HANDLER FOR NOT FOUND SET <span class="k">done</span> <span class="o">=</span> 1<span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    OPEN t_cursor<span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    flag: LOOP
+</span></span><span class="line"><span class="cl">        FETCH t_cursor INTO v_phone, v_name<span class="p">;</span>
+</span></span><span class="line"><span class="cl">        IF <span class="k">done</span> <span class="o">=</span> <span class="m">1</span> THEN
+</span></span><span class="line"><span class="cl">            LEAVE flag<span class="p">;</span>
+</span></span><span class="line"><span class="cl">        END IF<span class="p">;</span>
+</span></span><span class="line"><span class="cl">        SELECT v_phone, v_name, <span class="k">done</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    END LOOP flag<span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    CLOSE t_cursor<span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">END EOF
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/5dfc58f6432548ff9ce5d3dd7b5dcec4.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="执行结果" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/5dfc58f6432548ff9ce5d3dd7b5dcec4.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>执行结果</h2><p>执行结果</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/5dfc58f6432548ff9ce5d3dd7b5dcec4.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/5dfc58f6432548ff9ce5d3dd7b5dcec4.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/5dfc58f6432548ff9ce5d3dd7b5dcec4.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/5dfc58f6432548ff9ce5d3dd7b5dcec4.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/5dfc58f6432548ff9ce5d3dd7b5dcec4.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" />
+    </a><figcaption class="image-caption">执行结果</figcaption>
+    </figure></p>
+<h2 id="触发器和事件">触发器和事件</h2>
+<p>存储例程是需要手动调用的，而触发器和事件是 MySQL 服务器在特定情况下自动调用的。</p>
+<h2 id="触发器">触发器</h2>
+<p>创建触发器</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">CREATE TRIGGER 触发器名
+</span></span><span class="line"><span class="cl"><span class="o">{</span>BEFORE<span class="p">|</span>AFTER<span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">{</span>INSERT<span class="p">|</span>DELETE<span class="p">|</span>UPDATE<span class="o">}</span>
+</span></span><span class="line"><span class="cl">ON 表名
+</span></span><span class="line"><span class="cl">FOR EACH ROW
+</span></span><span class="line"><span class="cl">BEGIN
+</span></span><span class="line"><span class="cl">    触发器内容
+</span></span><span class="line"><span class="cl">END
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>MySQL 目前只支持对<code>INSERT</code>、<code>DELETE</code>、<code>UPDATE</code>这三种类型的语句设置触发器。</p>
+<p><code>FOR EACH ROW BEGIN ... END</code>表示对具体语句影响的每一条记录都执行触发器内容。</p>
+<p>对于<code>INSERT</code>语句来说，<code>FOR EACH ROW</code>影响的记录就是准备插入的那些新记录。</p>
+<p>对于<code>DELETE</code>语句和<code>UPDATE</code>语句来说，<code>FOR EACH ROW</code>影响的记录就是符合条件的那些记录。</p>
+<p>针对每一条受影响的记录，需要一种访问该记录中的内容的方式，MySQL提供了<code>NEW</code>和<code>OLD</code>两个单词来分别代表新记录和旧记录，它们在不同语句中的含义不同：</p>
+<ul>
+<li>对于<code>INSERT</code>语句设置的触发器来说，<code>NEW</code>代表准备插入的记录，<code>OLD</code>无效。</li>
+<li>对于<code>DELETE</code>语句设置的触发器来说，<code>OLD</code>代表删除前的记录，<code>NEW</code>无效。</li>
+<li>对于<code>UPDATE</code>语句设置的触发器来说，<code>NEW</code>代表修改后的记录，<code>OLD</code>代表修改前的记录。</li>
+</ul>
+<h3 id="示例-3">示例</h3>
+<p>🤦‍♂️以下示例，对表 <code>t</code> 创建一个 <code>my_trigger</code>触发器，表 <code>t</code> 有三个字段，<code>name</code>，<code>phone</code>，<code>my_join</code>，对于每条 <code>insert</code> 的语句，在执行 <code>insert</code>
+之前判断如果
+<code>name = admin</code> 那么将即将插入的 <code>name</code> 值改为 <code>valid</code>，如果 <code>name</code> 值为<code>空</code>，将即将插入的 <code>name</code> 值改为<code>无名氏</code>，除此之外将 <code>name</code> 和 <code>phone</code> 拼接后赋给 <code>my_join</code>
+字段。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">CREATE TRIGGER my_trigger
+</span></span><span class="line"><span class="cl">     BEFORE INSERT ON t
+</span></span><span class="line"><span class="cl">     FOR EACH ROW
+</span></span><span class="line"><span class="cl">     BEGIN
+</span></span><span class="line"><span class="cl">         IF NEW.name <span class="o">=</span> <span class="s1">&#39;admin&#39;</span> THEN
+</span></span><span class="line"><span class="cl">             SET NEW.name <span class="o">=</span> <span class="s1">&#39;valid&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">         ELSEIF NEW.name <span class="o">=</span> <span class="s1">&#39;&#39;</span> THEN
+</span></span><span class="line"><span class="cl">            SET NEW.name <span class="o">=</span> <span class="s1">&#39;无名氏&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">         ELSE
+</span></span><span class="line"><span class="cl">            SET NEW.my_join <span class="o">=</span> CONCAT<span class="o">(</span>NEW.name, <span class="s2">&#34;--&#34;</span>, NEW.phone<span class="o">)</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">         END IF<span class="p">;</span>
+</span></span><span class="line"><span class="cl"> END EOF
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/f7108f5048cc42b9b3a4effb62dfd34c.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="示例演示" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/f7108f5048cc42b9b3a4effb62dfd34c.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>示例演示</h2><p>示例演示</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/f7108f5048cc42b9b3a4effb62dfd34c.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/f7108f5048cc42b9b3a4effb62dfd34c.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/f7108f5048cc42b9b3a4effb62dfd34c.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/f7108f5048cc42b9b3a4effb62dfd34c.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/f7108f5048cc42b9b3a4effb62dfd34c.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" />
+    </a><figcaption class="image-caption">示例演示</figcaption>
+    </figure></p>
+<table>
+<thead>
+<tr>
+<th>CMD</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SHOW TRIGGERS;</code></td>
+<td>查看所有触发器</td>
+</tr>
+<tr>
+<td><code>SHOW CREATE TRIGGER 触发器名;</code></td>
+<td>查看某个触发器</td>
+</tr>
+<tr>
+<td><code>DROP TRIGGER 触发器名;</code></td>
+<td>删除某个触发器</td>
+</tr>
+</tbody>
+</table>
+<h3 id="注意事项">注意事项</h3>
+<ul>
+<li>触发器内容中不能有输出结果集的语句。</li>
+<li>触发器内容中<code>NEW</code>代表记录的列的值可以被更改，<code>OLD</code>代表记录的列的值无法更改。</li>
+<li>在<code>BEFORE</code>触发器中，我们可以使用<code>SET NEW.列名 = 某个值</code>的形式来更改待插入记录或者待更新记录的某个列的值，但是这种操作不能在<code>AFTER</code>触发器中使用，因为在执行<code>AFTER</code>
+触发器的内容时记录已经被插入完成或者更新完成了。</li>
+<li>如果我们的<code>BEFORE</code>触发器内容执行过程中遇到了错误，那这个触发器对应的具体语句将无法执行；如果具体的操作语句执行过程中遇到了错误，那与它对应的<code>AFTER</code>触发器的内容将无法执行。</li>
+</ul>
+<h2 id="事件">事件</h2>
+<p>事件可以让 MySQL 服务器在某个时间点或者每隔一段时间自动地执行一些语句。</p>
+<p>默认情况下，MySQL服务器并不会帮助我们执行事件，需要手动开启该功能：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">SET GLOBAL <span class="nv">event_scheduler</span> <span class="o">=</span> ON<span class="p">;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220421/2892ec357bc54b3e90d1009886e36d26.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="开启事件功能" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220421/2892ec357bc54b3e90d1009886e36d26.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>开启事件功能</h2><p>开启事件功能</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220421/2892ec357bc54b3e90d1009886e36d26.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220421/2892ec357bc54b3e90d1009886e36d26.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220421/2892ec357bc54b3e90d1009886e36d26.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220421/2892ec357bc54b3e90d1009886e36d26.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220421/2892ec357bc54b3e90d1009886e36d26.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" />
+    </a><figcaption class="image-caption">开启事件功能</figcaption>
+    </figure></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">CREATE EVENT 事件名
+</span></span><span class="line"><span class="cl">ON SCHEDULE
+</span></span><span class="line"><span class="cl"><span class="o">{</span>
+</span></span><span class="line"><span class="cl">    AT 某个确定的时间点<span class="p">|</span> 
+</span></span><span class="line"><span class="cl">    EVERY 期望的时间间隔 <span class="o">[</span>STARTS datetime<span class="o">][</span>END datetime<span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl">DO
+</span></span><span class="line"><span class="cl">BEGIN
+</span></span><span class="line"><span class="cl">    具体的语句
+</span></span><span class="line"><span class="cl">END
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="某个时间点执行">某个时间点执行</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">CREATE EVENT insert_t1_event
+</span></span><span class="line"><span class="cl">ON SCHEDULE
+</span></span><span class="line"><span class="cl">AT <span class="s1">&#39;2022-01-03 11:20:11&#39;</span> <span class="c1"># 或者 AT DATE_ADD(NOW(), INTERVAL 2 DAY)</span>
+</span></span><span class="line"><span class="cl">DO
+</span></span><span class="line"><span class="cl">BEGIN
+</span></span><span class="line"><span class="cl">    INSERT INTO t<span class="o">(</span>phone, name<span class="o">)</span> VALUES<span class="o">(</span><span class="s1">&#39;15210214254&#39;</span>, <span class="s1">&#39;宋江&#39;</span><span class="o">)</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">END
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="每隔一段时间执行">每隔一段时间执行</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">CREATE EVENT insert_t1
+</span></span><span class="line"><span class="cl">ON SCHEDULE
+</span></span><span class="line"><span class="cl">EVERY <span class="m">1</span> HOUR STARTS <span class="s1">&#39;2019-09-04 15:48:54&#39;</span> ENDS <span class="s1">&#39;2019-09-16 15:48:54&#39;</span>
+</span></span><span class="line"><span class="cl">DO
+</span></span><span class="line"><span class="cl">BEGIN
+</span></span><span class="line"><span class="cl">    INSERT INTO t<span class="o">(</span>phone, name<span class="o">)</span> VALUES<span class="o">(</span><span class="s1">&#39;15210214254&#39;</span>, <span class="s1">&#39;宋江&#39;</span><span class="o">)</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">END
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>在创建好事件之后，到了指定时间，MySQL 服务器会自动执行。</p>
+<table>
+<thead>
+<tr>
+<th>CMD</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SHOW EVENTS;</code></td>
+<td>查看所有事件</td>
+</tr>
+<tr>
+<td><code>SHOW CREATE EVENT 事件名;</code></td>
+<td>查看某个事件</td>
+</tr>
+<tr>
+<td><code>DROP EVENT 事件名;</code></td>
+<td>删除某个事件</td>
+</tr>
+</tbody>
+</table>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2022-04-20</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/mysql-stored-routine/index.md" target="_blank">阅读原始文档</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="分享到 Twitter" data-sharer="twitter" data-url="https://xiaobinqt.github.io/mysql-stored-routine/" data-title="mysql 存储程序" data-hashtags="mysql"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="https://xiaobinqt.github.io/mysql-stored-routine/" data-hashtag="mysql"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Hacker News" data-sharer="hackernews" data-url="https://xiaobinqt.github.io/mysql-stored-routine/" data-title="mysql 存储程序"><i class="fab fa-hacker-news fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Line" data-sharer="line" data-url="https://xiaobinqt.github.io/mysql-stored-routine/" data-title="mysql 存储程序"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/line.svg"></i></a><a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="https://xiaobinqt.github.io/mysql-stored-routine/" data-title="mysql 存储程序"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="分享到 百度" data-sharer="baidu" data-url="https://xiaobinqt.github.io/mysql-stored-routine/" data-title="mysql 存储程序"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/baidu.svg"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/mysql/">mysql</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a target="_blank" href="/linux-platform-install-go/" class="prev" rel="prev" title="Linux 环境下安装 Go"><i class="fas fa-angle-left fa-fw"></i>Linux 环境下安装 Go</a>
+            <a target="_blank" href="/what-is-https/" class="next" rel="next" title="透视 HTTPS">透视 HTTPS<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+<div id="comments"><div id="gitalk" class="comment"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://github.com/gitalk/gitalk"></a>Gitalk</a>.
+            </noscript></div></article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2018 - 2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">xiaobinqt</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span><span class="icp-splitter">&nbsp;|&nbsp;</span><br class="icp-br"/>
+                    <span class="icp"><a href='https://beian.miit.gov.cn/' target='_blank'>京ICP备16062974号-1</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery.js@1.2.0/dist/css/lightgallery.min.css"><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.37.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/algoliasearch@4.2.0/dist/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lightgallery.js@1.2.0/dist/js/lightgallery.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lg-thumbnail.js@1.2.0/dist/lg-thumbnail.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lg-zoom.js@1.2.0/dist/lg-zoom.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.4.0/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"gitalk":{"admin":["xiaobinqt"],"clientID":"47b15de6c2d8a0f8d707","clientSecret":"c70556c8b3a3b38ea7c72e539ff3b37d5bc1b4f3","id":"e39719b1834fadf14e3f4b6aa7b4468a","owner":"xiaobinqt","repo":"xiaobinqt.github.io","title":"mysql 存储程序"}},"lightGallery":{"actualSize":false,"exThumbImage":"data-thumbnail","hideBarsDelay":2000,"selector":".lightgallery","speed":400,"thumbContHeight":80,"thumbWidth":80,"thumbnail":true},"search":{"algoliaAppID":"CPNWIDNX0Y","algoliaIndex":"xiaobinqt.io","algoliaSearchKey":"80b84de0ebc766371dd27cd3e651c41e","highlightTag":"em","maxResultLength":20,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>
