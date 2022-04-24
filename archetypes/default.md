@@ -21,8 +21,7 @@ tags: [""]
 categories: [""]
 lightgallery: true
 
-toc:
-auto: false
+toc: true
 
 math:
 enable: true
