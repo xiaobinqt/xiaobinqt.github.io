@@ -254,6 +254,14 @@ tag 是基于某个分支下的某次 commit。如只执行 `git tag v1.0`，那
 > 尽量不要用 `git pull`，用 `git fetch` 和 `git merge` 代替 `git pull`。
 > 将 `fetch` 和 `merge` 放到一个命令里的另外一个弊端是，本地工作目录在未经确认的情况下就会被远程分支更新。
 
+### 将提交回到暂存区
+
+```git
+git reset --soft $commitID
+```
+
+![将 commit 后的代码回退到暂存区](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220426/4d0f8299ff774a2baadea254b3c16eb9.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '将 commit 后的代码回退到暂存区')
+
 ## 参考
 
 + [git-fast-version-control](https://git-scm.com/book/zh/v2/%E8%B5%B7%E6%AD%A5-%E5%85%B3%E4%BA%8E%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6)
