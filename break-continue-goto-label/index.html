@@ -9,7 +9,7 @@
 <meta property="og:description" content="go,continue,break,goto label的区别,Golang" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://xiaobinqt.github.io/break-continue-goto-label/" /><meta property="og:image" content="https://xiaobinqt.github.io/logo.png"/><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2022-02-16T00:00:00+00:00" />
+<meta property="article:published_time" content="2021-05-16T00:00:00+00:00" />
 <meta property="article:modified_time" content="2022-03-16T00:00:00+00:00" />
 
 <meta name="twitter:card" content="summary_large_image"/>
@@ -22,7 +22,7 @@
 <link rel="stylesheet" href="//at.alicdn.com/t/font_3267767_nzwpo5kwtd.css">
 <script src="https://cdn.bootcss.com/blueimp-md5/1.1.0/js/md5.min.js"></script><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://xiaobinqt.github.io/break-continue-goto-label/" /><link rel="prev" href="https://xiaobinqt.github.io/build-running-gcc-failed/" /><link rel="next" href="https://xiaobinqt.github.io/ajax-req-add-cookie/" /><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css"><script type="application/ld+json">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://xiaobinqt.github.io/break-continue-goto-label/" /><link rel="prev" href="https://xiaobinqt.github.io/pull-request/" /><link rel="next" href="https://xiaobinqt.github.io/new-make-difference/" /><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css"><script type="application/ld+json">
     {
         "@context": "http://schema.org",
         "@type": "BlogPosting",
@@ -31,8 +31,8 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/xiaobinqt.github.io\/break-continue-goto-label\/"
-        },"image": ["https:\/\/xiaobinqt.github.io\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "golang","wordcount":  446 ,
-        "url": "https:\/\/xiaobinqt.github.io\/break-continue-goto-label\/","datePublished": "2022-02-16T00:00:00+00:00","dateModified": "2022-03-16T00:00:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+        },"image": ["https:\/\/xiaobinqt.github.io\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "golang","wordcount":  592 ,
+        "url": "https:\/\/xiaobinqt.github.io\/break-continue-goto-label\/","datePublished": "2021-05-16T00:00:00+00:00","dateModified": "2022-03-16T00:00:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "xxxx","logo": {
                     "@type": "ImageObject",
@@ -113,8 +113,8 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">golang break，continue，goto label 的区别</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>xiaobinqt</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/golang/"><i class="far fa-folder fa-fw"></i>golang</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-02-16">2022-02-16</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 446 字&nbsp;
-                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 1 分钟&nbsp;</div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-05-16">2021-05-16</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 592 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 2 分钟&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
                     <span>目录</span>
@@ -127,9 +127,14 @@
     <li><a href="#goto-label">goto label</a></li>
   </ul>
 </nav></div>
-            </div><div class="content" id="content"><p>在 php 中可以直接在 break 和 continue 后加 num ，比如 <code>break 2</code>或 <code>continue 2</code>。</p>
-<p>break num 是结束外层第 num 层整个循环体，continue num 是结束外层第 num 层单次循环。</p>
-<p>类比 php ，go 中不能直接在关键字后加 num ，但是可以用 label 关键字代替 num。</p>
+            </div><div class="content" id="content"><!-- author： xiaobinqt -->
+<!-- email： xiaobinqt@163.com -->
+<!-- https://xiaobinqt.github.io -->
+<!-- https://www.xiaobinqt.cn -->
+<p>在其他语言，比如 php 中可以直接在 break 和 continue 后加 num ，比如 <code>break 2</code>或 <code>continue 2</code>。 break num 是结束外层第 num 层整个循环体，continue num 是结束外层第
+num 层单次循环。</p>
+<p>go 中不能直接在关键字后加 num ，但是可以用 label 关键代替 num。支持 goto label，也可以用 break label 和 continue label。</p>
+<p><code>goto</code> 可以跳到代码的任何地方，比如跳到 <code>A</code> 处，再从 <code>A</code> 继续往下执行。break label 如果跳到了循环外，不会再执行循环。continue label 如果跳出了循环，会再执行循环。</p>
 <h2 id="continue-label">continue label</h2>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -186,6 +191,7 @@
 </span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="break-label">break label</h2>
+<p>👇 以下例子，虽然 break 跳出循环到 label 处, label 在 for 循环上，但是不会再执行 for 循环，直接执行<code>fmt.Println()</code>。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt"> 1
@@ -233,8 +239,8 @@
 </span></span><span class="line"><span class="cl">		<span class="k">for</span> <span class="nx">index</span><span class="p">,</span> <span class="nx">v1</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">matrix</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">			<span class="nx">index2Val</span> <span class="p">=</span> <span class="nx">v1</span>
 </span></span><span class="line"><span class="cl">			<span class="k">if</span> <span class="nx">index</span> <span class="o">==</span> <span class="mi">2</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">				<span class="k">break</span> <span class="nx">next</span> <span class="c1">// 跳出循环到 label 处
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>			<span class="p">}</span>
+</span></span><span class="line"><span class="cl">				<span class="k">break</span> <span class="nx">next</span>
+</span></span><span class="line"><span class="cl">			<span class="p">}</span>
 </span></span><span class="line"><span class="cl">		<span class="p">}</span>
 </span></span><span class="line"><span class="cl">	<span class="p">}</span>
 </span></span><span class="line"><span class="cl">
@@ -329,15 +335,14 @@
         </section>
     </div>
 
-    <div class="post-nav"><a target="_blank" href="/build-running-gcc-failed/" class="prev" rel="prev" title="running gcc failed: exit status 1"><i class="fas fa-angle-left fa-fw"></i>running gcc failed: exit status 1</a>
-            <a target="_blank" href="/ajax-req-add-cookie/" class="next" rel="next" title="ajax 在请求时携带 cookie 信息">ajax 在请求时携带 cookie 信息<i class="fas fa-angle-right fa-fw"></i></a></div>
+    <div class="post-nav"><a target="_blank" href="/pull-request/" class="prev" rel="prev" title="github pull request"><i class="fas fa-angle-left fa-fw"></i>github pull request</a>
+            <a target="_blank" href="/new-make-difference/" class="next" rel="next" title="golang make 和 new 的区别">golang make 和 new 的区别<i class="fas fa-angle-right fa-fw"></i></a></div>
 </div>
 <div id="comments"><div id="gitalk" class="comment"></div><noscript>
                 Please enable JavaScript to view the comments powered by <a href="https://github.com/gitalk/gitalk"></a>Gitalk</a>.
             </noscript></div></article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2018 - 2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">xiaobinqt</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span><span class="icp-splitter">&nbsp;|&nbsp;</span><br class="icp-br"/>
-                    <span class="icp"><a href='https://beian.miit.gov.cn/' target='_blank'>京ICP备16062974号-1</a></span></div>
+        <div class="footer-container"><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2018 - 2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">xiaobinqt</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
         </div>
     </footer></div>
 
