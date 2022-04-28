@@ -18,8 +18,7 @@ tags: ["golang","build"]
 categories: ["golang"]
 lightgallery: true
 
-toc:
-auto: false
+toc: false
 
 math:
 enable: true
