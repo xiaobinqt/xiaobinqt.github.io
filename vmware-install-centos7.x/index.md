@@ -154,10 +154,10 @@ NAT 模式是 VMware 虚拟机默认使用的模式，其最大的优势就是�
 
 ### 设置
 
-在修改配置文件之前，为了防止配置出错，建议提前备份配置文件 `ifcfg-eth0`。
+在修改配置文件之前，为了防止配置出错，建议提前备份配置文件 `ifcfg-eth0`。我把原来的 ifcfg-ens32 重命名为了 ifcfg-eth0。
 
 ```shell
-cp /etc/sysconfig/network-scripts/ifcfg-ens32 /etc/sysconfig/network-scripts/ifcfg-ens32.bak
+cp /etc/sysconfig/network-scripts/ifcfg-eth0 /etc/sysconfig/network-scripts/ifcfg-eth0.bak
 ```
 
 我们需要把 `ifcfg-eth0` 配置文件中的 `BOOTPROTO` 的值设置为 `static`，将 `IPADDR`(IP 地址)的值设置为其所在的子网中正确的，无冲突的 ip 地址即可。
