@@ -15,7 +15,7 @@ resources:
   src: ""
 
 tags: ["hugo","emoji"]
-categories: ["hugo"]
+categories: ["开发者手册"]
 lightgallery: true
 
 toc:

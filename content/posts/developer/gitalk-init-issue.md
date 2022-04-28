@@ -18,7 +18,7 @@ featuredImage: ""
 reproduce: false
 
 tags: ["gitalk","python","hugo"]
-categories: ["hugo"]
+categories: ["开发者手册"]
 lightgallery: true
 
 toc:
