@@ -257,6 +257,16 @@ cp /etc/sysconfig/network-scripts/ifcfg-eth0 /etc/sysconfig/network-scripts/ifcf
 
 [//]: # (![图 10]&#40;https://cdn.xiaobinqt.cn/xiaobinqt.io/20220418/b9a48b92ab7c4cd08020f824171c949b.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '图 10'&#41;)
 
+## FAQ
+
++ :question:重启网卡问题
+
+`loaded (/etc/rc.d/init.d/network; bad; vendor preset: disabled)`
+
+![network err](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220428/ef54a9001aea4752bd5591e0d555a986.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'network err')
+
+:point_up: 以上这个问题可以参考[centos7重启网卡提示错误的解决方法](https://blog.csdn.net/qq_41601836/article/details/90171237)这篇文章。
+
 ## 参考
 
 + [How To Configure Static IP Address in CentOS 7 / RHEL 7](https://www.itzgeek.com/how-tos/linux/centos-how-tos/how-to-configure-static-ip-address-in-centos-7-rhel-7-fedora-26.html)
