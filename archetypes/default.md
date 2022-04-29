@@ -17,6 +17,8 @@ featuredImage: ""
 
 reproduce: false
 
+translate: false
+
 tags: [""]
 categories: [""]
 lightgallery: true
