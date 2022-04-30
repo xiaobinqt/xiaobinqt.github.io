@@ -15,6 +15,8 @@ description: "xiaobinqt"
 
 featuredImage: ""
 
+featuredImagePreview: ""
+
 reproduce: false
 
 translate: false
