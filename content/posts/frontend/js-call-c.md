@@ -44,7 +44,7 @@ docker pull linuxserver/code-server:version-v3.11.1
 
 ![github web 编辑器](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220412/1452c3a995af4dd480963de599766c73.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'github web 编辑器')
 
-## 加法器
+## 加法器示例
 
 开发环境搭建成功后，可以实现一个小功能，以熟悉 node-addon-api 的使用。
 
