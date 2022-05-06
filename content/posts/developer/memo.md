@@ -14,7 +14,7 @@ resources:
 - name: ""
   src: ""
 
-tags: ["备忘录"]
+tags: ["备忘"]
 categories: ["开发者手册"]
 lightgallery: true
 
