@@ -31,7 +31,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/xiaobinqt.github.io\/docker-glance\/"
-        },"image": ["https:\/\/xiaobinqt.github.io\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "docker","wordcount":  6854 ,
+        },"image": ["https:\/\/xiaobinqt.github.io\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "docker","wordcount":  6990 ,
         "url": "https:\/\/xiaobinqt.github.io\/docker-glance\/","datePublished": "2018-03-18T00:00:00+00:00","dateModified": "2022-04-28T00:00:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "xxxx","logo": {
@@ -113,7 +113,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">Docker 学习笔记</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>xiaobinqt</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E5%BC%80%E5%8F%91%E8%80%85%E6%89%8B%E5%86%8C/"><i class="far fa-folder fa-fw"></i>开发者手册</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2018-03-18">2018-03-18</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 6854 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2018-03-18">2018-03-18</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 6990 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 14 分钟&nbsp;</div>
         </div><div class="featured-image"><img
         class="lazyload"
@@ -188,28 +188,29 @@ CPU，进而能够同时运行多个程序或者操作系统。这些都是硬�
 <p>软件虚拟化指的是通过软件的方式来实现虚拟化中关键的<strong>指令转换部分</strong>。</p>
 <p>比如，在软件虚拟化实现中，通过一层夹杂在应用程序和硬件平台上的虚拟化实现软件来进行指令的转换。也就是说，虽然应用程序向操作系统或者物理硬件发出的指令不是当前硬件平台所支持的指令，这个实现虚拟化的软件也会将之转换为当前硬件平台所能识别的。</p>
 <h3 id="浅析-docker">浅析 Docker</h3>
-<p>可以将 Docker 容器理解为一种轻量级的<strong><ruby>沙盒<rt>sandbox</rt></ruby></strong>
-。每个容器内运行着一个应用，不同的容器相互隔离，容器之间也可以通过网络互相通信。容器的创建和停止十分快速，几乎跟创建和终止原生应用一致；另外，容器自身对系统资源的额外需求也十分有限，远远低于传统虚拟机。很多时候，甚至直接把容器当作应用本身也没有任何问题。</p>
+<p>可以把容器看作一个简易版的Linux系统环境（包括root用户权限、进程空间、用户空间和网络空间等）以及运行在其中的应用程序打包而成的<strong><ruby>沙盒<rt>sandbox</rt></ruby></strong>。</p>
+<p>每个容器内运行着一个应用，不同的容器相互隔离，容器之间也可以通过网络互相通信。容器的创建和停止十分快速，几乎跟创建和终止原生应用一致；另外，容器自身对系统资源的额外需求也十分有限，远远低于传统虚拟机。很多时候，甚至直接把容器当作应用本身也没有任何问题。</p>
 <p>Docker 并没有和虚拟机一样利用一个独立的 OS 执行环境的隔离，它利用的是目前当前 Linux 内核本身支持的容器方式，实现了资源和环境的隔离。</p>
 <p>支撑 docker 的核心技术有三个：<code>Namespace</code>，<code>Cgroup</code>，<code>UnionFS</code>。</p>
 <p><code>Namespace</code> 提供了虚拟层面的隔离，比如文件隔离，网络隔离等等。每个命名空间中的应用看到的，都是不同的IP地址，用户空间，进程 ID 等。</p>
 <p><code>Cgroup</code>提供了物理资源的隔离，比如 CPU，内存，磁盘等等。</p>
-<p>UnionFS 给 docker 镜像提供了技术支撑。在 Docker 中，提供了一种对 UnionFS 的改进实现，也就是 <strong><ruby>AUFS<rt>Advanced Union File System</rt></ruby></strong>。 AUFS
+<p><code>UnionFS</code> 给 docker 镜像提供了技术支撑。在 Docker 中，提供了一种对 UnionFS 的改进实现，也就是 <strong><ruby>AUFS<rt>Advanced Union File System</rt></ruby></strong>。 AUFS
 将文件的更新挂载到老的文件之上，而不去修改那些不更新的内容，这意味着即使虚拟的文件系统被反复修改，也能保证对真实文件系统的空间占用保持一个较低水平。就像在 Git 中每进行一次提交，Git
 并不是将我们所有的内容打包成一个版本，而只是将修改的部分进行记录，这样即使我们提交很多次后，代码库的空间占用也不会倍数增加。 通过 AUFS，Docker <strong>大幅减少了虚拟文件系统对物理存储空间的占用</strong>。</p>
 <h3 id="虚拟机和-docker">虚拟机和 Docker</h3>
 <p><strong><ruby>虚拟机<rt>Virtual Machine</rt></ruby></strong>，通常来说就是通过一个<strong><ruby>虚拟机监视器<rt>Virtual Machine Monitor</rt></ruby></strong>
 的设施来隔离操作系统与硬件或者应用程序和操作系统，以此达到虚拟化的目的。这个夹在其中的虚拟机监视器，常常被称为 <strong>Hypervisor</strong>。👇是虚拟机和 Docker 的对比：</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220428/2763785408b64bfa92d0263dfd6c6e77.png" title="虚拟机和容器" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220428/2763785408b64bfa92d0263dfd6c6e77.png" data-sub-html="<h2>虚拟机和容器</h2><p>虚拟机和容器</p>">
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220506/c869ee3cf8d94b20ae793d98e6022afd.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="虚拟机和容器" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220506/c869ee3cf8d94b20ae793d98e6022afd.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>虚拟机和容器</h2><p>虚拟机和容器</p>">
         <img
             class="lazyload"
             src="/svg/loading.min.svg"
-            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220428/2763785408b64bfa92d0263dfd6c6e77.png"
-            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220428/2763785408b64bfa92d0263dfd6c6e77.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220428/2763785408b64bfa92d0263dfd6c6e77.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220428/2763785408b64bfa92d0263dfd6c6e77.png 2x"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220506/c869ee3cf8d94b20ae793d98e6022afd.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220506/c869ee3cf8d94b20ae793d98e6022afd.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220506/c869ee3cf8d94b20ae793d98e6022afd.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220506/c869ee3cf8d94b20ae793d98e6022afd.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
             data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220428/2763785408b64bfa92d0263dfd6c6e77.png" />
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220506/c869ee3cf8d94b20ae793d98e6022afd.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" />
     </a><figcaption class="image-caption">虚拟机和容器</figcaption>
     </figure></p>
+<p>传统方式是在硬件层面实现虚拟化，需要有额外的虚拟机管理应用和虚拟机操作系统层。Docker容器是在操作系统层面上实现虚拟化，直接<strong>复用本地主机的操作系统</strong>，因此更加轻量级。</p>
 <p>虚拟机更擅长彻底隔离整个运行环境。例如，云服务提供商通常采用虚拟机技术隔离不同的用户。而 Docker 通常用于隔离不同的应用，例如前端，后端以及数据库。</p>
 <h2 id="常用命令">常用命令</h2>
 <table>
