@@ -82,26 +82,26 @@ Docker 并没有和虚拟机一样利用一个独立的 OS 执行环境的隔离
 
 ## 常用命令
 
-| CMD                                    | 说明                                                   |
-|----------------------------------------|------------------------------------------------------|
-| `sudo docker create --name 容器名称 镜像名称`  | 创建容器                                                 |
-| `docker start 名称`                      | 启动容器                                                 |
-| `sudo docker run --name 容器名称 -d 镜像名称`  | 创建并启动容器且在后台运行,`-d=--detach`                          |
-| `docker ps `                           | 列出**运行中**容器                                          |
-| `docker ps -a`                         | 列出所有容器, `-a=--all`                                   |
-| `docker stop 容器名称/ID`                  | 停止容器                                                 |
-| `docker rm 容器名称/ID`                    | 删除容器                                                 |
-| `docker exec -it 容器名称 bash/sh`         | 进入容器                                                 |
-| `docker attach --sig-proxy=false 容器名称` | 将容器转为了前台运行，如果不加`--sig-proxy=false` `Ctrl + C` 后会停止容器 |
-| `docker logs 容器名称`                     | 查看容器日志                                               |
-| `docker network ls/list`               | 查看已经存在的网络                                            |
-| `docker network create -d 网络驱动 网络名`    | 创建新网络                                                |
-| `docker volume ls`                     | 列出当前已创建的数据卷                                          |
-| `docker volume create 名称`              | 创建数据卷                                                |
-| `docker volume rm 名称`                  | 删除数据卷                                                |
-| `docker volume prune`                  | 删除没有被容器引用的数据卷                                        |
-| `docker build`                         | 构建镜像                                                 |
-| `docker inspect 容器名/ID`                | 查看容器详情                                               |
+| CMD                                       | 说明                                                   |
+|-------------------------------------------|------------------------------------------------------|
+| `sudo docker create --name 容器名称 镜像名称`     | 创建容器                                                 |
+| `docker start 名称`                         | 启动容器                                                 |
+| `sudo docker run --name 容器名称 -d 镜像名称`     | 创建并启动容器且在后台运行,`-d=--detach`                          |
+| `docker ps `                              | 列出**运行中**容器                                          |
+| `docker ps -a`                            | 列出所有容器, `-a=--all`                                   |
+| `docker stop 容器名称/ID`                     | 停止容器                                                 |
+| `docker rm 容器名称/ID`                       | 删除容器                                                 |
+| `docker exec -it 容器名称 bash/sh`            | 进入容器                                                 |
+| `docker attach --sig-proxy=false 容器名称`    | 将容器转为了前台运行，如果不加`--sig-proxy=false` `Ctrl + C` 后会停止容器 |
+| `docker logs 容器名称`                        | 查看容器日志                                               |
+| `docker network ls/list`                  | 查看已经存在的网络                                            |
+| `docker network create -d 网络驱动 网络名`       | 创建新网络                                                |
+| `docker volume ls`                        | 列出当前已创建的数据卷                                          |
+| `docker volume create 名称`                 | 创建数据卷                                                |
+| `docker volume rm 名称`                     | 删除数据卷                                                |
+| `docker volume prune`                     | 删除没有被容器引用的数据卷                                        |
+| `docker build`                            | 构建镜像                                                 |
+| `docker inspect 容器名/ID`                   | 查看容器详情                                               |
 
 `docker exec` 命令能帮助我们在正在运行的容器中运行指定的命令。
 
@@ -129,6 +129,45 @@ docker run --rm --name mysql2 -e MYSQL_RANDOM_ROOT_PASSWORD=yes  mysql:5.7
 ```shell
 docker build --no-cache  .....
 ```
+
+### images 子命令
+
+更多子命令选项还可以通过`man docker-images`
+来查看，或者查看官方文档 [docker images](https://docs.docker.com/engine/reference/commandline/images/)
+。
+
+| 选项                                     | 说明                                                |
+|----------------------------------------|---------------------------------------------------|
+| <code>-a, &hyphen;&hyphen;all=true &#124; false</code> | 列出所有（包括临时文件）镜像文件，默认为否                              |
+| <code>&hyphen;&hyphen;digests=true &#124; false </code> | 列出镜像的数字摘要值，默认为否                                   |
+| `-f, --filter=[]`                      | 过滤列出的镜像，如`dangling=true`只显示没有被使用的镜像；也可指定带有特定标注的镜像等 |
+| `--format="TEMPLATE"`                  | 控制输出格式，如`.ID`代表ID信息，`.Repository`代表仓库信息等          |
+| <code>&hyphen;&hyphen;no-trunc=true &#124; false </code> | 对输出结果中太长的部分是否进行截断，如镜像的ID信息，默认为是                   |
+| <code>-q, &hyphen;&hyphen;quiet=true &#124; false </code> | 仅输出ID信息，默认为否                                      |
+
+![--format](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220507/68e1884199cf428a981afd09c0b2a2dd.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '--format')
+
+![--filter](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220508/039153bec0674bfea7169d2c4f1325d5.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '--filter')
+
+### create 子命令
+
+create 命令支持的选项都十分复杂，选项主要包括如下几大类：与容器运行模式相关、与容器环境配置相关、与容器资源限制和安全保护相关。
+
++ :warning:容器运行模式相关的选项
+
+![容器运行模式相关的选项](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220507/33cd51368fe748cfa3537c318f148f0a.png '容器运行模式相关的选项')
+
++ :warning:容器环境和配置相关的选项
+
+![容器环境和配置相关的选项](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220507/fea604964abd42a3a3c26aa84e320b6d.png '容器环境和配置相关的选项')
+
++ :warning:容器资源限制和安全保护相关的选项
+
+![容器资源限制和安全保护相关的选项](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220507/e6eb7947b0c44d0cb039e4118a3e03b9.png '容器资源限制和安全保护相关的选项')
+
+### build 子命令
+
+![build 子命令](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220509/92e3455beeb546f6b046fb34936f8020.png 'build 子命令')
 
 ## 容器网络
 
@@ -281,7 +320,7 @@ docker run -d --name webapp -v /webapp/storage webapp:latest
 ]
 ```
 
-`Source` 是 Docker 为我们分配用于挂载的宿主机目录，其位于 Docker 的资源区域，一般默认为 `/var/lib/docker`。一版并不需要关心这个目录，一切对它的管理都已经在 Docker 内实现了。
+`Source` 是 Docker 为我们分配用于挂载的宿主机目录，其位于 Docker 的资源区域，一般默认为 `/var/lib/docker`。一般并不需要关心这个目录，一切对它的管理都已经在 Docker 内实现了。
 
 为了方便识别数据卷，可以像命名容器一样为数据卷命名，这里的 `Name` 是数据卷的命名，在未给出数据卷命名的时候，Docker 会采用数据卷的 ID 命名数据卷。可以通过 `-v <name>:<container-path>`
 这种形式来命名数据卷。
@@ -333,7 +372,7 @@ docker run --name mynginx -d nginx:1.12
 
 ![提交修改生成新镜像](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220428/ff0c45e23ed1400487138fcc6c290a78.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '提交修改生成新镜像')
 
-### 导出导入镜像
+### 存出载入镜像
 
 对于某个镜像我们可以导出成一个 tar 包，也可以将一个 tar 镜像导入到系统中。
 
@@ -355,9 +394,11 @@ docker run --name mynginx -d nginx:1.12
 
 ### 常用指令
 
+![常用指令](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220509/02c21142855e479a8826db7fcfbd438d.png '常用指令')
+
 + :trophy:`FROM`
 
-通过 `FROM` 指令指定一个基础镜像，接下来所有的指令都是基于这个镜像所展开的。
+通过 `FROM` 指令指定一个基础镜像，接下来所有的指令都是基于这个镜像所展开的。**为了保证镜像精简，可以选用体积较小的镜像如`Alpine`或`Debian`作为基础镜像**。
 
 `FROM` 指令支持三种形式：
 
@@ -411,6 +452,16 @@ VOLUME ["/data"]
 
 在 `VOLUME` 指令中定义的目录，在基于新镜像创建容器时，会自动建立为数据卷，不需要再单独使用 `-v` 选项来配置。
 
++ :trophy:`LABEL`
+
+`LABEL`指令可以为生成的镜像添加元数据标签信息。这些信息可以用来辅助过滤出特定镜像。格式为：
+
+```shell
+LABEL <key>=<value> 
+
+LABEL version=1.2
+```
+
 + :trophy: COPY 和 ADD
 
 在制作新的镜像的时候，可能需要将一些软件配置、程序代码、执行脚本等直接导入到镜像内的文件系统里，使用 `COPY` 或 `ADD` 指令能够帮助我们直接从宿主机的文件系统里拷贝内容到镜像里的文件系统中。
@@ -450,6 +501,8 @@ RUN wget -O tomcat.tar.gz "https://www.apache.org/dyn/closer.cgi?action=download
 
 如果我们需要通过这个 Dockerfile 文件构建 Tomcat 镜像，我们可以在构建时通过 docker build 的 `--build-arg` 选项来设置参数变量。
 
+Docker**内置**了一些镜像创建变量，用户可以直接使用而无须声明，包括（不区分大小写）`HTTP_PROXY`、`HTTPS_PROXY`、`FTP_PROXY`、`NO_PROXY`。
+
 ```shell
 docker build --build-arg TOMCAT_MAJOR=8 --build-arg TOMCAT_VERSION=8.0.53 -t tomcat:8.0 ./tomcat
 ```
@@ -481,18 +534,30 @@ docker run -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql:5.7
 
 ## FAQ
 
+### CMD 指令
+
+CMD指令用来指定启动容器时默认执行的命令。支持三种格式：
+
++ `CMD ["executable", "param1", "param2"]`：相当于执行 `executable param1 param2`，推荐方式。
+
++ `CMD command param1 param2`：在默认的 Shell 中执行，提供给需要交互的应用。
+
++ `CMD ["param1", "param2"]`：提供给 ENTRYPOINT 的默认参数。
+
+每个 Dockerfile 只能有一条 CMD 命令。如果指定了多条命令，只有最后一条会被执行。
+
 ### ENTRYPOINT 和 CMD 的区别
 
 这 2 个命令都是用来指定基于此镜像所创建容器里主进程的启动命令。
 
 `ENTRYPOINT` 指令的**优先级高于** `CMD` 指令。当 `ENTRYPOINT` 和 `CMD` 同时在镜像中被指定时，`CMD` 里的内容会作为 `ENTRYPOINT` 的参数，两者拼接之后，才是最终执行的命令。
 
-| NTRYPOINT                      | CMD                       | 实际执行                                              |
-|--------------------------------|---------------------------|---------------------------------------------------|
-| `ENTRYPOINT ["/bin/ep", "arge"]` | 	                         | `/bin/ep arge`                                    |
-| `ENTRYPOINT /bin/ep arge`        | 	                         | `/bin/sh -c /bin/ep arge`                          |
-|| `CMD ["/bin/exec", "args"]`      | `/bin/exec args`            |
-|| `CMD /bin/exec args`             | `/bin/sh -c /bin/exec args` |
+| NTRYPOINT                      | CMD                       | 实际执行                                                |
+|--------------------------------|---------------------------|-----------------------------------------------------|
+| `ENTRYPOINT ["/bin/ep", "arge"]` | 	                         | `/bin/ep arge`                                      |
+| `ENTRYPOINT /bin/ep arge`        | 	                         | `/bin/sh -c /bin/ep arge`                           |
+| `CMD ["/bin/exec", "args"]`      | `/bin/exec args`            |                                                     |
+| `CMD /bin/exec args`             | `/bin/sh -c /bin/exec args` |                                                     |
 | `ENTRYPOINT ["/bin/ep", "arge"]` | `CMD ["/bin/exec", "argc"]` | `/bin/ep arge /bin/exec argc`                       |
 | `ENTRYPOINT ["/bin/ep", "arge"]` | `CMD /bin/exec args`        | `/bin/ep arge /bin/sh -c /bin/exec args`            |
 | `ENTRYPOINT /bin/ep arge`        | `CMD ["/bin/exec", "argc"]` | `/bin/sh -c /bin/ep arge /bin/exec argc`            |
@@ -501,6 +566,8 @@ docker run -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql:5.7
 `ENTRYPOINT` 指令主要用于对容器进行一些初始化，而 `CMD` 指令则用于真正定义容器中主程序的启动命令。
 
 创建容器时可以改写容器主程序的启动命令，而这个覆盖只会覆盖 `CMD` 中定义的内容，不会影响 `ENTRYPOINT` 中的内容。
+
+每个 Dockerfile 中只能有一个`ENTRYPOINT`，当指定多个时，只有最后一个起效。在运行时，可以被`--entrypoint`参数覆盖掉，如`docker run --entrypoint`。
 
 > 使用脚本文件来作为 `ENTRYPOINT` 的内容是常见的做法，因为对容器运行初始化的命令相对较多，全部直接放置在 `ENTRYPOINT` 后会特别复杂。
 
@@ -516,6 +583,8 @@ ADD [--chown=<user>:<group>] ["<src>",... "<dest>"]
 
 两者的区别主要在于 `ADD` 能够支持使用网络端的 URL 地址作为 src 源，并且在源文件被识别为压缩包时，自动进行解压，而 `COPY` 没有这两个能力。
 
+当使用本地目录为源目录时，推荐使用 `COPY`。
+
 ### 写时复制
 
 在编程里，[写时复制]^(Copy on Write)
@@ -528,8 +597,17 @@ Docker 的写时复制与编程中的相类似，在通过镜像运行容器时�
 采用写时复制机制来设计的 Docker，既保证了镜像在生成为容器时，以及容器在运行过程中，不会对自身造成修改。又借助剔除常见虚拟化在初始化时需要从镜像中拷贝整个文件系统的过程，大幅提高了容器的创建和启动速度。可以说，Docker
 容器能够实现秒级启动速度，写时复制机制在其中发挥了举足轻重的作用。
 
+### docker save、export 区别
+
+`docker save` 和 `docker load` 是对镜像的操作，导入导出的是镜像文件。
+
+`docker export` 和 `docker import`是对容器的操作，是导出导入容器，导出一个已经创建的容器到一个文件，不管此时这个容器是否处于运行状态，可以理解为容器快照。
+
+容器快照文件将丢弃所有的历史记录和元数据信息（即仅保存容器当时的快照状态，如标签信息会被丢弃），而镜像存储文件将保存完整记录，体积更大。从容器快照文件导入时可以重新指定标签等元数据信息。
+
 ## 参考
 
++ [Docker技术入门与实战(第三版)](https://book.douban.com/subject/30329430/)
 + [对比Docker和虚拟机 ](https://www.cnblogs.com/zhangcz/p/15089684.html)
 + [开发者必备的 Docker 实践指南](https://juejin.cn/book/6844733746462064654)
 
