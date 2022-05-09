@@ -79,9 +79,13 @@ Ubuntu、CentOS、Fedora，他们每次在更新版本时都会更新代号。
 
 ![Linux发行版](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220507/f18e321c61d749359df40c04029e8e5a.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'Linux发行版')
 
-### Alpine
+### Busybox
 
-BusyBox 是一个集成了一百多个最常用 Linux 命令和工具（如cat、echo、grep、mount、telnet等）的**精简工具箱**，它只有几MB的大小，被誉为“Linux系统的瑞士军刀”。
+BusyBox 是一个集成了一百多个最常用 Linux 命令和工具（如 cat、echo、grep、mount、telnet 等）的**精简工具箱**，它只有几MB的大小，被誉为“Linux系统的瑞士军刀”。
+
+![busybox](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220509/f67ba7a59a1a4bca999f48b0706f6331.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'busybox')
+
+### Alpine
 
 Alpine 操作系统是一个面向安全的轻型 Linux 发行版。它不同于通常的 Linux 发行版，Alpine 采用了 musl libc 和 BusyBox 以减小系统的体积和运行时资源消耗，但功能上比 BusyBox
 又完善得多。在保持瘦身的同时，Alpine 还提供了自己的包管理工具`apk`
@@ -89,8 +93,10 @@ Alpine 操作系统是一个面向安全的轻型 Linux 发行版。它不同于
 
 相比于其他 Docker 镜像，Alpine Docker 的容量非常小，仅仅只有 5MB 左右，而 Ubuntu 系列镜像接近 200MB，且拥有非常友好的包管理机制。
 
-`Alpine` 镜像的缺点就在于它实在**过于精简**，以至于麻雀虽小，也无法做到五脏俱全了。在 `Alpine` 中缺少很多常见的工具和类库，以至于如果想基于 `Alpine`
-标签的镜像进行二次构建，那搭建的过程会相当烦琐。所以如果想要对软件镜像进行改造，并基于其构建新的镜像，那么 `Alpine` 镜像不是一个很好的选择。
+Docker 官方推荐使用 Alpine 作为默认的基础镜像环境，这可以带来多个优势，如镜像下载速度加快、镜像安全性提高、主机之间的切换更方便、占用更少磁盘空间等。
+
+Alpine 镜像的**缺点**就在于它实在**过于精简**，以至于麻雀虽小，也无法做到五脏俱全了。在 Alpine 中缺少很多常见的工具和类库，以至于如果想基于 Alpine
+标签的镜像进行二次构建，那搭建的过程会相当烦琐。所以如果想要对软件镜像进行改造，并基于其构建新的镜像，那么 Alpine 镜像不是一个很好的选择。
 
 ### Debian
 
