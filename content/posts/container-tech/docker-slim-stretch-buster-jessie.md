@@ -1,5 +1,5 @@
 ---
-title: "slim、stretch、buster、jessie、alpine、debian、ubuntu、centOS、fedora"
+title: "slim、stretch、buster、jessie、alpine、debian、ubuntu、centOS、fedora、buildpack-deps"
 subtitle: ""
 
 init_date: "2022-04-24T12:46:42+08:00"
@@ -11,7 +11,7 @@ lastmod: 2022-04-24
 draft: false
 
 author: "xiaobinqt"
-description: "xiaobinqt,Docker slim、stretch、buster、jessie、alpine、busyBox、debian、Ubuntu、CentOS、Fedora"
+description: "xiaobinqt,Docker slim、stretch、buster、jessie、alpine、busyBox、debian、Ubuntu、CentOS、Fedora、buildpack-deps"
 
 featuredImage: ""
 
@@ -64,6 +64,12 @@ Ubuntu、CentOS、Fedora，他们每次在更新版本时都会更新代号。
 `slim` 可以理解为精简版，跟 `Minimal`是一样的，仅安装运行特定工具所需的最少软件包。
 
 所以`FROM debian:buster` 就是把 debian 10 作为基础镜像，`FROM node:14.16.1-stretch-slim` 就是把 debian 9 的精简版作为基础镜像。
+
+## buildpack-deps
+
+[buildpack-deps](https://hub.docker.com/_/buildpack-deps)  是 docker hub 官方提供的一个镜像工具包，很多 docker
+官方的基础镜像都基于此基础镜像进行构建的，buildpack-deps 已经提供了很多内置好的依赖库，可以简化镜像部署，官方也提供了 debian 以及 ubuntu 等的镜像，如 debian
+10 `buildpack-deps:buster`，ubuntu 16 `buildpack-deps:xenial` 等。
 
 ## 操作系统
 
