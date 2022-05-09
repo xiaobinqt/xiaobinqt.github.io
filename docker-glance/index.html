@@ -31,7 +31,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/xiaobinqt.github.io\/docker-glance\/"
-        },"image": ["https:\/\/xiaobinqt.github.io\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "docker","wordcount":  6990 ,
+        },"image": ["https:\/\/xiaobinqt.github.io\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "docker","wordcount":  8204 ,
         "url": "https:\/\/xiaobinqt.github.io\/docker-glance\/","datePublished": "2018-03-18T00:00:00+00:00","dateModified": "2022-04-28T00:00:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "xxxx","logo": {
@@ -113,8 +113,8 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">Docker 学习笔记</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>xiaobinqt</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E5%BC%80%E5%8F%91%E8%80%85%E6%89%8B%E5%86%8C/"><i class="far fa-folder fa-fw"></i>开发者手册</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2018-03-18">2018-03-18</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 6990 字&nbsp;
-                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 14 分钟&nbsp;</div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2018-03-18">2018-03-18</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 8204 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 17 分钟&nbsp;</div>
         </div><div class="featured-image"><img
         class="lazyload"
         src="/svg/loading.min.svg"
@@ -137,7 +137,13 @@
         <li><a href="#虚拟机和-docker">虚拟机和 Docker</a></li>
       </ul>
     </li>
-    <li><a href="#常用命令">常用命令</a></li>
+    <li><a href="#常用命令">常用命令</a>
+      <ul>
+        <li><a href="#images-子命令">images 子命令</a></li>
+        <li><a href="#create-子命令">create 子命令</a></li>
+        <li><a href="#build-子命令">build 子命令</a></li>
+      </ul>
+    </li>
     <li><a href="#容器网络">容器网络</a>
       <ul>
         <li><a href="#创建网络">创建网络</a></li>
@@ -155,7 +161,7 @@
     <li><a href="#镜像版本管理">镜像版本管理</a>
       <ul>
         <li><a href="#提交修改生成新镜像">提交修改生成新镜像</a></li>
-        <li><a href="#导出导入镜像">导出导入镜像</a></li>
+        <li><a href="#存出载入镜像">存出载入镜像</a></li>
       </ul>
     </li>
     <li><a href="#dockerfile">Dockerfile</a>
@@ -167,9 +173,11 @@
     </li>
     <li><a href="#faq">FAQ</a>
       <ul>
+        <li><a href="#cmd-指令">CMD 指令</a></li>
         <li><a href="#entrypoint-和-cmd-的区别">ENTRYPOINT 和 CMD 的区别</a></li>
         <li><a href="#copy-和-add-的区别">COPY 和 ADD 的区别</a></li>
         <li><a href="#写时复制">写时复制</a></li>
+        <li><a href="#docker-saveexport-区别">docker save、export 区别</a></li>
       </ul>
     </li>
     <li><a href="#参考">参考</a></li>
@@ -342,7 +350,117 @@ CPU，进而能够同时运行多个程序或者操作系统。这些都是硬�
 <pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">docker build --no-cache  .....
 </span></span></code></pre></td></tr></table>
 </div>
-</div><h2 id="容器网络">容器网络</h2>
+</div><h3 id="images-子命令">images 子命令</h3>
+<p>更多子命令选项还可以通过<code>man docker-images</code>
+来查看，或者查看官方文档 <a href="https://docs.docker.com/engine/reference/commandline/images/" target="_blank" rel="noopener noreffer">docker images</a>
+。</p>
+<table>
+<thead>
+<tr>
+<th>选项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-a, ‐‐all=true | false</code></td>
+<td>列出所有（包括临时文件）镜像文件，默认为否</td>
+</tr>
+<tr>
+<td><code>‐‐digests=true | false </code></td>
+<td>列出镜像的数字摘要值，默认为否</td>
+</tr>
+<tr>
+<td><code>-f, --filter=[]</code></td>
+<td>过滤列出的镜像，如<code>dangling=true</code>只显示没有被使用的镜像；也可指定带有特定标注的镜像等</td>
+</tr>
+<tr>
+<td><code>--format=&quot;TEMPLATE&quot;</code></td>
+<td>控制输出格式，如<code>.ID</code>代表ID信息，<code>.Repository</code>代表仓库信息等</td>
+</tr>
+<tr>
+<td><code>‐‐no-trunc=true | false </code></td>
+<td>对输出结果中太长的部分是否进行截断，如镜像的ID信息，默认为是</td>
+</tr>
+<tr>
+<td><code>-q, ‐‐quiet=true | false </code></td>
+<td>仅输出ID信息，默认为否</td>
+</tr>
+</tbody>
+</table>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220507/68e1884199cf428a981afd09c0b2a2dd.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="&amp;ndash;format" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220507/68e1884199cf428a981afd09c0b2a2dd.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>--format</h2><p>&amp;ndash;format</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220507/68e1884199cf428a981afd09c0b2a2dd.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220507/68e1884199cf428a981afd09c0b2a2dd.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220507/68e1884199cf428a981afd09c0b2a2dd.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220507/68e1884199cf428a981afd09c0b2a2dd.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220507/68e1884199cf428a981afd09c0b2a2dd.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" />
+    </a><figcaption class="image-caption">--format</figcaption>
+    </figure></p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220508/039153bec0674bfea7169d2c4f1325d5.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="&amp;ndash;filter" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220508/039153bec0674bfea7169d2c4f1325d5.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>--filter</h2><p>&amp;ndash;filter</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220508/039153bec0674bfea7169d2c4f1325d5.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220508/039153bec0674bfea7169d2c4f1325d5.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220508/039153bec0674bfea7169d2c4f1325d5.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220508/039153bec0674bfea7169d2c4f1325d5.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220508/039153bec0674bfea7169d2c4f1325d5.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" />
+    </a><figcaption class="image-caption">--filter</figcaption>
+    </figure></p>
+<h3 id="create-子命令">create 子命令</h3>
+<p>create 命令支持的选项都十分复杂，选项主要包括如下几大类：与容器运行模式相关、与容器环境配置相关、与容器资源限制和安全保护相关。</p>
+<ul>
+<li>⚠️容器运行模式相关的选项</li>
+</ul>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220507/33cd51368fe748cfa3537c318f148f0a.png" title="容器运行模式相关的选项" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220507/33cd51368fe748cfa3537c318f148f0a.png" data-sub-html="<h2>容器运行模式相关的选项</h2><p>容器运行模式相关的选项</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220507/33cd51368fe748cfa3537c318f148f0a.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220507/33cd51368fe748cfa3537c318f148f0a.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220507/33cd51368fe748cfa3537c318f148f0a.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220507/33cd51368fe748cfa3537c318f148f0a.png 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220507/33cd51368fe748cfa3537c318f148f0a.png" />
+    </a><figcaption class="image-caption">容器运行模式相关的选项</figcaption>
+    </figure></p>
+<ul>
+<li>⚠️容器环境和配置相关的选项</li>
+</ul>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220507/fea604964abd42a3a3c26aa84e320b6d.png" title="容器环境和配置相关的选项" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220507/fea604964abd42a3a3c26aa84e320b6d.png" data-sub-html="<h2>容器环境和配置相关的选项</h2><p>容器环境和配置相关的选项</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220507/fea604964abd42a3a3c26aa84e320b6d.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220507/fea604964abd42a3a3c26aa84e320b6d.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220507/fea604964abd42a3a3c26aa84e320b6d.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220507/fea604964abd42a3a3c26aa84e320b6d.png 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220507/fea604964abd42a3a3c26aa84e320b6d.png" />
+    </a><figcaption class="image-caption">容器环境和配置相关的选项</figcaption>
+    </figure></p>
+<ul>
+<li>⚠️容器资源限制和安全保护相关的选项</li>
+</ul>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220507/e6eb7947b0c44d0cb039e4118a3e03b9.png" title="容器资源限制和安全保护相关的选项" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220507/e6eb7947b0c44d0cb039e4118a3e03b9.png" data-sub-html="<h2>容器资源限制和安全保护相关的选项</h2><p>容器资源限制和安全保护相关的选项</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220507/e6eb7947b0c44d0cb039e4118a3e03b9.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220507/e6eb7947b0c44d0cb039e4118a3e03b9.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220507/e6eb7947b0c44d0cb039e4118a3e03b9.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220507/e6eb7947b0c44d0cb039e4118a3e03b9.png 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220507/e6eb7947b0c44d0cb039e4118a3e03b9.png" />
+    </a><figcaption class="image-caption">容器资源限制和安全保护相关的选项</figcaption>
+    </figure></p>
+<h3 id="build-子命令">build 子命令</h3>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220509/92e3455beeb546f6b046fb34936f8020.png" title="build 子命令" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220509/92e3455beeb546f6b046fb34936f8020.png" data-sub-html="<h2>build 子命令</h2><p>build 子命令</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220509/92e3455beeb546f6b046fb34936f8020.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220509/92e3455beeb546f6b046fb34936f8020.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220509/92e3455beeb546f6b046fb34936f8020.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220509/92e3455beeb546f6b046fb34936f8020.png 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220509/92e3455beeb546f6b046fb34936f8020.png" />
+    </a><figcaption class="image-caption">build 子命令</figcaption>
+    </figure></p>
+<h2 id="容器网络">容器网络</h2>
 <p>在 Docker 网络中，有三个比较核心的概念，就是：<strong><ruby>沙盒<rt>Sandbox</rt></ruby></strong> 、<strong><ruby>网络<rt>Network</rt></ruby></strong>、<strong><ruby>端点<rt>Endpoint</rt></ruby></strong>。</p>
 <ul>
 <li>沙盒提供了容器的虚拟网络栈，也就是端口套接字、IP 路由表、防火墙等内容。实现隔离容器网络与宿主机网络，形成了完全独立的容器网络环境。</li>
@@ -553,7 +671,7 @@ Web 应用。</p>
 </span></span><span class="line"><span class="cl"><span class="p">]</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div><p><code>Source</code> 是 Docker 为我们分配用于挂载的宿主机目录，其位于 Docker 的资源区域，一般默认为 <code>/var/lib/docker</code>。一版并不需要关心这个目录，一切对它的管理都已经在 Docker 内实现了。</p>
+</div><p><code>Source</code> 是 Docker 为我们分配用于挂载的宿主机目录，其位于 Docker 的资源区域，一般默认为 <code>/var/lib/docker</code>。一般并不需要关心这个目录，一切对它的管理都已经在 Docker 内实现了。</p>
 <p>为了方便识别数据卷，可以像命名容器一样为数据卷命名，这里的 <code>Name</code> 是数据卷的命名，在未给出数据卷命名的时候，Docker 会采用数据卷的 ID 命名数据卷。可以通过 <code>-v &lt;name&gt;:&lt;container-path&gt;</code>
 这种形式来命名数据卷。</p>
 <div class="highlight"><div class="chroma">
@@ -635,7 +753,7 @@ Web 应用。</p>
             alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220428/ff0c45e23ed1400487138fcc6c290a78.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" />
     </a><figcaption class="image-caption">提交修改生成新镜像</figcaption>
     </figure></p>
-<h3 id="导出导入镜像">导出导入镜像</h3>
+<h3 id="存出载入镜像">存出载入镜像</h3>
 <p>对于某个镜像我们可以导出成一个 tar 包，也可以将一个 tar 镜像导入到系统中。</p>
 <p><code>docker save -o</code> 命令可以将一个镜像导出为 tar 包👇</p>
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220428/a28fbe578b704a16b618a051838c19e1.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="导出镜像" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220428/a28fbe578b704a16b618a051838c19e1.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>导出镜像</h2><p>导出镜像</p>">
@@ -673,10 +791,20 @@ Web 应用。</p>
 <h2 id="dockerfile">Dockerfile</h2>
 <p>利用 Dockerfile 文件可以生成镜像，这对于自定义镜像非常优雅，也利于镜像分享，直接分享 Dockerfile 文件就可以了。</p>
 <h3 id="常用指令">常用指令</h3>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220509/02c21142855e479a8826db7fcfbd438d.png" title="常用指令" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220509/02c21142855e479a8826db7fcfbd438d.png" data-sub-html="<h2>常用指令</h2><p>常用指令</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220509/02c21142855e479a8826db7fcfbd438d.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220509/02c21142855e479a8826db7fcfbd438d.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220509/02c21142855e479a8826db7fcfbd438d.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220509/02c21142855e479a8826db7fcfbd438d.png 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220509/02c21142855e479a8826db7fcfbd438d.png" />
+    </a><figcaption class="image-caption">常用指令</figcaption>
+    </figure></p>
 <ul>
 <li>🏆<code>FROM</code></li>
 </ul>
-<p>通过 <code>FROM</code> 指令指定一个基础镜像，接下来所有的指令都是基于这个镜像所展开的。</p>
+<p>通过 <code>FROM</code> 指令指定一个基础镜像，接下来所有的指令都是基于这个镜像所展开的。<strong>为了保证镜像精简，可以选用体积较小的镜像如<code>Alpine</code>或<code>Debian</code>作为基础镜像</strong>。</p>
 <p><code>FROM</code> 指令支持三种形式：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -754,6 +882,22 @@ Web 应用。</p>
 </div>
 </div><p>在 <code>VOLUME</code> 指令中定义的目录，在基于新镜像创建容器时，会自动建立为数据卷，不需要再单独使用 <code>-v</code> 选项来配置。</p>
 <ul>
+<li>🏆<code>LABEL</code></li>
+</ul>
+<p><code>LABEL</code>指令可以为生成的镜像添加元数据标签信息。这些信息可以用来辅助过滤出特定镜像。格式为：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">LABEL &lt;key&gt;<span class="o">=</span>&lt;value&gt; 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">LABEL <span class="nv">version</span><span class="o">=</span>1.2
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
 <li>🏆 COPY 和 ADD</li>
 </ul>
 <p>在制作新的镜像的时候，可能需要将一些软件配置、程序代码、执行脚本等直接导入到镜像内的文件系统里，使用 <code>COPY</code> 或 <code>ADD</code> 指令能够帮助我们直接从宿主机的文件系统里拷贝内容到镜像里的文件系统中。</p>
@@ -809,6 +953,7 @@ Web 应用。</p>
 </div><p>在☝️这个例子里，我们将 Tomcat 的版本号通过 <code>ARG</code> 指令定义为参数变量，在调用下载 Tomcat 包时，使用变量替换掉下载地址中的版本号。通过这样的定义，就可以让我们在不对 Dockerfile
 进行大幅修改的前提下，轻松实现对 Tomcat 版本的切换并重新构建镜像了。</p>
 <p>如果我们需要通过这个 Dockerfile 文件构建 Tomcat 镜像，我们可以在构建时通过 docker build 的 <code>--build-arg</code> 选项来设置参数变量。</p>
+<p>Docker<strong>内置</strong>了一些镜像创建变量，用户可以直接使用而无须声明，包括（不区分大小写）<code>HTTP_PROXY</code>、<code>HTTPS_PROXY</code>、<code>FTP_PROXY</code>、<code>NO_PROXY</code>。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
@@ -853,6 +998,20 @@ Web 应用。</p>
 </div>
 </div><p><strong>ENV 指令所定义的变量，永远会覆盖 ARG 所定义的变量</strong>。</p>
 <h2 id="faq">FAQ</h2>
+<h3 id="cmd-指令">CMD 指令</h3>
+<p>CMD指令用来指定启动容器时默认执行的命令。支持三种格式：</p>
+<ul>
+<li>
+<p><code>CMD [&quot;executable&quot;, &quot;param1&quot;, &quot;param2&quot;]</code>：相当于执行 <code>executable param1 param2</code>，推荐方式。</p>
+</li>
+<li>
+<p><code>CMD command param1 param2</code>：在默认的 Shell 中执行，提供给需要交互的应用。</p>
+</li>
+<li>
+<p><code>CMD [&quot;param1&quot;, &quot;param2&quot;]</code>：提供给 ENTRYPOINT 的默认参数。</p>
+</li>
+</ul>
+<p>每个 Dockerfile 只能有一条 CMD 命令。如果指定了多条命令，只有最后一条会被执行。</p>
 <h3 id="entrypoint-和-cmd-的区别">ENTRYPOINT 和 CMD 的区别</h3>
 <p>这 2 个命令都是用来指定基于此镜像所创建容器里主进程的启动命令。</p>
 <p><code>ENTRYPOINT</code> 指令的<strong>优先级高于</strong> <code>CMD</code> 指令。当 <code>ENTRYPOINT</code> 和 <code>CMD</code> 同时在镜像中被指定时，<code>CMD</code> 里的内容会作为 <code>ENTRYPOINT</code> 的参数，两者拼接之后，才是最终执行的命令。</p>
@@ -876,14 +1035,14 @@ Web 应用。</p>
 <td><code>/bin/sh -c /bin/ep arge</code></td>
 </tr>
 <tr>
-<td></td>
 <td><code>CMD [&quot;/bin/exec&quot;, &quot;args&quot;]</code></td>
 <td><code>/bin/exec args</code></td>
+<td></td>
 </tr>
 <tr>
-<td></td>
 <td><code>CMD /bin/exec args</code></td>
 <td><code>/bin/sh -c /bin/exec args</code></td>
+<td></td>
 </tr>
 <tr>
 <td><code>ENTRYPOINT [&quot;/bin/ep&quot;, &quot;arge&quot;]</code></td>
@@ -909,6 +1068,7 @@ Web 应用。</p>
 </table>
 <p><code>ENTRYPOINT</code> 指令主要用于对容器进行一些初始化，而 <code>CMD</code> 指令则用于真正定义容器中主程序的启动命令。</p>
 <p>创建容器时可以改写容器主程序的启动命令，而这个覆盖只会覆盖 <code>CMD</code> 中定义的内容，不会影响 <code>ENTRYPOINT</code> 中的内容。</p>
+<p>每个 Dockerfile 中只能有一个<code>ENTRYPOINT</code>，当指定多个时，只有最后一个起效。在运行时，可以被<code>--entrypoint</code>参数覆盖掉，如<code>docker run --entrypoint</code>。</p>
 <blockquote>
 <p>使用脚本文件来作为 <code>ENTRYPOINT</code> 的内容是常见的做法，因为对容器运行初始化的命令相对较多，全部直接放置在 <code>ENTRYPOINT</code> 后会特别复杂。</p>
 </blockquote>
@@ -930,6 +1090,7 @@ Web 应用。</p>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>两者的区别主要在于 <code>ADD</code> 能够支持使用网络端的 URL 地址作为 src 源，并且在源文件被识别为压缩包时，自动进行解压，而 <code>COPY</code> 没有这两个能力。</p>
+<p>当使用本地目录为源目录时，推荐使用 <code>COPY</code>。</p>
 <h3 id="写时复制">写时复制</h3>
 <p>在编程里，<strong><ruby>写时复制<rt>Copy on Write</rt></ruby></strong>
 常常用于对象或数组的拷贝中，当拷贝对象或数组时，复制的过程并不是马上发生在内存中，而只是先让两个变量同时指向同一个内存空间，并进行一些标记，当要对对象或数组进行修改时，才真正进行内存的拷贝。</p>
@@ -938,8 +1099,13 @@ Web 应用。</p>
 也就是说，容器在创建和启动的过程中，不需要进行任何的文件系统复制操作，也不需要为容器单独开辟大量的硬盘空间，与其他虚拟化方式对这个过程的操作进行对比，Docker 启动的速度可见一斑。</p>
 <p>采用写时复制机制来设计的 Docker，既保证了镜像在生成为容器时，以及容器在运行过程中，不会对自身造成修改。又借助剔除常见虚拟化在初始化时需要从镜像中拷贝整个文件系统的过程，大幅提高了容器的创建和启动速度。可以说，Docker
 容器能够实现秒级启动速度，写时复制机制在其中发挥了举足轻重的作用。</p>
+<h3 id="docker-saveexport-区别">docker save、export 区别</h3>
+<p><code>docker save</code> 和 <code>docker load</code> 是对镜像的操作，导入导出的是镜像文件。</p>
+<p><code>docker export</code> 和 <code>docker import</code>是对容器的操作，是导出导入容器，导出一个已经创建的容器到一个文件，不管此时这个容器是否处于运行状态，可以理解为容器快照。</p>
+<p>容器快照文件将丢弃所有的历史记录和元数据信息（即仅保存容器当时的快照状态，如标签信息会被丢弃），而镜像存储文件将保存完整记录，体积更大。从容器快照文件导入时可以重新指定标签等元数据信息。</p>
 <h2 id="参考">参考</h2>
 <ul>
+<li><a href="https://book.douban.com/subject/30329430/" target="_blank" rel="noopener noreffer">Docker技术入门与实战(第三版)</a></li>
 <li><a href="https://www.cnblogs.com/zhangcz/p/15089684.html" target="_blank" rel="noopener noreffer">对比Docker和虚拟机 </a></li>
 <li><a href="https://juejin.cn/book/6844733746462064654" target="_blank" rel="noopener noreffer">开发者必备的 Docker 实践指南</a></li>
 </ul>
