@@ -65,6 +65,8 @@ Ubuntu、CentOS、Fedora，他们每次在更新版本时都会更新代号。
 
 所以`FROM debian:buster` 就是把 debian 10 作为基础镜像，`FROM node:14.16.1-stretch-slim` 就是把 debian 9 的精简版作为基础镜像。
 
+容器的核心是应用。选择过大的父镜像（如Ubuntu系统镜像）会造成最终生成应用镜像的臃肿，所以会有这种瘦身过的应用镜像（如node:slim），或者较为小巧的系统镜像（如 alpine、busybox 或 debian）
+
 ## buildpack-deps
 
 [buildpack-deps](https://hub.docker.com/_/buildpack-deps)  是 docker hub 官方提供的一个镜像工具包，很多 docker
