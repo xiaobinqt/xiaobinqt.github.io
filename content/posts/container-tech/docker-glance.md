@@ -185,8 +185,13 @@ Docker 官方提供了五种 Docker 网络驱动：`Bridge Driver`、`Host Drive
 
 ![网络驱动](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220426/2e40239883264b8fa413bcd39eaf701a.png '网络驱动')
 
-`Bridge` 网络是 Docker 容器的默认网络驱动，通过网桥来实现网络通讯。`Overlay` 网络是借助 Docker 集群模块 Docker Swarm 来搭建的跨 Docker Daemon
-网络，可以通过它**跨越物理主机的限制**，让多个处于不同 Docker daemon 实例中的容器连接到同一个网络，并且让这些容器感觉这个网络与其他类型的网络没有区别。
+`Bridge` 网络是 Docker 容器的默认网络驱动，通过网桥来实现网络通讯。为容器创建独立的网络命名空间，分配网卡、IP 地址等网络配置，并通过veth接口对将容器挂载到一个虚拟网桥（默认为docker0）上。
+
+`none`为容器创建独立的网络命名空间，但不进行网络配置，即容器内没有创建网卡、IP地址等。
+
+`host`不为容器创建独立的网络命名空间，容器内看到的网络配置（网卡信息、路由表、Iptables 规则等）均与主机上的保持一致。注意其他资源还是与主机隔离的。
+
+`Overlay` 驱动默认采用 VXLAN 协议，在 **IP 地址可以互相访问**的多个主机之间搭建隧道，让容器可以互相访问，并且让这些容器感觉这个网络与其他类型的网络没有区别。
 
 ![Overlay network](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220428/982405a94bc347559812099a15aabeb2.png 'Overlay network')
 
