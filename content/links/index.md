@@ -47,7 +47,7 @@ enable: true
         </div>
         <div class="frienddivright">
             <div class="friendname">MakerLi</div>
-            <div class="friendinfo"></div>
+            <div class="friendinfo">向着全栈工程师前进</div>
         </div>
     </div>
 </a>
