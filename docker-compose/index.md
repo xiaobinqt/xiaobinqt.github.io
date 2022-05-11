@@ -1,4 +1,4 @@
-# Docker Compose 简单使用
+# Docker Compose 笔记
 
 
 <!-- author： xiaobinqt -->
@@ -7,7 +7,18 @@
 <!-- https://www.xiaobinqt.cn -->
 
 
-如果说 Dockerfile 是将容器内运行环境的搭建固化下来，那么 Docker Compose 可以理解为将多个容器运行的方式和配置固化下来。
+在日常工作中，经常会碰到需要多个容器相互配合来完成某项任务的情况。例如要实现一个 Web 项目，除了 Web 服务容器本身，往往还需要再加上后端的数据库服务容器，甚至还包括前端的负载均衡容器等。Compose
+恰好满足了这样的需求。Compose 定位是**定义和运行多个Docker容器的应用**。
+
+Compose 允许用户通过一个单独的 docker-compose.yml 模板文件（YAML格式）来定义一组相关联的应用容器为一个[服务栈]^(stack)。
+
+Compose中有几个重要的概念：
+
++ [任务]^(task)：一个容器被称为一个任务。任务拥有独一无二的ID，在同一个服务中的多个任务序号依次递增。
++ [服务]^(service)：某个相同应用镜像的容器副本集合，一个服务可以横向扩展为多个容器实例。
++ [服务栈]^(stack)：由多个服务组成，相互配合完成特定业务，如Web应用服务、数据库服务共同构成Web服务栈，一般由一个docker-compose.yml文件定义。
+
+Compose 的默认管理对象是服务栈，通过子命令对栈中的多个服务进行便捷的生命周期管理。
 
 ## 常用命令
 
@@ -17,6 +28,13 @@
 | `docker-compose down`       | 停止所有的容器，并将它们删除，同时消除网络等配置内容。                                      |
 | `docker-compose logs 服务名` | 查看服务日志                                                           |
 
+![常用 compose 命令](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220511/364fd570c3c34f73a782ea8e47b09c82.png '常用 compose 命令')
+
+具体可以参考
+
++ [https://yeasy.gitbook.io/docker_practice/compose/commands](https://yeasy.gitbook.io/docker_practice/compose/commands)
++ [https://weread.qq.com/web/reader/57f327107162732157facd6kbd432fb02a1bd4c9ab736c3](https://weread.qq.com/web/reader/57f327107162732157facd6kbd432fb02a1bd4c9ab736c3)
+
 `docker-compose` 命令默认会识别当前控制台所在目录内的 docker-compose.yml 文件，会以这个目录的名字作为组装的应用项目的名称。如果需要改变它们，可以通过选项 `-f` 来修改识别的 Docker
 Compose 配置文件，通过 `-p` 选项来定义项目名:point_down:。
 
@@ -25,6 +43,16 @@ docker-compose -f ./compose/docker-compose.yml -p myapp up -d
 ```
 
 ## 配置项
+
+![常见配置项](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220511/fe7bc1c181984359a0212a117b30e28f.png '常见配置项')
+
+具体可以参看
+
++ [https://yeasy.gitbook.io/docker_practice/compose/compose_file](https://yeasy.gitbook.io/docker_practice/compose/compose_file)
+
++ [https://weread.qq.com/web/reader/57f327107162732157facd6kb73329202a0b73ce398cadd](https://weread.qq.com/web/reader/57f327107162732157facd6kb73329202a0b73ce398cadd)
+
+## 示例说明
 
 ```yaml
 version: "3"
@@ -151,8 +179,10 @@ volumes:
 
 由于 YAML 格式对 `xx:yy` 这种格式的解析有特殊性，在设置小于 60 的值时，会被当成时间而不是字符串来处理，所以最好**使用引号**将端口映射的定义包裹起来，避免歧义。
 
+## 参考
 
-
++ [https://docs.docker.com/compose/](https://docs.docker.com/compose/)
++ [Docker-入门到实践](https://yeasy.gitbook.io/docker_practice/)
 
 
 

@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="robots" content="noodp" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
-        <title>Docker Compose 简单使用 - xiaobinqt&#39;s blog</title><meta name="Description" content="xiaobinqt,docker compose 使用方法,docker compose 如何映射端口,docker compose 常用命令,dokcer compose 指定镜像,文件挂载,使用数据卷"><meta property="og:title" content="Docker Compose 简单使用" />
+        <title>Docker Compose 笔记 - xiaobinqt&#39;s blog</title><meta name="Description" content="xiaobinqt,docker compose 使用方法,docker compose 如何映射端口,docker compose 常用命令,dokcer compose 指定镜像,文件挂载,使用数据卷"><meta property="og:title" content="Docker Compose 笔记" />
 <meta property="og:description" content="xiaobinqt,docker compose 使用方法,docker compose 如何映射端口,docker compose 常用命令,dokcer compose 指定镜像,文件挂载,使用数据卷" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://xiaobinqt.github.io/docker-compose/" /><meta property="og:image" content="https://xiaobinqt.github.io/logo.png"/><meta property="article:section" content="posts" />
@@ -15,7 +15,7 @@
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://xiaobinqt.github.io/logo.png"/>
 
-<meta name="twitter:title" content="Docker Compose 简单使用"/>
+<meta name="twitter:title" content="Docker Compose 笔记"/>
 <meta name="twitter:description" content="xiaobinqt,docker compose 使用方法,docker compose 如何映射端口,docker compose 常用命令,dokcer compose 指定镜像,文件挂载,使用数据卷"/>
 <meta name="application-name" content="xiaobinqt">
 <meta name="apple-mobile-web-app-title" content="xiaobinqt"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c">
@@ -26,12 +26,12 @@
     {
         "@context": "http://schema.org",
         "@type": "BlogPosting",
-        "headline": "Docker Compose 简单使用",
+        "headline": "Docker Compose 笔记",
         "inLanguage": "zh-CN",
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/xiaobinqt.github.io\/docker-compose\/"
-        },"image": ["https:\/\/xiaobinqt.github.io\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "docker","wordcount":  1423 ,
+        },"image": ["https:\/\/xiaobinqt.github.io\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "docker","wordcount":  1878 ,
         "url": "https:\/\/xiaobinqt.github.io\/docker-compose\/","datePublished": "2019-05-21T00:00:00+00:00","dateModified": "2022-04-28T00:00:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "xxxx","logo": {
@@ -111,10 +111,10 @@
                 <div class="container"><div class="toc" id="toc-auto">
             <h2 class="toc-title">目录</h2>
             <div class="toc-content" id="toc-content-auto"></div>
-        </div><article class="page single"><h1 class="single-title animated flipInX">Docker Compose 简单使用</h1><div class="post-meta">
+        </div><article class="page single"><h1 class="single-title animated flipInX">Docker Compose 笔记</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>xiaobinqt</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E5%BC%80%E5%8F%91%E8%80%85%E6%89%8B%E5%86%8C/"><i class="far fa-folder fa-fw"></i>开发者手册</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2019-05-21">2019-05-21</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1423 字&nbsp;
-                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 3 分钟&nbsp;</div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2019-05-21">2019-05-21</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1878 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 4 分钟&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
                     <span>目录</span>
@@ -123,7 +123,8 @@
                 <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
   <ul>
     <li><a href="#常用命令">常用命令</a></li>
-    <li><a href="#配置项">配置项</a>
+    <li><a href="#配置项">配置项</a></li>
+    <li><a href="#示例说明">示例说明</a>
       <ul>
         <li><a href="#定义服务">定义服务</a></li>
         <li><a href="#指定镜像">指定镜像</a></li>
@@ -133,13 +134,23 @@
         <li><a href="#端口映射">端口映射</a></li>
       </ul>
     </li>
+    <li><a href="#参考">参考</a></li>
   </ul>
 </nav></div>
             </div><div class="content" id="content"><!-- author： xiaobinqt -->
 <!-- email： xiaobinqt@163.com -->
 <!-- https://xiaobinqt.github.io -->
 <!-- https://www.xiaobinqt.cn -->
-<p>如果说 Dockerfile 是将容器内运行环境的搭建固化下来，那么 Docker Compose 可以理解为将多个容器运行的方式和配置固化下来。</p>
+<p>在日常工作中，经常会碰到需要多个容器相互配合来完成某项任务的情况。例如要实现一个 Web 项目，除了 Web 服务容器本身，往往还需要再加上后端的数据库服务容器，甚至还包括前端的负载均衡容器等。Compose
+恰好满足了这样的需求。Compose 定位是<strong>定义和运行多个Docker容器的应用</strong>。</p>
+<p>Compose 允许用户通过一个单独的 docker-compose.yml 模板文件（YAML格式）来定义一组相关联的应用容器为一个<strong><ruby>服务栈<rt>stack</rt></ruby></strong>。</p>
+<p>Compose中有几个重要的概念：</p>
+<ul>
+<li><strong><ruby>任务<rt>task</rt></ruby></strong>：一个容器被称为一个任务。任务拥有独一无二的ID，在同一个服务中的多个任务序号依次递增。</li>
+<li><strong><ruby>服务<rt>service</rt></ruby></strong>：某个相同应用镜像的容器副本集合，一个服务可以横向扩展为多个容器实例。</li>
+<li><strong><ruby>服务栈<rt>stack</rt></ruby></strong>：由多个服务组成，相互配合完成特定业务，如Web应用服务、数据库服务共同构成Web服务栈，一般由一个docker-compose.yml文件定义。</li>
+</ul>
+<p>Compose 的默认管理对象是服务栈，通过子命令对栈中的多个服务进行便捷的生命周期管理。</p>
 <h2 id="常用命令">常用命令</h2>
 <table>
 <thead>
@@ -163,6 +174,21 @@
 </tr>
 </tbody>
 </table>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220511/364fd570c3c34f73a782ea8e47b09c82.png" title="常用 compose 命令" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220511/364fd570c3c34f73a782ea8e47b09c82.png" data-sub-html="<h2>常用 compose 命令</h2><p>常用 compose 命令</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220511/364fd570c3c34f73a782ea8e47b09c82.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220511/364fd570c3c34f73a782ea8e47b09c82.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220511/364fd570c3c34f73a782ea8e47b09c82.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220511/364fd570c3c34f73a782ea8e47b09c82.png 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220511/364fd570c3c34f73a782ea8e47b09c82.png" />
+    </a><figcaption class="image-caption">常用 compose 命令</figcaption>
+    </figure></p>
+<p>具体可以参考</p>
+<ul>
+<li><a href="https://yeasy.gitbook.io/docker_practice/compose/commands" target="_blank" rel="noopener noreffer">https://yeasy.gitbook.io/docker_practice/compose/commands</a></li>
+<li><a href="https://weread.qq.com/web/reader/57f327107162732157facd6kbd432fb02a1bd4c9ab736c3" target="_blank" rel="noopener noreffer">https://weread.qq.com/web/reader/57f327107162732157facd6kbd432fb02a1bd4c9ab736c3</a></li>
+</ul>
 <p><code>docker-compose</code> 命令默认会识别当前控制台所在目录内的 docker-compose.yml 文件，会以这个目录的名字作为组装的应用项目的名称。如果需要改变它们，可以通过选项 <code>-f</code> 来修改识别的 Docker
 Compose 配置文件，通过 <code>-p</code> 选项来定义项目名👇。</p>
 <div class="highlight"><div class="chroma">
@@ -174,6 +200,26 @@ Compose 配置文件，通过 <code>-p</code> 选项来定义项目名👇。</p
 </span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="配置项">配置项</h2>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220511/fe7bc1c181984359a0212a117b30e28f.png" title="常见配置项" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220511/fe7bc1c181984359a0212a117b30e28f.png" data-sub-html="<h2>常见配置项</h2><p>常见配置项</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220511/fe7bc1c181984359a0212a117b30e28f.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220511/fe7bc1c181984359a0212a117b30e28f.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220511/fe7bc1c181984359a0212a117b30e28f.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220511/fe7bc1c181984359a0212a117b30e28f.png 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220511/fe7bc1c181984359a0212a117b30e28f.png" />
+    </a><figcaption class="image-caption">常见配置项</figcaption>
+    </figure></p>
+<p>具体可以参看</p>
+<ul>
+<li>
+<p><a href="https://yeasy.gitbook.io/docker_practice/compose/compose_file" target="_blank" rel="noopener noreffer">https://yeasy.gitbook.io/docker_practice/compose/compose_file</a></p>
+</li>
+<li>
+<p><a href="https://weread.qq.com/web/reader/57f327107162732157facd6kb73329202a0b73ce398cadd" target="_blank" rel="noopener noreffer">https://weread.qq.com/web/reader/57f327107162732157facd6kb73329202a0b73ce398cadd</a></p>
+</li>
+</ul>
+<h2 id="示例说明">示例说明</h2>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt"> 1
@@ -356,6 +402,11 @@ Compose 配置文件，通过 <code>-p</code> 选项来定义项目名👇。</p
 <h3 id="端口映射">端口映射</h3>
 <p><code>ports</code> 这个配置项，它是用来定义端口映射的。可以利用它进行宿主机与容器端口的映射，这个配置与 docker CLI 中 <code>-p</code> 选项的使用方法是近似的。</p>
 <p>由于 YAML 格式对 <code>xx:yy</code> 这种格式的解析有特殊性，在设置小于 60 的值时，会被当成时间而不是字符串来处理，所以最好<strong>使用引号</strong>将端口映射的定义包裹起来，避免歧义。</p>
+<h2 id="参考">参考</h2>
+<ul>
+<li><a href="https://docs.docker.com/compose/" target="_blank" rel="noopener noreffer">https://docs.docker.com/compose/</a></li>
+<li><a href="https://yeasy.gitbook.io/docker_practice/" target="_blank" rel="noopener noreffer">Docker-入门到实践</a></li>
+</ul>
 </div><div class="post-footer" id="post-footer">
     <div class="post-info">
         <div class="post-info-line">
@@ -369,7 +420,7 @@ Compose 配置文件，通过 <code>-p</code> 选项来定义项目名👇。</p
                             <a class="link-to-markdown" href="/docker-compose/index.md" target="_blank">阅读原始文档</a>
                         </span></div>
             <div class="post-info-share">
-                <span><a href="javascript:void(0);" title="分享到 Twitter" data-sharer="twitter" data-url="https://xiaobinqt.github.io/docker-compose/" data-title="Docker Compose 简单使用" data-hashtags="docker"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="https://xiaobinqt.github.io/docker-compose/" data-hashtag="docker"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Hacker News" data-sharer="hackernews" data-url="https://xiaobinqt.github.io/docker-compose/" data-title="Docker Compose 简单使用"><i class="fab fa-hacker-news fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Line" data-sharer="line" data-url="https://xiaobinqt.github.io/docker-compose/" data-title="Docker Compose 简单使用"><i data-svg-src="/lib/simple-icons/icons/line.min.svg"></i></a><a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="https://xiaobinqt.github.io/docker-compose/" data-title="Docker Compose 简单使用"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="分享到 百度" data-sharer="baidu" data-url="https://xiaobinqt.github.io/docker-compose/" data-title="Docker Compose 简单使用"><i data-svg-src="/lib/simple-icons/icons/baidu.min.svg"></i></a></span>
+                <span><a href="javascript:void(0);" title="分享到 Twitter" data-sharer="twitter" data-url="https://xiaobinqt.github.io/docker-compose/" data-title="Docker Compose 笔记" data-hashtags="docker"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="https://xiaobinqt.github.io/docker-compose/" data-hashtag="docker"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Hacker News" data-sharer="hackernews" data-url="https://xiaobinqt.github.io/docker-compose/" data-title="Docker Compose 笔记"><i class="fab fa-hacker-news fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Line" data-sharer="line" data-url="https://xiaobinqt.github.io/docker-compose/" data-title="Docker Compose 笔记"><i data-svg-src="/lib/simple-icons/icons/line.min.svg"></i></a><a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="https://xiaobinqt.github.io/docker-compose/" data-title="Docker Compose 笔记"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="分享到 百度" data-sharer="baidu" data-url="https://xiaobinqt.github.io/docker-compose/" data-title="Docker Compose 笔记"><i data-svg-src="/lib/simple-icons/icons/baidu.min.svg"></i></a></span>
             </div>
         </div>
     </div>
@@ -397,5 +448,5 @@ Compose 配置文件，通过 <code>-p</code> 选项来定义项目名👇。</p
             </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
                 <i class="fas fa-comment fa-fw"></i>
             </a>
-        </div><link rel="stylesheet" href="/lib/gitalk/gitalk.min.css"><link rel="stylesheet" href="/lib/lightgallery/lightgallery.min.css"><script type="text/javascript" src="/lib/gitalk/gitalk.min.js"></script><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="/lib/algoliasearch/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lightgallery.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-thumbnail.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-zoom.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"gitalk":{"admin":["xiaobinqt"],"clientID":"47b15de6c2d8a0f8d707","clientSecret":"c70556c8b3a3b38ea7c72e539ff3b37d5bc1b4f3","id":"6ffa8be18646d9ecc6573d2fdb167d1d","owner":"xiaobinqt","repo":"xiaobinqt.github.io","title":"Docker Compose 简单使用"}},"lightGallery":{"actualSize":false,"exThumbImage":"data-thumbnail","hideBarsDelay":2000,"selector":".lightgallery","speed":400,"thumbContHeight":80,"thumbWidth":80,"thumbnail":true},"search":{"algoliaAppID":"CPNWIDNX0Y","algoliaIndex":"xiaobinqt.io","algoliaSearchKey":"80b84de0ebc766371dd27cd3e651c41e","highlightTag":"em","maxResultLength":20,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+        </div><link rel="stylesheet" href="/lib/gitalk/gitalk.min.css"><link rel="stylesheet" href="/lib/lightgallery/lightgallery.min.css"><script type="text/javascript" src="/lib/gitalk/gitalk.min.js"></script><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="/lib/algoliasearch/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lightgallery.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-thumbnail.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-zoom.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"gitalk":{"admin":["xiaobinqt"],"clientID":"47b15de6c2d8a0f8d707","clientSecret":"c70556c8b3a3b38ea7c72e539ff3b37d5bc1b4f3","id":"6ffa8be18646d9ecc6573d2fdb167d1d","owner":"xiaobinqt","repo":"xiaobinqt.github.io","title":"Docker Compose 笔记"}},"lightGallery":{"actualSize":false,"exThumbImage":"data-thumbnail","hideBarsDelay":2000,"selector":".lightgallery","speed":400,"thumbContHeight":80,"thumbWidth":80,"thumbnail":true},"search":{"algoliaAppID":"CPNWIDNX0Y","algoliaIndex":"xiaobinqt.io","algoliaSearchKey":"80b84de0ebc766371dd27cd3e651c41e","highlightTag":"em","maxResultLength":20,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
 </html>
