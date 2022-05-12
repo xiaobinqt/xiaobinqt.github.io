@@ -82,26 +82,27 @@ Docker 并没有和虚拟机一样利用一个独立的 OS 执行环境的隔离
 
 ## 常用命令
 
-| CMD                                       | 说明                                                   |
-|-------------------------------------------|------------------------------------------------------|
-| `sudo docker create --name 容器名称 镜像名称`     | 创建容器                                                 |
-| `docker start 名称`                         | 启动容器                                                 |
-| `sudo docker run --name 容器名称 -d 镜像名称`     | 创建并启动容器且在后台运行,`-d=--detach`                          |
-| `docker ps `                              | 列出**运行中**容器                                          |
-| `docker ps -a`                            | 列出所有容器, `-a=--all`                                   |
-| `docker stop 容器名称/ID`                     | 停止容器                                                 |
-| `docker rm 容器名称/ID`                       | 删除容器                                                 |
-| `docker exec -it 容器名称 bash/sh`            | 进入容器                                                 |
-| `docker attach --sig-proxy=false 容器名称`    | 将容器转为了前台运行，如果不加`--sig-proxy=false` `Ctrl + C` 后会停止容器 |
-| `docker logs 容器名称`                        | 查看容器日志                                               |
-| `docker network ls/list`                  | 查看已经存在的网络                                            |
-| `docker network create -d 网络驱动 网络名`       | 创建新网络                                                |
-| `docker volume ls`                        | 列出当前已创建的数据卷                                          |
-| `docker volume create 名称`                 | 创建数据卷                                                |
-| `docker volume rm 名称`                     | 删除数据卷                                                |
-| `docker volume prune`                     | 删除没有被容器引用的数据卷                                        |
-| `docker build`                            | 构建镜像                                                 |
-| `docker inspect 容器名/ID`                   | 查看容器详情                                               |
+| CMD                                    | 说明                                                   |
+|----------------------------------------|------------------------------------------------------|
+| `sudo docker create --name 容器名称 镜像名称`  | 创建容器                                                 |
+| `docker start 名称`                      | 启动容器                                                 |
+| `sudo docker run --name 容器名称 -d 镜像名称`  | 创建并启动容器且在后台运行,`-d=--detach`                          |
+| `docker ps `                           | 列出**运行中**容器                                          |
+| `docker ps -a`                         | 列出所有容器, `-a=--all`                                   |
+| `docker stop 容器名称/ID`                  | 停止容器                                                 |
+| `docker rm 容器名称/ID`                    | 删除容器                                                 |
+| `docker exec -it 容器名称 bash/sh`         | 进入容器                                                 |
+| `docker attach --sig-proxy=false 容器名称` | 将容器转为了前台运行，如果不加`--sig-proxy=false` `Ctrl + C` 后会停止容器 |
+| `docker logs 容器名称`                     | 查看容器日志                                               |
+| `docker network ls/list`               | 查看已经存在的网络                                            |
+| `docker network create -d 网络驱动 网络名`    | 创建新网络                                                |
+| `docker volume ls`                     | 列出当前已创建的数据卷                                          |
+| `docker volume create 名称`              | 创建数据卷                                                |
+| `docker volume rm 名称`                  | 删除数据卷                                                |
+| `docker volume prune`                  | 删除没有被容器引用的数据卷                                        |
+| `docker build`                         | 构建镜像                                                 |
+| `docker inspect 容器名/ID`                | 查看容器详情                                               |
+| `docker run --privileged`              | 容器获取宿主机root权限                                               |
 
 `docker exec` 命令能帮助我们在正在运行的容器中运行指定的命令。
 
