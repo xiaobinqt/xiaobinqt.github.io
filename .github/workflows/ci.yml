@@ -61,3 +61,20 @@ jobs:
           PUBLISH_DIR: ./public  # hugo 生成到 public 作为跟目录
           commit_message: ${{ github.event.head_commit.message }}
 
+      #部署到服务器
+      - name: Deploy to aliyun server
+        uses: easingthemes/ssh-deploy@v2.1.6
+        env:
+          #私钥
+          SSH_PRIVATE_KEY: ${{ secrets.ALIYUN_PRIVATE_KEY }} #后面指定为该仓库配置的私钥
+          ARGS: "-rltgoDzvO"
+          # 源目录，编译后生成的文件目录
+          SOURCE: '/public/'
+          #服务器公网地址
+          REMOTE_HOST: '${{ secrets.ALIYUN_HOST }}'
+          #服务器用户名-一般默认root
+          REMOTE_USER: 'root'
+          #服务器中，代码部署的位置
+          TARGET: '/docker/www.xiaobinqt.cn/src/public/'
+          #去除的文件
+#          EXCLUDE: "/dist/, /node_modules/"
