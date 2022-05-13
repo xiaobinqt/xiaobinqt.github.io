@@ -7,6 +7,8 @@ Github Actions 是个好东西:grinning:，最近在使用的时候有个需求�
 
 ![marketplace](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220402/cf7d693259714fda8798eb7b9eaaff1c.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'marketplace')
 
+## replace-env-vars-in-file
+
 [Replace env vars in file](https://github.com/marketplace/actions/replace-env-vars-in-file) 是我选中的一个轮子。
 
 [//]: # (## 使用)
@@ -25,23 +27,29 @@ Github Actions 是个好东西:grinning:，最近在使用的时候有个需求�
 
 ![action 中替换](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220421/4d886ce9639043da9bf7794908404277.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'action 中替换')
 
-具体可以参看 [config.toml 配置文件](https://github.com/xiaobinqt/xiaobinqt.github.io/blob/23f0767e6b77f46c70edbf50e6822e5eebd85622/config.toml#L495)，[workflows
+具体可以参看 [config.toml 配置文件](https://github.com/xiaobinqt/xiaobinqt.github.io/blob/23f0767e6b77f46c70edbf50e6822e5eebd85622/config.toml#L495)
+，[workflows
 工作流](https://github.com/xiaobinqt/xiaobinqt.github.io/blob/23f0767e6b77f46c70edbf50e6822e5eebd85622/.github/workflows/ci.yml#L18)
 
+## simple-template-renderer
 
-[//]: # (![配置文件]&#40;https://cdn.xiaobinqt.cn/xiaobinqt.io/20220403/6633fcb2192f433f9be187f77fb26406.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '配置文件'&#41;)
+[simple-template-renderer](https://github.com/marketplace/actions/simple-template-renderer)
+相比 [Replace env vars in file](https://github.com/marketplace/actions/replace-env-vars-in-file)
+有个明显的优势，simple-template-renderer 支持 html 格式，replace-env-vars-in-file 不支持:cry:。
 
-[//]: # (![action 中替换]&#40;https://cdn.xiaobinqt.cn/xiaobinqt.io/20220403/df8850a8418643188140bf0fd9c1095d.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'action 中替换'&#41;)
+比如源文件中有
 
+```yaml
+icp = "${ICP}"
+```
 
-[//]: # (![action 中替换]&#40;https://cdn.xiaobinqt.cn/xiaobinqt.io/20220402/b9098ec71b84420a89bb53bbcecb29ea.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'action 中替换'&#41;)
+这个变量，需要把 `${ICP}` 替换成一个 html 的变量：
 
-[//]: # ()
+```shell
+ICP: "<a href=https://beian.miit.gov.cn/ target=_blank>京ICP备16062974号-1</a>"
+```
 
-[//]: # (![action 中替换]&#40;https://cdn.xiaobinqt.cn/xiaobinqt.io/20220402/76085f2e078a411da17bbce7dbea970a.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15&#41;)
-
-[//]: # ()
-
+![simple-template-renderer](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220513/296318e8d2664cc3bb920f1c9406ed4a.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'simple-template-renderer')
 
 
 
