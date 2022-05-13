@@ -22,7 +22,7 @@ reproduce: false
 translate: false
 
 tags: ["docker"]
-categories: ["docker"]
+categories: ["开发者手册"]
 lightgallery: true
 
 toc: true
