@@ -1,4 +1,4 @@
-# Jetbrains 家族 IDE 破解方法，支持最新版
+# Jetbrains 家族 ide 破解方法，支持最新版
 
 
 <!-- author： xiaobinqt -->
