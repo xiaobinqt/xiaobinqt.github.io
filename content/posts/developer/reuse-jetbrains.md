@@ -1,5 +1,5 @@
 ---
-title: "Jetbrains 家族 IDE 破解方法，支持最新版"
+title: "Jetbrains 家族 ide 破解方法，支持最新版"
 subtitle: ""
 
 init_date: "2022-05-14T16:23:30+08:00"
