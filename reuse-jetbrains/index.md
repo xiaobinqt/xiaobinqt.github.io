@@ -42,9 +42,10 @@ ide 下载完成后，去 [https://jetbra.in/s](https://jetbra.in/s) 页面下�
 
 ![激活](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220514/16ccd8c33c24495aaabf521cdcc39e4c.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '激活')
 
-## 参考
+[//]: # (## 参考)
 
-+ [https://springboot.io/t/topic/4592](https://springboot.io/t/topic/4592)
+[//]: # ()
+[//]: # (+ [https://springboot.io/t/topic/4592]&#40;https://springboot.io/t/topic/4592&#41;)
 
 
 
