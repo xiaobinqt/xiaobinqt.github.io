@@ -154,6 +154,7 @@ def delete_index():
     client = SearchClient.create(algolia_app_id, algolia_admin_api_key)
     index = client.init_index('xiaobinqt.io')
     index.delete()
+    print("algolia delete_index success")
 
 
 if __name__ == "__main__":
