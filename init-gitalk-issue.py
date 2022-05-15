@@ -1,15 +1,16 @@
 import hashlib
 import json
-import sys
-import time
 
 import requests
+import sys
+import time
+from algoliasearch.search_client import SearchClient
 
 site_url = "https://xiaobinqt.github.io"
 
-if len(sys.argv) != 4:
+if len(sys.argv) != 6:
     print("Usage:")
-    print(sys.argv[0], "token username repo_name")
+    print(sys.argv[0], "token username repo_name aligolia_app_id aligolia_admin_api_key")
     sys.exit(1)
 
 # issue 的 body 就是文章的 URL
@@ -17,6 +18,8 @@ if len(sys.argv) != 4:
 token = sys.argv[1]
 username = sys.argv[2]
 repo_name = sys.argv[3]
+algolia_app_id = sys.argv[4]
+algolia_admin_api_key = sys.argv[5]
 issue_map = dict()  ## [issue_body] = {"issue_number": issue_number, "issue_title": issue_title}
 posts_map = dict()  # [post_url] = {"post_uri":uri,"post_date":date,"post_title":title}
 
@@ -146,10 +149,17 @@ def get_uri_md5(uri):
     return m.hexdigest()
 
 
+# algolia 删除索引
+def delete_index():
+    client = SearchClient.create(algolia_app_id, algolia_admin_api_key)
+    index = client.init_index('xiaobinqt.io')
+    index.delete()
+
+
 if __name__ == "__main__":
     # print(get_uri_md5("/new-make-difference/"))
-
     ## 执行....
+    delete_index()
     get_all_gitalk_issues(token, username, repo_name)
     get_post_titles()
     init_gitalk()
