@@ -13,9 +13,9 @@ draft: false
 author: "xiaobinqt"
 description: "xiaobinqt,docker root用户执行"
 
-featuredImage: "https://cdn.xiaobinqt.cn/xiaobinqt.io/20220506/3305e58fbade4acc862591389ce7cd0f.png"
+featuredImage: "https://cdn.xiaobinqt.cn/xiaobinqt.io/20220517/ede3bf33a6994294a1d88e7a073a5e9c.png"
 
-featuredImagePreview: ""
+featuredImagePreview: "https://cdn.xiaobinqt.cn/xiaobinqt.io/20220506/3305e58fbade4acc862591389ce7cd0f.png"
 
 reproduce: false
 
