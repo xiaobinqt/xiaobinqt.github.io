@@ -31,7 +31,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/www.xiaobinqt.cn\/mongodb-glance\/"
-        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "mongodb","wordcount":  3131 ,
+        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "mongodb","wordcount":  3169 ,
         "url": "https:\/\/www.xiaobinqt.cn\/mongodb-glance\/","datePublished": "2021-04-14T00:00:00+00:00","dateModified": "2022-04-15T00:00:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "xxxx","logo": {
@@ -113,7 +113,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">Mongodb 学习笔记</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>xiaobinqt</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E5%BC%80%E5%8F%91%E8%80%85%E6%89%8B%E5%86%8C/"><i class="far fa-folder fa-fw"></i>开发者手册</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-04-14">2021-04-14</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 3131 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-04-14">2021-04-14</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 3169 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 7 分钟&nbsp;</div>
         </div><div class="featured-image"><img
         class="lazyload"
@@ -140,7 +140,12 @@
     <li><a href="#概念解析">概念解析</a></li>
     <li><a href="#常用命令">常用命令</a></li>
     <li><a href="#集合查询">集合查询</a></li>
-    <li><a href="#更新文档">更新文档</a></li>
+    <li><a href="#更新文档">更新文档</a>
+      <ul>
+        <li><a href="#push">$push</a></li>
+        <li><a href="#addtoset">$addToSet</a></li>
+      </ul>
+    </li>
     <li><a href="#globalsignmgo-使用">globalsign/mgo 使用</a></li>
     <li><a href="#faq">FAQ</a>
       <ul>
@@ -656,14 +661,12 @@
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
-</span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="n">userInfo</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">where</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="k">not</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="p">(</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">select</span><span class="w"> </span><span class="n">id</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">from</span><span class="w"> </span><span class="n">userInfo</span><span class="w"> </span><span class="k">limit</span><span class="w"> </span><span class="mi">10</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">where</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="k">not</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="p">(</span><span class="k">select</span><span class="w"> </span><span class="n">id</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                 </span><span class="k">from</span><span class="w"> </span><span class="n">userInfo</span><span class="w"> </span><span class="k">limit</span><span class="w"> </span><span class="mi">10</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">);</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
@@ -754,8 +757,12 @@
 <li>multi : 可选，mongodb 默认是 false,只更新找到的第一条记录，如果这个参数为 true, 就把按条件查出来多条记录全部更新。</li>
 <li>writeConcern :可选，抛出异常的级别。</li>
 </ul>
+<h3 id="push">$push</h3>
+<p><code>$push</code> 操作符添加指定的值到数组中，<strong>不去重</strong>。</p>
+<h3 id="addtoset">$addToSet</h3>
+<p><code>$addToSet</code> 这个方法向数组中增加值，<strong>自动去重</strong>。</p>
 <h2 id="globalsignmgo-使用">globalsign/mgo 使用</h2>
-<p><a href="https://github.com/globalsign/mgo" target="_blank" rel="noopener noreffer">globalsign/mgo</a> 是 Go 的 MongoDB 驱动，也是我现在维护的项目用的驱动，在这里简单介绍一下。</p>
+<p><a href="https://github.com/globalsign/mgo" target="_blank" rel="noopener noreffer">globalsign/mgo</a> 是 Go 的 MongoDB 驱动，我现在维护的项目也在使用这个，在这里简单介绍一下。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">  1
@@ -1042,7 +1049,7 @@
 <tr>
 <td>size</td>
 <td>数值</td>
-<td>（可选）为固定集合指定一个最大值，即 <strong>字节数</strong> 。如果 capped 为 true，也需要指定该字段。</td>
+<td>（可选）为固定集合指定一个最大值，即<font style="font-weight:bold">字节数 </font>。如果 capped 为 true，也需要指定该字段。</td>
 </tr>
 <tr>
 <td>max</td>
