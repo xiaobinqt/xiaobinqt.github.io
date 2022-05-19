@@ -18,8 +18,7 @@ tags: ["chrome"]
 categories: ["开发者手册"]
 lightgallery: true
 
-toc:
-auto: false
+toc: false
 
 math:
 enable: true
