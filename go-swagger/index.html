@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>Go 使用原生 Swagger - xiaobinqt 博客 - 技术改变生活</title><meta name="Description" content="xiaobinqt,golang 使用 swagger,go 原生 swagger 的使用"><meta property="og:title" content="Go 使用原生 Swagger" />
+<meta property="og:description" content="xiaobinqt,golang 使用 swagger,go 原生 swagger 的使用" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.xiaobinqt.cn/go-swagger/" /><meta property="og:image" content="https://www.xiaobinqt.cn/logo.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-12-27T00:00:00+00:00" />
+<meta property="article:modified_time" content="2022-04-22T00:00:00+00:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://www.xiaobinqt.cn/logo.png"/>
+
+<meta name="twitter:title" content="Go 使用原生 Swagger"/>
+<meta name="twitter:description" content="xiaobinqt,golang 使用 swagger,go 原生 swagger 的使用"/>
+<meta name="application-name" content="xiaobinqt">
+<meta name="apple-mobile-web-app-title" content="xiaobinqt"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c">
+<link rel="stylesheet" href="//at.alicdn.com/t/font_3267767_dz25dtwdgdc.css">
+<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://www.xiaobinqt.cn/go-swagger/" /><link rel="prev" href="https://www.xiaobinqt.cn/js-call-c/" /><link rel="next" href="https://www.xiaobinqt.cn/reuse-jetbrains/" /><link rel="stylesheet" href="/lib/md5/md5.min.js"><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><meta name="google-site-verification" content="hFkClWMTOtPBuE0lQaXNiNb707E7P6O2CwexZoSm3VQ" /><meta name="msvalidate.01" content="A961D393878F86E04112E1198500FDBD" /><meta name="baidu-site-verification" content="code-cMh5ORsrP2" /><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Go 使用原生 Swagger",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/www.xiaobinqt.cn\/go-swagger\/"
+        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "golang, swagger","wordcount":  1286 ,
+        "url": "https:\/\/www.xiaobinqt.cn\/go-swagger\/","datePublished": "2021-12-27T00:00:00+00:00","dateModified": "2022-04-22T00:00:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+            "@type": "Organization",
+            "name": "xxxx","logo": {
+                    "@type": "ImageObject",
+                    "url": "https:\/\/www.xiaobinqt.cn\/images\/avatar.png",
+                    "width":  528 ,
+                    "height":  560 
+                }},"author": {
+                "@type": "Person",
+                "name": "xiaobinqt"
+            },"description": "xiaobinqt,golang 使用 swagger,go 原生 swagger 的使用"
+    }
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="xiaobinqt 博客 - 技术改变生活"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>萧十一郎</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/about/"> 关于 </a><a class="menu-item" href="/links/"> 友链 </a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="xiaobinqt 博客 - 技术改变生活"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>萧十一郎</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/about/" title="">关于</a><a class="menu-item" href="/links/" title="">友链</a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">目录</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">Go 使用原生 Swagger</h1><h2 class="single-subtitle">Golang use swagger</h2><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>xiaobinqt</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E5%BC%80%E5%8F%91%E8%80%85%E6%89%8B%E5%86%8C/"><i class="far fa-folder fa-fw"></i>开发者手册</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-12-27">2021-12-27</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1286 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 3 分钟&nbsp;</div>
+        </div><div class="featured-image"><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/a12951789f2d401bab720fd3d4bb6472.png"
+        data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/a12951789f2d401bab720fd3d4bb6472.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/a12951789f2d401bab720fd3d4bb6472.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/a12951789f2d401bab720fd3d4bb6472.png 2x"
+        data-sizes="auto"
+        alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/a12951789f2d401bab720fd3d4bb6472.png"
+        title="xiaobinqt,golang 使用 swagger,go 原生 swagger 的使用" /></div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#swag-cli-安装">swag cli 安装</a></li>
+    <li><a href="#swagger-ui-库">swagger-ui 库</a></li>
+    <li><a href="#swagger-文档">swagger 文档</a></li>
+    <li><a href="#常见问题">常见问题</a>
+      <ul>
+        <li><a href="#apikey">apiKey</a></li>
+        <li><a href="#paramtype">paramType</a></li>
+      </ul>
+    </li>
+    <li><a href="#参考">参考</a></li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><!-- author： xiaobinqt -->
+<!-- email： xiaobinqt@163.com -->
+<!-- https://xiaobinqt.github.io -->
+<!-- https://www.xiaobinqt.cn -->
+<p>Swagger 是一个规范且完整的框架，用于生成、描述、调用和可视化 RESTful 风格的 Web 服务。</p>
+<p>当通过 Swagger 进行正确定义，用户可以理解远程服务并使用最少实现逻辑与远程服务进行交互。</p>
+<p>支持 API 自动生成同步的在线文档。使用 Swagger 后可以直接通过代码生成文档，不再需要自己手动编写接口文档了，对程序员来说非常友好，可以节约写文档的时间。</p>
+<p>提供 Web 页面在线测试 API。光有文档还不够，Swagger 生成的文档还支持在线测试。参数和格式都定好了，直接在界面上输入参数对应的值即可在线测试接口。</p>
+<h2 id="swag-cli-安装">swag cli 安装</h2>
+<p>Swag 能将 Go 的注释转换为 Swagger 文档。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 安装swag</span>
+</span></span><span class="line"><span class="cl">go get github.com/swaggo/swag/cmd/swag
+</span></span><span class="line"><span class="cl"><span class="c1"># 查看版本</span>
+</span></span><span class="line"><span class="cl">swag -v
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/90cbf963f17a451187e3527877bd8172.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="swag cli" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/90cbf963f17a451187e3527877bd8172.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>swag cli</h2><p>swag cli</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/90cbf963f17a451187e3527877bd8172.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/90cbf963f17a451187e3527877bd8172.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/90cbf963f17a451187e3527877bd8172.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/90cbf963f17a451187e3527877bd8172.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/90cbf963f17a451187e3527877bd8172.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" />
+    </a><figcaption class="image-caption">swag cli</figcaption>
+    </figure></p>
+<h2 id="swagger-ui-库">swagger-ui 库</h2>
+<p>从 <a href="https://github.com/swagger-api/swagger-ui" target="_blank" rel="noopener noreffer">swagger-ui</a>
+库下载 <a href="https://github.com/swagger-api/swagger-ui/tree/master/dist" target="_blank" rel="noopener noreffer">dist</a>
+文件夹到自己的项目中，并更名为 swagger（更名不是必须的）。</p>
+<p>把 swagger 中的 swagger-initializer.js 文件中有个 url 参数，<strong>全局替换</strong> swagger 文件夹中的这个 url 参数值为 <code>./swagger.json</code>。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/28a4221079dd478e926209292027748b.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="swagger-initializer.js url" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/28a4221079dd478e926209292027748b.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>swagger-initializer.js url</h2><p>swagger-initializer.js url</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/28a4221079dd478e926209292027748b.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/28a4221079dd478e926209292027748b.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/28a4221079dd478e926209292027748b.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/28a4221079dd478e926209292027748b.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/28a4221079dd478e926209292027748b.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" />
+    </a><figcaption class="image-caption">swagger-initializer.js url</figcaption>
+    </figure></p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/1fd26413ebe2426e8263e8cd7182526a.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="替换所有" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/1fd26413ebe2426e8263e8cd7182526a.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>替换所有</h2><p>替换所有</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/1fd26413ebe2426e8263e8cd7182526a.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/1fd26413ebe2426e8263e8cd7182526a.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/1fd26413ebe2426e8263e8cd7182526a.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/1fd26413ebe2426e8263e8cd7182526a.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/1fd26413ebe2426e8263e8cd7182526a.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" />
+    </a><figcaption class="image-caption">替换所有</figcaption>
+    </figure></p>
+<h2 id="swagger-文档">swagger 文档</h2>
+<p>swagger 是以注释的方式描述的，然后使用 swag cli 生成的文档。</p>
+<p>比如我有一个 main.go 文件，文件内容如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;embed&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;net/http&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;github.com/go-martini/martini&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">//go:embed swagger
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">var</span> <span class="nx">embededFiles</span> <span class="nx">embed</span><span class="p">.</span><span class="nx">FS</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// @title 测试 API
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @version 4.0
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @description 测试 API V4.0
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @securityDefinitions.apiKey MyApiKey
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @in header
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @name Xiaobinqt-Api-Key
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @BasePath /
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">m</span> <span class="o">:=</span> <span class="nx">martini</span><span class="p">.</span><span class="nf">Classic</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">m</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;/swagger/**&#34;</span><span class="p">,</span> <span class="nx">http</span><span class="p">.</span><span class="nf">FileServer</span><span class="p">(</span><span class="nx">http</span><span class="p">.</span><span class="nf">FS</span><span class="p">(</span><span class="nx">embededFiles</span><span class="p">)).</span><span class="nx">ServeHTTP</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">m</span><span class="p">.</span><span class="nf">Post</span><span class="p">(</span><span class="s">&#34;/api/login&#34;</span><span class="p">,</span> <span class="nx">Login</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">m</span><span class="p">.</span><span class="nf">Run</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Req</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">Email</span>    <span class="kt">string</span> <span class="s">`json:&#34;email&#34;`</span> <span class="c1">// 邮箱
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">Password</span> <span class="kt">string</span> <span class="s">`json:&#34;password&#34;`</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// @Tags 用户管理
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @Summary 用户登录
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @Security MyApiKey
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @accept application/json
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @Produce application/json
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @Param data body Req true &#34;email: 用户名，password: 密码&#34;
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @Success 200 {object} EdgeInstanceList
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @Router /api/login [POST]
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">Login</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">w</span><span class="p">.</span><span class="nf">Write</span><span class="p">([]</span><span class="nb">byte</span><span class="p">(</span><span class="s">&#34;hello&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">EdgeInstanceList</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">A</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">B</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>使用 swag cli 生成 swagger 文档：</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/41886c08ae484deaa904bec886cfa532.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="生成 swagger 文档" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/41886c08ae484deaa904bec886cfa532.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>生成 swagger 文档</h2><p>生成 swagger 文档</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/41886c08ae484deaa904bec886cfa532.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/41886c08ae484deaa904bec886cfa532.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/41886c08ae484deaa904bec886cfa532.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/41886c08ae484deaa904bec886cfa532.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/41886c08ae484deaa904bec886cfa532.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" />
+    </a><figcaption class="image-caption">生成 swagger 文档</figcaption>
+    </figure></p>
+<p>访问 swagger 路由：</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/5bdd5117ff644d37a9a895c781a6b5b0.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="访问 swagger 路由" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/5bdd5117ff644d37a9a895c781a6b5b0.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>访问 swagger 路由</h2><p>访问 swagger 路由</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/5bdd5117ff644d37a9a895c781a6b5b0.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/5bdd5117ff644d37a9a895c781a6b5b0.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/5bdd5117ff644d37a9a895c781a6b5b0.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/5bdd5117ff644d37a9a895c781a6b5b0.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/5bdd5117ff644d37a9a895c781a6b5b0.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" />
+    </a><figcaption class="image-caption">访问 swagger 路由</figcaption>
+    </figure></p>
+<h2 id="常见问题">常见问题</h2>
+<h3 id="apikey">apiKey</h3>
+<p>有的 api 需要加上 header 头信息才能正确访问，这时可以添加注释信息：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">// @securityDefinitions.apiKey MyApiKey
+</span></span><span class="line"><span class="cl">// @in header
+</span></span><span class="line"><span class="cl">// @name Xiaobinqt-Api-Key
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>@in header</code> 设置，在请求 header 中，<code>@name Xiaobinqt-Api-Key</code> header 字段为<code>Xiaobinqt-Api-Key</code>，<code>@securityDefinitions.apiKey</code>
+固定写法，<code>MyApiKey</code>在每个方法中的<code>@Security</code>注释信息值，如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">// @Tags 用户管理
+</span></span><span class="line"><span class="cl">// @Summary 用户登录
+</span></span><span class="line"><span class="cl">// @Security MyApiKey
+</span></span><span class="line"><span class="cl">// @accept application/json
+</span></span><span class="line"><span class="cl">// @Produce application/json
+</span></span><span class="line"><span class="cl">// @Param data body Req <span class="nb">true</span> <span class="s2">&#34;email: 用户名，password: 密码&#34;</span>
+</span></span><span class="line"><span class="cl">// @Success <span class="m">200</span> <span class="o">{</span>object<span class="o">}</span> EdgeInstanceList
+</span></span><span class="line"><span class="cl">// @Router /api/login <span class="o">[</span>POST<span class="o">]</span>
+</span></span><span class="line"><span class="cl">func Login<span class="o">(</span>w http.ResponseWriter, r *http.Request<span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">	w.Write<span class="o">([]</span>byte<span class="o">(</span><span class="s2">&#34;hello&#34;</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>如果在 swagger 页面 Available authorizations 的值不为空，那么每次请求都会带着<code>Xiaobinqt-Api-Key</code>这个 header 头，值就是<code>Available authorizations</code>
+填入的值。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/17586935d9494b30b83b30be0e46f45a.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="Available authorizations" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/17586935d9494b30b83b30be0e46f45a.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>Available authorizations</h2><p>Available authorizations</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/17586935d9494b30b83b30be0e46f45a.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/17586935d9494b30b83b30be0e46f45a.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/17586935d9494b30b83b30be0e46f45a.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/17586935d9494b30b83b30be0e46f45a.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/17586935d9494b30b83b30be0e46f45a.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" />
+    </a><figcaption class="image-caption">Available authorizations</figcaption>
+    </figure></p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/125010439aed41258b007ab94bba2309.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="Execute" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/125010439aed41258b007ab94bba2309.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>Execute</h2><p>Execute</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/125010439aed41258b007ab94bba2309.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/125010439aed41258b007ab94bba2309.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/125010439aed41258b007ab94bba2309.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/125010439aed41258b007ab94bba2309.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/125010439aed41258b007ab94bba2309.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" />
+    </a><figcaption class="image-caption">Execute</figcaption>
+    </figure></p>
+<h3 id="paramtype">paramType</h3>
+<p>具体可以参看：<a href="https://swagger.io/docs/specification/describing-parameters/" target="_blank" rel="noopener noreffer">https://swagger.io/docs/specification/describing-parameters/</a></p>
+<ul>
+<li>body</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">type</span> Req struct <span class="o">{</span>
+</span></span><span class="line"><span class="cl">	Email    string <span class="sb">`</span>json:<span class="s2">&#34;email&#34;</span><span class="sb">`</span> // 邮箱
+</span></span><span class="line"><span class="cl">	Password string <span class="sb">`</span>json:<span class="s2">&#34;password&#34;</span><span class="sb">`</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">// @Param data body Req <span class="nb">true</span> <span class="s2">&#34;email: 用户名，password: 密码&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>path</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">// @Param  user_id path string <span class="nb">true</span> <span class="s2">&#34;用户ID&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>query</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">// @Param  search query string <span class="nb">false</span> <span class="s2">&#34;搜索内容&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>完整注释如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">// @Tags 用户管理
+</span></span><span class="line"><span class="cl">// @Summary 用户登录
+</span></span><span class="line"><span class="cl">// @Security MyApiKey
+</span></span><span class="line"><span class="cl">// @accept application/json
+</span></span><span class="line"><span class="cl">// @Produce application/json
+</span></span><span class="line"><span class="cl">// @Param  user_id path string <span class="nb">true</span> <span class="s2">&#34;用户ID&#34;</span>
+</span></span><span class="line"><span class="cl">// @Param  search query string <span class="nb">false</span> <span class="s2">&#34;搜索内容&#34;</span>
+</span></span><span class="line"><span class="cl">// @Param data body Req <span class="nb">true</span> <span class="s2">&#34;email: 用户名，password: 密码&#34;</span>
+</span></span><span class="line"><span class="cl">// @Success <span class="m">200</span> <span class="o">{</span>object<span class="o">}</span> EdgeInstanceList
+</span></span><span class="line"><span class="cl">// @Router /api/login/<span class="o">{</span>user_id<span class="o">}</span> <span class="o">[</span>POST<span class="o">]</span>
+</span></span><span class="line"><span class="cl">func Login<span class="o">(</span>w http.ResponseWriter, r *http.Request<span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">	w.Write<span class="o">([]</span>byte<span class="o">(</span><span class="s2">&#34;hello&#34;</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/e46042ea6a5e4ce8bd4c85ec34223d9f.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="效果_01" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/e46042ea6a5e4ce8bd4c85ec34223d9f.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>效果_01</h2><p>效果_01</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/e46042ea6a5e4ce8bd4c85ec34223d9f.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/e46042ea6a5e4ce8bd4c85ec34223d9f.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/e46042ea6a5e4ce8bd4c85ec34223d9f.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/e46042ea6a5e4ce8bd4c85ec34223d9f.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/e46042ea6a5e4ce8bd4c85ec34223d9f.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" />
+    </a><figcaption class="image-caption">效果_01</figcaption>
+    </figure></p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/c068d1585a49494992af4e7993a5a4f8.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="效果_02" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/c068d1585a49494992af4e7993a5a4f8.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>效果_02</h2><p>效果_02</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/c068d1585a49494992af4e7993a5a4f8.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/c068d1585a49494992af4e7993a5a4f8.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/c068d1585a49494992af4e7993a5a4f8.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/c068d1585a49494992af4e7993a5a4f8.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/c068d1585a49494992af4e7993a5a4f8.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" />
+    </a><figcaption class="image-caption">效果_02</figcaption>
+    </figure></p>
+<h2 id="参考">参考</h2>
+<ul>
+<li><a href="https://github.com/xiaobinqt/go.src/tree/master/dev/martini-swagger" target="_blank" rel="noopener noreffer">☝️文章示例源码</a></li>
+<li><a href="https://swagger.io/docs/" target="_blank" rel="noopener noreffer">swagger官方文档</a></li>
+<li><a href="https://github.com/swaggo/swag/blob/master/README_zh-CN.md" target="_blank" rel="noopener noreffer">https://github.com/swaggo/swag/blob/master/README_zh-CN.md</a></li>
+<li><a href="https://www.jianshu.com/p/9313d0c5395d" target="_blank" rel="noopener noreffer">https://www.jianshu.com/p/9313d0c5395d</a></li>
+</ul>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2022-04-22</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/go-swagger/index.md" target="_blank">阅读原始文档</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="分享到 Twitter" data-sharer="twitter" data-url="https://www.xiaobinqt.cn/go-swagger/" data-title="Go 使用原生 Swagger" data-hashtags="golang,swagger"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="https://www.xiaobinqt.cn/go-swagger/" data-hashtag="golang"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Hacker News" data-sharer="hackernews" data-url="https://www.xiaobinqt.cn/go-swagger/" data-title="Go 使用原生 Swagger"><i class="fab fa-hacker-news fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Line" data-sharer="line" data-url="https://www.xiaobinqt.cn/go-swagger/" data-title="Go 使用原生 Swagger"><i data-svg-src="/lib/simple-icons/icons/line.min.svg"></i></a><a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="https://www.xiaobinqt.cn/go-swagger/" data-title="Go 使用原生 Swagger" data-image="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220519/a12951789f2d401bab720fd3d4bb6472.png"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="分享到 百度" data-sharer="baidu" data-url="https://www.xiaobinqt.cn/go-swagger/" data-title="Go 使用原生 Swagger"><i data-svg-src="/lib/simple-icons/icons/baidu.min.svg"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/golang/">golang</a>,&nbsp;<a href="/tags/swagger/">swagger</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a target="_blank" href="/js-call-c/" class="prev" rel="prev" title="nodeJS 调用 C 语言"><i class="fas fa-angle-left fa-fw"></i>nodeJS 调用 C 语言</a>
+            <a target="_blank" href="/reuse-jetbrains/" class="next" rel="next" title="Jetbrains 家族 ide 破解方法，支持最新版">Jetbrains 家族 ide 破解方法，支持最新版<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+<div id="comments"><div id="gitalk" class="comment"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://github.com/gitalk/gitalk"></a>Gitalk</a>.
+            </noscript></div></article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2018 - 2022</span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/gitalk/gitalk.min.css"><link rel="stylesheet" href="/lib/lightgallery/lightgallery.min.css"><script type="text/javascript" src="/lib/gitalk/gitalk.min.js"></script><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="/lib/algoliasearch/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lightgallery.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-thumbnail.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-zoom.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"gitalk":{"admin":["xiaobinqt"],"clientID":"47b15de6c2d8a0f8d707","clientSecret":"c70556c8b3a3b38ea7c72e539ff3b37d5bc1b4f3","id":"c2db27034e1aa56b2c7f22f783d04a5a","owner":"xiaobinqt","repo":"xiaobinqt.github.io","title":"Go 使用原生 Swagger"}},"lightGallery":{"actualSize":false,"exThumbImage":"data-thumbnail","hideBarsDelay":2000,"selector":".lightgallery","speed":400,"thumbContHeight":80,"thumbWidth":80,"thumbnail":true},"search":{"algoliaAppID":"CPNWIDNX0Y","algoliaIndex":"xiaobinqt.io","algoliaSearchKey":"80b84de0ebc766371dd27cd3e651c41e","highlightTag":"em","maxResultLength":20,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>
