@@ -235,9 +235,8 @@ db.userInfo.find().skip(10);
 ```sql
 select *
 from userInfo
-where id not in (
-    select id
-    from userInfo limit 10
+where id not in (select id
+                 from userInfo limit 10
     );
 ```
 
@@ -298,9 +297,17 @@ db.col.update({'title':'MongoDB 教程'},{$set:{'title':'MongoDB'}})
 + multi : 可选，mongodb 默认是 false,只更新找到的第一条记录，如果这个参数为 true, 就把按条件查出来多条记录全部更新。
 + writeConcern :可选，抛出异常的级别。
 
+### $push
+
+`$push` 操作符添加指定的值到数组中，**不去重**。
+
+### $addToSet
+
+`$addToSet` 这个方法向数组中增加值，**自动去重**。
+
 ## globalsign/mgo 使用
 
-[globalsign/mgo](https://github.com/globalsign/mgo) 是 Go 的 MongoDB 驱动，也是我现在维护的项目用的驱动，在这里简单介绍一下。
+[globalsign/mgo](https://github.com/globalsign/mgo) 是 Go 的 MongoDB 驱动，我现在维护的项目也在使用这个，在这里简单介绍一下。
 
 ```go
 package main
@@ -442,12 +449,12 @@ func main() {
 
 options 可以是如下参数：
 
-| 字段       | 类型  <div style="width: 40px;"> | 描述                                                                                 |
-|----------|--------------------------------|------------------------------------------------------------------------------------|
-| capped   | 布尔                             | （可选）如果为 true，则创建固定集合。固定集合是指有着固定大小的集合，当达到最大值时，它会自动覆盖最早的文档。当该值为 true 时，必须指定 size 参数。 |
-| autoIndexId | 布尔                             | <font color="red">3.2 之后不再支持该参数。</font>（可选）如为 true，自动在 `_id` 字段创建索引。默认为 false。     |
-| size     | 数值                             | （可选）为固定集合指定一个最大值，即 **字节数** 。如果 capped 为 true，也需要指定该字段。                             |
-| max      | 数值                             | （可选）指定固定集合中包含文档的最大数量。                                                              |
+| 字段       | 类型  <div style="width: 40px;"> | 描述                                                                                      |
+|----------|--------------------------------|-----------------------------------------------------------------------------------------|
+| capped   | 布尔                             | （可选）如果为 true，则创建固定集合。固定集合是指有着固定大小的集合，当达到最大值时，它会自动覆盖最早的文档。当该值为 true 时，必须指定 size 参数。      |
+| autoIndexId | 布尔                             | <font color="red">3.2 之后不再支持该参数。</font>（可选）如为 true，自动在 `_id` 字段创建索引。默认为 false。          |
+| size     | 数值                             | （可选）为固定集合指定一个最大值，即<font style="font-weight:bold">字节数 </font>。如果 capped 为 true，也需要指定该字段。 |
+| max      | 数值                             | （可选）指定固定集合中包含文档的最大数量。                                                                   |
 
 如果是新建一个集合，这种方式肯定是可以的，但是如果要同步老数据呢？
 
