@@ -224,3 +224,4 @@ func Login(w http.ResponseWriter, r *http.Request) {
 + [swagger官方文档](https://swagger.io/docs/)
 + [https://github.com/swaggo/swag/blob/master/README_zh-CN.md](https://github.com/swaggo/swag/blob/master/README_zh-CN.md)
 + [https://www.jianshu.com/p/9313d0c5395d](https://www.jianshu.com/p/9313d0c5395d)
++ [Go embed 简明教程](https://colobu.com/2021/01/17/go-embed-tutorial/)
