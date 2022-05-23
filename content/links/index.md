@@ -34,7 +34,7 @@ enable: true
         </div>
         <div class="frienddivright">
             <div class="friendname">前小端</div>
-            <div class="friendinfo"></div>
+            <div class="friendinfo">技术为本，创意为先</div>
         </div>
     </div>
 </a>
