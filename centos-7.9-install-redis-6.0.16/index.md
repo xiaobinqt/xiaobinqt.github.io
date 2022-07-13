@@ -39,7 +39,7 @@ make && make install
 需要安装 gcc:point_down:
 
 ```shell
-yum install gcc c++ 
+yum -y install gcc gcc-c++ libstdc++-devel
 ```
 
 ### struct redisServer server_xxx
