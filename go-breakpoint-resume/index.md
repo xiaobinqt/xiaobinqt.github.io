@@ -289,7 +289,7 @@ func DownloadDownloadArtifact(downloadPath, surl string) (err error) {
 		err = errors.Wrapf(err, "get download md5dum err")
 		logrus.Error(err.Error())
 		// md5 不一致直接删除
-		//os.Remove(downloadPath)
+		os.Remove(downloadPath)
 		return err
 	}
 	logrus.Debugf("downloadMd5sum: %s,headerMd5sum:%s ", downloadMd5sum, headerMd5sum)
@@ -299,7 +299,7 @@ func DownloadDownloadArtifact(downloadPath, surl string) (err error) {
 	}
 
 	// 错误了删除 tar 包
-	//os.Remove(downloadPath)
+	os.Remove(downloadPath)
 	return fmt.Errorf("download md5sum not equal header md5dum")
 }
 
