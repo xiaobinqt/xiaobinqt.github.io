@@ -61,11 +61,16 @@ func new(Type) *Type
        u := user{}
       ```
 
+## 零值
+
++ array、struct 每个元素或字段都是对应该类型的零值
++ slice、map 对于零值 nil
 
 ## 参考
 
 + [make、new操作](https://github.com/astaxie/build-web-application-with-golang/blob/master/zh/02.2.md#makenew%E6%93%8D%E4%BD%9C)
 + [Go make 和 new的区别](https://www.cnblogs.com/vincenshen/p/9356974.html)
++ [Go - var & make & new 在复杂类型上的使用区别](https://dryyun.com/2019/05/30/go-new-make-use/)
 
 
 
