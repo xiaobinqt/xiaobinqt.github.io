@@ -18,8 +18,7 @@ tags: ["web"]
 categories: ["web"]
 lightgallery: true
 
-toc:
-auto: false
+toc: false
 
 math:
 enable: true
