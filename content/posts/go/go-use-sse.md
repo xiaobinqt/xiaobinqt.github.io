@@ -22,7 +22,7 @@ reproduce: false
 translate: false
 
 tags: ["sse","golang"]
-categories: ["network","开发者手册"]
+categories: ["web","开发者手册"]
 lightgallery: true
 
 toc: true
