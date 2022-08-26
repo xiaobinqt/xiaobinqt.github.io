@@ -19,8 +19,8 @@ featuredImagePreview: "https://cdn.xiaobinqt.cn/xiaobinqt.io/20220823/a229b28988
 
 reproduce: false
 
-tags: ["golang"]
-categories: ["pdf"]
+tags: ["golang","pdf"]
+categories: ["golang"]
 lightgallery: true
 
 toc:
