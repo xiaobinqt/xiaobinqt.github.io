@@ -285,6 +285,14 @@ git reset --soft $commitID
 
 ![将 commit 后的代码回退到暂存区](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220426/4d0f8299ff774a2baadea254b3c16eb9.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '将 commit 后的代码回退到暂存区')
 
+或者
+
+```git
+git reset HEAR 文件/文件夹
+```
+
+:point_up:可以将某个文件/文件夹回滚到上一次操作。
+
 ## 参考
 
 + [git-fast-version-control](https://git-scm.com/book/zh/v2/%E8%B5%B7%E6%AD%A5-%E5%85%B3%E4%BA%8E%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6)
