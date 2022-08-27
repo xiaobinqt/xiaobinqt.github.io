@@ -343,6 +343,15 @@ VALUES (`name`);
 
 ![设置多个变量](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/9c894c060ac34628abd1b9071d4e7e27.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '设置多个变量')
 
+## innodb 和 myisam 的区别
 
++ innodb 支持事务，而 myisam 不支持事务。
++ innodb 支持外键，而 myisam 不支持外键。
++ innodb 默认表锁，使用索引检索条件时是行锁，而myisam是表锁（每次更新增加删除都会锁住表）。
++ innodb 和 myisam 的索引都是基于b+树，但他们具体实现不一样，innodb 的 `b+` 树的叶子节点是存放数据的，myisam 的 `b+` 树的叶子节点是存放指针的。
++ innodb 是聚簇索引，必须要有主键，一定会基于主键查询，但是辅助索引就会查询两次，myisam是非聚簇索引，索引和数据是分离的，索引里保存的是数据地址的指针，主键索引和辅助索引是分开的。
++ innodb 不存储表的行数，所以`select count(*)`的时候会全表查询，而 myisam 会存放表的行数，`select count(*）`的时候会查的很快。
+
+总结：mysql 默认使用 innodb，如果要用事务和外键就使用 innodb，如果这张表只用来查询，可以用 myisam。如果更新删除增加频繁就使用 innodb。
 
 
