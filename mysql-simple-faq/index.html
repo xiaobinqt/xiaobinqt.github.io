@@ -32,7 +32,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/www.xiaobinqt.cn\/mysql-simple-faq\/"
-        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "mysql","wordcount":  2968 ,
+        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "mysql","wordcount":  3349 ,
         "url": "https:\/\/www.xiaobinqt.cn\/mysql-simple-faq\/","datePublished": "2019-10-03T00:00:00+00:00","dateModified": "2022-04-20T00:00:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "xxxx","logo": {
@@ -114,8 +114,8 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">mysql 常见问题</h1><h2 class="single-subtitle">Mysql FAQ</h2><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>xiaobinqt</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/mysql/"><i class="far fa-folder fa-fw"></i>mysql</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2019-10-03">2019-10-03</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2968 字&nbsp;
-                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 6 分钟&nbsp;</div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2019-10-03">2019-10-03</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 3349 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 7 分钟&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
                     <span>目录</span>
@@ -165,6 +165,7 @@
         <li><a href="#多个变量">多个变量</a></li>
       </ul>
     </li>
+    <li><a href="#innodb-和-myisam-的区别">innodb 和 myisam 的区别</a></li>
   </ul>
 </nav></div>
             </div><div class="content" id="content"><!-- author： xiaobinqt -->
@@ -847,6 +848,16 @@
             alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/9c894c060ac34628abd1b9071d4e7e27.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" />
     </a><figcaption class="image-caption">设置多个变量</figcaption>
     </figure></p>
+<h2 id="innodb-和-myisam-的区别">innodb 和 myisam 的区别</h2>
+<ul>
+<li>innodb 支持事务，而 myisam 不支持事务。</li>
+<li>innodb 支持外键，而 myisam 不支持外键。</li>
+<li>innodb 默认表锁，使用索引检索条件时是行锁，而myisam是表锁（每次更新增加删除都会锁住表）。</li>
+<li>innodb 和 myisam 的索引都是基于b+树，但他们具体实现不一样，innodb 的 <code>b+</code> 树的叶子节点是存放数据的，myisam 的 <code>b+</code> 树的叶子节点是存放指针的。</li>
+<li>innodb 是聚簇索引，必须要有主键，一定会基于主键查询，但是辅助索引就会查询两次，myisam是非聚簇索引，索引和数据是分离的，索引里保存的是数据地址的指针，主键索引和辅助索引是分开的。</li>
+<li>innodb 不存储表的行数，所以<code>select count(*)</code>的时候会全表查询，而 myisam 会存放表的行数，<code>select count(*）</code>的时候会查的很快。</li>
+</ul>
+<p>总结：mysql 默认使用 innodb，如果要用事务和外键就使用 innodb，如果这张表只用来查询，可以用 myisam。如果更新删除增加频繁就使用 innodb。</p>
 </div><div class="post-footer" id="post-footer">
     <div class="post-info">
         <div class="post-info-line">
