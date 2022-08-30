@@ -15,7 +15,7 @@ description: "xiaobinqt,"
 
 featuredImage: ""
 
-featuredImagePreview: ""
+featuredImagePreview: "https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/89de4f7569e845ad91eab0a8857d5afb.png"
 
 reproduce: true
 
