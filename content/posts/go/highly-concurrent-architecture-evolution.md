@@ -21,7 +21,7 @@ reproduce: true
 
 translate: false
 
-tags: ["golang"]
+tags: ["golang","高并发"]
 categories: ["golang"]
 lightgallery: true
 
