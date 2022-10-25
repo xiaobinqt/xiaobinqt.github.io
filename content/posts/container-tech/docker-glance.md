@@ -11,7 +11,8 @@ lastmod: 2022-04-28
 draft: false
 
 author: "xiaobinqt"
-description: "xiaobinqt,endpoint 和 cmd 的区别,docker 启动，docker 写时复制,docker 常见命令,虚拟化,docker 文件挂载,数据卷是什么,容器网络,如何写 dockerfile"
+description: "xiaobinqt,endpoint 和 cmd 的区别,docker 启动，docker 写时复制,docker 常见命令,虚拟化,docker
+文件挂载,数据卷是什么,容器网络,如何写 dockerfile"
 
 featuredImage: "https://cdn.xiaobinqt.cn/xiaobinqt.io/20220428/21100b3b2f8b4afb9e6df1a48bee2c33.png"
 
@@ -39,7 +40,8 @@ enable: true
 
 硬件虚拟化，指物理硬件本身就提供虚拟化的支持。
 
-比如，A 平台的 CPU，能够将 B 平台的指令集转换为自身的指令集执行，并给程序完全运行在 B 平台上的感觉。又或者，CPU 能够自身模拟裂变，让程序或者操作系统认为存在多个
+比如，A 平台的 CPU，能够将 B 平台的指令集转换为自身的指令集执行，并给程序完全运行在 B 平台上的感觉。又或者，CPU
+能够自身模拟裂变，让程序或者操作系统认为存在多个
 CPU，进而能够同时运行多个程序或者操作系统。这些都是硬件虚拟化的体现。
 
 ### 软件虚拟化
@@ -50,7 +52,8 @@ CPU，进而能够同时运行多个程序或者操作系统。这些都是硬�
 
 ### 浅析 Docker
 
-可以把容器看作一个简易版的Linux系统环境（包括root用户权限、进程空间、用户空间和网络空间等）以及运行在其中的应用程序打包而成的[沙盒]^(sandbox)。
+可以把容器看作一个简易版的Linux系统环境（包括root用户权限、进程空间、用户空间和网络空间等）以及运行在其中的应用程序打包而成的[沙盒]
+^(sandbox)。
 
 每个容器内运行着一个应用，不同的容器相互隔离，容器之间也可以通过网络互相通信。容器的创建和停止十分快速，几乎跟创建和终止原生应用一致；另外，容器自身对系统资源的额外需求也十分有限，远远低于传统虚拟机。很多时候，甚至直接把容器当作应用本身也没有任何问题。
 
@@ -58,25 +61,31 @@ Docker 并没有和虚拟机一样利用一个独立的 OS 执行环境的隔离
 
 支撑 docker 的核心技术有三个：`Namespace`，`Cgroup`，`UnionFS`。
 
-`Namespace` 提供了虚拟层面的隔离，比如文件隔离，网络隔离等等。每个命名空间中的应用看到的，都是不同的IP地址，用户空间，进程 ID 等。
+`Namespace` 提供了虚拟层面的隔离，比如文件隔离，网络隔离等等。每个命名空间中的应用看到的，都是不同的IP地址，用户空间，进程 ID
+等。
 
 `Cgroup`提供了物理资源的隔离，比如 CPU，内存，磁盘等等。
 
-`UnionFS` 给 docker 镜像提供了技术支撑。在 Docker 中，提供了一种对 UnionFS 的改进实现，也就是 [AUFS]^(Advanced Union File System)。 AUFS
-将文件的更新挂载到老的文件之上，而不去修改那些不更新的内容，这意味着即使虚拟的文件系统被反复修改，也能保证对真实文件系统的空间占用保持一个较低水平。就像在 Git 中每进行一次提交，Git
-并不是将我们所有的内容打包成一个版本，而只是将修改的部分进行记录，这样即使我们提交很多次后，代码库的空间占用也不会倍数增加。 通过 AUFS，Docker **大幅减少了虚拟文件系统对物理存储空间的占用**。
+`UnionFS` 给 docker 镜像提供了技术支撑。在 Docker 中，提供了一种对 UnionFS 的改进实现，也就是 [AUFS]^(Advanced Union File
+System)。 AUFS
+将文件的更新挂载到老的文件之上，而不去修改那些不更新的内容，这意味着即使虚拟的文件系统被反复修改，也能保证对真实文件系统的空间占用保持一个较低水平。就像在
+Git 中每进行一次提交，Git
+并不是将我们所有的内容打包成一个版本，而只是将修改的部分进行记录，这样即使我们提交很多次后，代码库的空间占用也不会倍数增加。
+通过 AUFS，Docker **大幅减少了虚拟文件系统对物理存储空间的占用**。
 
 ### 虚拟机和 Docker
 
 [虚拟机]^(Virtual Machine)，通常来说就是通过一个[虚拟机监视器]^(Virtual Machine Monitor)
-的设施来隔离操作系统与硬件或者应用程序和操作系统，以此达到虚拟化的目的。这个夹在其中的虚拟机监视器，常常被称为 **Hypervisor**。:point_down:是虚拟机和 Docker 的对比：
+的设施来隔离操作系统与硬件或者应用程序和操作系统，以此达到虚拟化的目的。这个夹在其中的虚拟机监视器，常常被称为 **
+Hypervisor**。:point_down:是虚拟机和 Docker 的对比：
 
 ![虚拟机和容器](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220506/c869ee3cf8d94b20ae793d98e6022afd.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '虚拟机和容器')
 
 
 [//]: # (![虚拟机和容器]&#40;https://cdn.xiaobinqt.cn/xiaobinqt.io/20220428/2763785408b64bfa92d0263dfd6c6e77.png '虚拟机和容器'&#41;)
 
-传统方式是在硬件层面实现虚拟化，需要有额外的虚拟机管理应用和虚拟机操作系统层。Docker容器是在操作系统层面上实现虚拟化，直接**复用本地主机的操作系统**，因此更加轻量级。
+传统方式是在硬件层面实现虚拟化，需要有额外的虚拟机管理应用和虚拟机操作系统层。Docker容器是在操作系统层面上实现虚拟化，直接**
+复用本地主机的操作系统**，因此更加轻量级。
 
 虚拟机更擅长彻底隔离整个运行环境。例如，云服务提供商通常采用虚拟机技术隔离不同的用户。而 Docker 通常用于隔离不同的应用，例如前端，后端以及数据库。
 
@@ -122,7 +131,8 @@ docker run --rm --name mysql2 -e MYSQL_RANDOM_ROOT_PASSWORD=yes  mysql:5.7
  docker build -t webapp:latest -f ./webapp/a.Dockerfile ./webapp
 ```
 
-:point_up:`-t` 选项，指定新生成镜像的名称。`-f` 指定 Dockerfile 文件所在目录，如果不写的话会从 `./webapp` 目录中去找，`./webapp` 可以直接写成`.`
+:point_up:`-t` 选项，指定新生成镜像的名称。`-f` 指定 Dockerfile 文件所在目录，如果不写的话会从 `./webapp`
+目录中去找，`./webapp` 可以直接写成`.`
 理解成当前目录，也是镜像构建的上下文，比如 `COPY`指令执行时就是从这个上下文中去找的。
 
 如果需要禁止缓存可以加上`--no-cache`参数。
@@ -175,7 +185,8 @@ create 命令支持的选项都十分复杂，选项主要包括如下几大类�
 在 Docker 网络中，有三个比较核心的概念，就是：[沙盒]^(Sandbox) 、[网络]^(Network)、[端点]^(Endpoint)。
 
 + 沙盒提供了容器的虚拟网络栈，也就是端口套接字、IP 路由表、防火墙等内容。实现隔离容器网络与宿主机网络，形成了完全独立的容器网络环境。
-+ 网络可以理解为 Docker 内部的虚拟子网，网络内的参与者相互可见并能够进行通讯。Docker 的这种虚拟网络也是于宿主机网络存在隔离关系的，其目的主要是形成容器间的安全通讯环境。
++ 网络可以理解为 Docker 内部的虚拟子网，网络内的参与者相互可见并能够进行通讯。Docker
+  的这种虚拟网络也是于宿主机网络存在隔离关系的，其目的主要是形成容器间的安全通讯环境。
 + 端点是位于容器或网络隔离墙之上的洞，其主要目的是形成一个可以控制的突破封闭的网络环境的出入口。当容器的端点与网络的端点形成配对后，就如同在这两者之间搭建了桥梁，便能够进行数据传输了。
 
 这三者形成了 Docker 网络的核心模型，也就是[容器网络模型]^(Container Network Model)。
@@ -186,7 +197,8 @@ Docker 官方提供了五种 Docker 网络驱动：`Bridge Driver`、`Host Drive
 
 ![网络驱动](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220426/2e40239883264b8fa413bcd39eaf701a.png '网络驱动')
 
-`Bridge` 网络是 Docker 容器的默认网络驱动，通过网桥来实现网络通讯。为容器创建独立的网络命名空间，分配网卡、IP 地址等网络配置，并通过veth接口对将容器挂载到一个虚拟网桥（默认为docker0）上。
+`Bridge` 网络是 Docker 容器的默认网络驱动，通过网桥来实现网络通讯。为容器创建独立的网络命名空间，分配网卡、IP
+地址等网络配置，并通过veth接口对将容器挂载到一个虚拟网桥（默认为docker0）上。
 
 `none`为容器创建独立的网络命名空间，但不进行网络配置，即容器内没有创建网卡、IP地址等。
 
@@ -204,12 +216,14 @@ Docker 官方提供了五种 Docker 网络驱动：`Bridge Driver`、`Host Drive
 docker network create -d bridge individual
 ```
 
-通过 `-d` 选项我们可以为新的网络**指定驱动的类型**，其值可以默认的 `bridge`、`host`、`overlay`、`maclan`、`none`，也可以是其他网络驱动插件所定义的类型。 当不指定网络驱动时，Docker
+通过 `-d` 选项我们可以为新的网络**指定驱动的类型**，其值可以默认的 `bridge`、`host`、`overlay`、`maclan`、`none`
+，也可以是其他网络驱动插件所定义的类型。 当不指定网络驱动时，Docker
 也会默认采用 `Bridge Driver` 作为网络驱动。
 
 通过 `docker network ls` 或是 `docker network list` 可以查看 Docker 中已经存在的网络。
 
-在创建容器时，可以通过 `--network` 来指定容器所加入的网络，一旦这个参数被指定，容器便不会默认加入到 `bridge` 这个网络中，但是仍然可以通过 `--network bridge` 让其加入。
+在创建容器时，可以通过 `--network` 来指定容器所加入的网络，一旦这个参数被指定，容器便不会默认加入到 `bridge`
+这个网络中，但是仍然可以通过 `--network bridge` 让其加入。
 
 ```shell
 docker run -d --name mysql -e MYSQL_RANDOM_ROOT_PASSWORD=yes --network individual mysql:5.7
@@ -240,7 +254,9 @@ mysql:3306
 
 在这里，连接地址中的 mysql（容器名） 好比常见的域名解析，Docker 会将其指向 MySQL 容器的 IP 地址。
 
-Docker 在容器互通中带来的一项便利就是，不再需要真实的知道另外一个容器的 IP 地址就能进行连接。在以往的开发中，每切换一个环境（例如将程序从开发环境提交到测试环境），都需要重新配置程序中的各项连接地址等参数，而在 Docker
+Docker 在容器互通中带来的一项便利就是，不再需要真实的知道另外一个容器的 IP
+地址就能进行连接。在以往的开发中，每切换一个环境（例如将程序从开发环境提交到测试环境），都需要重新配置程序中的各项连接地址等参数，而在
+Docker
 里，并不需要关心这个，只需要程序中配置被连接容器的名称，映射 IP 的工作就可以交给 Docker。
 
 在 Docker 里还支持连接时使用**别名**来摆脱容器名的限制。
@@ -249,7 +265,8 @@ Docker 在容器互通中带来的一项便利就是，不再需要真实的知�
 sudo docker run -d --name webapp --link mysql:database webapp:latest
 ```
 
-在这里，使用 `--link <name>:<alias>` 的形式，连接到 MySQL 容器，并设置它的别名为 `database`。当我们要在 Web 应用中使用 MySQL 连接时，我们就可以使用 `database`
+在这里，使用 `--link <name>:<alias>` 的形式，连接到 MySQL 容器，并设置它的别名为 `database`。当我们要在 Web 应用中使用 MySQL
+连接时，我们就可以使用 `database`
 来代替连接地址了。
 
 ```shell
@@ -258,7 +275,8 @@ database:3306
 
 ### 端口映射
 
-容器直接通过 Docker 网络进行的互相访问，在实际使用中，我们需要在容器外通过网络访问容器中的应用。最简单的一个例子，我们提供了 Web 服务，那么我们就需要提供一种方式访问运行在容器中的
+容器直接通过 Docker 网络进行的互相访问，在实际使用中，我们需要在容器外通过网络访问容器中的应用。最简单的一个例子，我们提供了
+Web 服务，那么我们就需要提供一种方式访问运行在容器中的
 Web 应用。
 
 ![端口映射](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220428/4b474ffc3f9c468abe6086eb13d43428.png '端口映射')
@@ -271,8 +289,10 @@ Web 应用。
 docker run -d --name nginx -p 80:80 -p 443:443 nginx:1.12 
 ```
 
-使用端口映射选项的格式是 `-p <ip>:<host-port>:<container-port>`，其中 ip 是宿主操作系统的监听 ip，可以用来控制监听的网卡，默认为 `0.0.0.0`，即是监听所有网卡。`host-port` 和
-`container-port` 分别表示映射到宿主操作系统的端口和容器的端口，这两者是可以不一样的，比如，可以将容器的 80 端口映射到宿主操作系统的 8080 端口，传入 `-p 8080:80` 即可。
+使用端口映射选项的格式是 `-p <ip>:<host-port>:<container-port>`，其中 ip 是宿主操作系统的监听
+ip，可以用来控制监听的网卡，默认为 `0.0.0.0`，即是监听所有网卡。`host-port` 和
+`container-port` 分别表示映射到宿主操作系统的端口和容器的端口，这两者是可以不一样的，比如，可以将容器的 80 端口映射到宿主操作系统的
+8080 端口，传入 `-p 8080:80` 即可。
 
 ## 文件挂载
 
@@ -284,10 +304,14 @@ docker run -d --name nginx -p 80:80 -p 443:443 nginx:1.12
 docker run -d --name nginx -v /webapp/html:/usr/share/nginx/html nginx:1.12
 ```
 
-使用 `-v` 或 `--volume` 来挂载宿主操作系统目录的形式是 `-v <host-path>:<container-path>` 或 `--volume <host-path>:<container-path>`，其中
-`host-path` 和 `container-path` 分别代表宿主操作系统中的目录和容器中的目录。这里需要注意的是，Docker 这里强制定义目录时**必须使用绝对路径，不能使用相对路径**。
+使用 `-v` 或 `--volume` 来挂载宿主操作系统目录的形式是 `-v <host-path>:<container-path>`
+或 `--volume <host-path>:<container-path>`，其中
+`host-path` 和 `container-path` 分别代表宿主操作系统中的目录和容器中的目录。这里需要注意的是，Docker 这里强制定义目录时**
+必须使用绝对路径，不能使用相对路径**。
 
-Docker 还支持以只读的方式挂载，通过只读方式挂载的目录和文件，只能被容器中的程序读取，但不接受容器中程序修改它们的请求。在挂载选项 `-v` 后再接上 `:ro` 就可以只读挂载了。
+Docker
+还支持以只读的方式挂载，通过只读方式挂载的目录和文件，只能被容器中的程序读取，但不接受容器中程序修改它们的请求。在挂载选项 `-v`
+后再接上 `:ro` 就可以只读挂载了。
 
 ```shell
 docker run -d --name nginx -v /webapp/html:/usr/share/nginx/html:ro nginx:1.12
@@ -295,7 +319,8 @@ docker run -d --name nginx -v /webapp/html:/usr/share/nginx/html:ro nginx:1.12
 
 ### Volume
 
-[数据卷]^(Volume)是从宿主操作系统中挂载目录到容器内，只不过这个挂载的目录由 Docker 进行管理，**只需要指定容器内的目录**，不需要关心具体挂载到了宿主操作系统中的哪里。
+[数据卷]^(Volume)是从宿主操作系统中挂载目录到容器内，只不过这个挂载的目录由 Docker 进行管理，**只需要指定容器内的目录**
+，不需要关心具体挂载到了宿主操作系统中的哪里。
 
 可以使用 `-v` 或 `--volume` 选项来定义数据卷的挂载。
 
@@ -326,9 +351,11 @@ docker run -d --name webapp -v /webapp/storage webapp:latest
 ]
 ```
 
-`Source` 是 Docker 为我们分配用于挂载的宿主机目录，其位于 Docker 的资源区域，一般默认为 `/var/lib/docker`。一般并不需要关心这个目录，一切对它的管理都已经在 Docker 内实现了。
+`Source` 是 Docker 为我们分配用于挂载的宿主机目录，其位于 Docker 的资源区域，一般默认为 `/var/lib/docker`
+。一般并不需要关心这个目录，一切对它的管理都已经在 Docker 内实现了。
 
-为了方便识别数据卷，可以像命名容器一样为数据卷命名，这里的 `Name` 是数据卷的命名，在未给出数据卷命名的时候，Docker 会采用数据卷的 ID 命名数据卷。可以通过 `-v <name>:<container-path>`
+为了方便识别数据卷，可以像命名容器一样为数据卷命名，这里的 `Name` 是数据卷的命名，在未给出数据卷命名的时候，Docker 会采用数据卷的
+ID 命名数据卷。可以通过 `-v <name>:<container-path>`
 这种形式来命名数据卷。
 
 ````shell
@@ -373,7 +400,8 @@ docker run --name mynginx -d nginx:1.12
 
 ![添加新文件](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220428/17f756252ad3482480613efb90087efd.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '添加新文件')
 
-将这个改动后的容器保存为新的镜像，`docker commit`提交这次修改，提交容器更新后产生的镜像并没 `REPOSITORY` 和 `TAG` 的内容，也就是说，这个新的镜像还没有名字。可以使用 `docker tag`
+将这个改动后的容器保存为新的镜像，`docker commit`提交这次修改，提交容器更新后产生的镜像并没 `REPOSITORY` 和 `TAG`
+的内容，也就是说，这个新的镜像还没有名字。可以使用 `docker tag`
 给新镜像命名。
 
 ![提交修改生成新镜像](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220428/ff0c45e23ed1400487138fcc6c290a78.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '提交修改生成新镜像')
@@ -404,7 +432,8 @@ docker run --name mynginx -d nginx:1.12
 
 + :trophy:`FROM`
 
-通过 `FROM` 指令指定一个基础镜像，接下来所有的指令都是基于这个镜像所展开的。**为了保证镜像精简，可以选用体积较小的镜像如`Alpine`或`Debian`作为基础镜像**。
+通过 `FROM` 指令指定一个基础镜像，接下来所有的指令都是基于这个镜像所展开的。**
+为了保证镜像精简，可以选用体积较小的镜像如`Alpine`或`Debian`作为基础镜像**。
 
 `FROM` 指令支持三种形式：
 
@@ -418,7 +447,8 @@ Dockerfile 中的第一条指令必须是 `FROM` 指令，因为没有了基础�
 
 + :trophy:`RUN`
 
-`RUN` 指令用于向控制台发送命令的指令，在 `RUN` 指令之后，我们直接拼接上需要执行的命令，在构建时，Docker 就会执行这些命令，并将它们对文件系统的修改记录下来，形成镜像的变化。
+`RUN` 指令用于向控制台发送命令的指令，在 `RUN` 指令之后，我们直接拼接上需要执行的命令，在构建时，Docker
+就会执行这些命令，并将它们对文件系统的修改记录下来，形成镜像的变化。
 
 ```shell
 RUN <command>
@@ -429,7 +459,8 @@ RUN ["executable", "param1", "param2"]
 
 + :trophy:`ENTRYPOINT` 和 `CMD`
 
-在容器启动时会根据镜像所定义的一条命令来启动容器中进程号为 1 的进程。而这个命令的定义，就是通过 Dockerfile 中的 `ENTRYPOINT` 和 `CMD` 实现的。
+在容器启动时会根据镜像所定义的一条命令来启动容器中进程号为 1 的进程。而这个命令的定义，就是通过 Dockerfile
+中的 `ENTRYPOINT` 和 `CMD` 实现的。
 
 ```shell
 ENTRYPOINT ["executable", "param1", "param2"]
@@ -440,7 +471,8 @@ CMD ["param1","param2"]
 CMD command param1 param2
 ```
 
-当 `ENTRYPOINT` 与 `CMD` 同时给出时，`CMD` 中的内容会作为 `ENTRYPOINT` 定义命令的参数，最终执行容器启动的还是 `ENTRYPOINT` 中给出的命令。
+当 `ENTRYPOINT` 与 `CMD` 同时给出时，`CMD` 中的内容会作为 `ENTRYPOINT` 定义命令的参数，最终执行容器启动的还是 `ENTRYPOINT`
+中给出的命令。
 
 + :trophy:`EXPOSE`
 
@@ -470,7 +502,8 @@ LABEL version=1.2
 
 + :trophy: COPY 和 ADD
 
-在制作新的镜像的时候，可能需要将一些软件配置、程序代码、执行脚本等直接导入到镜像内的文件系统里，使用 `COPY` 或 `ADD` 指令能够帮助我们直接从宿主机的文件系统里拷贝内容到镜像里的文件系统中。
+在制作新的镜像的时候，可能需要将一些软件配置、程序代码、执行脚本等直接导入到镜像内的文件系统里，使用 `COPY` 或 `ADD`
+指令能够帮助我们直接从宿主机的文件系统里拷贝内容到镜像里的文件系统中。
 
 ```shell
 COPY [--chown=<user>:<group>] <src>... <dest>
@@ -502,12 +535,14 @@ RUN wget -O tomcat.tar.gz "https://www.apache.org/dyn/closer.cgi?action=download
 
 ```
 
-在:point_up:这个例子里，我们将 Tomcat 的版本号通过 `ARG` 指令定义为参数变量，在调用下载 Tomcat 包时，使用变量替换掉下载地址中的版本号。通过这样的定义，就可以让我们在不对 Dockerfile
+在:point_up:这个例子里，我们将 Tomcat 的版本号通过 `ARG` 指令定义为参数变量，在调用下载 Tomcat
+包时，使用变量替换掉下载地址中的版本号。通过这样的定义，就可以让我们在不对 Dockerfile
 进行大幅修改的前提下，轻松实现对 Tomcat 版本的切换并重新构建镜像了。
 
 如果我们需要通过这个 Dockerfile 文件构建 Tomcat 镜像，我们可以在构建时通过 docker build 的 `--build-arg` 选项来设置参数变量。
 
-Docker**内置**了一些镜像创建变量，用户可以直接使用而无须声明，包括（不区分大小写）`HTTP_PROXY`、`HTTPS_PROXY`、`FTP_PROXY`、`NO_PROXY`。
+Docker**内置**了一些镜像创建变量，用户可以直接使用而无须声明，包括（不区分大小写）`HTTP_PROXY`、`HTTPS_PROXY`、`FTP_PROXY`
+、`NO_PROXY`。
 
 ```shell
 docker build --build-arg TOMCAT_MAJOR=8 --build-arg TOMCAT_VERSION=8.0.53 -t tomcat:8.0 ./tomcat
@@ -529,7 +564,8 @@ ENV TOMCAT_VERSION 8.0.53
 
 ```
 
-环境变量的值不是在构建指令中传入的，而是在 Dockerfile 中编写。由于环境变量在容器运行时依然有效，所以运行容器时我们也可以对其进行覆盖，在创建容器时使用 `-e` 或是 `--env`
+环境变量的值不是在构建指令中传入的，而是在 Dockerfile
+中编写。由于环境变量在容器运行时依然有效，所以运行容器时我们也可以对其进行覆盖，在创建容器时使用 `-e` 或是 `--env`
 选项，可以对环境变量的值进行修改或定义新的环境变量。
 
 ```shell
@@ -556,7 +592,8 @@ CMD指令用来指定启动容器时默认执行的命令。支持三种格式�
 
 这 2 个命令都是用来指定基于此镜像所创建容器里主进程的启动命令。
 
-`ENTRYPOINT` 指令的**优先级高于** `CMD` 指令。当 `ENTRYPOINT` 和 `CMD` 同时在镜像中被指定时，`CMD` 里的内容会作为 `ENTRYPOINT` 的参数，两者拼接之后，才是最终执行的命令。
+`ENTRYPOINT` 指令的**优先级高于** `CMD` 指令。当 `ENTRYPOINT` 和 `CMD` 同时在镜像中被指定时，`CMD`
+里的内容会作为 `ENTRYPOINT` 的参数，两者拼接之后，才是最终执行的命令。
 
 | NTRYPOINT                      | CMD                       | 实际执行                                                |
 |--------------------------------|---------------------------|-----------------------------------------------------|
@@ -573,9 +610,11 @@ CMD指令用来指定启动容器时默认执行的命令。支持三种格式�
 
 创建容器时可以改写容器主程序的启动命令，而这个覆盖只会覆盖 `CMD` 中定义的内容，不会影响 `ENTRYPOINT` 中的内容。
 
-每个 Dockerfile 中只能有一个`ENTRYPOINT`，当指定多个时，只有最后一个起效。在运行时，可以被`--entrypoint`参数覆盖掉，如`docker run --entrypoint`。
+每个 Dockerfile 中只能有一个`ENTRYPOINT`，当指定多个时，只有最后一个起效。在运行时，可以被`--entrypoint`
+参数覆盖掉，如`docker run --entrypoint`。
 
-> 使用脚本文件来作为 `ENTRYPOINT` 的内容是常见的做法，因为对容器运行初始化的命令相对较多，全部直接放置在 `ENTRYPOINT` 后会特别复杂。
+> 使用脚本文件来作为 `ENTRYPOINT` 的内容是常见的做法，因为对容器运行初始化的命令相对较多，全部直接放置在 `ENTRYPOINT`
+> 后会特别复杂。
 
 ### COPY 和 ADD 的区别
 
@@ -587,7 +626,8 @@ COPY [--chown=<user>:<group>] ["<src>",... "<dest>"]
 ADD [--chown=<user>:<group>] ["<src>",... "<dest>"]
 ```
 
-两者的区别主要在于 `ADD` 能够支持使用网络端的 URL 地址作为 src 源，并且在源文件被识别为压缩包时，自动进行解压，而 `COPY` 没有这两个能力。
+两者的区别主要在于 `ADD` 能够支持使用网络端的 URL 地址作为 src 源，并且在源文件被识别为压缩包时，自动进行解压，而 `COPY`
+没有这两个能力。
 
 当使用本地目录为源目录时，推荐使用 `COPY`。
 
@@ -596,11 +636,14 @@ ADD [--chown=<user>:<group>] ["<src>",... "<dest>"]
 在编程里，[写时复制]^(Copy on Write)
 常常用于对象或数组的拷贝中，当拷贝对象或数组时，复制的过程并不是马上发生在内存中，而只是先让两个变量同时指向同一个内存空间，并进行一些标记，当要对对象或数组进行修改时，才真正进行内存的拷贝。
 
-Docker 的写时复制与编程中的相类似，在通过镜像运行容器时，并不是马上就把镜像里的所有内容拷贝到容器所运行的沙盒文件系统中，而是利用 UnionFS
+Docker 的写时复制与编程中的相类似，在通过镜像运行容器时，并不是马上就把镜像里的所有内容拷贝到容器所运行的沙盒文件系统中，而是利用
+UnionFS
 将镜像以只读的方式挂载到沙盒文件系统中。只有在容器中发生对文件的修改时，修改才会体现到沙盒环境上。
-也就是说，容器在创建和启动的过程中，不需要进行任何的文件系统复制操作，也不需要为容器单独开辟大量的硬盘空间，与其他虚拟化方式对这个过程的操作进行对比，Docker 启动的速度可见一斑。
+也就是说，容器在创建和启动的过程中，不需要进行任何的文件系统复制操作，也不需要为容器单独开辟大量的硬盘空间，与其他虚拟化方式对这个过程的操作进行对比，Docker
+启动的速度可见一斑。
 
-采用写时复制机制来设计的 Docker，既保证了镜像在生成为容器时，以及容器在运行过程中，不会对自身造成修改。又借助剔除常见虚拟化在初始化时需要从镜像中拷贝整个文件系统的过程，大幅提高了容器的创建和启动速度。可以说，Docker
+采用写时复制机制来设计的
+Docker，既保证了镜像在生成为容器时，以及容器在运行过程中，不会对自身造成修改。又借助剔除常见虚拟化在初始化时需要从镜像中拷贝整个文件系统的过程，大幅提高了容器的创建和启动速度。可以说，Docker
 容器能够实现秒级启动速度，写时复制机制在其中发挥了举足轻重的作用。
 
 ### docker save、export 区别
@@ -616,27 +659,4 @@ Docker 的写时复制与编程中的相类似，在通过镜像运行容器时�
 + [Docker技术入门与实战(第三版)](https://book.douban.com/subject/30329430/)
 + [对比Docker和虚拟机 ](https://www.cnblogs.com/zhangcz/p/15089684.html)
 + [开发者必备的 Docker 实践指南](https://juejin.cn/book/6844733746462064654)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
++ [php 中文网 docker](https://www.php.cn/docker/)
