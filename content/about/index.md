@@ -16,7 +16,8 @@ enable: true
 
 ## 缘起
 
-很喜欢电影[《五亿探长雷洛传》](https://zh.wikipedia.org/wiki/%E4%BA%94%E5%84%84%E6%8E%A2%E9%95%B7%E9%9B%B7%E6%B4%9B%E5%82%B3)，电影一开头，由潮州迁居香港的青年雷洛，为了生计，投考香港警察，面试官问他，为什么要当警察，他回答，为了吃饭。
+很喜欢电影[《五亿探长雷洛传》](https://zh.wikipedia.org/wiki/%E4%BA%94%E5%84%84%E6%8E%A2%E9%95%B7%E9%9B%B7%E6%B4%9B%E5%82%B3)
+，电影一开头，由潮州迁居香港的青年雷洛，为了生计，投考香港警察，面试官问他，为什么要当警察，他回答，为了吃饭。
 
 [//]: # (![为了吃饭]&#40;https://cdn.xiaobinqt.cn/xiaobinqt.io/20220401/0fab5cacd5f04b109eba61f29acebe4a.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '为了吃饭'&#41;)
 
@@ -46,7 +47,9 @@ enable: true
 
 {{< admonition type=note title="版权说明" open=true >}}
 
-本站图片和文字，除原创作品之外，部分来自互联网。 此类资源的原版权所有者可在任何时候、以任何理由要求本站停止使用，其中包括被本站编辑（比如加注说明）过的资源， 联系方式见下文。
+本站图片和文字，除原创作品之外，部分来自互联网。对于转载的文章，本站都标识有【转载】。
+
+此类资源的原版权所有者可在任何时候、以任何理由要求本站停止使用，其中包括被本站编辑（比如加注说明）过的资源， 联系方式见下文。
 
 {{< /admonition >}}
 
