@@ -8,7 +8,8 @@ date: 2022-10-01
 lastmod: 2022-04-01
 
 author: "xiaobinqt"
-description: ""
+description: "xiaobinqt,萧十一郎,mysql 面试题,redis,golang,go,BAT 面试题,资料库,工具,www.xiaobinqt.cn
+,xiaobinqt.github.io"
 resources:
 
 tags: [""]
