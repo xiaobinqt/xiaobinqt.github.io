@@ -11,6 +11,12 @@
 + [mysql索引相关面试题](https://juejin.cn/post/6844904126585765902)
 + [Golang 常见面试题目解析](https://github.com/lifei6671/interview-go)
 + [化身一个请求感受浏览器输入URL后奇妙的网络之旅](https://juejin.cn/post/7124553120859815967)
++ [TCP和UDP协议的区别以及原理](https://blog.csdn.net/weixin_38483133/article/details/123864253)
+
+## 视频
+
++ [一条视频讲清楚TCP协议与UDP协议-什么是三次握手与四次挥手](https://www.bilibili.com/video/BV1kV411j7hA)
++ [【尚硅谷】Kubernetes（k8s）入门到实战教程丨全新升级完整版](https://www.bilibili.com/video/BV1GT4y1A756)
 
 ## 在线文档
 
@@ -31,6 +37,8 @@
 + [go Standard library](https://pkg.go.dev/std)
 + [~~alblue~~](http://alblue.cn/tags/go)
 + [床长人工智能教程](https://www.captainbed.net/)
++ [Golang开发手记](https://github.com/kevinyan815/gocookbook)
++ [Pro Git（中文版）](https://gitee.com/progit/)
 
 ## 博主
 
@@ -43,6 +51,8 @@
 
 ## 工具
 
++ [Data Structure Visualizations](https://www.cs.usfca.edu/~galles/visualization/Algorithms.html)
++ [learn git branching](https://learngitbranching.js.org/?locale=zh_CN)
 + [navicat premium15破解教程](http://www.downcc.com/soft/430673.html)
 
 ## 资料库
