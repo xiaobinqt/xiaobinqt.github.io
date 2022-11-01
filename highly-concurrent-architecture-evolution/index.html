@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="robots" content="noodp" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
-        <title>高并发分布式架构演进 - xiaobinqt 博客 - 技术改变生活</title><meta name="Description" content="xiaobinqt,">
-<meta name="keywords" content="xiaobinqt, 萧十一郎, php, golang, go,服务器相关, Laravel5.5&#43;/Lumen, linux, php, mysql, redis, go领域, python" /><meta property="og:title" content="高并发分布式架构演进" />
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noodp" />
+    <title class="pjax-title">高并发分布式架构演进 - xiaobinqt 博客 - 技术改变生活</title><meta name="Description" content="xiaobinqt,"><meta property="og:title" content="高并发分布式架构演进" />
 <meta property="og:description" content="xiaobinqt," />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://www.xiaobinqt.cn/highly-concurrent-architecture-evolution/" /><meta property="og:image" content="https://www.xiaobinqt.cn/logo.png"/><meta property="article:section" content="posts" />
@@ -19,11 +18,14 @@
 <meta name="twitter:title" content="高并发分布式架构演进"/>
 <meta name="twitter:description" content="xiaobinqt,"/>
 <meta name="application-name" content="xiaobinqt">
-<meta name="apple-mobile-web-app-title" content="xiaobinqt"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c">
-<link rel="stylesheet" href="//at.alicdn.com/t/font_3267767_dz25dtwdgdc.css">
-<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+<meta name="apple-mobile-web-app-title" content="xiaobinqt">
+
+<meta name="theme-color" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c">
+<link rel="stylesheet" href="//at.alicdn.com/t/font_3267767_dz25dtwdgdc.css"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://www.xiaobinqt.cn/highly-concurrent-architecture-evolution/" /><link rel="prev" href="https://www.xiaobinqt.cn/session-cookie-token-difference/" /><link rel="next" href="https://www.xiaobinqt.cn/go-sync-map/" /><link rel="stylesheet" href="/lib/md5/md5.min.js"><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><meta name="google-site-verification" content="hFkClWMTOtPBuE0lQaXNiNb707E7P6O2CwexZoSm3VQ" /><meta name="msvalidate.01" content="A961D393878F86E04112E1198500FDBD" /><meta name="baidu-site-verification" content="code-cMh5ORsrP2" /><script type="application/ld+json">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://www.xiaobinqt.cn/highly-concurrent-architecture-evolution/" /><link rel="prev" href="https://www.xiaobinqt.cn/session-cookie-token-difference/" /><link rel="next" href="https://www.xiaobinqt.cn/go-sync-map/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/fontawesome-free/all.min.css">
+        <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/animate/animate.min.css">
+        <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><meta name="google-site-verification" content="hFkClWMTOtPBuE0lQaXNiNb707E7P6O2CwexZoSm3VQ" /><meta name="msvalidate.01" content="A961D393878F86E04112E1198500FDBD" /><meta name="baidu-site-verification" content="code-cMh5ORsrP2" /><script type="application/ld+json">
     {
         "@context": "http://schema.org",
         "@type": "BlogPosting",
@@ -46,29 +48,36 @@
             },"description": "xiaobinqt,"
     }
     </script></head>
-    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
 
-        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+<body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">
+        function setTheme(theme) {document.body.setAttribute('theme', theme); document.documentElement.style.setProperty('color-scheme', theme === 'light' ? 'light' : 'dark');}
+        function saveTheme(theme) {window.localStorage && localStorage.setItem('theme', theme);}
+        function getMeta(metaName) {const metas = document.getElementsByTagName('meta'); for (let i = 0; i < metas.length; i++) if (metas[i].getAttribute('name') === metaName) return metas[i]; return '';}
+        if (window.localStorage && localStorage.getItem('theme')) {let theme = localStorage.getItem('theme');theme === 'light' || theme === 'dark' || theme === 'black' ? setTheme(theme) : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? setTheme('dark') : setTheme('light')); } else { if ('auto' === 'light' || 'auto' === 'dark' || 'auto' === 'black') setTheme('auto'), saveTheme('auto'); else saveTheme('auto'), window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? setTheme('dark') : setTheme('light');}
+        let metaColors = {'light': '#f8f8f8','dark': '#252627','black': '#000000'}
+        getMeta('theme-color').content = metaColors[document.body.getAttribute('theme')];
+    </script>
+    <div id="back-to-top"></div>
+    <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
     <div class="header-wrapper">
         <div class="header-title">
             <a href="/" title="xiaobinqt 博客 - 技术改变生活"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>萧十一郎</a>
         </div>
         <div class="menu">
-            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/about/"> 关于 </a><a class="menu-item" href="/memo/"> 收藏夹 </a><a class="menu-item" href="/links/"> 友链 </a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/about/"> 关于 </a><a class="menu-item" href="/memo/"> 收藏夹 </a><a class="menu-item" href="/links/"> 友链 </a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" rel="noopener noreferrer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
                         <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
-                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                        <a href="#" onclick="return false;" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
                             <i class="fas fa-search fa-fw"></i>
                         </a>
-                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                        <a href="#" onclick="return false;" class="search-button search-clear" id="search-clear-desktop" title="清空">
                             <i class="fas fa-times-circle fa-fw"></i>
                         </a>
                         <span class="search-button search-loading" id="search-loading-desktop">
                             <i class="fas fa-spinner fa-fw fa-spin"></i>
                         </span>
-                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    </span><a href="#" onclick="return false;" class="menu-item theme-switch" title="切换主题">
                     <i class="fas fa-adjust fa-fw"></i>
-                </a>
-            </div>
+                </a></div>
         </div>
     </div>
 </header><header class="mobile" id="header-mobile">
@@ -84,20 +93,20 @@
         <div class="menu" id="menu-mobile"><div class="search-wrapper">
                     <div class="search mobile" id="search-mobile">
                         <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
-                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                        <a href="#" onclick="return false;" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
                             <i class="fas fa-search fa-fw"></i>
                         </a>
-                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                        <a href="#" onclick="return false;" class="search-button search-clear" id="search-clear-mobile" title="清空">
                             <i class="fas fa-times-circle fa-fw"></i>
                         </a>
                         <span class="search-button search-loading" id="search-loading-mobile">
                             <i class="fas fa-spinner fa-fw fa-spin"></i>
                         </span>
                     </div>
-                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                    <a href="#" onclick="return false;" class="search-cancel" id="search-cancel-mobile">
                         取消
                     </a>
-                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/about/" title="">关于</a><a class="menu-item" href="/memo/" title="">收藏夹</a><a class="menu-item" href="/links/" title="">友链</a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/about/" title="">关于</a><a class="menu-item" href="/memo/" title="">收藏夹</a><a class="menu-item" href="/links/" title="">友链</a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" rel="noopener noreferrer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a href="#" onclick="return false;" class="menu-item theme-switch" title="切换主题">
                 <i class="fas fa-adjust fa-fw"></i>
             </a></div>
     </div>
@@ -109,14 +118,40 @@
     <div id="search-dropdown-mobile"></div>
 </div>
 <main class="main">
-                <div class="container"><div class="toc" id="toc-auto">
-            <h2 class="toc-title">目录</h2>
-            <div class="toc-content" id="toc-content-auto"></div>
-        </div><article class="page single"><h1 class="single-title animated flipInX">高并发分布式架构演进</h1><div class="post-meta">
+            <div class="container"><div class="toc" id="toc-auto">
+        <h2 class="toc-title">目录</h2>
+        <div class="toc-content" id="toc-content-auto"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#0-目录和说明">0. 目录和说明</a></li>
+    <li><a href="#1-概述">1. 概述</a></li>
+    <li><a href="#2-基本概念">2. 基本概念</a></li>
+    <li><a href="#3-架构演进">3. 架构演进</a>
+      <ul>
+        <li><a href="#31-单机架构">3.1 单机架构</a></li>
+        <li><a href="#32-第一次演进tomcat-与数据库分开部署">3.2 第一次演进：Tomcat 与数据库分开部署</a></li>
+        <li><a href="#33-第二次演进引入本地缓存和分布式缓存">3.3 第二次演进：引入本地缓存和分布式缓存</a></li>
+        <li><a href="#34-第三次演进引入反向代理实现负载均衡">3.4 第三次演进：引入反向代理实现负载均衡</a></li>
+        <li><a href="#35-第四次演进数据库读写分离">3.5 第四次演进：数据库读写分离</a></li>
+        <li><a href="#36-第五次演进数据库按业务分库">3.6 第五次演进：数据库按业务分库</a></li>
+        <li><a href="#37-第六次演进把大表拆分为小表">3.7 第六次演进：把大表拆分为小表</a></li>
+        <li><a href="#38-第七次演进使用-lvs-或-f5-来使多个-nginx-负载均衡">3.8 第七次演进：使用 LVS 或 F5 来使多个 Nginx 负载均衡</a></li>
+        <li><a href="#39-第八次演进通过-dns-轮询实现机房间的负载均衡">3.9 第八次演进：通过 DNS 轮询实现机房间的负载均衡</a></li>
+        <li><a href="#310-第九次演进引入-nosql-数据库和搜索引擎等技术">3.10 第九次演进：引入 NoSQL 数据库和搜索引擎等技术</a></li>
+        <li><a href="#311-第十次演进大应用拆分为小应用">3.11 第十次演进：大应用拆分为小应用</a></li>
+        <li><a href="#312-第十一次演进复用的功能抽离成微服务">3.12 第十一次演进：复用的功能抽离成微服务</a></li>
+        <li><a href="#313-第十二次演进引入企业服务总线-esb-屏蔽服务接口的访问差异">3.13 第十二次演进：引入企业服务总线 ESB 屏蔽服务接口的访问差异</a></li>
+        <li><a href="#314-第十三次演进引入容器化技术实现运行环境隔离与动态服务管理">3.14 第十三次演进：引入容器化技术实现运行环境隔离与动态服务管理</a></li>
+        <li><a href="#315-第十四次演进以云平台承载系统">3.15 第十四次演进：以云平台承载系统</a></li>
+      </ul>
+    </li>
+    <li><a href="#4-架构设计总结">4. 架构设计总结</a></li>
+  </ul>
+</nav></div>
+    </div><script>document.getElementsByTagName("main")[0].setAttribute("pageStyle", "normal")</script><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single"><h1 class="single-title animate__animated animate__flipInX">高并发分布式架构演进</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author">
                     <i class="custom-icon iconfont icon-weibiaoti-"></i>
-                </span>&nbsp;&nbsp;<span class="post-category">收录于 <a href="/categories/golang/"><i class="far fa-folder fa-fw"></i>golang</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-08-29">2022-08-29</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 6993 字&nbsp;
+                </span>&nbsp;&nbsp;<span class="post-category">收录于 </span>&nbsp;<span class="post-category">类别 <a href="/categories/golang/"><i class="far fa-folder fa-fw"></i>golang</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-08-29">2022-08-29</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2022-08-30">2022-08-30</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 6993 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 14 分钟&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
@@ -155,10 +190,10 @@
 <!-- https://xiaobinqt.github.io -->
 <!-- https://www.xiaobinqt.cn -->
 <blockquote>
-<p>原文链接：<a href="https://segmentfault.com/a/1190000018626163" target="_blank" rel="noopener noreffer">https://segmentfault.com/a/1190000018626163</a></p>
+<p>原文链接：<a href="https://segmentfault.com/a/1190000018626163" target="_blank" rel="noopener noreferrer">https://segmentfault.com/a/1190000018626163</a></p>
 </blockquote>
-<h2 id="0-目录和说明">0. 目录和说明</h2>
-<p>文章在介绍一些基本概念后，按照以下过程阐述了整个架构的演进过程：</p>
+<h2 id="0-目录和说明" class="headerLink">
+    <a href="#0-%e7%9b%ae%e5%bd%95%e5%92%8c%e8%af%b4%e6%98%8e" class="header-mark"></a>0. 目录和说明</h2><p>文章在介绍一些基本概念后，按照以下过程阐述了整个架构的演进过程：</p>
 <ul>
 <li>
 <p>单机架构</p>
@@ -206,13 +241,13 @@
 <p>第十四次演进：以云平台承载系统</p>
 </li>
 </ul>
-<h2 id="1-概述">1. 概述</h2>
-<p>本文以淘宝作为例子，介绍从一百个到千万级并发情况下服务端的架构的演进过程，同时列举出每个演进阶段会遇到的相关技术，让大家对架构的演进有一个整体的认知，文章最后汇总了一些架构设计的原则。</p>
+<h2 id="1-概述" class="headerLink">
+    <a href="#1-%e6%a6%82%e8%bf%b0" class="header-mark"></a>1. 概述</h2><p>本文以淘宝作为例子，介绍从一百个到千万级并发情况下服务端的架构的演进过程，同时列举出每个演进阶段会遇到的相关技术，让大家对架构的演进有一个整体的认知，文章最后汇总了一些架构设计的原则。</p>
 <blockquote>
 <p>特别说明：本文以淘宝为例仅仅是为了便于说明演进过程可能遇到的问题，并非是淘宝真正的技术演进路径</p>
 </blockquote>
-<h2 id="2-基本概念">2. 基本概念</h2>
-<p>在介绍架构之前，为了避免部分读者对架构设计中的一些概念不了解，下面对几个最基础的概念进行介绍。</p>
+<h2 id="2-基本概念" class="headerLink">
+    <a href="#2-%e5%9f%ba%e6%9c%ac%e6%a6%82%e5%bf%b5" class="header-mark"></a>2. 基本概念</h2><p>在介绍架构之前，为了避免部分读者对架构设计中的一些概念不了解，下面对几个最基础的概念进行介绍。</p>
 <ul>
 <li>
 <p><strong>分布式</strong>系统中的多个模块在不同服务器上部署，即可称为分布式系统，如 Tomcat 和数据库分别部署在不同的服务器上，或两个相同功能的 Tomcat 分别部署在不同服务器上</p>
@@ -233,16 +268,15 @@
 <strong>正向代理是代理服务器代替系统内部来访问外部网络的过程，反向代理是外部请求访问系统时通过代理服务器转发到内部服务器的过程</strong>。</p>
 </li>
 </ul>
-<h2 id="3-架构演进">3. 架构演进</h2>
-<h3 id="31-单机架构">3.1 单机架构</h3>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/1f117811d1f646bbbb030f52013818ab.png" title="单机架构" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/1f117811d1f646bbbb030f52013818ab.png" data-sub-html="<h2>单机架构</h2><p>单机架构</p>">
+<h2 id="3-架构演进" class="headerLink">
+    <a href="#3-%e6%9e%b6%e6%9e%84%e6%bc%94%e8%bf%9b" class="header-mark"></a>3. 架构演进</h2><h3 id="31-单机架构" class="headerLink">
+    <a href="#31-%e5%8d%95%e6%9c%ba%e6%9e%b6%e6%9e%84" class="header-mark"></a>3.1 单机架构</h3><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/1f117811d1f646bbbb030f52013818ab.png" title="单机架构" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/1f117811d1f646bbbb030f52013818ab.png" data-sub-html="<h2>单机架构</h2><p>单机架构</p>">
         <img
             class="lazyload"
-            src="/svg/loading.min.svg"
             data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/1f117811d1f646bbbb030f52013818ab.png"
             data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/1f117811d1f646bbbb030f52013818ab.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/1f117811d1f646bbbb030f52013818ab.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/1f117811d1f646bbbb030f52013818ab.png 2x"
             data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/1f117811d1f646bbbb030f52013818ab.png" />
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/1f117811d1f646bbbb030f52013818ab.png">
     </a><figcaption class="image-caption">单机架构</figcaption>
     </figure></p>
 <p>以淘宝作为例子。在网站最初时，应用数量与用户数都较少，可以把 Tomcat 和数据库部署在同一台服务器上。浏览器往 <code>www.taobao.com</code> 发起请求时，首先经过 DNS 服务器（域名系统）把域名转换为实际 IP 地址
@@ -250,30 +284,28 @@
 <blockquote>
 <p>随着用户数的增长，Tomcat 和数据库之间竞争资源，单机性能不足以支撑业务</p>
 </blockquote>
-<h3 id="32-第一次演进tomcat-与数据库分开部署">3.2 第一次演进：Tomcat 与数据库分开部署</h3>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/51b57795a18a487daae0807e4e005d73.png" title="第一次演进" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/51b57795a18a487daae0807e4e005d73.png" data-sub-html="<h2>第一次演进</h2><p>第一次演进</p>">
+<h3 id="32-第一次演进tomcat-与数据库分开部署" class="headerLink">
+    <a href="#32-%e7%ac%ac%e4%b8%80%e6%ac%a1%e6%bc%94%e8%bf%9btomcat-%e4%b8%8e%e6%95%b0%e6%8d%ae%e5%ba%93%e5%88%86%e5%bc%80%e9%83%a8%e7%bd%b2" class="header-mark"></a>3.2 第一次演进：Tomcat 与数据库分开部署</h3><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/51b57795a18a487daae0807e4e005d73.png" title="第一次演进" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/51b57795a18a487daae0807e4e005d73.png" data-sub-html="<h2>第一次演进</h2><p>第一次演进</p>">
         <img
             class="lazyload"
-            src="/svg/loading.min.svg"
             data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/51b57795a18a487daae0807e4e005d73.png"
             data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/51b57795a18a487daae0807e4e005d73.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/51b57795a18a487daae0807e4e005d73.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/51b57795a18a487daae0807e4e005d73.png 2x"
             data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/51b57795a18a487daae0807e4e005d73.png" />
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/51b57795a18a487daae0807e4e005d73.png">
     </a><figcaption class="image-caption">第一次演进</figcaption>
     </figure></p>
 <p>Tomcat 和数据库分别独占服务器资源，显著提高两者各自性能。</p>
 <blockquote>
 <p>随着用户数的增长，并发读写数据库成为瓶颈</p>
 </blockquote>
-<h3 id="33-第二次演进引入本地缓存和分布式缓存">3.3 第二次演进：引入本地缓存和分布式缓存</h3>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/08062e488e3a42c3952d2e083e117f28.png" title="第二次演进" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/08062e488e3a42c3952d2e083e117f28.png" data-sub-html="<h2>第二次演进</h2><p>第二次演进</p>">
+<h3 id="33-第二次演进引入本地缓存和分布式缓存" class="headerLink">
+    <a href="#33-%e7%ac%ac%e4%ba%8c%e6%ac%a1%e6%bc%94%e8%bf%9b%e5%bc%95%e5%85%a5%e6%9c%ac%e5%9c%b0%e7%bc%93%e5%ad%98%e5%92%8c%e5%88%86%e5%b8%83%e5%bc%8f%e7%bc%93%e5%ad%98" class="header-mark"></a>3.3 第二次演进：引入本地缓存和分布式缓存</h3><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/08062e488e3a42c3952d2e083e117f28.png" title="第二次演进" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/08062e488e3a42c3952d2e083e117f28.png" data-sub-html="<h2>第二次演进</h2><p>第二次演进</p>">
         <img
             class="lazyload"
-            src="/svg/loading.min.svg"
             data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/08062e488e3a42c3952d2e083e117f28.png"
             data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/08062e488e3a42c3952d2e083e117f28.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/08062e488e3a42c3952d2e083e117f28.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/08062e488e3a42c3952d2e083e117f28.png 2x"
             data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/08062e488e3a42c3952d2e083e117f28.png" />
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/08062e488e3a42c3952d2e083e117f28.png">
     </a><figcaption class="image-caption">第二次演进</figcaption>
     </figure></p>
 <p>在 Tomcat 同服务器上或同 JVM 中增加本地缓存，并在外部增加分布式缓存，缓存热门商品信息或热门商品的 html 页面等。通过缓存能把绝大多数请求在读写数据库前拦截掉，大大降低数据库压力。其中涉及的技术包括：使用 memcached
@@ -281,15 +313,14 @@
 <blockquote>
 <p>缓存抗住了大部分的访问请求，随着用户数的增长，并发压力主要落在单机的 Tomcat 上，响应逐渐变慢</p>
 </blockquote>
-<h3 id="34-第三次演进引入反向代理实现负载均衡">3.4 第三次演进：引入反向代理实现负载均衡</h3>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/447531a9c371496e9263e32a312b192c.png" title="第三次演进" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/447531a9c371496e9263e32a312b192c.png" data-sub-html="<h2>第三次演进</h2><p>第三次演进</p>">
+<h3 id="34-第三次演进引入反向代理实现负载均衡" class="headerLink">
+    <a href="#34-%e7%ac%ac%e4%b8%89%e6%ac%a1%e6%bc%94%e8%bf%9b%e5%bc%95%e5%85%a5%e5%8f%8d%e5%90%91%e4%bb%a3%e7%90%86%e5%ae%9e%e7%8e%b0%e8%b4%9f%e8%bd%bd%e5%9d%87%e8%a1%a1" class="header-mark"></a>3.4 第三次演进：引入反向代理实现负载均衡</h3><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/447531a9c371496e9263e32a312b192c.png" title="第三次演进" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/447531a9c371496e9263e32a312b192c.png" data-sub-html="<h2>第三次演进</h2><p>第三次演进</p>">
         <img
             class="lazyload"
-            src="/svg/loading.min.svg"
             data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/447531a9c371496e9263e32a312b192c.png"
             data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/447531a9c371496e9263e32a312b192c.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/447531a9c371496e9263e32a312b192c.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/447531a9c371496e9263e32a312b192c.png 2x"
             data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/447531a9c371496e9263e32a312b192c.png" />
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/447531a9c371496e9263e32a312b192c.png">
     </a><figcaption class="image-caption">第三次演进</figcaption>
     </figure></p>
 <p>在多台服务器上分别部署 Tomcat，使用反向代理软件（Nginx）把请求均匀分发到每个 Tomcat 中。此处假设 Tomcat 最多支持 100 个并发，Nginx 最多支持 50000 个并发，那么理论上 Nginx 把请求分发到
@@ -297,45 +328,42 @@
 <blockquote>
 <p>反向代理使应用服务器可支持的并发量大大增加，但并发量的增长也意味着更多请求穿透到数据库，单机的数据库最终成为瓶颈</p>
 </blockquote>
-<h3 id="35-第四次演进数据库读写分离">3.5 第四次演进：数据库读写分离</h3>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/53d08f904fa54100bb891bacf5d55eec.png" title="第四次演进" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/53d08f904fa54100bb891bacf5d55eec.png" data-sub-html="<h2>第四次演进</h2><p>第四次演进</p>">
+<h3 id="35-第四次演进数据库读写分离" class="headerLink">
+    <a href="#35-%e7%ac%ac%e5%9b%9b%e6%ac%a1%e6%bc%94%e8%bf%9b%e6%95%b0%e6%8d%ae%e5%ba%93%e8%af%bb%e5%86%99%e5%88%86%e7%a6%bb" class="header-mark"></a>3.5 第四次演进：数据库读写分离</h3><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/53d08f904fa54100bb891bacf5d55eec.png" title="第四次演进" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/53d08f904fa54100bb891bacf5d55eec.png" data-sub-html="<h2>第四次演进</h2><p>第四次演进</p>">
         <img
             class="lazyload"
-            src="/svg/loading.min.svg"
             data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/53d08f904fa54100bb891bacf5d55eec.png"
             data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/53d08f904fa54100bb891bacf5d55eec.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/53d08f904fa54100bb891bacf5d55eec.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/53d08f904fa54100bb891bacf5d55eec.png 2x"
             data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/53d08f904fa54100bb891bacf5d55eec.png" />
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/53d08f904fa54100bb891bacf5d55eec.png">
     </a><figcaption class="image-caption">第四次演进</figcaption>
     </figure></p>
 <p>把数据库划分为读库和写库，读库可以有多个，通过同步机制把写库的数据同步到读库，对于需要查询最新写入数据场景，可通过在缓存中多写一份，通过缓存获得最新数据。其中涉及的技术包括：Mycat，它是数据库中间件，可通过它来组织数据库的分离读写和分库分表，客户端通过它来访问下层数据库，还会涉及数据同步，数据一致性的问题。</p>
 <blockquote>
 <p>业务逐渐变多，不同业务之间的访问量差距较大，不同业务直接竞争数据库，相互影响性能</p>
 </blockquote>
-<h3 id="36-第五次演进数据库按业务分库">3.6 第五次演进：数据库按业务分库</h3>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/effe7db154244811af27331d0b1a4d8c.png" title="第五次演进" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/effe7db154244811af27331d0b1a4d8c.png" data-sub-html="<h2>第五次演进</h2><p>第五次演进</p>">
+<h3 id="36-第五次演进数据库按业务分库" class="headerLink">
+    <a href="#36-%e7%ac%ac%e4%ba%94%e6%ac%a1%e6%bc%94%e8%bf%9b%e6%95%b0%e6%8d%ae%e5%ba%93%e6%8c%89%e4%b8%9a%e5%8a%a1%e5%88%86%e5%ba%93" class="header-mark"></a>3.6 第五次演进：数据库按业务分库</h3><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/effe7db154244811af27331d0b1a4d8c.png" title="第五次演进" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/effe7db154244811af27331d0b1a4d8c.png" data-sub-html="<h2>第五次演进</h2><p>第五次演进</p>">
         <img
             class="lazyload"
-            src="/svg/loading.min.svg"
             data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/effe7db154244811af27331d0b1a4d8c.png"
             data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/effe7db154244811af27331d0b1a4d8c.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/effe7db154244811af27331d0b1a4d8c.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/effe7db154244811af27331d0b1a4d8c.png 2x"
             data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/effe7db154244811af27331d0b1a4d8c.png" />
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/effe7db154244811af27331d0b1a4d8c.png">
     </a><figcaption class="image-caption">第五次演进</figcaption>
     </figure></p>
 <p>把不同业务的数据保存到不同的数据库中，使业务之间的资源竞争降低，对于访问量大的业务，可以部署更多的服务器来支撑。这样同时导致跨业务的表无法直接做关联分析，需要通过其他途径来解决，但这不是本文讨论的重点，有兴趣的可以自行搜索解决方案。</p>
 <blockquote>
 <p>随着用户数的增长，单机的写库会逐渐会达到性能瓶颈</p>
 </blockquote>
-<h3 id="37-第六次演进把大表拆分为小表">3.7 第六次演进：把大表拆分为小表</h3>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/2fad6020cd9b4b97baebc993157067dc.png" title="第六次演进" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/2fad6020cd9b4b97baebc993157067dc.png" data-sub-html="<h2>第六次演进</h2><p>第六次演进</p>">
+<h3 id="37-第六次演进把大表拆分为小表" class="headerLink">
+    <a href="#37-%e7%ac%ac%e5%85%ad%e6%ac%a1%e6%bc%94%e8%bf%9b%e6%8a%8a%e5%a4%a7%e8%a1%a8%e6%8b%86%e5%88%86%e4%b8%ba%e5%b0%8f%e8%a1%a8" class="header-mark"></a>3.7 第六次演进：把大表拆分为小表</h3><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/2fad6020cd9b4b97baebc993157067dc.png" title="第六次演进" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/2fad6020cd9b4b97baebc993157067dc.png" data-sub-html="<h2>第六次演进</h2><p>第六次演进</p>">
         <img
             class="lazyload"
-            src="/svg/loading.min.svg"
             data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/2fad6020cd9b4b97baebc993157067dc.png"
             data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/2fad6020cd9b4b97baebc993157067dc.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/2fad6020cd9b4b97baebc993157067dc.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/2fad6020cd9b4b97baebc993157067dc.png 2x"
             data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/2fad6020cd9b4b97baebc993157067dc.png" />
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/2fad6020cd9b4b97baebc993157067dc.png">
     </a><figcaption class="image-caption">第六次演进</figcaption>
     </figure></p>
 <p>比如针对评论数据，可按照商品 ID 进行 hash，路由到对应的表中存储；针对支付记录，可按照小时创建表，每个小时表继续拆分为小表，使用用户 ID
@@ -350,15 +378,14 @@
 <blockquote>
 <p>数据库和 Tomcat 都能够水平扩展，可支撑的并发大幅提高，随着用户数的增长，最终单机的 Nginx 会成为瓶颈</p>
 </blockquote>
-<h3 id="38-第七次演进使用-lvs-或-f5-来使多个-nginx-负载均衡">3.8 第七次演进：使用 LVS 或 F5 来使多个 Nginx 负载均衡</h3>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/1b37027ad49a4aaeb4485885ad9a696a.png" title="第七次演进" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/1b37027ad49a4aaeb4485885ad9a696a.png" data-sub-html="<h2>第七次演进</h2><p>第七次演进</p>">
+<h3 id="38-第七次演进使用-lvs-或-f5-来使多个-nginx-负载均衡" class="headerLink">
+    <a href="#38-%e7%ac%ac%e4%b8%83%e6%ac%a1%e6%bc%94%e8%bf%9b%e4%bd%bf%e7%94%a8-lvs-%e6%88%96-f5-%e6%9d%a5%e4%bd%bf%e5%a4%9a%e4%b8%aa-nginx-%e8%b4%9f%e8%bd%bd%e5%9d%87%e8%a1%a1" class="header-mark"></a>3.8 第七次演进：使用 LVS 或 F5 来使多个 Nginx 负载均衡</h3><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/1b37027ad49a4aaeb4485885ad9a696a.png" title="第七次演进" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/1b37027ad49a4aaeb4485885ad9a696a.png" data-sub-html="<h2>第七次演进</h2><p>第七次演进</p>">
         <img
             class="lazyload"
-            src="/svg/loading.min.svg"
             data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/1b37027ad49a4aaeb4485885ad9a696a.png"
             data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/1b37027ad49a4aaeb4485885ad9a696a.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/1b37027ad49a4aaeb4485885ad9a696a.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/1b37027ad49a4aaeb4485885ad9a696a.png 2x"
             data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/1b37027ad49a4aaeb4485885ad9a696a.png" />
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/1b37027ad49a4aaeb4485885ad9a696a.png">
     </a><figcaption class="image-caption">第七次演进</figcaption>
     </figure></p>
 <p>由于瓶颈在 Nginx，因此无法通过两层的 Nginx 来实现多个 Nginx 的负载均衡。图中的 <strong><ruby>LVS<rt>Linux Virtual Server</rt></ruby></strong> 和 F5 是工作在网络第四层的负载均衡解决方案，其中 LVS
@@ -371,15 +398,14 @@ keepalived 实现高可用，其他的 Nginx 接另外的 Tomcat，这样可接�
 <blockquote>
 <p>由于 LVS 也是单机的，随着并发数增长到几十万时，LVS 服务器最终会达到瓶颈，此时用户数达到千万甚至上亿级别，用户分布在不同的地区，与服务器机房距离不同，导致了访问的延迟会明显不同</p>
 </blockquote>
-<h3 id="39-第八次演进通过-dns-轮询实现机房间的负载均衡">3.9 第八次演进：通过 DNS 轮询实现机房间的负载均衡</h3>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/460349470a99405eb838823aa29cbe27.png" title="第八次演进" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/460349470a99405eb838823aa29cbe27.png" data-sub-html="<h2>第八次演进</h2><p>第八次演进</p>">
+<h3 id="39-第八次演进通过-dns-轮询实现机房间的负载均衡" class="headerLink">
+    <a href="#39-%e7%ac%ac%e5%85%ab%e6%ac%a1%e6%bc%94%e8%bf%9b%e9%80%9a%e8%bf%87-dns-%e8%bd%ae%e8%af%a2%e5%ae%9e%e7%8e%b0%e6%9c%ba%e6%88%bf%e9%97%b4%e7%9a%84%e8%b4%9f%e8%bd%bd%e5%9d%87%e8%a1%a1" class="header-mark"></a>3.9 第八次演进：通过 DNS 轮询实现机房间的负载均衡</h3><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/460349470a99405eb838823aa29cbe27.png" title="第八次演进" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/460349470a99405eb838823aa29cbe27.png" data-sub-html="<h2>第八次演进</h2><p>第八次演进</p>">
         <img
             class="lazyload"
-            src="/svg/loading.min.svg"
             data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/460349470a99405eb838823aa29cbe27.png"
             data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/460349470a99405eb838823aa29cbe27.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/460349470a99405eb838823aa29cbe27.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/460349470a99405eb838823aa29cbe27.png 2x"
             data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/460349470a99405eb838823aa29cbe27.png" />
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/460349470a99405eb838823aa29cbe27.png">
     </a><figcaption class="image-caption">第八次演进</figcaption>
     </figure></p>
 <p>在 DNS 服务器中可配置一个域名对应多个 IP 地址，每个 IP 地址对应到不同的机房里的虚拟 IP。当用户访问 <code>www.taobao.com</code> 时，DNS 服务器会使用轮询策略或其他策略，来选择某个 IP
@@ -387,15 +413,14 @@ keepalived 实现高可用，其他的 Nginx 接另外的 Tomcat，这样可接�
 <blockquote>
 <p>随着数据的丰富程度和业务的发展，检索、分析等需求越来越丰富，单单依靠数据库无法解决如此丰富的需求</p>
 </blockquote>
-<h3 id="310-第九次演进引入-nosql-数据库和搜索引擎等技术">3.10 第九次演进：引入 NoSQL 数据库和搜索引擎等技术</h3>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/4431084b90e14e95bad5a0beb93e9196.png" title="第九次演进" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/4431084b90e14e95bad5a0beb93e9196.png" data-sub-html="<h2>第九次演进</h2><p>第九次演进</p>">
+<h3 id="310-第九次演进引入-nosql-数据库和搜索引擎等技术" class="headerLink">
+    <a href="#310-%e7%ac%ac%e4%b9%9d%e6%ac%a1%e6%bc%94%e8%bf%9b%e5%bc%95%e5%85%a5-nosql-%e6%95%b0%e6%8d%ae%e5%ba%93%e5%92%8c%e6%90%9c%e7%b4%a2%e5%bc%95%e6%93%8e%e7%ad%89%e6%8a%80%e6%9c%af" class="header-mark"></a>3.10 第九次演进：引入 NoSQL 数据库和搜索引擎等技术</h3><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/4431084b90e14e95bad5a0beb93e9196.png" title="第九次演进" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/4431084b90e14e95bad5a0beb93e9196.png" data-sub-html="<h2>第九次演进</h2><p>第九次演进</p>">
         <img
             class="lazyload"
-            src="/svg/loading.min.svg"
             data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/4431084b90e14e95bad5a0beb93e9196.png"
             data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/4431084b90e14e95bad5a0beb93e9196.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/4431084b90e14e95bad5a0beb93e9196.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/4431084b90e14e95bad5a0beb93e9196.png 2x"
             data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/4431084b90e14e95bad5a0beb93e9196.png" />
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/4431084b90e14e95bad5a0beb93e9196.png">
     </a><figcaption class="image-caption">第九次演进</figcaption>
     </figure></p>
 <p>当数据库中的数据多到一定规模时，数据库就不适用于复杂的查询了，往往只能满足普通查询的场景。对于统计报表场景，在数据量大时不一定能跑出结果，而且在跑复杂查询时会导致其他查询变慢，对于全文检索、可变数据结构等场景，数据库天生不适用。因此需要针对特定的场景，引入合适的解决方案。如对于海量文件存储，可通过分布式文件系统
@@ -404,30 +429,28 @@ HDFS 解决，对于 key value 类型的数据，可通过 HBase 和 Redis 等�
 <blockquote>
 <p>引入更多组件解决了丰富的需求，业务维度能够极大扩充，随之而来的是一个应用中包含了太多的业务代码，业务的升级迭代变得困难</p>
 </blockquote>
-<h3 id="311-第十次演进大应用拆分为小应用">3.11 第十次演进：大应用拆分为小应用</h3>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/8cb5f4af10c54384bcda7ac1a19bdaba.png" title="第十次演进" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/8cb5f4af10c54384bcda7ac1a19bdaba.png" data-sub-html="<h2>第十次演进</h2><p>第十次演进</p>">
+<h3 id="311-第十次演进大应用拆分为小应用" class="headerLink">
+    <a href="#311-%e7%ac%ac%e5%8d%81%e6%ac%a1%e6%bc%94%e8%bf%9b%e5%a4%a7%e5%ba%94%e7%94%a8%e6%8b%86%e5%88%86%e4%b8%ba%e5%b0%8f%e5%ba%94%e7%94%a8" class="header-mark"></a>3.11 第十次演进：大应用拆分为小应用</h3><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/8cb5f4af10c54384bcda7ac1a19bdaba.png" title="第十次演进" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/8cb5f4af10c54384bcda7ac1a19bdaba.png" data-sub-html="<h2>第十次演进</h2><p>第十次演进</p>">
         <img
             class="lazyload"
-            src="/svg/loading.min.svg"
             data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/8cb5f4af10c54384bcda7ac1a19bdaba.png"
             data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/8cb5f4af10c54384bcda7ac1a19bdaba.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/8cb5f4af10c54384bcda7ac1a19bdaba.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/8cb5f4af10c54384bcda7ac1a19bdaba.png 2x"
             data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/8cb5f4af10c54384bcda7ac1a19bdaba.png" />
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/8cb5f4af10c54384bcda7ac1a19bdaba.png">
     </a><figcaption class="image-caption">第十次演进</figcaption>
     </figure></p>
 <p>按照业务板块来划分应用代码，使单个应用的职责更清晰，相互之间可以做到独立升级迭代。这时候应用之间可能会涉及到一些公共配置，可以通过分布式配置中心 Zookeeper 来解决。</p>
 <blockquote>
 <p>不同应用之间存在共用的模块，由应用单独管理会导致相同代码存在多份，导致公共功能升级时全部应用代码都要跟着升级</p>
 </blockquote>
-<h3 id="312-第十一次演进复用的功能抽离成微服务">3.12 第十一次演进：复用的功能抽离成微服务</h3>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/542da2f0e6704dd2bc537098708aedcc.png" title="第十一次演进" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/542da2f0e6704dd2bc537098708aedcc.png" data-sub-html="<h2>第十一次演进</h2><p>第十一次演进</p>">
+<h3 id="312-第十一次演进复用的功能抽离成微服务" class="headerLink">
+    <a href="#312-%e7%ac%ac%e5%8d%81%e4%b8%80%e6%ac%a1%e6%bc%94%e8%bf%9b%e5%a4%8d%e7%94%a8%e7%9a%84%e5%8a%9f%e8%83%bd%e6%8a%bd%e7%a6%bb%e6%88%90%e5%be%ae%e6%9c%8d%e5%8a%a1" class="header-mark"></a>3.12 第十一次演进：复用的功能抽离成微服务</h3><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/542da2f0e6704dd2bc537098708aedcc.png" title="第十一次演进" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/542da2f0e6704dd2bc537098708aedcc.png" data-sub-html="<h2>第十一次演进</h2><p>第十一次演进</p>">
         <img
             class="lazyload"
-            src="/svg/loading.min.svg"
             data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/542da2f0e6704dd2bc537098708aedcc.png"
             data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/542da2f0e6704dd2bc537098708aedcc.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/542da2f0e6704dd2bc537098708aedcc.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/542da2f0e6704dd2bc537098708aedcc.png 2x"
             data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/542da2f0e6704dd2bc537098708aedcc.png" />
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/542da2f0e6704dd2bc537098708aedcc.png">
     </a><figcaption class="image-caption">第十一次演进</figcaption>
     </figure></p>
 <p>如用户管理、订单、支付、鉴权等功能在多个应用中都存在，那么可以把这些功能的代码单独抽取出来形成一个单独的服务来管理，这样的服务就是所谓的微服务，应用和服务之间通过 HTTP、TCP 或 RPC
@@ -435,15 +458,14 @@ HDFS 解决，对于 key value 类型的数据，可通过 HBase 和 Redis 等�
 <blockquote>
 <p>不同服务的接口访问方式不同，应用代码需要适配多种访问方式才能使用服务，此外，应用访问服务，服务之间也可能相互访问，调用链将会变得非常复杂，逻辑变得混乱</p>
 </blockquote>
-<h3 id="313-第十二次演进引入企业服务总线-esb-屏蔽服务接口的访问差异">3.13 第十二次演进：引入企业服务总线 ESB 屏蔽服务接口的访问差异</h3>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/a2f54a652b6141f88fc441a97e8dea97.png" title="第十二次演进" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/a2f54a652b6141f88fc441a97e8dea97.png" data-sub-html="<h2>第十二次演进</h2><p>第十二次演进</p>">
+<h3 id="313-第十二次演进引入企业服务总线-esb-屏蔽服务接口的访问差异" class="headerLink">
+    <a href="#313-%e7%ac%ac%e5%8d%81%e4%ba%8c%e6%ac%a1%e6%bc%94%e8%bf%9b%e5%bc%95%e5%85%a5%e4%bc%81%e4%b8%9a%e6%9c%8d%e5%8a%a1%e6%80%bb%e7%ba%bf-esb-%e5%b1%8f%e8%94%bd%e6%9c%8d%e5%8a%a1%e6%8e%a5%e5%8f%a3%e7%9a%84%e8%ae%bf%e9%97%ae%e5%b7%ae%e5%bc%82" class="header-mark"></a>3.13 第十二次演进：引入企业服务总线 ESB 屏蔽服务接口的访问差异</h3><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/a2f54a652b6141f88fc441a97e8dea97.png" title="第十二次演进" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/a2f54a652b6141f88fc441a97e8dea97.png" data-sub-html="<h2>第十二次演进</h2><p>第十二次演进</p>">
         <img
             class="lazyload"
-            src="/svg/loading.min.svg"
             data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/a2f54a652b6141f88fc441a97e8dea97.png"
             data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/a2f54a652b6141f88fc441a97e8dea97.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/a2f54a652b6141f88fc441a97e8dea97.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/a2f54a652b6141f88fc441a97e8dea97.png 2x"
             data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/a2f54a652b6141f88fc441a97e8dea97.png" />
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/a2f54a652b6141f88fc441a97e8dea97.png">
     </a><figcaption class="image-caption">第十二次演进</figcaption>
     </figure></p>
 <p>通过 ESB 统一进行访问协议转换，应用统一通过 ESB 来访问后端服务，服务与服务之间也通过 ESB
@@ -455,15 +477,14 @@ HDFS 解决，对于 key value 类型的数据，可通过 HBase 和 Redis 等�
 <p>业务不断发展，应用和服务都会不断变多，应用和服务的部署变得复杂，同一台服务器上部署多个服务还要解决运行环境冲突的问题，
 此外，对于如大促这类需要动态扩缩容的场景，需要水平扩展服务的性能，就需要在新增的服务上准备运行环境，部署服务等，运维将变得十分困难</p>
 </blockquote>
-<h3 id="314-第十三次演进引入容器化技术实现运行环境隔离与动态服务管理">3.14 第十三次演进：引入容器化技术实现运行环境隔离与动态服务管理</h3>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/ebae2b361aaa4d00a266279ffb59f28e.png" title="第十三次演进" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/ebae2b361aaa4d00a266279ffb59f28e.png" data-sub-html="<h2>第十三次演进</h2><p>第十三次演进</p>">
+<h3 id="314-第十三次演进引入容器化技术实现运行环境隔离与动态服务管理" class="headerLink">
+    <a href="#314-%e7%ac%ac%e5%8d%81%e4%b8%89%e6%ac%a1%e6%bc%94%e8%bf%9b%e5%bc%95%e5%85%a5%e5%ae%b9%e5%99%a8%e5%8c%96%e6%8a%80%e6%9c%af%e5%ae%9e%e7%8e%b0%e8%bf%90%e8%a1%8c%e7%8e%af%e5%a2%83%e9%9a%94%e7%a6%bb%e4%b8%8e%e5%8a%a8%e6%80%81%e6%9c%8d%e5%8a%a1%e7%ae%a1%e7%90%86" class="header-mark"></a>3.14 第十三次演进：引入容器化技术实现运行环境隔离与动态服务管理</h3><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/ebae2b361aaa4d00a266279ffb59f28e.png" title="第十三次演进" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/ebae2b361aaa4d00a266279ffb59f28e.png" data-sub-html="<h2>第十三次演进</h2><p>第十三次演进</p>">
         <img
             class="lazyload"
-            src="/svg/loading.min.svg"
             data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/ebae2b361aaa4d00a266279ffb59f28e.png"
             data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/ebae2b361aaa4d00a266279ffb59f28e.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/ebae2b361aaa4d00a266279ffb59f28e.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/ebae2b361aaa4d00a266279ffb59f28e.png 2x"
             data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/ebae2b361aaa4d00a266279ffb59f28e.png" />
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/ebae2b361aaa4d00a266279ffb59f28e.png">
     </a><figcaption class="image-caption">第十三次演进</figcaption>
     </figure></p>
 <p>目前最流行的容器化技术是 Docker，最流行的容器管理服务是 Kubernetes(K8S)，应用/服务可以打包为 Docker 镜像，通过 K8S 来动态分发和部署镜像。Docker
@@ -474,15 +495,14 @@ HDFS 解决，对于 key value 类型的数据，可通过 HBase 和 Redis 等�
 <blockquote>
 <p>使用容器化技术后服务动态扩缩容问题得以解决，但是机器还是需要公司自身来管理，在非大促的时候，还是需要闲置着大量的机器资源来应对大促，机器自身成本和运维成本都极高，资源利用率低</p>
 </blockquote>
-<h3 id="315-第十四次演进以云平台承载系统">3.15 第十四次演进：以云平台承载系统</h3>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/9c8cba63d6594fa19726b0b0c97fe17d.png" title="第十四次演进" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/9c8cba63d6594fa19726b0b0c97fe17d.png" data-sub-html="<h2>第十四次演进</h2><p>第十四次演进</p>">
+<h3 id="315-第十四次演进以云平台承载系统" class="headerLink">
+    <a href="#315-%e7%ac%ac%e5%8d%81%e5%9b%9b%e6%ac%a1%e6%bc%94%e8%bf%9b%e4%bb%a5%e4%ba%91%e5%b9%b3%e5%8f%b0%e6%89%bf%e8%bd%bd%e7%b3%bb%e7%bb%9f" class="header-mark"></a>3.15 第十四次演进：以云平台承载系统</h3><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/9c8cba63d6594fa19726b0b0c97fe17d.png" title="第十四次演进" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/9c8cba63d6594fa19726b0b0c97fe17d.png" data-sub-html="<h2>第十四次演进</h2><p>第十四次演进</p>">
         <img
             class="lazyload"
-            src="/svg/loading.min.svg"
             data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/9c8cba63d6594fa19726b0b0c97fe17d.png"
             data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/9c8cba63d6594fa19726b0b0c97fe17d.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/9c8cba63d6594fa19726b0b0c97fe17d.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/9c8cba63d6594fa19726b0b0c97fe17d.png 2x"
             data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/9c8cba63d6594fa19726b0b0c97fe17d.png" />
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220830/9c8cba63d6594fa19726b0b0c97fe17d.png">
     </a><figcaption class="image-caption">第十四次演进</figcaption>
     </figure></p>
 <p>系统可部署到公有云上，利用公有云的海量机器资源，解决动态硬件资源的问题，在大促的时间段里，在云平台中临时申请更多的资源，结合 Docker 和 K8S
@@ -503,8 +523,8 @@ HDFS 解决，对于 key value 类型的数据，可通过 HBase 和 Redis 等�
 <blockquote>
 <p>至此，以上所提到的从高并发访问问题，到服务的架构和系统实施的层面都有了各自的解决方案，但同时也应该意识到，在上面的介绍中，其实是有意忽略了诸如跨机房数据同步、分布式事务实现等等的实际问题，这些问题以后有机会再拿出来单独讨论</p>
 </blockquote>
-<h2 id="4-架构设计总结">4. 架构设计总结</h2>
-<ul>
+<h2 id="4-架构设计总结" class="headerLink">
+    <a href="#4-%e6%9e%b6%e6%9e%84%e8%ae%be%e8%ae%a1%e6%80%bb%e7%bb%93" class="header-mark"></a>4. 架构设计总结</h2><ul>
 <li>
 <p><strong>架构的调整是否必须按照上述演变路径进行？</strong>
 不是的，以上所说的架构演变顺序只是针对某个侧面进行单独的改进，在实际场景中，可能同一时间会有几个问题需要解决，或者可能先达到瓶颈的是另外的方面，这时候就应该按照实际问题实际解决。如在政府类的并发量可能不大，但业务可能很丰富的场景，高并发就不是重点解决的问题，此时优先需要的可能会是丰富需求的解决方案。</p>
@@ -558,7 +578,9 @@ HDFS 解决，对于 key value 类型的数据，可通过 HBase 和 Redis 等�
 <p>无状态设计。服务接口应该做成无状态的，当前接口的访问不依赖于接口上次访问的状态。</p>
 </li>
 </ul>
-</div><div class="post-footer" id="post-footer">
+</div>
+
+        <div class="post-footer" id="post-footer">
     <div class="post-info">
         <div class="post-info-line">
             <div class="post-info-mod">
@@ -567,11 +589,10 @@ HDFS 解决，对于 key value 类型的数据，可通过 HBase 和 Redis 等�
             <div class="post-info-license"></div>
         </div>
         <div class="post-info-line">
-            <div class="post-info-md"><span>
-                            <a class="link-to-markdown" href="/highly-concurrent-architecture-evolution/index.md" target="_blank">阅读原始文档</a>
-                        </span></div>
+            <div class="post-info-md"><span><a class="link-to-mardown" href=/highly-concurrent-architecture-evolution/index.md target="_blank" rel="noopener noreferrer">阅读原始文档</a>
+                    </span></div>
             <div class="post-info-share">
-                <span><a href="javascript:void(0);" title="分享到 Twitter" data-sharer="twitter" data-url="https://www.xiaobinqt.cn/highly-concurrent-architecture-evolution/" data-title="高并发分布式架构演进" data-hashtags="golang,高并发"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="https://www.xiaobinqt.cn/highly-concurrent-architecture-evolution/" data-hashtag="golang"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Hacker News" data-sharer="hackernews" data-url="https://www.xiaobinqt.cn/highly-concurrent-architecture-evolution/" data-title="高并发分布式架构演进"><i class="fab fa-hacker-news fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Line" data-sharer="line" data-url="https://www.xiaobinqt.cn/highly-concurrent-architecture-evolution/" data-title="高并发分布式架构演进"><i data-svg-src="/lib/simple-icons/icons/line.min.svg"></i></a><a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="https://www.xiaobinqt.cn/highly-concurrent-architecture-evolution/" data-title="高并发分布式架构演进"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="分享到 百度" data-sharer="baidu" data-url="https://www.xiaobinqt.cn/highly-concurrent-architecture-evolution/" data-title="高并发分布式架构演进"><i data-svg-src="/lib/simple-icons/icons/baidu.min.svg"></i></a></span>
+                <span><a href="#" onclick="return false;" title="分享到 Twitter" data-sharer="twitter" data-url="https://www.xiaobinqt.cn/highly-concurrent-architecture-evolution/" data-title="高并发分布式架构演进" data-hashtags="golang,高并发"><i class="fab fa-twitter fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Facebook" data-sharer="facebook" data-url="https://www.xiaobinqt.cn/highly-concurrent-architecture-evolution/" data-hashtag="golang"><i class="fab fa-facebook-square fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Hacker News" data-sharer="hackernews" data-url="https://www.xiaobinqt.cn/highly-concurrent-architecture-evolution/" data-title="高并发分布式架构演进"><i class="fab fa-hacker-news fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Line" data-sharer="line" data-url="https://www.xiaobinqt.cn/highly-concurrent-architecture-evolution/" data-title="高并发分布式架构演进"><i data-svg-src="/lib/simple-icons/icons/line.min.svg"></i></a><a href="#" onclick="return false;" title="分享到 微博" data-sharer="weibo" data-url="https://www.xiaobinqt.cn/highly-concurrent-architecture-evolution/" data-title="高并发分布式架构演进"><i class="fab fa-weibo fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 百度" data-sharer="baidu" data-url="https://www.xiaobinqt.cn/highly-concurrent-architecture-evolution/" data-title="高并发分布式架构演进"><i data-svg-src="/lib/simple-icons/icons/baidu.min.svg"></i></a></span>
             </div>
         </div>
     </div>
@@ -583,21 +604,28 @@ HDFS 解决，对于 key value 类型的数据，可通过 HBase 和 Redis 等�
         </section>
     </div>
 
-    <div class="post-nav"><a target="_blank" href="/session-cookie-token-difference/" class="prev" rel="prev" title="session cookie token 的区别"><i class="fas fa-angle-left fa-fw"></i>session cookie token 的区别</a>
-            <a target="_blank" href="/go-sync-map/" class="next" rel="next" title="Go sync.Map 解读">Go sync.Map 解读<i class="fas fa-angle-right fa-fw"></i></a></div>
+    <div class="post-nav"><a href="/session-cookie-token-difference/" class="prev" rel="prev" title="session cookie token 的区别"><i class="fas fa-angle-left fa-fw"></i>session cookie token 的区别</a>
+            <a href="/go-sync-map/" class="next" rel="next" title="Go sync.Map 解读">Go sync.Map 解读<i class="fas fa-angle-right fa-fw"></i></a></div>
 </div>
 <div id="comments"><div id="gitalk" class="comment"></div><noscript>
                 Please enable JavaScript to view the comments powered by <a href="https://github.com/gitalk/gitalk"></a>Gitalk</a>.
             </noscript></div></article></div>
-            </main><footer class="footer">
+        </main><footer class="footer">
         <div class="footer-container"><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2018 - 2022</span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
-        </div>
-    </footer></div>
+            <div class="footer-line"></div>
+            <div class="footer-line">
+            </div>
+        </div></footer></div>
 
-        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
-                <i class="fas fa-arrow-up fa-fw"></i>
-            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
-                <i class="fas fa-comment fa-fw"></i>
-            </a>
-        </div><link rel="stylesheet" href="/lib/gitalk/gitalk.min.css"><link rel="stylesheet" href="/lib/lightgallery/lightgallery.min.css"><script type="text/javascript" src="/lib/gitalk/gitalk.min.js"></script><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="/lib/algoliasearch/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lightgallery.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-thumbnail.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-zoom.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"gitalk":{"admin":["xiaobinqt"],"clientID":"47b15de6c2d8a0f8d707","clientSecret":"c70556c8b3a3b38ea7c72e539ff3b37d5bc1b4f3","id":"ac00376a7e1b48c731de1fb8e13c8195","owner":"xiaobinqt","repo":"xiaobinqt.github.io","title":"高并发分布式架构演进"}},"lightGallery":{"actualSize":false,"exThumbImage":"data-thumbnail","hideBarsDelay":2000,"selector":".lightgallery","speed":400,"thumbContHeight":80,"thumbWidth":80,"thumbnail":true},"search":{"algoliaAppID":"CPNWIDNX0Y","algoliaIndex":"xiaobinqt.io","algoliaSearchKey":"80b84de0ebc766371dd27cd3e651c41e","highlightTag":"em","maxResultLength":20,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+    <div id="fixed-buttons"><a href="#back-to-top" id="back-to-top-button" class="fixed-button" title="回到顶部">
+            <i class="fas fa-arrow-up fa-fw"></i>
+        </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+            <i class="fas fa-comment fa-fw"></i>
+        </a>
+    </div><div class="assets"><script type="text/javascript" src="/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="/lib/algoliasearch/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/topbar/topbar.min.js"></script><script type="text/javascript" src="/lib/pjax/pjax.min.js"></script><script type="text/javascript" src="/js/theme.min.js" defer></script></div>
+
+<div class="pjax-assets"><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"gitalk":{"admin":["xiaobinqt"],"clientID":"47b15de6c2d8a0f8d707","clientSecret":"c70556c8b3a3b38ea7c72e539ff3b37d5bc1b4f3","id":"2022-08-29T00:00:00Z","owner":"xiaobinqt","repo":"xiaobinqt.github.io","title":"高并发分布式架构演进"}},"lightGallery":{"actualSize":false,"exThumbImage":"data-thumbnail","hideBarsDelay":2000,"selector":".lightgallery","speed":400,"thumbContHeight":80,"thumbWidth":80,"thumbnail":true},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"algoliaAppID":"CPNWIDNX0Y","algoliaIndex":"xiaobinqt.io","algoliaSearchKey":"80b84de0ebc766371dd27cd3e651c41e","highlightTag":"em","maxResultLength":20,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"},"sharerjs":true};</script><script type="text/javascript" src="/lib/gitalk/gitalk.min.js"></script><script type="text/javascript" src="/js/gitalk.min.js" defer></script><script type="text/javascript" src="/lib/lightgallery/lightgallery.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-thumbnail.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-zoom.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript" src="/lib/katex/katex.min.js" defer></script><script type="text/javascript" src="/lib/katex/auto-render.min.js" defer></script><script type="text/javascript" src="/lib/katex/copy-tex.min.js" defer></script><script type="text/javascript" src="/lib/katex/mhchem.min.js" defer></script><script type="text/javascript" src="/js/katex.min.js" defer></script><link rel="stylesheet" href="/lib/gitalk/gitalk.min.css"><link rel="stylesheet" href="/lib/lightgallery/lightgallery.min.css"><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/katex/copy-tex.min.css">
+        <noscript><link rel="stylesheet" href="/lib/katex/copy-tex.min.css"></noscript></div>
+</body>
+
 </html>

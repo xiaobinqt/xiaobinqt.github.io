@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="robots" content="noodp" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
-        <title>mysql 常见问题 - xiaobinqt 博客 - 技术改变生活</title><meta name="Description" content="xiaobinqt, mysql 常见问题,主键和 unique 的区别,什么是 mysql 结束符,什么是 mysql 外键,什么是 ZEROFILL 显示宽度,limit offset 的区别,mysql 判断语句,mysql 循环语句,mysql DUPLICATE KEY UPDATE 用法,mysql 变量">
-<meta name="keywords" content="xiaobinqt, 萧十一郎, php, golang, go,服务器相关, Laravel5.5&#43;/Lumen, linux, php, mysql, redis, go领域, python" /><meta property="og:title" content="mysql 常见问题" />
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noodp" />
+    <title class="pjax-title">mysql 常见问题 - xiaobinqt 博客 - 技术改变生活</title><meta name="Description" content="xiaobinqt, mysql 常见问题,主键和 unique 的区别,什么是 mysql 结束符,什么是 mysql 外键,什么是 ZEROFILL 显示宽度,limit offset 的区别,mysql 判断语句,mysql 循环语句,mysql DUPLICATE KEY UPDATE 用法,mysql 变量"><meta property="og:title" content="mysql 常见问题" />
 <meta property="og:description" content="xiaobinqt, mysql 常见问题,主键和 unique 的区别,什么是 mysql 结束符,什么是 mysql 外键,什么是 ZEROFILL 显示宽度,limit offset 的区别,mysql 判断语句,mysql 循环语句,mysql DUPLICATE KEY UPDATE 用法,mysql 变量" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://www.xiaobinqt.cn/mysql-simple-faq/" /><meta property="og:image" content="https://www.xiaobinqt.cn/logo.png"/><meta property="article:section" content="posts" />
@@ -19,11 +18,14 @@
 <meta name="twitter:title" content="mysql 常见问题"/>
 <meta name="twitter:description" content="xiaobinqt, mysql 常见问题,主键和 unique 的区别,什么是 mysql 结束符,什么是 mysql 外键,什么是 ZEROFILL 显示宽度,limit offset 的区别,mysql 判断语句,mysql 循环语句,mysql DUPLICATE KEY UPDATE 用法,mysql 变量"/>
 <meta name="application-name" content="xiaobinqt">
-<meta name="apple-mobile-web-app-title" content="xiaobinqt"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c">
-<link rel="stylesheet" href="//at.alicdn.com/t/font_3267767_dz25dtwdgdc.css">
-<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+<meta name="apple-mobile-web-app-title" content="xiaobinqt">
+
+<meta name="theme-color" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c">
+<link rel="stylesheet" href="//at.alicdn.com/t/font_3267767_dz25dtwdgdc.css"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://www.xiaobinqt.cn/mysql-simple-faq/" /><link rel="prev" href="https://www.xiaobinqt.cn/alpha-beta-rc-stable-diff/" /><link rel="next" href="https://www.xiaobinqt.cn/funny-abbreviations/" /><link rel="stylesheet" href="/lib/md5/md5.min.js"><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><meta name="google-site-verification" content="hFkClWMTOtPBuE0lQaXNiNb707E7P6O2CwexZoSm3VQ" /><meta name="msvalidate.01" content="A961D393878F86E04112E1198500FDBD" /><meta name="baidu-site-verification" content="code-cMh5ORsrP2" /><script type="application/ld+json">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://www.xiaobinqt.cn/mysql-simple-faq/" /><link rel="prev" href="https://www.xiaobinqt.cn/alpha-beta-rc-stable-diff/" /><link rel="next" href="https://www.xiaobinqt.cn/funny-abbreviations/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/fontawesome-free/all.min.css">
+        <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/animate/animate.min.css">
+        <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><meta name="google-site-verification" content="hFkClWMTOtPBuE0lQaXNiNb707E7P6O2CwexZoSm3VQ" /><meta name="msvalidate.01" content="A961D393878F86E04112E1198500FDBD" /><meta name="baidu-site-verification" content="code-cMh5ORsrP2" /><script type="application/ld+json">
     {
         "@context": "http://schema.org",
         "@type": "BlogPosting",
@@ -32,7 +34,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/www.xiaobinqt.cn\/mysql-simple-faq\/"
-        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "mysql","wordcount":  5032 ,
+        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "mysql","wordcount":  6099 ,
         "url": "https:\/\/www.xiaobinqt.cn\/mysql-simple-faq\/","datePublished": "2019-10-03T00:00:00+00:00","dateModified": "2022-04-20T00:00:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "xxxx","logo": {
@@ -46,29 +48,36 @@
             },"description": "xiaobinqt, mysql 常见问题,主键和 unique 的区别,什么是 mysql 结束符,什么是 mysql 外键,什么是 ZEROFILL 显示宽度,limit offset 的区别,mysql 判断语句,mysql 循环语句,mysql DUPLICATE KEY UPDATE 用法,mysql 变量"
     }
     </script></head>
-    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
 
-        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+<body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">
+        function setTheme(theme) {document.body.setAttribute('theme', theme); document.documentElement.style.setProperty('color-scheme', theme === 'light' ? 'light' : 'dark');}
+        function saveTheme(theme) {window.localStorage && localStorage.setItem('theme', theme);}
+        function getMeta(metaName) {const metas = document.getElementsByTagName('meta'); for (let i = 0; i < metas.length; i++) if (metas[i].getAttribute('name') === metaName) return metas[i]; return '';}
+        if (window.localStorage && localStorage.getItem('theme')) {let theme = localStorage.getItem('theme');theme === 'light' || theme === 'dark' || theme === 'black' ? setTheme(theme) : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? setTheme('dark') : setTheme('light')); } else { if ('auto' === 'light' || 'auto' === 'dark' || 'auto' === 'black') setTheme('auto'), saveTheme('auto'); else saveTheme('auto'), window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? setTheme('dark') : setTheme('light');}
+        let metaColors = {'light': '#f8f8f8','dark': '#252627','black': '#000000'}
+        getMeta('theme-color').content = metaColors[document.body.getAttribute('theme')];
+    </script>
+    <div id="back-to-top"></div>
+    <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
     <div class="header-wrapper">
         <div class="header-title">
             <a href="/" title="xiaobinqt 博客 - 技术改变生活"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>萧十一郎</a>
         </div>
         <div class="menu">
-            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/about/"> 关于 </a><a class="menu-item" href="/memo/"> 收藏夹 </a><a class="menu-item" href="/links/"> 友链 </a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/about/"> 关于 </a><a class="menu-item" href="/memo/"> 收藏夹 </a><a class="menu-item" href="/links/"> 友链 </a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" rel="noopener noreferrer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
                         <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
-                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                        <a href="#" onclick="return false;" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
                             <i class="fas fa-search fa-fw"></i>
                         </a>
-                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                        <a href="#" onclick="return false;" class="search-button search-clear" id="search-clear-desktop" title="清空">
                             <i class="fas fa-times-circle fa-fw"></i>
                         </a>
                         <span class="search-button search-loading" id="search-loading-desktop">
                             <i class="fas fa-spinner fa-fw fa-spin"></i>
                         </span>
-                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    </span><a href="#" onclick="return false;" class="menu-item theme-switch" title="切换主题">
                     <i class="fas fa-adjust fa-fw"></i>
-                </a>
-            </div>
+                </a></div>
         </div>
     </div>
 </header><header class="mobile" id="header-mobile">
@@ -84,20 +93,20 @@
         <div class="menu" id="menu-mobile"><div class="search-wrapper">
                     <div class="search mobile" id="search-mobile">
                         <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
-                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                        <a href="#" onclick="return false;" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
                             <i class="fas fa-search fa-fw"></i>
                         </a>
-                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                        <a href="#" onclick="return false;" class="search-button search-clear" id="search-clear-mobile" title="清空">
                             <i class="fas fa-times-circle fa-fw"></i>
                         </a>
                         <span class="search-button search-loading" id="search-loading-mobile">
                             <i class="fas fa-spinner fa-fw fa-spin"></i>
                         </span>
                     </div>
-                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                    <a href="#" onclick="return false;" class="search-cancel" id="search-cancel-mobile">
                         取消
                     </a>
-                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/about/" title="">关于</a><a class="menu-item" href="/memo/" title="">收藏夹</a><a class="menu-item" href="/links/" title="">友链</a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/about/" title="">关于</a><a class="menu-item" href="/memo/" title="">收藏夹</a><a class="menu-item" href="/links/" title="">友链</a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" rel="noopener noreferrer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a href="#" onclick="return false;" class="menu-item theme-switch" title="切换主题">
                 <i class="fas fa-adjust fa-fw"></i>
             </a></div>
     </div>
@@ -109,13 +118,95 @@
     <div id="search-dropdown-mobile"></div>
 </div>
 <main class="main">
-                <div class="container"><div class="toc" id="toc-auto">
-            <h2 class="toc-title">目录</h2>
-            <div class="toc-content" id="toc-content-auto"></div>
-        </div><article class="page single"><h1 class="single-title animated flipInX">mysql 常见问题</h1><h2 class="single-subtitle">Mysql FAQ</h2><div class="post-meta">
-            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>xiaobinqt</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/mysql/"><i class="far fa-folder fa-fw"></i>mysql</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2019-10-03">2019-10-03</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 5032 字&nbsp;
-                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 11 分钟&nbsp;</div>
+            <div class="container"><div class="toc" id="toc-auto">
+        <h2 class="toc-title">目录</h2>
+        <div class="toc-content always-active" id="toc-content-auto"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#主键和-unique-的区别">主键和 <code>UNIQUE</code> 的区别</a></li>
+    <li><a href="#结束符">结束符</a></li>
+    <li><a href="#什么是外键">什么是外键</a>
+      <ul>
+        <li><a href="#示例">示例</a></li>
+      </ul>
+    </li>
+    <li><a href="#zerofill">ZEROFILL</a>
+      <ul>
+        <li><a href="#注意">注意</a></li>
+      </ul>
+    </li>
+    <li><a href="#limitoffset-区别">limit、offset 区别</a></li>
+    <li><a href="#常用函数">常用函数</a>
+      <ul>
+        <li><a href="#文本处理函数">文本处理函数</a></li>
+        <li><a href="#时间处理函数">时间处理函数</a></li>
+        <li><a href="#数值处理函数">数值处理函数</a></li>
+      </ul>
+    </li>
+    <li><a href="#count-函数">COUNT 函数</a></li>
+    <li><a href="#查询">查询</a></li>
+    <li><a href="#判断语句">判断语句</a>
+      <ul>
+        <li><a href="#if-then">if then</a></li>
+        <li><a href="#case-when">case when</a></li>
+      </ul>
+    </li>
+    <li><a href="#循环语句">循环语句</a>
+      <ul>
+        <li><a href="#while">WHILE</a></li>
+        <li><a href="#repeat">REPEAT</a></li>
+        <li><a href="#loop">LOOP</a></li>
+      </ul>
+    </li>
+    <li><a href="#duplicate-key-update">DUPLICATE KEY UPDATE</a></li>
+    <li><a href="#自定义变量">自定义变量</a>
+      <ul>
+        <li><a href="#单个变量">单个变量</a></li>
+        <li><a href="#多个变量">多个变量</a></li>
+      </ul>
+    </li>
+    <li><a href="#innodb-和-myisam-的区别">innodb 和 myisam 的区别</a></li>
+    <li><a href="#索引">索引</a>
+      <ul>
+        <li><a href="#功能逻辑">功能逻辑</a>
+          <ul>
+            <li><a href="#唯一索引">唯一索引</a></li>
+            <li><a href="#主键索引">主键索引</a></li>
+            <li><a href="#普通索引">普通索引</a></li>
+            <li><a href="#全文索引">全文索引</a></li>
+          </ul>
+        </li>
+        <li><a href="#存储方式">存储方式</a>
+          <ul>
+            <li><a href="#聚簇索引">聚簇索引</a></li>
+            <li><a href="#非聚簇索引">非聚簇索引</a></li>
+          </ul>
+        </li>
+        <li><a href="#回表">回表</a></li>
+        <li><a href="#建立原则">建立原则</a></li>
+        <li><a href="#注意点">注意点</a></li>
+        <li><a href="#正确使用">正确使用</a></li>
+        <li><a href="#索引失效">索引失效</a></li>
+        <li><a href="#索引覆盖索引下推mrr">索引覆盖，索引下推，MRR</a></li>
+        <li><a href="#索引为何选择-btree">索引为何选择 B+Tree</a></li>
+      </ul>
+    </li>
+    <li><a href="#explain">Explain</a></li>
+    <li><a href="#事务">事务</a>
+      <ul>
+        <li><a href="#事务的-acid-原则">事务的 ACID 原则</a></li>
+        <li><a href="#两阶段提交">两阶段提交</a></li>
+        <li><a href="#脏读幻读不可重复读">脏读、幻读、不可重复读</a></li>
+        <li><a href="#事务的隔离级别">事务的隔离级别</a></li>
+      </ul>
+    </li>
+    <li><a href="#参考">参考</a></li>
+  </ul>
+</nav></div>
+    </div><script>document.getElementsByTagName("main")[0].setAttribute("pageStyle", "normal")</script><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single"><h1 class="single-title animate__animated animate__flipInX">mysql 常见问题</h1><h2 class="single-subtitle">Mysql FAQ</h2><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><i class="author fas fa-user-circle fa-fw"></i><a href="/" title="Author" rel=" author" class="author">xiaobinqt</a>
+                </span>&nbsp;<span class="post-category">收录于 </span>&nbsp;<span class="post-category">类别 <a href="/categories/mysql/"><i class="far fa-folder fa-fw"></i>mysql</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2019-10-03">2019-10-03</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2022-04-20">2022-04-20</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 6099 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 13 分钟&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
                     <span>目录</span>
@@ -188,10 +279,18 @@
         <li><a href="#正确使用">正确使用</a></li>
         <li><a href="#索引失效">索引失效</a></li>
         <li><a href="#索引覆盖索引下推mrr">索引覆盖，索引下推，MRR</a></li>
+        <li><a href="#索引为何选择-btree">索引为何选择 B+Tree</a></li>
       </ul>
     </li>
     <li><a href="#explain">Explain</a></li>
-    <li><a href="#两阶段提交">两阶段提交</a></li>
+    <li><a href="#事务">事务</a>
+      <ul>
+        <li><a href="#事务的-acid-原则">事务的 ACID 原则</a></li>
+        <li><a href="#两阶段提交">两阶段提交</a></li>
+        <li><a href="#脏读幻读不可重复读">脏读、幻读、不可重复读</a></li>
+        <li><a href="#事务的隔离级别">事务的隔离级别</a></li>
+      </ul>
+    </li>
     <li><a href="#参考">参考</a></li>
   </ul>
 </nav></div>
@@ -199,14 +298,14 @@
 <!-- email： xiaobinqt@163.com -->
 <!-- https://xiaobinqt.github.io -->
 <!-- https://www.xiaobinqt.cn -->
-<h2 id="主键和-unique-的区别">主键和 <code>UNIQUE</code> 的区别</h2>
-<p>主键和<code>UNIQUE</code>约束都能保证某个列或者列组合的唯一性，但是：</p>
+<h2 id="主键和-unique-的区别" class="headerLink">
+    <a href="#%e4%b8%bb%e9%94%ae%e5%92%8c-unique-%e7%9a%84%e5%8c%ba%e5%88%ab" class="header-mark"></a>主键和 <code>UNIQUE</code> 的区别</h2><p>主键和<code>UNIQUE</code>约束都能保证某个列或者列组合的唯一性，但是：</p>
 <ul>
 <li>一张表中只能定义一个主键，却可以定义多个<code>UNIQUE</code>约束！</li>
 <li>主键列不允许存放<code>NULL</code>，而声明了<code>UNIQUE</code>属性的列可以存放<code>NULL</code>，而且<code>NULL</code>可以重复地出现在多条记录中。</li>
 </ul>
-<h2 id="结束符">结束符</h2>
-<div class="highlight"><div class="chroma">
+<h2 id="结束符" class="headerLink">
+    <a href="#%e7%bb%93%e6%9d%9f%e7%ac%a6" class="header-mark"></a>结束符</h2><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
@@ -217,16 +316,15 @@
 </div><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/fdd2e38117284a7f8b46ba3af60c26c9.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="修改结束符" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/fdd2e38117284a7f8b46ba3af60c26c9.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>修改结束符</h2><p>修改结束符</p>">
         <img
             class="lazyload"
-            src="/svg/loading.min.svg"
             data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/fdd2e38117284a7f8b46ba3af60c26c9.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
             data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/fdd2e38117284a7f8b46ba3af60c26c9.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/fdd2e38117284a7f8b46ba3af60c26c9.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/fdd2e38117284a7f8b46ba3af60c26c9.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
             data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/fdd2e38117284a7f8b46ba3af60c26c9.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" />
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/fdd2e38117284a7f8b46ba3af60c26c9.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15">
     </a><figcaption class="image-caption">修改结束符</figcaption>
     </figure></p>
 <p>由☝️图可知，将默认的结束符从 <code>;</code> 改为 <code>EOF</code>。</p>
-<h2 id="什么是外键">什么是外键</h2>
-<p>如果<code>A</code>表中的某个列或者某些列依赖与<code>B</code>表中的某个列或者某些列，那么就称<code>A</code>表为子表，<code>B</code>表为父表。子表和父表可以使用外键来关联起来。</p>
+<h2 id="什么是外键" class="headerLink">
+    <a href="#%e4%bb%80%e4%b9%88%e6%98%af%e5%a4%96%e9%94%ae" class="header-mark"></a>什么是外键</h2><p>如果<code>A</code>表中的某个列或者某些列依赖与<code>B</code>表中的某个列或者某些列，那么就称<code>A</code>表为子表，<code>B</code>表为父表。子表和父表可以使用外键来关联起来。</p>
 <p><strong>父表中被子表依赖的列或者列组合必须建立索引</strong>，如果该列或者列组合已经是主键或者有<code>UNIQUE</code>属性，那么也就被默认建立了索引。</p>
 <p>定义外键的语法：</p>
 <div class="highlight"><div class="chroma">
@@ -237,8 +335,8 @@
 <pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">CONSTRAINT</span><span class="w"> </span><span class="p">[</span><span class="err">外键名称</span><span class="p">]</span><span class="w"> </span><span class="k">FOREIGN</span><span class="w"> </span><span class="k">KEY</span><span class="p">(</span><span class="err">列</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="err">列</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="p">...)</span><span class="w"> </span><span class="k">REFERENCES</span><span class="w"> </span><span class="err">父表名</span><span class="p">(</span><span class="err">父列</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="err">父列</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="p">...);</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
-</div><h3 id="示例">示例</h3>
-<div class="highlight"><div class="chroma">
+</div><h3 id="示例" class="headerLink">
+    <a href="#%e7%a4%ba%e4%be%8b" class="header-mark"></a>示例</h3><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
@@ -263,8 +361,8 @@
 </div><p>☝️ 如上，在对<code>student_score</code>表插入数据的时候，MySQL都会检查插入的学号是否能在<code>student_info</code>
 表中找到，如果找不到则会报错，因为<code>student_score</code>表中的<code>number</code>
 列依赖于<code>student_info</code>表的<code>number</code>列，也就是，如果没有这个学生，何来成绩？</p>
-<h2 id="zerofill">ZEROFILL</h2>
-<p>对于<strong>无符号整数类型</strong>的列，可以在查询数据的时候让数字左边补 0，如果想实现这个效果需要给该列加一个<code>ZEROFILL</code>属性：</p>
+<h2 id="zerofill" class="headerLink">
+    <a href="#zerofill" class="header-mark"></a>ZEROFILL</h2><p>对于<strong>无符号整数类型</strong>的列，可以在查询数据的时候让数字左边补 0，如果想实现这个效果需要给该列加一个<code>ZEROFILL</code>属性：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
@@ -282,8 +380,8 @@
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>INT后边的<code>(5)</code>，这个 5 就是显示宽度，默认是10，也就是 <code>INT</code> 也 <code>INT(10)</code> 效果是一样的。</p>
-<h3 id="注意">注意</h3>
-<ul>
+<h3 id="注意" class="headerLink">
+    <a href="#%e6%b3%a8%e6%84%8f" class="header-mark"></a>注意</h3><ul>
 <li>该列必须是整数类型</li>
 <li>该列必须有 <code>UNSIGNED ZEROFILL</code>的属性</li>
 <li>该列的实际值的位数必须小于显示宽度</li>
@@ -291,8 +389,8 @@
 <li><strong>显示宽度并不会影响实际类型的实际存储空间</strong></li>
 <li>对于没有声明<code>ZEROFILL</code>属性的列，显示宽度没有任何作用，只有在查询声明了<code>ZEROFILL</code>属性的列时，显示宽度才会起作用，否则可以忽略显示宽度这个东西的存在。</li>
 </ul>
-<h2 id="limitoffset-区别">limit、offset 区别</h2>
-<blockquote>
+<h2 id="limitoffset-区别" class="headerLink">
+    <a href="#limitoffset-%e5%8c%ba%e5%88%ab" class="header-mark"></a>limit、offset 区别</h2><blockquote>
 <p>从 0 开始计数，第1条记录在 MYSQL 中是第 0 条。</p>
 </blockquote>
 <p>limit 和 offset 都可以用来限制查询条数，一般用做分页。</p>
@@ -340,9 +438,9 @@
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>从 0 行开始计算，取第 1 - 3 条数据，也就是取 1,2,3 三条数据。</p>
-<h2 id="常用函数">常用函数</h2>
-<h3 id="文本处理函数">文本处理函数</h3>
-<table>
+<h2 id="常用函数" class="headerLink">
+    <a href="#%e5%b8%b8%e7%94%a8%e5%87%bd%e6%95%b0" class="header-mark"></a>常用函数</h2><h3 id="文本处理函数" class="headerLink">
+    <a href="#%e6%96%87%e6%9c%ac%e5%a4%84%e7%90%86%e5%87%bd%e6%95%b0" class="header-mark"></a>文本处理函数</h3><table>
 <thead>
 <tr>
 <th>名称</th>
@@ -408,8 +506,8 @@
 </tr>
 </tbody>
 </table>
-<h3 id="时间处理函数">时间处理函数</h3>
-<table>
+<h3 id="时间处理函数" class="headerLink">
+    <a href="#%e6%97%b6%e9%97%b4%e5%a4%84%e7%90%86%e5%87%bd%e6%95%b0" class="header-mark"></a>时间处理函数</h3><table>
 <thead>
 <tr>
 <th>名称</th>
@@ -516,8 +614,8 @@
 </tr>
 </tbody>
 </table>
-<h3 id="数值处理函数">数值处理函数</h3>
-<table>
+<h3 id="数值处理函数" class="headerLink">
+    <a href="#%e6%95%b0%e5%80%bc%e5%a4%84%e7%90%86%e5%87%bd%e6%95%b0" class="header-mark"></a>数值处理函数</h3><table>
 <thead>
 <tr>
 <th>名称</th>
@@ -583,15 +681,15 @@
 </tr>
 </tbody>
 </table>
-<h2 id="count-函数">COUNT 函数</h2>
-<p>COUNT函数使用来统计<strong>行数</strong>的，有下边两种使用方式：</p>
+<h2 id="count-函数" class="headerLink">
+    <a href="#count-%e5%87%bd%e6%95%b0" class="header-mark"></a>COUNT 函数</h2><p>COUNT函数使用来统计<strong>行数</strong>的，有下边两种使用方式：</p>
 <ul>
 <li><code>COUNT(*)</code>：对表中行的数目进行计数，不管列的值是不是NULL。</li>
 <li><code>COUNT(列名)</code>：对特定的列进行计数，会忽略掉该列为NULL的行。</li>
 </ul>
 <p><strong>两者的区别是会不会忽略统计列的值为NULL的行</strong>。</p>
-<h2 id="查询">查询</h2>
-<p><code>where</code> 竟然可以这么写😇</p>
+<h2 id="查询" class="headerLink">
+    <a href="#%e6%9f%a5%e8%af%a2" class="header-mark"></a>查询</h2><p><code>where</code> 竟然可以这么写😇</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
@@ -617,9 +715,9 @@
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">where</span><span class="w"> </span><span class="p">(</span><span class="n">ip</span><span class="p">,</span><span class="w"> </span><span class="k">mode</span><span class="p">)</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="p">(</span><span class="k">select</span><span class="w"> </span><span class="s1">&#39;192.168.50.101&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">);</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
-</div><h2 id="判断语句">判断语句</h2>
-<h3 id="if-then">if then</h3>
-<div class="highlight"><div class="chroma">
+</div><h2 id="判断语句" class="headerLink">
+    <a href="#%e5%88%a4%e6%96%ad%e8%af%ad%e5%8f%a5" class="header-mark"></a>判断语句</h2><h3 id="if-then" class="headerLink">
+    <a href="#if-then" class="header-mark"></a>if then</h3><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
@@ -641,8 +739,8 @@
 </span></span><span class="line"><span class="cl">END IF<span class="p">;</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div><h3 id="case-when">case when</h3>
-<div class="highlight"><div class="chroma">
+</div><h3 id="case-when" class="headerLink">
+    <a href="#case-when" class="header-mark"></a>case when</h3><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
@@ -685,9 +783,9 @@
 </span></span><span class="line"><span class="cl">    from user<span class="p">;</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div><h2 id="循环语句">循环语句</h2>
-<h3 id="while">WHILE</h3>
-<div class="highlight"><div class="chroma">
+</div><h2 id="循环语句" class="headerLink">
+    <a href="#%e5%be%aa%e7%8e%af%e8%af%ad%e5%8f%a5" class="header-mark"></a>循环语句</h2><h3 id="while" class="headerLink">
+    <a href="#while" class="header-mark"></a>WHILE</h3><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
@@ -699,8 +797,8 @@
 </span></span><span class="line"><span class="cl">END WHILE<span class="p">;</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div><h3 id="repeat">REPEAT</h3>
-<div class="highlight"><div class="chroma">
+</div><h3 id="repeat" class="headerLink">
+    <a href="#repeat" class="header-mark"></a>REPEAT</h3><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
@@ -712,8 +810,8 @@
 </span></span><span class="line"><span class="cl">UNTIL 表达式 END REPEAT<span class="p">;</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div><h3 id="loop">LOOP</h3>
-<div class="highlight"><div class="chroma">
+</div><h3 id="loop" class="headerLink">
+    <a href="#loop" class="header-mark"></a>LOOP</h3><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
@@ -767,8 +865,8 @@
 <blockquote>
 <p>标记主要是为了可以跳到指定的语句中</p>
 </blockquote>
-<h2 id="duplicate-key-update">DUPLICATE KEY UPDATE</h2>
-<p>对于<strong>主键</strong>或者有<strong>唯一性约束</strong>
+<h2 id="duplicate-key-update" class="headerLink">
+    <a href="#duplicate-key-update" class="header-mark"></a>DUPLICATE KEY UPDATE</h2><p>对于<strong>主键</strong>或者有<strong>唯一性约束</strong>
 的列或列组合来说，新插入的记录如果和表中已存在的记录重复的话，我们可以选择的策略不仅仅是忽略（<code>INSERT IGNORE</code>
 ）该条记录的插入，也可以选择更新这条重复的旧记录。</p>
 <div class="highlight"><div class="chroma">
@@ -799,11 +897,10 @@
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/1ba316643e874fcb9e90dcaa9b333f60.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="图1" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/1ba316643e874fcb9e90dcaa9b333f60.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>图1</h2><p>图1</p>">
         <img
             class="lazyload"
-            src="/svg/loading.min.svg"
             data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/1ba316643e874fcb9e90dcaa9b333f60.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
             data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/1ba316643e874fcb9e90dcaa9b333f60.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/1ba316643e874fcb9e90dcaa9b333f60.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/1ba316643e874fcb9e90dcaa9b333f60.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
             data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/1ba316643e874fcb9e90dcaa9b333f60.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" />
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/1ba316643e874fcb9e90dcaa9b333f60.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15">
     </a><figcaption class="image-caption">图1</figcaption>
     </figure></p>
 <p>表里有条记录 <code>phone = 15212124125</code>，<code>name = '吴彦祖'</code>，现在再添加一条记录，phone 跟 <code>name = '吴彦祖'</code>
@@ -838,11 +935,10 @@
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/6998e509ee9f4c3eacb72f9c5b42080b.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="图2" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/6998e509ee9f4c3eacb72f9c5b42080b.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>图2</h2><p>图2</p>">
         <img
             class="lazyload"
-            src="/svg/loading.min.svg"
             data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/6998e509ee9f4c3eacb72f9c5b42080b.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
             data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/6998e509ee9f4c3eacb72f9c5b42080b.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/6998e509ee9f4c3eacb72f9c5b42080b.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/6998e509ee9f4c3eacb72f9c5b42080b.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
             data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/6998e509ee9f4c3eacb72f9c5b42080b.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" />
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/6998e509ee9f4c3eacb72f9c5b42080b.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15">
     </a><figcaption class="image-caption">图2</figcaption>
     </figure></p>
 <p>由结果可知，phone 电话的值没有改变，但是 name 被修改成了宋江。</p>
@@ -850,33 +946,31 @@
 约束），那么就把该记录的 <code>name</code>列更新为<code>'宋江'</code>。</p>
 <p>对于那些是主键或者具有UNIQUE约束的列或者列组合来说，如果表中已存在的记录中有与待插入记录在这些列或者列组合上重复的值，我们可以使用VALUES(
 列名)的形式来引用待插入记录中对应列的值</p>
-<h2 id="自定义变量">自定义变量</h2>
-<h3 id="单个变量">单个变量</h3>
-<p>设置单个变量可以使用 <code>SET</code> 关键字。</p>
+<h2 id="自定义变量" class="headerLink">
+    <a href="#%e8%87%aa%e5%ae%9a%e4%b9%89%e5%8f%98%e9%87%8f" class="header-mark"></a>自定义变量</h2><h3 id="单个变量" class="headerLink">
+    <a href="#%e5%8d%95%e4%b8%aa%e5%8f%98%e9%87%8f" class="header-mark"></a>单个变量</h3><p>设置单个变量可以使用 <code>SET</code> 关键字。</p>
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/7d7a7bc57efa43e1ba30412b76c53917.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="设置单个变量" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/7d7a7bc57efa43e1ba30412b76c53917.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>设置单个变量</h2><p>设置单个变量</p>">
         <img
             class="lazyload"
-            src="/svg/loading.min.svg"
             data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/7d7a7bc57efa43e1ba30412b76c53917.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
             data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/7d7a7bc57efa43e1ba30412b76c53917.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/7d7a7bc57efa43e1ba30412b76c53917.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/7d7a7bc57efa43e1ba30412b76c53917.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
             data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/7d7a7bc57efa43e1ba30412b76c53917.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" />
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/7d7a7bc57efa43e1ba30412b76c53917.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15">
     </a><figcaption class="image-caption">设置单个变量</figcaption>
     </figure></p>
-<h3 id="多个变量">多个变量</h3>
-<p>设置多个变量可以使用 <code>INTO</code> 关键字。</p>
+<h3 id="多个变量" class="headerLink">
+    <a href="#%e5%a4%9a%e4%b8%aa%e5%8f%98%e9%87%8f" class="header-mark"></a>多个变量</h3><p>设置多个变量可以使用 <code>INTO</code> 关键字。</p>
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/9c894c060ac34628abd1b9071d4e7e27.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="设置多个变量" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/9c894c060ac34628abd1b9071d4e7e27.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>设置多个变量</h2><p>设置多个变量</p>">
         <img
             class="lazyload"
-            src="/svg/loading.min.svg"
             data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/9c894c060ac34628abd1b9071d4e7e27.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
             data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/9c894c060ac34628abd1b9071d4e7e27.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/9c894c060ac34628abd1b9071d4e7e27.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/9c894c060ac34628abd1b9071d4e7e27.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
             data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/9c894c060ac34628abd1b9071d4e7e27.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" />
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/9c894c060ac34628abd1b9071d4e7e27.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15">
     </a><figcaption class="image-caption">设置多个变量</figcaption>
     </figure></p>
-<h2 id="innodb-和-myisam-的区别">innodb 和 myisam 的区别</h2>
-<ul>
+<h2 id="innodb-和-myisam-的区别" class="headerLink">
+    <a href="#innodb-%e5%92%8c-myisam-%e7%9a%84%e5%8c%ba%e5%88%ab" class="header-mark"></a>innodb 和 myisam 的区别</h2><ul>
 <li>innodb 支持事务，而 myisam 不支持事务。</li>
 <li>innodb 支持外键，而 myisam 不支持外键。</li>
 <li>innodb 默认表锁，使用索引检索条件时是行锁，而myisam是表锁（每次更新增加删除都会锁住表）。</li>
@@ -887,30 +981,30 @@
 </ul>
 <p>总结：mysql 默认使用 innodb，如果要用事务和外键就使用 innodb，如果这张表只用来查询，可以用 myisam。如果更新删除增加频繁就使用
 innodb。</p>
-<h2 id="索引">索引</h2>
-<h3 id="功能逻辑">功能逻辑</h3>
-<h4 id="唯一索引">唯一索引</h4>
-<p>指索引中的索引节点值不允许重复，一般配合唯一约束使用。</p>
-<h4 id="主键索引">主键索引</h4>
-<p>主键索引是一种特殊的唯一索引，和普通唯一索引的区别在于不允许有空值。</p>
-<h4 id="普通索引">普通索引</h4>
-<p>通过<code>KEY</code>、<code>INDEX</code>关键字创建的索引就是这个类型，没什么限制，就是单纯的可以让查询快一点。</p>
-<h4 id="全文索引">全文索引</h4>
-<p>在 5.7 版本之前，只有 MyISAM 引擎支持。</p>
+<h2 id="索引" class="headerLink">
+    <a href="#%e7%b4%a2%e5%bc%95" class="header-mark"></a>索引</h2><h3 id="功能逻辑" class="headerLink">
+    <a href="#%e5%8a%9f%e8%83%bd%e9%80%bb%e8%be%91" class="header-mark"></a>功能逻辑</h3><h4 id="唯一索引" class="headerLink">
+    <a href="#%e5%94%af%e4%b8%80%e7%b4%a2%e5%bc%95" class="header-mark"></a>唯一索引</h4><p>指索引中的索引节点值不允许重复，一般配合唯一约束使用。</p>
+<h4 id="主键索引" class="headerLink">
+    <a href="#%e4%b8%bb%e9%94%ae%e7%b4%a2%e5%bc%95" class="header-mark"></a>主键索引</h4><p>主键索引是一种特殊的唯一索引，和普通唯一索引的区别在于不允许有空值。</p>
+<h4 id="普通索引" class="headerLink">
+    <a href="#%e6%99%ae%e9%80%9a%e7%b4%a2%e5%bc%95" class="header-mark"></a>普通索引</h4><p>通过<code>KEY</code>、<code>INDEX</code>关键字创建的索引就是这个类型，没什么限制，就是单纯的可以让查询快一点。</p>
+<h4 id="全文索引" class="headerLink">
+    <a href="#%e5%85%a8%e6%96%87%e7%b4%a2%e5%bc%95" class="header-mark"></a>全文索引</h4><p>在 5.7 版本之前，只有 MyISAM 引擎支持。</p>
 <p>全文索引只能创建在<code>CHAR</code>、<code>VARCHAR</code>、<code>TEXT</code>等这些文本类型字段上，而且使用全文索引查询时，条件字符数量必须<strong>大于</strong> 3
 才生效。如果想要创建出的全文索引支持中文，需要在最后指定解析器：<code>with parser ngram</code>。</p>
-<p>具体的使用可以参看 <a href="https://juejin.cn/post/7147609139974242317#heading-16" target="_blank" rel="noopener noreffer">全文索引的创建与使用</a></p>
-<h3 id="存储方式">存储方式</h3>
-<h4 id="聚簇索引">聚簇索引</h4>
-<p>在聚簇索引中，索引数据和表数据在磁盘中的位置是一起的。</p>
+<p>具体的使用可以参看 <a href="https://juejin.cn/post/7147609139974242317#heading-16" target="_blank" rel="noopener noreferrer">全文索引的创建与使用</a></p>
+<h3 id="存储方式" class="headerLink">
+    <a href="#%e5%ad%98%e5%82%a8%e6%96%b9%e5%bc%8f" class="header-mark"></a>存储方式</h3><h4 id="聚簇索引" class="headerLink">
+    <a href="#%e8%81%9a%e7%b0%87%e7%b4%a2%e5%bc%95" class="header-mark"></a>聚簇索引</h4><p>在聚簇索引中，索引数据和表数据在磁盘中的位置是一起的。</p>
 <p>一张表中只能存在一个聚簇索引，一般都会选用主键作为聚簇索引。</p>
 <p>一般聚簇索引要求索引必须是非空唯一索引才行。</p>
-<h4 id="非聚簇索引">非聚簇索引</h4>
-<p>在非聚簇索引中，索引节点和表数据之间用物理地址的方式维护两者的联系。</p>
-<h3 id="回表">回表</h3>
-<p>参看 <a href="https://juejin.cn/post/7149074488649318431#heading-9" target="_blank" rel="noopener noreffer">索引查询时的回表问题</a></p>
-<h3 id="建立原则">建立原则</h3>
-<ul>
+<h4 id="非聚簇索引" class="headerLink">
+    <a href="#%e9%9d%9e%e8%81%9a%e7%b0%87%e7%b4%a2%e5%bc%95" class="header-mark"></a>非聚簇索引</h4><p>在非聚簇索引中，索引节点和表数据之间用物理地址的方式维护两者的联系。</p>
+<h3 id="回表" class="headerLink">
+    <a href="#%e5%9b%9e%e8%a1%a8" class="header-mark"></a>回表</h3><p>参看 <a href="https://juejin.cn/post/7149074488649318431#heading-9" target="_blank" rel="noopener noreferrer">索引查询时的回表问题</a></p>
+<h3 id="建立原则" class="headerLink">
+    <a href="#%e5%bb%ba%e7%ab%8b%e5%8e%9f%e5%88%99" class="header-mark"></a>建立原则</h3><ul>
 <li>经常频繁用作查询条件的字段应酌情考虑为其创建索引。</li>
 <li>表的主外键或连表字段，必须建立索引，因为能很大程度提升连表查询的性能。</li>
 <li>建立索引的字段，一般值的区分性要足够高，这样才能提高索引的检索效率。</li>
@@ -920,8 +1014,8 @@ innodb。</p>
 <li>对于唯一索引，如果确认不会利用该字段排序，那可以将结构改为<code>Hash</code>结构。</li>
 <li>尽量使用联合索引代替单值索引，联合索引比多个单值索引查询效率要高。</li>
 </ul>
-<h3 id="注意点">注意点</h3>
-<ul>
+<h3 id="注意点" class="headerLink">
+    <a href="#%e6%b3%a8%e6%84%8f%e7%82%b9" class="header-mark"></a>注意点</h3><ul>
 <li>值经常会增删改的字段，不合适建立索引，因为每次改变后需维护索引结构。</li>
 <li>一个字段存在大量的重复值时，不适合建立索引，比如之前举例的性别字段。</li>
 <li>索引不能参与计算，因此经常带函数查询的字段，并不适合建立索引。</li>
@@ -930,8 +1024,8 @@ innodb。</p>
 <li>当表的数据较少，不应当建立索引，因为数据量不大时，维护索引反而开销更大。</li>
 <li>索引的字段值无序时，不推荐建立索引，因为会造成页分裂，尤其是主键索引。</li>
 </ul>
-<h3 id="正确使用">正确使用</h3>
-<ul>
+<h3 id="正确使用" class="headerLink">
+    <a href="#%e6%ad%a3%e7%a1%ae%e4%bd%bf%e7%94%a8" class="header-mark"></a>正确使用</h3><ul>
 <li>查询 SQL 中尽量不要使用<code>OR</code>关键字，可以使用多 SQL 或子查询代替。</li>
 <li>模糊查询尽量不要以<code>%</code>开头，如果实在要实现这个功能可以建立全文索引。</li>
 <li>⚠️编写 SQL 时一定要注意字段的数据类型，否则 MySQL 的隐式转换会导致索引失效。</li>
@@ -941,15 +1035,57 @@ innodb。</p>
 <li>对于需要对比多个字段的查询业务时，可以拆分为连表查询，使用临时表代替。</li>
 <li>在 SQL 中不要使用反范围性的查询条件，大部分反范围性、不等性查询都会让索引失效。</li>
 </ul>
-<h3 id="索引失效">索引失效</h3>
-<p>哪些情况下会导致索引失效，参看 <a href="https://juejin.cn/post/7149074488649318431#heading-15" target="_blank" rel="noopener noreffer">索引失效的一些场景</a></p>
-<h3 id="索引覆盖索引下推mrr">索引覆盖，索引下推，MRR</h3>
-<p>要查询的列，在使用的索引中已经包含，被所使用的索引覆盖，这种情况称之为索引覆盖。</p>
-<p>参看 <a href="https://juejin.cn/post/7149074488649318431#heading-25" target="_blank" rel="noopener noreffer">索引覆盖，索引下推，MRR</a></p>
-<h2 id="explain">Explain</h2>
-<p>参看 <a href="https://juejin.cn/post/7149074488649318431#heading-14" target="_blank" rel="noopener noreffer">执行分析工具 - ExPlain</a></p>
-<h2 id="两阶段提交">两阶段提交</h2>
-<p>redo log 保证的是数据库的 crash-safe 能力。采用的策略就是常说的“两阶段提交”。</p>
+<h3 id="索引失效" class="headerLink">
+    <a href="#%e7%b4%a2%e5%bc%95%e5%a4%b1%e6%95%88" class="header-mark"></a>索引失效</h3><p>哪些情况下会导致索引失效，参看 <a href="https://juejin.cn/post/7149074488649318431#heading-15" target="_blank" rel="noopener noreferrer">索引失效的一些场景</a></p>
+<h3 id="索引覆盖索引下推mrr" class="headerLink">
+    <a href="#%e7%b4%a2%e5%bc%95%e8%a6%86%e7%9b%96%e7%b4%a2%e5%bc%95%e4%b8%8b%e6%8e%a8mrr" class="header-mark"></a>索引覆盖，索引下推，MRR</h3><p>要查询的列，在使用的索引中已经包含，被所使用的索引覆盖，这种情况称之为索引覆盖。</p>
+<p>参看 <a href="https://juejin.cn/post/7149074488649318431#heading-25" target="_blank" rel="noopener noreferrer">索引覆盖，索引下推，MRR</a></p>
+<h3 id="索引为何选择-btree" class="headerLink">
+    <a href="#%e7%b4%a2%e5%bc%95%e4%b8%ba%e4%bd%95%e9%80%89%e6%8b%a9-btree" class="header-mark"></a>索引为何选择 B+Tree</h3><p>为什么 mysql 选择 B+Tree
+作为索引的数据结构。参看<a href="https://juejin.cn/post/7151275584218202143#heading-8" target="_blank" rel="noopener noreferrer">索引为何要选择B+Tree？</a></p>
+<h2 id="explain" class="headerLink">
+    <a href="#explain" class="header-mark"></a>Explain</h2><p>参看 <a href="https://juejin.cn/post/7149074488649318431#heading-14" target="_blank" rel="noopener noreferrer">执行分析工具 - ExPlain</a></p>
+<h2 id="事务" class="headerLink">
+    <a href="#%e4%ba%8b%e5%8a%a1" class="header-mark"></a>事务</h2><h3 id="事务的-acid-原则" class="headerLink">
+    <a href="#%e4%ba%8b%e5%8a%a1%e7%9a%84-acid-%e5%8e%9f%e5%88%99" class="header-mark"></a>事务的 ACID 原则</h3><ul>
+<li>
+<p><code>A/Atomicity</code>：原子性</p>
+</li>
+<li>
+<p><code>C/Consistency</code>：一致性</p>
+</li>
+<li>
+<p><code>I/Isolation</code>：独立性/隔离性</p>
+</li>
+<li>
+<p><code>D/Durability</code>：持久性</p>
+</li>
+<li>
+<p>原子性要求事务中所有操作要么全部成功，要么全部失败，这点是基于<code>undo-log</code>来实现的，因为在该日志中会生成相应的反
+SQL，执行失败时会利用该日志来回滚所有写入操作。</p>
+</li>
+<li>
+<p>持久性要求的是所有 SQL 写入的数据都必须能落入磁盘存储，确保数据不会丢失，这点则是基于<code>redo-log</code>实现的。</p>
+</li>
+<li>
+<p>隔离性的要求是一个事务不会受到另一个事务的影响，对于这点则是通过锁机制和 MVCC 机制实现的，只不过 MySQL 屏蔽了加锁和 MVCC
+的细节。</p>
+</li>
+<li>
+<p>一致性要求数据库的整体数据变化，只能从一个一致性状态变为另一个一致性状态，其实前面的原子性、持久性、隔离性都是为了确保这点而存在的。</p>
+</li>
+<li>
+<p><code>undo-log</code>：主要记录 SQL 的撤销日志，比如目前是<code>insert</code>语句，就记录一条<code>delete</code>日志。</p>
+</li>
+<li>
+<p><code>redo-log</code>：记录当前 SQL 归属事务的状态，以及记录修改内容和修改页的位置。</p>
+</li>
+<li>
+<p><code>bin-log</code>：记录每条 SQL 操作日志，只要是用于数据的主从复制与数据恢复/备份。</p>
+</li>
+</ul>
+<h3 id="两阶段提交" class="headerLink">
+    <a href="#%e4%b8%a4%e9%98%b6%e6%ae%b5%e6%8f%90%e4%ba%a4" class="header-mark"></a>两阶段提交</h3><p>redo log 保证的是数据库的 crash-safe 能力。采用的策略就是常说的“两阶段提交”。</p>
 <p>一条 update 的 SQL 语句是按照这样的流程来执行的：</p>
 <p>将数据页加载到内存 → 修改数据 → 更新数据 → 写redo log（状态为prepare） → 写binlog → 提交事务（数据写入成功后将redo
 log状态改为commit）</p>
@@ -986,12 +1122,39 @@ log状态改为commit）</p>
 </tr>
 </tbody>
 </table>
-<h2 id="参考">参考</h2>
-<ul>
-<li><a href="https://juejin.cn/post/7149074488649318431" target="_blank" rel="noopener noreffer">建立索引的正确姿势与使用索引的最佳指南</a></li>
-<li><a href="https://blog.csdn.net/shudaqi2010/article/details/122744651" target="_blank" rel="noopener noreffer">MySQL的redo log、undo log、binlog</a></li>
+<h3 id="脏读幻读不可重复读" class="headerLink">
+    <a href="#%e8%84%8f%e8%af%bb%e5%b9%bb%e8%af%bb%e4%b8%8d%e5%8f%af%e9%87%8d%e5%a4%8d%e8%af%bb" class="header-mark"></a>脏读、幻读、不可重复读</h3><p>参考 <a href="https://juejin.cn/post/7152765784299667487#heading-10" target="_blank" rel="noopener noreferrer">脏读、幻读、不可重复读问题</a></p>
+<p>脏读：指一个事务读到了其他事务还未提交的数据，也就是当前事务读到的数据，由于还未提交，因此有可能会回滚。</p>
+<p>幻读：另外一个事务在第一个事务要处理的目标数据范围之内新增了数据，然后先于第一个事务提交造成的问题。</p>
+<blockquote>
+<p>幻读是对自己来说的，比如，事务 A 在对表中多行数据进行修改，将性别「男、女」改为「0、1」，此时事务 B 又插入了一条性别为男的数据，
+当事务 A 提交后，再次查询表时，会发现表中依旧存在一条性别为男的数据。</p>
+</blockquote>
+<h3 id="事务的隔离级别" class="headerLink">
+    <a href="#%e4%ba%8b%e5%8a%a1%e7%9a%84%e9%9a%94%e7%a6%bb%e7%ba%a7%e5%88%ab" class="header-mark"></a>事务的隔离级别</h3><ol>
+<li>
+<p>Read uncommitted/RU：读未提交，处于该隔离级别的数据库，脏读、不可重复读、幻读问题都有可能发生。</p>
+</li>
+<li>
+<p>Read committed/RC：读已提交，处于该隔离级别的数据库，解决了脏读问题，不可重复读、幻读问题依旧存在。</p>
+</li>
+<li>
+<p>Repeatable read/RR：可重复读，处于该隔离级别的数据库，解决了脏读、不可重复读问题，幻读问题依旧存在。</p>
+</li>
+<li>
+<p>Serializable：序列化/串行化，处于该隔离级别的数据库，解决了脏读、不可重复读、幻读问题都不存在。</p>
+</li>
+</ol>
+<p>上述四个级别，越靠后并发控制度越高，也就是在多线程并发操作的情况下，出现问题的几率越小，但对应的也性能越差，MySQL 的事务隔离级别，
+默认为第三级别：<code>Repeatable read</code>可重复读。</p>
+<h2 id="参考" class="headerLink">
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
+<li><a href="https://juejin.cn/post/7149074488649318431" target="_blank" rel="noopener noreferrer">建立索引的正确姿势与使用索引的最佳指南</a></li>
+<li><a href="https://blog.csdn.net/shudaqi2010/article/details/122744651" target="_blank" rel="noopener noreferrer">MySQL的redo log、undo log、binlog</a></li>
 </ul>
-</div><div class="post-footer" id="post-footer">
+</div>
+
+        <div class="post-footer" id="post-footer">
     <div class="post-info">
         <div class="post-info-line">
             <div class="post-info-mod">
@@ -1000,11 +1163,10 @@ log状态改为commit）</p>
             <div class="post-info-license"></div>
         </div>
         <div class="post-info-line">
-            <div class="post-info-md"><span>
-                            <a class="link-to-markdown" href="/mysql-simple-faq/index.md" target="_blank">阅读原始文档</a>
-                        </span></div>
+            <div class="post-info-md"><span><a class="link-to-mardown" href=/mysql-simple-faq/index.md target="_blank" rel="noopener noreferrer">阅读原始文档</a>
+                    </span></div>
             <div class="post-info-share">
-                <span><a href="javascript:void(0);" title="分享到 Twitter" data-sharer="twitter" data-url="https://www.xiaobinqt.cn/mysql-simple-faq/" data-title="mysql 常见问题" data-hashtags="mysql"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="https://www.xiaobinqt.cn/mysql-simple-faq/" data-hashtag="mysql"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Hacker News" data-sharer="hackernews" data-url="https://www.xiaobinqt.cn/mysql-simple-faq/" data-title="mysql 常见问题"><i class="fab fa-hacker-news fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Line" data-sharer="line" data-url="https://www.xiaobinqt.cn/mysql-simple-faq/" data-title="mysql 常见问题"><i data-svg-src="/lib/simple-icons/icons/line.min.svg"></i></a><a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="https://www.xiaobinqt.cn/mysql-simple-faq/" data-title="mysql 常见问题"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="分享到 百度" data-sharer="baidu" data-url="https://www.xiaobinqt.cn/mysql-simple-faq/" data-title="mysql 常见问题"><i data-svg-src="/lib/simple-icons/icons/baidu.min.svg"></i></a></span>
+                <span><a href="#" onclick="return false;" title="分享到 Twitter" data-sharer="twitter" data-url="https://www.xiaobinqt.cn/mysql-simple-faq/" data-title="mysql 常见问题" data-hashtags="mysql"><i class="fab fa-twitter fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Facebook" data-sharer="facebook" data-url="https://www.xiaobinqt.cn/mysql-simple-faq/" data-hashtag="mysql"><i class="fab fa-facebook-square fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Hacker News" data-sharer="hackernews" data-url="https://www.xiaobinqt.cn/mysql-simple-faq/" data-title="mysql 常见问题"><i class="fab fa-hacker-news fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Line" data-sharer="line" data-url="https://www.xiaobinqt.cn/mysql-simple-faq/" data-title="mysql 常见问题"><i data-svg-src="/lib/simple-icons/icons/line.min.svg"></i></a><a href="#" onclick="return false;" title="分享到 微博" data-sharer="weibo" data-url="https://www.xiaobinqt.cn/mysql-simple-faq/" data-title="mysql 常见问题"><i class="fab fa-weibo fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 百度" data-sharer="baidu" data-url="https://www.xiaobinqt.cn/mysql-simple-faq/" data-title="mysql 常见问题"><i data-svg-src="/lib/simple-icons/icons/baidu.min.svg"></i></a></span>
             </div>
         </div>
     </div>
@@ -1016,21 +1178,28 @@ log状态改为commit）</p>
         </section>
     </div>
 
-    <div class="post-nav"><a target="_blank" href="/alpha-beta-rc-stable-diff/" class="prev" rel="prev" title="alpha、beta、rc、stable 的区别"><i class="fas fa-angle-left fa-fw"></i>alpha、beta、rc、stable 的区别</a>
-            <a target="_blank" href="/funny-abbreviations/" class="next" rel="next" title="那些迷之缩写">那些迷之缩写<i class="fas fa-angle-right fa-fw"></i></a></div>
+    <div class="post-nav"><a href="/alpha-beta-rc-stable-diff/" class="prev" rel="prev" title="alpha、beta、rc、stable 的区别"><i class="fas fa-angle-left fa-fw"></i>alpha、beta、rc、stable 的区别</a>
+            <a href="/funny-abbreviations/" class="next" rel="next" title="那些迷之缩写">那些迷之缩写<i class="fas fa-angle-right fa-fw"></i></a></div>
 </div>
 <div id="comments"><div id="gitalk" class="comment"></div><noscript>
                 Please enable JavaScript to view the comments powered by <a href="https://github.com/gitalk/gitalk"></a>Gitalk</a>.
             </noscript></div></article></div>
-            </main><footer class="footer">
+        </main><footer class="footer">
         <div class="footer-container"><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2018 - 2022</span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
-        </div>
-    </footer></div>
+            <div class="footer-line"></div>
+            <div class="footer-line">
+            </div>
+        </div></footer></div>
 
-        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
-                <i class="fas fa-arrow-up fa-fw"></i>
-            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
-                <i class="fas fa-comment fa-fw"></i>
-            </a>
-        </div><link rel="stylesheet" href="/lib/gitalk/gitalk.min.css"><link rel="stylesheet" href="/lib/lightgallery/lightgallery.min.css"><script type="text/javascript" src="/lib/gitalk/gitalk.min.js"></script><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="/lib/algoliasearch/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lightgallery.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-thumbnail.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-zoom.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"gitalk":{"admin":["xiaobinqt"],"clientID":"47b15de6c2d8a0f8d707","clientSecret":"c70556c8b3a3b38ea7c72e539ff3b37d5bc1b4f3","id":"8579b80f05795ba801f272904717ec6e","owner":"xiaobinqt","repo":"xiaobinqt.github.io","title":"mysql 常见问题"}},"lightGallery":{"actualSize":false,"exThumbImage":"data-thumbnail","hideBarsDelay":2000,"selector":".lightgallery","speed":400,"thumbContHeight":80,"thumbWidth":80,"thumbnail":true},"search":{"algoliaAppID":"CPNWIDNX0Y","algoliaIndex":"xiaobinqt.io","algoliaSearchKey":"80b84de0ebc766371dd27cd3e651c41e","highlightTag":"em","maxResultLength":20,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+    <div id="fixed-buttons"><a href="#back-to-top" id="back-to-top-button" class="fixed-button" title="回到顶部">
+            <i class="fas fa-arrow-up fa-fw"></i>
+        </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+            <i class="fas fa-comment fa-fw"></i>
+        </a>
+    </div><div class="assets"><script type="text/javascript" src="/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="/lib/algoliasearch/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/topbar/topbar.min.js"></script><script type="text/javascript" src="/lib/pjax/pjax.min.js"></script><script type="text/javascript" src="/js/theme.min.js" defer></script></div>
+
+<div class="pjax-assets"><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"gitalk":{"admin":["xiaobinqt"],"clientID":"47b15de6c2d8a0f8d707","clientSecret":"c70556c8b3a3b38ea7c72e539ff3b37d5bc1b4f3","id":"2019-10-03T00:00:00Z","owner":"xiaobinqt","repo":"xiaobinqt.github.io","title":"mysql 常见问题"}},"lightGallery":{"actualSize":false,"exThumbImage":"data-thumbnail","hideBarsDelay":2000,"selector":".lightgallery","speed":400,"thumbContHeight":80,"thumbWidth":80,"thumbnail":true},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"algoliaAppID":"CPNWIDNX0Y","algoliaIndex":"xiaobinqt.io","algoliaSearchKey":"80b84de0ebc766371dd27cd3e651c41e","highlightTag":"em","maxResultLength":20,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"},"sharerjs":true};</script><script type="text/javascript" src="/lib/gitalk/gitalk.min.js"></script><script type="text/javascript" src="/js/gitalk.min.js" defer></script><script type="text/javascript" src="/lib/lightgallery/lightgallery.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-thumbnail.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-zoom.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript" src="/lib/katex/katex.min.js" defer></script><script type="text/javascript" src="/lib/katex/auto-render.min.js" defer></script><script type="text/javascript" src="/lib/katex/copy-tex.min.js" defer></script><script type="text/javascript" src="/lib/katex/mhchem.min.js" defer></script><script type="text/javascript" src="/js/katex.min.js" defer></script><link rel="stylesheet" href="/lib/gitalk/gitalk.min.css"><link rel="stylesheet" href="/lib/lightgallery/lightgallery.min.css"><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/katex/copy-tex.min.css">
+        <noscript><link rel="stylesheet" href="/lib/katex/copy-tex.min.css"></noscript></div>
+</body>
+
 </html>

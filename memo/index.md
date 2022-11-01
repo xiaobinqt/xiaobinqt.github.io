@@ -48,12 +48,14 @@
 + [煎鱼](https://eddycjy.com/)
 + [xargin](https://www.xargin.com/)
 + [竹子爱熊猫](https://juejin.cn/user/862486453028888)
++ [技术印记](https://www.365seal.com/)
 
 ## 工具
 
 + [Data Structure Visualizations](https://www.cs.usfca.edu/~galles/visualization/Algorithms.html)
 + [learn git branching](https://learngitbranching.js.org/?locale=zh_CN)
 + [navicat premium15破解教程](http://www.downcc.com/soft/430673.html)
++ [Bit Calculator](https://www.matisse.net/bitcalc/)
 
 ## 资料库
 
