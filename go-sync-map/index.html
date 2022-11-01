@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="robots" content="noodp" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
-        <title>Go sync.Map 解读 - xiaobinqt 博客 - 技术改变生活</title><meta name="Description" content="xiaobinqt,Go sync.Map 解读,golang sync.map 源码解析,golang sync.map 并发 map 的使用">
-<meta name="keywords" content="xiaobinqt, 萧十一郎, php, golang, go,服务器相关, Laravel5.5&#43;/Lumen, linux, php, mysql, redis, go领域, python" /><meta property="og:title" content="Go sync.Map 解读" />
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noodp" />
+    <title class="pjax-title">Go sync.Map 解读 - xiaobinqt 博客 - 技术改变生活</title><meta name="Description" content="xiaobinqt,Go sync.Map 解读,golang sync.map 源码解析,golang sync.map 并发 map 的使用"><meta property="og:title" content="Go sync.Map 解读" />
 <meta property="og:description" content="xiaobinqt,Go sync.Map 解读,golang sync.map 源码解析,golang sync.map 并发 map 的使用" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://www.xiaobinqt.cn/go-sync-map/" /><meta property="og:image" content="https://www.xiaobinqt.cn/logo.png"/><meta property="article:section" content="posts" />
@@ -19,11 +18,14 @@
 <meta name="twitter:title" content="Go sync.Map 解读"/>
 <meta name="twitter:description" content="xiaobinqt,Go sync.Map 解读,golang sync.map 源码解析,golang sync.map 并发 map 的使用"/>
 <meta name="application-name" content="xiaobinqt">
-<meta name="apple-mobile-web-app-title" content="xiaobinqt"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c">
-<link rel="stylesheet" href="//at.alicdn.com/t/font_3267767_dz25dtwdgdc.css">
-<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+<meta name="apple-mobile-web-app-title" content="xiaobinqt">
+
+<meta name="theme-color" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c">
+<link rel="stylesheet" href="//at.alicdn.com/t/font_3267767_dz25dtwdgdc.css"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://www.xiaobinqt.cn/go-sync-map/" /><link rel="prev" href="https://www.xiaobinqt.cn/highly-concurrent-architecture-evolution/" /><link rel="next" href="https://www.xiaobinqt.cn/old-pal/" /><link rel="stylesheet" href="/lib/md5/md5.min.js"><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><meta name="google-site-verification" content="hFkClWMTOtPBuE0lQaXNiNb707E7P6O2CwexZoSm3VQ" /><meta name="msvalidate.01" content="A961D393878F86E04112E1198500FDBD" /><meta name="baidu-site-verification" content="code-cMh5ORsrP2" /><script type="application/ld+json">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://www.xiaobinqt.cn/go-sync-map/" /><link rel="prev" href="https://www.xiaobinqt.cn/highly-concurrent-architecture-evolution/" /><link rel="next" href="https://www.xiaobinqt.cn/old-pal/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/fontawesome-free/all.min.css">
+        <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/animate/animate.min.css">
+        <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><meta name="google-site-verification" content="hFkClWMTOtPBuE0lQaXNiNb707E7P6O2CwexZoSm3VQ" /><meta name="msvalidate.01" content="A961D393878F86E04112E1198500FDBD" /><meta name="baidu-site-verification" content="code-cMh5ORsrP2" /><script type="application/ld+json">
     {
         "@context": "http://schema.org",
         "@type": "BlogPosting",
@@ -32,7 +34,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/www.xiaobinqt.cn\/go-sync-map\/"
-        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "golang","wordcount":  6615 ,
+        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "golang","wordcount":  6622 ,
         "url": "https:\/\/www.xiaobinqt.cn\/go-sync-map\/","datePublished": "2022-09-14T00:00:00+00:00","dateModified": "2022-09-14T00:00:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "xxxx","logo": {
@@ -46,29 +48,36 @@
             },"description": "xiaobinqt,Go sync.Map 解读,golang sync.map 源码解析,golang sync.map 并发 map 的使用"
     }
     </script></head>
-    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
 
-        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+<body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">
+        function setTheme(theme) {document.body.setAttribute('theme', theme); document.documentElement.style.setProperty('color-scheme', theme === 'light' ? 'light' : 'dark');}
+        function saveTheme(theme) {window.localStorage && localStorage.setItem('theme', theme);}
+        function getMeta(metaName) {const metas = document.getElementsByTagName('meta'); for (let i = 0; i < metas.length; i++) if (metas[i].getAttribute('name') === metaName) return metas[i]; return '';}
+        if (window.localStorage && localStorage.getItem('theme')) {let theme = localStorage.getItem('theme');theme === 'light' || theme === 'dark' || theme === 'black' ? setTheme(theme) : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? setTheme('dark') : setTheme('light')); } else { if ('auto' === 'light' || 'auto' === 'dark' || 'auto' === 'black') setTheme('auto'), saveTheme('auto'); else saveTheme('auto'), window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? setTheme('dark') : setTheme('light');}
+        let metaColors = {'light': '#f8f8f8','dark': '#252627','black': '#000000'}
+        getMeta('theme-color').content = metaColors[document.body.getAttribute('theme')];
+    </script>
+    <div id="back-to-top"></div>
+    <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
     <div class="header-wrapper">
         <div class="header-title">
             <a href="/" title="xiaobinqt 博客 - 技术改变生活"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>萧十一郎</a>
         </div>
         <div class="menu">
-            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/about/"> 关于 </a><a class="menu-item" href="/memo/"> 收藏夹 </a><a class="menu-item" href="/links/"> 友链 </a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/about/"> 关于 </a><a class="menu-item" href="/memo/"> 收藏夹 </a><a class="menu-item" href="/links/"> 友链 </a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" rel="noopener noreferrer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
                         <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
-                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                        <a href="#" onclick="return false;" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
                             <i class="fas fa-search fa-fw"></i>
                         </a>
-                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                        <a href="#" onclick="return false;" class="search-button search-clear" id="search-clear-desktop" title="清空">
                             <i class="fas fa-times-circle fa-fw"></i>
                         </a>
                         <span class="search-button search-loading" id="search-loading-desktop">
                             <i class="fas fa-spinner fa-fw fa-spin"></i>
                         </span>
-                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    </span><a href="#" onclick="return false;" class="menu-item theme-switch" title="切换主题">
                     <i class="fas fa-adjust fa-fw"></i>
-                </a>
-            </div>
+                </a></div>
         </div>
     </div>
 </header><header class="mobile" id="header-mobile">
@@ -84,20 +93,20 @@
         <div class="menu" id="menu-mobile"><div class="search-wrapper">
                     <div class="search mobile" id="search-mobile">
                         <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
-                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                        <a href="#" onclick="return false;" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
                             <i class="fas fa-search fa-fw"></i>
                         </a>
-                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                        <a href="#" onclick="return false;" class="search-button search-clear" id="search-clear-mobile" title="清空">
                             <i class="fas fa-times-circle fa-fw"></i>
                         </a>
                         <span class="search-button search-loading" id="search-loading-mobile">
                             <i class="fas fa-spinner fa-fw fa-spin"></i>
                         </span>
                     </div>
-                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                    <a href="#" onclick="return false;" class="search-cancel" id="search-cancel-mobile">
                         取消
                     </a>
-                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/about/" title="">关于</a><a class="menu-item" href="/memo/" title="">收藏夹</a><a class="menu-item" href="/links/" title="">友链</a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/about/" title="">关于</a><a class="menu-item" href="/memo/" title="">收藏夹</a><a class="menu-item" href="/links/" title="">友链</a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" rel="noopener noreferrer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a href="#" onclick="return false;" class="menu-item theme-switch" title="切换主题">
                 <i class="fas fa-adjust fa-fw"></i>
             </a></div>
     </div>
@@ -109,14 +118,45 @@
     <div id="search-dropdown-mobile"></div>
 </div>
 <main class="main">
-                <div class="container"><div class="toc" id="toc-auto">
-            <h2 class="toc-title">目录</h2>
-            <div class="toc-content" id="toc-content-auto"></div>
-        </div><article class="page single"><h1 class="single-title animated flipInX">Go sync.Map 解读</h1><div class="post-meta">
+            <div class="container"><div class="toc" id="toc-auto">
+        <h2 class="toc-title">目录</h2>
+        <div class="toc-content" id="toc-content-auto"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#背景">背景</a></li>
+    <li><a href="#核心思想架构">核心思想＆架构</a>
+      <ul>
+        <li><a href="#核心思想">核心思想</a></li>
+        <li><a href="#架构设计图">架构设计图</a></li>
+      </ul>
+    </li>
+    <li><a href="#源码细节梳理">源码细节梳理</a>
+      <ul>
+        <li><a href="#store操作对应cu">Store操作（对应C/U）</a></li>
+        <li><a href="#store操作对应r">Store操作（对应R）</a></li>
+        <li><a href="#delete操作对应d">Delete操作（对应D）</a></li>
+      </ul>
+    </li>
+    <li><a href="#整体思考">整体思考</a>
+      <ul>
+        <li><a href="#dirty-和-read-互转分别在什么样的时机下会进行">dirty 和 read 互转，分别在什么样的时机下会进行？</a></li>
+        <li><a href="#read-从何而来存在的意义又是什么">read 从何而来，存在的意义又是什么？</a></li>
+        <li><a href="#entry-的-p-可能的状态有哪些">entry 的 p 可能的状态，有哪些？</a></li>
+        <li><a href="#删除操作的细节ep到底是设置成了-nil-还是-expunged">删除操作的细节，<code>e.p</code>到底是设置成了 nil 还是 expunged？</a></li>
+        <li><a href="#什么时候-ep-由-nil-变成-expunged">什么时候 e.p 由 nil 变成 expunged？</a></li>
+        <li><a href="#既然-nil-也表示标记删除那么再设计出一个-expunged-的意义是什么">既然 nil 也表示标记删除，那么再设计出一个 expunged 的意义是什么？</a></li>
+        <li><a href="#对于一个-entry从生到死的状态机图">对于一个 entry，从生到死的状态机图</a></li>
+        <li><a href="#注释中关于-slow-path-和-fast-path-的解释">注释中关于 slow path 和 fast path 的解释</a></li>
+      </ul>
+    </li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#参考">参考</a></li>
+  </ul>
+</nav></div>
+    </div><script>document.getElementsByTagName("main")[0].setAttribute("pageStyle", "normal")</script><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Go sync.Map 解读</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author">
                     <i class="custom-icon iconfont icon-weibiaoti-"></i>
-                </span>&nbsp;&nbsp;<span class="post-category">收录于 <a href="/categories/golang/"><i class="far fa-folder fa-fw"></i>golang</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-09-14">2022-09-14</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 6615 字&nbsp;
+                </span>&nbsp;&nbsp;<span class="post-category">收录于 </span>&nbsp;<span class="post-category">类别 <a href="/categories/golang/"><i class="far fa-folder fa-fw"></i>golang</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-09-14">2022-09-14</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2022-09-14">2022-09-14</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 6622 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 14 分钟&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
@@ -159,20 +199,20 @@
 <!-- email： xiaobinqt@163.com -->
 <!-- https://xiaobinqt.github.io -->
 <!-- https://www.xiaobinqt.cn -->
-<h2 id="背景">背景</h2>
-<p>项目中遇到了需要使用高并发的 map 的场景，众所周知 Go 官方的原生 map 是不支持并发读写的，直接并发的读写很容易触发 panic。</p>
+<h2 id="背景" class="headerLink">
+    <a href="#%e8%83%8c%e6%99%af" class="header-mark"></a>背景</h2><p>项目中遇到了需要使用高并发的 map 的场景，众所周知 Go 官方的原生 map 是不支持并发读写的，直接并发的读写很容易触发 panic。</p>
 <p>解决的办法有两个：</p>
 <ul>
 <li>自己配一把锁<code>sync.Mutex</code>，或者更加考究一点配一把读写锁<code>sync.RWMutex</code>。这种方案简约直接，但是缺点也明显，就是性能不会太高。</li>
 <li>使用 Go 语言在 2017 年发布的 Go 1.9 中正式加入了并发安全的字典类型<code>sync.Map</code>。</li>
 </ul>
 <p>很显然，方案 2 是优雅且实用的。但是，为什么官方的<code>sync.Map</code>能够在 <strong><ruby>lock free<rt>无锁并发</rt></ruby></strong> 的前提下，保证足够高的性能？本文结合源码进行简单的分析。</p>
-<h2 id="核心思想架构">核心思想＆架构</h2>
-<p>如果要保证并发的安全，最朴素的想法就是使用锁，但是这意味着要把一些并发的操作强制串行化，性能自然就会下降。</p>
+<h2 id="核心思想架构" class="headerLink">
+    <a href="#%e6%a0%b8%e5%bf%83%e6%80%9d%e6%83%b3%e6%9e%b6%e6%9e%84" class="header-mark"></a>核心思想＆架构</h2><p>如果要保证并发的安全，最朴素的想法就是使用锁，但是这意味着要把一些并发的操作强制串行化，性能自然就会下降。</p>
 <p>事实上，除了使用锁，还有一个办法，也可以达到类似并发安全的目的，就是原子操作<code>atomic</code>。</p>
 <p><code>sync.Map</code>的设计非常巧妙，充分利用了<code>atmoic</code>和<code>mutex</code>的配合。</p>
-<h3 id="核心思想">核心思想</h3>
-<p>核心原则就是，尽量使用原子操作，最大程度上减少了锁的使用，从而接近了 lock free 的效果。</p>
+<h3 id="核心思想" class="headerLink">
+    <a href="#%e6%a0%b8%e5%bf%83%e6%80%9d%e6%83%b3" class="header-mark"></a>核心思想</h3><p>核心原则就是，尽量使用原子操作，最大程度上减少了锁的使用，从而接近了 lock free 的效果。</p>
 <p>核心点：</p>
 <ul>
 <li>
@@ -277,16 +317,15 @@
 </span></span><span class="line"><span class="cl">}
 </span></span></code></pre></td></tr></table>
 </div>
-</div><h3 id="架构设计图">架构设计图</h3>
-<p>初看这个结构的设计，会觉得复杂，不理解为什么要设计成这样，这里画了一个图，力求更加直观的说明 read 和 dirty 之间的配合关系。</p>
+</div><h3 id="架构设计图" class="headerLink">
+    <a href="#%e6%9e%b6%e6%9e%84%e8%ae%be%e8%ae%a1%e5%9b%be" class="header-mark"></a>架构设计图</h3><p>初看这个结构的设计，会觉得复杂，不理解为什么要设计成这样，这里画了一个图，力求更加直观的说明 read 和 dirty 之间的配合关系。</p>
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221025/3b41e0a3ca3443d0b1d8a2daba7aab8a.png" title="设计架构图" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221025/3b41e0a3ca3443d0b1d8a2daba7aab8a.png" data-sub-html="<h2>设计架构图</h2><p>设计架构图</p>">
         <img
             class="lazyload"
-            src="/svg/loading.min.svg"
             data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221025/3b41e0a3ca3443d0b1d8a2daba7aab8a.png"
             data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221025/3b41e0a3ca3443d0b1d8a2daba7aab8a.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20221025/3b41e0a3ca3443d0b1d8a2daba7aab8a.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20221025/3b41e0a3ca3443d0b1d8a2daba7aab8a.png 2x"
             data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221025/3b41e0a3ca3443d0b1d8a2daba7aab8a.png" />
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221025/3b41e0a3ca3443d0b1d8a2daba7aab8a.png">
     </a><figcaption class="image-caption">设计架构图</figcaption>
     </figure></p>
 <p>架构的进一步解释说明：</p>
@@ -318,11 +357,11 @@ normal，它们分别的意义，会在最后统一总结。</p>
 read，即触发 <code>dirty=&gt;read</code>升级。同时在某些情况，也会出现<code>read=&gt;dirty</code>的重塑，具体方式和这么设计的原因，最后详述。</p>
 </li>
 </ul>
-<h2 id="源码细节梳理">源码细节梳理</h2>
-<p>通过上面的分析，可以对<code>sync.Map</code>有一个初步的整体认知，这里再列出 CURD
+<h2 id="源码细节梳理" class="headerLink">
+    <a href="#%e6%ba%90%e7%a0%81%e7%bb%86%e8%8a%82%e6%a2%b3%e7%90%86" class="header-mark"></a>源码细节梳理</h2><p>通过上面的分析，可以对<code>sync.Map</code>有一个初步的整体认知，这里再列出 CURD
 几个关键操作的源码，进一步加深理解。同样的由于篇幅原因，我去除了大段冗长的英文注释，换成了提炼之后更加通俗的理解，有需要可以对比原文注释。</p>
-<h3 id="store操作对应cu">Store操作（对应C/U）</h3>
-<div class="highlight"><div class="chroma">
+<h3 id="store操作对应cu" class="headerLink">
+    <a href="#store%e6%93%8d%e4%bd%9c%e5%af%b9%e5%ba%94cu" class="header-mark"></a>Store操作（对应C/U）</h3><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">  1
 </span><span class="lnt">  2
@@ -544,8 +583,8 @@ read，即触发 <code>dirty=&gt;read</code>升级。同时在某些情况，也
 </span></span><span class="line"><span class="cl">}
 </span></span></code></pre></td></tr></table>
 </div>
-</div><h3 id="store操作对应r">Store操作（对应R）</h3>
-<div class="highlight"><div class="chroma">
+</div><h3 id="store操作对应r" class="headerLink">
+    <a href="#store%e6%93%8d%e4%bd%9c%e5%af%b9%e5%ba%94r" class="header-mark"></a>Store操作（对应R）</h3><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
@@ -653,8 +692,8 @@ read，即触发 <code>dirty=&gt;read</code>升级。同时在某些情况，也
 </span></span><span class="line"><span class="cl">}
 </span></span></code></pre></td></tr></table>
 </div>
-</div><h3 id="delete操作对应d">Delete操作（对应D）</h3>
-<div class="highlight"><div class="chroma">
+</div><h3 id="delete操作对应d" class="headerLink">
+    <a href="#delete%e6%93%8d%e4%bd%9c%e5%af%b9%e5%ba%94d" class="header-mark"></a>Delete操作（对应D）</h3><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
@@ -742,10 +781,10 @@ read，即触发 <code>dirty=&gt;read</code>升级。同时在某些情况，也
 </span></span><span class="line"><span class="cl">}
 </span></span></code></pre></td></tr></table>
 </div>
-</div><h2 id="整体思考">整体思考</h2>
-<p>第一次读 Map 的源码，会觉得很晦涩，虽然整体思路是明确的，但是细节却很多，困惑于为什么做这样的设计，多读几遍之后，很多问题能够略窥门径。这里列出一些开始觉得困惑的问题：</p>
-<h3 id="dirty-和-read-互转分别在什么样的时机下会进行">dirty 和 read 互转，分别在什么样的时机下会进行？</h3>
-<ul>
+</div><h2 id="整体思考" class="headerLink">
+    <a href="#%e6%95%b4%e4%bd%93%e6%80%9d%e8%80%83" class="header-mark"></a>整体思考</h2><p>第一次读 Map 的源码，会觉得很晦涩，虽然整体思路是明确的，但是细节却很多，困惑于为什么做这样的设计，多读几遍之后，很多问题能够略窥门径。这里列出一些开始觉得困惑的问题：</p>
+<h3 id="dirty-和-read-互转分别在什么样的时机下会进行" class="headerLink">
+    <a href="#dirty-%e5%92%8c-read-%e4%ba%92%e8%bd%ac%e5%88%86%e5%88%ab%e5%9c%a8%e4%bb%80%e4%b9%88%e6%a0%b7%e7%9a%84%e6%97%b6%e6%9c%ba%e4%b8%8b%e4%bc%9a%e8%bf%9b%e8%a1%8c" class="header-mark"></a>dirty 和 read 互转，分别在什么样的时机下会进行？</h3><ul>
 <li>
 <p><code>dirty=&gt;read</code>：随着 load 的 miss 不断自增，达到阈值后触发升级转储（完毕之后，dirty 置空<code>&amp;miss</code>清零<code>&amp;read.amended</code>置false）</p>
 </li>
@@ -760,15 +799,14 @@ read，即触发 <code>dirty=&gt;read</code>升级。同时在某些情况，也
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221025/e8837d7eda904db586f5e78b23a69ef2.png" title="read=&amp;gt;dirty" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221025/e8837d7eda904db586f5e78b23a69ef2.png" data-sub-html="<h2>read=&gt;dirty</h2><p>read=&amp;gt;dirty</p>">
         <img
             class="lazyload"
-            src="/svg/loading.min.svg"
             data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221025/e8837d7eda904db586f5e78b23a69ef2.png"
             data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221025/e8837d7eda904db586f5e78b23a69ef2.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20221025/e8837d7eda904db586f5e78b23a69ef2.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20221025/e8837d7eda904db586f5e78b23a69ef2.png 2x"
             data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221025/e8837d7eda904db586f5e78b23a69ef2.png" />
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221025/e8837d7eda904db586f5e78b23a69ef2.png">
     </a><figcaption class="image-caption">read=>dirty</figcaption>
     </figure></p>
-<h3 id="read-从何而来存在的意义又是什么">read 从何而来，存在的意义又是什么？</h3>
-<ul>
+<h3 id="read-从何而来存在的意义又是什么" class="headerLink">
+    <a href="#read-%e4%bb%8e%e4%bd%95%e8%80%8c%e6%9d%a5%e5%ad%98%e5%9c%a8%e7%9a%84%e6%84%8f%e4%b9%89%e5%8f%88%e6%98%af%e4%bb%80%e4%b9%88" class="header-mark"></a>read 从何而来，存在的意义又是什么？</h3><ul>
 <li>
 <p>read 是由 dirty
 升级而来，是利用了<code>atomic.Store</code>一次性覆盖，而不是一点点的 set 操作出来的。所以，read 更像是一个快照，read 中 key
@@ -782,8 +820,8 @@ read，即触发 <code>dirty=&gt;read</code>升级。同时在某些情况，也
 <p>read 的存在价值，在于加速读性能（通过原子操作避免了锁）</p>
 </li>
 </ul>
-<h3 id="entry-的-p-可能的状态有哪些">entry 的 p 可能的状态，有哪些？</h3>
-<ul>
+<h3 id="entry-的-p-可能的状态有哪些" class="headerLink">
+    <a href="#entry-%e7%9a%84-p-%e5%8f%af%e8%83%bd%e7%9a%84%e7%8a%b6%e6%80%81%e6%9c%89%e5%93%aa%e4%ba%9b" class="header-mark"></a>entry 的 p 可能的状态，有哪些？</h3><ul>
 <li>
 <p><code>e.p==nil</code>：entry 已经被标记删除，不过此时还未经过<code>read=&gt;dirty</code>重塑，此时可能仍然属于 dirty（如果 dirty 非 nil）</p>
 </li>
@@ -795,8 +833,8 @@ read，即触发 <code>dirty=&gt;read</code>升级。同时在某些情况，也
 <p><code>e.p==普通指针</code>：此时 entry 是一个普通的存在状态，属于 read，如果 dirty 非 nil，也属于 dirty。对应架构图中的 normal 状态。</p>
 </li>
 </ul>
-<h3 id="删除操作的细节ep到底是设置成了-nil-还是-expunged">删除操作的细节，<code>e.p</code>到底是设置成了 nil 还是 expunged？</h3>
-<ul>
+<h3 id="删除操作的细节ep到底是设置成了-nil-还是-expunged" class="headerLink">
+    <a href="#%e5%88%a0%e9%99%a4%e6%93%8d%e4%bd%9c%e7%9a%84%e7%bb%86%e8%8a%82ep%e5%88%b0%e5%ba%95%e6%98%af%e8%ae%be%e7%bd%ae%e6%88%90%e4%ba%86-nil-%e8%bf%98%e6%98%af-expunged" class="header-mark"></a>删除操作的细节，<code>e.p</code>到底是设置成了 nil 还是 expunged？</h3><ul>
 <li>
 <p>如果 key 不在 read 中，但是在 dirty 中，则直接 delete。</p>
 </li>
@@ -804,8 +842,8 @@ read，即触发 <code>dirty=&gt;read</code>升级。同时在某些情况，也
 <p>如果 key 在 read 中，则逻辑删除，<code>e.p</code>赋值为 nil(后续在重塑的时候，nil 会变成 expunged )</p>
 </li>
 </ul>
-<h3 id="什么时候-ep-由-nil-变成-expunged">什么时候 e.p 由 nil 变成 expunged？</h3>
-<ul>
+<h3 id="什么时候-ep-由-nil-变成-expunged" class="headerLink">
+    <a href="#%e4%bb%80%e4%b9%88%e6%97%b6%e5%80%99-ep-%e7%94%b1-nil-%e5%8f%98%e6%88%90-expunged" class="header-mark"></a>什么时候 e.p 由 nil 变成 expunged？</h3><ul>
 <li>
 <p><code>read=&gt;dirty</code>重塑的时候，此时 read 中仍然是 nil 的，会变成 expunged，表示这部分 key 等待被最终丢弃（expunged
 是最终态，等待被丢弃，除非又出现了重新 store 的情况）</p>
@@ -814,8 +852,8 @@ read，即触发 <code>dirty=&gt;read</code>升级。同时在某些情况，也
 <p>最终丢弃的时机：就是<code>dirty=&gt;read</code>升级的时候，dirty 的直接粗暴覆盖，会使得 read 中的所有成员都被丢弃，包括 expunged。</p>
 </li>
 </ul>
-<h3 id="既然-nil-也表示标记删除那么再设计出一个-expunged-的意义是什么">既然 nil 也表示标记删除，那么再设计出一个 expunged 的意义是什么？</h3>
-<p>expunged 是有存在意义的，它作为删除的最终状态（待释放），这样 nil 就可以作为一种中间状态。如果仅仅使用
+<h3 id="既然-nil-也表示标记删除那么再设计出一个-expunged-的意义是什么" class="headerLink">
+    <a href="#%e6%97%a2%e7%84%b6-nil-%e4%b9%9f%e8%a1%a8%e7%a4%ba%e6%a0%87%e8%ae%b0%e5%88%a0%e9%99%a4%e9%82%a3%e4%b9%88%e5%86%8d%e8%ae%be%e8%ae%a1%e5%87%ba%e4%b8%80%e4%b8%aa-expunged-%e7%9a%84%e6%84%8f%e4%b9%89%e6%98%af%e4%bb%80%e4%b9%88" class="header-mark"></a>既然 nil 也表示标记删除，那么再设计出一个 expunged 的意义是什么？</h3><p>expunged 是有存在意义的，它作为删除的最终状态（待释放），这样 nil 就可以作为一种中间状态。如果仅仅使用
 nil，那么，在<code>read=&gt;dirty</code>重塑的时候，可能会出现如下的情况：</p>
 <ul>
 <li>
@@ -833,19 +871,18 @@ nil 的状态，永远无法得到清理的机会。</p>
 </ul>
 <p>综上，为了保证 read 作为快照的性质（不能单独删除或新增key），同时要避免 Map 中 nil 的 key 不断膨胀等多个前提要求，才设计成了
 expungd 的状态。</p>
-<h3 id="对于一个-entry从生到死的状态机图">对于一个 entry，从生到死的状态机图</h3>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221025/0e888b76b2f14ecc89735f7d0d314eae.png" title="entry 从生到死的状态机图" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221025/0e888b76b2f14ecc89735f7d0d314eae.png" data-sub-html="<h2>entry 从生到死的状态机图</h2><p>entry 从生到死的状态机图</p>">
+<h3 id="对于一个-entry从生到死的状态机图" class="headerLink">
+    <a href="#%e5%af%b9%e4%ba%8e%e4%b8%80%e4%b8%aa-entry%e4%bb%8e%e7%94%9f%e5%88%b0%e6%ad%bb%e7%9a%84%e7%8a%b6%e6%80%81%e6%9c%ba%e5%9b%be" class="header-mark"></a>对于一个 entry，从生到死的状态机图</h3><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221025/0e888b76b2f14ecc89735f7d0d314eae.png" title="entry 从生到死的状态机图" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221025/0e888b76b2f14ecc89735f7d0d314eae.png" data-sub-html="<h2>entry 从生到死的状态机图</h2><p>entry 从生到死的状态机图</p>">
         <img
             class="lazyload"
-            src="/svg/loading.min.svg"
             data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221025/0e888b76b2f14ecc89735f7d0d314eae.png"
             data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221025/0e888b76b2f14ecc89735f7d0d314eae.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20221025/0e888b76b2f14ecc89735f7d0d314eae.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20221025/0e888b76b2f14ecc89735f7d0d314eae.png 2x"
             data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221025/0e888b76b2f14ecc89735f7d0d314eae.png" />
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221025/0e888b76b2f14ecc89735f7d0d314eae.png">
     </a><figcaption class="image-caption">entry 从生到死的状态机图</figcaption>
     </figure></p>
-<h3 id="注释中关于-slow-path-和-fast-path-的解释">注释中关于 slow path 和 fast path 的解释</h3>
-<ul>
+<h3 id="注释中关于-slow-path-和-fast-path-的解释" class="headerLink">
+    <a href="#%e6%b3%a8%e9%87%8a%e4%b8%ad%e5%85%b3%e4%ba%8e-slow-path-%e5%92%8c-fast-path-%e7%9a%84%e8%a7%a3%e9%87%8a" class="header-mark"></a>注释中关于 slow path 和 fast path 的解释</h3><ul>
 <li>
 <p>慢路径其实就是经过了锁的代码路径。</p>
 </li>
@@ -853,14 +890,16 @@ expungd 的状态。</p>
 <p>快路径就是不经过锁的。</p>
 </li>
 </ul>
-<h2 id="总结">总结</h2>
-<p><code>sync.Map</code>的源码并不长，但是里面的很多细节都非常的考究，比如对于原子和锁的使用、利用状态机的变化标记来代替 map 的 delete
+<h2 id="总结" class="headerLink">
+    <a href="#%e6%80%bb%e7%bb%93" class="header-mark"></a>总结</h2><p><code>sync.Map</code>的源码并不长，但是里面的很多细节都非常的考究，比如对于原子和锁的使用、利用状态机的变化标记来代替 map 的 delete
 从而提高性能和安全性等等。</p>
-<h2 id="参考">参考</h2>
-<ul>
-<li><a href="https://view.inews.qq.com/k/20220613A08UDG00" target="_blank" rel="noopener noreffer">不得不知道的Golang之sync.Map解读！</a></li>
+<h2 id="参考" class="headerLink">
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
+<li><a href="https://view.inews.qq.com/k/20220613A08UDG00" target="_blank" rel="noopener noreferrer">不得不知道的Golang之sync.Map解读！</a></li>
 </ul>
-</div><div class="post-footer" id="post-footer">
+</div>
+
+        <div class="post-footer" id="post-footer">
     <div class="post-info">
         <div class="post-info-line">
             <div class="post-info-mod">
@@ -869,11 +908,10 @@ expungd 的状态。</p>
             <div class="post-info-license"></div>
         </div>
         <div class="post-info-line">
-            <div class="post-info-md"><span>
-                            <a class="link-to-markdown" href="/go-sync-map/index.md" target="_blank">阅读原始文档</a>
-                        </span></div>
+            <div class="post-info-md"><span><a class="link-to-mardown" href=/go-sync-map/index.md target="_blank" rel="noopener noreferrer">阅读原始文档</a>
+                    </span></div>
             <div class="post-info-share">
-                <span><a href="javascript:void(0);" title="分享到 Twitter" data-sharer="twitter" data-url="https://www.xiaobinqt.cn/go-sync-map/" data-title="Go sync.Map 解读" data-hashtags="golang"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="https://www.xiaobinqt.cn/go-sync-map/" data-hashtag="golang"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Hacker News" data-sharer="hackernews" data-url="https://www.xiaobinqt.cn/go-sync-map/" data-title="Go sync.Map 解读"><i class="fab fa-hacker-news fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Line" data-sharer="line" data-url="https://www.xiaobinqt.cn/go-sync-map/" data-title="Go sync.Map 解读"><i data-svg-src="/lib/simple-icons/icons/line.min.svg"></i></a><a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="https://www.xiaobinqt.cn/go-sync-map/" data-title="Go sync.Map 解读"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="分享到 百度" data-sharer="baidu" data-url="https://www.xiaobinqt.cn/go-sync-map/" data-title="Go sync.Map 解读"><i data-svg-src="/lib/simple-icons/icons/baidu.min.svg"></i></a></span>
+                <span><a href="#" onclick="return false;" title="分享到 Twitter" data-sharer="twitter" data-url="https://www.xiaobinqt.cn/go-sync-map/" data-title="Go sync.Map 解读" data-hashtags="golang"><i class="fab fa-twitter fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Facebook" data-sharer="facebook" data-url="https://www.xiaobinqt.cn/go-sync-map/" data-hashtag="golang"><i class="fab fa-facebook-square fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Hacker News" data-sharer="hackernews" data-url="https://www.xiaobinqt.cn/go-sync-map/" data-title="Go sync.Map 解读"><i class="fab fa-hacker-news fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Line" data-sharer="line" data-url="https://www.xiaobinqt.cn/go-sync-map/" data-title="Go sync.Map 解读"><i data-svg-src="/lib/simple-icons/icons/line.min.svg"></i></a><a href="#" onclick="return false;" title="分享到 微博" data-sharer="weibo" data-url="https://www.xiaobinqt.cn/go-sync-map/" data-title="Go sync.Map 解读"><i class="fab fa-weibo fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 百度" data-sharer="baidu" data-url="https://www.xiaobinqt.cn/go-sync-map/" data-title="Go sync.Map 解读"><i data-svg-src="/lib/simple-icons/icons/baidu.min.svg"></i></a></span>
             </div>
         </div>
     </div>
@@ -885,21 +923,28 @@ expungd 的状态。</p>
         </section>
     </div>
 
-    <div class="post-nav"><a target="_blank" href="/highly-concurrent-architecture-evolution/" class="prev" rel="prev" title="高并发分布式架构演进"><i class="fas fa-angle-left fa-fw"></i>高并发分布式架构演进</a>
-            <a target="_blank" href="/old-pal/" class="next" rel="next" title="纪念一位老友">纪念一位老友<i class="fas fa-angle-right fa-fw"></i></a></div>
+    <div class="post-nav"><a href="/highly-concurrent-architecture-evolution/" class="prev" rel="prev" title="高并发分布式架构演进"><i class="fas fa-angle-left fa-fw"></i>高并发分布式架构演进</a>
+            <a href="/old-pal/" class="next" rel="next" title="纪念一位老友">纪念一位老友<i class="fas fa-angle-right fa-fw"></i></a></div>
 </div>
 <div id="comments"><div id="gitalk" class="comment"></div><noscript>
                 Please enable JavaScript to view the comments powered by <a href="https://github.com/gitalk/gitalk"></a>Gitalk</a>.
             </noscript></div></article></div>
-            </main><footer class="footer">
+        </main><footer class="footer">
         <div class="footer-container"><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2018 - 2022</span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
-        </div>
-    </footer></div>
+            <div class="footer-line"></div>
+            <div class="footer-line">
+            </div>
+        </div></footer></div>
 
-        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
-                <i class="fas fa-arrow-up fa-fw"></i>
-            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
-                <i class="fas fa-comment fa-fw"></i>
-            </a>
-        </div><link rel="stylesheet" href="/lib/gitalk/gitalk.min.css"><link rel="stylesheet" href="/lib/lightgallery/lightgallery.min.css"><script type="text/javascript" src="/lib/gitalk/gitalk.min.js"></script><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="/lib/algoliasearch/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lightgallery.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-thumbnail.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-zoom.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"gitalk":{"admin":["xiaobinqt"],"clientID":"47b15de6c2d8a0f8d707","clientSecret":"c70556c8b3a3b38ea7c72e539ff3b37d5bc1b4f3","id":"426f6dd240f98ab89de296a81fbb6c0c","owner":"xiaobinqt","repo":"xiaobinqt.github.io","title":"Go sync.Map 解读"}},"lightGallery":{"actualSize":false,"exThumbImage":"data-thumbnail","hideBarsDelay":2000,"selector":".lightgallery","speed":400,"thumbContHeight":80,"thumbWidth":80,"thumbnail":true},"search":{"algoliaAppID":"CPNWIDNX0Y","algoliaIndex":"xiaobinqt.io","algoliaSearchKey":"80b84de0ebc766371dd27cd3e651c41e","highlightTag":"em","maxResultLength":20,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+    <div id="fixed-buttons"><a href="#back-to-top" id="back-to-top-button" class="fixed-button" title="回到顶部">
+            <i class="fas fa-arrow-up fa-fw"></i>
+        </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+            <i class="fas fa-comment fa-fw"></i>
+        </a>
+    </div><div class="assets"><script type="text/javascript" src="/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="/lib/algoliasearch/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/topbar/topbar.min.js"></script><script type="text/javascript" src="/lib/pjax/pjax.min.js"></script><script type="text/javascript" src="/js/theme.min.js" defer></script></div>
+
+<div class="pjax-assets"><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"gitalk":{"admin":["xiaobinqt"],"clientID":"47b15de6c2d8a0f8d707","clientSecret":"c70556c8b3a3b38ea7c72e539ff3b37d5bc1b4f3","id":"2022-09-14T00:00:00Z","owner":"xiaobinqt","repo":"xiaobinqt.github.io","title":"Go sync.Map 解读"}},"lightGallery":{"actualSize":false,"exThumbImage":"data-thumbnail","hideBarsDelay":2000,"selector":".lightgallery","speed":400,"thumbContHeight":80,"thumbWidth":80,"thumbnail":true},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"algoliaAppID":"CPNWIDNX0Y","algoliaIndex":"xiaobinqt.io","algoliaSearchKey":"80b84de0ebc766371dd27cd3e651c41e","highlightTag":"em","maxResultLength":20,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"},"sharerjs":true};</script><script type="text/javascript" src="/lib/gitalk/gitalk.min.js"></script><script type="text/javascript" src="/js/gitalk.min.js" defer></script><script type="text/javascript" src="/lib/lightgallery/lightgallery.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-thumbnail.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-zoom.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript" src="/lib/katex/katex.min.js" defer></script><script type="text/javascript" src="/lib/katex/auto-render.min.js" defer></script><script type="text/javascript" src="/lib/katex/copy-tex.min.js" defer></script><script type="text/javascript" src="/lib/katex/mhchem.min.js" defer></script><script type="text/javascript" src="/js/katex.min.js" defer></script><link rel="stylesheet" href="/lib/gitalk/gitalk.min.css"><link rel="stylesheet" href="/lib/lightgallery/lightgallery.min.css"><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/katex/copy-tex.min.css">
+        <noscript><link rel="stylesheet" href="/lib/katex/copy-tex.min.css"></noscript></div>
+</body>
+
 </html>

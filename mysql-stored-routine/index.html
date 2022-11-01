@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="robots" content="noodp" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
-        <title>mysql 存储程序 - xiaobinqt 博客 - 技术改变生活</title><meta name="Description" content="xiaobinqt,mysql 存储程序,mysql 存储函数,存储过程,触发器,事件,mysql 游标,什么是游标,mysql 局部变量和自定义变量">
-<meta name="keywords" content="xiaobinqt, 萧十一郎, php, golang, go,服务器相关, Laravel5.5&#43;/Lumen, linux, php, mysql, redis, go领域, python" /><meta property="og:title" content="mysql 存储程序" />
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noodp" />
+    <title class="pjax-title">mysql 存储程序 - xiaobinqt 博客 - 技术改变生活</title><meta name="Description" content="xiaobinqt,mysql 存储程序,mysql 存储函数,存储过程,触发器,事件,mysql 游标,什么是游标,mysql 局部变量和自定义变量"><meta property="og:title" content="mysql 存储程序" />
 <meta property="og:description" content="xiaobinqt,mysql 存储程序,mysql 存储函数,存储过程,触发器,事件,mysql 游标,什么是游标,mysql 局部变量和自定义变量" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://www.xiaobinqt.cn/mysql-stored-routine/" /><meta property="og:image" content="https://www.xiaobinqt.cn/logo.png"/><meta property="article:section" content="posts" />
@@ -19,11 +18,14 @@
 <meta name="twitter:title" content="mysql 存储程序"/>
 <meta name="twitter:description" content="xiaobinqt,mysql 存储程序,mysql 存储函数,存储过程,触发器,事件,mysql 游标,什么是游标,mysql 局部变量和自定义变量"/>
 <meta name="application-name" content="xiaobinqt">
-<meta name="apple-mobile-web-app-title" content="xiaobinqt"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c">
-<link rel="stylesheet" href="//at.alicdn.com/t/font_3267767_dz25dtwdgdc.css">
-<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+<meta name="apple-mobile-web-app-title" content="xiaobinqt">
+
+<meta name="theme-color" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c">
+<link rel="stylesheet" href="//at.alicdn.com/t/font_3267767_dz25dtwdgdc.css"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://www.xiaobinqt.cn/mysql-stored-routine/" /><link rel="prev" href="https://www.xiaobinqt.cn/linux-platform-install-go/" /><link rel="next" href="https://www.xiaobinqt.cn/what-is-https/" /><link rel="stylesheet" href="/lib/md5/md5.min.js"><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><meta name="google-site-verification" content="hFkClWMTOtPBuE0lQaXNiNb707E7P6O2CwexZoSm3VQ" /><meta name="msvalidate.01" content="A961D393878F86E04112E1198500FDBD" /><meta name="baidu-site-verification" content="code-cMh5ORsrP2" /><script type="application/ld+json">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://www.xiaobinqt.cn/mysql-stored-routine/" /><link rel="prev" href="https://www.xiaobinqt.cn/linux-platform-install-go/" /><link rel="next" href="https://www.xiaobinqt.cn/what-is-https/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/fontawesome-free/all.min.css">
+        <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/animate/animate.min.css">
+        <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><meta name="google-site-verification" content="hFkClWMTOtPBuE0lQaXNiNb707E7P6O2CwexZoSm3VQ" /><meta name="msvalidate.01" content="A961D393878F86E04112E1198500FDBD" /><meta name="baidu-site-verification" content="code-cMh5ORsrP2" /><script type="application/ld+json">
     {
         "@context": "http://schema.org",
         "@type": "BlogPosting",
@@ -46,29 +48,36 @@
             },"description": "xiaobinqt,mysql 存储程序,mysql 存储函数,存储过程,触发器,事件,mysql 游标,什么是游标,mysql 局部变量和自定义变量"
     }
     </script></head>
-    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
 
-        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+<body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">
+        function setTheme(theme) {document.body.setAttribute('theme', theme); document.documentElement.style.setProperty('color-scheme', theme === 'light' ? 'light' : 'dark');}
+        function saveTheme(theme) {window.localStorage && localStorage.setItem('theme', theme);}
+        function getMeta(metaName) {const metas = document.getElementsByTagName('meta'); for (let i = 0; i < metas.length; i++) if (metas[i].getAttribute('name') === metaName) return metas[i]; return '';}
+        if (window.localStorage && localStorage.getItem('theme')) {let theme = localStorage.getItem('theme');theme === 'light' || theme === 'dark' || theme === 'black' ? setTheme(theme) : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? setTheme('dark') : setTheme('light')); } else { if ('auto' === 'light' || 'auto' === 'dark' || 'auto' === 'black') setTheme('auto'), saveTheme('auto'); else saveTheme('auto'), window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? setTheme('dark') : setTheme('light');}
+        let metaColors = {'light': '#f8f8f8','dark': '#252627','black': '#000000'}
+        getMeta('theme-color').content = metaColors[document.body.getAttribute('theme')];
+    </script>
+    <div id="back-to-top"></div>
+    <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
     <div class="header-wrapper">
         <div class="header-title">
             <a href="/" title="xiaobinqt 博客 - 技术改变生活"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>萧十一郎</a>
         </div>
         <div class="menu">
-            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/about/"> 关于 </a><a class="menu-item" href="/memo/"> 收藏夹 </a><a class="menu-item" href="/links/"> 友链 </a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/about/"> 关于 </a><a class="menu-item" href="/memo/"> 收藏夹 </a><a class="menu-item" href="/links/"> 友链 </a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" rel="noopener noreferrer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
                         <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
-                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                        <a href="#" onclick="return false;" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
                             <i class="fas fa-search fa-fw"></i>
                         </a>
-                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                        <a href="#" onclick="return false;" class="search-button search-clear" id="search-clear-desktop" title="清空">
                             <i class="fas fa-times-circle fa-fw"></i>
                         </a>
                         <span class="search-button search-loading" id="search-loading-desktop">
                             <i class="fas fa-spinner fa-fw fa-spin"></i>
                         </span>
-                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    </span><a href="#" onclick="return false;" class="menu-item theme-switch" title="切换主题">
                     <i class="fas fa-adjust fa-fw"></i>
-                </a>
-            </div>
+                </a></div>
         </div>
     </div>
 </header><header class="mobile" id="header-mobile">
@@ -84,20 +93,20 @@
         <div class="menu" id="menu-mobile"><div class="search-wrapper">
                     <div class="search mobile" id="search-mobile">
                         <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
-                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                        <a href="#" onclick="return false;" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
                             <i class="fas fa-search fa-fw"></i>
                         </a>
-                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                        <a href="#" onclick="return false;" class="search-button search-clear" id="search-clear-mobile" title="清空">
                             <i class="fas fa-times-circle fa-fw"></i>
                         </a>
                         <span class="search-button search-loading" id="search-loading-mobile">
                             <i class="fas fa-spinner fa-fw fa-spin"></i>
                         </span>
                     </div>
-                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                    <a href="#" onclick="return false;" class="search-cancel" id="search-cancel-mobile">
                         取消
                     </a>
-                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/about/" title="">关于</a><a class="menu-item" href="/memo/" title="">收藏夹</a><a class="menu-item" href="/links/" title="">友链</a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/about/" title="">关于</a><a class="menu-item" href="/memo/" title="">收藏夹</a><a class="menu-item" href="/links/" title="">友链</a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" rel="noopener noreferrer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a href="#" onclick="return false;" class="menu-item theme-switch" title="切换主题">
                 <i class="fas fa-adjust fa-fw"></i>
             </a></div>
     </div>
@@ -109,12 +118,48 @@
     <div id="search-dropdown-mobile"></div>
 </div>
 <main class="main">
-                <div class="container"><div class="toc" id="toc-auto">
-            <h2 class="toc-title">目录</h2>
-            <div class="toc-content" id="toc-content-auto"></div>
-        </div><article class="page single"><h1 class="single-title animated flipInX">mysql 存储程序</h1><div class="post-meta">
-            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>xiaobinqt</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/mysql/"><i class="far fa-folder fa-fw"></i>mysql</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-10-08">2020-10-08</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 3403 字&nbsp;
+            <div class="container"><div class="toc" id="toc-auto">
+        <h2 class="toc-title">目录</h2>
+        <div class="toc-content always-active" id="toc-content-auto"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#总览">总览</a></li>
+    <li><a href="#存储函数">存储函数</a>
+      <ul>
+        <li><a href="#示例">示例</a></li>
+      </ul>
+    </li>
+    <li><a href="#局部变量和自定义变量">局部变量和自定义变量</a></li>
+    <li><a href="#存储过程">存储过程</a>
+      <ul>
+        <li><a href="#示例-1">示例</a></li>
+      </ul>
+    </li>
+    <li><a href="#存储过程的参数前缀">存储过程的参数前缀</a></li>
+    <li><a href="#存储过程和存储函数的区别">存储过程和存储函数的区别</a></li>
+    <li><a href="#游标">游标</a>
+      <ul>
+        <li><a href="#示例-2">示例</a></li>
+      </ul>
+    </li>
+    <li><a href="#触发器和事件">触发器和事件</a></li>
+    <li><a href="#触发器">触发器</a>
+      <ul>
+        <li><a href="#示例-3">示例</a></li>
+        <li><a href="#注意事项">注意事项</a></li>
+      </ul>
+    </li>
+    <li><a href="#事件">事件</a>
+      <ul>
+        <li><a href="#某个时间点执行">某个时间点执行</a></li>
+        <li><a href="#每隔一段时间执行">每隔一段时间执行</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+    </div><script>document.getElementsByTagName("main")[0].setAttribute("pageStyle", "normal")</script><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single"><h1 class="single-title animate__animated animate__flipInX">mysql 存储程序</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><i class="author fas fa-user-circle fa-fw"></i><a href="/" title="Author" rel=" author" class="author">xiaobinqt</a>
+                </span>&nbsp;<span class="post-category">收录于 </span>&nbsp;<span class="post-category">类别 <a href="/categories/mysql/"><i class="far fa-folder fa-fw"></i>mysql</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-10-08">2020-10-08</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2022-04-20">2022-04-20</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 3403 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 7 分钟&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
@@ -161,29 +206,27 @@
 <!-- email： xiaobinqt@163.com -->
 <!-- https://xiaobinqt.github.io -->
 <!-- https://www.xiaobinqt.cn -->
-<h2 id="总览">总览</h2>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/e92bc705bec14bcba089f2a8848359b2.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="存储程序" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/e92bc705bec14bcba089f2a8848359b2.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>存储程序</h2><p>存储程序</p>">
+<h2 id="总览" class="headerLink">
+    <a href="#%e6%80%bb%e8%a7%88" class="header-mark"></a>总览</h2><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/e92bc705bec14bcba089f2a8848359b2.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="存储程序" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/e92bc705bec14bcba089f2a8848359b2.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>存储程序</h2><p>存储程序</p>">
         <img
             class="lazyload"
-            src="/svg/loading.min.svg"
             data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/e92bc705bec14bcba089f2a8848359b2.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
             data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/e92bc705bec14bcba089f2a8848359b2.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/e92bc705bec14bcba089f2a8848359b2.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/e92bc705bec14bcba089f2a8848359b2.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
             data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/e92bc705bec14bcba089f2a8848359b2.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" />
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/e92bc705bec14bcba089f2a8848359b2.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15">
     </a><figcaption class="image-caption">存储程序</figcaption>
     </figure></p>
 <p>存储程序可以封装一些语句，然后给用户提供一种简单的方式来调用这个存储程序，从而间接地执行某些语句。根据调用方式的不同，可以把存储程序分为<code>存储例程</code>、<code>触发器</code>和<code>事件</code>，存储例程又分为<code>存储函数</code>和<code>存储过程</code>，如☝️
 上图。</p>
-<h2 id="存储函数">存储函数</h2>
-<p>存储函数<strong>只有一个返回值</strong>，可以从 mysql 内置的函数理解，所有 mysql 内置的函数都是只有一个返回值，比如：</p>
+<h2 id="存储函数" class="headerLink">
+    <a href="#%e5%ad%98%e5%82%a8%e5%87%bd%e6%95%b0" class="header-mark"></a>存储函数</h2><p>存储函数<strong>只有一个返回值</strong>，可以从 mysql 内置的函数理解，所有 mysql 内置的函数都是只有一个返回值，比如：</p>
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/b1bfc8c3ac9a45dea2dfdc1fb901e54f.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="mysql 内置函数" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/b1bfc8c3ac9a45dea2dfdc1fb901e54f.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>mysql 内置函数</h2><p>mysql 内置函数</p>">
         <img
             class="lazyload"
-            src="/svg/loading.min.svg"
             data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/b1bfc8c3ac9a45dea2dfdc1fb901e54f.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
             data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/b1bfc8c3ac9a45dea2dfdc1fb901e54f.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/b1bfc8c3ac9a45dea2dfdc1fb901e54f.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/b1bfc8c3ac9a45dea2dfdc1fb901e54f.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
             data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/b1bfc8c3ac9a45dea2dfdc1fb901e54f.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" />
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/b1bfc8c3ac9a45dea2dfdc1fb901e54f.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15">
     </a><figcaption class="image-caption">mysql 内置函数</figcaption>
     </figure></p>
 <p>存储函数很好理解，就是一个函数，跟普通函数一样有<code>函数名</code>，<code>函数体</code>，<code>参数列表</code>和<code>返回值</code>。创建存储函数语句如下：</p>
@@ -225,8 +268,8 @@
 </tr>
 </tbody>
 </table>
-<h3 id="示例">示例</h3>
-<p>现在写一个存储函数，输入用户名 <code>name</code>，返回用户手机号 <code>phone</code>：</p>
+<h3 id="示例" class="headerLink">
+    <a href="#%e7%a4%ba%e4%be%8b" class="header-mark"></a>示例</h3><p>现在写一个存储函数，输入用户名 <code>name</code>，返回用户手机号 <code>phone</code>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
@@ -251,15 +294,14 @@
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/fbbd1bb4c54341368ccda472619df5d2.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="效果" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/fbbd1bb4c54341368ccda472619df5d2.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>效果</h2><p>效果</p>">
         <img
             class="lazyload"
-            src="/svg/loading.min.svg"
             data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/fbbd1bb4c54341368ccda472619df5d2.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
             data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/fbbd1bb4c54341368ccda472619df5d2.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/fbbd1bb4c54341368ccda472619df5d2.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/fbbd1bb4c54341368ccda472619df5d2.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
             data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/fbbd1bb4c54341368ccda472619df5d2.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" />
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/fbbd1bb4c54341368ccda472619df5d2.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15">
     </a><figcaption class="image-caption">效果</figcaption>
     </figure></p>
-<h2 id="局部变量和自定义变量">局部变量和自定义变量</h2>
-<p>在存储函数中可以使用局部变量和自定义变量，二者的区别是，局部变量用 <code>DECLARE</code> 申明，不用加 <code>@</code>符，局部变量随着函数调用结束，变量销毁且只能在存储函数中使用。自定义变量需要加 <code>@</code> 符，且可以在函数外调用。</p>
+<h2 id="局部变量和自定义变量" class="headerLink">
+    <a href="#%e5%b1%80%e9%83%a8%e5%8f%98%e9%87%8f%e5%92%8c%e8%87%aa%e5%ae%9a%e4%b9%89%e5%8f%98%e9%87%8f" class="header-mark"></a>局部变量和自定义变量</h2><p>在存储函数中可以使用局部变量和自定义变量，二者的区别是，局部变量用 <code>DECLARE</code> 申明，不用加 <code>@</code>符，局部变量随着函数调用结束，变量销毁且只能在存储函数中使用。自定义变量需要加 <code>@</code> 符，且可以在函数外调用。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
@@ -287,16 +329,15 @@
 </div><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/40c4689ff9214887a6cfd46c761df53d.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="局部变量和自定义变量" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/40c4689ff9214887a6cfd46c761df53d.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>局部变量和自定义变量</h2><p>局部变量和自定义变量</p>">
         <img
             class="lazyload"
-            src="/svg/loading.min.svg"
             data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/40c4689ff9214887a6cfd46c761df53d.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
             data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/40c4689ff9214887a6cfd46c761df53d.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/40c4689ff9214887a6cfd46c761df53d.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/40c4689ff9214887a6cfd46c761df53d.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
             data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/40c4689ff9214887a6cfd46c761df53d.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" />
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/40c4689ff9214887a6cfd46c761df53d.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15">
     </a><figcaption class="image-caption">局部变量和自定义变量</figcaption>
     </figure></p>
 <p>☝️ 可知，在存储函数<code>get_phone</code>中有一个局部变量 <code>ph</code>和自定义变量 <code>@ii</code>，函数调用结束后 <code>@ii</code> 被赋值为<code>100</code> 且可以在函数执行完后访问，但是 <code>@ph</code> 是空的。</p>
-<h2 id="存储过程">存储过程</h2>
-<p>存储函数侧重于执行某些语句并<strong>返回一个值</strong>，而存储过程更侧重于单纯的去执行这些语句。存储过程的定义<strong>不需要声明返回值类型</strong>。</p>
+<h2 id="存储过程" class="headerLink">
+    <a href="#%e5%ad%98%e5%82%a8%e8%bf%87%e7%a8%8b" class="header-mark"></a>存储过程</h2><p>存储函数侧重于执行某些语句并<strong>返回一个值</strong>，而存储过程更侧重于单纯的去执行这些语句。存储过程的定义<strong>不需要声明返回值类型</strong>。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
@@ -334,8 +375,8 @@
 </tr>
 </tbody>
 </table>
-<h3 id="示例-1">示例</h3>
-<p>以下示例定义了一个 <code>my_operate</code> 的存储过程：</p>
+<h3 id="示例-1" class="headerLink">
+    <a href="#%e7%a4%ba%e4%be%8b-1" class="header-mark"></a>示例</h3><p>以下示例定义了一个 <code>my_operate</code> 的存储过程：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
@@ -359,16 +400,15 @@
 </div><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/283408a351b74a758648f47b08fa347c.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="存储过程" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/283408a351b74a758648f47b08fa347c.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>存储过程</h2><p>存储过程</p>">
         <img
             class="lazyload"
-            src="/svg/loading.min.svg"
             data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/283408a351b74a758648f47b08fa347c.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
             data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/283408a351b74a758648f47b08fa347c.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/283408a351b74a758648f47b08fa347c.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/283408a351b74a758648f47b08fa347c.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
             data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/283408a351b74a758648f47b08fa347c.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" />
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/283408a351b74a758648f47b08fa347c.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15">
     </a><figcaption class="image-caption">存储过程</figcaption>
     </figure></p>
 <p>☝️ <code>my_operate</code> 定义并执行了 4 条 sql，完美诠释了存储过程更侧重于单纯的去执行这些语句。</p>
-<h2 id="存储过程的参数前缀">存储过程的参数前缀</h2>
-<p>存储过程在定义参数的时候可以选择添加一些前缀👇，如果不写，<strong>默认的前缀是<code>IN</code></strong>：</p>
+<h2 id="存储过程的参数前缀" class="headerLink">
+    <a href="#%e5%ad%98%e5%82%a8%e8%bf%87%e7%a8%8b%e7%9a%84%e5%8f%82%e6%95%b0%e5%89%8d%e7%bc%80" class="header-mark"></a>存储过程的参数前缀</h2><p>存储过程在定义参数的时候可以选择添加一些前缀👇，如果不写，<strong>默认的前缀是<code>IN</code></strong>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
@@ -439,35 +479,33 @@
 </div><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/c792415cd0e1476eb60c2f831a4f2fa6.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="综合示例" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/c792415cd0e1476eb60c2f831a4f2fa6.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>综合示例</h2><p>综合示例</p>">
         <img
             class="lazyload"
-            src="/svg/loading.min.svg"
             data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/c792415cd0e1476eb60c2f831a4f2fa6.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
             data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/c792415cd0e1476eb60c2f831a4f2fa6.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/c792415cd0e1476eb60c2f831a4f2fa6.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/c792415cd0e1476eb60c2f831a4f2fa6.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
             data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/c792415cd0e1476eb60c2f831a4f2fa6.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" />
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/c792415cd0e1476eb60c2f831a4f2fa6.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15">
     </a><figcaption class="image-caption">综合示例</figcaption>
     </figure></p>
 <p>由☝️可以看出，虽然在存储过程中修改了 <code>pname</code> 的值为 <code>公孙胜</code>，但是并<strong>没有生效</strong>，值依然是最初的<code>宋江</code>。<code>IN</code>参数只能被用于读取，对它赋值是不会被调用者看到的。</p>
 <p><code>out</code> 参数 <code>ophone</code> 最初是空的，通过存储过程赋值成功为<code>公孙胜</code>。</p>
 <p><code>inout</code> 参数 <code>io_name</code> 最初是空的，通过存储过程赋值成功为<code>公孙胜</code>，这里如果 <code>io_name</code> 不为空，也会被修改为<code>公孙胜</code>。</p>
-<h2 id="存储过程和存储函数的区别">存储过程和存储函数的区别</h2>
-<ul>
+<h2 id="存储过程和存储函数的区别" class="headerLink">
+    <a href="#%e5%ad%98%e5%82%a8%e8%bf%87%e7%a8%8b%e5%92%8c%e5%ad%98%e5%82%a8%e5%87%bd%e6%95%b0%e7%9a%84%e5%8c%ba%e5%88%ab" class="header-mark"></a>存储过程和存储函数的区别</h2><ul>
 <li>存储函数在定义时需要显式用<code>RETURNS</code>语句标明返回的数据类型，而且在函数体中必须使用<code>RETURN</code>语句来显式指定返回的值，而存储过程不需要。</li>
 <li>存储函数只支持<code>IN</code>参数，而存储过程支持<code>IN</code>参数、<code>OUT</code>参数、和<code>INOUT</code>参数。</li>
 <li>存储函数<font style="color:red"><strong>只能返回一个值</strong></font>，而存储过程可以通过设置多个<code>OUT</code>参数或者<code>INOUT</code>参数来返回多个结果。</li>
 <li>存储函数执行过程中产生的结果集并<strong>不会</strong>被显示到客户端，而存储过程执行过程中产生的结果集<strong>会</strong>被显示到客户端。</li>
 <li>存储函数直接在表达式中调用，而存储过程只能通过<code>CALL</code>语句来显式调用。</li>
 </ul>
-<h2 id="游标">游标</h2>
-<p>游标是为了方便访问结果集中的某一条记录，可以理解成循环。如果某个结果集中有 10 条记录，使用游标后，会一条一条的去访问这 10 条记录。</p>
+<h2 id="游标" class="headerLink">
+    <a href="#%e6%b8%b8%e6%a0%87" class="header-mark"></a>游标</h2><p>游标是为了方便访问结果集中的某一条记录，可以理解成循环。如果某个结果集中有 10 条记录，使用游标后，会一条一条的去访问这 10 条记录。</p>
 <p>游标可以在存储函数和存储过程中使用。</p>
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/71873b26746f48f69a00761f46d21328.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="cursor" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/71873b26746f48f69a00761f46d21328.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>cursor</h2><p>cursor</p>">
         <img
             class="lazyload"
-            src="/svg/loading.min.svg"
             data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/71873b26746f48f69a00761f46d21328.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
             data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/71873b26746f48f69a00761f46d21328.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/71873b26746f48f69a00761f46d21328.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/71873b26746f48f69a00761f46d21328.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
             data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/71873b26746f48f69a00761f46d21328.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" />
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/71873b26746f48f69a00761f46d21328.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15">
     </a><figcaption class="image-caption">cursor</figcaption>
     </figure></p>
 <p>使用游标分为 4 步：</p>
@@ -489,8 +527,8 @@
 <pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">FETCH 游标名 INTO 变量1, 变量2, ... 变量n
 </span></span></code></pre></td></tr></table>
 </div>
-</div><h3 id="示例-2">示例</h3>
-<p>🤑以下创建一个存储过程，在存储过程中使用游标。</p>
+</div><h3 id="示例-2" class="headerLink">
+    <a href="#%e7%a4%ba%e4%be%8b-2" class="header-mark"></a>示例</h3><p>🤑以下创建一个存储过程，在存储过程中使用游标。</p>
 <p>创建游标<code>t_cursor</code>，游标执行语句为 <code>SELECT phone, name FROM t</code>。</p>
 <p><code>DECLARE CONTINUE HANDLER FOR NOT FOUND 处理语句;</code> 的作用是结果集遍历结束后会自动执行这句，这里也可以使用 <code>WHILE</code> 循环遍历，但是 <code>while</code>
 有个弊端是需要提前知道结束条件，比如结果集的总数是多少。这样写的好处是直接遍历，遍历结束自动处理，将 <code>done</code> 变量设置为 <code>1</code>，也就是说只要 <code>done = 1</code> 就说明遍历结束了，利用 <code>LEAVE</code> 关键字跳出循环。</p>
@@ -547,17 +585,16 @@
 </div><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/5dfc58f6432548ff9ce5d3dd7b5dcec4.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="执行结果" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/5dfc58f6432548ff9ce5d3dd7b5dcec4.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>执行结果</h2><p>执行结果</p>">
         <img
             class="lazyload"
-            src="/svg/loading.min.svg"
             data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/5dfc58f6432548ff9ce5d3dd7b5dcec4.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
             data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/5dfc58f6432548ff9ce5d3dd7b5dcec4.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/5dfc58f6432548ff9ce5d3dd7b5dcec4.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/5dfc58f6432548ff9ce5d3dd7b5dcec4.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
             data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/5dfc58f6432548ff9ce5d3dd7b5dcec4.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" />
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/5dfc58f6432548ff9ce5d3dd7b5dcec4.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15">
     </a><figcaption class="image-caption">执行结果</figcaption>
     </figure></p>
-<h2 id="触发器和事件">触发器和事件</h2>
-<p>存储例程是需要手动调用的，而触发器和事件是 MySQL 服务器在特定情况下自动调用的。</p>
-<h2 id="触发器">触发器</h2>
-<p>创建触发器</p>
+<h2 id="触发器和事件" class="headerLink">
+    <a href="#%e8%a7%a6%e5%8f%91%e5%99%a8%e5%92%8c%e4%ba%8b%e4%bb%b6" class="header-mark"></a>触发器和事件</h2><p>存储例程是需要手动调用的，而触发器和事件是 MySQL 服务器在特定情况下自动调用的。</p>
+<h2 id="触发器" class="headerLink">
+    <a href="#%e8%a7%a6%e5%8f%91%e5%99%a8" class="header-mark"></a>触发器</h2><p>创建触发器</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
@@ -590,8 +627,8 @@
 <li>对于<code>DELETE</code>语句设置的触发器来说，<code>OLD</code>代表删除前的记录，<code>NEW</code>无效。</li>
 <li>对于<code>UPDATE</code>语句设置的触发器来说，<code>NEW</code>代表修改后的记录，<code>OLD</code>代表修改前的记录。</li>
 </ul>
-<h3 id="示例-3">示例</h3>
-<p>🤦‍♂️以下示例，对表 <code>t</code> 创建一个 <code>my_trigger</code>触发器，表 <code>t</code> 有三个字段，<code>name</code>，<code>phone</code>，<code>my_join</code>，对于每条 <code>insert</code> 的语句，在执行 <code>insert</code>
+<h3 id="示例-3" class="headerLink">
+    <a href="#%e7%a4%ba%e4%be%8b-3" class="header-mark"></a>示例</h3><p>🤦‍♂️以下示例，对表 <code>t</code> 创建一个 <code>my_trigger</code>触发器，表 <code>t</code> 有三个字段，<code>name</code>，<code>phone</code>，<code>my_join</code>，对于每条 <code>insert</code> 的语句，在执行 <code>insert</code>
 之前判断如果
 <code>name = admin</code> 那么将即将插入的 <code>name</code> 值改为 <code>valid</code>，如果 <code>name</code> 值为<code>空</code>，将即将插入的 <code>name</code> 值改为<code>无名氏</code>，除此之外将 <code>name</code> 和 <code>phone</code> 拼接后赋给 <code>my_join</code>
 字段。</p>
@@ -628,11 +665,10 @@
 </div><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/f7108f5048cc42b9b3a4effb62dfd34c.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="示例演示" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/f7108f5048cc42b9b3a4effb62dfd34c.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>示例演示</h2><p>示例演示</p>">
         <img
             class="lazyload"
-            src="/svg/loading.min.svg"
             data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/f7108f5048cc42b9b3a4effb62dfd34c.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
             data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/f7108f5048cc42b9b3a4effb62dfd34c.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/f7108f5048cc42b9b3a4effb62dfd34c.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/f7108f5048cc42b9b3a4effb62dfd34c.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
             data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/f7108f5048cc42b9b3a4effb62dfd34c.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" />
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/f7108f5048cc42b9b3a4effb62dfd34c.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15">
     </a><figcaption class="image-caption">示例演示</figcaption>
     </figure></p>
 <table>
@@ -657,16 +693,16 @@
 </tr>
 </tbody>
 </table>
-<h3 id="注意事项">注意事项</h3>
-<ul>
+<h3 id="注意事项" class="headerLink">
+    <a href="#%e6%b3%a8%e6%84%8f%e4%ba%8b%e9%a1%b9" class="header-mark"></a>注意事项</h3><ul>
 <li>触发器内容中不能有输出结果集的语句。</li>
 <li>触发器内容中<code>NEW</code>代表记录的列的值可以被更改，<code>OLD</code>代表记录的列的值无法更改。</li>
 <li>在<code>BEFORE</code>触发器中，我们可以使用<code>SET NEW.列名 = 某个值</code>的形式来更改待插入记录或者待更新记录的某个列的值，但是这种操作不能在<code>AFTER</code>触发器中使用，因为在执行<code>AFTER</code>
 触发器的内容时记录已经被插入完成或者更新完成了。</li>
 <li>如果我们的<code>BEFORE</code>触发器内容执行过程中遇到了错误，那这个触发器对应的具体语句将无法执行；如果具体的操作语句执行过程中遇到了错误，那与它对应的<code>AFTER</code>触发器的内容将无法执行。</li>
 </ul>
-<h2 id="事件">事件</h2>
-<p>事件可以让 MySQL 服务器在某个时间点或者每隔一段时间自动地执行一些语句。</p>
+<h2 id="事件" class="headerLink">
+    <a href="#%e4%ba%8b%e4%bb%b6" class="header-mark"></a>事件</h2><p>事件可以让 MySQL 服务器在某个时间点或者每隔一段时间自动地执行一些语句。</p>
 <p>默认情况下，MySQL服务器并不会帮助我们执行事件，需要手动开启该功能：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -679,11 +715,10 @@
 </div><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220421/2892ec357bc54b3e90d1009886e36d26.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="开启事件功能" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220421/2892ec357bc54b3e90d1009886e36d26.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>开启事件功能</h2><p>开启事件功能</p>">
         <img
             class="lazyload"
-            src="/svg/loading.min.svg"
             data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220421/2892ec357bc54b3e90d1009886e36d26.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
             data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220421/2892ec357bc54b3e90d1009886e36d26.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220421/2892ec357bc54b3e90d1009886e36d26.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220421/2892ec357bc54b3e90d1009886e36d26.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
             data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220421/2892ec357bc54b3e90d1009886e36d26.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" />
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220421/2892ec357bc54b3e90d1009886e36d26.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15">
     </a><figcaption class="image-caption">开启事件功能</figcaption>
     </figure></p>
 <div class="highlight"><div class="chroma">
@@ -712,8 +747,8 @@
 </span></span><span class="line"><span class="cl">END
 </span></span></code></pre></td></tr></table>
 </div>
-</div><h3 id="某个时间点执行">某个时间点执行</h3>
-<div class="highlight"><div class="chroma">
+</div><h3 id="某个时间点执行" class="headerLink">
+    <a href="#%e6%9f%90%e4%b8%aa%e6%97%b6%e9%97%b4%e7%82%b9%e6%89%a7%e8%a1%8c" class="header-mark"></a>某个时间点执行</h3><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
@@ -733,8 +768,8 @@
 </span></span><span class="line"><span class="cl">END
 </span></span></code></pre></td></tr></table>
 </div>
-</div><h3 id="每隔一段时间执行">每隔一段时间执行</h3>
-<div class="highlight"><div class="chroma">
+</div><h3 id="每隔一段时间执行" class="headerLink">
+    <a href="#%e6%af%8f%e9%9a%94%e4%b8%80%e6%ae%b5%e6%97%b6%e9%97%b4%e6%89%a7%e8%a1%8c" class="header-mark"></a>每隔一段时间执行</h3><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
@@ -777,7 +812,9 @@
 </tr>
 </tbody>
 </table>
-</div><div class="post-footer" id="post-footer">
+</div>
+
+        <div class="post-footer" id="post-footer">
     <div class="post-info">
         <div class="post-info-line">
             <div class="post-info-mod">
@@ -786,11 +823,10 @@
             <div class="post-info-license"></div>
         </div>
         <div class="post-info-line">
-            <div class="post-info-md"><span>
-                            <a class="link-to-markdown" href="/mysql-stored-routine/index.md" target="_blank">阅读原始文档</a>
-                        </span></div>
+            <div class="post-info-md"><span><a class="link-to-mardown" href=/mysql-stored-routine/index.md target="_blank" rel="noopener noreferrer">阅读原始文档</a>
+                    </span></div>
             <div class="post-info-share">
-                <span><a href="javascript:void(0);" title="分享到 Twitter" data-sharer="twitter" data-url="https://www.xiaobinqt.cn/mysql-stored-routine/" data-title="mysql 存储程序" data-hashtags="mysql"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="https://www.xiaobinqt.cn/mysql-stored-routine/" data-hashtag="mysql"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Hacker News" data-sharer="hackernews" data-url="https://www.xiaobinqt.cn/mysql-stored-routine/" data-title="mysql 存储程序"><i class="fab fa-hacker-news fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Line" data-sharer="line" data-url="https://www.xiaobinqt.cn/mysql-stored-routine/" data-title="mysql 存储程序"><i data-svg-src="/lib/simple-icons/icons/line.min.svg"></i></a><a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="https://www.xiaobinqt.cn/mysql-stored-routine/" data-title="mysql 存储程序"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="分享到 百度" data-sharer="baidu" data-url="https://www.xiaobinqt.cn/mysql-stored-routine/" data-title="mysql 存储程序"><i data-svg-src="/lib/simple-icons/icons/baidu.min.svg"></i></a></span>
+                <span><a href="#" onclick="return false;" title="分享到 Twitter" data-sharer="twitter" data-url="https://www.xiaobinqt.cn/mysql-stored-routine/" data-title="mysql 存储程序" data-hashtags="mysql"><i class="fab fa-twitter fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Facebook" data-sharer="facebook" data-url="https://www.xiaobinqt.cn/mysql-stored-routine/" data-hashtag="mysql"><i class="fab fa-facebook-square fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Hacker News" data-sharer="hackernews" data-url="https://www.xiaobinqt.cn/mysql-stored-routine/" data-title="mysql 存储程序"><i class="fab fa-hacker-news fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Line" data-sharer="line" data-url="https://www.xiaobinqt.cn/mysql-stored-routine/" data-title="mysql 存储程序"><i data-svg-src="/lib/simple-icons/icons/line.min.svg"></i></a><a href="#" onclick="return false;" title="分享到 微博" data-sharer="weibo" data-url="https://www.xiaobinqt.cn/mysql-stored-routine/" data-title="mysql 存储程序"><i class="fab fa-weibo fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 百度" data-sharer="baidu" data-url="https://www.xiaobinqt.cn/mysql-stored-routine/" data-title="mysql 存储程序"><i data-svg-src="/lib/simple-icons/icons/baidu.min.svg"></i></a></span>
             </div>
         </div>
     </div>
@@ -802,21 +838,28 @@
         </section>
     </div>
 
-    <div class="post-nav"><a target="_blank" href="/linux-platform-install-go/" class="prev" rel="prev" title="Linux 环境下安装 Go"><i class="fas fa-angle-left fa-fw"></i>Linux 环境下安装 Go</a>
-            <a target="_blank" href="/what-is-https/" class="next" rel="next" title="透视 HTTPS">透视 HTTPS<i class="fas fa-angle-right fa-fw"></i></a></div>
+    <div class="post-nav"><a href="/linux-platform-install-go/" class="prev" rel="prev" title="Linux 环境下安装 Go"><i class="fas fa-angle-left fa-fw"></i>Linux 环境下安装 Go</a>
+            <a href="/what-is-https/" class="next" rel="next" title="透视 HTTPS">透视 HTTPS<i class="fas fa-angle-right fa-fw"></i></a></div>
 </div>
 <div id="comments"><div id="gitalk" class="comment"></div><noscript>
                 Please enable JavaScript to view the comments powered by <a href="https://github.com/gitalk/gitalk"></a>Gitalk</a>.
             </noscript></div></article></div>
-            </main><footer class="footer">
+        </main><footer class="footer">
         <div class="footer-container"><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2018 - 2022</span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
-        </div>
-    </footer></div>
+            <div class="footer-line"></div>
+            <div class="footer-line">
+            </div>
+        </div></footer></div>
 
-        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
-                <i class="fas fa-arrow-up fa-fw"></i>
-            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
-                <i class="fas fa-comment fa-fw"></i>
-            </a>
-        </div><link rel="stylesheet" href="/lib/gitalk/gitalk.min.css"><link rel="stylesheet" href="/lib/lightgallery/lightgallery.min.css"><script type="text/javascript" src="/lib/gitalk/gitalk.min.js"></script><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="/lib/algoliasearch/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lightgallery.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-thumbnail.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-zoom.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"gitalk":{"admin":["xiaobinqt"],"clientID":"47b15de6c2d8a0f8d707","clientSecret":"c70556c8b3a3b38ea7c72e539ff3b37d5bc1b4f3","id":"e39719b1834fadf14e3f4b6aa7b4468a","owner":"xiaobinqt","repo":"xiaobinqt.github.io","title":"mysql 存储程序"}},"lightGallery":{"actualSize":false,"exThumbImage":"data-thumbnail","hideBarsDelay":2000,"selector":".lightgallery","speed":400,"thumbContHeight":80,"thumbWidth":80,"thumbnail":true},"search":{"algoliaAppID":"CPNWIDNX0Y","algoliaIndex":"xiaobinqt.io","algoliaSearchKey":"80b84de0ebc766371dd27cd3e651c41e","highlightTag":"em","maxResultLength":20,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+    <div id="fixed-buttons"><a href="#back-to-top" id="back-to-top-button" class="fixed-button" title="回到顶部">
+            <i class="fas fa-arrow-up fa-fw"></i>
+        </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+            <i class="fas fa-comment fa-fw"></i>
+        </a>
+    </div><div class="assets"><script type="text/javascript" src="/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="/lib/algoliasearch/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/topbar/topbar.min.js"></script><script type="text/javascript" src="/lib/pjax/pjax.min.js"></script><script type="text/javascript" src="/js/theme.min.js" defer></script></div>
+
+<div class="pjax-assets"><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"gitalk":{"admin":["xiaobinqt"],"clientID":"47b15de6c2d8a0f8d707","clientSecret":"c70556c8b3a3b38ea7c72e539ff3b37d5bc1b4f3","id":"2020-10-08T00:00:00Z","owner":"xiaobinqt","repo":"xiaobinqt.github.io","title":"mysql 存储程序"}},"lightGallery":{"actualSize":false,"exThumbImage":"data-thumbnail","hideBarsDelay":2000,"selector":".lightgallery","speed":400,"thumbContHeight":80,"thumbWidth":80,"thumbnail":true},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"algoliaAppID":"CPNWIDNX0Y","algoliaIndex":"xiaobinqt.io","algoliaSearchKey":"80b84de0ebc766371dd27cd3e651c41e","highlightTag":"em","maxResultLength":20,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"},"sharerjs":true};</script><script type="text/javascript" src="/lib/gitalk/gitalk.min.js"></script><script type="text/javascript" src="/js/gitalk.min.js" defer></script><script type="text/javascript" src="/lib/lightgallery/lightgallery.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-thumbnail.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-zoom.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript" src="/lib/katex/katex.min.js" defer></script><script type="text/javascript" src="/lib/katex/auto-render.min.js" defer></script><script type="text/javascript" src="/lib/katex/copy-tex.min.js" defer></script><script type="text/javascript" src="/lib/katex/mhchem.min.js" defer></script><script type="text/javascript" src="/js/katex.min.js" defer></script><link rel="stylesheet" href="/lib/gitalk/gitalk.min.css"><link rel="stylesheet" href="/lib/lightgallery/lightgallery.min.css"><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/katex/copy-tex.min.css">
+        <noscript><link rel="stylesheet" href="/lib/katex/copy-tex.min.css"></noscript></div>
+</body>
+
 </html>
