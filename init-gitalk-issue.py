@@ -1,9 +1,9 @@
 import hashlib
 import json
-
-import requests
 import sys
 import time
+
+import requests
 from algoliasearch.search_client import SearchClient
 
 site_url = "https://xiaobinqt.github.io"
@@ -91,10 +91,20 @@ def get_post_titles():
 
         file_data = json.loads(file_data)
         for data in file_data:
-            key = "%s%s" % (site_url, data['uri'])
+            origin_uri = data['uri']
+            if origin_uri == "":
+                continue
+            x = origin_uri.split('#')
+            if len(x) < 1:
+                continue
+            uri = x[0]
+            if uri == "":
+                continue
+
+            key = "%s%s" % (site_url, uri)
             if key not in posts_map:
                 posts_map[key] = {
-                    "post_uri": data['uri'],
+                    "post_uri": uri,
                     "post_date": data['date'],
                     "post_title": data['title']
                 }
