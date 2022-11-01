@@ -22,8 +22,7 @@ tags: ["docker"]
 categories: ["开发者手册"]
 lightgallery: true
 
-toc:
-auto: false
+toc: true
 
 math:
 enable: true

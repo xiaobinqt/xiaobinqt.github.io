@@ -21,7 +21,7 @@ lightgallery: true
 toc: false
 
 math:
-enable: true
+    enable: true
 ---
 
 

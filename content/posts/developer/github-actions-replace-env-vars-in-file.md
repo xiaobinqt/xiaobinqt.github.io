@@ -24,7 +24,7 @@ lightgallery: true
 toc: true
 
 math:
-enable: true
+    enable: true
 ---
 
 Github Actions 是个好东西:grinning:，最近在使用的时候有个需求是，我项目不想把设置成私有的，但是有些配置又比较私密，比如 github 的 Personal access token，这种配置就不能暴露出来。

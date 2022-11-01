@@ -22,10 +22,10 @@ categories: ["golang"]
 lightgallery: true
 
 toc:
-auto: false
+    auto: false
 
 math:
-enable: true
+    enable: true
 ---
 
 [//]: # (author： xiaobinqt)

@@ -20,10 +20,10 @@ categories: ["开发者手册"]
 lightgallery: true
 
 toc:
-auto: false
+    auto: false
 
 math:
-enable: true
+    enable: true
 ---
 
 这几天在使用 google 浏览器打开公司的一个网站时，发现总是自动跳转到 https，以至于出现下面这个页面：

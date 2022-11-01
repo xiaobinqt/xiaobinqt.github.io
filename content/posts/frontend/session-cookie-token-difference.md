@@ -28,7 +28,7 @@ lightgallery: true
 toc: true
 
 math:
-enable: true
+  enable: true
 ---
 
 <!-- author： xiaobinqt -->

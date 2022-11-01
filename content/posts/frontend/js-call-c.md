@@ -22,10 +22,10 @@ categories: ["web"]
 lightgallery: true
 
 toc:
-auto: false
+  auto: false
 
 math:
-enable: true
+  enable: true
 ---
 
 最近在 node 项目开发中，有个需求是 nodeJS 需要支持调用 C 语言的函数，[node-addon-api](https://www.npmjs.com/package/node-addon-api) 可以支持这个需求。
