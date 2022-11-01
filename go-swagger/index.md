@@ -199,5 +199,5 @@ func Login(w http.ResponseWriter, r *http.Request) {
 + [https://github.com/swaggo/swag/blob/master/README_zh-CN.md](https://github.com/swaggo/swag/blob/master/README_zh-CN.md)
 + [https://www.jianshu.com/p/9313d0c5395d](https://www.jianshu.com/p/9313d0c5395d)
 + [Go embed 简明教程](https://colobu.com/2021/01/17/go-embed-tutorial/)
-+ [https://zhuanlan.zhihu.com/p/351931501](https://zhuanlan.zhihu.com/p/351931501)
++ [Go 1.16新特性-embed包及其使用](https://zhuanlan.zhihu.com/p/351931501)
 
