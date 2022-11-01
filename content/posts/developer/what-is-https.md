@@ -22,10 +22,10 @@ categories: ["理解计算机"]
 lightgallery: true
 
 toc:
-auto: false
+   auto: false
 
 math:
-enable: true
+   enable: true
 ---
 
 [//]: # (https://xiaobinqt.github.io)

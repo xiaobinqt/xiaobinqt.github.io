@@ -20,10 +20,10 @@ categories: ["开发者手册"]
 lightgallery: true
 
 toc:
-auto: false
+  auto: false
 
 math:
-enable: true
+  enable: true
 ---
 
 [//]: # (xiaobinqt.github.io)

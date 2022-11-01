@@ -18,10 +18,10 @@ categories: ["golang"]
 lightgallery: true
 
 toc:
-auto: false
+    auto: false
 
 math:
-enable: true
+    enable: true
 ---
 
 ## 进程、线程、协程的区别

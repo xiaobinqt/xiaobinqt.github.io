@@ -20,10 +20,10 @@ categories: ["开发者手册"]
 lightgallery: true
 
 toc:
-auto: false
+    auto: false
 
 math:
-enable: true
+    enable: true
 ---
 
 最近在使用 hugo algolia 时，在 github actions 同步索引到 algolia 时总是出现这样的错误：

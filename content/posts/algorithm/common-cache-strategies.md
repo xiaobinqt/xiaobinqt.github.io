@@ -21,8 +21,7 @@ categories: ["算法与数学"]
 
 lightgallery: true
 
-toc:
-auto: false
+toc: true
 
 math:
 enable: true

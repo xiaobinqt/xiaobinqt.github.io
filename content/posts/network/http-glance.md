@@ -19,10 +19,10 @@ categories: ["理解计算机"]
 lightgallery: true
 
 toc:
-auto: false
+    auto: false
 
 math:
-enable: true
+    enable: true
 ---
 
 该笔记是在学习《透视 HTTP 协议》时整理，还参考了网上的其他资料。鄙人只是网络世界的搬运整理工:joy:。
