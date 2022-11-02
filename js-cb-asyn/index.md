@@ -79,11 +79,9 @@ p1.then(function (res) {
 
 async 函数是非常新的语法功能，在 ES7 中可用。
 
-async 函数返回一个 Promise 对象，可以使用 then 方法添加回调函数。await 作为修饰符，只能放在 async 内部使用。 当函数执行的时候，一旦遇到 await
-就会先返回，等到触发的异步操作完成，再接着执行函数体内后面的语句。
+async 函数返回一个 Promise 对象，可以使用 then 方法添加回调函数。await 作为修饰符，只能放在 async 内部使用。 当函数执行的时候，一旦遇到 await 就会先返回，等到触发的异步操作完成，再接着执行函数体内后面的语句。
 
-await 等待右侧表达式的结果。 如果等到的不是一个 promise 对象，那 await 表达式的运算结果就是它等到的东西。 如果它等到的是一个 promise 对象，它会阻塞后面的代码，等着 promise 对象
-resolve，然后得到 resolve 的值，作为 await 表达式的运算结果。
+await 等待右侧表达式的结果。 如果等到的不是一个 promise 对象，那 await 表达式的运算结果就是它等到的东西。 如果它等到的是一个 promise 对象，它会阻塞后面的代码，等着 promise 对象 resolve，然后得到 resolve 的值，作为 await 表达式的运算结果。
 
 ```javascript
 async function test() {
