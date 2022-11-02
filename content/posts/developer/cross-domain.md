@@ -21,11 +21,9 @@ tags: ["web"]
 categories: ["web"]
 lightgallery: true
 
-toc:
-    auto: false
+toc: true
 
-math:
-    enable: true
+math: true
 ---
 
 <!-- author： xiaobinqt -->

@@ -19,11 +19,9 @@ tags: ["network"]
 categories: ["理解计算机"]
 lightgallery: true
 
-toc:
-    auto: false
+toc: true
 
-math:
-    enable: true
+math: true
 ---
 
 ## 概述

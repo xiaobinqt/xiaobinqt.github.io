@@ -21,11 +21,9 @@ tags: ["golang"]
 categories: ["golang"]
 lightgallery: true
 
-toc:
-    auto: false
+toc: true
 
-math:
-    enable: true
+math: true
 ---
 
 [//]: # (featuredImage: "https://cdn.xiaobinqt.cn/xiaobinqt.io/20220406/ce3a3b5e36c143cbbe589984ae467c4f.png")

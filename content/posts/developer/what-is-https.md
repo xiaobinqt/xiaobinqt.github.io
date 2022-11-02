@@ -21,11 +21,9 @@ tags: ["http/https","SSL","TLS"]
 categories: ["理解计算机"]
 lightgallery: true
 
-toc:
-   auto: false
+toc: true
 
-math:
-   enable: true
+math: true
 ---
 
 [//]: # (https://xiaobinqt.github.io)

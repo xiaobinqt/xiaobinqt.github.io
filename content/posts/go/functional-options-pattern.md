@@ -21,11 +21,9 @@ tags: ["golang"]
 categories: ["golang"]
 lightgallery: true
 
-toc:
-    auto: false
+toc: true
 
-math:
-    enable: true
+math: true
 ---
 
 Go 语言没有构造函数，一般通过定义 New 函数来充当构造函数。但是，如果结构有较多字段，要初始化这些字段，就有很多种方式，有一种方式被认为是最优雅的，就是函数式选项模式（Functional Options Pattern）。

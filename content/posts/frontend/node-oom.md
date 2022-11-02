@@ -18,12 +18,9 @@ tags: ["web","node"]
 categories: ["web"]
 lightgallery: true
 
-toc:
-  enable: false
-  auto: false
+toc: true
 
-math:
-  enable: true
+math: true
 ---
 
 

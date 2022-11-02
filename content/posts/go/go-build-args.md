@@ -18,11 +18,9 @@ tags: ["golang"]
 categories: ["golang"]
 lightgallery: true
 
-toc:
-  auto: false
+toc: true
 
-math:
-  enable: true
+math: true
 ---
 
 ## 常用编译参数
