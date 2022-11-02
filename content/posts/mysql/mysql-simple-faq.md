@@ -1,40 +1,32 @@
 ---
-title: "mysql 常见问题"
-subtitle: "Mysql FAQ"
+{
+"title": "mysql 常见问题",
+"subtitle": "Mysql FAQ",
+"init_date": "2022-04-19T11:41:51+08:00",
+"date": "2019-10-03T00:00:00.000Z",
+"lastmod": "2022-04-20T00:00:00.000Z",
+"draft": false,
+"author": "xiaobinqt",
+"description": "xiaobinqt, mysql 常见问题,主键和 unique 的区别,什么是 mysql 结束符,什么是 mysql 外键,什么是
+ZEROFILL显示宽度,limit offset 的区别,mysql 判断语句,mysql 循环语句,mysql DUPLICATE KEY UPDATE 用法,mysql 变量",
+"featuredImage": "",
+"reproduce": false,
+"tags": [
+"mysql"
+],
+"categories": [
+"mysql"
+],
+"lightgallery": true,
+"toc": true,
+"math": true
+}
 
-init_date: "2022-04-19T11:41:51+08:00"
-
-date: 2019-10-03
-
-lastmod: 2022-04-20
-
-draft: false
-
-author: "xiaobinqt"
-description: "xiaobinqt, mysql 常见问题,主键和 unique 的区别,什么是 mysql 结束符,什么是 mysql 外键,什么是 ZEROFILL
-显示宽度,limit offset 的区别,mysql
-判断语句,mysql 循环语句,mysql DUPLICATE KEY UPDATE 用法,mysql 变量"
-
-featuredImage: ""
-
-reproduce: false
-
-tags: ["mysql"]
-categories: ["mysql"]
-lightgallery: true
-
-toc:
-  auto: false
-
-math:
-  enable: true
 ---
+
 <!-- author： xiaobinqt -->
-
 <!-- email： xiaobinqt@163.com -->
-
 <!-- https://xiaobinqt.github.io -->
-
 <!-- https://www.xiaobinqt.cn -->
 
 ## 主键和 `UNIQUE` 的区别
@@ -537,6 +529,17 @@ log状态改为commit）
 
 > 幻读是对自己来说的，比如，事务 A 在对表中多行数据进行修改，将性别「男、女」改为「0、1」，此时事务 B 又插入了一条性别为男的数据，
 > 当事务 A 提交后，再次查询表时，会发现表中依旧存在一条性别为男的数据。
+
+不可重复读：指在一个事务中，多次读取同一数据，先后读取到的数据不一致。
+
+> 事务 A 执行下单业务时，因为添加物流信息的时候出错了，导致整个事务回滚，事务回滚完成后，事务 A 就结束了。但事务 B 却并未结束，在事务
+> B 中，在事务 A 执行时读取了一次剩余库存，然后在事务 A 回滚后又读取了一次剩余库存，仔细想想：B 事务第一次读到的剩余库存是扣减之后的，第二次读到
+> 的剩余库存则是扣减之前的（因为 A 事务回滚又加回去了），导致两次读取的数据不一致，这就是不可重复读。
+
+作者：竹子爱熊猫
+链接：https://juejin.cn/post/7152765784299667487
+来源：稀土掘金
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
 
 ### 事务的隔离级别
 
