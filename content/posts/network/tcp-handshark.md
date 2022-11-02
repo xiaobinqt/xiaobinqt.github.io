@@ -21,11 +21,9 @@ tags: ["tcp"]
 categories: ["理解计算机"]
 lightgallery: true
 
-toc:
-  auto: false
+toc: true
 
-math:
-  enable: true
+math: true
 ---
 
 ## 名词解释

@@ -18,11 +18,9 @@ tags: ["golang"]
 categories: ["golang"]
 lightgallery: true
 
-toc:
-  auto: false
+toc: true
 
-math:
-  enable: true
+math: true
 ---
 
 + make 的作用是初始化内置的数据结构，也就是 `slice`、`map`和 `channel`。

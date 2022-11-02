@@ -21,11 +21,9 @@ tags: ["mysql"]
 categories: ["mysql"]
 lightgallery: true
 
-toc:
-    auto: false
+toc: true
 
-math:
-    enable: true
+math: true
 ---
 
 <!-- author： xiaobinqt -->
