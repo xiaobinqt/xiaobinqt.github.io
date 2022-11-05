@@ -15,7 +15,7 @@ description: ""
 lightgallery: true
 
 tags: ["生活"]
-categories: ["读书与生活"]
+categories: ["随笔"]
 lightgallery: true
 
 toc: false
