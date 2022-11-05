@@ -56,6 +56,7 @@
 + [learn git branching](https://learngitbranching.js.org/?locale=zh_CN)
 + [navicat premium15破解教程](http://www.downcc.com/soft/430673.html)
 + [Bit Calculator](https://www.matisse.net/bitcalc/)
++ [YouTube Video Download](https://en.savefrom.net/1-youtube-video-downloader-394/)
 
 ## 资料库
 
