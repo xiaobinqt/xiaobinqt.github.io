@@ -218,11 +218,23 @@ math: true
 
 ## 相关视频
 
-{{< youtube ckLg6R3638I >}}
+[我不做近視雷射手術的原因? 該擔心後遺症嗎? Smile全飛秒是什麼? | 蒼藍鴿聊醫學EP179](https://www.youtube.com/watch?v=ckLg6R3638I&ab_channel=%E8%92%BC%E8%97%8D%E9%B4%BF%E7%9A%84%E9%86%AB%E5%AD%B8%E5%A4%A9%E5%9C%B0)
+
+<video width="100%" height="100%" controls>
+  <source src="https://cdn.xiaobinqt.cn/%E6%88%91%E4%B8%8D%E5%81%9A%E8%BF%91%E8%A6%96%E9%9B%B7%E5%B0%84%E6%89%8B%E8%A1%93%E7%9A%84%E5%8E%9F%E5%9B%A0_%20%E8%A9%B2%E6%93%94%E5%BF%83%E5%BE%8C%E9%81%BA%E7%97%87%E5%97%8E_%20Smile%E5%85%A8%E9%A3%9B%E7%A7%92%E6%98%AF%E4%BB%80%E9%BA%BC_%20_%20%E8%92%BC%E8%97%8D%E9%B4%BF%E8%81%8A%E9%86%AB%E5%AD%B8EP179.mp4" type="video/mp4">
+</video>
+
+[//]: # ({{< youtube ckLg6R3638I >}})
 
 <br/>
 
-{{< youtube xLWVj5uOJPM >}}
+[//]: # ({{< youtube xLWVj5uOJPM >}})
+
+[眼睛裡面是什麼樣的呢](https://www.youtube.com/watch?v=xLWVj5uOJPM&ab_channel=%E4%BA%AE%E7%94%9F%E6%B4%BB%2FBrightSide)
+
+<video width="100%" height="100%" controls>
+  <source src="https://cdn.xiaobinqt.cn/%E7%9C%BC%E7%9D%9B%E8%A3%A1%E9%9D%A2%E6%98%AF%E4%BB%80%E9%BA%BC%E6%A8%A3%E7%9A%84%E5%91%A2.mp4" type="video/mp4">
+</video>
 
 ## 关于我
 
