@@ -236,6 +236,14 @@ math: true
 
 [//]: # (## 工具)
 
+## 是否可以通过训练逆转近视
+
+[近视，一个可以逆转的现代疾病！](https://www.youtube.com/watch?v=mYQ_5t8vf14&ab_channel=%E8%B6%A3%E5%91%B3%E7%A7%91%E6%99%AE%E4%BA%BA%E6%96%87)
+
+<video width="100%" height="100%" controls>
+  <source src="https://cdn.xiaobinqt.cn/videoplayback.mp4" type="video/mp4">
+</video>
+
 ## 相关视频
 
 1. [我不做近視雷射手術的原因? 該擔心後遺症嗎? Smile全飛秒是什麼? | 蒼藍鴿聊醫學EP179](https://www.youtube.com/watch?v=ckLg6R3638I&ab_channel=%E8%92%BC%E8%97%8D%E9%B4%BF%E7%9A%84%E9%86%AB%E5%AD%B8%E5%A4%A9%E5%9C%B0)
