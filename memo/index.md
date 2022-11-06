@@ -57,6 +57,7 @@
 + [navicat premium15破解教程](http://www.downcc.com/soft/430673.html)
 + [Bit Calculator](https://www.matisse.net/bitcalc/)
 + [YouTube Video Download](https://en.savefrom.net/1-youtube-video-downloader-394/)
++ [冷熊简历](https://cv.ftqq.com/#)
 
 ## 资料库
 
