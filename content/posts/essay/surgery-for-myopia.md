@@ -278,7 +278,7 @@ math: true
 
 ![凝光术](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221105/673cf5c0b2184f9d97eff7d4a3cab611.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '凝光术')
 
-最近我又挂了协和的一个专家号，想再去检查下，其实这几天查了一些资料，包括跟朋友的交流，不知道为啥，我对做手术的欲望已经不是很大了:joy:。
+其实这几天查了一些资料，包括跟朋友的交流，不知道为啥，我对做手术的欲望已经不是很大了，甚至觉得可以通过一些锻炼来恢复自己的视力，:joy: 个人觉得理论上，只要反向训，就可以恢复视力，但是这个过程可能会很漫长:see_no_evil:。
 
 ## 参考
 
@@ -289,3 +289,4 @@ math: true
 + [近视手术靠谱吗？只是能矫正，但无法根治近视](https://tech.sina.com.cn/scientist/2019-07-04/doc-ihytcitk9574179.shtml)
 + [近视手术中的角膜瓣是什么](https://zhuanlan.zhihu.com/p/102476044)
 + [飞蚊症](https://www.mayoclinic.org/zh-hans/diseases-conditions/eye-floaters/symptoms-causes/syc-20372346)
++ [近视真的可以自愈吗？](https://zhuanlan.zhihu.com/p/441747388)
