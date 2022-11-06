@@ -245,11 +245,11 @@
 
 ![我的暗瞳](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221103/e4722c3129314d5487d52c5b6097e1af.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '我的暗瞳')
 
-而且我眼底也有问题，做个次全视网膜凝光术。
+而且我眼底也有问题，做过次全视网膜凝光术。
 
 ![凝光术](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221105/673cf5c0b2184f9d97eff7d4a3cab611.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '凝光术')
 
-其实这几天查了一些资料，包括跟朋友的交流，不知道为啥，我对做手术的欲望已经不是很大了，甚至觉得可以通过一些锻炼来恢复自己的视力，:joy: 个人觉得理论上，只要反向训，就可以恢复视力，但是这个过程可能会很漫长:see_no_evil:。
+其实这几天查了一些资料，包括跟朋友的交流，不知道为啥，我对做手术的欲望已经不是很大了，甚至觉得可以通过一些锻炼来恢复自己的视力，:joy: 个人觉得理论上，只要反向训练，就可以恢复视力，但是这个过程可能会很漫长:see_no_evil:。
 
 ## 参考
 
