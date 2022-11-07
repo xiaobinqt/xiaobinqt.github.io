@@ -10,7 +10,7 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://www.xiaobinqt.cn/mysql-simple-faq/" /><meta property="og:image" content="https://www.xiaobinqt.cn/logo.png"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2019-10-03T00:00:00+00:00" />
-<meta property="article:modified_time" content="2022-11-05T15:29:43+08:00" />
+<meta property="article:modified_time" content="2022-11-07T15:21:28+08:00" />
 
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://www.xiaobinqt.cn/logo.png"/>
@@ -34,8 +34,8 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/www.xiaobinqt.cn\/mysql-simple-faq\/"
-        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "mysql","wordcount":  6668 ,
-        "url": "https:\/\/www.xiaobinqt.cn\/mysql-simple-faq\/","datePublished": "2019-10-03T00:00:00+00:00","dateModified": "2022-11-05T15:29:43+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "mysql","wordcount":  6985 ,
+        "url": "https:\/\/www.xiaobinqt.cn\/mysql-simple-faq\/","datePublished": "2019-10-03T00:00:00+00:00","dateModified": "2022-11-07T15:21:28+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "xxxx","logo": {
                     "@type": "ImageObject",
@@ -196,11 +196,16 @@
         <li><a href="#事务的-acid-原则">事务的 ACID 原则</a></li>
         <li><a href="#两阶段提交">两阶段提交</a></li>
         <li><a href="#脏读幻读不可重复读">脏读、幻读、不可重复读</a></li>
+        <li><a href="#脏写问题">脏写问题</a></li>
         <li><a href="#事务的隔离级别">事务的隔离级别</a></li>
       </ul>
     </li>
-    <li><a href="#死锁">死锁</a>
+    <li><a href="#锁">锁</a>
       <ul>
+        <li><a href="#共享锁">共享锁</a></li>
+        <li><a href="#排他锁">排他锁</a></li>
+        <li><a href="#间隙锁与临键锁">间隙锁与临键锁</a></li>
+        <li><a href="#死锁">死锁</a></li>
         <li><a href="#如何避免死锁的产生">如何避免死锁的产生</a></li>
       </ul>
     </li>
@@ -210,7 +215,7 @@
     </div><script>document.getElementsByTagName("main")[0].setAttribute("pageStyle", "normal")</script><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single"><h1 class="single-title animate__animated animate__flipInX">mysql 常见问题</h1><h2 class="single-subtitle">Mysql FAQ</h2><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><i class="author fas fa-user-circle fa-fw"></i><a href="/" title="Author" rel=" author" class="author">xiaobinqt</a>
                 </span>&nbsp;<span class="post-category">收录于 </span>&nbsp;<span class="post-category">类别 <a href="/categories/mysql/"><i class="far fa-folder fa-fw"></i>mysql</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2019-10-03">2019-10-03</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2022-11-05">2022-11-05</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 6668 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2019-10-03">2019-10-03</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2022-11-07">2022-11-07</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 6985 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 14 分钟&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
@@ -293,11 +298,16 @@
         <li><a href="#事务的-acid-原则">事务的 ACID 原则</a></li>
         <li><a href="#两阶段提交">两阶段提交</a></li>
         <li><a href="#脏读幻读不可重复读">脏读、幻读、不可重复读</a></li>
+        <li><a href="#脏写问题">脏写问题</a></li>
         <li><a href="#事务的隔离级别">事务的隔离级别</a></li>
       </ul>
     </li>
-    <li><a href="#死锁">死锁</a>
+    <li><a href="#锁">锁</a>
       <ul>
+        <li><a href="#共享锁">共享锁</a></li>
+        <li><a href="#排他锁">排他锁</a></li>
+        <li><a href="#间隙锁与临键锁">间隙锁与临键锁</a></li>
+        <li><a href="#死锁">死锁</a></li>
         <li><a href="#如何避免死锁的产生">如何避免死锁的产生</a></li>
       </ul>
     </li>
@@ -1140,6 +1150,8 @@
 B 中，在事务 A 执行时读取了一次剩余库存，然后在事务 A 回滚后又读取了一次剩余库存，仔细想想：B 事务第一次读到的剩余库存是扣减之后的，第二次读到
 的剩余库存则是扣减之前的（因为 A 事务回滚又加回去了），导致两次读取的数据不一致，这就是不可重复读。</p>
 </blockquote>
+<h3 id="脏写问题" class="headerLink">
+    <a href="#%e8%84%8f%e5%86%99%e9%97%ae%e9%a2%98" class="header-mark"></a>脏写问题</h3><p>参考 <a href="https://juejin.cn/post/7156111610589741063#heading-19" target="_blank" rel="noopener noreferrer">3.1、RU（Read Uncommitted）读未提交级别的实现</a></p>
 <h3 id="事务的隔离级别" class="headerLink">
     <a href="#%e4%ba%8b%e5%8a%a1%e7%9a%84%e9%9a%94%e7%a6%bb%e7%ba%a7%e5%88%ab" class="header-mark"></a>事务的隔离级别</h3><ol>
 <li>
@@ -1156,8 +1168,16 @@ B 中，在事务 A 执行时读取了一次剩余库存，然后在事务 A 回
 </li>
 </ol>
 <p>上述四个级别，越靠后并发控制度越高，也就是在多线程并发操作的情况下，出现问题的几率越小，但对应的也性能越差，MySQL 的事务隔离级别， 默认为第三级别：<code>Repeatable read</code>可重复读。</p>
-<h2 id="死锁" class="headerLink">
-    <a href="#%e6%ad%bb%e9%94%81" class="header-mark"></a>死锁</h2><p>关于死锁问题，可以参考 <a href="https://juejin.cn/post/7156111610589741063#heading-6" target="_blank" rel="noopener noreferrer">死锁检测算法 - wait-for graph</a></p>
+<h2 id="锁" class="headerLink">
+    <a href="#%e9%94%81" class="header-mark"></a>锁</h2><h3 id="共享锁" class="headerLink">
+    <a href="#%e5%85%b1%e4%ba%ab%e9%94%81" class="header-mark"></a>共享锁</h3><p>共享锁又被称之为 S 锁，它是<code>Shared Lock</code>的简称，不同事务之间不会排斥，可以同时获取锁并执行，这里所谓的不会排斥，仅仅只是指不会排斥其他事务来读数据，但其他事务尝试写数据时，就会出现排斥性。</p>
+<h3 id="排他锁" class="headerLink">
+    <a href="#%e6%8e%92%e4%bb%96%e9%94%81" class="header-mark"></a>排他锁</h3><p>排他锁也被称之为独占锁，当一个线程获取到独占锁后，会排斥其他线程，如若其他线程也想对共享资源/同一数据进行操作，必须等到当前线程释放锁并竞争到锁资源才行。</p>
+<p>排他锁并不是只能用于写操作，对于一个读操作，也可以手动的指定为获取排他锁，当一个事务在读数据时，获取了排他锁，那当其他事务来读、写同一数据时，都会被排斥。</p>
+<h3 id="间隙锁与临键锁" class="headerLink">
+    <a href="#%e9%97%b4%e9%9a%99%e9%94%81%e4%b8%8e%e4%b8%b4%e9%94%ae%e9%94%81" class="header-mark"></a>间隙锁与临键锁</h3><p>参看 <a href="https://juejin.cn/post/7153869469394305061#heading-16" target="_blank" rel="noopener noreferrer">间隙锁（Gap Lock）</a></p>
+<h3 id="死锁" class="headerLink">
+    <a href="#%e6%ad%bb%e9%94%81" class="header-mark"></a>死锁</h3><p>关于死锁问题，可以参考 <a href="https://juejin.cn/post/7156111610589741063#heading-6" target="_blank" rel="noopener noreferrer">死锁检测算法 - wait-for graph</a></p>
 <h3 id="如何避免死锁的产生" class="headerLink">
     <a href="#%e5%a6%82%e4%bd%95%e9%81%bf%e5%85%8d%e6%ad%bb%e9%94%81%e7%9a%84%e4%ba%a7%e7%94%9f" class="header-mark"></a>如何避免死锁的产生</h3><ul>
 <li>合理的设计索引结构，使业务 SQL 在执行时能通过索引定位到具体的几行数据，减小锁的粒度。</li>
@@ -1181,8 +1201,8 @@ B 中，在事务 A 执行时读取了一次剩余库存，然后在事务 A 回
     <div class="post-info">
         <div class="post-info-line">
             <div class="post-info-mod">
-                <span>更新于 2022-11-05&nbsp;<a class="git-hash" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/07ed97606484c31188802f69222462189cf8c3c2" target="_blank" title="commit by weibin(xiaobinqt@163.com) 07ed97606484c31188802f69222462189cf8c3c2: add surgery-for-myopia.md and update other" rel="noopener noreferrer">
-                                    <i class="fas fa-hashtag fa-fw"></i>07ed9760</a></span>
+                <span>更新于 2022-11-07&nbsp;<a class="git-hash" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/9a1dd217569a7780e2d27f37b5241791367f9252" target="_blank" title="commit by weibin(xiaobinqt@163.com) 9a1dd217569a7780e2d27f37b5241791367f9252: update mysql-simple-faq.md" rel="noopener noreferrer">
+                                    <i class="fas fa-hashtag fa-fw"></i>9a1dd217</a></span>
             </div>
             <div class="post-info-license"></div>
         </div>
