@@ -49,6 +49,7 @@
 + [xargin](https://www.xargin.com/)
 + [竹子爱熊猫](https://juejin.cn/user/862486453028888)
 + [技术印记](https://www.365seal.com/)
++ [abcdocker运维博客](https://i4t.com)
 
 ## 工具
 
