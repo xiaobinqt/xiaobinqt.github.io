@@ -300,3 +300,4 @@ git reset HEAR 文件/文件夹
 + [git cherry-pick 教程](http://www.ruanyifeng.com/blog/2020/04/git-cherry-pick.html)
 + [git stash 用法总结和注意点](https://www.cnblogs.com/zndxall/archive/2018/09/04/9586088.html)
 + [详解git pull和git fetch的区别](https://blog.csdn.net/weixin_41975655/article/details/82887273)
++ [Git飞行规则(Flight Rules)](https://github.com/k88hudson/git-flight-rules/blob/master/README_zh-CN.md)
