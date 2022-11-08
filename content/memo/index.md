@@ -8,9 +8,11 @@ date: 2022-10-01
 lastmod: 2022-04-01
 
 author: "xiaobinqt"
-description: "xiaobinqt,萧十一郎,mysql 面试题,redis,golang,go,BAT 面试题,资料库,工具,www.xiaobinqt.cn
-,xiaobinqt.github.io"
-resources:
+description: "xiaobinqt,萧十一郎,mysql 面试题,redis,golang,go,BAT 面试题,资料库,工具,www.xiaobinqt.cn,xiaobinqt.github.io"
+
+featuredImage: "https://cdn.xiaobinqt.cn/xiaobinqt.io/20221108/620edba556764c15ad42bc8adab19094.png"
+
+featuredImagePreview: "https://cdn.xiaobinqt.cn/xiaobinqt.io/20221108/620edba556764c15ad42bc8adab19094.png"
 
 tags: [""]
 categories: [""]
@@ -18,9 +20,10 @@ lightgallery: true
 
 toc: true
 
-math:
-enable: true
+math: true
 ---
+
+[//]: # (![]&#40;https://cdn.xiaobinqt.cn/xiaobinqt.io/20221108/620edba556764c15ad42bc8adab19094.png ' '&#41;)
 
 ## 面试题
 
@@ -59,11 +62,12 @@ enable: true
 + [~~alblue~~](http://alblue.cn/tags/go)
 + [床长人工智能教程](https://www.captainbed.net/)
 + [Golang开发手记](https://github.com/kevinyan815/gocookbook)
++ [Git飞行规则(Flight Rules)](https://github.com/k88hudson/git-flight-rules/blob/master/README_zh-CN.md)
 + [Pro Git（中文版）](https://gitee.com/progit/)
 
 ## 博主
 
-+ [刘丹冰aceld](https://www.kancloud.cn/@aceld)
++ [刘丹冰aceld](https://www.yuque.com/aceld)
 + [gairuo](https://www.gairuo.com/)
 + [面向信仰编程](https://draveness.me/)
 + [煎鱼](https://eddycjy.com/)
@@ -82,6 +86,7 @@ enable: true
 + [YouTube Video Download](https://en.savefrom.net/1-youtube-video-downloader-394/)
 + [冷熊简历](https://cv.ftqq.com/#)
 + [身份证号码生成器](https://www.dute.org/fake-id-card-number)
++ [PlantUML简述](https://plantuml.com/zh/)
 
 ## 资料库
 
