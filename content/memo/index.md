@@ -81,7 +81,9 @@ enable: true
 + [Bit Calculator](https://www.matisse.net/bitcalc/)
 + [YouTube Video Download](https://en.savefrom.net/1-youtube-video-downloader-394/)
 + [冷熊简历](https://cv.ftqq.com/#)
++ [身份证号码生成器](https://www.dute.org/fake-id-card-number)
 
 ## 资料库
 
++ [国内多家权威出版社：10000多本电子书合集](https://www.aliyundrive.com/s/jMasUr7qytc)
 + [ahhhhfs｜A姐分享](https://www.ahhhhfs.com/)
