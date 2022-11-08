@@ -20,8 +20,7 @@ lightgallery: true
 
 toc: false
 
-math:
-enable: true
+math: true
 ---
 
 
