@@ -23,8 +23,6 @@ toc: true
 math: true
 ---
 
-[//]: # (![]&#40;https://cdn.xiaobinqt.cn/xiaobinqt.io/20221108/620edba556764c15ad42bc8adab19094.png ' '&#41;)
-
 ## 面试题
 
 + [Redis面试题（总结最全面的面试题）](https://juejin.cn/post/6844904127055527950)
@@ -45,6 +43,8 @@ math: true
 ## 在线文档
 
 + [计算机教育中缺失的一课](https://missing-semester-cn.github.io/)
++ [Docker-从入门到实战](https://yeasy.gitbook.io/docker_practice/)
++ [区块链技术指南](https://yeasy.gitbook.io/blockchain_guide/)
 + [build-web-application-with-golang](https://github.com/astaxie/build-web-application-with-golang/tree/master/zh)
 + [Mastering_Go](https://www.kancloud.cn/cloud001/golang/1601804)
 + [Go语言101](https://gfw.go101.org)
@@ -52,7 +52,6 @@ math: true
 + [JavaScript 标准参考教程](https://javascript.ruanyifeng.com/)
 + [ES6 入门教程](https://es6.ruanyifeng.com)
 + [JavaScript 教程](https://wangdoc.com/javascript/)
-+ [Docker-从入门到实战](https://yeasy.gitbook.io/docker_practice/)
 + [网道](https://wangdoc.com/)
 + [PHP编程之道](https://phptherightway.golaravel.com/)
 + [Kubernetes 文档](https://kubernetes.io/zh/docs/home/)
@@ -92,3 +91,6 @@ math: true
 
 + [国内多家权威出版社：10000多本电子书合集](https://www.aliyundrive.com/s/jMasUr7qytc)
 + [ahhhhfs｜A姐分享](https://www.ahhhhfs.com/)
++ [首发整理！【编程开发全套资料】](https://www.aliyundrive.com/s/mzwfZJYVLcs/folder/636c7fd0bc630df6d2f74d7088be74c65f5c20aa)
+
+

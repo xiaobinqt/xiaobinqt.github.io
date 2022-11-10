@@ -14,7 +14,7 @@ description: ""
 
 lightgallery: true
 
-tags: ["生活"]
+tags: ["随笔"]
 categories: ["生活"]
 lightgallery: true
 
