@@ -78,6 +78,7 @@ math: true
 ## 工具
 
 + [HTTP Cats](https://http.cat/ )
++ [loading.io](https://loading.io/)
 + [Data Structure Visualizations](https://www.cs.usfca.edu/~galles/visualization/Algorithms.html)
 + [learn git branching](https://learngitbranching.js.org/?locale=zh_CN)
 + [navicat premium15破解教程](http://www.downcc.com/soft/430673.html)
