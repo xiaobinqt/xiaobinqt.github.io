@@ -10,7 +10,7 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://www.xiaobinqt.cn/docker-glance/" /><meta property="og:image" content="https://www.xiaobinqt.cn/logo.png"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2018-03-18T00:00:00+00:00" />
-<meta property="article:modified_time" content="2022-11-10T22:49:52+08:00" />
+<meta property="article:modified_time" content="2022-11-10T23:25:47+08:00" />
 
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://www.xiaobinqt.cn/logo.png"/>
@@ -34,8 +34,8 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/www.xiaobinqt.cn\/docker-glance\/"
-        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "docker","wordcount":  8163 ,
-        "url": "https:\/\/www.xiaobinqt.cn\/docker-glance\/","datePublished": "2018-03-18T00:00:00+00:00","dateModified": "2022-11-10T22:49:52+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "docker","wordcount":  8408 ,
+        "url": "https:\/\/www.xiaobinqt.cn\/docker-glance\/","datePublished": "2018-03-18T00:00:00+00:00","dateModified": "2022-11-10T23:25:47+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "xxxx","logo": {
                     "@type": "ImageObject",
@@ -171,6 +171,7 @@
         <li><a href="#copy-和-add-的区别">COPY 和 ADD 的区别</a></li>
         <li><a href="#写时复制">写时复制</a></li>
         <li><a href="#docker-saveexport-区别">docker save、export 区别</a></li>
+        <li><a href="#-v-和---mount-的区别">-v 和 &ndash;mount 的区别</a></li>
       </ul>
     </li>
     <li><a href="#参考">参考</a></li>
@@ -179,7 +180,7 @@
     </div><script>document.getElementsByTagName("main")[0].setAttribute("pageStyle", "normal")</script><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Docker 学习笔记</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><i class="author fas fa-user-circle fa-fw"></i><a href="/" title="Author" rel=" author" class="author">xiaobinqt</a>
                 </span>&nbsp;<span class="post-category">收录于 </span>&nbsp;<span class="post-category">类别 <a href="/categories/%E5%BC%80%E5%8F%91%E8%80%85%E6%89%8B%E5%86%8C/"><i class="far fa-folder fa-fw"></i>开发者手册</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2018-03-18">2018-03-18</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2022-11-10">2022-11-10</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 8163 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2018-03-18">2018-03-18</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2022-11-10">2022-11-10</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 8408 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 17 分钟&nbsp;</div>
         </div><div class="featured-image"><img
         class="lazyload"
@@ -243,6 +244,7 @@
         <li><a href="#copy-和-add-的区别">COPY 和 ADD 的区别</a></li>
         <li><a href="#写时复制">写时复制</a></li>
         <li><a href="#docker-saveexport-区别">docker save、export 区别</a></li>
+        <li><a href="#-v-和---mount-的区别">-v 和 &ndash;mount 的区别</a></li>
       </ul>
     </li>
     <li><a href="#参考">参考</a></li>
@@ -1161,11 +1163,15 @@
     <a href="#docker-saveexport-%e5%8c%ba%e5%88%ab" class="header-mark"></a>docker save、export 区别</h3><p><code>docker save</code> 和 <code>docker load</code> 是对镜像的操作，导入导出的是镜像文件。</p>
 <p><code>docker export</code> 和 <code>docker import</code>是对容器的操作，是导出导入容器，导出一个已经创建的容器到一个文件，不管此时这个容器是否处于运行状态，可以理解为容器快照。</p>
 <p>容器快照文件将丢弃所有的历史记录和元数据信息（即仅保存容器当时的快照状态，如标签信息会被丢弃），而镜像存储文件将保存完整记录，体积更大。从容器快照文件导入时可以重新指定标签等元数据信息。</p>
+<h3 id="-v-和---mount-的区别" class="headerLink">
+    <a href="#-v-%e5%92%8c---mount-%e7%9a%84%e5%8c%ba%e5%88%ab" class="header-mark"></a>-v 和 &ndash;mount 的区别</h3><p>使用<code>-v</code>时，如果宿主机上没有这个文件，也会自动创建，如果使用<code>--mount</code>时，宿主机中没有这个文件会报错找不到这个文件，并创建失败。</p>
+<p><code>--mount</code>由多个键-值对组成，以逗号分隔，每个键-值对由一个<code>&lt;key&gt;=&lt;value&gt;</code>元组组成。<code>--mount</code>语法比<code>-v</code>或<code>--volume</code>更冗长，但是键的顺序并不重要，标记的值也更容易理解。 挂载的类型<code>type</code>，可以是<code>bind</code>、<code>volume</code>或者<code>tmpfs</code>。</p>
 <h2 id="参考" class="headerLink">
     <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
 <li><a href="https://book.douban.com/subject/30329430/" target="_blank" rel="noopener noreferrer">Docker技术入门与实战(第三版)</a></li>
 <li><a href="https://www.cnblogs.com/zhangcz/p/15089684.html" target="_blank" rel="noopener noreferrer">对比Docker和虚拟机 </a></li>
 <li><a href="https://juejin.cn/book/6844733746462064654" target="_blank" rel="noopener noreferrer">开发者必备的 Docker 实践指南</a></li>
+<li><a href="https://www.cnblogs.com/ittranslator/p/13352727.html" target="_blank" rel="noopener noreferrer">Docker 基础知识 - 使用绑定挂载(bind mounts)管理应用程序数据</a></li>
 <li><a href="https://www.php.cn/docker/" target="_blank" rel="noopener noreferrer">php 中文网 docker</a></li>
 </ul>
 </div>
@@ -1174,8 +1180,8 @@
     <div class="post-info">
         <div class="post-info-line">
             <div class="post-info-mod">
-                <span>更新于 2022-11-10&nbsp;<a class="git-hash" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/9958ba44b1a796a9269d91e2b710d80d7e4cd19f" target="_blank" title="commit by weibin(xiaobinqt@163.com) 9958ba44b1a796a9269d91e2b710d80d7e4cd19f: update docker-glance.md" rel="noopener noreferrer">
-                                    <i class="fas fa-hashtag fa-fw"></i>9958ba44</a></span>
+                <span>更新于 2022-11-10&nbsp;<a class="git-hash" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/bde2cccdccbfe749bac06c9f6ee80697f46de298" target="_blank" title="commit by weibin(xiaobinqt@163.com) bde2cccdccbfe749bac06c9f6ee80697f46de298: update docker-glance.md" rel="noopener noreferrer">
+                                    <i class="fas fa-hashtag fa-fw"></i>bde2cccd</a></span>
             </div>
             <div class="post-info-license"></div>
         </div>
