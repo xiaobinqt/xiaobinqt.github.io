@@ -19,7 +19,7 @@ tags: ["hugo","algolia"]
 categories: ["开发者手册"]
 lightgallery: true
 
-toc: true
+toc: false
 
 math: true
 ---
