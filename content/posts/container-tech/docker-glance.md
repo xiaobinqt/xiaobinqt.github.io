@@ -615,9 +615,16 @@ Docker 的写时复制与编程中的相类似，在通过镜像运行容器时�
 
 容器快照文件将丢弃所有的历史记录和元数据信息（即仅保存容器当时的快照状态，如标签信息会被丢弃），而镜像存储文件将保存完整记录，体积更大。从容器快照文件导入时可以重新指定标签等元数据信息。
 
+### -v 和 --mount 的区别
+
+使用`-v`时，如果宿主机上没有这个文件，也会自动创建，如果使用`--mount`时，宿主机中没有这个文件会报错找不到这个文件，并创建失败。
+
+`--mount`由多个键-值对组成，以逗号分隔，每个键-值对由一个`<key>=<value>`元组组成。`--mount`语法比`-v`或`--volume`更冗长，但是键的顺序并不重要，标记的值也更容易理解。 挂载的类型`type`，可以是`bind`、`volume`或者`tmpfs`。
+
 ## 参考
 
 + [Docker技术入门与实战(第三版)](https://book.douban.com/subject/30329430/)
 + [对比Docker和虚拟机 ](https://www.cnblogs.com/zhangcz/p/15089684.html)
 + [开发者必备的 Docker 实践指南](https://juejin.cn/book/6844733746462064654)
++ [Docker 基础知识 - 使用绑定挂载(bind mounts)管理应用程序数据](https://www.cnblogs.com/ittranslator/p/13352727.html)
 + [php 中文网 docker](https://www.php.cn/docker/)
