@@ -1,4 +1,4 @@
-# golang break，continue，goto label 的区别
+# Go break，continue，goto label 的区别
 
 
 <!-- author： xiaobinqt -->
