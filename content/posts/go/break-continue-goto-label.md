@@ -1,5 +1,5 @@
 ---
-title: "golang break，continue，goto label 的区别"
+title: "Go break，continue，goto label 的区别"
 
 date: 2020-05-16
 
