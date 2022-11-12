@@ -21,7 +21,7 @@ reproduce: false
 
 translate: false
 
-tags: ["chore"]
+tags: ["版本管理"]
 categories: ["开发者手册"]
 lightgallery: true
 

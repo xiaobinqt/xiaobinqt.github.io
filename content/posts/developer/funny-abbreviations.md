@@ -17,14 +17,14 @@ featuredImage: ""
 
 reproduce: false
 
-tags: ["chore"]
+tags: ["缩写"]
 categories: ["开发者手册"]
 lightgallery: true
 
 toc: false
 
 math:
-    enable: true
+enable: true
 ---
 
 互联网是个造词的行业，娴熟的司机们都会使用缩写来达到提高逼格的效果。
