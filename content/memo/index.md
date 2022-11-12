@@ -93,5 +93,6 @@ math: true
 + [国内多家权威出版社：10000多本电子书合集](https://www.aliyundrive.com/s/jMasUr7qytc)
 + [ahhhhfs｜A姐分享](https://www.ahhhhfs.com/)
 + [首发整理！【编程开发全套资料】](https://www.aliyundrive.com/s/mzwfZJYVLcs/folder/636c7fd0bc630df6d2f74d7088be74c65f5c20aa)
++ [百度网盘资源](http://www.baoqiyi.org/)
 
 
