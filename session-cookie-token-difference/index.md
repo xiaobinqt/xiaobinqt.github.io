@@ -12,13 +12,11 @@ HTTP 协议是一种`无状态协议`，即每次服务端接收到客户端的�
 
 ### Session 是什么
 
-客户端请求服务端，服务端会为这次请求开辟一块`内存空间`，这个对象便是 Session 对象，存储结构为 `ConcurrentHashMap`。Session 弥补了 HTTP 无状态特性，服务器可以利用 Session
-存储客户端在同一个会话期间的一些操作记录。
+客户端请求服务端，服务端会为这次请求开辟一块`内存空间`，这个对象便是 Session 对象，存储结构为 `ConcurrentHashMap`。Session 弥补了 HTTP 无状态特性，服务器可以利用 Session 存储客户端在同一个会话期间的一些操作记录。
 
 ### Session 如何判断是否是同一会话
 
-服务器第一次接收到请求时，开辟了一块 Session 空间（创建了Session对象），同时生成一个 `sessionId` ，并通过响应头的 **Set-Cookie：JSESSIONID=XXXXXXX** 命令，向客户端发送要求设置
-Cookie 的响应；客户端收到响应后，在本机客户端设置了一个 **JSESSIONID=XXXXXXX** 的 Cookie 信息，该 Cookie 的过期时间为浏览器会话结束。
+服务器第一次接收到请求时，开辟了一块 Session 空间（创建了Session对象），同时生成一个 `sessionId` ，并通过响应头的 **Set-Cookie：JSESSIONID=XXXXXXX** 命令，向客户端发送要求设置 Cookie 的响应；客户端收到响应后，在本机客户端设置了一个 **JSESSIONID=XXXXXXX** 的 Cookie 信息，该 Cookie 的过期时间为浏览器会话结束。
 
 ![会话](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220824/50c3ccd67e62465ab1beaa691995ed06.png '会话')
 
@@ -30,8 +28,7 @@ Session 机制有个缺点，比如 A 服务器存储了 Session，就是做了�
 
 ### Cookies 是什么
 
-HTTP 协议中的 Cookie 包括 `Web Cookie` 和`浏览器 Cookie`，它是服务器发送到 Web 浏览器的一小块数据。服务器发送到浏览器的
-Cookie，浏览器会进行存储，并与下一个请求一起发送到服务器。通常，它用于判断两个请求是否来自于同一个浏览器，例如用户保持登录状态。
+HTTP 协议中的 Cookie 包括 `Web Cookie` 和`浏览器 Cookie`，它是服务器发送到 Web 浏览器的一小块数据。服务器发送到浏览器的 Cookie，浏览器会进行存储，并与下一个请求一起发送到服务器。通常，它用于判断两个请求是否来自于同一个浏览器，例如用户保持登录状态。
 
 > HTTP Cookie 机制是 HTTP 协议无状态的一种补充和改良
 
@@ -75,9 +72,7 @@ Cookie 曾经用于一般的客户端存储。虽然这是合法的，因为它�
 
 ![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e399aefd856~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png)
 
-有两种类型的 Cookies，一种是 [Session Cookies]^(会话 cookie)，一种是 [Persistent Cookies]^(永久 cookie)，如果 Cookie 不包含到期日期，则将其视为会话
-Cookie。会话 Cookie
-存储在内存中，永远不会写入磁盘，当浏览器关闭时，此后 Cookie 将永久丢失。如果 Cookie 包含`有效期` ，则将其视为持久性 Cookie。在到期指定的日期，Cookie 将从磁盘中删除。
+有两种类型的 Cookies，一种是 [Session Cookies]^(会话 cookie)，一种是 [Persistent Cookies]^(永久 cookie)，如果 Cookie 不包含到期日期，则将其视为会话 Cookie。会话 Cookie 存储在内存中，永远不会写入磁盘，当浏览器关闭时，此后 Cookie 将永久丢失。如果 Cookie 包含`有效期` ，则将其视为持久性 Cookie。在到期指定的日期，Cookie 将从磁盘中删除。
 
 还有一种是 Cookie 的 `Secure` 和 `HttpOnly` 标记。
 
@@ -105,8 +100,7 @@ Set-Cookie: id=a3fWa; Expires=Wed, 21 Oct 2015 07:28:00 GMT;
 
 - HttpOnly 是微软对 Cookie 做的扩展，该值指定 Cookie 是否可通过客户端脚本访问。
 
-- 如果在 Cookie 中**没有设置** `HttpOnly` 属性为 true，可能导致 Cookie 被窃取。窃取的 Cookie 可以包含标识站点用户的敏感信息，如 ASP.NET 会话 ID 或 Forms
-  身份验证票证，攻击者可以重播窃取的 Cookie，以便伪装成用户或获取敏感信息，进行跨站脚本攻击等。
+- 如果在 Cookie 中**没有设置** `HttpOnly` 属性为 true，可能导致 Cookie 被窃取。窃取的 Cookie 可以包含标识站点用户的敏感信息，如 ASP.NET 会话 ID 或 Forms 身份验证票证，攻击者可以重播窃取的 Cookie，以便伪装成用户或获取敏感信息，进行跨站脚本攻击等。
 
 ### Cookie 的作用域
 
@@ -258,8 +252,7 @@ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4
 
 ![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e39cc29f678~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png)
 
-如果想自己测试编写的话，可以访问 JWT
-官网 [https://jwt.io/#debugger-io](https://jwt.io/#debugger-io)
+如果想自己测试编写的话，可以访问 JWT 官网 [https://jwt.io/#debugger-io](https://jwt.io/#debugger-io)
 
 ### JWT 和 Session Cookies 的不同
 
@@ -277,8 +270,7 @@ JWT 是`无状态`的，因为声明被存储在`客户端`，而不是服务端
 
 #### 可扩展性
 
-Session Cookies 是存储在服务器内存中，这就意味着如果网站或者应用很大的情况下会耗费大量的资源。由于 JWT 是无状态的，在许多情况下，它们可以节省服务器资源。因此 JWT 要比 Session Cookies
-具有更强的`可扩展性`。
+Session Cookies 是存储在服务器内存中，这就意味着如果网站或者应用很大的情况下会耗费大量的资源。由于 JWT 是无状态的，在许多情况下，它们可以节省服务器资源。因此 JWT 要比 Session Cookies 具有更强的`可扩展性`。
 
 #### JWT 支持跨域认证
 
@@ -312,7 +304,7 @@ npm 包[https://www.npmjs.com/package/jwt-decode](https://www.npmjs.com/package/
 
 + [看完这篇 Session、Cookie、Token，和面试官扯皮就没问题了](https://juejin.cn/post/6844904115080790023)
 + [JSON Web Token 入门教程](http://www.ruanyifeng.com/blog/2018/07/json_web_token-tutorial.html)
-
++ [认证方式的前世今生，以及 JWT 的使用](https://zhuanlan.zhihu.com/p/193090304)
 
 
 
