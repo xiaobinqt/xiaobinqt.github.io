@@ -25,6 +25,10 @@ tags: [""]
 categories: [""]
 lightgallery: true
 
+series: [""]
+
+series_weight:
+
 toc: true
 
 math: true
