@@ -21,6 +21,7 @@ reproduce: true
 
 translate: false
 
+series: ["reproduce"]
 tags: ["web","session","cookie"]
 categories: ["web"]
 lightgallery: true

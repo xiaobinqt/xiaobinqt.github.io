@@ -17,6 +17,7 @@ resources:
 - name: ""
   src: ""
 
+series: ["reproduce"]
 tags: ["web","oauth"]
 categories: ["开发者手册"]
 lightgallery: true
@@ -31,8 +32,7 @@ math: true
 
 **OAuth 的核心就是向第三方应用颁发令牌**，比如网站A想用Github的信息，那么对于Github来说，网站A就是第三方应用。
 
-第三方应用申请令牌之前，都必须先到系统备案，比如申请Github的令牌，得先到[github备案登记](https://github.com/settings/applications/new)，
-说明自己的身份，然后会拿到两个身份识别码：客户端 ID（client ID）和客户端密钥（client secret）。这是为了防止令牌被滥用，没有备案过的第三方应用，是不会拿到令牌的。
+第三方应用申请令牌之前，都必须先到系统备案，比如申请Github的令牌，得先到[github备案登记](https://github.com/settings/applications/new)， 说明自己的身份，然后会拿到两个身份识别码：客户端 ID（client ID）和客户端密钥（client secret）。这是为了防止令牌被滥用，没有备案过的第三方应用，是不会拿到令牌的。
 
 关于 OAuth2.0 是什么可以参考一下文章：
 

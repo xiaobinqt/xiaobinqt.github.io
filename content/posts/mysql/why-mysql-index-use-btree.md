@@ -21,14 +21,14 @@ reproduce: true
 
 translate: false
 
+series: ["reproduce"]
 tags: ["mysql"]
 categories: ["mysql"]
 lightgallery: true
 
 toc: true
 
-math:
-    enable: true
+math: true
 ---
 
 <!-- author： xiaobinqt -->

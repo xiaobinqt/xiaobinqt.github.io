@@ -17,14 +17,14 @@ featuredImage: ""
 
 reproduce: true
 
+series: ["reproduce"]
 tags: ["nginx"]
 categories: ["开发者手册"]
 lightgallery: true
 
 toc: true
 
-math:
-  enable: true
+math: true
 ---
 
 <!-- author： xiaobinqt -->
@@ -829,8 +829,7 @@ document_root: /usr/share/nginx/html
 
 ### 反向代理
 
-> - 反向代理\*（Reverse
-    Proxy）方式是指以代理服务器来接受internet上的连接请求，然后将请求转发给内部网络上的服务器，并将从服务器上得到的结果返回给internet上请求连接的客户端，此时代理服务器对外就表现为一个反向代理服务器。
+> - 反向代理\*（Reverse Proxy）方式是指以代理服务器来接受internet上的连接请求，然后将请求转发给内部网络上的服务器，并将从服务器上得到的结果返回给internet上请求连接的客户端，此时代理服务器对外就表现为一个反向代理服务器。
 
 反向代理是为服务端服务的，反向代理可以帮助服务器接收来自客户端的请求，帮助服务器做请求转发，负载均衡等。
 
