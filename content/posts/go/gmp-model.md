@@ -13,6 +13,7 @@ resources:
 
 reproduce: true
 
+series: ["reproduce"]
 tags: ["golang"]
 categories: ["golang"]
 lightgallery: true

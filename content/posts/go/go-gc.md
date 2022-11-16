@@ -17,6 +17,7 @@ featuredImage: "https://cdn.xiaobinqt.cn/xiaobinqt.io/20220407/e9a10f9b61de47f8b
 
 reproduce: true
 
+series: ["reproduce"]
 tags: ["golang"]
 categories: ["golang"]
 lightgallery: true
@@ -77,8 +78,7 @@ Go v1.3 之前使用普通的标记-清除（mark and sweep）算法，主要有
 
 对象 5，6 不可达，被 GC 清除。
 
-操作简单，但是，mark and sweep 算法在执行的时候，需要程序暂停！即 STW（stop the world），STW 的过程中，CPU 不执行用户代码，全部用于垃圾回收，这个过程的影响很大，所以 STW
-也是一些回收机制最大的难题和希望优化的点。
+操作简单，但是，mark and sweep 算法在执行的时候，需要程序暂停！即 STW（stop the world），STW 的过程中，CPU 不执行用户代码，全部用于垃圾回收，这个过程的影响很大，所以 STW 也是一些回收机制最大的难题和希望优化的点。
 
 **在执行第三步的这段时间，程序会暂定停止任何工作，卡在那等待回收执行完毕**。
 
@@ -450,8 +450,7 @@ new 栈对象9；
 
 ![场景4-03](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220407/e25db1900a4d404189fdcb61d33ac5d2.png '场景4-03')
 
-Go 中的混合写屏障满足**弱三色不变式**，结合了删除写屏障和插入写屏障的优点，**只需要在开始时并发扫描各个 goroutine 的栈**，使其变黑并一直保持，这个过程不需要
-STW，而标记结束后，因为栈在扫描后始终是黑色的，也无需再进行 re-scan 操作了，减少了 STW 的时间。
+Go 中的混合写屏障满足**弱三色不变式**，结合了删除写屏障和插入写屏障的优点，**只需要在开始时并发扫描各个 goroutine 的栈**，使其变黑并一直保持，这个过程不需要 STW，而标记结束后，因为栈在扫描后始终是黑色的，也无需再进行 re-scan 操作了，减少了 STW 的时间。
 
 ## 总结
 
