@@ -21,14 +21,14 @@ reproduce: true
 
 translate: false
 
+series: ["reproduce"]
 tags: ["golang","高并发"]
 categories: ["golang"]
 lightgallery: true
 
 toc: true
 
-math:
-  enable: true
+math: true
 ---
 
 <!-- author： xiaobinqt -->
