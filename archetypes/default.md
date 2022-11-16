@@ -25,7 +25,7 @@ tags: [""]
 categories: [""]
 lightgallery: true
 
-series: [""]
+series: []
 
 series_weight:
 
