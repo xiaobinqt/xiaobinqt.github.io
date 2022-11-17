@@ -287,7 +287,7 @@ git reset --soft $commitID
 或者
 
 ```git
-git reset HEAR 文件/文件夹
+git reset HEAD 文件/文件夹
 ```
 
 :point_up:可以将某个文件/文件夹回滚到上一次操作。
