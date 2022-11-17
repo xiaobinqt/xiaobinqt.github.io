@@ -38,7 +38,7 @@ math: true
 ## 视频
 
 + [一条视频讲清楚TCP协议与UDP协议-什么是三次握手与四次挥手](https://www.bilibili.com/video/BV1kV411j7hA)
-+ [【尚硅谷】Kubernetes（k8s）入门到实战教程丨全新升级完整版](https://www.bilibili.com/video/BV1GT4y1A756)
++ [黑马程序员 MySQL数据库入门到精通，从mysql安装到mysql高级、mysql优化全囊括](https://www.bilibili.com/video/BV1Kr4y1i7ru)
 
 ## 在线文档
 
@@ -69,6 +69,7 @@ math: true
 + [刘丹冰aceld](https://www.yuque.com/aceld)
 + [gairuo](https://www.gairuo.com/)
 + [面向信仰编程](https://draveness.me/)
++ [小林coding](https://xiaolincoding.com/)
 + [煎鱼](https://eddycjy.com/)
 + [xargin](https://www.xargin.com/)
 + [竹子爱熊猫](https://juejin.cn/user/862486453028888)
