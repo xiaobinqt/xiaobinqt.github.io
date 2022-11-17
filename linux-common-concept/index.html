@@ -10,7 +10,7 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://www.xiaobinqt.cn/linux-common-concept/" /><meta property="og:image" content="https://www.xiaobinqt.cn/logo.png"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2020-11-19T00:00:00+00:00" />
-<meta property="article:modified_time" content="2022-11-01T14:53:50+08:00" />
+<meta property="article:modified_time" content="2022-11-17T14:18:56+08:00" />
 
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://www.xiaobinqt.cn/logo.png"/>
@@ -34,8 +34,8 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/www.xiaobinqt.cn\/linux-common-concept\/"
-        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "linux","wordcount":  985 ,
-        "url": "https:\/\/www.xiaobinqt.cn\/linux-common-concept\/","datePublished": "2020-11-19T00:00:00+00:00","dateModified": "2022-11-01T14:53:50+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "linux","wordcount":  1434 ,
+        "url": "https:\/\/www.xiaobinqt.cn\/linux-common-concept\/","datePublished": "2020-11-19T00:00:00+00:00","dateModified": "2022-11-17T14:18:56+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "xxxx","logo": {
                     "@type": "ImageObject",
@@ -138,18 +138,21 @@
         <li><a href="#参数">参数</a></li>
       </ul>
     </li>
-    <li><a href="#linux-常用命令">linux 常用命令</a>
+    <li><a href="#常用命令">常用命令</a>
       <ul>
         <li><a href="#cut">cut</a></li>
         <li><a href="#grep">grep</a></li>
         <li><a href="#curl">curl</a></li>
-        <li><a href="#数组操作">数组操作</a></li>
-        <li><a href="#sed">sed</a>
-          <ul>
-            <li><a href="#-e多重编辑"><code>-e</code>多重编辑</a></li>
-            <li><a href="#读取下一行">读取下一行</a></li>
-          </ul>
-        </li>
+        <li><a href="#sed">sed</a></li>
+        <li><a href="#tar">tar</a></li>
+        <li><a href="#md5sum">md5sum</a></li>
+        <li><a href="#mktemp">mktemp</a></li>
+      </ul>
+    </li>
+    <li><a href="#数组操作">数组操作</a></li>
+    <li><a href="#cloc">cloc</a>
+      <ul>
+        <li><a href="#常用命令-1">常用命令</a></li>
       </ul>
     </li>
     <li><a href="#参考">参考</a></li>
@@ -158,9 +161,15 @@
     </div><script>document.getElementsByTagName("main")[0].setAttribute("pageStyle", "normal")</script><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Linux 常用命令备忘</h1><h2 class="single-subtitle">Summary of Common Linux commands</h2><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><i class="author fas fa-user-circle fa-fw"></i><a href="/" title="Author" rel=" author" class="author">xiaobinqt</a>
                 </span>&nbsp;<span class="post-category">收录于 </span>&nbsp;<span class="post-category">类别 <a href="/categories/%E5%BC%80%E5%8F%91%E8%80%85%E6%89%8B%E5%86%8C/"><i class="far fa-folder fa-fw"></i>开发者手册</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-19">2020-11-19</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2022-11-01">2022-11-01</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 985 字&nbsp;
-                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 2 分钟&nbsp;</div>
-        </div><div class="details toc" id="toc-static"  kept="">
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-11-19">2020-11-19</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2022-11-17">2022-11-17</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1434 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 3 分钟&nbsp;</div>
+        </div><div class="featured-image"><img
+        class="lazyload"
+        data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221117/903e986fcf6c49ab8e03498a04f46776.png"
+        data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221117/903e986fcf6c49ab8e03498a04f46776.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20221117/903e986fcf6c49ab8e03498a04f46776.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20221117/903e986fcf6c49ab8e03498a04f46776.png 2x"
+        data-sizes="auto"
+        alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221117/903e986fcf6c49ab8e03498a04f46776.png"
+        title="xiaobinqt" height="auto" width="auto"></div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
                     <span>目录</span>
                     <span><i class="details-icon fas fa-angle-right"></i></span>
@@ -183,18 +192,21 @@
         <li><a href="#参数">参数</a></li>
       </ul>
     </li>
-    <li><a href="#linux-常用命令">linux 常用命令</a>
+    <li><a href="#常用命令">常用命令</a>
       <ul>
         <li><a href="#cut">cut</a></li>
         <li><a href="#grep">grep</a></li>
         <li><a href="#curl">curl</a></li>
-        <li><a href="#数组操作">数组操作</a></li>
-        <li><a href="#sed">sed</a>
-          <ul>
-            <li><a href="#-e多重编辑"><code>-e</code>多重编辑</a></li>
-            <li><a href="#读取下一行">读取下一行</a></li>
-          </ul>
-        </li>
+        <li><a href="#sed">sed</a></li>
+        <li><a href="#tar">tar</a></li>
+        <li><a href="#md5sum">md5sum</a></li>
+        <li><a href="#mktemp">mktemp</a></li>
+      </ul>
+    </li>
+    <li><a href="#数组操作">数组操作</a></li>
+    <li><a href="#cloc">cloc</a>
+      <ul>
+        <li><a href="#常用命令-1">常用命令</a></li>
       </ul>
     </li>
     <li><a href="#参考">参考</a></li>
@@ -290,27 +302,15 @@
     </a><figcaption class="image-caption">lsb_release 参数</figcaption>
     </figure></p>
 <ul>
-<li>
-<p><code>-v</code>：显示与你 Linux 发行版相对应的 Linux 版本库描述信息。Linux 版本库模块描述使用冒号 <code>:</code> 分分隔</p>
-</li>
-<li>
-<p><code>-i</code>：显示该 Linux 系统的发行商</p>
-</li>
-<li>
-<p><code>-d</code>：显示 Linux 发行版描述信息</p>
-</li>
-<li>
-<p><code>-r</code>：显示当前 Linux 发行版版本号</p>
-</li>
-<li>
-<p><code>-c</code>：显示当前 Linux 发行版<strong><ruby>代号<rt>codename</rt></ruby></strong></p>
-</li>
-<li>
-<p><code>-a</code>：显示全部信息，包括 LSB、版本号、代号、版本描述信息</p>
-</li>
+<li><code>-v</code>：显示与你 Linux 发行版相对应的 Linux 版本库描述信息。Linux 版本库模块描述使用冒号 <code>:</code> 分分隔</li>
+<li><code>-i</code>：显示该 Linux 系统的发行商</li>
+<li><code>-d</code>：显示 Linux 发行版描述信息</li>
+<li><code>-r</code>：显示当前 Linux 发行版版本号</li>
+<li><code>-c</code>：显示当前 Linux 发行版<strong><ruby>代号<rt>codename</rt></ruby></strong></li>
+<li><code>-a</code>：显示全部信息，包括 LSB、版本号、代号、版本描述信息</li>
 </ul>
-<h2 id="linux-常用命令" class="headerLink">
-    <a href="#linux-%e5%b8%b8%e7%94%a8%e5%91%bd%e4%bb%a4" class="header-mark"></a>linux 常用命令</h2><p>以下命令都是笔者在工作中用到过的，因为不是专业的 shell 工程师，所以遍通过笔记记录下来防止忘记。</p>
+<h2 id="常用命令" class="headerLink">
+    <a href="#%e5%b8%b8%e7%94%a8%e5%91%bd%e4%bb%a4" class="header-mark"></a>常用命令</h2><p>以下命令都是笔者在工作中用到过的，因为不是专业的 shell 工程师，所以便通过笔记记录下来防止忘记。</p>
 <h3 id="cut" class="headerLink">
     <a href="#cut" class="header-mark"></a>cut</h3><p><code>cut</code> 命令从文件的每一行剪切字节、字符和字段并将这些字节、字符和字段写至标准输出。</p>
 <ul>
@@ -357,9 +357,102 @@
 <li><code>-o</code> ：输出文件，默认为标准输出。</li>
 <li><code>-s</code> ：屏蔽掉输出，不显示任何内容。</li>
 <li><code>-w</code> ：输出http状态码。</li>
+<li><code>-k</code> : 忽略证书</li>
 </ul>
-<h3 id="数组操作" class="headerLink">
-    <a href="#%e6%95%b0%e7%bb%84%e6%93%8d%e4%bd%9c" class="header-mark"></a>数组操作</h3><div class="highlight"><div class="chroma">
+<h3 id="sed" class="headerLink">
+    <a href="#sed" class="header-mark"></a>sed</h3><ol>
+<li><strong><code>-e</code>多重编辑</strong></li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">tail /etc/services <span class="p">|</span> sed -e <span class="s1">&#39;1,2d&#39;</span> -e <span class="s1">&#39;s/blp5/test/&#39;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li><code>1,2d</code>：删除第一行和第二行</li>
+<li><code>s/blp5/test/</code>：将<code>blp5</code>替换为<code>test</code></li>
+</ul>
+<p>可以用<code>;</code>分隔多个命令👇效果一样：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">tail /etc/services <span class="p">|</span> sed  <span class="s1">&#39;1,2d;s/blp5/test/&#39;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220719/ba6358760d314a4aa69c9fd10e5ad836.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="sed多行编辑" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220719/ba6358760d314a4aa69c9fd10e5ad836.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>sed多行编辑</h2><p>sed多行编辑</p>">
+        <img
+            class="lazyload"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220719/ba6358760d314a4aa69c9fd10e5ad836.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220719/ba6358760d314a4aa69c9fd10e5ad836.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220719/ba6358760d314a4aa69c9fd10e5ad836.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220719/ba6358760d314a4aa69c9fd10e5ad836.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220719/ba6358760d314a4aa69c9fd10e5ad836.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15">
+    </a><figcaption class="image-caption">sed多行编辑</figcaption>
+    </figure></p>
+<ol start="2">
+<li><strong>读取下一行</strong></li>
+</ol>
+<p><code>n</code> 读取下一行到模式空间</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">seq <span class="m">6</span> <span class="p">|</span> sed -n <span class="s1">&#39;n;p&#39;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>sed 先读取第一行 1，执行 n 命令，获取下一行 2，此时模式空间是 2，执行 p 命令，打印模式空间。现在模式空间是 2， sed 再读取 3，执行 n 命令，获取下一行 4，此时模式空间为 4，执行 p 命令，以此类推。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220719/22639dc6e1b048a280f0af7beb2c1fd3.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="打印偶数" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220719/22639dc6e1b048a280f0af7beb2c1fd3.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>打印偶数</h2><p>打印偶数</p>">
+        <img
+            class="lazyload"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220719/22639dc6e1b048a280f0af7beb2c1fd3.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220719/22639dc6e1b048a280f0af7beb2c1fd3.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220719/22639dc6e1b048a280f0af7beb2c1fd3.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220719/22639dc6e1b048a280f0af7beb2c1fd3.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220719/22639dc6e1b048a280f0af7beb2c1fd3.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15">
+    </a><figcaption class="image-caption">打印偶数</figcaption>
+    </figure></p>
+<h3 id="tar" class="headerLink">
+    <a href="#tar" class="header-mark"></a>tar</h3><ul>
+<li><strong>不解压读取tar里面的某个文件</strong>，<code>tar xf tar包 路径 -O</code></li>
+</ul>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221117/0ae5a5a4b67b4bcf8e136b91d39a046f.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="读取文件" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221117/0ae5a5a4b67b4bcf8e136b91d39a046f.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>读取文件</h2><p>读取文件</p>">
+        <img
+            class="lazyload"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221117/0ae5a5a4b67b4bcf8e136b91d39a046f.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221117/0ae5a5a4b67b4bcf8e136b91d39a046f.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20221117/0ae5a5a4b67b4bcf8e136b91d39a046f.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20221117/0ae5a5a4b67b4bcf8e136b91d39a046f.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221117/0ae5a5a4b67b4bcf8e136b91d39a046f.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15">
+    </a><figcaption class="image-caption">读取文件</figcaption>
+    </figure></p>
+<h3 id="md5sum" class="headerLink">
+    <a href="#md5sum" class="header-mark"></a>md5sum</h3><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221117/9c6941cc68e847d38961d866591955f4.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="md5sum" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221117/9c6941cc68e847d38961d866591955f4.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>md5sum</h2><p>md5sum</p>">
+        <img
+            class="lazyload"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221117/9c6941cc68e847d38961d866591955f4.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221117/9c6941cc68e847d38961d866591955f4.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20221117/9c6941cc68e847d38961d866591955f4.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20221117/9c6941cc68e847d38961d866591955f4.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221117/9c6941cc68e847d38961d866591955f4.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15">
+    </a><figcaption class="image-caption">md5sum</figcaption>
+    </figure></p>
+<h3 id="mktemp" class="headerLink">
+    <a href="#mktemp" class="header-mark"></a>mktemp</h3><ul>
+<li><code>-d</code> 创建一个目录而非文件</li>
+</ul>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221117/9d07f580d1f8414a8875935f9c9b7864.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="mktemp" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221117/9d07f580d1f8414a8875935f9c9b7864.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>mktemp</h2><p>mktemp</p>">
+        <img
+            class="lazyload"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221117/9d07f580d1f8414a8875935f9c9b7864.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221117/9d07f580d1f8414a8875935f9c9b7864.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20221117/9d07f580d1f8414a8875935f9c9b7864.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20221117/9d07f580d1f8414a8875935f9c9b7864.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221117/9d07f580d1f8414a8875935f9c9b7864.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15">
+    </a><figcaption class="image-caption">mktemp</figcaption>
+    </figure></p>
+<h2 id="数组操作" class="headerLink">
+    <a href="#%e6%95%b0%e7%bb%84%e6%93%8d%e4%bd%9c" class="header-mark"></a>数组操作</h2><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
@@ -416,62 +509,59 @@
             alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220718/45e1e48fc0ce4d1ca29cb4593a79257b.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15">
     </a><figcaption class="image-caption">数组操作</figcaption>
     </figure></p>
-<h3 id="sed" class="headerLink">
-    <a href="#sed" class="header-mark"></a>sed</h3><h4 id="-e多重编辑" class="headerLink">
-    <a href="#-e%e5%a4%9a%e9%87%8d%e7%bc%96%e8%be%91" class="header-mark"></a><code>-e</code>多重编辑</h4><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">tail /etc/services <span class="p">|</span> sed -e <span class="s1">&#39;1,2d&#39;</span> -e <span class="s1">&#39;s/blp5/test/&#39;</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><ul>
-<li>
-<p><code>1,2d</code>：删除第一行和第二行</p>
-</li>
-<li>
-<p><code>s/blp5/test/</code>：将<code>blp5</code>替换为<code>test</code></p>
-</li>
-</ul>
-<p>可以用<code>;</code>分隔多个命令👇效果一样：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">tail /etc/services <span class="p">|</span> sed  <span class="s1">&#39;1,2d;s/blp5/test/&#39;</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220719/ba6358760d314a4aa69c9fd10e5ad836.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="sed多行编辑" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220719/ba6358760d314a4aa69c9fd10e5ad836.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>sed多行编辑</h2><p>sed多行编辑</p>">
+<h2 id="cloc" class="headerLink">
+    <a href="#cloc" class="header-mark"></a>cloc</h2><p><strong><ruby>cloc<rt>count lines of code</rt></ruby></strong>，是一款使用 Perl 语言开发的开源代码统计工具，支持多平台使用、多语言识别。从名字就能够直观地知道它的功能：可以帮助计算文件中的有效代码数量，而且会自动排除注释和空格。</p>
+<p>cloc git 地址 <a href="https://github.com/AlDanial/cloc" target="_blank" rel="noopener noreferrer">https://github.com/AlDanial/cloc</a>，官网地址 <a href="https://cloc.sourceforge.net/" target="_blank" rel="noopener noreferrer">https://cloc.sourceforge.net/</a>。</p>
+<p>cloc 还可以通过 <a href="https://www.npmjs.com/package/cloc" target="_blank" rel="noopener noreferrer">npm 安装</a>。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221117/148b71653e5b473a82e398a23d5ad399.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="cloc" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221117/148b71653e5b473a82e398a23d5ad399.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>cloc</h2><p>cloc</p>">
         <img
             class="lazyload"
-            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220719/ba6358760d314a4aa69c9fd10e5ad836.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
-            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220719/ba6358760d314a4aa69c9fd10e5ad836.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220719/ba6358760d314a4aa69c9fd10e5ad836.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220719/ba6358760d314a4aa69c9fd10e5ad836.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221117/148b71653e5b473a82e398a23d5ad399.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221117/148b71653e5b473a82e398a23d5ad399.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20221117/148b71653e5b473a82e398a23d5ad399.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20221117/148b71653e5b473a82e398a23d5ad399.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
             data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220719/ba6358760d314a4aa69c9fd10e5ad836.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15">
-    </a><figcaption class="image-caption">sed多行编辑</figcaption>
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221117/148b71653e5b473a82e398a23d5ad399.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15">
+    </a><figcaption class="image-caption">cloc</figcaption>
     </figure></p>
-<h4 id="读取下一行" class="headerLink">
-    <a href="#%e8%af%bb%e5%8f%96%e4%b8%8b%e4%b8%80%e8%a1%8c" class="header-mark"></a>读取下一行</h4><p><code>n</code> 读取下一行到模式空间</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">seq <span class="m">6</span> <span class="p">|</span> sed -n <span class="s1">&#39;n;p&#39;</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>sed 先读取第一行 1，执行 n 命令，获取下一行 2，此时模式空间是 2，执行 p 命令，打印模式空间。现在模式空间是 2， sed 再读取 3，执行 n 命令，获取下一行 4，此时模式空间为 4，执行 p 命令，以此类推。</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220719/22639dc6e1b048a280f0af7beb2c1fd3.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="打印偶数" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220719/22639dc6e1b048a280f0af7beb2c1fd3.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>打印偶数</h2><p>打印偶数</p>">
-        <img
-            class="lazyload"
-            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220719/22639dc6e1b048a280f0af7beb2c1fd3.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
-            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220719/22639dc6e1b048a280f0af7beb2c1fd3.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220719/22639dc6e1b048a280f0af7beb2c1fd3.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220719/22639dc6e1b048a280f0af7beb2c1fd3.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
-            data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220719/22639dc6e1b048a280f0af7beb2c1fd3.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15">
-    </a><figcaption class="image-caption">打印偶数</figcaption>
-    </figure></p>
+<p>在执行完<code>cloc</code>命令以后它会计算不一样编程语言的文件数（files）、空行（blank）、注释（comment）和代码行数（code），而且最后返回 SUM 总数。</p>
+<h3 id="常用命令-1" class="headerLink">
+    <a href="#%e5%b8%b8%e7%94%a8%e5%91%bd%e4%bb%a4-1" class="header-mark"></a>常用命令</h3><table>
+<thead>
+<tr>
+<th>命令</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--ignore-whitespace</code></td>
+<td>在使用&ndash;diff比较文件时忽略水平空格</td>
+</tr>
+<tr>
+<td><code>--max-file-size=&lt;MB&gt;</code></td>
+<td>若是要跳过大于给定大小MB的文件</td>
+</tr>
+<tr>
+<td><code>--exclude-dir=&lt;dir1&gt;,&lt;dir2&gt;</code></td>
+<td>排除给定的逗号分隔目录</td>
+</tr>
+<tr>
+<td><code>--exclude-ext=&lt;ext1&gt;,&lt;ext2&gt;</code></td>
+<td>排除给定的文件扩展名</td>
+</tr>
+<tr>
+<td><code>--out=&lt;file&gt;</code></td>
+<td>将结果保存到<code>&lt;file&gt;</code></td>
+</tr>
+<tr>
+<td><code>--quiet</code></td>
+<td>禁止全部信息消息并仅显示最终报告</td>
+</tr>
+<tr>
+<td><code>--diff&lt;set1&gt; &lt;set2&gt;</code></td>
+<td>计算set1和set2的源文件之间的代码差别。 输入能够是文件和目录的混合</td>
+</tr>
+</tbody>
+</table>
 <h2 id="参考" class="headerLink">
     <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
 <li><a href="https://blog.csdn.net/workdsz/article/details/78489101" target="_blank" rel="noopener noreferrer">curl -w,–write-out参数详解</a></li>
@@ -482,8 +572,8 @@
     <div class="post-info">
         <div class="post-info-line">
             <div class="post-info-mod">
-                <span>更新于 2022-11-01&nbsp;<a class="git-hash" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/9efef159d3cdd3ae50409131cf7a7d7d5fdd3671" target="_blank" title="commit by weibin(xiaobinqt@163.com) 9efef159d3cdd3ae50409131cf7a7d7d5fdd3671: add git submodule and update toc format" rel="noopener noreferrer">
-                                    <i class="fas fa-hashtag fa-fw"></i>9efef159</a></span>
+                <span>更新于 2022-11-17&nbsp;<a class="git-hash" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/a026b77ced3bc8c3c2ae1304cd22aeaca65da438" target="_blank" title="commit by weibin(xiaobinqt@163.com) a026b77ced3bc8c3c2ae1304cd22aeaca65da438: update linux-common-concept.md" rel="noopener noreferrer">
+                                    <i class="fas fa-hashtag fa-fw"></i>a026b77c</a></span>
             </div>
             <div class="post-info-license"></div>
         </div>
@@ -491,7 +581,7 @@
             <div class="post-info-md"><span><a class="link-to-mardown" href=/linux-common-concept/index.md target="_blank" rel="noopener noreferrer">阅读原始文档</a>
                     </span></div>
             <div class="post-info-share">
-                <span><a href="#" onclick="return false;" title="分享到 Twitter" data-sharer="twitter" data-url="https://www.xiaobinqt.cn/linux-common-concept/" data-title="Linux 常用命令备忘" data-hashtags="linux"><i class="fab fa-twitter fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Facebook" data-sharer="facebook" data-url="https://www.xiaobinqt.cn/linux-common-concept/" data-hashtag="linux"><i class="fab fa-facebook-square fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Hacker News" data-sharer="hackernews" data-url="https://www.xiaobinqt.cn/linux-common-concept/" data-title="Linux 常用命令备忘"><i class="fab fa-hacker-news fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Line" data-sharer="line" data-url="https://www.xiaobinqt.cn/linux-common-concept/" data-title="Linux 常用命令备忘"><i data-svg-src="/lib/simple-icons/icons/line.min.svg"></i></a><a href="#" onclick="return false;" title="分享到 微博" data-sharer="weibo" data-url="https://www.xiaobinqt.cn/linux-common-concept/" data-title="Linux 常用命令备忘"><i class="fab fa-weibo fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 百度" data-sharer="baidu" data-url="https://www.xiaobinqt.cn/linux-common-concept/" data-title="Linux 常用命令备忘"><i data-svg-src="/lib/simple-icons/icons/baidu.min.svg"></i></a></span>
+                <span><a href="#" onclick="return false;" title="分享到 Twitter" data-sharer="twitter" data-url="https://www.xiaobinqt.cn/linux-common-concept/" data-title="Linux 常用命令备忘" data-hashtags="linux"><i class="fab fa-twitter fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Facebook" data-sharer="facebook" data-url="https://www.xiaobinqt.cn/linux-common-concept/" data-hashtag="linux"><i class="fab fa-facebook-square fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Hacker News" data-sharer="hackernews" data-url="https://www.xiaobinqt.cn/linux-common-concept/" data-title="Linux 常用命令备忘"><i class="fab fa-hacker-news fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Line" data-sharer="line" data-url="https://www.xiaobinqt.cn/linux-common-concept/" data-title="Linux 常用命令备忘"><i data-svg-src="/lib/simple-icons/icons/line.min.svg"></i></a><a href="#" onclick="return false;" title="分享到 微博" data-sharer="weibo" data-url="https://www.xiaobinqt.cn/linux-common-concept/" data-title="Linux 常用命令备忘" data-image="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221117/903e986fcf6c49ab8e03498a04f46776.png"><i class="fab fa-weibo fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 百度" data-sharer="baidu" data-url="https://www.xiaobinqt.cn/linux-common-concept/" data-title="Linux 常用命令备忘"><i data-svg-src="/lib/simple-icons/icons/baidu.min.svg"></i></a></span>
             </div>
         </div>
     </div>
@@ -523,8 +613,7 @@
         </a>
     </div><div class="assets"><script type="text/javascript" src="/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="/lib/algoliasearch/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/topbar/topbar.min.js"></script><script type="text/javascript" src="/lib/pjax/pjax.min.js"></script><script type="text/javascript" src="/js/theme.min.js" defer></script></div>
 
-<div class="pjax-assets"><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":30},"comment":{"gitalk":{"admin":["xiaobinqt"],"clientID":"47b15de6c2d8a0f8d707","clientSecret":"c70556c8b3a3b38ea7c72e539ff3b37d5bc1b4f3","id":"b739b197999b2575321a120214122bbb","owner":"xiaobinqt","repo":"xiaobinqt.github.io","title":"Linux 常用命令备忘"}},"lightGallery":{"actualSize":false,"exThumbImage":"data-thumbnail","hideBarsDelay":2000,"selector":".lightgallery","speed":400,"thumbContHeight":80,"thumbWidth":80,"thumbnail":true},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"algoliaAppID":"CPNWIDNX0Y","algoliaIndex":"xiaobinqt.io","algoliaSearchKey":"80b84de0ebc766371dd27cd3e651c41e","highlightTag":"em","maxResultLength":20,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"},"sharerjs":true};</script><script type="text/javascript" src="/lib/gitalk/gitalk.min.js"></script><script type="text/javascript" src="/js/gitalk.min.js" defer></script><script type="text/javascript" src="/lib/lightgallery/lightgallery.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-thumbnail.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-zoom.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript" src="/lib/katex/katex.min.js" defer></script><script type="text/javascript" src="/lib/katex/auto-render.min.js" defer></script><script type="text/javascript" src="/lib/katex/copy-tex.min.js" defer></script><script type="text/javascript" src="/lib/katex/mhchem.min.js" defer></script><script type="text/javascript" src="/js/katex.min.js" defer></script><link rel="stylesheet" href="/lib/gitalk/gitalk.min.css"><link rel="stylesheet" href="/lib/lightgallery/lightgallery.min.css"><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/katex/copy-tex.min.css">
-        <noscript><link rel="stylesheet" href="/lib/katex/copy-tex.min.css"></noscript></div>
+<div class="pjax-assets"><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":30},"comment":{"gitalk":{"admin":["xiaobinqt"],"clientID":"47b15de6c2d8a0f8d707","clientSecret":"c70556c8b3a3b38ea7c72e539ff3b37d5bc1b4f3","id":"b739b197999b2575321a120214122bbb","owner":"xiaobinqt","repo":"xiaobinqt.github.io","title":"Linux 常用命令备忘"}},"lightGallery":{"actualSize":false,"exThumbImage":"data-thumbnail","hideBarsDelay":2000,"selector":".lightgallery","speed":400,"thumbContHeight":80,"thumbWidth":80,"thumbnail":true},"search":{"algoliaAppID":"CPNWIDNX0Y","algoliaIndex":"xiaobinqt.io","algoliaSearchKey":"80b84de0ebc766371dd27cd3e651c41e","highlightTag":"em","maxResultLength":20,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"},"sharerjs":true};</script><script type="text/javascript" src="/lib/gitalk/gitalk.min.js"></script><script type="text/javascript" src="/js/gitalk.min.js" defer></script><script type="text/javascript" src="/lib/lightgallery/lightgallery.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-thumbnail.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-zoom.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><link rel="stylesheet" href="/lib/gitalk/gitalk.min.css"><link rel="stylesheet" href="/lib/lightgallery/lightgallery.min.css"></div>
 </body>
 
 </html>
