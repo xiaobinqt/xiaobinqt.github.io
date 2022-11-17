@@ -102,35 +102,29 @@ type entry struct {
 
 架构的进一步解释说明：
 
-- read map 由于是原子包托管，主要负责高性能，但是无法保证拥有全量的 key（因为对于新增 key，会首先加到 dirty 中），所以 read
-  某种程度上，类似于一个 key 的快照。
+- read map 由于是原子包托管，主要负责高性能，但是无法保证拥有全量的 key（因为对于新增 key，会首先加到 dirty 中），所以 read 某种程度上，类似于一个 key 的快照。
 
 
 - dirty map 拥有全量的 key，当 Store 操作要新增一个之前不存在的 key 的时候，预先是增加自 dirty 中的。
 
 
-- 在查找指定的 key 的时候，总会先去只读字典中寻找，并不需要锁定互斥锁。只有当 read 中没有，但 dirty 中可能会有这个 key
-  的时候，才会在锁的保护下去访问 dirty。
+- 在查找指定的 key 的时候，总会先去只读字典中寻找，并不需要锁定互斥锁。只有当 read 中没有，但 dirty 中可能会有这个 key 的时候，才会在锁的保护下去访问 dirty。
 
 
 - 在存储键值对的时候，只要 read 中已存有这个 key，并且该键值对未被标记为`expunged`，就会把新值存到里面并直接返回，这种情况下也不需要用到锁。
 
 
-- expunged 和 nil，都表示标记删除，但是它们是有区别的，简单说 expunged 是 read 独有的，而 nil 则是 read 和 dirty
-  共有的，具体这么设计的原因，最后统一总结。
+- expunged 和 nil，都表示标记删除，但是它们是有区别的，简单说 expunged 是 read 独有的，而 nil 则是 read 和 dirty 共有的，具体这么设计的原因，最后统一总结。
 
 
-- read 和 map 的关系，是一直在动态变化的，可能存在重叠，也可能是某某一方为空；重叠的公共部分，由分为两种情况，nil 和
-  normal，它们分别的意义，会在最后统一总结。
+- read 和 map 的关系，是一直在动态变化的，可能存在重叠，也可能是某某一方为空；重叠的公共部分，由分为两种情况，nil 和 normal，它们分别的意义，会在最后统一总结。
 
 
-- read 和 dirty 之间是会互相转换的，在 dirty 中查找 key 对次数足够多的时候，`sync.Map`会把 dirty 直接作为
-  read，即触发 `dirty=>read`升级。同时在某些情况，也会出现`read=>dirty`的重塑，具体方式和这么设计的原因，最后详述。
+- read 和 dirty 之间是会互相转换的，在 dirty 中查找 key 对次数足够多的时候，`sync.Map`会把 dirty 直接作为 read，即触发 `dirty=>read`升级。同时在某些情况，也会出现`read=>dirty`的重塑，具体方式和这么设计的原因，最后详述。
 
 ## 源码细节梳理
 
-通过上面的分析，可以对`sync.Map`有一个初步的整体认知，这里再列出 CURD
-几个关键操作的源码，进一步加深理解。同样的由于篇幅原因，我去除了大段冗长的英文注释，换成了提炼之后更加通俗的理解，有需要可以对比原文注释。
+通过上面的分析，可以对`sync.Map`有一个初步的整体认知，这里再列出 CURD 几个关键操作的源码，进一步加深理解。同样的由于篇幅原因，我去除了大段冗长的英文注释，换成了提炼之后更加通俗的理解，有需要可以对比原文注释。
 
 ### Store操作（对应C/U）
 
@@ -359,10 +353,7 @@ func (e *entry) delete() (value interface{}, ok bool) {
 
 
 - `read=>dirty`
-  ：当有 read 中不存在的新 key 需要增加且 read 和 dirty 一致的时候，触发重塑，且`read.amended`置 true（然后再在 dirty
-  新增）。重塑的过程，会将 nil
-  状态的 entry，全部挤压到 expunged 状态中，同时将非 expunged 的 entry 浅拷贝到 dirty 中，这样可以避免 read 的 key
-  无限的膨胀（存在大量逻辑删除的 key）。最终，在 dirty 再次升级为 read 的时候，这些逻辑删除的 key 就可以一次性丢弃释放了（因为是直接覆盖上去）
+  ：当有 read 中不存在的新 key 需要增加且 read 和 dirty 一致的时候，触发重塑，且`read.amended`置 true（然后再在 dirty 新增）。重塑的过程，会将 nil 状态的 entry，全部挤压到 expunged 状态中，同时将非 expunged 的 entry 浅拷贝到 dirty 中，这样可以避免 read 的 key 无限的膨胀（存在大量逻辑删除的 key）。最终，在 dirty 再次升级为 read 的时候，这些逻辑删除的 key 就可以一次性丢弃释放了（因为是直接覆盖上去）
 
 ![read=>dirty](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221025/e8837d7eda904db586f5e78b23a69ef2.png 'read=>dirty')
 
@@ -370,9 +361,7 @@ func (e *entry) delete() (value interface{}, ok bool) {
 
 ### read 从何而来，存在的意义又是什么？
 
-+ read 是由 dirty
-  升级而来，是利用了`atomic.Store`一次性覆盖，而不是一点点的 set 操作出来的。所以，read 更像是一个快照，read 中 key
-  的集合不能被改变（注意，这里说的 read 的 key 不可改变，不代表指定的 key 的 value 不可改变，value 是可以通过原子`CAS`
++ read 是由 dirty 升级而来，是利用了`atomic.Store`一次性覆盖，而不是一点点的 set 操作出来的。所以，read 更像是一个快照，read 中 key 的集合不能被改变（注意，这里说的 read 的 key 不可改变，不代表指定的 key 的 value 不可改变，value 是可以通过原子`CAS`
   来进行更改的），所以其中的键的集合有时候可能是不全的。
 
 + 相反，脏字典中的键值对集合总是完全的，但是其中不会包含expunged的键值对。
@@ -400,30 +389,24 @@ func (e *entry) delete() (value interface{}, ok bool) {
 
 ### 什么时候 e.p 由 nil 变成 expunged？
 
-- `read=>dirty`重塑的时候，此时 read 中仍然是 nil 的，会变成 expunged，表示这部分 key 等待被最终丢弃（expunged
-  是最终态，等待被丢弃，除非又出现了重新 store 的情况）
+- `read=>dirty`重塑的时候，此时 read 中仍然是 nil 的，会变成 expunged，表示这部分 key 等待被最终丢弃（expunged 是最终态，等待被丢弃，除非又出现了重新 store 的情况）
 
 
 - 最终丢弃的时机：就是`dirty=>read`升级的时候，dirty 的直接粗暴覆盖，会使得 read 中的所有成员都被丢弃，包括 expunged。
 
 ### 既然 nil 也表示标记删除，那么再设计出一个 expunged 的意义是什么？
 
-expunged 是有存在意义的，它作为删除的最终状态（待释放），这样 nil 就可以作为一种中间状态。如果仅仅使用
-nil，那么，在`read=>dirty`重塑的时候，可能会出现如下的情况：
+expunged 是有存在意义的，它作为删除的最终状态（待释放），这样 nil 就可以作为一种中间状态。如果仅仅使用 nil，那么，在`read=>dirty`重塑的时候，可能会出现如下的情况：
 
-- 如果 nil 在 read 浅拷贝至 dirty 的时候仍然保留 entry 的指针（即拷贝完成后，对应键值下 read 和 dirty 中都有对应键下 entry
-  e 的指针，且`e.p=nil`）那么之后在`dirty=>read`升级 key 的时候对应 entry 的指针仍然会保留。那么最终；的合集会越来越大，存在大量
-  nil 的状态，永远无法得到清理的机会。
+- 如果 nil 在 read 浅拷贝至 dirty 的时候仍然保留 entry 的指针（即拷贝完成后，对应键值下 read 和 dirty 中都有对应键下 entry e 的指针，且`e.p=nil`）那么之后在`dirty=>read`升级 key 的时候对应 entry 的指针仍然会保留。那么最终；的合集会越来越大，存在大量 nil 的状态，永远无法得到清理的机会。
 
 
-- 如果 nil 在 read 浅拷贝时不进入 dirty，那么之后 store 某个 Key 键的时候，可能会出现 read 和 dirty
-  不同步的情况，即此时 read 中包含 dirty 不包含的键，那么之后用 dirty 替换 read 的时候就会出现数据丢失的问题。
+- 如果 nil 在 read 浅拷贝时不进入 dirty，那么之后 store 某个 Key 键的时候，可能会出现 read 和 dirty 不同步的情况，即此时 read 中包含 dirty 不包含的键，那么之后用 dirty 替换 read 的时候就会出现数据丢失的问题。
 
 
 - 如果 nil 在 read 浅拷贝时直接把 read 中对应键删除（从而避免了不同步的问题），但这又必须对 read 加锁，违背了 read 读写不加锁的初衷。
 
-综上，为了保证 read 作为快照的性质（不能单独删除或新增key），同时要避免 Map 中 nil 的 key 不断膨胀等多个前提要求，才设计成了
-expungd 的状态。
+综上，为了保证 read 作为快照的性质（不能单独删除或新增key），同时要避免 Map 中 nil 的 key 不断膨胀等多个前提要求，才设计成了 expungd 的状态。
 
 ### 对于一个 entry，从生到死的状态机图
 
@@ -439,8 +422,7 @@ expungd 的状态。
 
 ## 总结
 
-`sync.Map`的源码并不长，但是里面的很多细节都非常的考究，比如对于原子和锁的使用、利用状态机的变化标记来代替 map 的 delete
-从而提高性能和安全性等等。
+`sync.Map`的源码并不长，但是里面的很多细节都非常的考究，比如对于原子和锁的使用、利用状态机的变化标记来代替 map 的 delete 从而提高性能和安全性等等。
 
 ## 参考
 
