@@ -13,7 +13,7 @@ draft: false
 author: "xiaobinqt"
 description: "xiaobinqt"
 
-featuredImage: ""
+featuredImage: "https://cdn.xiaobinqt.cn/xiaobinqt.io/20221117/903e986fcf6c49ab8e03498a04f46776.png"
 
 featuredImagePreview: ""
 
@@ -27,10 +27,8 @@ lightgallery: true
 
 toc: true
 
-math:
-    enable: true
+math: true
 ---
-
 <!-- author： xiaobinqt -->
 <!-- email： xiaobinqt@163.com -->
 <!-- https://xiaobinqt.github.io -->
@@ -52,7 +50,7 @@ musl 和 glibc 都是 Linux 的标准库，区别是 musl 是一个 mini 版本�
 lsb_release -cs
 ```
 
-![获取系统代号](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220507/6fbea271a68b46a994188ae23a6eb291.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '获取系统代号')
+![获取系统代号](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220507/6fbea271a68b46a994188ae23a6eb291.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 "获取系统代号")
 
 ### 内核版本信息
 
@@ -62,7 +60,7 @@ uname -a
 cat /proc/version
 ```
 
-![内核版本信息](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220507/5649c120ada14e0193593b847d46d652.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '内核版本信息')
+![内核版本信息](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220507/5649c120ada14e0193593b847d46d652.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 "内核版本信息")
 
 ## lsb_release
 
@@ -90,23 +88,18 @@ sudo dnf update && sudo dnf install redhat-lsb-core
 
 ### 参数
 
-![lsb_release 参数](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220507/287b2dcba4694769b879bcc0e19e8d68.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'lsb_release 参数')
+![lsb_release 参数](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220507/287b2dcba4694769b879bcc0e19e8d68.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 "lsb_release 参数")
 
 + `-v`：显示与你 Linux 发行版相对应的 Linux 版本库描述信息。Linux 版本库模块描述使用冒号 `:` 分分隔
-
 + `-i`：显示该 Linux 系统的发行商
-
 + `-d`：显示 Linux 发行版描述信息
-
 + `-r`：显示当前 Linux 发行版版本号
-
 + `-c`：显示当前 Linux 发行版[代号]^(codename)
-
 + `-a`：显示全部信息，包括 LSB、版本号、代号、版本描述信息
 
-## linux 常用命令
+## 常用命令
 
-以下命令都是笔者在工作中用到过的，因为不是专业的 shell 工程师，所以遍通过笔记记录下来防止忘记。
+以下命令都是笔者在工作中用到过的，因为不是专业的 shell 工程师，所以便通过笔记记录下来防止忘记。
 
 ### cut
 
@@ -115,7 +108,7 @@ sudo dnf update && sudo dnf install redhat-lsb-core
 + `-d` ：自定义分隔符，默认为制表符。
 + `-f` ：与`-d`一起使用，指定显示哪个区域。
 
-![cut -d -f](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220718/a050c61a3f2b410da7641f8972811dbb.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'cut -d -f')
+![cut -d -f](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220718/a050c61a3f2b410da7641f8972811dbb.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 "cut -d -f")
 
 ### grep
 
@@ -123,7 +116,7 @@ sudo dnf update && sudo dnf install redhat-lsb-core
 grep -v name # 表示查看除了含有name之外的行内容
 ```
 
-![grep -v](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220718/a7c681db9d6b461f8bbce757a75b9eec.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'grep -v')
+![grep -v](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220718/a7c681db9d6b461f8bbce757a75b9eec.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 "grep -v")
 
 ### curl
 
@@ -134,8 +127,56 @@ curl -o /dev/null -s -w %{http_code}  https://www.baidu.com
 + `-o` ：输出文件，默认为标准输出。
 + `-s` ：屏蔽掉输出，不显示任何内容。
 + `-w` ：输出http状态码。
++ `-k` : 忽略证书
 
-### 数组操作
+### sed
+
+1. **`-e`多重编辑**
+
+```shell
+tail /etc/services | sed -e '1,2d' -e 's/blp5/test/'
+```
+
++ `1,2d`：删除第一行和第二行
++ `s/blp5/test/`：将`blp5`替换为`test`
+
+可以用`;`分隔多个命令:point_down:效果一样：
+
+```shell
+tail /etc/services | sed  '1,2d;s/blp5/test/'
+```
+
+![sed多行编辑](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220719/ba6358760d314a4aa69c9fd10e5ad836.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 "sed多行编辑")
+
+2. **读取下一行**
+
+`n` 读取下一行到模式空间
+
+```shell
+seq 6 | sed -n 'n;p'
+```
+
+sed 先读取第一行 1，执行 n 命令，获取下一行 2，此时模式空间是 2，执行 p 命令，打印模式空间。现在模式空间是 2， sed 再读取 3，执行 n 命令，获取下一行 4，此时模式空间为 4，执行 p 命令，以此类推。
+
+![打印偶数](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220719/22639dc6e1b048a280f0af7beb2c1fd3.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 "打印偶数")
+
+### tar
+
++ **不解压读取tar里面的某个文件**，`tar xf tar包 路径 -O`
+
+![读取文件](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221117/0ae5a5a4b67b4bcf8e136b91d39a046f.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '读取文件')
+
+### md5sum
+
+![md5sum](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221117/9c6941cc68e847d38961d866591955f4.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'md5sum')
+
+### mktemp
+
++ `-d` 创建一个目录而非文件
+
+![mktemp](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221117/9d07f580d1f8414a8875935f9c9b7864.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'mktemp')
+
+## 数组操作
 
 ```shell
 #!/bin/bash
@@ -162,55 +203,32 @@ echo "再次数组所有元素 ${array[*]}"
 
 ```
 
-![数组操作](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220718/45e1e48fc0ce4d1ca29cb4593a79257b.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '数组操作')
+![数组操作](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220718/45e1e48fc0ce4d1ca29cb4593a79257b.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 "数组操作")
 
-### sed
+## cloc
 
-#### `-e`多重编辑
+[cloc]^(count lines of code)，是一款使用 Perl 语言开发的开源代码统计工具，支持多平台使用、多语言识别。从名字就能够直观地知道它的功能：可以帮助计算文件中的有效代码数量，而且会自动排除注释和空格。
 
-```shell
-tail /etc/services | sed -e '1,2d' -e 's/blp5/test/'
-```
+cloc git 地址 [https://github.com/AlDanial/cloc](https://github.com/AlDanial/cloc)，官网地址 [https://cloc.sourceforge.net/](https://cloc.sourceforge.net/)。
 
-+ `1,2d`：删除第一行和第二行
+cloc 还可以通过 [npm 安装](https://www.npmjs.com/package/cloc)。
 
-+ `s/blp5/test/`：将`blp5`替换为`test`
+![cloc](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221117/148b71653e5b473a82e398a23d5ad399.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 "cloc")
 
-可以用`;`分隔多个命令:point_down:效果一样：
+在执行完`cloc`命令以后它会计算不一样编程语言的文件数（files）、空行（blank）、注释（comment）和代码行数（code），而且最后返回 SUM 总数。
 
-```shell
-tail /etc/services | sed  '1,2d;s/blp5/test/'
-```
+### 常用命令
 
-![sed多行编辑](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220719/ba6358760d314a4aa69c9fd10e5ad836.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'sed多行编辑')
-
-#### 读取下一行
-
-`n` 读取下一行到模式空间
-
-```shell
-seq 6 | sed -n 'n;p'
-```
-
-sed 先读取第一行 1，执行 n 命令，获取下一行 2，此时模式空间是 2，执行 p 命令，打印模式空间。现在模式空间是 2， sed 再读取 3，执行 n 命令，获取下一行 4，此时模式空间为 4，执行 p 命令，以此类推。
-
-![打印偶数](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220719/22639dc6e1b048a280f0af7beb2c1fd3.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '打印偶数')
+| 命令                | 说明                                                        |
+| ------------------- | ----------------------------------------------------------- |
+|`--ignore-whitespace` | 在使用--diff比较文件时忽略水平空格|
+|`--max-file-size=<MB>` | 若是要跳过大于给定大小MB的文件|
+|`--exclude-dir=<dir1>,<dir2>` | 排除给定的逗号分隔目录|
+|`--exclude-ext=<ext1>,<ext2>` | 排除给定的文件扩展名|
+|`--out=<file>` | 将结果保存到`<file>` |
+|`--quiet` | 禁止全部信息消息并仅显示最终报告|
+|`--diff<set1> <set2>` | 计算set1和set2的源文件之间的代码差别。 输入能够是文件和目录的混合 |
 
 ## 参考
 
 + [curl -w,–write-out参数详解](https://blog.csdn.net/workdsz/article/details/78489101)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
