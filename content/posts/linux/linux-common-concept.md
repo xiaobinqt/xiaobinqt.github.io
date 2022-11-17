@@ -176,6 +176,13 @@ sed 先读取第一行 1，执行 n 命令，获取下一行 2，此时模式空
 
 ![mktemp](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221117/9d07f580d1f8414a8875935f9c9b7864.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'mktemp')
 
+### du
+
++ `du -sh` 查看当前目录的总大小
++ `du -sh *` 查看当前目录所有子目录的大小
++ `du -ach *` 查看当前目录和所有子目录大小，最后一行会显示当前目录的总大小，不包括隐藏文件
++ `du -sh /* --exclude="proc"`，`du -sh /* --exclude="*proc*"` 排除名字中包含 proc 的文件或目录
+
 ## 数组操作
 
 ```shell
@@ -232,3 +239,4 @@ cloc 还可以通过 [npm 安装](https://www.npmjs.com/package/cloc)。
 ## 参考
 
 + [curl -w,–write-out参数详解](https://blog.csdn.net/workdsz/article/details/78489101)
++ [【linux】查看文件目录大小](https://blog.csdn.net/jiangjun_dao519/article/details/125593433)
