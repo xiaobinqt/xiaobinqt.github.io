@@ -37,7 +37,6 @@ math: true
 
 ## 视频
 
-+ [一条视频讲清楚TCP协议与UDP协议-什么是三次握手与四次挥手](https://www.bilibili.com/video/BV1kV411j7hA)
 + [黑马程序员 MySQL数据库入门到精通，从mysql安装到mysql高级、mysql优化全囊括](https://www.bilibili.com/video/BV1Kr4y1i7ru)
 
 ## 在线文档
@@ -48,6 +47,7 @@ math: true
 + [build-web-application-with-golang](https://github.com/astaxie/build-web-application-with-golang/tree/master/zh)
 + [Mastering_Go](https://www.kancloud.cn/cloud001/golang/1601804)
 + [Go语言101](https://gfw.go101.org)
++ [《GO专家编程》](https://www.bookstack.cn/read/GoExpertProgramming/README.md)
 + [PHP扩展开发及内核应用](https://github.com/walu/phpbook)
 + [JavaScript 标准参考教程](https://javascript.ruanyifeng.com/)
 + [ES6 入门教程](https://es6.ruanyifeng.com)
