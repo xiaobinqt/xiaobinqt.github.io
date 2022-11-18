@@ -13,7 +13,7 @@ draft: false
 author: "xiaobinqt"
 description: "golang GC 原理,Go 垃圾回收,Go 垃圾标记清除算法,golang 三色标记法,golang 屏障机制,go 垃圾回收算法,go 插入/删除屏障,golang 混合写屏障,垃圾回收 STW,STW"
 
-featuredImage: "https://cdn.xiaobinqt.cn/xiaobinqt.io/20220407/e9a10f9b61de47f8bdf2db1d0bb22bb2.png"
+featuredImage: "https://cdn.xiaobinqt.cn/xiaobinqt.io/20221118/74f00ad9b278426887ea4348fd7a0e1c.png"
 
 reproduce: true
 
@@ -462,5 +462,6 @@ GoV1.8：三色标记法，混合写屏障机制， 栈空间不启动，堆空�
 
 ## 参考
 
-+ [golang 的GC原理](http://alblue.cn/articles/2020/07/07/1594131614114.html#toc_h2_11)
++ [~~golang 的GC原理~~](http://alblue.cn/articles/2020/07/07/1594131614114.html#toc_h2_11)
 + [Golang三色标记+混合写屏障GC模式全分析](https://www.kancloud.cn/aceld/golang/1958308)
++ [Golang中GC回收机制三色标记与混合写屏障](https://www.bilibili.com/video/BV1wz4y1y7Kd/)
