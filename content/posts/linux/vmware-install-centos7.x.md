@@ -11,21 +11,19 @@ lastmod: 2022-04-18
 draft: false
 
 author: "xiaobinqt"
-description: "xiaobinqt,vmware,centos 7.9,静态 ip,vmware 安装,vmware 安装 CentOS 7.x,vmware 设置静态 ip,centos7,ifconfig command
-not found,修改网卡为 eth0"
+description: "xiaobinqt,vmware,centos 7.9,静态 ip,vmware 安装,vmware 安装 CentOS 7.x,vmware 设置静态 ip,centos7,ifconfig command not found,修改网卡为 eth0"
 
 featuredImage: ""
 
 reproduce: false
 
-tags: ["CentOS 7.x","VMware"]
+tags: ["CentOS 7.x","VMware","linux"]
 categories: ["开发者手册"]
 lightgallery: true
 
 toc: true
 
-math:
-    enable: true
+math: true
 ---
 
 <!-- author： xiaobinqt -->
@@ -47,8 +45,7 @@ math:
 
 ## 安装 CentOS 7.9
 
-下载完 [CentOS-7-x86_64-Minimal-2009](https://mirrors.aliyun.com/centos/7.9.2009/isos/x86_64/) 就可以安装了，这里用的是 Minimal
-版本，安装完成后，系统中只有最基本的组件，方便学习。
+下载完 [CentOS-7-x86_64-Minimal-2009](https://mirrors.aliyun.com/centos/7.9.2009/isos/x86_64/) 就可以安装了，这里用的是 Minimal 版本，安装完成后，系统中只有最基本的组件，方便学习。
 
 ![新建虚拟机](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220415/b3e26ed50cd849c4acb1fd03eda92705.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '新建虚拟机')
 
@@ -266,8 +263,7 @@ cp /etc/sysconfig/network-scripts/ifcfg-eth0 /etc/sysconfig/network-scripts/ifcf
 
 [//]: # (![图 9]&#40;https://img-blog.csdnimg.cn/20200303225047693.png '图 9'&#41;)
 
-物理机共向 ip 地址 `192.168.48.8` 发送了 4 次 ping 请求，4 次都是成功的，发送的数据包为 32 字节，TTL(生存时间值)为 64，其中 TTL 在发送时的默认值为 64，每经过一个路由则减 1
-，此次显示最终结果为 64 说明中间没有经过路由。
+物理机共向 ip 地址 `192.168.48.8` 发送了 4 次 ping 请求，4 次都是成功的，发送的数据包为 32 字节，TTL(生存时间值)为 64，其中 TTL 在发送时的默认值为 64，每经过一个路由则减 1 ，此次显示最终结果为 64 说明中间没有经过路由。
 
 ### 虚拟机测试
 
