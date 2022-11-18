@@ -436,5 +436,6 @@ GoV1.8：三色标记法，混合写屏障机制， 栈空间不启动，堆空�
 
 ## 参考
 
-+ [golang 的GC原理](http://alblue.cn/articles/2020/07/07/1594131614114.html#toc_h2_11)
++ [~~golang 的GC原理~~](http://alblue.cn/articles/2020/07/07/1594131614114.html#toc_h2_11)
 + [Golang三色标记+混合写屏障GC模式全分析](https://www.kancloud.cn/aceld/golang/1958308)
++ [Golang中GC回收机制三色标记与混合写屏障](https://www.bilibili.com/video/BV1wz4y1y7Kd/)
