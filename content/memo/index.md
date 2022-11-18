@@ -95,5 +95,6 @@ math: true
 + [ahhhhfs｜A姐分享](https://www.ahhhhfs.com/)
 + [首发整理！【编程开发全套资料】](https://www.aliyundrive.com/s/mzwfZJYVLcs/folder/636c7fd0bc630df6d2f74d7088be74c65f5c20aa)
 + [百度网盘资源](http://www.baoqiyi.org/)
++ [IT_book](https://github.com/XiangLinPro/IT_book)
 
 
