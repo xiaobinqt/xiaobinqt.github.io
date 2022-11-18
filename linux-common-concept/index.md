@@ -137,6 +137,22 @@ sed 先读取第一行 1，执行 n 命令，获取下一行 2，此时模式空
 
 ![读取文件](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221117/0ae5a5a4b67b4bcf8e136b91d39a046f.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '读取文件')
 
++ **目录压缩成`.tgz`**
+
+| 参数|说明|
+|----|----|
+|`-c`|create 建立压缩档案的参数|
+|`-x`| 解压缩压缩档案的参数|
+|`-z`| 是否需要用gzip压缩|
+|`-v`|压缩的过程中显示档案|
+|`-f`|置顶文档名，在f后面立即接文件名，不能再加参数|
+
+```shell
+tar czvf xxxx.tgz 目录
+#比如
+tar czvf   node-test.tgz package
+````
+
 ### md5sum
 
 ![md5sum](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221117/9c6941cc68e847d38961d866591955f4.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'md5sum')
