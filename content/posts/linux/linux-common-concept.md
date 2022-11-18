@@ -128,6 +128,16 @@ curl -o /dev/null -s -w %{http_code}  https://www.baidu.com
 + `-s` ：屏蔽掉输出，不显示任何内容。
 + `-w` ：输出http状态码。
 + `-k` : 忽略证书
++ `-v` 参数输出通信的整个过程，用于调试
++ 添加请求 cookie
+
+`--cookie "TOKEN1=Yes;TOKEN2=no"` 可以设置请求 cookie，多个 cookie 用`;`分隔。
+
+比如：
+
+```shell
+ curl -v --cookie 'LG=1cabdaad-e522-417c-8ee4-6d5c53daa043;U=2f2f01d2-4fb3-462b-8e38-1b1e11e7bc53' 'http://example.com:42225/api/projects/819c4030-184f-42d2-924a-53184e903acd/jobs/3/artifacts/switch_app_test.tar?token=MYTOKEN' -o testsssss.tar
+```
 
 ### sed
 
