@@ -13,7 +13,7 @@ draft: false
 author: "xiaobinqt"
 description: "xiaobinqt,"
 
-featuredImage: "https://cdn.xiaobinqt.cn/xiaobinqt.io/20221119/9d37840d88db47cb946177b53c6e72e4.png"
+featuredImage: "https://cdn.xiaobinqt.cn/xiaobinqt.io/20221119/ad11d01bf802490fb43e31a0e43569e7.png"
 
 featuredImagePreview: ""
 
@@ -33,6 +33,8 @@ toc: false
 
 math: true
 ---
+
+[//]: # (https://cdn.xiaobinqt.cn/xiaobinqt.io/20221119/9d37840d88db47cb946177b53c6e72e4.png)
 
 <!-- author： xiaobinqt -->
 <!-- email： xiaobinqt@163.com -->
