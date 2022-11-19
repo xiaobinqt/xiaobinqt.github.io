@@ -16,6 +16,7 @@
 ## 视频
 
 + [黑马程序员 MySQL数据库入门到精通，从mysql安装到mysql高级、mysql优化全囊括](https://www.bilibili.com/video/BV1Kr4y1i7ru)
++ [李敖對佛教徒迎佛骨之批判《李敖大哥大》](https://www.youtube.com/watch?v=7TLRaufwPaU&ab_channel=%E4%B8%AD%E5%A4%A9%E9%9B%BB%E8%A6%96)
 
 ## 在线文档
 
