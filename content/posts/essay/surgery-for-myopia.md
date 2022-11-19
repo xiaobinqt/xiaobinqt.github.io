@@ -22,7 +22,7 @@ reproduce: false
 translate: false
 
 tags: ["近视激光手术","半飞秒","全飞秒"]
-categories: ["生活"]
+categories: ["读书与生活"]
 lightgallery: true
 
 toc: true
