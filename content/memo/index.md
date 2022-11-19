@@ -89,6 +89,7 @@ math: true
 + [冷熊简历](https://cv.ftqq.com/#)
 + [身份证号码生成器](https://www.dute.org/fake-id-card-number)
 + [PlantUML简述](https://plantuml.com/zh/)
++ [在线PS-Photopea](https://www.logosc.cn/online-ps) / [在线PS-toolwa](https://toolwa.com/ps/)
 
 ## 资料库
 
