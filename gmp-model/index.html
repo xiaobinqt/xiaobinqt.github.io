@@ -5,18 +5,18 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noodp" />
-    <title class="pjax-title">Go GMP 模型 - xiaobinqt 博客 - 技术改变生活</title><meta name="Description" content="golang GMP 模型,go 数学模型,GMP,进程,线程,协程,goroutine,go 调度器,golang调度器,go协程调度模型"><meta property="og:title" content="Go GMP 模型" />
+    <title class="pjax-title">Go GMP 调度模型 - xiaobinqt 博客 - 技术改变生活</title><meta name="Description" content="golang GMP 模型,go 数学模型,GMP,进程,线程,协程,goroutine,go 调度器,golang调度器,go协程调度模型"><meta property="og:title" content="Go GMP 调度模型" />
 <meta property="og:description" content="golang GMP 模型,go 数学模型,GMP,进程,线程,协程,goroutine,go 调度器,golang调度器,go协程调度模型" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://www.xiaobinqt.cn/gmp-model/" /><meta property="og:image" content="https://www.xiaobinqt.cn/logo.png"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2022-03-16T00:00:00+00:00" />
-<meta property="article:modified_time" content="2022-11-16T22:09:10+08:00" />
+<meta property="article:modified_time" content="2022-11-20T17:21:39+08:00" />
 <meta property="og:see_also" content="https://www.xiaobinqt.cn/go-sync-map/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/highly-concurrent-architecture-evolution/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/session-cookie-token-difference/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/why-mysql-index-use-btree/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/redis-break-pierce-avalanche/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/go-gc/" />
 
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://www.xiaobinqt.cn/logo.png"/>
 
-<meta name="twitter:title" content="Go GMP 模型"/>
+<meta name="twitter:title" content="Go GMP 调度模型"/>
 <meta name="twitter:description" content="golang GMP 模型,go 数学模型,GMP,进程,线程,协程,goroutine,go 调度器,golang调度器,go协程调度模型"/>
 <meta name="application-name" content="xiaobinqt">
 <meta name="apple-mobile-web-app-title" content="xiaobinqt">
@@ -30,13 +30,13 @@
     {
         "@context": "http://schema.org",
         "@type": "BlogPosting",
-        "headline": "Go GMP 模型",
+        "headline": "Go GMP 调度模型",
         "inLanguage": "zh-CN",
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/www.xiaobinqt.cn\/gmp-model\/"
-        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "golang","wordcount":  3191 ,
-        "url": "https:\/\/www.xiaobinqt.cn\/gmp-model\/","datePublished": "2022-03-16T00:00:00+00:00","dateModified": "2022-11-16T22:09:10+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "golang, GMP","wordcount":  6084 ,
+        "url": "https:\/\/www.xiaobinqt.cn\/gmp-model\/","datePublished": "2022-03-16T00:00:00+00:00","dateModified": "2022-11-20T17:21:39+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "xxxx","logo": {
                     "@type": "ImageObject",
@@ -131,8 +131,21 @@
       </ul>
     </li>
     <li><a href="#goroutine-是什么">goroutine 是什么</a></li>
-    <li><a href="#什么是调度">什么是调度</a></li>
+    <li><a href="#调度器的由来">调度器的由来</a></li>
+    <li><a href="#协程和线程的映射">协程和线程的映射</a>
+      <ul>
+        <li><a href="#n1-关系">N:1 关系</a></li>
+        <li><a href="#11-关系">1:1 关系</a></li>
+        <li><a href="#mn-关系">M:N 关系</a></li>
+      </ul>
+    </li>
+    <li><a href="#go-的调度">Go 的调度</a>
+      <ul>
+        <li><a href="#p和m何时会被创建">P和M何时会被创建</a></li>
+      </ul>
+    </li>
     <li><a href="#调度流程">调度流程</a></li>
+    <li><a href="#m0和g0">M0和G0</a></li>
     <li><a href="#窃取行为">窃取行为</a></li>
     <li><a href="#限制条件">限制条件</a>
       <ul>
@@ -143,16 +156,23 @@
       </ul>
     </li>
     <li><a href="#为什么要有-p">为什么要有 P</a></li>
+    <li><a href="#faq">FAQ</a></li>
     <li><a href="#参考">参考</a></li>
   </ul>
 </nav></div>
-    </div><script>document.getElementsByTagName("main")[0].setAttribute("pageStyle", "normal")</script><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Go GMP 模型</h1><div class="post-meta">
+    </div><script>document.getElementsByTagName("main")[0].setAttribute("pageStyle", "normal")</script><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Go GMP 调度模型</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author">
                     <i class="custom-icon iconfont icon-weibiaoti-"></i>
                 </span>&nbsp;&nbsp;<span class="post-category">收录于 </span>&nbsp;<span class="post-category">类别 <a href="/categories/golang/"><i class="far fa-folder fa-fw"></i>golang</a></span>&nbsp;<span class="post-category">和</span>&nbsp;<span class="post-series">系列 <a href="/series/reproduce/"><i class="far fa-list-alt fa-fw"></i>转载</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-03-16">2022-03-16</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2022-11-16">2022-11-16</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 3191 字&nbsp;
-                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 7 分钟&nbsp;</div>
-        </div><div class="details toc" id="toc-static"  kept="">
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-03-16">2022-03-16</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2022-11-20">2022-11-20</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 6084 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 13 分钟&nbsp;</div>
+        </div><div class="featured-image"><img
+        class="lazyload"
+        data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221118/555f4905eb1c4615b9702ead116731d1.png"
+        data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221118/555f4905eb1c4615b9702ead116731d1.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20221118/555f4905eb1c4615b9702ead116731d1.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20221118/555f4905eb1c4615b9702ead116731d1.png 2x"
+        data-sizes="auto"
+        alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221118/555f4905eb1c4615b9702ead116731d1.png"
+        title="golang GMP 模型,go 数学模型,GMP,进程,线程,协程,goroutine,go 调度器,golang调度器,go协程调度模型" height="auto" width="auto"></div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
                     <span>目录</span>
                     <span><i class="details-icon fas fa-angle-right"></i></span>
@@ -167,8 +187,21 @@
       </ul>
     </li>
     <li><a href="#goroutine-是什么">goroutine 是什么</a></li>
-    <li><a href="#什么是调度">什么是调度</a></li>
+    <li><a href="#调度器的由来">调度器的由来</a></li>
+    <li><a href="#协程和线程的映射">协程和线程的映射</a>
+      <ul>
+        <li><a href="#n1-关系">N:1 关系</a></li>
+        <li><a href="#11-关系">1:1 关系</a></li>
+        <li><a href="#mn-关系">M:N 关系</a></li>
+      </ul>
+    </li>
+    <li><a href="#go-的调度">Go 的调度</a>
+      <ul>
+        <li><a href="#p和m何时会被创建">P和M何时会被创建</a></li>
+      </ul>
+    </li>
     <li><a href="#调度流程">调度流程</a></li>
+    <li><a href="#m0和g0">M0和G0</a></li>
     <li><a href="#窃取行为">窃取行为</a></li>
     <li><a href="#限制条件">限制条件</a>
       <ul>
@@ -179,12 +212,13 @@
       </ul>
     </li>
     <li><a href="#为什么要有-p">为什么要有 P</a></li>
+    <li><a href="#faq">FAQ</a></li>
     <li><a href="#参考">参考</a></li>
   </ul>
 </nav></div>
             </div><div class="content" id="content"><h2 id="进程线程协程的区别" class="headerLink">
     <a href="#%e8%bf%9b%e7%a8%8b%e7%ba%bf%e7%a8%8b%e5%8d%8f%e7%a8%8b%e7%9a%84%e5%8c%ba%e5%88%ab" class="header-mark"></a>进程、线程、协程的区别</h2><h3 id="进程" class="headerLink">
-    <a href="#%e8%bf%9b%e7%a8%8b" class="header-mark"></a>进程</h3><p>进程是操作系统对一个正在运行的程序的一种抽象，<strong>进程是资源分配的最小单位</strong>。</p>
+    <a href="#%e8%bf%9b%e7%a8%8b" class="header-mark"></a>进程</h3><p>进程是操作系统对一个正在运行的程序的一种抽象，<strong>进程是资源分配的最小单位</strong>，每一个进程都有一个自己的地址空间。</p>
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220405/c0032558db4249a0a8ce4d6473327d38.png" title="进程在操作系统中的抽象表现" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220405/c0032558db4249a0a8ce4d6473327d38.png" data-sub-html="<h2>进程在操作系统中的抽象表现</h2><p>进程在操作系统中的抽象表现</p>">
         <img
             class="lazyload"
@@ -194,9 +228,19 @@
             alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220405/c0032558db4249a0a8ce4d6473327d38.png">
     </a><figcaption class="image-caption">进程在操作系统中的抽象表现</figcaption>
     </figure></p>
-<p>进程存在的意义是为了<strong>合理压榨 CPU 的性能和分配运行的时间片，不能 “闲着“</strong>。</p>
+<p>通俗的说，<strong>进程就是一个正在执行的程序</strong>。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221118/19ae7497830b4301831fe13d24a30f5f.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="Windows任务管理器" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221118/19ae7497830b4301831fe13d24a30f5f.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>Windows任务管理器</h2><p>Windows任务管理器</p>">
+        <img
+            class="lazyload"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221118/19ae7497830b4301831fe13d24a30f5f.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221118/19ae7497830b4301831fe13d24a30f5f.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20221118/19ae7497830b4301831fe13d24a30f5f.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20221118/19ae7497830b4301831fe13d24a30f5f.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221118/19ae7497830b4301831fe13d24a30f5f.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15">
+    </a><figcaption class="image-caption">Windows任务管理器</figcaption>
+    </figure></p>
+<p>进程存在的意义是为了<strong>合理压榨 CPU 的性能和分配运行的时间片，让 CPU 不能 “闲着“</strong>。</p>
 <p>在计算机中，其计算核心是 CPU，负责所有计算相关的工作和资源。单个 CPU 一次只能运行一个任务。如果一个进程跑着，就把唯一一个 CPU 给完全占住，那是非常不合理的。</p>
-<p>如果总是在运行一个进程上的任务，就会出现一个现象。就是任务不一定总是在执行 ”计算型“ 的任务，会有很大可能是在执行网络调用，阻塞了，CPU 岂不就浪费了？</p>
+<p>如果总是在运行一个进程上的任务，就会出现一个现象，就是任务不一定总是在执行“计算型”的任务，会有很大可能是在执行网络调用阻塞了，那么 CPU 岂不就浪费了？</p>
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220405/a406c795e40e4b7395a0228b299dd6bd.png" title="进程上下文切换" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220405/a406c795e40e4b7395a0228b299dd6bd.png" data-sub-html="<h2>进程上下文切换</h2><p>进程上下文切换</p>">
         <img
             class="lazyload"
@@ -208,12 +252,12 @@
     </figure></p>
 <p>所以出现了多进程，多个 CPU，多个进程。多进程就是指计算机系统可以同时执行多个进程，从一个进程到另外一个进程的转换是由操作系统内核管理的，一般是同时运行多个软件。</p>
 <h3 id="线程" class="headerLink">
-    <a href="#%e7%ba%bf%e7%a8%8b" class="header-mark"></a>线程</h3><p>有了多进程，在操作系统上可以同时运行多个进程。那么为什么有了进程，还要线程呢？这是因为，</p>
+    <a href="#%e7%ba%bf%e7%a8%8b" class="header-mark"></a>线程</h3><p>有了多进程，在操作系统上可以同时运行多个进程。那么为什么有了进程，还要线程呢？这是因为：</p>
 <ul>
 <li>进程间的信息难以共享数据，父子进程并未共享内存，需要通过进程间通信（IPC），在进程间进行信息交换，性能开销较大。</li>
 <li>创建进程（一般是调用 <code>fork</code> 方法）的性能开销较大。</li>
 </ul>
-<p>大家又把目光转向了进程内，能不能在进程里做点什么呢？</p>
+<p>所以大家又把目光转向了进程内，能不能在进程里做点什么呢？</p>
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220405/9462880ac1eb4cdeb5288716a15bac4d.png" title="进程由多个线程组成" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220405/9462880ac1eb4cdeb5288716a15bac4d.png" data-sub-html="<h2>进程由多个线程组成</h2><p>进程由多个线程组成</p>">
         <img
             class="lazyload"
@@ -230,15 +274,15 @@
 <li>创建线程比创建进程要快 10 倍甚至更多。 线程都是同一个进程下自家的孩子，像是内存页、页表等就不需要了。</li>
 </ul>
 <h3 id="协程" class="headerLink">
-    <a href="#%e5%8d%8f%e7%a8%8b" class="header-mark"></a>协程</h3><p>协程（Coroutine）是用户态的线程。通常创建协程时，会从进程的堆中分配一段内存作为协程的栈。</p>
-<p>线程的栈有 8 MB，而协程栈的大小通常只有 KB，而 Go 语言的协程更夸张，只有 2-4KB，非常的轻巧。</p>
+    <a href="#%e5%8d%8f%e7%a8%8b" class="header-mark"></a>协程</h3><p>协程（Co-routine）是用户态的线程。通常创建协程时，会从进程的堆中分配一段内存作为协程的栈。</p>
+<p>线程的栈有 8MB，而协程栈的大小通常只有 KB 级别，而 Go 语言的协程更夸张，只有 2-4KB，非常的轻巧。</p>
 <p>协程有以下优势👋：</p>
 <ul>
 <li>
-<p>👉节省 CPU：避免系统内核级的线程频繁切换，造成的 CPU 资源浪费。好钢用在刀刃上。而协程是用户态的线程，用户可以自行控制协程的创建于销毁，极大程度避免了系统级线程上下文切换造成的资源浪费。</p>
+<p>👉节省 CPU：避免系统内核级的线程频繁切换，造成的 CPU 资源浪费。而协程是用户态的线程，用户可以自行控制协程的创建于销毁，极大程度避免了系统级线程上下文切换造成的资源浪费。</p>
 </li>
 <li>
-<p>👉节约内存：在 64 位的Linux中，一个线程需要分配 8MB 栈内存和 64MB 堆内存，系统内存的制约导致我们无法开启更多线程实现高并发。而在协程编程模式下，可以轻松有十几万协程，这是线程无法比拟的。</p>
+<p>👉节约内存：在 64 位的 Linux 中，一个线程需要分配 8MB 栈内存和 64MB 堆内存，系统内存的制约导致我们无法开启更多线程实现高并发。而在协程编程模式下，可以轻松有十几万协程，这是线程无法比拟的。</p>
 </li>
 <li>
 <p>👉稳定性：前面提到线程之间通过内存来共享数据，这也导致了一个问题，任何一个线程出错时，进程中的所有线程都会跟着一起崩溃。</p>
@@ -248,7 +292,7 @@
 </li>
 </ul>
 <h2 id="goroutine-是什么" class="headerLink">
-    <a href="#goroutine-%e6%98%af%e4%bb%80%e4%b9%88" class="header-mark"></a>goroutine 是什么</h2><p>Goroutine 是一个由 Go 运行时管理的轻量级线程，我们称为 “协程”。</p>
+    <a href="#goroutine-%e6%98%af%e4%bb%80%e4%b9%88" class="header-mark"></a>goroutine 是什么</h2><p>Goroutine 是一个由 Go 运行时管理的轻量级线程，我们称为“协程”。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
@@ -257,34 +301,101 @@
 <pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">go f(x, y, z)
 </span></span></code></pre></td></tr></table>
 </div>
-</div><p>操作系统本身是无法明确感知到 Goroutine 的存在的，Goroutine 的操作和切换归属于 “用户态” 中。</p>
-<p>Goroutine 由特定的调度模式来控制，以 “多路复用” 的形式运行在操作系统为 Go 程序分配的几个系统线程上。</p>
+</div><p>操作系统本身是无法明确感知到 Goroutine 的存在的，Goroutine 的操作和切换归属于“用户态”中。</p>
+<p>Goroutine 由特定的调度模式来控制，以“多路复用”的形式运行在操作系统为 Go 程序分配的几个系统线程上。</p>
 <p>同时创建 Goroutine 的开销很小，初始只需要 2-4k 的栈空间。Goroutine 本身会根据实际使用情况进行自伸缩，非常轻量。</p>
 <div class="details admonition info open">
         <div class="details-summary admonition-title">
             <i class="icon fas fa-info-circle fa-fw"></i>Tips<i class="details-icon fas fa-angle-right fa-fw"></i>
         </div>
         <div class="details-content">
-            <div class="admonition-content"><p>Go程序中没有语言级的关键字让你去创建一个内核线程，你只能创建 goroutine，内核线程只能由 runtime 根据实际情况去创建。</p>
-<p>Go运行时系统并没有内核调度器的中断能力，内核调度器会发起抢占式调度将长期运行的线程中断并让出CPU资源，让其他线程获得执行机会。</p>
+            <div class="admonition-content"><p>Go 程序中没有语言级的关键字让你去创建一个内核线程，你只能创建 goroutine，内核线程只能由 runtime 根据实际情况去创建。</p>
+<p>Go 运行时系统并没有内核调度器的中断能力，内核调度器会发起抢占式调度将长期运行的线程中断并让出 CPU 资源，让其他线程获得执行机会。</p>
 </div>
         </div>
     </div>
-<h2 id="什么是调度" class="headerLink">
-    <a href="#%e4%bb%80%e4%b9%88%e6%98%af%e8%b0%83%e5%ba%a6" class="header-mark"></a>什么是调度</h2><p><strong>用户态的 Goroutine，操作系统看不到它</strong>。必然需要有某个东西去管理他，才能更好的运作起来。 这就是 Go 语言中的调度，也就是 GMP 模型。</p>
-<p>Go scheduler<code> /ˈskedʒuːlər/</code> 的主要功能是针对在处理器上运行的 OS 线程分发可运行的 Goroutine，而我们一提到调度器，就离不开三个经常被提到的缩写，分别是：</p>
-<p>G：Goroutine，实际上我们每次调用 go func 就是生成了一个 G。</p>
-<p>P：Processor，处理器，一般 P 的数量就是处理器的核数，可以通过 GOMAXPROCS 进行修改。</p>
-<p>M：Machine，系统线程。</p>
-<p>这三者交互实际来源于 Go 的 M: N 调度模型。也就是 <strong>M 必须与 P 进行绑定</strong>，然后不断地在 M 上循环寻找可运行的 G 来执行相应的任务。</p>
-<h2 id="调度流程" class="headerLink">
-    <a href="#%e8%b0%83%e5%ba%a6%e6%b5%81%e7%a8%8b" class="header-mark"></a>调度流程</h2><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220405/3ce52556ebc74dcfaf5771cfacb4e218.png" title="调度流程" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220405/3ce52556ebc74dcfaf5771cfacb4e218.png" data-sub-html="<h2>调度流程</h2><p>调度流程</p>">
+<h2 id="调度器的由来" class="headerLink">
+    <a href="#%e8%b0%83%e5%ba%a6%e5%99%a8%e7%9a%84%e7%94%b1%e6%9d%a5" class="header-mark"></a>调度器的由来</h2><p>在多进程/多线程的操作系统中，解决了早期的单进程操作系统进程阻塞的问题，因为一个进程阻塞 CPU 可以立刻切换到其他进程中去执行，而且调度 CPU 的算法可以保证在运行的进程都可以被分配到 CPU 的运行时间片，这样从宏观来看，似乎多个进程是在同时被运行。</p>
+<p>但新的问题就出现了，进程拥有太多的资源，进程的创建、切换、销毁，都会占用很长的时间。CPU 虽然利用起来了，但如果进程过多，CPU 有很大的一部分都被用来进行进程调度。为了能提高CPU的利用率，这里就需要用到调度。</p>
+<p>CPU 调度切换的是进程和线程，CPU 对进程和线程的态度是一样的，虽然线程看起来很好，但实际上多线程开发设计会变得很复杂，要考虑很多同步竞争的问题，比如锁、竞争冲突等。</p>
+<p>一个线程其实分为“内核态“线程和”用户态“线程。一个“用户态线程”必须要绑定一个“内核态线程”，但是 CPU 并不知道有“用户态线程”的存在，CPU 只知道它运行的是一个“内核态线程”。这里我们可以把内核线程依然叫<strong>线程</strong>，用户线程叫<strong>协程</strong>。既然一个协程可以绑定一个线程，那么能不能多个协程绑定在一个或者多个线程上呢！</p>
+<h2 id="协程和线程的映射" class="headerLink">
+    <a href="#%e5%8d%8f%e7%a8%8b%e5%92%8c%e7%ba%bf%e7%a8%8b%e7%9a%84%e6%98%a0%e5%b0%84" class="header-mark"></a>协程和线程的映射</h2><h3 id="n1-关系" class="headerLink">
+    <a href="#n1-%e5%85%b3%e7%b3%bb" class="header-mark"></a>N:1 关系</h3><p>N 个协程绑定 1 个线程。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/32ca2352460442e1b75aed52373558a0.png" title="N:1" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/32ca2352460442e1b75aed52373558a0.png" data-sub-html="<h2>N:1</h2><p>N:1</p>">
         <img
             class="lazyload"
-            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220405/3ce52556ebc74dcfaf5771cfacb4e218.png"
-            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220405/3ce52556ebc74dcfaf5771cfacb4e218.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220405/3ce52556ebc74dcfaf5771cfacb4e218.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220405/3ce52556ebc74dcfaf5771cfacb4e218.png 2x"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/32ca2352460442e1b75aed52373558a0.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/32ca2352460442e1b75aed52373558a0.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/32ca2352460442e1b75aed52373558a0.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/32ca2352460442e1b75aed52373558a0.png 2x"
             data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220405/3ce52556ebc74dcfaf5771cfacb4e218.png">
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/32ca2352460442e1b75aed52373558a0.png">
+    </a><figcaption class="image-caption">N:1</figcaption>
+    </figure></p>
+<p><strong>优点</strong>：</p>
+<p>协程在用户态线程即完成切换，不会陷入到内核态，这种切换非常的轻量快速。但也有很大的缺点，1 个进程的所有协程都绑定在 1 个线程上。</p>
+<p><strong>缺点</strong>：</p>
+<ul>
+<li>某个程序用不了硬件的多核加速能力</li>
+<li>一旦某协程阻塞，造成线程阻塞，本进程的其他协程都无法执行了，根本就没有并发的能力了。</li>
+</ul>
+<h3 id="11-关系" class="headerLink">
+    <a href="#11-%e5%85%b3%e7%b3%bb" class="header-mark"></a>1:1 关系</h3><p>1 个协程绑定 1 个线程，协程的调度都由 CPU 完成了，不存在<code>N:1</code>的缺点，但是协程的创建、删除和切换的代价都由 CPU 完成，略显昂贵。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/48726c7c54854150a7088dba1bc78860.png" title="1:1" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/48726c7c54854150a7088dba1bc78860.png" data-sub-html="<h2>1:1</h2><p>1:1</p>">
+        <img
+            class="lazyload"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/48726c7c54854150a7088dba1bc78860.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/48726c7c54854150a7088dba1bc78860.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/48726c7c54854150a7088dba1bc78860.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/48726c7c54854150a7088dba1bc78860.png 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/48726c7c54854150a7088dba1bc78860.png">
+    </a><figcaption class="image-caption">1:1</figcaption>
+    </figure></p>
+<h3 id="mn-关系" class="headerLink">
+    <a href="#mn-%e5%85%b3%e7%b3%bb" class="header-mark"></a>M:N 关系</h3><p>M 个协程绑定 N 个线程，是<code>N:1</code>和<code>1:1</code>类型的结合，克服了以上 2 种模型的缺点，但实现复杂。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/042a666564f44407a0efe47b5ffeaa7d.png" title="M:N" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/042a666564f44407a0efe47b5ffeaa7d.png" data-sub-html="<h2>M:N</h2><p>M:N</p>">
+        <img
+            class="lazyload"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/042a666564f44407a0efe47b5ffeaa7d.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/042a666564f44407a0efe47b5ffeaa7d.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/042a666564f44407a0efe47b5ffeaa7d.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/042a666564f44407a0efe47b5ffeaa7d.png 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/042a666564f44407a0efe47b5ffeaa7d.png">
+    </a><figcaption class="image-caption">M:N</figcaption>
+    </figure></p>
+<h2 id="go-的调度" class="headerLink">
+    <a href="#go-%e7%9a%84%e8%b0%83%e5%ba%a6" class="header-mark"></a>Go 的调度</h2><p><strong>用户态的 Goroutine，操作系统看不到它</strong>。必然需要有某个东西去管理他，才能更好的运作起来。 这就是 Go 语言中的调度，也就是 GMP 模型。</p>
+<p>Go scheduler<code> /ˈskedʒuːlər/</code> 的主要功能是针对在处理器上运行的 OS 线程分发可运行的 Goroutine，而我们一提到调度器，就离不开三个经常被提到的缩写，他们分别是：</p>
+<ul>
+<li>
+<p>G：Goroutine，实际上我们每次调用<code>go func</code>就是生成了一个 G。</p>
+</li>
+<li>
+<p>P：Processor，处理器，一般 P 的数量就是处理器的核数，可以通过<code>runtime.GOMAXPROCS(n)</code>进行修改。P 包含了运行 goroutine 的资源，如果线程 M 想运行 goroutine，必须先获取 P ，一个 M 在与一个 P 关联之后形成了一个有效的 G 运行环境「内核线程 + 上下文环境」。P 中还包含了可运行的本地 G 队列，本地 G 队列不超过 256 个 G，优先会将新创建的 G 放到某个 P 的本地队列中，如果本地队列满了会放到全局队列中。</p>
+</li>
+<li>
+<p>M：Machine，系统/内核线程，是运行 goroutine 的实体，每个 M 都代表了 1 个内核线程。<strong>M 可以运行 2 种代码，当 M 运行 go 代码一定需要一个P，当 M 运行原生代码, 例如阻塞的<code>syscall</code>, 此时 M 不需要 P</strong>。</p>
+</li>
+</ul>
+<p>M 与 P 的数量没有绝对关系，一个 M 阻塞，P 就会去创建或者切换另一个 M，所以，<strong>即使 P 的默认数量是 1，也有可能会创建很多个 M 出来</strong>。</p>
+<p>这三者交互实际来源于 Go 的<code>M:N</code>调度模型。也就是 <strong>M 必须与 P 进行绑定</strong>，然后不断地在 M 上循环寻找可运行的 G 来执行相应的任务。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221119/849f150e61d6472ea2099f1097c581fa.png" title="GMP调度" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221119/849f150e61d6472ea2099f1097c581fa.png" data-sub-html="<h2>GMP调度</h2><p>GMP调度</p>">
+        <img
+            class="lazyload"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221119/849f150e61d6472ea2099f1097c581fa.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221119/849f150e61d6472ea2099f1097c581fa.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20221119/849f150e61d6472ea2099f1097c581fa.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20221119/849f150e61d6472ea2099f1097c581fa.png 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221119/849f150e61d6472ea2099f1097c581fa.png">
+    </a><figcaption class="image-caption">GMP调度</figcaption>
+    </figure></p>
+<h3 id="p和m何时会被创建" class="headerLink">
+    <a href="#p%e5%92%8cm%e4%bd%95%e6%97%b6%e4%bc%9a%e8%a2%ab%e5%88%9b%e5%bb%ba" class="header-mark"></a>P和M何时会被创建</h3><p><strong>P 何时创建</strong>：在确定了 P 的最大数量 n 后，运行时系统会根据这个数量创建 n 个 P。</p>
+<p><strong>M 何时创建</strong>：没有足够的 M 来关联 P 并运行其中的可运行的 G。比如所有的 M 此时都阻塞住了，而 P 中还有很多就绪任务，就会去寻找空闲的 M，而没有空闲的，就会去创建新的 M。当 M 有空闲就会被回收或是睡眠。</p>
+<h2 id="调度流程" class="headerLink">
+    <a href="#%e8%b0%83%e5%ba%a6%e6%b5%81%e7%a8%8b" class="header-mark"></a>调度流程</h2><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221119/945c94520e1b40c5adb516f58a0c2f30.png" title="调度流程" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221119/945c94520e1b40c5adb516f58a0c2f30.png" data-sub-html="<h2>调度流程</h2><p>调度流程</p>">
+        <img
+            class="lazyload"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221119/945c94520e1b40c5adb516f58a0c2f30.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221119/945c94520e1b40c5adb516f58a0c2f30.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20221119/945c94520e1b40c5adb516f58a0c2f30.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20221119/945c94520e1b40c5adb516f58a0c2f30.png 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221119/945c94520e1b40c5adb516f58a0c2f30.png">
     </a><figcaption class="image-caption">调度流程</figcaption>
     </figure></p>
 <ol>
@@ -292,23 +403,58 @@
 <p>当我们执行 <code>go func()</code> 时，实际上就是创建一个全新的 Goroutine，我们称它为 G。</p>
 </li>
 <li>
-<p>新创建的 G 会被放入 P 的本地队列（Local Queue）或全局队列（Global Queue）中，准备下一步的动作。需要注意的一点，这里的 P 指的是创建 G 的 P。 唤醒或创建 M 以便执行 G。</p>
+<p>新创建的 G 会被放入 P 的本地队列（Local Queue）或全局队列（Global Queue）中，准备下一步的动作。需要注意的一点，这里的 P 指的是创建 G 的 P，如果 P 的本地队列已经满了就会保存在全局的队列中。</p>
 </li>
 <li>
-<p>不断地进行事件循环</p>
+<p>唤醒或创建 M 以便执行 G。G 只能运行在 M 中，一个 M 必须持有一个 P，M 与 P 是<code>1:1</code>的关系。M 会从 P 的本地队列弹出一个可执行状态的 G 来执行，如果 P 的本地队列为空，就会想其他的<code>MP</code>组合偷取一个可执行的 G 来执行。</p>
 </li>
 <li>
-<p>寻找在可用状态下的 G 进行执行任务</p>
+<p>一个M调度G执行的过程是一个循环机制。</p>
 </li>
 <li>
-<p>清除后，重新进入事件循环</p>
+<p>当 M 执行某一个 G 的时候如果发生了<code>syscall</code>或者其余的阻塞操作，M 会阻塞，如果当前有一些 G 在执行，runtime 会把这个线程 M 从 P 中摘除（detach），然后再创建一个新的操作系统的线程（如果有空闲的线程可用就复用空闲线程）来服务于这个 P。</p>
+</li>
+<li>
+<p>当 M 系统调用结束时候，这个 G 会尝试获取一个空闲的 P 执行，并放入到这个 P 的本地队列。如果获取不到 P，那么这个线程 M 变成休眠状态，加入到空闲线程中，然后这个 G 会被放入全局队列中。</p>
 </li>
 </ol>
 <p>在描述中有提到全局和本地这两类队列，其实在功能上来讲都是用于存放正在等待运行的 G，但是不同点在于，<strong>本地队列有数量限制，不允许超过 256 个</strong>。</p>
 <p>并且在新建 G 时，会优先选择 P 的本地队列，如果本地队列满了，则将 P 的本地队列的一半的 G 移动到全局队列。 可以理解为调度资源的共享和再平衡。</p>
+<h2 id="m0和g0" class="headerLink">
+    <a href="#m0%e5%92%8cg0" class="header-mark"></a>M0和G0</h2><p><code>M0</code>是启动程序后的编号为 0 的主线程，这个 M 对应的实例会在全局变量<code>runtime.m0</code>中，<code>M0</code>负责执行初始化操作和启动第一个 G， 在之后<code>M0</code>就和其他的 M 一样。</p>
+<p><code>G0</code>是每次启动一个 M 都会第一个创建的 gourtine，<code>G0</code>仅用于负责调度的 G，G0 不指向任何可执行的函数, 每个 M 都会有一个自己的<code>G0</code>。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Hello world&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>☝️上面代码会经历如下过程：</p>
+<ol>
+<li>runtime 创建最初的线程 m0 和 goroutine g0，并把 2 者关联。</li>
+<li>调度器初始化：初始化 m0、栈、垃圾回收，以及创建和初始化由<code>GOMAXPROCS</code>个 P 构成的 P 列表。</li>
+<li>示例代码中的 main 函数是<code>main.main</code>，runtime 中也有 1 个 main 函数<code>runtime.main</code>，代码经过编译后，<code>runtime.main</code>会调用<code>main.main</code>，程序启动时会为<code>runtime.main</code>创建 goroutine，可以称它为 main goroutine，然后把 main goroutine 加入到 P 的本地队列。</li>
+<li>启动 m0，m0 已经绑定了 P，会从 P 的本地队列获取 G，获取到 main goroutine。</li>
+<li>M 根据 G 中的栈信息和调度信息设置运行环境，M 运行 G。</li>
+<li>G 退出，再次回到 M 获取可运行的 G，这样重复下去，直到<code>main.main</code>退出，<code>runtime.main</code>执行 Defer 和 Panic 处理，或调用<code>runtime.exit</code>退出程序。</li>
+</ol>
+<p>调度器的生命周期几乎占满了一个 Go 程序的一生，<code>runtime.main</code>的 goroutine 执行之前都是为调度器做准备工作，<code>runtime.main</code>的 goroutine 运行，才是调度器的真正开始，直到<code>runtime.main</code>结束而结束。</p>
 <h2 id="窃取行为" class="headerLink">
-    <a href="#%e7%aa%83%e5%8f%96%e8%a1%8c%e4%b8%ba" class="header-mark"></a>窃取行为</h2><p>可以看到图上有 steal 行为，这是用来做什么的呢，我们都知道当你创建新的 G 或者 G 变成可运行状态时，它会被推送加入到当前 P 的本地队列中。</p>
-<p>其实当 P 执行 G 完毕后，它也会 “干活”，它会将其从本地队列中弹出 G，同时会检查当前本地队列是否为空，如果为空会随机的从其他 P 的本地队列中尝试<strong>窃取一半</strong>可运行的 G 到自己的名下。</p>
+    <a href="#%e7%aa%83%e5%8f%96%e8%a1%8c%e4%b8%ba" class="header-mark"></a>窃取行为</h2><p>当创建新的 G 或者 G 变成可运行状态时，它会被推送加入到当前 P 的本地队列中。当 P 执行 G 完毕后，P 会将 G 从本地队列中弹出，同时会检查当前本地队列是否为空，如果为空不会立刻销毁线程，而是会随机的从其他 P 的本地队列中尝试<strong>窃取一半</strong>可运行的 G 到自己的名下。</p>
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220405/a378474165e94b908f8fc7b44812cc4c.png" title="窃取行为" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220405/a378474165e94b908f8fc7b44812cc4c.png" data-sub-html="<h2>窃取行为</h2><p>窃取行为</p>">
         <img
             class="lazyload"
@@ -318,8 +464,7 @@
             alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220405/a378474165e94b908f8fc7b44812cc4c.png">
     </a><figcaption class="image-caption">窃取行为</figcaption>
     </figure></p>
-<p>上图中👆，P2 在本地队列中找不到可以运行的 G，它会执行 <code>work-stealing</code> 调度算法，随机选择其它的处理器 P1，并从 P1 的本地队列中窃取了三个 G 到它自己的本地队列中去。</p>
-<p>至此，P1、P2 都拥有了可运行的 G，P1 多余的 G 也不会被浪费，调度资源将会更加平均的在多个处理器中流转。</p>
+<p>上图中👆，P2 在本地队列中找不到可以运行的 G，它会执行 <code>work-stealing</code> 调度算法，随机选择其它的处理器 P1，并从 P1 的本地队列中窃取了三个 G 到它自己的本地队列中去。至此，P1、P2 都拥有了可运行的 G，P1 多余的 G 也不会被浪费，调度资源将会更加平均的在多个处理器中流转。</p>
 <h2 id="限制条件" class="headerLink">
     <a href="#%e9%99%90%e5%88%b6%e6%9d%a1%e4%bb%b6" class="header-mark"></a>限制条件</h2><h3 id="m-的限制" class="headerLink">
     <a href="#m-%e7%9a%84%e9%99%90%e5%88%b6" class="header-mark"></a>M 的限制</h3><p>在协程的执行中，真正干活的是 GPM 中的 M（系统线程） ，因为 G 是用户态上的东西，最终执行都是得映射，对应到 M 这一个系统线程上去运行。</p>
@@ -363,15 +508,71 @@
 </ul>
 <p>跑的如果是 “资源怪兽”，只运行几个 Goroutine 都可以跑死。</p>
 <h2 id="为什么要有-p" class="headerLink">
-    <a href="#%e4%b8%ba%e4%bb%80%e4%b9%88%e8%a6%81%e6%9c%89-p" class="header-mark"></a>为什么要有 P</h2><p>// TODO</p>
-<h2 id="参考" class="headerLink">
+    <a href="#%e4%b8%ba%e4%bb%80%e4%b9%88%e8%a6%81%e6%9c%89-p" class="header-mark"></a>为什么要有 P</h2><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/bdcbfb4a788d477b991c0179a7180c3c.png" title="早期调度器" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/bdcbfb4a788d477b991c0179a7180c3c.png" data-sub-html="<h2>早期调度器</h2><p>早期调度器</p>">
+        <img
+            class="lazyload"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/bdcbfb4a788d477b991c0179a7180c3c.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/bdcbfb4a788d477b991c0179a7180c3c.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/bdcbfb4a788d477b991c0179a7180c3c.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/bdcbfb4a788d477b991c0179a7180c3c.png 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/bdcbfb4a788d477b991c0179a7180c3c.png">
+    </a><figcaption class="image-caption">早期调度器</figcaption>
+    </figure></p>
+<p>Go 早期的调度器是没有 P 的，只有 M 和 G。M 想要执行、放回 G 都必须访问全局 G 队列，并且 M 有多个，多线程访问同一资源需要加锁进行保证互斥/同步，所以全局 G 队列是有互斥锁进行保护的。</p>
+<p>所以早期的调度器存在这样几个缺点：</p>
+<ul>
+<li>创建、销毁、调度 G 都需要每个 M 获取锁，这就形成了激烈的<strong>锁竞争</strong>。</li>
+<li>M 转移 G 会造成延迟和额外的系统负载。比如当 G 中包含创建新协程的时候，M 创建了<code>G'</code>，为了继续执行 G，需要把<code>G'</code>交给<code>M'</code>执行，也造成了很差的局部性，因为<code>G'</code>和 G 是相关的，最好放在 M 上执行，而不是其他<code>M'</code>。</li>
+<li>系统调用（CPU 在 M 之间的切换）导致频繁的线程阻塞和取消阻塞操作增加了系统开销。</li>
+</ul>
+<h2 id="faq" class="headerLink">
+    <a href="#faq" class="header-mark"></a>FAQ</h2><ol>
+<li><strong>hand off 机制</strong></li>
+</ol>
+<p>当本线程上执行的 G 阻塞时，线程会释放绑定的 P，把 P 和 M 分离，把 P 转移给其他空闲的线程执行。</p>
+<ol start="2">
+<li><strong>利用并行</strong></li>
+</ol>
+<p>可以通过<code>GOMAXPROCS</code>设置 P 的数量，最多有<code>GOMAXPROCS</code>个线程分布在多个 CPU 上同时运行，因为 P 是绑定在 M 上的，M 想要运行 G 必须先获取 P。<code>GOMAXPROCS</code>也限制了并发的程度，比如<code>GOMAXPROCS = 核数/2</code>，则最多利用了一半的 CPU 核进行并行。</p>
+<ol start="3">
+<li><strong>抢占</strong></li>
+</ol>
+<p>一个 goroutine 最多占用 CPU 10ms，防止其他 goroutine 被饿死。</p>
+<ol start="4">
+<li><strong>自旋线程</strong></li>
+</ol>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/f6015c66c0b946e5a775ee6928f4d9a7.png" title="自旋线程" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/f6015c66c0b946e5a775ee6928f4d9a7.png" data-sub-html="<h2>自旋线程</h2><p>自旋线程</p>">
+        <img
+            class="lazyload"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/f6015c66c0b946e5a775ee6928f4d9a7.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/f6015c66c0b946e5a775ee6928f4d9a7.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/f6015c66c0b946e5a775ee6928f4d9a7.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/f6015c66c0b946e5a775ee6928f4d9a7.png 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/f6015c66c0b946e5a775ee6928f4d9a7.png">
+    </a><figcaption class="image-caption">自旋线程</figcaption>
+    </figure></p>
+<p>假定 G2 唤醒了 M2，M2 绑定了 P2，M2 调用并运行<code>G0</code>，但 P2 本地队列没有 G，M2 此时的状态称为自旋线程（没有 G 但为运行状态的线程，不断寻找 G）。自旋线程<strong>优先</strong>会从全局队列里获取 G，当全局队列里没有了时，会去其他的<code>MP</code>组合中偷取 G。</p>
+<p>自旋线程的最大限制符合公式：<code>自旋线程 + 执行线程 &lt;= GOMAXPROCS</code></p>
+<ol start="5">
+<li><strong>如何从全局队列取 G 的数量</strong></li>
+</ol>
+<p>某个 M 尝试从全局队列(简称“GQ”)取一批 G 放到自己 P 的本地队列，从全局队列取的 G 数量符合下面的公式：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">n =  min(len(GQ) / GOMAXPROCS +  1,  cap(LQ) / 2 )
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="参考" class="headerLink">
     <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
+<li><a href="https://www.yuque.com/aceld/golang/srxd6d" target="_blank" rel="noopener noreferrer">Golang的协程调度器原理及GMP设计思想</a></li>
 <li><a href="https://zhuanlan.zhihu.com/p/111346689" target="_blank" rel="noopener noreferrer">Go 为什么这么“快”</a></li>
 <li><a href="https://blog.csdn.net/weixin_38054045/article/details/104098072" target="_blank" rel="noopener noreferrer">让你很快就能理解-go的协程调度原理</a></li>
 <li><a href="https://mp.weixin.qq.com/s/uWP2X6iFu7BtwjIv5H55vw" target="_blank" rel="noopener noreferrer">Goroutine 数量控制在多少合适，会影响 GC 和调度？</a></li>
 <li><a href="https://studygolang.com/articles/9211" target="_blank" rel="noopener noreferrer">Golang goroutine与调度器</a></li>
 <li><a href="https://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html" target="_blank" rel="noopener noreferrer">进程与线程的一个简单解释</a></li>
-<li><a href="https://learnku.com/articles/41728" target="_blank" rel="noopener noreferrer">[典藏版] Golang 调度器 GMP 原理与调度全分析</a></li>
+<li><a href="https://mp.weixin.qq.com/s?__biz=MzUxMDI4MDc1NA==&amp;mid=2247488604&amp;idx=1&amp;sn=83219ea874b1345debc65904cd7f025a" target="_blank" rel="noopener noreferrer">Go 面试官：什么是协程，协程和线程的区别和联系？</a></li>
+<li><a href="https://blog.csdn.net/genziisme/article/details/124324755" target="_blank" rel="noopener noreferrer">golang高级进阶（一）：进程、线程、并发、并行、goroutine协程</a></li>
 </ul>
 </div>
 
@@ -379,8 +580,8 @@
     <div class="post-info">
         <div class="post-info-line">
             <div class="post-info-mod">
-                <span>更新于 2022-11-16&nbsp;<a class="git-hash" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/ac9e49d3ace07e1a7a02db0732b993568dbd539d" target="_blank" title="commit by weibin(xiaobinqt@163.com) ac9e49d3ace07e1a7a02db0732b993568dbd539d: categorize into series" rel="noopener noreferrer">
-                                    <i class="fas fa-hashtag fa-fw"></i>ac9e49d3</a></span>
+                <span>更新于 2022-11-20&nbsp;<a class="git-hash" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/a49472d9a0135f218f8bc34ef6cecb4d7fed3b79" target="_blank" title="commit by weibin(xiaobinqt@163.com) a49472d9a0135f218f8bc34ef6cecb4d7fed3b79: update gmp-model.md" rel="noopener noreferrer">
+                                    <i class="fas fa-hashtag fa-fw"></i>a49472d9</a></span>
             </div>
             <div class="post-info-license"></div>
         </div>
@@ -388,13 +589,13 @@
             <div class="post-info-md"><span><a class="link-to-mardown" href=/gmp-model/index.md target="_blank" rel="noopener noreferrer">阅读原始文档</a>
                     </span></div>
             <div class="post-info-share">
-                <span><a href="#" onclick="return false;" title="分享到 Twitter" data-sharer="twitter" data-url="https://www.xiaobinqt.cn/gmp-model/" data-title="Go GMP 模型" data-hashtags="golang"><i class="fab fa-twitter fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Facebook" data-sharer="facebook" data-url="https://www.xiaobinqt.cn/gmp-model/" data-hashtag="golang"><i class="fab fa-facebook-square fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Hacker News" data-sharer="hackernews" data-url="https://www.xiaobinqt.cn/gmp-model/" data-title="Go GMP 模型"><i class="fab fa-hacker-news fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Line" data-sharer="line" data-url="https://www.xiaobinqt.cn/gmp-model/" data-title="Go GMP 模型"><i data-svg-src="/lib/simple-icons/icons/line.min.svg"></i></a><a href="#" onclick="return false;" title="分享到 微博" data-sharer="weibo" data-url="https://www.xiaobinqt.cn/gmp-model/" data-title="Go GMP 模型"><i class="fab fa-weibo fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 百度" data-sharer="baidu" data-url="https://www.xiaobinqt.cn/gmp-model/" data-title="Go GMP 模型"><i data-svg-src="/lib/simple-icons/icons/baidu.min.svg"></i></a></span>
+                <span><a href="#" onclick="return false;" title="分享到 Twitter" data-sharer="twitter" data-url="https://www.xiaobinqt.cn/gmp-model/" data-title="Go GMP 调度模型" data-hashtags="golang,GMP"><i class="fab fa-twitter fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Facebook" data-sharer="facebook" data-url="https://www.xiaobinqt.cn/gmp-model/" data-hashtag="golang"><i class="fab fa-facebook-square fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Hacker News" data-sharer="hackernews" data-url="https://www.xiaobinqt.cn/gmp-model/" data-title="Go GMP 调度模型"><i class="fab fa-hacker-news fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Line" data-sharer="line" data-url="https://www.xiaobinqt.cn/gmp-model/" data-title="Go GMP 调度模型"><i data-svg-src="/lib/simple-icons/icons/line.min.svg"></i></a><a href="#" onclick="return false;" title="分享到 微博" data-sharer="weibo" data-url="https://www.xiaobinqt.cn/gmp-model/" data-title="Go GMP 调度模型" data-image="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221118/555f4905eb1c4615b9702ead116731d1.png"><i class="fab fa-weibo fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 百度" data-sharer="baidu" data-url="https://www.xiaobinqt.cn/gmp-model/" data-title="Go GMP 调度模型"><i data-svg-src="/lib/simple-icons/icons/baidu.min.svg"></i></a></span>
             </div>
         </div>
     </div>
 
     <div class="post-info-more">
-        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/golang/">golang</a></section>
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/golang/">golang</a>,&nbsp;<a href="/tags/gmp/">GMP</a></section>
         <section>
             <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
         </section>
@@ -420,7 +621,7 @@
         </a>
     </div><div class="assets"><script type="text/javascript" src="/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="/lib/algoliasearch/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/topbar/topbar.min.js"></script><script type="text/javascript" src="/lib/pjax/pjax.min.js"></script><script type="text/javascript" src="/js/theme.min.js" defer></script></div>
 
-<div class="pjax-assets"><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":30},"comment":{"gitalk":{"admin":["xiaobinqt"],"clientID":"47b15de6c2d8a0f8d707","clientSecret":"c70556c8b3a3b38ea7c72e539ff3b37d5bc1b4f3","id":"72b3cf9fcc792d8713f6d8d095738751","owner":"xiaobinqt","repo":"xiaobinqt.github.io","title":"Go GMP 模型"}},"lightGallery":{"actualSize":false,"exThumbImage":"data-thumbnail","hideBarsDelay":2000,"selector":".lightgallery","speed":400,"thumbContHeight":80,"thumbWidth":80,"thumbnail":true},"search":{"algoliaAppID":"CPNWIDNX0Y","algoliaIndex":"xiaobinqt.io","algoliaSearchKey":"80b84de0ebc766371dd27cd3e651c41e","highlightTag":"em","maxResultLength":20,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"},"sharerjs":true};</script><script type="text/javascript" src="/lib/gitalk/gitalk.min.js"></script><script type="text/javascript" src="/js/gitalk.min.js" defer></script><script type="text/javascript" src="/lib/lightgallery/lightgallery.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-thumbnail.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-zoom.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><link rel="stylesheet" href="/lib/gitalk/gitalk.min.css"><link rel="stylesheet" href="/lib/lightgallery/lightgallery.min.css"></div>
+<div class="pjax-assets"><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":30},"comment":{"gitalk":{"admin":["xiaobinqt"],"clientID":"47b15de6c2d8a0f8d707","clientSecret":"c70556c8b3a3b38ea7c72e539ff3b37d5bc1b4f3","id":"72b3cf9fcc792d8713f6d8d095738751","owner":"xiaobinqt","repo":"xiaobinqt.github.io","title":"Go GMP 调度模型"}},"lightGallery":{"actualSize":false,"exThumbImage":"data-thumbnail","hideBarsDelay":2000,"selector":".lightgallery","speed":400,"thumbContHeight":80,"thumbWidth":80,"thumbnail":true},"search":{"algoliaAppID":"CPNWIDNX0Y","algoliaIndex":"xiaobinqt.io","algoliaSearchKey":"80b84de0ebc766371dd27cd3e651c41e","highlightTag":"em","maxResultLength":20,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"},"sharerjs":true};</script><script type="text/javascript" src="/lib/gitalk/gitalk.min.js"></script><script type="text/javascript" src="/js/gitalk.min.js" defer></script><script type="text/javascript" src="/lib/lightgallery/lightgallery.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-thumbnail.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-zoom.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><link rel="stylesheet" href="/lib/gitalk/gitalk.min.css"><link rel="stylesheet" href="/lib/lightgallery/lightgallery.min.css"></div>
 </body>
 
 </html>
