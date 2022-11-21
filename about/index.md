@@ -36,7 +36,7 @@
 
 {{< admonition type=note title="版权说明" open=true >}}
 
-本站图片和文字，除原创作品之外，部分来自互联网。对于转载的文章，本站都标识有【转载】。
+本站图片和文字，除原创作品之外，部分来自互联网。对于转载和文章大部分内容来自多位作者的文章，本站都标识有【转载】并在文末标注了参考地址。
 
 此类资源的原版权所有者可在任何时候、以任何理由要求本站停止使用，其中包括被本站编辑（比如加注说明）过的资源， 联系方式见下文。
 
@@ -50,8 +50,7 @@
 
 + 微信：
 
-{{< image
-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220319/d5616bfc809a45608437f9cc94b14044.jpg?imageView2/0/interlace/1/q/50|imageslim"
+{{< image src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220319/d5616bfc809a45608437f9cc94b14044.jpg?imageView2/0/interlace/1/q/50|imageslim"
 caption="个人微信" class="wb-wechat">}}
 
 
