@@ -48,7 +48,7 @@ CREATE TABLE student_score
 );
 ```
 
-:point_up: 如上，在对`student_score`表插入数据的时候，MySQL都会检查插入的学号是否能在`student_info`
+:point_up: 如上，在对`student_score`表插入数据的时候，MySQL 都会检查插入的学号是否能在`student_info`
 表中找到，如果找不到则会报错，因为`student_score`表中的`number`
 列依赖于`student_info`表的`number`列，也就是，如果没有这个学生，何来成绩？
 
@@ -71,9 +71,9 @@ INT后边的`(5)`，这个 5 就是显示宽度，默认是10，也就是 `INT` 
 + 该列必须是整数类型
 + 该列必须有 `UNSIGNED ZEROFILL`的属性
 + 该列的实际值的位数必须小于显示宽度
-+ 在创建表的时候，如果声明了`ZEROFILL`属性的列没有声明`UNSIGNED`属性，MySQL会为该列自动生成`UNSIGNED`属性
++ 在创建表的时候，如果声明了`ZEROFILL`属性的列没有声明`UNSIGNED`属性，MySQL 会为该列自动生成`UNSIGNED`属性
 + **显示宽度并不会影响实际类型的实际存储空间**
-+ 对于没有声明`ZEROFILL`属性的列，显示宽度没有任何作用，只有在查询声明了`ZEROFILL`属性的列时，显示宽度才会起作用，否则可以忽略显示宽度这个东西的存在。
++ 对于没有声明`ZEROFILL`属性的列，显示宽度没有任何作用，只有在查询声明了`ZEROFILL`属性的列时，显示宽度才会起作用，否则**可以忽略**显示宽度这个东西的存在。
 
 ## limit、offset 区别
 
@@ -332,8 +332,7 @@ VALUES (`name`);
 也就是说，如果 `t` 表中已经存在 `phone` 的列值为 `15212124125` 的记录（因为 `phone`列具有`UNIQUE`
 约束），那么就把该记录的 `name`列更新为`'宋江'`。
 
-对于那些是主键或者具有UNIQUE约束的列或者列组合来说，如果表中已存在的记录中有与待插入记录在这些列或者列组合上重复的值，我们可以使用VALUES(
-列名)的形式来引用待插入记录中对应列的值
+对于那些是主键或者具有UNIQUE约束的列或者列组合来说，如果表中已存在的记录中有与待插入记录在这些列或者列组合上重复的值，我们可以使用`VALUES(列名)`的形式来引用待插入记录中对应列的值
 
 ## 自定义变量
 
@@ -473,13 +472,16 @@ VALUES (`name`);
 
 ### 两阶段提交
 
-redo log 保证的是数据库的 crash-safe 能力。采用的策略就是常说的“两阶段提交”。
+redo log 保证的是数据库的`crash-safe`能力。采用的策略就是常说的”两阶段提交“。具体可以参看 [Redo-log的两阶段提交](https://juejin.cn/post/7157956679932313608#heading-18)。
 
 一条 update 的 SQL 语句是按照这样的流程来执行的：
 
-将数据页加载到内存 → 修改数据 → 更新数据 → 写redo log（状态为prepare） → 写binlog → 提交事务（数据写入成功后将redo log状态改为commit）
+1. 先写一条 redo-prepare 状态的日志，再记录 undo-log 日志。
+2. 执行 SQL 语句，修改缓冲页中的数据，修改完成后表示执行成功。
+3. 记录 bin-log 日志。
+4. 将 redo-prepare 状态的日志改为 redo-commit 状态。
 
-只有当两个日志都提交成功（刷入磁盘），事务才算真正的完成。
+默认情况下，只有当第三步执行完成后才会提交事务。
 
 一旦发生系统故障（不管是宕机、断电、重启等等），都可以配套使用 redo log 与 binlog 做数据修复。
 
@@ -489,6 +491,16 @@ redo log 保证的是数据库的 crash-safe 能力。采用的策略就是常�
 | 有记录 |	prepare	|在binlog写完、提交事务之前发生故障。此时数据完整。恢复策略：提交事务|
 | 无记录 |	prepare	|在binglog写完之前发生故障。恢复策略：回滚|
 | 无记录 |	无记录	|在写redo log之前发生故障。恢复策略：回滚|
+
+### redo-log、bin-log 的区别
+
+①生效范围不同，Redo-log 是 InnoDB 专享的，Bin-log 是所有引擎通用的。
+
+②写入方式不同，Redo-log 是用两个文件循环写，而 Bin-log 是不断创建新文件追加写。
+
+③文件格式不同，Redo-log 中记录的都是变更后的数据，而 Bin-log 会记录变更 SQL 语句。
+
+④使用场景不同，Redo-log 主要实现故障情况下的数据恢复，Bin-log 则用于数据灾备、同步。
 
 ### 脏读、幻读、不可重复读
 
@@ -509,7 +521,7 @@ redo log 保证的是数据库的 crash-safe 能力。采用的策略就是常�
 
 ### 脏写问题
 
-参考 [3.1、RU（Read Uncommitted）读未提交级别的实现](https://juejin.cn/post/7156111610589741063#heading-19)
+可以参考 [RU（Read Uncommitted）读未提交级别的实现](https://juejin.cn/post/7156111610589741063#heading-19)
 
 ### 事务的隔离级别
 
