@@ -5,7 +5,7 @@
 
 + 卫彬/男/1994
 + 本科/[西安培华学院](https://www.peihua.cn/)
-+ 个人博客：[https://www.xiaobinqt.cn](https://www.xiaobinqt.cn) / [xiaobinqt.github.io](https://xiaobinqt.github.io/)
++ 个人博客：[https://www.xiaobinqt.cn](https://www.xiaobinqt.cn) / [https://xiaobinqt.github.io](https://xiaobinqt.github.io/)
 + Github：[https://github.com/xiaobinqt](https://github.com/xiaobinqt)
 + CSDN：[https://blog.csdn.net/xiaobinqt](https://blog.csdn.net/xiaobinqt)
 
