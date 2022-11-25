@@ -48,7 +48,7 @@ math: true
 - 了解 Linux 常用命令。熟练使用 Mysql 数据库，可编写和优化 SQL 语句。
 - 了解 Docker 容器的基本使用。了解常用的设计模式。
 - 了解 Redis 的使用。熟悉第三方接口调用，微信公众平台、微信小程序，企业微信开发。
-- 了解 JavaScript、Node、 jQuery、 CSS+DIV 等 web 前端技术。（[个人前端学习网站示例](https://html.dev.xiaobinqt.cn)）。
+- 了解 JavaScript、Node、npm、jQuery、CSS+DIV 等 web 前端技术。（[个人前端学习网站示例](https://html.dev.xiaobinqt.cn)）。
 
 ## 工作经历
 
@@ -56,12 +56,11 @@ math: true
 
 ### 柔性云
 
-柔性云是组态化边缘计算微应用开发仿真发布一体化云平台，主要包括用户，管理员功能，研发人员，打包部署等功能。研发人员使用在[WebIDE](https://github.com/coder/code-server) 开发节点，测试完成后发布到 npm 仓库，其他人员通过[Node-RED](https://github.com/node-red)低代码平台开发节点安装使用，测试完成打包部署到正式环境。
+柔性云是组态化边缘计算微应用开发仿真发布一体化云平台，主要包括用户，管理员功能，研发人员，打包部署等功能。研发人员使用 [WebIDE](https://github.com/coder/code-server) 开发节点，测试完成后发布到 [npm](https://github.com/verdaccio/verdaccio) 仓库，其他人员通过 [Node-RED](https://github.com/node-red) 低代码平台开发节点安装使用，测试完成打包部署到正式环境。
 
 ### xae
 
-信创项目，以数字化引领信创技术，以信创筑牢数字化建设。可以通过 xae 给公司赋能，快速搭建迁徙适配测试平台。
-xae 平台包括厂商管理，产品管理，适配测试， 数据迁徙，知识库，证书管理，自动化部署等功能。
+信创项目，以数字化引领信创技术，以信创筑牢数字化建设。可以通过 xae 给公司赋能，快速搭建迁徙适配测试平台。xae 平台包括厂商管理，产品管理，适配测试， 数据迁徙，知识库，证书管理，自动化部署等功能。
 
 ## 法本信息技术股份有限公司外派腾讯 （ 2019年4月 ~ 2021年4月 ）
 
@@ -87,8 +86,10 @@ xae 平台包括厂商管理，产品管理，适配测试， 数据迁徙，知
 
 使用 php 进行开发，网上商城功能包括用户管理，商品分类，商品搜索，购物车功能。平台端可以管理健身房和教练，查看教练的销售业绩和销售提成；供应商端可以对平台端的订单进行管理和发货，对商品进行管理操作。
 
-### [西班牙旅游网站](http://aragontourism.cn)
+[//]: # (### [西班牙旅游网站]&#40;http://aragontourism.cn&#41;)
 
-该项目是西班牙旅游景点介绍的网站。项目利用 Wordpress 进行开发维护。在开发过程中用到了 Advanced Custom Fields，Contact Form 7， Export Users to CSV， Math Captcha， WP Mail Smtp 等 Wordpress 插件。
+[//]: # ()
+
+[//]: # (该项目是西班牙旅游景点介绍的网站。项目利用 Wordpress 进行开发维护。在开发过程中用到了 Advanced Custom Fields，Contact Form 7， Export Users to CSV， Math Captcha， WP Mail Smtp 等 Wordpress 插件。)
 
 
