@@ -24,31 +24,25 @@ math: true
 
 + 卫彬/男/1994
 + 本科/[西安培华学院](https://www.peihua.cn/)
-+ 个人博客：[https://www.xiaobinqt.cn](https://www.xiaobinqt.cn) / [https://xiaobinqt.github.io](https://xiaobinqt.github.io/)
-+ Github：[https://github.com/xiaobinqt](https://github.com/xiaobinqt)
-+ CSDN：[https://blog.csdn.net/xiaobinqt](https://blog.csdn.net/xiaobinqt)
-
-## 联系方式
-
-- 手机：15209272743
-- Email：[xiaobinqt@163.com](mailto:xiaobinqt@163.com)
-- 微信：15209272743
++ 手机：15209272743
++ Email：[xiaobinqt@163.com](mailto:xiaobinqt@163.com)
++ 微信：15209272743
 
 ## 期望职位
 
-- 期望职位：Golang 开发 / PHP 开发
-- 期望城市：北京
++ 期望职位：Golang 开发 / PHP 开发
++ 期望城市：北京
 
 ## 个人技能
 
-- 熟悉 Go 语法，并发编程，协程，管道的使用。有 Go 开发的相关经验。
-- 熟悉 php 的 Laravel，Thinkphp，CI 框架，可熟练使用。
-- 熟悉 Git 版本控制软件，具有良好的编码风格和习惯，热爱开源。
-- 了解 Python 的使用，可使用 Python 进行常用脚本的编写。
-- 了解 Linux 常用命令。熟练使用 Mysql 数据库，可编写和优化 SQL 语句。
-- 了解 Docker 容器的基本使用。了解常用的设计模式。
-- 了解 Redis 的使用。熟悉第三方接口调用，微信公众平台、微信小程序，企业微信开发。
-- 了解 JavaScript、Node、npm、jQuery、CSS+DIV 等 web 前端技术。（[个人前端学习网站示例](https://html.dev.xiaobinqt.cn)）。
++ 熟悉 Go 语法，并发编程，协程，管道的使用。有 Go 开发的相关经验。
++ 熟悉 php 的 Laravel，Thinkphp，CI 框架，可熟练使用。
++ 熟悉 Git 版本控制软件，具有良好的编码风格和习惯，热爱开源。
++ 了解 Python 的使用，可使用 Python 进行常用脚本的编写。
++ 了解 Linux 常用命令。熟练使用 Mysql 数据库，可编写和优化 SQL 语句。
++ 了解 Docker 容器的基本使用。了解常用的设计模式。
++ 了解 Redis 的使用。熟悉第三方接口调用，微信公众平台、微信小程序，企业微信开发。
++ 了解 JavaScript、Node、npm、jQuery、CSS+DIV 等 web 前端技术。（[个人前端学习网站示例](https://html.dev.xiaobinqt.cn)）。
 
 ## 工作经历
 
@@ -86,10 +80,8 @@ math: true
 
 使用 php 进行开发，网上商城功能包括用户管理，商品分类，商品搜索，购物车功能。平台端可以管理健身房和教练，查看教练的销售业绩和销售提成；供应商端可以对平台端的订单进行管理和发货，对商品进行管理操作。
 
-[//]: # (### [西班牙旅游网站]&#40;http://aragontourism.cn&#41;)
+### [西班牙旅游网站](http://aragontourism.cn)
 
-[//]: # ()
-
-[//]: # (该项目是西班牙旅游景点介绍的网站。项目利用 Wordpress 进行开发维护。在开发过程中用到了 Advanced Custom Fields，Contact Form 7， Export Users to CSV， Math Captcha， WP Mail Smtp 等 Wordpress 插件。)
+该项目由 PHP 开发，是介绍西班牙旅游景点的网站。项目利用 [Wordpress](https://wordpress.com) 进行开发维护。在开发过程中用到了 Advanced Custom Fields，Contact Form 7， Export Users to CSV， Math Captcha， WP Mail Smtp 等 Wordpress 插件。
 
 
