@@ -20,12 +20,12 @@
 + 熟悉 Go 语法，并发编程，协程，管道的使用，熟悉 Go GC，GMP 模型。可熟悉使用 gin 框架开发。
 + 熟悉 php 的 Laravel，Thinkphp，CI 框架，可熟练使用。
 + 熟悉 Redis 的数据结构和高并发使用场景，比如缓存雪崩，缓存穿透，缓存击穿等。
-+ 熟练使用 MySQL 数据库，了解 MySQL 索引，事务，锁机制都。
++ 熟练使用 MySQL 数据库，了解 MySQL 索引，事务，锁机制等。
 + 熟悉 Git 版本控制软件，具有良好的编码风格和习惯，热爱开源。
 + 了解 Python 的使用，可使用 Python 进行常用脚本的编写。
 + 了解 Linux 常用命令。了解 Docker 容器的基本使用。
 + 了解 JS、Node、npm、jQuery、CSS+DIV 盒模型等 web 前端技术。（[个人前端学习网站示例](https://html.dev.xiaobinqt.cn)）。
-+ 了解 [wordpress](https://wordpress.com/) 的基本使用，了解常用的设计模式。
++ 了解 [wordpress](https://wordpress.com/) 的基本使用。了解常用的设计模式。
 
 ## 工作经历
 
