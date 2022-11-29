@@ -35,7 +35,7 @@
 
 ### 法本信息技术股份有限公司外派腾讯 （ 2019年4月 ~ 2021年4月 ）
 
-在北京腾讯总部参与了星盘数据平台和烽火统一 PUSH 平台的开发。星盘数据平台使用 php 开发。PUSH 平台使用 Go 开发，主要使用了 Go 协程，channel 等提高系统整理性能和并发。
+在北京腾讯总部参与了星盘数据平台和烽火统一 PUSH 平台的开发。星盘数据平台使用 php 开发。PUSH 平台使用 Go 开发，主要使用了 Go 协程，channel 等提高系统整体性能和并发。
 
 ### [西安维客软件科技有限公司](https://www.victtech.com/) （ 2017年4月 ~ 2019年3月 ）
 
@@ -57,7 +57,7 @@
 
 **项目成果**
 
-+ 支持业务快速迭代，客户在使用过程中，系统稳定运行。
++ 支持业务快速迭代，客户在使用过程中系统稳定运行。
 + 获得反向代理，多路复用和 node，npm，docker 等使用经验。
 + 参与开源并贡献代码，[mojocn/base64Captcha#7c33ebb7](https://github.com/mojocn/base64Captcha/commit/7c33ebb78373a5dd5f7e9a4988e09bbcbc01bd14)，[node-red/node-red#380a0824](https://github.com/node-red/node-red/commit/380a08242af44b1ee54453790b0df076b445bbd5)。
 
@@ -82,17 +82,17 @@
 
 **项目描述**
 
-项目由 php 开发，是一个医学器材租借管理系统。采用前后端分离，后端利用 Lumen 提供 API 支持。项目工作流为商务部新建合同，合同转到财务交租，交租成功后仓储部发货，运营负责数据的报表管理。
+项目由 php 开发，是一个医学器材租借管理系统。采用前后端分离，后端利用 Lumen 框架提供 API 支持。项目工作流为商务部新建合同，合同转到财务交租，交租成功后仓储部发货，运营负责数据的报表管理。
 
 **项目职责**
 
 + 日常需求的开发与维护，跟需求方的日常沟通。
-+ 微信服务的相关调研，如公众号/小程序推送。七牛云相关的使用。
++ 微信服务的相关调研与开发，如公众号/小程序推送。七牛云服务的相关使用。
 
 **项目成果**
 
 + 支持业务的开度更迭和稳定运行。
-+ 获取 docker，微信SDK [EasyWeChat](https://easywechat.com)，和七牛云服务的相关使用经验，
-+ 参与开源并或贡献代码，[SocialiteProviders/Weixin#44bc75b7](https://github.com/SocialiteProviders/Weixin/commit/44bc75b7d98760ce32e71331f28871ccb186546a)。
++ 获取 docker，微信SDK [EasyWeChat](https://easywechat.com) 和七牛云服务的相关使用经验，
++ 参与开源并贡献代码，[SocialiteProviders/Weixin#44bc75b7](https://github.com/SocialiteProviders/Weixin/commit/44bc75b7d98760ce32e71331f28871ccb186546a)。
 
 
