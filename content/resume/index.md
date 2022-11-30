@@ -42,7 +42,7 @@ math: true
 ## 个人技能
 
 + 熟悉 Go 语法，并发编程，协程，管道的使用，熟悉 Go GC，GMP 模型。可熟悉使用 gin 框架开发。
-+ 熟悉 php 的 Laravel，Thinkphp，CI 框架，可熟练使用。
++ 熟悉 php 的 Laravel，Thinkphp，CI 框架，可熟练使用。熟悉微信小程序开发。
 + 熟悉 Redis 的数据结构和高并发使用场景，比如缓存雪崩，缓存穿透，缓存击穿等。
 + 熟练使用 MySQL 数据库，了解 MySQL 索引，事务，锁机制等。
 + 熟悉 Git 版本控制软件，具有良好的编码风格和习惯，热爱开源。
@@ -99,7 +99,7 @@ math: true
 **项目成果**
 
 + 一期目前已通过太极演示，正在太极内网试运行。
-+ 获取 MySQL8.0 使用经验，阅读 Go sync.Map 源码和其底层实现。
++ 获得 MySQL8.0，数据加密，断点续传使用经验，接触 Go sync.Map 源码并了解其底层实现。
 
 ### 烽火统一 PUSH 平台
 
@@ -110,13 +110,23 @@ math: true
 **项目职责**
 
 + 文章自动化接入，日常需求开发和维护。
-+ 腾讯 007 监控平台，polaris 等平台的调研和使用。
++ 腾讯 007 监控平台，polaris，trpc-go 等平台和技术的调研和使用。
 
 **项目成果**
 
 + 腾讯年度业务突破奖。
 + PHP 迁徙到 Go 的项目，熟悉了 Go 语法，Go 中 channel，协程和并发编程的使用，获得了 Go 项目的实战经验。
 + 熟悉腾讯的开发规范，内部 trpc-go 框架的使用。
+
+### 星盘数据平台
+
+**项目描述**
+
+星盘是由 PCG 兴趣阅读产品部设计并研发的综合型数据平台，面向产品，运营，业务研发和数据发等各类需求方，提供数据生产消费各个环节的相关服务。平台主要功能有数据分析，数据管理和专题工具几大类。主要功能有仪表盘、实时数据，元数据，数据模型和权限等功能。
+
+**项目成果**
+
++ 腾讯年度技术突破奖
 
 ### 聚美医后台
 
@@ -132,6 +142,17 @@ math: true
 **项目成果**
 
 + 支持业务的开度更迭和稳定运行。
-+ 获取 docker，微信SDK [EasyWeChat](https://easywechat.com) 和七牛云服务的相关使用经验，
++ 获取 docker，微信SDK [EasyWeChat](https://easywechat.com) 和七牛云服务的相关使用经验。
 + 参与开源并贡献代码，[SocialiteProviders/Weixin#44bc75b7](https://github.com/SocialiteProviders/Weixin/commit/44bc75b7d98760ce32e71331f28871ccb186546a)。
 
+### 潘帕斯 pop 商城
+
+**项目描述**
+
+使用 php 进行开发，网上商城功能包括用户管理，商品分类，商品搜索，购物车功能。平台端可以管理健身房和教练，查看教练的销售业绩和销售提成，供应商端可以对平台端的订单进行管理和发货，对商品进行管理操作。
+
+**项目成果**
+
++ 熟悉 [Laravel5.5](https://learnku.com/docs/laravel/5.5) 框架和 [composer](https://getcomposer.org/) 在项目中的使用。
++ 获得企业微信开发经验，微信支付和 Redis 相关使用经验。
++ 参与 [Laravel 社区](https://learnku.com/laravel) 文档翻译并[贡献](https://learnku.com/docs/laravel/5.8?mode=translators)。
