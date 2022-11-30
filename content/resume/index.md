@@ -83,7 +83,7 @@ math: true
 
 + 支持业务快速迭代，客户在使用过程中系统稳定运行。
 + 获得反向代理，多路复用和 node，npm，docker 等使用经验。
-+ 参与开源并贡献代码，[mojocn/base64Captcha#7c33ebb7](https://github.com/mojocn/base64Captcha/commit/7c33ebb78373a5dd5f7e9a4988e09bbcbc01bd14)，[node-red/node-red#380a0824](https://github.com/node-red/node-red/commit/380a08242af44b1ee54453790b0df076b445bbd5)。
++ 参与开源并贡献代码 [mojocn/base64Captcha#7c33ebb7](https://github.com/mojocn/base64Captcha/commit/7c33ebb78373a5dd5f7e9a4988e09bbcbc01bd14)，[node-red/node-red#380a0824](https://github.com/node-red/node-red/commit/380a08242af44b1ee54453790b0df076b445bbd5)。
 
 ### xae
 
@@ -143,7 +143,7 @@ math: true
 
 + 支持业务的开度更迭和稳定运行。
 + 获取 docker，微信SDK [EasyWeChat](https://easywechat.com) 和七牛云服务的相关使用经验。
-+ 参与开源并贡献代码，[SocialiteProviders/Weixin#44bc75b7](https://github.com/SocialiteProviders/Weixin/commit/44bc75b7d98760ce32e71331f28871ccb186546a)。
++ 参与开源并贡献代码 [SocialiteProviders/Weixin#44bc75b7](https://github.com/SocialiteProviders/Weixin/commit/44bc75b7d98760ce32e71331f28871ccb186546a)。
 
 ### 潘帕斯 pop 商城
 
