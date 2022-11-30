@@ -29,6 +29,11 @@ math: true
 + Email：[xiaobinqt@163.com](mailto:xiaobinqt@163.com)
 + 开源项目：[Go微信机器人](https://github.com/xiaobinqt/go-wxbot)
 
+## 自我评价
+
++ 热爱代码，对开源抱有极大的热情。有坚持做一件事的毅力和决心。
++ 良好的沟通能力，学习能力，适应能力强及团队协作意识，具有主人翁意识。
+
 ## 期望职位
 
 + 期望职位：Golang 开发 / PHP 开发
@@ -70,7 +75,7 @@ math: true
 
 **项目职责**
 
-+ 负责项目整体的搭建和研发，日常问题的解决。
++ 负责项目整体的搭建和研发，swagger 文档的输出，日常问题的解决。
 + 负责低代码平台 [node-red](https://github.com/node-red/node-red) 基于源码问题的修改。
 + 负责项目上线后客户问题的实时解决。
 
@@ -79,6 +84,22 @@ math: true
 + 支持业务快速迭代，客户在使用过程中系统稳定运行。
 + 获得反向代理，多路复用和 node，npm，docker 等使用经验。
 + 参与开源并贡献代码，[mojocn/base64Captcha#7c33ebb7](https://github.com/mojocn/base64Captcha/commit/7c33ebb78373a5dd5f7e9a4988e09bbcbc01bd14)，[node-red/node-red#380a0824](https://github.com/node-red/node-red/commit/380a08242af44b1ee54453790b0df076b445bbd5)。
+
+### xae
+
+**项目描述**
+
+使用 Go 开发的信创项目，以数字化引领信创技术，以信创筑牢数字化建设。可以通过 xae 给公司赋能，快速搭建迁徙适配测试平台。xae 平台包括厂商管理，产品管理，适配测试，数据迁徙，知识库，证书管理，自动化部署等功能。
+
+**项目职责**
+
++ 需求分析评审，业务整理与功能的开发维护。
++ 跟合作伙伴博睿共同推进项目，将博睿的产品 ZCBUS 嵌入系统。
+
+**项目成果**
+
++ 一期目前已通过太极演示，正在太极内网试运行。
++ 获取 MySQL8.0 使用经验，阅读 Go sync.Map 源码和其底层实现。
 
 ### 烽火统一 PUSH 平台
 
