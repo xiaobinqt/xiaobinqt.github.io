@@ -21,6 +21,22 @@
 + 600 度以上900以下属于**高度近视**（600-875度）
 + 900 度以上属于**超高度近视**（900-∞度）
 
+## 验光单怎么看
+
+想看明白视力验光单，需要了解验光单上的`OD`、`OS`、`DS`、`DC`英文缩写以及`+`、`-`各代表着什么意义:question:
+
++ 验光单上的`OD`表示表示**右眼**，`OS`表示**左眼**。
+
++ `+`表示凸透镜片（远视眼用），`-`表示凹透镜片（近视眼用）。
+
++ `DS`表示球镜（近视和远视用），`DC`表示柱镜（散光用）。而`+`或`-`之后的数值则表示我们镜片的屈光度，这里有一个值得注意的地方，屈光度的数值常常和我们所说的近视或远视度差100倍。例如验光报告上的`—2.00`就相当于我们常说的近视 200 度。
+
++ 以`OD：-3.00DS/-2.00DC×80°`的验光报告为例，其表示右眼 300 度的近视镜联合 200 度的散光镜，散光的轴度是 80 度。
+
++ `PD`一般是指瞳孔距离，就是我们常说的瞳距。
+
+![验光单](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221201/c4f9ebcb4fe74923802fc158d05c826a.png '验光单')
+
 ## 近视原理
 
 ![近视屈光](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221105/0102bebd1eb749c29bef7388c9c497e6.png '近视屈光')
@@ -249,7 +265,7 @@
 
 ![凝光术](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221105/673cf5c0b2184f9d97eff7d4a3cab611.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '凝光术')
 
-其实这几天查了一些资料，包括跟朋友的交流，不知道为啥，我对做手术的欲望已经不是很大了，甚至觉得可以通过一些锻炼来恢复自己的视力，:joy: 个人觉得理论上，只要反向训练，就可以恢复视力，但是这个过程可能会很漫长:see_no_evil:。
+其实这几天查了一些资料，包括跟朋友的交流，我对做手术的欲望已经不是很大了，但是，23333，我觉得可以通过一些锻炼来恢复自己的视力，:joy: 个人觉得理论上，只要反向训练，就可以恢复视力，但是这个过程可能会很漫长:see_no_evil:。
 
 ## 参考
 
@@ -261,3 +277,4 @@
 + [近视手术中的角膜瓣是什么](https://zhuanlan.zhihu.com/p/102476044)
 + [飞蚊症](https://www.mayoclinic.org/zh-hans/diseases-conditions/eye-floaters/symptoms-causes/syc-20372346)
 + [近视真的可以自愈吗？](https://zhuanlan.zhihu.com/p/441747388)
++ [验光单怎么看？史上最全验光单样式及参数详解](https://www.eachsee.com/article-5054.html)
