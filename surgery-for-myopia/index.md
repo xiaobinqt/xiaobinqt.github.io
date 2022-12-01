@@ -1,6 +1,8 @@
 # 近视手术调研笔记
 
 
+[//]: # (https://cdn.xiaobinqt.cn/xiaobinqt.io/20221103/2e4b304482ab458ba54f3d3ee4f48e38.png)
+
 <!-- author： xiaobinqt -->
 <!-- email： xiaobinqt@163.com -->
 <!-- https://xiaobinqt.github.io -->
