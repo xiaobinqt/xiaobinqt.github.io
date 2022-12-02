@@ -1,5 +1,5 @@
 ---
-title: "mysql 常见问题"
+title: "MySQL 常见问题（一）"
 subtitle: "Mysql FAQ"
 init_date: "2022-04-19T11:41:51+08:00"
 date: "2019-10-03"
