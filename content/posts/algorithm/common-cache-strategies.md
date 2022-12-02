@@ -20,7 +20,7 @@ lightgallery: true
 
 toc: true
 
-math:true
+math: true
 ---
 
 ## FIFO
