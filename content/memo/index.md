@@ -80,6 +80,7 @@ math: true
 + [Java充电社](http://itsoku.com/)
 + [go.nsddd.top](https://go.nsddd.top/)
 + [mojotv](https://mojotv.cn/)
++ [华为-developers-小林coding](https://bbs.huaweicloud.com/community/usersnew/id_1620783238021017)
 
 ## 工具
 
