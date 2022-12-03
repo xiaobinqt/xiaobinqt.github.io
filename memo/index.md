@@ -43,6 +43,7 @@
 + [Golang开发手记](https://github.com/kevinyan815/gocookbook)
 + [Git飞行规则(Flight Rules)](https://github.com/k88hudson/git-flight-rules/blob/master/README_zh-CN.md)
 + [Pro Git（中文版）](https://gitee.com/progit/)
++ [南京大学 计算机科学与技术系 计算机系统基础 课程实验 2019](https://nju-projectn.github.io/ics-pa-gitbook/ics2019/)
 
 ## 博主
 
