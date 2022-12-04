@@ -13,9 +13,9 @@ draft: false
 author: "xiaobinqt"
 description: "xiaobinqt,linux 常用命令，cloc统计代码行数，grep,curl,mktemp用法"
 
-featuredImage: "https://cdn.xiaobinqt.cn/xiaobinqt.io/20221117/903e986fcf6c49ab8e03498a04f46776.png"
+featuredImage: ""
 
-featuredImagePreview: ""
+featuredImagePreview: "https://cdn.xiaobinqt.cn/xiaobinqt.io/20221204/94b2915249db4141a082f45e4572f54b.png"
 
 reproduce: false
 
@@ -178,13 +178,13 @@ sed 先读取第一行 1，执行 n 命令，获取下一行 2，此时模式空
 
 + **目录压缩成`.tgz`**
 
-| 参数|说明|
-|----|----|
-|`-c`|create 建立压缩档案的参数|
-|`-x`| 解压缩压缩档案的参数|
-|`-z`| 是否需要用gzip压缩|
-|`-v`|压缩的过程中显示档案|
-|`-f`|置顶文档名，在f后面立即接文件名，不能再加参数|
+| 参数   | 说明                      |
+|------|-------------------------|
+| `-c` | create 建立压缩档案的参数        |
+| `-x` | 解压缩压缩档案的参数              |
+| `-z` | 是否需要用gzip压缩             |
+| `-v` | 压缩的过程中显示档案              |
+| `-f` | 置顶文档名，在f后面立即接文件名，不能再加参数 |
 
 ```shell
 tar czvf xxxx.tgz 目录
@@ -252,15 +252,15 @@ cloc 还可以通过 [npm 安装](https://www.npmjs.com/package/cloc)。
 
 ### 常用命令
 
-| 命令                | 说明                                                        |
-| ------------------- | ----------------------------------------------------------- |
-|`--ignore-whitespace` | 在使用--diff比较文件时忽略水平空格|
-|`--max-file-size=<MB>` | 若是要跳过大于给定大小MB的文件|
-|`--exclude-dir=<dir1>,<dir2>` | 排除给定的逗号分隔目录|
-|`--exclude-ext=<ext1>,<ext2>` | 排除给定的文件扩展名|
-|`--out=<file>` | 将结果保存到`<file>` |
-|`--quiet` | 禁止全部信息消息并仅显示最终报告|
-|`--diff<set1> <set2>` | 计算set1和set2的源文件之间的代码差别。 输入能够是文件和目录的混合 |
+| 命令                            | 说明                                    |
+|-------------------------------|---------------------------------------|
+| `--ignore-whitespace`         | 在使用--diff比较文件时忽略水平空格                  |
+| `--max-file-size=<MB>`        | 若是要跳过大于给定大小MB的文件                      |
+| `--exclude-dir=<dir1>,<dir2>` | 排除给定的逗号分隔目录                           |
+| `--exclude-ext=<ext1>,<ext2>` | 排除给定的文件扩展名                            |
+| `--out=<file>`                | 将结果保存到`<file>`                        |
+| `--quiet`                     | 禁止全部信息消息并仅显示最终报告                      |
+| `--diff<set1> <set2>`         | 计算set1和set2的源文件之间的代码差别。 输入能够是文件和目录的混合 |
 
 ## 参考
 
