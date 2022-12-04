@@ -5,18 +5,18 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noodp" />
-    <title class="pjax-title">Go GC 原理 - xiaobinqt 博客 - 技术改变生活</title><meta name="Description" content="golang GC 原理,Go 垃圾回收,Go 垃圾标记清除算法,golang 三色标记法,golang 屏障机制,go 垃圾回收算法,go 插入/删除屏障,golang 混合写屏障,垃圾回收 STW,STW"><meta property="og:title" content="Go GC 原理" />
+    <title class="pjax-title">Go GC 垃圾回收 - xiaobinqt 博客 - 技术改变生活</title><meta name="Description" content="golang GC 原理,Go 垃圾回收,Go 垃圾标记清除算法,golang 三色标记法,golang 屏障机制,go 垃圾回收算法,go 插入/删除屏障,golang 混合写屏障,垃圾回收 STW,STW"><meta property="og:title" content="Go GC 垃圾回收" />
 <meta property="og:description" content="golang GC 原理,Go 垃圾回收,Go 垃圾标记清除算法,golang 三色标记法,golang 屏障机制,go 垃圾回收算法,go 插入/删除屏障,golang 混合写屏障,垃圾回收 STW,STW" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://www.xiaobinqt.cn/go-gc/" /><meta property="og:image" content="https://www.xiaobinqt.cn/logo.png"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2022-04-06T00:00:00+00:00" />
-<meta property="article:modified_time" content="2022-11-18T13:40:26+08:00" />
+<meta property="article:modified_time" content="2022-12-04T14:44:54+08:00" />
 <meta property="og:see_also" content="https://www.xiaobinqt.cn/go-sync-map/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/highly-concurrent-architecture-evolution/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/session-cookie-token-difference/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/why-mysql-index-use-btree/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/redis-break-pierce-avalanche/" />
 
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://www.xiaobinqt.cn/logo.png"/>
 
-<meta name="twitter:title" content="Go GC 原理"/>
+<meta name="twitter:title" content="Go GC 垃圾回收"/>
 <meta name="twitter:description" content="golang GC 原理,Go 垃圾回收,Go 垃圾标记清除算法,golang 三色标记法,golang 屏障机制,go 垃圾回收算法,go 插入/删除屏障,golang 混合写屏障,垃圾回收 STW,STW"/>
 <meta name="application-name" content="xiaobinqt">
 <meta name="apple-mobile-web-app-title" content="xiaobinqt">
@@ -30,13 +30,13 @@
     {
         "@context": "http://schema.org",
         "@type": "BlogPosting",
-        "headline": "Go GC 原理",
+        "headline": "Go GC 垃圾回收",
         "inLanguage": "zh-CN",
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/www.xiaobinqt.cn\/go-gc\/"
-        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "golang","wordcount":  5516 ,
-        "url": "https:\/\/www.xiaobinqt.cn\/go-gc\/","datePublished": "2022-04-06T00:00:00+00:00","dateModified": "2022-11-18T13:40:26+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "golang, GC","wordcount":  5641 ,
+        "url": "https:\/\/www.xiaobinqt.cn\/go-gc\/","datePublished": "2022-04-06T00:00:00+00:00","dateModified": "2022-12-04T14:44:54+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "xxxx","logo": {
                     "@type": "ImageObject",
@@ -123,6 +123,7 @@
         <h2 class="toc-title">目录</h2>
         <div class="toc-content" id="toc-content-auto"><nav id="TableOfContents">
   <ul>
+    <li><a href="#gc-变革">GC 变革</a></li>
     <li><a href="#堆和栈">堆和栈</a></li>
     <li><a href="#标记清除算法">标记清除算法</a>
       <ul>
@@ -168,11 +169,11 @@
     <li><a href="#参考">参考</a></li>
   </ul>
 </nav></div>
-    </div><script>document.getElementsByTagName("main")[0].setAttribute("pageStyle", "normal")</script><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Go GC 原理</h1><div class="post-meta">
+    </div><script>document.getElementsByTagName("main")[0].setAttribute("pageStyle", "normal")</script><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Go GC 垃圾回收</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author">
                     <i class="custom-icon iconfont icon-weibiaoti-"></i>
                 </span>&nbsp;&nbsp;<span class="post-category">收录于 </span>&nbsp;<span class="post-category">类别 <a href="/categories/golang/"><i class="far fa-folder fa-fw"></i>golang</a></span>&nbsp;<span class="post-category">和</span>&nbsp;<span class="post-series">系列 <a href="/series/reproduce/"><i class="far fa-list-alt fa-fw"></i>转载</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-04-06">2022-04-06</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2022-11-18">2022-11-18</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 5516 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-04-06">2022-04-06</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2022-12-04">2022-12-04</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 5641 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 12 分钟&nbsp;</div>
         </div><div class="featured-image"><img
         class="lazyload"
@@ -187,6 +188,7 @@
                 </div>
                 <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
   <ul>
+    <li><a href="#gc-变革">GC 变革</a></li>
     <li><a href="#堆和栈">堆和栈</a></li>
     <li><a href="#标记清除算法">标记清除算法</a>
       <ul>
@@ -234,6 +236,8 @@
 </nav></div>
             </div><div class="content" id="content"><p>垃圾回收（Garbage Collection，GC）是编程语言中提供的自动的内存管理机制，自动释放不需要的内存对象，让出存储器资源。GC 过程中无需程序员手动执行。</p>
 <p>GC 机制在现代很多编程语言都支持，GC 能力的性能与优劣也是不同语言之间对比度指标之一。</p>
+<h2 id="gc-变革" class="headerLink">
+    <a href="#gc-%e5%8f%98%e9%9d%a9" class="header-mark"></a>GC 变革</h2><p>// TODO</p>
 <h2 id="堆和栈" class="headerLink">
     <a href="#%e5%a0%86%e5%92%8c%e6%a0%88" class="header-mark"></a>堆和栈</h2><p>栈：由操作系统自动分配释放，存放函数的参数值，局部变量的值等。</p>
 <p>堆：一般由程序员分配和释放，若程序员不释放，程序结束时可能由 OS 回收。</p>
@@ -241,10 +245,10 @@
 <p>堆则是存放在二级缓存中，生命周期由虚拟机的垃圾回收算法来决定，但并不是一旦成为孤儿对象就能被回收。</p>
 <p>申请到栈内存好处：函数返回直接释放，不会引起垃圾回收，对性能没有影响。</p>
 <h2 id="标记清除算法" class="headerLink">
-    <a href="#%e6%a0%87%e8%ae%b0%e6%b8%85%e9%99%a4%e7%ae%97%e6%b3%95" class="header-mark"></a>标记清除算法</h2><p>Go v1.3 之前使用普通的标记-清除（mark and sweep）算法，主要有两个主要的步骤：</p>
+    <a href="#%e6%a0%87%e8%ae%b0%e6%b8%85%e9%99%a4%e7%ae%97%e6%b3%95" class="header-mark"></a>标记清除算法</h2><p>Go V1.3 之前使用普通的<strong><ruby>标记-清除<rt>mark and sweep</rt></ruby></strong>算法，主要有两个主要的步骤：</p>
 <ol>
 <li>
-<p>标记(Mark phase)，找出不可达的对象，然后做上标记。</p>
+<p>标记(Mark phase)，找出<strong>不可达</strong>的对象，然后做上标记。</p>
 </li>
 <li>
 <p>清除(Sweep phase)，回收标记好的对象。</p>
@@ -286,13 +290,13 @@
     </a><figcaption class="image-caption">清除对象</figcaption>
     </figure></p>
 <p>对象 5，6 不可达，被 GC 清除。</p>
-<p>操作简单，但是，mark and sweep 算法在执行的时候，需要程序暂停！即 STW（stop the world），STW 的过程中，CPU 不执行用户代码，全部用于垃圾回收，这个过程的影响很大，所以 STW 也是一些回收机制最大的难题和希望优化的点。</p>
+<p>操作简单，但是，mark and sweep 算法在执行的时候，需要程序暂停！即 <strong><ruby>STW<rt>stop the world</rt></ruby></strong>，STW 的过程中，CPU 不执行用户代码，全部用于垃圾回收，这个过程的影响很大，所以 STW 也是一些回收机制最大的难题和希望优化的点。</p>
 <p><strong>在执行第三步的这段时间，程序会暂定停止任何工作，卡在那等待回收执行完毕</strong>。</p>
 <h3 id="第四步" class="headerLink">
     <a href="#%e7%ac%ac%e5%9b%9b%e6%ad%a5" class="header-mark"></a>第四步</h3><p>停止暂停，让程序继续执行。然后循环重复这个过程，直到 process 程序生命周期结束。</p>
 <h3 id="缺点与优化" class="headerLink">
     <a href="#%e7%bc%ba%e7%82%b9%e4%b8%8e%e4%bc%98%e5%8c%96" class="header-mark"></a>缺点与优化</h3><p>标记清除算法明了，过程鲜明干脆，但是也有非常严重的问题，就是 STW，让程序暂停，程序出现卡顿。</p>
-<p>Go V1.3版本之前就是用这种方式来实施的。执行 GC 的基本流程就是首先启动 STW 暂停，然后执行标记，再执行数据回收，最后停止 STW ，如下图👇</p>
+<p>Go V1.3 版本之前就是用这种方式来实施的。执行 GC 的基本流程就是首先启动 STW 暂停，然后执行标记，再执行数据回收，最后停止 STW ，如下图👇</p>
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220406/7913f2957c4f4b5c9ba01013cb0c44fa.png" title="STW" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220406/7913f2957c4f4b5c9ba01013cb0c44fa.png" data-sub-html="<h2>STW</h2><p>STW</p>">
         <img
             class="lazyload"
@@ -302,7 +306,7 @@
             alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220406/7913f2957c4f4b5c9ba01013cb0c44fa.png">
     </a><figcaption class="image-caption">STW</figcaption>
     </figure></p>
-<p>从👆来看，全部的 GC 时间都是包裹在 STW 范围之内的，这样貌似程序暂停的时间过长，影响程序的运行性能。所以Go v1.3 做了简单的优化，将 STW 的步骤提前，减少 STW 暂停的时间范围
+<p>从👆来看，全部的 GC 时间都是包裹在 STW 范围之内的，这样貌似程序暂停的时间过长，影响程序的运行性能。所以Go V1.3 做了简单的优化，将 STW 的步骤提前，减少 STW 暂停的时间范围
 👇</p>
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220406/2b64ccd849624544ae495ed36236a780.png" title="STW优化" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220406/2b64ccd849624544ae495ed36236a780.png" data-sub-html="<h2>STW优化</h2><p>STW优化</p>">
         <img
@@ -313,7 +317,8 @@
             alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220406/2b64ccd849624544ae495ed36236a780.png">
     </a><figcaption class="image-caption">STW优化</figcaption>
     </figure></p>
-<p>主要是将 STW 的步骤提前了一步，因为在 Sweep 清除的时候，可以不需要 STW 停止，因为这些对象已经是不可达对象了，不会出现回收写冲突等问题，<strong>清除操作和用户逻辑可以并发</strong>。</p>
+<p>主要是将 STW 的步骤提前了一步，因为在 Sweep 清除的时候，可以不需要 STW 停止，因为这些对象已经是不可达对象了，不会出现回收写冲突等问题，
+<strong>清除操作和用户逻辑可以并发</strong>。</p>
 <p>但是无论怎么优化，Go v1.3 都面临这个一个重要问题，就是 mark-and-sweep 算法会暂停整个程序 。</p>
 <h2 id="有stw的三色标记法" class="headerLink">
     <a href="#%e6%9c%89stw%e7%9a%84%e4%b8%89%e8%89%b2%e6%a0%87%e8%ae%b0%e6%b3%95" class="header-mark"></a>有STW的三色标记法</h2><p>Go 中的垃圾回收主要应用三色标记法，GC 过程和其他用户 goroutine 可并发运行，但需要一定时间的 STW。</p>
@@ -363,7 +368,8 @@
             alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220406/f381a66d7e4944c998f7c893629accd4.png">
     </a><figcaption class="image-caption">遍历_2</figcaption>
     </figure></p>
-<p>这一次遍历是<strong>只扫描灰色对象</strong>，将灰色对象的第一层遍历可抵达的对象由白色变为灰色，如：对象2、对象7。 而之前的灰色对象1 和对象4 则会被标记为黑色，同时由灰色标记表移动到黑色标记表中。</p>
+<p>这一次遍历是<strong>只扫描灰色对象</strong>
+，将灰色对象的第一层遍历可抵达的对象由白色变为灰色，如：对象2、对象7。 而之前的灰色对象1 和对象4 则会被标记为黑色，同时由灰色标记表移动到黑色标记表中。</p>
 <h3 id="第四步-1" class="headerLink">
     <a href="#%e7%ac%ac%e5%9b%9b%e6%ad%a5-1" class="header-mark"></a>第四步</h3><p>重复第三步， 直到灰色中无任何对象，如图👇所示：</p>
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220406/3a751806772e445d813bee6344ab81d1.png" title="遍历_3" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220406/3a751806772e445d813bee6344ab81d1.png" data-sub-html="<h2>遍历_3</h2><p>遍历_3</p>">
@@ -387,7 +393,7 @@
 <p>当我们全部的可达对象都遍历完后，<strong>灰色标记表将不再存在灰色对象</strong>。</p>
 <p>目前全部内存的数据只有两种颜色，黑色和白色。那么，黑色对象就是我们程序逻辑可达（需要的）对象，这些数据是目前支撑程序正常业务运行的，是合法的有用数据，不可删除。白色的对象是全部不可达对象，目前程序逻辑并不依赖他们，那么白色对象就是内存中目前的垃圾数据，需要被清除。</p>
 <h3 id="第五步" class="headerLink">
-    <a href="#%e7%ac%ac%e4%ba%94%e6%ad%a5" class="header-mark"></a>第五步</h3><p>回收所有的白色标记表的对象，也就是回收垃圾，如图所示👇：</p>
+    <a href="#%e7%ac%ac%e4%ba%94%e6%ad%a5" class="header-mark"></a>第五步</h3><p>回收所有的白色标记表的对象，也就是回收垃圾，如图所示👇</p>
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220406/f271ee96ace2416c8eaf808d3f45b8f0.png" title="GC 回收" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220406/f271ee96ace2416c8eaf808d3f45b8f0.png" data-sub-html="<h2>GC 回收</h2><p>GC 回收</p>">
         <img
             class="lazyload"
@@ -398,7 +404,8 @@
     </a><figcaption class="image-caption">GC 回收</figcaption>
     </figure></p>
 <p>将全部的白色对象进行删除回收，剩下的就是全部依赖的黑色对象。</p>
-<p>这里面可能会有很多并发流程均会被扫描，执行并发流程的内存可能相互依赖，为了在 GC 过程中保证数据的安全，<strong>在开始三色标记之前就会加上 STW，在扫描确定黑白对象之后再放开 STW</strong>。但是很明显这样的 GC 扫描的性能实在是太低了。</p>
+<p>这里面可能会有很多并发流程均会被扫描，执行并发流程的内存可能相互依赖，为了在 GC 过程中保证数据的安全，<strong>在开始三色标记之前就会加上
+STW，在扫描确定黑白对象之后再放开 STW</strong>。但是很明显这样的 GC 扫描的性能实在是太低了。</p>
 <p>所以现在的三色标记法还是会 STW。</p>
 <h2 id="没有stw的三色标记法" class="headerLink">
     <a href="#%e6%b2%a1%e6%9c%89stw%e7%9a%84%e4%b8%89%e8%89%b2%e6%a0%87%e8%ae%b0%e6%b3%95" class="header-mark"></a>没有STW的三色标记法</h2><p>如果没有 STW，那么也就不会再存在性能上的问题，那么假设如果三色标记法不加入STW会发生什么事情❓</p>
@@ -414,7 +421,8 @@
             alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220406/df4917c4b48d4e12857a5b8552cf3815.png">
     </a><figcaption class="image-caption">no ST2 01</figcaption>
     </figure></p>
-<p>现在如果三色标记过程不启动 STW，那么在 GC 扫描过程中，<strong>任意的对象均可能发生读写操作</strong>，如下图所示，在还没有扫描到对象2的时候，已经标记为黑色的对象4，此时创建指针 q，并且指向白色的对象3。</p>
+<p>现在如果三色标记过程不启动 STW，那么在 GC 扫描过程中，<strong>任意的对象均可能发生读写操作</strong>
+，如下图所示，在还没有扫描到对象2的时候，已经标记为黑色的对象4，此时创建指针 q，并且指向白色的对象3。</p>
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220406/c47b38d901dc46efb2ddc7b3d01fede4.png" title="no ST2 02" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220406/c47b38d901dc46efb2ddc7b3d01fede4.png" data-sub-html="<h2>no ST2 02</h2><p>no ST2 02</p>">
         <img
             class="lazyload"
@@ -454,20 +462,38 @@
             alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220406/512e92ad527e4ac1871abb2a8df63e75.png">
     </a><figcaption class="image-caption">no ST2 05</figcaption>
     </figure></p>
-<p>但是最后我们才发现，本来是对象4合法引用的对象3，却被GC给“误杀”回收掉了。</p>
-<p>可以看出，有两种情况，在三色标记法中，是不希望被发生的。</p>
+<p>最后我们发现，本来是对象4合法引用的对象3，却被GC给“误杀”回收掉了。</p>
+<p>可以看出，有两种情况，在三色标记法中是不希望被发生的。</p>
 <ul>
 <li>👉 一个白色对象被黑色对象引用 <strong>（白色被挂在黑色下）</strong></li>
 <li>👉 灰色对象与它之间可达关系的白色对象遭到破坏 <strong>（灰色同时丢了该白色）</strong></li>
 </ul>
 <p>如果当以上两个条件同时满足时，就会出现对象丢失现象！</p>
-<p>并且，上面所示的场景中，如果示例中的白色对象3还有很多下游对象的话， 也会一并都清理掉。</p>
-<p>为了防止这种现象的发生，最简单的方式就是 STW，直接禁止掉其他用户程序对对象引用关系的干扰，但是 <strong>STW的过程有明显的资源浪费，对所有的用户程序都有很大影响</strong>
-。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/f9e8dce78c274ccfb76bb491967d8fc2.png" title="三色标记对象丢失" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/f9e8dce78c274ccfb76bb491967d8fc2.png" data-sub-html="<h2>三色标记对象丢失</h2><p>三色标记对象丢失</p>">
+        <img
+            class="lazyload"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/f9e8dce78c274ccfb76bb491967d8fc2.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/f9e8dce78c274ccfb76bb491967d8fc2.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/f9e8dce78c274ccfb76bb491967d8fc2.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/f9e8dce78c274ccfb76bb491967d8fc2.png 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/f9e8dce78c274ccfb76bb491967d8fc2.png">
+    </a><figcaption class="image-caption">三色标记对象丢失</figcaption>
+    </figure></p>
+<p>并且，上面所示的场景中，如果示例中的白色对象3还有很多下游对象的话，也会一并都清理掉。</p>
+<p>为了防止这种现象的发生，最简单的方式就是 STW，直接禁止掉其他用户程序对对象引用关系的干扰，但是
+<strong>STW的过程有明显的资源浪费，对所有的用户程序都有很大影响</strong>。</p>
 <p>那么是否可以在保证对象不丢失的情况下合理的尽可能的提高 GC 效率，减少 STW 时间呢❓</p>
 <p>答案是可以的，我们只要使用一种机制，尝试去破坏上面的两个必要条件就可以了。</p>
 <h2 id="屏障机制" class="headerLink">
-    <a href="#%e5%b1%8f%e9%9a%9c%e6%9c%ba%e5%88%b6" class="header-mark"></a>屏障机制</h2><p>如果让 GC 回收器，满足下面两种情况之一时，即可保证对象不丢失。这两种方式就是强三色不变式和弱三色不变式。</p>
+    <a href="#%e5%b1%8f%e9%9a%9c%e6%9c%ba%e5%88%b6" class="header-mark"></a>屏障机制</h2><p>如果让 GC 回收器，满足下面两种情况之一时，即可保证对象不丢失。这两种方式就是<strong>强三色不变式</strong>和<strong>弱三色不变式</strong>。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/95aefcee22ae4f72a04437582362e947.png" title="强/弱三色不变式" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/95aefcee22ae4f72a04437582362e947.png" data-sub-html="<h2>强/弱三色不变式</h2><p>强/弱三色不变式</p>">
+        <img
+            class="lazyload"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/95aefcee22ae4f72a04437582362e947.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/95aefcee22ae4f72a04437582362e947.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/95aefcee22ae4f72a04437582362e947.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/95aefcee22ae4f72a04437582362e947.png 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/95aefcee22ae4f72a04437582362e947.png">
+    </a><figcaption class="image-caption">强/弱三色不变式</figcaption>
+    </figure></p>
 <h3 id="强三色不变式" class="headerLink">
     <a href="#%e5%bc%ba%e4%b8%89%e8%89%b2%e4%b8%8d%e5%8f%98%e5%bc%8f" class="header-mark"></a>强三色不变式</h3><p>强三色不变式实际上是强制性的不允许黑色对象引用白色对象，这样就不会出现有白色对象被误删的情况。</p>
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220406/513a0f19f5524f00936e3d1bbf3cda6f.png" title="强三色不变式" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220406/513a0f19f5524f00936e3d1bbf3cda6f.png" data-sub-html="<h2>强三色不变式</h2><p>强三色不变式</p>">
@@ -494,7 +520,7 @@
 <p>这样实则是黑色对象引用白色对象，白色对象处于一个危险被删除的状态，但是由于上游灰色对象的引用，可以保护该白色对象，使其安全。</p>
 <p>为了遵循上述的两个方式，GC 算法演进到两种屏障方式，分别是<strong>插入屏障</strong>和<strong>删除屏障</strong>。</p>
 <h3 id="插入屏障" class="headerLink">
-    <a href="#%e6%8f%92%e5%85%a5%e5%b1%8f%e9%9a%9c" class="header-mark"></a>插入屏障</h3><p>具体操作： 在 A 对象引用 B 对象的时候，B 对象被标记为灰色。将 B 挂在 A 下游，B 必须被标记为灰色。</p>
+    <a href="#%e6%8f%92%e5%85%a5%e5%b1%8f%e9%9a%9c" class="header-mark"></a>插入屏障</h3><p>具体操作： 在 A 对象引用 B 对象的时候，B 对象被标记为灰色。<strong>将 B 挂在 A 下游，B 必须被标记为灰色</strong>。</p>
 <p>满足：<strong>强三色不变式</strong>。不存在黑色对象引用白色对象的情况了， 因为<strong>白色会强制变成灰色</strong>。</p>
 <p>伪代码如下：</p>
 <div class="highlight"><div class="chroma">
@@ -528,7 +554,9 @@
 </span></span><span class="line"><span class="cl">A.添加下游对象(C, B)     //A 将下游对象C 更换为B，  B被标记为灰色
 </span></span></code></pre></td></tr></table>
 </div>
-</div><p>这段伪代码逻辑就是写屏障，我们知道，黑色对象的内存槽有两种位置，栈和堆。 栈空间的特点是容量小，但是要求响应速度快，因为函数调用弹出频繁使用，所以插入屏障机制，<strong>在栈空间的对象操作中不使用，而仅仅使用在堆空间对象的操作中</strong>。</p>
+</div><p>这段伪代码逻辑就是写屏障，但是这里有个性能损耗的地方就是每次添加好插入对象都要去判断。</p>
+<p>黑色对象的内存槽有两种位置，栈和堆。 栈空间的特点是容量小，但是要求响应速度快，因为函数调用弹出频繁使用，所以插入屏障机制，
+<strong>在栈空间的对象操作中不使用，而仅仅使用在堆空间对象的操作中</strong>。</p>
 <p>接下来，我们用几张图，来模拟一下整个详细的过程，希望能更可观的看清整体流程。</p>
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220406/9d76191546e44252ac8edd0fae087465.png" title="插入屏障01" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220406/9d76191546e44252ac8edd0fae087465.png" data-sub-html="<h2>插入屏障01</h2><p>插入屏障01</p>">
         <img
@@ -584,7 +612,8 @@
             alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220406/c55625c54be54d848fb98ccfc88a76f9.png">
     </a><figcaption class="image-caption">插入屏障06</figcaption>
     </figure></p>
-<p>但是如果栈不添加，当全部三色标记扫描之后，栈上有可能依然存在白色对象被引用的情况（如上图的对象9）。 所以要对栈重新进行三色标记扫描，但这次为了对象不丢失，<strong>要对本次标记扫描启动 STW 暂停</strong>，直到栈空间的三色标记结束。</p>
+<p>但是如果栈不添加，当全部三色标记扫描之后，栈上有可能依然存在白色对象被引用的情况（如上图的对象9）。 所以要对栈重新进行三色标记扫描，但这次为了对象不丢失，
+<strong>要对本次标记扫描启动 STW 暂停</strong>，直到栈空间的三色标记结束。</p>
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220406/80c67f3febd44156b71332b19172c2ec.png" title="插入屏障07" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220406/80c67f3febd44156b71332b19172c2ec.png" data-sub-html="<h2>插入屏障07</h2><p>插入屏障07</p>">
         <img
             class="lazyload"
@@ -612,7 +641,8 @@
             alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220406/268b613c2dbd44048b5fd32667957a6e.png">
     </a><figcaption class="image-caption">插入屏障09</figcaption>
     </figure></p>
-<p>最后将栈和堆空间扫描剩余的全部白色节点清除，这次 STW 大约的时间在 10~100ms 间。</p>
+<p>最后将栈和堆空间扫描剩余的全部白色节点清除，这次 STW 大约的时间在 10~100ms 间。这也是插入写屏障的
+<strong>不足</strong>，因为还是需要 STW，虽然时间很短。</p>
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220406/c3fe1710d579448aa8b13f84cd2cd6f0.png" title="插入屏障10" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220406/c3fe1710d579448aa8b13f84cd2cd6f0.png" data-sub-html="<h2>插入屏障10</h2><p>插入屏障10</p>">
         <img
             class="lazyload"
@@ -725,14 +755,14 @@
             alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220406/7d6c80f3eec34796ab3c3e333642de96.png">
     </a><figcaption class="image-caption">删除屏障07</figcaption>
     </figure></p>
-<p>这种方式的<strong>回收精度低</strong>，一个对象即使被删除了最后一个指向它的指针也<strong>依旧可以</strong>活过这一轮，在下一轮 GC 中被清理掉。</p>
+<p>这种方式的<strong>不足是回收精度低</strong>，一个对象即使被删除了最后一个指向它的指针也<strong>依旧可以</strong>活过这一轮，在下一轮 GC 中被清理掉。</p>
 <h2 id="混合写屏障" class="headerLink">
     <a href="#%e6%b7%b7%e5%90%88%e5%86%99%e5%b1%8f%e9%9a%9c" class="header-mark"></a>混合写屏障</h2><p>插入写屏障和删除写屏障的短板：</p>
 <ul>
-<li>插入写屏障：结束时需要 STW 来重新扫描栈，标记栈上引用的白色对象的存活。</li>
-<li>删除写屏障：回收精度低，GC 开始时 STW 扫描堆栈来记录初始快照（监控对象的内存修改，判断对象是否删除），这个过程会保护开始时刻的所有存活对象。</li>
+<li>插入写屏障：结束时需要 STW 来重新扫描栈，标记栈上引用的白色对象的存活，大约需要 10-100ms。</li>
+<li>删除写屏障：回收精度低，一个对象即使被删除了最后一个指向它的指针也依旧可以活过这一轮，在下一轮 GC 中被清理掉。GC 开始时 STW 扫描堆栈来记录初始快照（监控对象的内存修改，判断对象是否删除），这个过程会保护开始时刻的所有存活对象。</li>
 </ul>
-<p>Go v1.8 版本引入了混合写屏障机制（hybrid write barrier），避免了对栈 re-scan 的过程，极大的减少了 STW 的时间，结合了两者的优点。</p>
+<p>Go v1.8 版本引入了<strong><ruby>混合写屏障机制<rt>hybrid write barrier</rt></ruby></strong>，避免了对栈 re-scan 的过程，极大的减少了 STW 的时间，结合了两者的优点。</p>
 <h3 id="规则" class="headerLink">
     <a href="#%e8%a7%84%e5%88%99" class="header-mark"></a>规则</h3><p>具体操作：</p>
 <ol>
@@ -959,7 +989,8 @@
             alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220407/e25db1900a4d404189fdcb61d33ac5d2.png">
     </a><figcaption class="image-caption">场景4-03</figcaption>
     </figure></p>
-<p>Go 中的混合写屏障满足<strong>弱三色不变式</strong>，结合了删除写屏障和插入写屏障的优点，<strong>只需要在开始时并发扫描各个 goroutine 的栈</strong>，使其变黑并一直保持，这个过程不需要 STW，而标记结束后，因为栈在扫描后始终是黑色的，也无需再进行 re-scan 操作了，减少了 STW 的时间。</p>
+<p>Go 中的混合写屏障满足<strong>弱三色不变式</strong>，结合了删除写屏障和插入写屏障的优点，<strong>只需要在开始时并发扫描各个 goroutine 的栈</strong>
+，使其变黑并一直保持，这个过程不需要 STW，而标记结束后，因为栈在扫描后始终是黑色的，也无需再进行 re-scan 操作了，减少了 STW 的时间。</p>
 <h2 id="总结" class="headerLink">
     <a href="#%e6%80%bb%e7%bb%93" class="header-mark"></a>总结</h2><p>GoV1.3：普通标记清除法，整体过程需要启动 STW，效率极低。</p>
 <p>GoV1.5：三色标记法，堆空间启动写屏障，栈空间不启动，全部扫描之后，需要重新扫描一次栈(需要 STW )，效率普通。</p>
@@ -976,8 +1007,8 @@
     <div class="post-info">
         <div class="post-info-line">
             <div class="post-info-mod">
-                <span>更新于 2022-11-18&nbsp;<a class="git-hash" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/2c819cc9b877aedbb65bec6ce0e0e2d9881e349b" target="_blank" title="commit by weibin(xiaobinqt@163.com) 2c819cc9b877aedbb65bec6ce0e0e2d9881e349b: update go-gc.md" rel="noopener noreferrer">
-                                    <i class="fas fa-hashtag fa-fw"></i>2c819cc9</a></span>
+                <span>更新于 2022-12-04&nbsp;<a class="git-hash" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/a9a4819547687d1bc1f6ac35c013580875bc4394" target="_blank" title="commit by weibin(xiaobinqt@163.com) a9a4819547687d1bc1f6ac35c013580875bc4394: update go-gc.md" rel="noopener noreferrer">
+                                    <i class="fas fa-hashtag fa-fw"></i>a9a48195</a></span>
             </div>
             <div class="post-info-license"></div>
         </div>
@@ -985,13 +1016,13 @@
             <div class="post-info-md"><span><a class="link-to-mardown" href=/go-gc/index.md target="_blank" rel="noopener noreferrer">阅读原始文档</a>
                     </span></div>
             <div class="post-info-share">
-                <span><a href="#" onclick="return false;" title="分享到 Twitter" data-sharer="twitter" data-url="https://www.xiaobinqt.cn/go-gc/" data-title="Go GC 原理" data-hashtags="golang"><i class="fab fa-twitter fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Facebook" data-sharer="facebook" data-url="https://www.xiaobinqt.cn/go-gc/" data-hashtag="golang"><i class="fab fa-facebook-square fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Hacker News" data-sharer="hackernews" data-url="https://www.xiaobinqt.cn/go-gc/" data-title="Go GC 原理"><i class="fab fa-hacker-news fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Line" data-sharer="line" data-url="https://www.xiaobinqt.cn/go-gc/" data-title="Go GC 原理"><i data-svg-src="/lib/simple-icons/icons/line.min.svg"></i></a><a href="#" onclick="return false;" title="分享到 微博" data-sharer="weibo" data-url="https://www.xiaobinqt.cn/go-gc/" data-title="Go GC 原理" data-image="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221118/74f00ad9b278426887ea4348fd7a0e1c.png"><i class="fab fa-weibo fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 百度" data-sharer="baidu" data-url="https://www.xiaobinqt.cn/go-gc/" data-title="Go GC 原理"><i data-svg-src="/lib/simple-icons/icons/baidu.min.svg"></i></a></span>
+                <span><a href="#" onclick="return false;" title="分享到 Twitter" data-sharer="twitter" data-url="https://www.xiaobinqt.cn/go-gc/" data-title="Go GC 垃圾回收" data-hashtags="golang,GC"><i class="fab fa-twitter fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Facebook" data-sharer="facebook" data-url="https://www.xiaobinqt.cn/go-gc/" data-hashtag="golang"><i class="fab fa-facebook-square fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Hacker News" data-sharer="hackernews" data-url="https://www.xiaobinqt.cn/go-gc/" data-title="Go GC 垃圾回收"><i class="fab fa-hacker-news fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Line" data-sharer="line" data-url="https://www.xiaobinqt.cn/go-gc/" data-title="Go GC 垃圾回收"><i data-svg-src="/lib/simple-icons/icons/line.min.svg"></i></a><a href="#" onclick="return false;" title="分享到 微博" data-sharer="weibo" data-url="https://www.xiaobinqt.cn/go-gc/" data-title="Go GC 垃圾回收" data-image="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221118/74f00ad9b278426887ea4348fd7a0e1c.png"><i class="fab fa-weibo fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 百度" data-sharer="baidu" data-url="https://www.xiaobinqt.cn/go-gc/" data-title="Go GC 垃圾回收"><i data-svg-src="/lib/simple-icons/icons/baidu.min.svg"></i></a></span>
             </div>
         </div>
     </div>
 
     <div class="post-info-more">
-        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/golang/">golang</a></section>
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/golang/">golang</a>,&nbsp;<a href="/tags/gc/">GC</a></section>
         <section>
             <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
         </section>
@@ -1017,7 +1048,7 @@
         </a>
     </div><div class="assets"><script type="text/javascript" src="/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="/lib/algoliasearch/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/topbar/topbar.min.js"></script><script type="text/javascript" src="/lib/pjax/pjax.min.js"></script><script type="text/javascript" src="/js/theme.min.js" defer></script></div>
 
-<div class="pjax-assets"><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":30},"comment":{"gitalk":{"admin":["xiaobinqt"],"clientID":"47b15de6c2d8a0f8d707","clientSecret":"c70556c8b3a3b38ea7c72e539ff3b37d5bc1b4f3","id":"b6184283b223dead605ae636e54dd05a","owner":"xiaobinqt","repo":"xiaobinqt.github.io","title":"Go GC 原理"}},"lightGallery":{"actualSize":false,"exThumbImage":"data-thumbnail","hideBarsDelay":2000,"selector":".lightgallery","speed":400,"thumbContHeight":80,"thumbWidth":80,"thumbnail":true},"search":{"algoliaAppID":"CPNWIDNX0Y","algoliaIndex":"xiaobinqt.io","algoliaSearchKey":"80b84de0ebc766371dd27cd3e651c41e","highlightTag":"em","maxResultLength":20,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"},"sharerjs":true};</script><script type="text/javascript" src="/lib/gitalk/gitalk.min.js"></script><script type="text/javascript" src="/js/gitalk.min.js" defer></script><script type="text/javascript" src="/lib/lightgallery/lightgallery.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-thumbnail.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-zoom.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><link rel="stylesheet" href="/lib/gitalk/gitalk.min.css"><link rel="stylesheet" href="/lib/lightgallery/lightgallery.min.css"></div>
+<div class="pjax-assets"><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":30},"comment":{"gitalk":{"admin":["xiaobinqt"],"clientID":"47b15de6c2d8a0f8d707","clientSecret":"c70556c8b3a3b38ea7c72e539ff3b37d5bc1b4f3","id":"b6184283b223dead605ae636e54dd05a","owner":"xiaobinqt","repo":"xiaobinqt.github.io","title":"Go GC 垃圾回收"}},"lightGallery":{"actualSize":false,"exThumbImage":"data-thumbnail","hideBarsDelay":2000,"selector":".lightgallery","speed":400,"thumbContHeight":80,"thumbWidth":80,"thumbnail":true},"search":{"algoliaAppID":"CPNWIDNX0Y","algoliaIndex":"xiaobinqt.io","algoliaSearchKey":"80b84de0ebc766371dd27cd3e651c41e","highlightTag":"em","maxResultLength":20,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"},"sharerjs":true};</script><script type="text/javascript" src="/lib/gitalk/gitalk.min.js"></script><script type="text/javascript" src="/js/gitalk.min.js" defer></script><script type="text/javascript" src="/lib/lightgallery/lightgallery.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-thumbnail.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-zoom.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><link rel="stylesheet" href="/lib/gitalk/gitalk.min.css"><link rel="stylesheet" href="/lib/lightgallery/lightgallery.min.css"></div>
 </body>
 
 </html>
