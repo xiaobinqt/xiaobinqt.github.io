@@ -22,8 +22,8 @@ func main() {
 }
 ```
 
-在:point_up:代码中，我们分别对三种类型调用了 `make` 函数进行了初始化。会发现有的入参是有多个长度指定，有的没有。 这里的区别主要
-是长度（len）和容量（cap）的指定，**有的类型是没有容量这一说法**。
+在:point_up:代码中，我们分别对三种类型调用了 `make` 函数进行了初始化。会发现有的入参是有多个长度指定，有的没有。 这里的区别主要 是长度（len）和容量（cap）的指定，
+**有的类型是没有容量这一说法**。
 
 输出结果：
 
@@ -59,7 +59,7 @@ func new(Type) *Type
     + 可被替代，其实不常用，我们通常都是采用短语句声明以及结构体的字面量达到我们的目的，比如：
       ```
        i := 0
-       u := user{}
+       u := &user{}
       ```
 
 ## 零值
@@ -72,10 +72,6 @@ func new(Type) *Type
 + [make、new操作](https://github.com/astaxie/build-web-application-with-golang/blob/master/zh/02.2.md#makenew%E6%93%8D%E4%BD%9C)
 + [Go make 和 new的区别](https://www.cnblogs.com/vincenshen/p/9356974.html)
 + [Go - var & make & new 在复杂类型上的使用区别](https://dryyun.com/2019/05/30/go-new-make-use/)
-+ [面试官：Golang 的 new 与make 区别是什么？](https://juejin.cn/post/7085915779006201870)
-
-
-
-
++ [Go 面试题： new 和 make 是什么，差异在哪？](https://mp.weixin.qq.com/s?__biz=MzUxMDI4MDc1NA==&mid=2247487140&idx=1&sn=36d12263308fd24c32e9f5327e73ba21)
 
 
