@@ -4,6 +4,7 @@
 ## 面试题
 
 + [对线面试官面试系列](https://github.com/ZhongFuCheng3y/athena)
++ [命中率极高的 Go 面试题，赶紧收藏！](https://mp.weixin.qq.com/s/7rCsaGy8B2lwbZ4duEC7Nw)
 + [Redis面试题（总结最全面的面试题）](https://juejin.cn/post/6844904127055527950)
 + [很用心的为你写了 9 道 MySQL 面试题](https://juejin.cn/post/6844904130641657870)
 + [史上最详细的一线大厂Mysql面试题详解](https://juejin.cn/post/6844903824935632909)
