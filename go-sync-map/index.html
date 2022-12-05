@@ -10,7 +10,7 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://www.xiaobinqt.cn/go-sync-map/" /><meta property="og:image" content="https://www.xiaobinqt.cn/logo.png"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2022-09-14T00:00:00+00:00" />
-<meta property="article:modified_time" content="2022-12-05T17:32:00+08:00" />
+<meta property="article:modified_time" content="2022-12-05T21:46:45+08:00" />
 <meta property="og:see_also" content="https://www.xiaobinqt.cn/highly-concurrent-architecture-evolution/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/session-cookie-token-difference/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/mysql-faq-2/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/why-mysql-index-use-btree/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/redis-break-pierce-avalanche/" />
 
 <meta name="twitter:card" content="summary_large_image"/>
@@ -35,8 +35,8 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/www.xiaobinqt.cn\/go-sync-map\/"
-        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "golang","wordcount":  6290 ,
-        "url": "https:\/\/www.xiaobinqt.cn\/go-sync-map\/","datePublished": "2022-09-14T00:00:00+00:00","dateModified": "2022-12-05T17:32:00+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "golang","wordcount":  6586 ,
+        "url": "https:\/\/www.xiaobinqt.cn\/go-sync-map\/","datePublished": "2022-09-14T00:00:00+00:00","dateModified": "2022-12-05T21:46:45+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "xxxx","logo": {
                     "@type": "ImageObject",
@@ -143,8 +143,8 @@
             <div class="post-meta-line"><span class="post-author">
                     <i class="custom-icon iconfont icon-weibiaoti-"></i>
                 </span>&nbsp;&nbsp;<span class="post-category">收录于 </span>&nbsp;<span class="post-category">类别 <a href="/categories/golang/"><i class="far fa-folder fa-fw"></i>golang</a></span>&nbsp;<span class="post-category">和</span>&nbsp;<span class="post-series">系列 <a href="/series/reproduce/"><i class="far fa-list-alt fa-fw"></i>转载</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-09-14">2022-09-14</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2022-12-05">2022-12-05</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 6290 字&nbsp;
-                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 13 分钟&nbsp;</div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-09-14">2022-09-14</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2022-12-05">2022-12-05</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 6586 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 14 分钟&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
                     <span>目录</span>
@@ -263,17 +263,33 @@
 <pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">var expunged = unsafe.Pointer(new(interface{}))
 </span></span></code></pre></td></tr></table>
 </div>
-</div><p>它是一个指向任意类型的指针，用来标记从 dirty map 中<strong>删除</strong>的 entry。</p>
+</div><p>expunged 是一个指向任意类型的指针，用来标记从 dirty map 中<strong>删除</strong>的 entry。</p>
 <p>sync.Map 类型的 Store 方法，该方法的作用是新增或更新一个元素。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func (m *Map) Store(key, value interface{}) {
@@ -283,9 +299,25 @@
 </span></span><span class="line"><span class="cl"> }
 </span></span><span class="line"><span class="cl">  ...
 </span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">// tryStore stores a value if the entry has not been expunged.
+</span></span><span class="line"><span class="cl">//
+</span></span><span class="line"><span class="cl">// If the entry is expunged, tryStore returns false and leaves the entry
+</span></span><span class="line"><span class="cl">// unchanged.
+</span></span><span class="line"><span class="cl">func (e *entry) tryStore(i *interface{}) bool {
+</span></span><span class="line"><span class="cl">	for {
+</span></span><span class="line"><span class="cl">		p := atomic.LoadPointer(&amp;e.p)
+</span></span><span class="line"><span class="cl">		if p == expunged {
+</span></span><span class="line"><span class="cl">			return false
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">		if atomic.CompareAndSwapPointer(&amp;e.p, p, unsafe.Pointer(i)) {
+</span></span><span class="line"><span class="cl">			return true
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">}
 </span></span></code></pre></td></tr></table>
 </div>
-</div><p>调用<code>Load</code>方法检查<code>m.read</code>中是否存在这个元素。若存在，且没有被标记为删除状态，则尝试存储。</p>
+</div><p>调用<code>Load</code>方法检查<code>m.read</code>中是否存在这个元素。若存在，且没有被标记为 expunged 删除状态，则尝试存储。</p>
 <p>若该元素不存在或已经被标记为删除状态，则继续走到下面流程👇</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -424,7 +456,7 @@
 <ol>
 <li>如果在 read 里能够找到待存储的 key，并且对应的 entry 的 p 值不为 expunged，也就是没被删除时，直接更新对应的 entry 即可。</li>
 <li>如果第一步没有成功，要么 read 中没有这个 key，要么 key 被标记为删除。则先加锁，再进行后续的操作。</li>
-<li>再次在 read 中查找是否存在这个 key，也就是 double check 双检查一下，这是 lock-free 编程里的常见套路。如果 read 中存在该 key，但<code>p == expunged</code>，说明<code>m.dirty != nil</code>（<code>m.dirty</code>是被初始化过的）并且<code>m.dirty</code>中不存在该 key 值（因为已经被删除了，dirty 中直接就删除了，read 中标记为<code>expunged</code>），此时👇
+<li>再次在 read 中查找是否存在这个 key，也就是 double check 双检查一下，这是 lock-free 编程的常见套路。如果 read 中存在该 key，但<code>p == expunged</code>，说明<code>m.dirty != nil</code>（<code>m.dirty</code>是被初始化过的）并且<code>m.dirty</code>中不存在该 key 值（因为已经被删除了，dirty 中的删除直接就删除了；read 中的删除，会先标记为 nil，<code>read=&gt;dirty</code>重塑时再标记为<code>expunged</code>），此时👇
 <ol>
 <li>将 p 的状态由<code>expunged</code>更改为<code>nil</code></li>
 <li>dirty map 插入 key。然后，直接更新对应的 value</li>
@@ -434,13 +466,47 @@
 <li>最后一步，如果 read 和 dirty 中都不存在该 key，则👇
 <ol>
 <li>如果<code>dirty</code>为空，则需要创建<code>dirty</code>，并从<code>read</code>中拷贝未被删除的元素</li>
-<li>更新<code>amended</code>字段，标识 dirty map 中存在 read map 中没有的<code>key</code></li>
+<li>更新<code>amended</code>字段为 true，标识 dirty map 中存在 read map 中没有的<code>key</code></li>
 <li>将<code>k-v</code>写入 dirty map 中，<code>read.m</code>不变。最后，更新此 key 对应的<code>value</code>。</li>
 </ol>
 </li>
 </ol>
-<p><code>Store</code>可能会在某种情况下（初始化或者<code>m.dirty</code>刚被提升后，此时<code>m.read</code>中的数据和<code>m.dirty</code>中的相等，readOnly 中的<code>amended</code>为<code>false</code>，也就是说可能存在一个 key read 中找不到 dirty 中也找不到）从<code>m.read</code>中复制数据，如果这个时候<code>m.read</code>中数据量非常大，可能会影响性能。</p>
-<p>综上可知 sync.Map 类型<strong>不适合写多的场景</strong>，读多写少是比较好的。若有大数据量的场景，则需要考虑 read 复制数据时的偶然性能抖动是否能够接受。</p>
+<p><strong>为什么 read 中存在 key，但是<code>p == expunged</code>时需要把 p 的状态由<code>expunged</code>更改为<code>nil</code></strong> ❓</p>
+<p>我理解的是 p 的 nil 是一个中间状态，其实是把 p 的状态从<code>expunged-&gt;nil-&gt;新的entry</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">if e.unexpungeLocked() {
+</span></span><span class="line"><span class="cl">      // The entry was previously expunged, which implies that there is a
+</span></span><span class="line"><span class="cl">      // non-nil dirty map and this entry is not in it.
+</span></span><span class="line"><span class="cl">      m.dirty[key] = e
+</span></span><span class="line"><span class="cl">  }
+</span></span><span class="line"><span class="cl">  e.storeLocked(&amp;value)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">// storeLocked unconditionally stores a value to the entry.
+</span></span><span class="line"><span class="cl">//
+</span></span><span class="line"><span class="cl">// The entry must be known not to be expunged.
+</span></span><span class="line"><span class="cl">func (e *entry) storeLocked(i *interface{}) {
+</span></span><span class="line"><span class="cl">	atomic.StorePointer(&amp;e.p, unsafe.Pointer(i))
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>Store 可能会在某种情况下（初始化或者<code>m.dirty</code>刚被提升后，此时<code>m.read</code>中的数据和<code>m.dirty</code>中的相等，readOnly 中的<code>amended</code>为<code>false</code>，也就是说可能存在一个 key，read 中找不到 dirty 中也找不到）从<code>m.read</code>中复制数据，如果这个时候<code>m.read</code>中数据量非常大，可能会影响性能。</p>
+<p>综上可知，sync.Map 类型<strong>不适合写多的场景</strong>，读多写少是比较好的。若有大数据量的场景，则需要考虑 read 复制数据时的偶然性能抖动是否能够接受。</p>
 <h2 id="load查找过程" class="headerLink">
     <a href="#load%e6%9f%a5%e6%89%be%e8%bf%87%e7%a8%8b" class="header-mark"></a>Load查找过程</h2><p>sync.Map 类型本质上是有两个“map”。一个叫 read、一个叫 dirty，长的也差不多👇</p>
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221204/301dd5df668c43c08845983b106b0fc4.png" title="sync.map" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221204/301dd5df668c43c08845983b106b0fc4.png" data-sub-html="<h2>sync.map</h2><p>sync.map</p>">
@@ -516,7 +582,7 @@
 </div><p>处理路径分为 fast path 和 slow path，整体流程如下：</p>
 <ol>
 <li>首先是 fast path，直接在 read 中找，如果找到了直接调用 entry 的 load 方法，取出其中的值。</li>
-<li>如果 read 中没有这个 key，且 amended 为 fase，说明 dirty 为空，那直接返回 空和 false。</li>
+<li>如果 read 中没有这个 key，且 amended 为 fase，说明 dirty 为空，那直接返回空和 false。</li>
 <li>如果 read 中没有这个 key，且 amended 为 true，说明 dirty 中可能存在我们要找的 key。当然要先上锁，再尝试去 dirty 中查找。在这之前，仍然有一个 double check 的操作。若还是没有在 read 中找到，那么就从 dirty 中找。不管 dirty 中有没有找到，都要“记一笔”，因为在 dirty 被提升为 read 之前，都会进入这条路径</li>
 </ol>
 <p>那么<code>m.dirty</code>是如何被提升的❓，<code>missLocked</code>方法中可能会将<code>m.dirty</code>提升。</p>
@@ -774,8 +840,8 @@
     <div class="post-info">
         <div class="post-info-line">
             <div class="post-info-mod">
-                <span>更新于 2022-12-05&nbsp;<a class="git-hash" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/0910032b0ec7f7472ec81e6b8ad2b095de4bcb35" target="_blank" title="commit by weibin(xiaobinqt@163.com) 0910032b0ec7f7472ec81e6b8ad2b095de4bcb35: update go-sync-map.md" rel="noopener noreferrer">
-                                    <i class="fas fa-hashtag fa-fw"></i>0910032b</a></span>
+                <span>更新于 2022-12-05&nbsp;<a class="git-hash" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/b05793a61de365333b230e3e945e309ffa36b65e" target="_blank" title="commit by weibin(xiaobinqt@163.com) b05793a61de365333b230e3e945e309ffa36b65e: update go-sync-map.md" rel="noopener noreferrer">
+                                    <i class="fas fa-hashtag fa-fw"></i>b05793a6</a></span>
             </div>
             <div class="post-info-license"></div>
         </div>
