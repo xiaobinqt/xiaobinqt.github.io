@@ -34,19 +34,22 @@ Docker 并没有和虚拟机一样利用一个独立的 OS 执行环境的隔离
 
 `Cgroup`提供了物理资源的隔离，比如 CPU，内存，磁盘等等。
 
-`UnionFS` 给 docker 镜像提供了技术支撑。在 Docker 中，提供了一种对 UnionFS 的改进实现，也就是 [AUFS]^(Advanced Union File System)。 AUFS 将文件的更新挂载到老的文件之上，而不去修改那些不更新的内容，这意味着即使虚拟的文件系统被反复修改，也能保证对真实文件系统的空间占用保持一个较低水平。就像在 Git 中每进行一次提交，Git 并不是将我们所有的内容打包成一个版本，而只是将修改的部分进行记录，这样即使我们提交很多次后，代码库的空间占用也不会倍数增加。 通过 AUFS，Docker **大幅减少了虚拟文件系统对物理存储空间的占用**。
+`UnionFS` 给 docker 镜像提供了技术支撑。在 Docker 中，提供了一种对 UnionFS 的改进实现，也就是 [AUFS]^(Advanced Union File System)。 AUFS 将文件的更新挂载到老的文件之上，而不去修改那些不更新的内容，这意味着即使虚拟的文件系统被反复修改，也能保证对真实文件系统的空间占用保持一个较低水平。就像在 Git 中每进行一次提交，Git 并不是将我们所有的内容打包成一个版本，而只是将修改的部分进行记录，这样即使我们提交很多次后，代码库的空间占用也不会倍数增加。 通过 AUFS，Docker
+**大幅减少了虚拟文件系统对物理存储空间的占用**。
 
 ### 虚拟机和 Docker
 
 [虚拟机]^(Virtual Machine)，通常来说就是通过一个[虚拟机监视器]^(Virtual Machine Monitor)
-的设施来隔离操作系统与硬件或者应用程序和操作系统，以此达到虚拟化的目的。这个夹在其中的虚拟机监视器，常常被称为 **Hypervisor**。:point_down:是虚拟机和 Docker 的对比：
+的设施来隔离操作系统与硬件或者应用程序和操作系统，以此达到虚拟化的目的。这个夹在其中的虚拟机监视器，常常被称为
+**Hypervisor**。:point_down:是虚拟机和 Docker 的对比：
 
 ![虚拟机和容器](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220506/c869ee3cf8d94b20ae793d98e6022afd.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '虚拟机和容器')
 
 
 [//]: # (![虚拟机和容器]&#40;https://cdn.xiaobinqt.cn/xiaobinqt.io/20220428/2763785408b64bfa92d0263dfd6c6e77.png '虚拟机和容器'&#41;)
 
-传统方式是在硬件层面实现虚拟化，需要有额外的虚拟机管理应用和虚拟机操作系统层。Docker容器是在操作系统层面上实现虚拟化，直接**复用本地主机的操作系统**，因此更加轻量级。
+传统方式是在硬件层面实现虚拟化，需要有额外的虚拟机管理应用和虚拟机操作系统层。Docker容器是在操作系统层面上实现虚拟化，直接
+**复用本地主机的操作系统**，因此更加轻量级。
 
 虚拟机更擅长彻底隔离整个运行环境。例如，云服务提供商通常采用虚拟机技术隔离不同的用户。而 Docker 通常用于隔离不同的应用，例如前端，后端以及数据库。
 
@@ -72,12 +75,13 @@ Docker 并没有和虚拟机一样利用一个独立的 OS 执行环境的隔离
 | `docker volume prune`                  | 删除没有被容器引用的数据卷                                        |
 | `docker build`                         | 构建镜像                                                 |
 | `docker inspect 容器名/ID`                | 查看容器详情                                               |
-| `docker run --privileged`              | 容器获取宿主机root权限                                               |
+| `docker run --privileged`              | 容器获取宿主机root权限                                        |
 
 `docker exec` 命令能帮助我们在正在运行的容器中运行指定的命令。
 
 ```shell
 docker exec [-i] 容器名 命令
+
 ```
 
 ![docker exec](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220426/0b8a159e61264e45ae982fcfd8418016.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'docker exec')
@@ -108,14 +112,14 @@ docker build --no-cache  .....
 来查看，或者查看官方文档 [docker images](https://docs.docker.com/engine/reference/commandline/images/)
 。
 
-| 选项                                     | 说明                                                |
-|----------------------------------------|---------------------------------------------------|
-| <code>-a, &hyphen;&hyphen;all=true &#124; false</code> | 列出所有（包括临时文件）镜像文件，默认为否                              |
-| <code>&hyphen;&hyphen;digests=true &#124; false </code> | 列出镜像的数字摘要值，默认为否                                   |
-| `-f, --filter=[]`                      | 过滤列出的镜像，如`dangling=true`只显示没有被使用的镜像；也可指定带有特定标注的镜像等 |
-| `--format="TEMPLATE"`                  | 控制输出格式，如`.ID`代表ID信息，`.Repository`代表仓库信息等          |
-| <code>&hyphen;&hyphen;no-trunc=true &#124; false </code> | 对输出结果中太长的部分是否进行截断，如镜像的ID信息，默认为是                   |
-| <code>-q, &hyphen;&hyphen;quiet=true &#124; false </code> | 仅输出ID信息，默认为否                                      |
+| 选项                                                        | 说明                                                 |
+|-----------------------------------------------------------|----------------------------------------------------|
+| <code>-a, &hyphen;&hyphen;all=true &#124; false</code>    | 列出所有（包括临时文件）镜像文件，默认为否                              |
+| <code>&hyphen;&hyphen;digests=true &#124; false </code>   | 列出镜像的数字摘要值，默认为否                                    |
+| `-f, --filter=[]`                                         | 过滤列出的镜像，如`dangling=true`只显示没有被使用的镜像；也可指定带有特定标注的镜像等 |
+| `--format="TEMPLATE"`                                     | 控制输出格式，如`.ID`代表ID信息，`.Repository`代表仓库信息等           |
+| <code>&hyphen;&hyphen;no-trunc=true &#124; false </code>  | 对输出结果中太长的部分是否进行截断，如镜像的ID信息，默认为是                    |
+| <code>-q, &hyphen;&hyphen;quiet=true &#124; false </code> | 仅输出ID信息，默认为否                                       |
 
 ![--format](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220507/68e1884199cf428a981afd09c0b2a2dd.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '--format')
 
@@ -255,8 +259,8 @@ docker run -d --name nginx -v /webapp/html:/usr/share/nginx/html nginx:1.12
 ```
 
 使用 `-v` 或 `--volume` 来挂载宿主操作系统目录的形式是 `-v <host-path>:<container-path>`
-或 `--volume <host-path>:<container-path>`，其中
-`host-path` 和 `container-path` 分别代表宿主操作系统中的目录和容器中的目录。这里需要注意的是，Docker 这里强制定义目录时**必须使用绝对路径，不能使用相对路径**。
+或 `--volume <host-path>:<container-path>`，其中`host-path` 和 `container-path` 分别代表宿主操作系统中的目录和容器中的目录。这里需要注意的是，Docker 这里强制定义目录时
+**必须使用绝对路径，不能使用相对路径**。
 
 Docker 还支持以只读的方式挂载，通过只读方式挂载的目录和文件，只能被容器中的程序读取，但不接受容器中程序修改它们的请求。在挂载选项 `-v`
 后再接上 `:ro` 就可以只读挂载了。
@@ -379,8 +383,8 @@ docker run --name mynginx -d nginx:1.12
 
 + :trophy:`FROM`
 
-通过 `FROM` 指令指定一个基础镜像，接下来所有的指令都是基于这个镜像所展开的。**
-为了保证镜像精简，可以选用体积较小的镜像如`Alpine`或`Debian`作为基础镜像**。
+通过 `FROM` 指令指定一个基础镜像，接下来所有的指令都是基于这个镜像所展开的。
+**为了保证镜像精简，可以选用体积较小的镜像如`Alpine`或`Debian`作为基础镜像**。
 
 `FROM` 指令支持三种形式：
 
@@ -537,10 +541,10 @@ CMD指令用来指定启动容器时默认执行的命令。支持三种格式�
 `ENTRYPOINT` 指令的**优先级高于** `CMD` 指令。当 `ENTRYPOINT` 和 `CMD` 同时在镜像中被指定时，`CMD`
 里的内容会作为 `ENTRYPOINT` 的参数，两者拼接之后，才是最终执行的命令。
 
-| NTRYPOINT                      | CMD                       | 实际执行                                                |
-|--------------------------------|---------------------------|-----------------------------------------------------|
-| `ENTRYPOINT ["/bin/ep", "arge"]` | 	                         | `/bin/ep arge`                                      |
-| `ENTRYPOINT /bin/ep arge`        | 	                         | `/bin/sh -c /bin/ep arge`                           |
+| ENTRYPOINT                       | CMD                         | 实际执行                                                |
+|----------------------------------|-----------------------------|-----------------------------------------------------|
+| `ENTRYPOINT ["/bin/ep", "arge"]` | 	                           | `/bin/ep arge`                                      |
+| `ENTRYPOINT /bin/ep arge`        | 	                           | `/bin/sh -c /bin/ep arge`                           |
 | `CMD ["/bin/exec", "args"]`      | `/bin/exec args`            |                                                     |
 | `CMD /bin/exec args`             | `/bin/sh -c /bin/exec args` |                                                     |
 | `ENTRYPOINT ["/bin/ep", "arge"]` | `CMD ["/bin/exec", "argc"]` | `/bin/ep arge /bin/exec argc`                       |
