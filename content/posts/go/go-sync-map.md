@@ -108,7 +108,7 @@ type entry struct {
 var expunged = unsafe.Pointer(new(interface{}))
 ```
 
-它是一个指向任意类型的指针，用来标记从 dirty map 中**删除**的 entry。
+expunged 是一个指向任意类型的指针，用来标记从 dirty map 中**删除**的 entry。
 
 sync.Map 类型的 Store 方法，该方法的作用是新增或更新一个元素。
 
@@ -120,9 +120,25 @@ func (m *Map) Store(key, value interface{}) {
  }
   ...
 }
+
+// tryStore stores a value if the entry has not been expunged.
+//
+// If the entry is expunged, tryStore returns false and leaves the entry
+// unchanged.
+func (e *entry) tryStore(i *interface{}) bool {
+	for {
+		p := atomic.LoadPointer(&e.p)
+		if p == expunged {
+			return false
+		}
+		if atomic.CompareAndSwapPointer(&e.p, p, unsafe.Pointer(i)) {
+			return true
+		}
+	}
+}
 ```
 
-调用`Load`方法检查`m.read`中是否存在这个元素。若存在，且没有被标记为删除状态，则尝试存储。
+调用`Load`方法检查`m.read`中是否存在这个元素。若存在，且没有被标记为 expunged 删除状态，则尝试存储。
 
 若该元素不存在或已经被标记为删除状态，则继续走到下面流程:point_down:
 
@@ -202,18 +218,38 @@ if !ok && read.amended {
 
 1. 如果在 read 里能够找到待存储的 key，并且对应的 entry 的 p 值不为 expunged，也就是没被删除时，直接更新对应的 entry 即可。
 2. 如果第一步没有成功，要么 read 中没有这个 key，要么 key 被标记为删除。则先加锁，再进行后续的操作。
-3. 再次在 read 中查找是否存在这个 key，也就是 double check 双检查一下，这是 lock-free 编程里的常见套路。如果 read 中存在该 key，但`p == expunged`，说明`m.dirty != nil`（`m.dirty`是被初始化过的）并且`m.dirty`中不存在该 key 值（因为已经被删除了，dirty 中直接就删除了，read 中标记为`expunged`），此时:point_down:
+3. 再次在 read 中查找是否存在这个 key，也就是 double check 双检查一下，这是 lock-free 编程的常见套路。如果 read 中存在该 key，但`p == expunged`，说明`m.dirty != nil`（`m.dirty`是被初始化过的）并且`m.dirty`中不存在该 key 值（因为已经被删除了，dirty 中的删除直接就删除了；read 中的删除，会先标记为 nil，`read=>dirty`重塑时再标记为`expunged`），此时:point_down:
     1. 将 p 的状态由`expunged`更改为`nil`
     2. dirty map 插入 key。然后，直接更新对应的 value
 4. 如果 read 中没有此 key，那就查看 dirty 中是否有此 key，如果有，则直接更新对应的 value，这时 read 中还是没有此 key。
 5. 最后一步，如果 read 和 dirty 中都不存在该 key，则:point_down:
     1. 如果`dirty`为空，则需要创建`dirty`，并从`read`中拷贝未被删除的元素
-    2. 更新`amended`字段，标识 dirty map 中存在 read map 中没有的`key`
+    2. 更新`amended`字段为 true，标识 dirty map 中存在 read map 中没有的`key`
     3. 将`k-v`写入 dirty map 中，`read.m`不变。最后，更新此 key 对应的`value`。
 
-`Store`可能会在某种情况下（初始化或者`m.dirty`刚被提升后，此时`m.read`中的数据和`m.dirty`中的相等，readOnly 中的`amended`为`false`，也就是说可能存在一个 key read 中找不到 dirty 中也找不到）从`m.read`中复制数据，如果这个时候`m.read`中数据量非常大，可能会影响性能。
+**为什么 read 中存在 key，但是`p == expunged`时需要把 p 的状态由`expunged`更改为`nil`** :question:
 
-综上可知 sync.Map 类型**不适合写多的场景**，读多写少是比较好的。若有大数据量的场景，则需要考虑 read 复制数据时的偶然性能抖动是否能够接受。
+我理解的是 p 的 nil 是一个中间状态，其实是把 p 的状态从`expunged->nil->新的entry`
+
+```
+if e.unexpungeLocked() {
+      // The entry was previously expunged, which implies that there is a
+      // non-nil dirty map and this entry is not in it.
+      m.dirty[key] = e
+  }
+  e.storeLocked(&value)
+
+// storeLocked unconditionally stores a value to the entry.
+//
+// The entry must be known not to be expunged.
+func (e *entry) storeLocked(i *interface{}) {
+	atomic.StorePointer(&e.p, unsafe.Pointer(i))
+}
+```
+
+Store 可能会在某种情况下（初始化或者`m.dirty`刚被提升后，此时`m.read`中的数据和`m.dirty`中的相等，readOnly 中的`amended`为`false`，也就是说可能存在一个 key，read 中找不到 dirty 中也找不到）从`m.read`中复制数据，如果这个时候`m.read`中数据量非常大，可能会影响性能。
+
+综上可知，sync.Map 类型**不适合写多的场景**，读多写少是比较好的。若有大数据量的场景，则需要考虑 read 复制数据时的偶然性能抖动是否能够接受。
 
 ## Load查找过程
 
@@ -257,7 +293,7 @@ func (m *Map) Load(key interface{}) (value interface{}, ok bool) {
 处理路径分为 fast path 和 slow path，整体流程如下：
 
 1. 首先是 fast path，直接在 read 中找，如果找到了直接调用 entry 的 load 方法，取出其中的值。
-2. 如果 read 中没有这个 key，且 amended 为 fase，说明 dirty 为空，那直接返回 空和 false。
+2. 如果 read 中没有这个 key，且 amended 为 fase，说明 dirty 为空，那直接返回空和 false。
 3. 如果 read 中没有这个 key，且 amended 为 true，说明 dirty 中可能存在我们要找的 key。当然要先上锁，再尝试去 dirty 中查找。在这之前，仍然有一个 double check 的操作。若还是没有在 read 中找到，那么就从 dirty 中找。不管 dirty 中有没有找到，都要“记一笔”，因为在 dirty 被提升为 read 之前，都会进入这条路径
 
 那么`m.dirty`是如何被提升的:question:，`missLocked`方法中可能会将`m.dirty`提升。
