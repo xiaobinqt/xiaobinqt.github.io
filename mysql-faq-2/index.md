@@ -148,7 +148,7 @@ update table set age = age + 1 where id = 1;
 
 1. Read uncommitted/RU：读未提交，处于该隔离级别的数据库，脏读、不可重复读、幻读问题都有可能发生。
 2. Read committed/RC：读已提交，处于该隔离级别的数据库，解决了脏读问题，不可重复读、幻读问题依旧存在。
-3. Repeatable read/RR：可重复读，处于该隔离级别的数据库，解决了脏读、不可重复读问题，幻读问题依旧存在。
+3. Repeatable read/RR：可重复读，处于该隔离级别的数据库，解决了脏读、不可重复读、幻读问题。
 4. Serializable：序列化/串行化，处于该隔离级别的数据库，解决了脏读、不可重复读、幻读问题都不存在。
 
 数据库事务的隔离级别，**由低到高**依次为 Read uncommitted 、Read committed、Repeatable read 、Serializable。
