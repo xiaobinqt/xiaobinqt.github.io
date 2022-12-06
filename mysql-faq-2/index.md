@@ -321,4 +321,4 @@ MySQL 默认的隔离级别为 Repeatable read。很大一部分原因是在最�
 + [MySQL 索引](https://mp.weixin.qq.com/s/74lPw8-keqM_niBDoOXSCQ)
 + [MySQL 事务、锁和MVCC](https://mp.weixin.qq.com/s?__biz=MzU4NzA3MTc5Mg==&mid=2247485997&idx=1&sn=b05b4a56d0248e9c7108bd01eb95438d)
 + [MySQL 调优](https://mp.weixin.qq.com/s?__biz=MzU4NzA3MTc5Mg==&mid=2247486035&idx=1&sn=7878dd9b45bc79e210eca1478ac2d9be)
-+ [如何解决 bin log 与 redo log 的一致性问题](https://baijiahao.baidu.com/s?id=1719905225647709469)
++ [redo log/binlog/两阶段提交](https://juejin.cn/post/6844904199952531463)
