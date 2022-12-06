@@ -371,7 +371,16 @@ func (e *entry) tryExpungeLocked() (isExpunged bool) {
 ## dirty和read互转，分别在什么样的时机下进行
 
 + `dirty=>read`：随着 load 的 miss 不断自增，达到阈值（`m.misses >= len(m.dirty)`）后触发升级转储。
-+ `read=>dirty`：当有 read 中不存在的新 key 需要增加，且 read 和 dirty 一致的时候，触发重塑，且`read.amended`置 true，然后再在 dirty 新增。重塑的过程，会将 nil 状态的 entry，全部挤压到 expunged 状态中，同时将非 expunged 的 entry 浅拷贝到 dirty 中，这样可以避免 read 的 key 无限的膨胀（存在大量逻辑删除的 key）。最终，在 dirty 再次升级为 read 的时候，这些逻辑删除的 key 就可以一次性丢弃释放（因为是直接覆盖上去）。
++ `read=>dirty`：当有 read 中不存在的新 key 需要增加，且 read 和 dirty 一致的时候，触发重塑，且`read.amended`置为 true，然后再在 dirty 新增。重塑的过程，会将 nil 状态的 entry，全部挤压到 expunged 状态中，同时将非 expunged 的 entry 浅拷贝到 dirty 中，这样可以避免 read 的 key 无限的膨胀（存在大量逻辑删除的 key）。最终，在 dirty 再次升级为 read 的时候，这些逻辑删除的 key 就可以一次性丢弃释放（因为是直接覆盖上去）。
+
+```
+if !read.amended {
+   // We're adding the first new key to the dirty map.
+   // Make sure it is allocated and mark the read-only map as incomplete.
+   m.dirtyLocked()
+   m.read.Store(readOnly{m: read.m, amended: true})
+}
+```
 
 ![read=>dirty](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221025/e8837d7eda904db586f5e78b23a69ef2.png 'read=>dirty')
 
