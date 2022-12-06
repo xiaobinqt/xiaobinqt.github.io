@@ -10,7 +10,7 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://www.xiaobinqt.cn/go-sync-map/" /><meta property="og:image" content="https://www.xiaobinqt.cn/logo.png"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2022-09-14T00:00:00+00:00" />
-<meta property="article:modified_time" content="2022-12-05T21:46:45+08:00" />
+<meta property="article:modified_time" content="2022-12-06T17:27:56+08:00" />
 <meta property="og:see_also" content="https://www.xiaobinqt.cn/highly-concurrent-architecture-evolution/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/session-cookie-token-difference/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/mysql-faq-2/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/why-mysql-index-use-btree/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/redis-break-pierce-avalanche/" />
 
 <meta name="twitter:card" content="summary_large_image"/>
@@ -35,8 +35,8 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/www.xiaobinqt.cn\/go-sync-map\/"
-        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "golang","wordcount":  6586 ,
-        "url": "https:\/\/www.xiaobinqt.cn\/go-sync-map\/","datePublished": "2022-09-14T00:00:00+00:00","dateModified": "2022-12-05T21:46:45+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "golang","wordcount":  6626 ,
+        "url": "https:\/\/www.xiaobinqt.cn\/go-sync-map\/","datePublished": "2022-09-14T00:00:00+00:00","dateModified": "2022-12-06T17:27:56+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "xxxx","logo": {
                     "@type": "ImageObject",
@@ -143,7 +143,7 @@
             <div class="post-meta-line"><span class="post-author">
                     <i class="custom-icon iconfont icon-weibiaoti-"></i>
                 </span>&nbsp;&nbsp;<span class="post-category">收录于 </span>&nbsp;<span class="post-category">类别 <a href="/categories/golang/"><i class="far fa-folder fa-fw"></i>golang</a></span>&nbsp;<span class="post-category">和</span>&nbsp;<span class="post-series">系列 <a href="/series/reproduce/"><i class="far fa-list-alt fa-fw"></i>转载</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-09-14">2022-09-14</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2022-12-05">2022-12-05</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 6586 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-09-14">2022-09-14</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2022-12-06">2022-12-06</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 6626 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 14 分钟&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
@@ -751,9 +751,27 @@
 <h2 id="dirty和read互转分别在什么样的时机下进行" class="headerLink">
     <a href="#dirty%e5%92%8cread%e4%ba%92%e8%bd%ac%e5%88%86%e5%88%ab%e5%9c%a8%e4%bb%80%e4%b9%88%e6%a0%b7%e7%9a%84%e6%97%b6%e6%9c%ba%e4%b8%8b%e8%bf%9b%e8%a1%8c" class="header-mark"></a>dirty和read互转，分别在什么样的时机下进行</h2><ul>
 <li><code>dirty=&gt;read</code>：随着 load 的 miss 不断自增，达到阈值（<code>m.misses &gt;= len(m.dirty)</code>）后触发升级转储。</li>
-<li><code>read=&gt;dirty</code>：当有 read 中不存在的新 key 需要增加，且 read 和 dirty 一致的时候，触发重塑，且<code>read.amended</code>置 true，然后再在 dirty 新增。重塑的过程，会将 nil 状态的 entry，全部挤压到 expunged 状态中，同时将非 expunged 的 entry 浅拷贝到 dirty 中，这样可以避免 read 的 key 无限的膨胀（存在大量逻辑删除的 key）。最终，在 dirty 再次升级为 read 的时候，这些逻辑删除的 key 就可以一次性丢弃释放（因为是直接覆盖上去）。</li>
+<li><code>read=&gt;dirty</code>：当有 read 中不存在的新 key 需要增加，且 read 和 dirty 一致的时候，触发重塑，且<code>read.amended</code>置为 true，然后再在 dirty 新增。重塑的过程，会将 nil 状态的 entry，全部挤压到 expunged 状态中，同时将非 expunged 的 entry 浅拷贝到 dirty 中，这样可以避免 read 的 key 无限的膨胀（存在大量逻辑删除的 key）。最终，在 dirty 再次升级为 read 的时候，这些逻辑删除的 key 就可以一次性丢弃释放（因为是直接覆盖上去）。</li>
 </ul>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221025/e8837d7eda904db586f5e78b23a69ef2.png" title="read=&amp;gt;dirty" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221025/e8837d7eda904db586f5e78b23a69ef2.png" data-sub-html="<h2>read=&gt;dirty</h2><p>read=&amp;gt;dirty</p>">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">if !read.amended {
+</span></span><span class="line"><span class="cl">   // We&#39;re adding the first new key to the dirty map.
+</span></span><span class="line"><span class="cl">   // Make sure it is allocated and mark the read-only map as incomplete.
+</span></span><span class="line"><span class="cl">   m.dirtyLocked()
+</span></span><span class="line"><span class="cl">   m.read.Store(readOnly{m: read.m, amended: true})
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221025/e8837d7eda904db586f5e78b23a69ef2.png" title="read=&amp;gt;dirty" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221025/e8837d7eda904db586f5e78b23a69ef2.png" data-sub-html="<h2>read=&gt;dirty</h2><p>read=&amp;gt;dirty</p>">
         <img
             class="lazyload"
             data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221025/e8837d7eda904db586f5e78b23a69ef2.png"
@@ -840,8 +858,8 @@
     <div class="post-info">
         <div class="post-info-line">
             <div class="post-info-mod">
-                <span>更新于 2022-12-05&nbsp;<a class="git-hash" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/b05793a61de365333b230e3e945e309ffa36b65e" target="_blank" title="commit by weibin(xiaobinqt@163.com) b05793a61de365333b230e3e945e309ffa36b65e: update go-sync-map.md" rel="noopener noreferrer">
-                                    <i class="fas fa-hashtag fa-fw"></i>b05793a6</a></span>
+                <span>更新于 2022-12-06&nbsp;<a class="git-hash" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/75e40ac17b36edfebf7e569b3da361b0fbd82e52" target="_blank" title="commit by weibin(xiaobinqt@163.com) 75e40ac17b36edfebf7e569b3da361b0fbd82e52: update go-sync-map.md" rel="noopener noreferrer">
+                                    <i class="fas fa-hashtag fa-fw"></i>75e40ac1</a></span>
             </div>
             <div class="post-info-license"></div>
         </div>
