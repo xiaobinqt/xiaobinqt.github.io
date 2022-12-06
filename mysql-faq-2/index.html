@@ -10,7 +10,7 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://www.xiaobinqt.cn/mysql-faq-2/" /><meta property="og:image" content="https://www.xiaobinqt.cn/logo.png"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2022-05-21T00:00:00+00:00" />
-<meta property="article:modified_time" content="2022-12-04T19:48:26+08:00" />
+<meta property="article:modified_time" content="2022-12-06T10:40:58+08:00" />
 <meta property="og:see_also" content="https://www.xiaobinqt.cn/go-sync-map/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/highly-concurrent-architecture-evolution/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/session-cookie-token-difference/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/why-mysql-index-use-btree/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/redis-break-pierce-avalanche/" />
 
 <meta name="twitter:card" content="summary_large_image"/>
@@ -35,8 +35,8 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/www.xiaobinqt.cn\/mysql-faq-2\/"
-        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "mysql, 索引, MVCC","wordcount":  7329 ,
-        "url": "https:\/\/www.xiaobinqt.cn\/mysql-faq-2\/","datePublished": "2022-05-21T00:00:00+00:00","dateModified": "2022-12-04T19:48:26+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "mysql, 索引, MVCC","wordcount":  7406 ,
+        "url": "https:\/\/www.xiaobinqt.cn\/mysql-faq-2\/","datePublished": "2022-05-21T00:00:00+00:00","dateModified": "2022-12-06T10:40:58+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "xxxx","logo": {
                     "@type": "ImageObject",
@@ -146,7 +146,7 @@
             <div class="post-meta-line"><span class="post-author">
                     <i class="custom-icon iconfont icon-weibiaoti-"></i>
                 </span>&nbsp;&nbsp;<span class="post-category">收录于 </span>&nbsp;<span class="post-category">类别 <a href="/categories/mysql/"><i class="far fa-folder fa-fw"></i>mysql</a></span>&nbsp;<span class="post-category">和</span>&nbsp;<span class="post-series">系列 <a href="/series/reproduce/"><i class="far fa-list-alt fa-fw"></i>转载</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-05-21">2022-05-21</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2022-12-04">2022-12-04</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 7329 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-05-21">2022-05-21</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2022-12-06">2022-12-06</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 7406 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 15 分钟&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
@@ -185,10 +185,10 @@
 <p>B+ 树相对于 B 树而言，它又有两种特性：</p>
 <ul>
 <li>
-<p>B+ 树非叶子节点不存储数据，在相同的数据量下，B+ 树更加矮壮。数据都存储在叶子节点上，非叶子节点的存储能存储更多的索引，所以整棵树就更加矮壮。</p>
+<p>B+ 树非叶子节点不存储数据，在相同的数据量下，B+ 树更加矮壮。数据都存储在叶子节点上，非叶子节点的存储能存储更多的索引，所以整棵树就更加矮壮。树的高度能够决定磁盘 IO 的次数，磁盘 IO 次数越少，对于性能的提升就越大。</p>
 </li>
 <li>
-<p>B+ 树叶子节点之间组成一个链表，方便于遍历查询，遍历操作在 MySQL 中比较常见。</p>
+<p>因为叶子节点存储所有数据，所以 B+ 树的全局扫描能力更强一些，因为它只需要扫描叶子节点。但是 B 树需要遍历整个树。B+ 树叶子节点之间组成一个链表，方便于遍历查询，遍历操作在 MySQL 中比较常见。</p>
 </li>
 </ul>
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221201/b768c90fe50b48aa8d7deec33efd7e8c.png" title="b&#43;树" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221201/b768c90fe50b48aa8d7deec33efd7e8c.png" data-sub-html="<h2>b&#43;树</h2><p>b&#43;树</p>">
@@ -240,7 +240,7 @@
 <p>查询条件 <code>a=1 and b=2 and c&gt;3 and d=4</code>，这里只能使用<code>a</code>，<code>b</code>和<code>a、b</code>索引，而不能使用<code>a、b、c</code>或<code>a、b、c、d</code>索引。</p>
 <p>先匹配最左边的，索引只能用于查找<code>key</code>是否存在或相等，遇到范围查询<code>&gt;</code>、<code>&lt;</code>、<code>between</code>、<code>like</code>左匹配等就不能进一步匹配了，后续退化为线性查找，这就是最左匹配原则。</p>
 <h2 id="实际项目中如何生成主键" class="headerLink">
-    <a href="#%e5%ae%9e%e9%99%85%e9%a1%b9%e7%9b%ae%e4%b8%ad%e5%a6%82%e4%bd%95%e7%94%9f%e6%88%90%e4%b8%bb%e9%94%ae" class="header-mark"></a>实际项目中如何生成主键</h2><p>用自增主键。首先主键得保证它的唯一性和空间尽可能短，这两块是需要考虑的。由于索引的有序特性，如果生成像 uuid 类似的主键，那插入的的性能是比自增的要差的。因为生成的 uuid，在插入时有可能需要移动磁盘块，比如，块内的空间在当前时刻已经存储满了，但新生成的 uuid 需要插入已满的块内，就需要移动块的数据。</p>
+    <a href="#%e5%ae%9e%e9%99%85%e9%a1%b9%e7%9b%ae%e4%b8%ad%e5%a6%82%e4%bd%95%e7%94%9f%e6%88%90%e4%b8%bb%e9%94%ae" class="header-mark"></a>实际项目中如何生成主键</h2><p>用自增主键。首先主键得保证它的唯一性和空间尽可能短，这两块是需要考虑的。由于索引的有序特性，id 本身具有连续性使得对应的数据也会按照顺序存储在磁盘上，写入性能和检索性能都很高。如果使用 uuid 这种随机 id，那么在频繁插入数据的时候，就会导致随机磁盘 IO，从而导致性能较低。</p>
 <h2 id="如何理解innodb引擎中的事务" class="headerLink">
     <a href="#%e5%a6%82%e4%bd%95%e7%90%86%e8%a7%a3innodb%e5%bc%95%e6%93%8e%e4%b8%ad%e7%9a%84%e4%ba%8b%e5%8a%a1" class="header-mark"></a>如何理解InnoDB引擎中的事务</h2><p>事务可以使「一组操作」要么全部成功，要么全部失败。事务其目的是为了「保证数据最终的一致性」。</p>
 <h2 id="事务的特性" class="headerLink">
@@ -536,8 +536,8 @@
     <div class="post-info">
         <div class="post-info-line">
             <div class="post-info-mod">
-                <span>更新于 2022-12-04&nbsp;<a class="git-hash" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/fdc449057a1754820907de15109052d2eafac84b" target="_blank" title="commit by weibin(xiaobinqt@163.com) fdc449057a1754820907de15109052d2eafac84b: update mysql-faq-2.md" rel="noopener noreferrer">
-                                    <i class="fas fa-hashtag fa-fw"></i>fdc44905</a></span>
+                <span>更新于 2022-12-06&nbsp;<a class="git-hash" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/4a3a38f976150f68045239e9ad0f55ba258bfffe" target="_blank" title="commit by weibin(xiaobinqt@163.com) 4a3a38f976150f68045239e9ad0f55ba258bfffe: update mysql-faq-2.md" rel="noopener noreferrer">
+                                    <i class="fas fa-hashtag fa-fw"></i>4a3a38f9</a></span>
             </div>
             <div class="post-info-license"></div>
         </div>
