@@ -79,9 +79,9 @@ ACID，分别是原子性（Atomicity）、一致性（Consistency）、隔离�
 ![原子性](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221202/8a8fcedc257b42c8ad74a868363fdafe.png '原子性')
 
 **隔离性**
-指的是：在事务「并发」执行时，他们内部的操作不能互相干扰。如果多个事务可以同时操作一个数据，那么就会产生脏读、重复读、幻读的问题。于是，事务与事务之间需要存在「一定」的隔离。
+指的是：在事务「并发」执行时，他们内部的操作不能互相干扰。如果多个事务可以同时操作一个数据，那么就会产生脏读、不可重复读、幻读的问题。于是，事务与事务之间需要存在「一定」的隔离。
 
-在 InnoDB 引擎中，定义了四种隔离级别供我们使用，分别是：[read uncommit]^(读未提交)、[read commit]^(读已提交)、[repeatable read]^(可重复复读)、[serializable]^(串行)。
+在 InnoDB 引擎中，定义了四种隔离级别供我们使用，分别是：[read uncommitted]^(读未提交)、[read committed]^(读已提交)、[repeatable read]^(可重复复读)、[serializable]^(串行)。
 
 不同的隔离级别对事务之间的隔离性是不一样的，级别越高事务隔离性越好，但性能就越低，而隔离性是由 MySQL 的各种锁来实现的，只是它屏蔽了加锁的细节。
 
@@ -100,7 +100,7 @@ ACID，分别是原子性（Atomicity）、一致性（Consistency）、隔离�
 
 ![一致性](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221202/4702334e18194c00b62d4001d1100e13.png '一致性')
 
-## redo-log两阶段提交
+## 什么是两阶段提交
 
 MySQL 的 bin log 只能用于归档，不足以实现[崩溃恢复]^(crash-safe)，需要借助 InnoDB 引擎的 redo log 才能拥有崩溃恢复的能力。所谓崩溃恢复就是，即使在数据库宕机的情况下，也不会出现操作一半的情况。
 
@@ -112,13 +112,15 @@ bin log 是可以追加写入的。“追加写” 是指 bin log 文件写到�
 
 redo log 是循环写的，redo log 只会记录未刷入磁盘的日志，已经刷入磁盘的数据都会从 redo log 这个有限大小的日志文件里删除。
 
+bin log 因为是全量日志，所以可以作为恢复数据使用，主从复制搭建。redo log 可以作为异常宕机或者故障后的数据恢复使用。
+
 下面用这条简单的 SQL 语句为例，来解释下执行器和 InnoDB 存储引擎在更新时做了哪些事情：
 
 ```shell
 update table set age = age + 1 where id = 1;
 ```
 
-![图1](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221202/2fdd570a5dec42248cb0b3fff5762dfd.png ' ')
+![两阶段提交](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221206/0fa9678f6b214a63bfdd8506cabe8a28.png '两阶段提交')
 
 所谓两阶段提交，其实就是把 redo log 的写入拆分成了两个步骤`prepare`和`commit`。
 
@@ -131,22 +133,33 @@ update table set age = age + 1 where id = 1;
 1. 如果 binlog 存在并完整，则提交事务；
 2. 否则，回滚事务。
 
+## 为什么需要两阶段提交
+
+两阶段提交主要是为了解决主从数据同步的问题。如果没有两阶段提交，那么 binlog 和 redolog 的提交，无非就是两种形式:point_down:
+
+1. 先写 bin-log 再写 redo-log
+2. 先写 redo-log 再写 bin-log
+
+假设我们要向表中插入一条记录 R，如果是先写 bin-log 再写 redo-log，那么假设 bin-log 写完后崩溃了，此时 redo-log 还没写。那么重启恢复的时候就会出问题：bin-log 中已经有 R 的记录了，当从机从主机同步数据的时候或者我们使用 bin-log 恢复数据的时候，就会同步到 R 这条记录；但是 redo-log 中没有关于 R 的记录，所以崩溃恢复之后，插入 R 记录的这个事务是无效的，即数据库中没有该行记录，这就造成了数据不一致。
+
+相反，假设我们要向表中插入一条记录 R，如果是先写 redo-log 再写 bin-log，那么假设 redo-log 写完后崩溃了，此时 bin-log 还没写。那么重启恢复的时候也会出问题：redo-log 中已经有 R 的记录了，所以崩溃恢复之后，插入 R 记录的这个事务是有效的，通过该记录将数据恢复到数据库中；但是 bin-log 中还没有关于 R 的记录，所以当从机从主机同步数据的时候或者我们使用 bin-log 恢复数据的时候，就不会同步到 R 这条记录，这就造成了数据不一致。
+
 ## 四种隔离级别
 
-隔离级别其实跟锁有关，在 InnoDB 引擎下，按锁的粒度分类，可以简单分为行锁和表锁。
+1. Read uncommitted/RU：读未提交，处于该隔离级别的数据库，脏读、不可重复读、幻读问题都有可能发生。
+2. Read committed/RC：读已提交，处于该隔离级别的数据库，解决了脏读问题，不可重复读、幻读问题依旧存在。
+3. Repeatable read/RR：可重复读，处于该隔离级别的数据库，解决了脏读、不可重复读问题，幻读问题依旧存在。
+4. Serializable：序列化/串行化，处于该隔离级别的数据库，解决了脏读、不可重复读、幻读问题都不存在。
 
-行锁实际上是作用在索引之上的。当我们的 SQL 命中了索引，那锁住的就是命中条件内的索引节点（这种就是行锁），如果没有命中索引，那我们锁的就是整个索引树（表锁）。
+数据库事务的隔离级别，**由低到高**依次为 Read uncommitted 、Read committed、Repeatable read 、Serializable。
 
-简单来说就是：锁住的是整棵树还是某几个节点，完全取决于 SQL 条件是否有命中到对应的索引节点。而行锁又可以简单分为读锁（共享锁、S锁）和写锁（排它锁、X锁）。
-**读锁是共享的，多个事务可以同时读取同一个资源，但不允许其他事务修改。写锁是排他的，写锁会阻塞其他的写锁和读锁**。
+上述四个级别，越靠后并发控制度越高，也就是在多线程并发操作的情况下，出现问题的几率越小，但对应的也性能越差，MySQL 的事务隔离级别， 默认为第三级别：`Repeatable read`可重复读。
 
-![MySQL锁](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221202/f79b8964c5644e46b14c64d72583b922.png 'MySQL锁')
+首先来看下[read uncommitted]^(读未提交)。比如说：A 向 B 转账，A 执行了转账语句，但 A 还没有提交事务，B 读取数据，发现自己账户钱变多了！B 跟 A 说，我已经收到钱了。A 回滚事务【rollback】，等 B 再查看账户的钱时，发现钱并没有多。
 
-首先来看下[read uncommit]^(读未提交)。比如说：A 向 B 转账，A 执行了转账语句，但 A 还没有提交事务，B 读取数据，发现自己账户钱变多了！B 跟 A 说，我已经收到钱了。A 回滚事务【rollback】，等 B 再查看账户的钱时，发现钱并没有多。
+简单的定义就是：事务 B 读取到了事务 A 还没提交的数据，这种用专业术语来说叫做「**脏读**」。
 
-简单的定义就是：事务 B 读取到了事务 A 还没提交的数据，这种用专业术语来说叫做「脏读」。
-
-对于锁的维度而言，其实就是在 read uncommit 隔离级别下，读不会加任何锁，而写会加排他锁。读什么锁都不加，这就让排他锁无法排它了。
+对于锁的维度而言，其实就是在 read uncommitted 隔离级别下，读不会加任何锁，而写会加排他锁。读什么锁都不加，这就让排他锁无法排它了。
 
 ![读未提交](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221202/06ccfe53f21143e8a3a9093f0864ac46.png '读未提交')
 
@@ -154,7 +167,7 @@ update table set age = age + 1 where id = 1;
 
 脏读在生产环境下肯定是无法接受的，那如果读加锁的话，那意味着：当更新数据的时，就没办法读取了，这会极大地降低数据库性能。
 
-在 MySQL InnoDB 引擎层面，又有新的解决方案（解决加锁后读写性能问题），叫做[MVCC]^(Multi-Version Concurrency Control)多版本并发控制。
+在 MySQL InnoDB 引擎层面，有新的解决方案，解决加锁后读写性能问题，叫做[MVCC]^(Multi-Version Concurrency Control)多版本并发控制。
 
 ![MVCC](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221202/0e52740b759b4aa490ef6e37497de964.png 'MVCC')
 
@@ -162,17 +175,17 @@ update table set age = age + 1 where id = 1;
 
 MVCC 通过生成数据[快照]^(Snapshot)，并用这个快照来提供一定级别（语句级或事务级）的一致性读取。
 
-回到事务隔离级别下，针对于[read commit]^(读已提交) 隔离级别，它生成的就是语句级快照，而针对于[repeatable read]^(可重复读)，它生成的就是事务级的快照。
+回到事务隔离级别下，针对于[read committed]^(读已提交) 隔离级别，它生成的就是语句级快照，而针对于[repeatable read]^(可重复读)，它生成的就是事务级的快照。
 
 ![MVCC2](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221202/00282fd01288429b8b03a1407b7c5227.png ' ')
 
-前面提到过 read uncommit 隔离级别下会产生脏读，而[read commit]^(读已提交) 隔离级别解决了脏读。思想其实很简单：在读取的时候生成一个”版本号”，等到其他事务commit 了之后，才会读取最新已 commit 的“版本号”数据。
+前面提到过 read uncommitted 隔离级别下会产生脏读，而[read committed]^(读已提交) 隔离级别解决了脏读。思想其实很简单：在读取的时候生成一个”版本号”，等到其他事务commit 了之后，才会读取最新已 commit 的“版本号”数据。
 
 比如说：事务 A 读取了记录（生成版本号），事务 B 修改了记录，此时加了写锁，事务 A 再读取的时候，是依据最新的版本号来读取的（当事务 B 执行 commit 了之后，会生成一个新的版本号），如果事务 B 还没有 commit，那事务 A 读取的还是之前版本号的数据。
 
 通过「版本」的概念，这样就解决了脏读的问题，而「版本」其实就是对应快照的数据。
 
-[read commit]^(读已提交) 解决了脏读，但也会有其他并发的问题。「不可重复读」：一个事务读取到另外一个事务已经提交的数据，也就是说一个事务可以看到其他事务所做的修改。
+[read committed]^(读已提交) 解决了脏读，但也会有其他并发的问题。「不可重复读」：一个事务读取到另外一个事务已经提交的数据，也就是说一个事务可以看到其他事务所做的修改。
 
 不可重复读的例子：A 查询数据库得到数据，B 去修改数据库的数据，导致 A 多次查询数据库的结果都不一样【危害：A 每次查询的结果都是受 B 的影响的】
 
@@ -217,7 +230,7 @@ undo log 会记录修改数据之前的信息，事务中的原子性就是通�
 
 在每行数据有两列隐藏的字段，分别是`DB_TRX_ID`（记录着当前ID）以及`DB_ROLL_PTR` 指向上一个版本数据在 undo log 里的位置指针，到这里，很容易就发现，MVCC 其实就是靠「比对版本」来实现读写不阻塞，而版本的数据存在于 undo log 中。
 
-而针对于不同的隔离级别（read commit 和 repeatable read），无非就是 read commit 隔离级别下，每次都获取一个新的 read view，repeatable read 隔离级别则每次事务只获取一个 read view。
+而针对于不同的隔离级别 read committed 和 repeatable read，无非就是 read committed 隔离级别下，每次都获取一个新的 read view，repeatable read 隔离级别则每次事务只获取一个 read view。
 
 ## 工作中如何建索引
 
@@ -239,13 +252,13 @@ undo log 会记录修改数据之前的信息，事务中的原子性就是通�
 
 ## 线上用的是什么隔离级别
 
-我们这边用的是[Read Commit]^(读已提交)，MySQL 默认用的是 [Repeatable read]^(可重复读)。
+我们这边用的是[Read committed]^(读已提交)，MySQL 默认用的是 [Repeatable read]^(可重复读)。
 
-选用什么隔离级别，主要看应用场景，因为隔离级别越低，事务并发性能越高。一般互联网公司都选择 Read Commit 作为主要的隔离级别。
+选用什么隔离级别，主要看应用场景，因为隔离级别越低，事务并发性能越高。一般互联网公司都选择 Read committed 作为主要的隔离级别。
 
 像[Repeatable read]^(可重复读)隔离级别，就有可能因为「间隙锁」导致的死锁问题。
 
-MySQL 默认的隔离级别为 Repeatable read。很大一部分原因是在最开始的时候，MySQL 的 binlog 没有 row 模式（记录具体出现变更的数据，也会包含数据所在的分区以及所位于的数据页），在 read commit 隔离级别下会存在「主从数据不一致」的问题。binlog 记录了数据库表结构和表数据「变更」，比如`update/delete/insert/truncate/create`。在 MySQL 中，主从同步实际上就是应用了 binlog 来实现的。有了该历史原因，所以 MySQL 就将默认的隔离级别设置为 Repeatable read。
+MySQL 默认的隔离级别为 Repeatable read。很大一部分原因是在最开始的时候，MySQL 的 binlog 没有 row 模式（记录具体出现变更的数据，也会包含数据所在的分区以及所位于的数据页），在 read committed 隔离级别下会存在「主从数据不一致」的问题。binlog 记录了数据库表结构和表数据「变更」，比如`update/delete/insert/truncate/create`。在 MySQL 中，主从同步实际上就是应用了 binlog 来实现的。有了该历史原因，所以 MySQL 就将默认的隔离级别设置为 Repeatable read。
 
 ![隔离级别](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221202/acbe1fc753c84d1e9a9ccbd047f8afc9.png '隔离级别')
 
@@ -293,7 +306,7 @@ MySQL 默认的隔离级别为 Repeatable read。很大一部分原因是在最�
 
 ## 常以什么作为分库键
 
-一般来说是按照`userId`（因为按照用户的维度查询比较多），如果要按照其他的维度进行查询，那还是参照上面的的思路（以空间换时间）。
+一般来说是按照`userId`，因为按照用户的维度查询比较多，如果要按照其他的维度进行查询，那还是参照上面的的思路（以空间换时间）。
 
 ## 分库分表后的ID是怎么生成的
 
