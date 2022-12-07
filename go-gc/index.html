@@ -10,7 +10,7 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://www.xiaobinqt.cn/go-gc/" /><meta property="og:image" content="https://www.xiaobinqt.cn/logo.png"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2022-04-06T00:00:00+00:00" />
-<meta property="article:modified_time" content="2022-12-04T14:44:54+08:00" />
+<meta property="article:modified_time" content="2022-12-07T18:23:59+08:00" />
 <meta property="og:see_also" content="https://www.xiaobinqt.cn/go-sync-map/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/highly-concurrent-architecture-evolution/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/session-cookie-token-difference/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/mysql-faq-2/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/why-mysql-index-use-btree/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/redis-break-pierce-avalanche/" />
 
 <meta name="twitter:card" content="summary_large_image"/>
@@ -35,8 +35,8 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/www.xiaobinqt.cn\/go-gc\/"
-        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "golang, GC","wordcount":  5641 ,
-        "url": "https:\/\/www.xiaobinqt.cn\/go-gc\/","datePublished": "2022-04-06T00:00:00+00:00","dateModified": "2022-12-04T14:44:54+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "golang, GC","wordcount":  5636 ,
+        "url": "https:\/\/www.xiaobinqt.cn\/go-gc\/","datePublished": "2022-04-06T00:00:00+00:00","dateModified": "2022-12-07T18:23:59+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "xxxx","logo": {
                     "@type": "ImageObject",
@@ -173,7 +173,7 @@
             <div class="post-meta-line"><span class="post-author">
                     <i class="custom-icon iconfont icon-weibiaoti-"></i>
                 </span>&nbsp;&nbsp;<span class="post-category">收录于 </span>&nbsp;<span class="post-category">类别 <a href="/categories/golang/"><i class="far fa-folder fa-fw"></i>golang</a></span>&nbsp;<span class="post-category">和</span>&nbsp;<span class="post-series">系列 <a href="/series/reproduce/"><i class="far fa-list-alt fa-fw"></i>转载</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-04-06">2022-04-06</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2022-12-04">2022-12-04</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 5641 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-04-06">2022-04-06</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2022-12-07">2022-12-07</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 5636 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 12 分钟&nbsp;</div>
         </div><div class="featured-image"><img
         class="lazyload"
@@ -239,8 +239,8 @@
 <h2 id="gc-变革" class="headerLink">
     <a href="#gc-%e5%8f%98%e9%9d%a9" class="header-mark"></a>GC 变革</h2><p>// TODO</p>
 <h2 id="堆和栈" class="headerLink">
-    <a href="#%e5%a0%86%e5%92%8c%e6%a0%88" class="header-mark"></a>堆和栈</h2><p>栈：由操作系统自动分配释放，存放函数的参数值，局部变量的值等。</p>
-<p>堆：一般由程序员分配和释放，若程序员不释放，程序结束时可能由 OS 回收。</p>
+    <a href="#%e5%a0%86%e5%92%8c%e6%a0%88" class="header-mark"></a>堆和栈</h2><p><strong>栈</strong>：由操作系统自动分配释放，存放函数的参数值，局部变量的值等。</p>
+<p><strong>堆</strong>：一般由程序员分配和释放，若程序员不释放，程序结束时可能由 OS 回收。</p>
 <p>栈使用的是一级缓存，他们通常都是被调用时处于存储空间中，<strong>调用完毕立即释放</strong>。</p>
 <p>堆则是存放在二级缓存中，生命周期由虚拟机的垃圾回收算法来决定，但并不是一旦成为孤儿对象就能被回收。</p>
 <p>申请到栈内存好处：函数返回直接释放，不会引起垃圾回收，对性能没有影响。</p>
@@ -290,7 +290,7 @@
     </a><figcaption class="image-caption">清除对象</figcaption>
     </figure></p>
 <p>对象 5，6 不可达，被 GC 清除。</p>
-<p>操作简单，但是，mark and sweep 算法在执行的时候，需要程序暂停！即 <strong><ruby>STW<rt>stop the world</rt></ruby></strong>，STW 的过程中，CPU 不执行用户代码，全部用于垃圾回收，这个过程的影响很大，所以 STW 也是一些回收机制最大的难题和希望优化的点。</p>
+<p>操作简单，但是 mark and sweep 算法在执行的时候，需要程序暂停！即 <strong><ruby>STW<rt>stop the world</rt></ruby></strong>，STW 的过程中，CPU 不执行用户代码，全部用于垃圾回收，这个过程的影响很大，所以 STW 也是一些回收机制最大的难题和希望优化的点。</p>
 <p><strong>在执行第三步的这段时间，程序会暂定停止任何工作，卡在那等待回收执行完毕</strong>。</p>
 <h3 id="第四步" class="headerLink">
     <a href="#%e7%ac%ac%e5%9b%9b%e6%ad%a5" class="header-mark"></a>第四步</h3><p>停止暂停，让程序继续执行。然后循环重复这个过程，直到 process 程序生命周期结束。</p>
@@ -334,7 +334,7 @@
             alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220407/3b601d5fc23247b4b05de52b7fb2ed52.png">
     </a><figcaption class="image-caption">白色对象</figcaption>
     </figure></p>
-<p>上图所示，我们的程序可抵达的内存对象关系如左图所示，右边的标记表，是用来记录目前每个对象的标记颜色分类。</p>
+<p>上图所示，我们的程序可抵达的内存对象关系如左图所示，右边的标记表是用来记录目前每个对象的标记颜色分类。</p>
 <p>这里所谓“程序”，是一些<strong>对象的根节点集合</strong>。如果我们将“程序”展开，会得到类似如下的表现形式：</p>
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220406/25f6f7613a894569a426c70c6c8c2c10.png" title="程序的根节点集合展开" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220406/25f6f7613a894569a426c70c6c8c2c10.png" data-sub-html="<h2>程序的根节点集合展开</h2><p>程序的根节点集合展开</p>">
         <img
@@ -495,7 +495,7 @@ STW，在扫描确定黑白对象之后再放开 STW</strong>。但是很明显�
     </a><figcaption class="image-caption">强/弱三色不变式</figcaption>
     </figure></p>
 <h3 id="强三色不变式" class="headerLink">
-    <a href="#%e5%bc%ba%e4%b8%89%e8%89%b2%e4%b8%8d%e5%8f%98%e5%bc%8f" class="header-mark"></a>强三色不变式</h3><p>强三色不变式实际上是强制性的不允许黑色对象引用白色对象，这样就不会出现有白色对象被误删的情况。</p>
+    <a href="#%e5%bc%ba%e4%b8%89%e8%89%b2%e4%b8%8d%e5%8f%98%e5%bc%8f" class="header-mark"></a>强三色不变式</h3><p>强三色不变式实际上是强制性的<strong>不允许黑色对象引用白色对象</strong>，这样就不会出现有白色对象被误删的情况。</p>
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220406/513a0f19f5524f00936e3d1bbf3cda6f.png" title="强三色不变式" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220406/513a0f19f5524f00936e3d1bbf3cda6f.png" data-sub-html="<h2>强三色不变式</h2><p>强三色不变式</p>">
         <img
             class="lazyload"
@@ -1007,8 +1007,8 @@ STW，在扫描确定黑白对象之后再放开 STW</strong>。但是很明显�
     <div class="post-info">
         <div class="post-info-line">
             <div class="post-info-mod">
-                <span>更新于 2022-12-04&nbsp;<a class="git-hash" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/a9a4819547687d1bc1f6ac35c013580875bc4394" target="_blank" title="commit by weibin(xiaobinqt@163.com) a9a4819547687d1bc1f6ac35c013580875bc4394: update go-gc.md" rel="noopener noreferrer">
-                                    <i class="fas fa-hashtag fa-fw"></i>a9a48195</a></span>
+                <span>更新于 2022-12-07&nbsp;<a class="git-hash" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/9a1deeaaa5fd132f4aa2edab511ab759dbeeb0ea" target="_blank" title="commit by weibin(xiaobinqt@163.com) 9a1deeaaa5fd132f4aa2edab511ab759dbeeb0ea: update go-gc.md" rel="noopener noreferrer">
+                                    <i class="fas fa-hashtag fa-fw"></i>9a1deeaa</a></span>
             </div>
             <div class="post-info-license"></div>
         </div>
