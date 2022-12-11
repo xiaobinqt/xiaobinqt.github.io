@@ -72,6 +72,7 @@ math: true
 ## 博主
 
 + [刘丹冰aceld](https://www.yuque.com/aceld)
++ [代码随想录](https://programmercarl.com/)
 + [gairuo](https://www.gairuo.com/)
 + [面向信仰编程](https://draveness.me/)
 + [小林coding](https://xiaolincoding.com/)
@@ -83,6 +84,8 @@ math: true
 + [Java充电社](http://itsoku.com/)
 + [go.nsddd.top](https://go.nsddd.top/)
 + [mojotv](https://mojotv.cn/)
++ [NoahNyy](https://www.yuque.com/noahnyy)
++ [大都督的技术博客](https://www.yuque.com/renyong-jmovm/dadudu/zgpx1l#985980fa)
 
 ## 工具
 
@@ -106,5 +109,4 @@ math: true
 + [百度网盘资源](http://www.baoqiyi.org/)
 + [IT_book](https://github.com/XiangLinPro/IT_book)
 + [站长免费证书](http://aq.chinaz.com/SSL)
-
 
