@@ -1,4 +1,4 @@
-# golang udp 简单使用
+# Go udp 简单使用
 
 
 ## server
