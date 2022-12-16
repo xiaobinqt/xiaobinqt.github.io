@@ -25,7 +25,7 @@ tags: ["mysql"]
 categories: ["mysql"]
 lightgallery: true
 
-series: []
+series: ["interview"]
 
 series_weight:
 

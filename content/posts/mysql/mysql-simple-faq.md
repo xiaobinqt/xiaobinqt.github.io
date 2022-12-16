@@ -18,6 +18,8 @@ tags: ["mysql"]
 categories: ["mysql"]
 lightgallery: true
 
+series: ["interview"]
+
 toc: true
 
 math: true
