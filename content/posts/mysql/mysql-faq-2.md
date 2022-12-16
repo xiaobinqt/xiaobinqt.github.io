@@ -25,7 +25,7 @@ tags: ["mysql","索引","MVCC"]
 categories: ["mysql"]
 lightgallery: true
 
-series: ["reproduce"]
+series: ["reproduce","interview"]
 
 series_weight:
 
