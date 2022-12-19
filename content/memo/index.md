@@ -90,6 +90,7 @@ math: true
 + [大都督的技术博客](https://www.yuque.com/renyong-jmovm/dadudu/zgpx1l#985980fa)
 + [欧长坤](https://changkun.de/)
 + [LABULADONG 的算法网站](https://labuladong.github.io/algo/)
++ [Hello 算法](https://www.hello-algo.com/)
 
 ## 工具
 
