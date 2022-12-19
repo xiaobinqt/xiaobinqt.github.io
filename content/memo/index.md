@@ -46,6 +46,7 @@ math: true
 ## 在线文档
 
 + [计算机教育中缺失的一课](https://missing-semester-cn.github.io/)
++ [interview-go](https://github.com/lifei6671/interview-go)
 + [Docker-从入门到实战](https://yeasy.gitbook.io/docker_practice/)
 + [区块链技术指南](https://yeasy.gitbook.io/blockchain_guide/)
 + [build-web-application-with-golang](https://github.com/astaxie/build-web-application-with-golang/tree/master/zh)
@@ -87,6 +88,7 @@ math: true
 + [mojotv](https://mojotv.cn/)
 + [NoahNyy](https://www.yuque.com/noahnyy)
 + [大都督的技术博客](https://www.yuque.com/renyong-jmovm/dadudu/zgpx1l#985980fa)
++ [欧长坤](https://changkun.de/)
 
 ## 工具
 
