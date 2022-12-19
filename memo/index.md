@@ -46,6 +46,7 @@
 + [Git飞行规则(Flight Rules)](https://github.com/k88hudson/git-flight-rules/blob/master/README_zh-CN.md)
 + [Pro Git（中文版）](https://gitee.com/progit/)
 + [南京大学 计算机科学与技术系 计算机系统基础 课程实验 2019](https://nju-projectn.github.io/ics-pa-gitbook/ics2019/)
++ [Mysql 实战45讲](https://funnylog.gitee.io/mysql45/)
 
 ## 博主
 
@@ -87,5 +88,6 @@
 + [百度网盘资源](http://www.baoqiyi.org/)
 + [IT_book](https://github.com/XiangLinPro/IT_book)
 + [站长免费证书](http://aq.chinaz.com/SSL)
++ [可能是最用心的「Go学习建议」](https://mp.weixin.qq.com/s/DIIpLUrGj2_-7Qd6vu0kuA)
 
 

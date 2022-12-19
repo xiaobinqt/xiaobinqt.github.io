@@ -4,7 +4,7 @@
 ## 个人信息
 
 + 卫彬/男/1994
-+ 本科/[西安培华学院](https://www.peihua.cn/)
++ 本科/通信工程
 + Github：[https://github.com/xiaobinqt](https://github.com/xiaobinqt)
 + 手机/微信：15209272743
 + Email：[xiaobinqt@163.com](mailto:xiaobinqt@163.com)
