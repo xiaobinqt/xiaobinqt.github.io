@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="24. 两两交换链表中的节点 # 题目地址： https://leetcode.cn/problems/swap-nodes-in-pairs/
+解题思路 # 参考 https://leetcode.cn/problems/swap-nodes-in-pairs/solutions/444474/liang-liang-jiao-huan-lian-biao-zhong-de-jie-di-91/
+递归法 # 可以通过递归的方式实现两两交换链表中的节点。递归的终止条件是链表中没有节点，或者链表中只有一个节点，此时无法进行交换。
+如果链表中至少有两个节点，则在两两交换链表中的节点之后，原始链表的头节点变成新的链表的第二个节点，原始链表的第二个节点变成新的链表的头节点。链表中的其余节点的两两交换可以递归地实现。在对链表中的其余节点递归地两两交换之后，更新节点之间的指针关系，即可完成整个链表的两两交换。
+用head表示原始链表的头节点，新的链表的第二个节点，用newHead表示新的链表的头节点，原始链表的第二个节点，则原始链表中的其余节点的头节点是newHead.next。令head.next = swapPairs(newHead.next)，表示将其余节点进行两两交换，交换后的新的头节点为head的下一个节点。然后令newHead.next = head，即完成了所有节点的交换。最后返回新的链表的头节点newHead。
+:warning:好吧，再理解一下，关于递归，我只关注我这一层要干什么，返回什么，至于我的下一层（规模减 1），我不管，我就是一个甩手掌柜:see_no_evil:。
+我其实只需要关心第一层，也就是节点1和节点2的交换，把节点2的next指向节点1，节点2的next给下一层也就是递归函数。而我最后返回的应该是头结点，其实也就是原始节点的节点2。
+迭代法 # TODO
+具体实现 # Go递归 package main import ( &#34;fmt&#34; ) type ListNode struct { Val int Next *ListNode } func swapPairs(head *ListNode) *ListNode { if head == nil || head.Next == nil { return head } newHead := head.Next head.Next = swapPairs(head.Next.Next) newHead.Next = head return newHead } func main() { x := swapPairs(&amp;ListNode{ Val: 1, Next: &amp;ListNode{ Val: 2, Next: &amp;ListNode{ Val: 3, Next: &amp;ListNode{ Val: 4, Next: nil, }, }, }, }) fmt.">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="24. 两两交换链表中的节点" />
+<meta property="og:description" content="24. 两两交换链表中的节点 # 题目地址： https://leetcode.cn/problems/swap-nodes-in-pairs/
+解题思路 # 参考 https://leetcode.cn/problems/swap-nodes-in-pairs/solutions/444474/liang-liang-jiao-huan-lian-biao-zhong-de-jie-di-91/
+递归法 # 可以通过递归的方式实现两两交换链表中的节点。递归的终止条件是链表中没有节点，或者链表中只有一个节点，此时无法进行交换。
+如果链表中至少有两个节点，则在两两交换链表中的节点之后，原始链表的头节点变成新的链表的第二个节点，原始链表的第二个节点变成新的链表的头节点。链表中的其余节点的两两交换可以递归地实现。在对链表中的其余节点递归地两两交换之后，更新节点之间的指针关系，即可完成整个链表的两两交换。
+用head表示原始链表的头节点，新的链表的第二个节点，用newHead表示新的链表的头节点，原始链表的第二个节点，则原始链表中的其余节点的头节点是newHead.next。令head.next = swapPairs(newHead.next)，表示将其余节点进行两两交换，交换后的新的头节点为head的下一个节点。然后令newHead.next = head，即完成了所有节点的交换。最后返回新的链表的头节点newHead。
+:warning:好吧，再理解一下，关于递归，我只关注我这一层要干什么，返回什么，至于我的下一层（规模减 1），我不管，我就是一个甩手掌柜:see_no_evil:。
+我其实只需要关心第一层，也就是节点1和节点2的交换，把节点2的next指向节点1，节点2的next给下一层也就是递归函数。而我最后返回的应该是头结点，其实也就是原始节点的节点2。
+迭代法 # TODO
+具体实现 # Go递归 package main import ( &#34;fmt&#34; ) type ListNode struct { Val int Next *ListNode } func swapPairs(head *ListNode) *ListNode { if head == nil || head.Next == nil { return head } newHead := head.Next head.Next = swapPairs(head.Next.Next) newHead.Next = head return newHead } func main() { x := swapPairs(&amp;ListNode{ Val: 1, Next: &amp;ListNode{ Val: 2, Next: &amp;ListNode{ Val: 3, Next: &amp;ListNode{ Val: 4, Next: nil, }, }, }, }) fmt." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://example.com/leetcode/docs/medium/24/" /><meta property="article:section" content="docs" />
+
+<meta property="article:modified_time" content="2022-12-21T22:12:08+08:00" />
+<title>24. 两两交换链表中的节点 | LeetCode</title>
+<link rel="manifest" href="/leetcode/manifest.json">
+<link rel="icon" href="/leetcode/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/leetcode/book.min.44ab80b6e9fbffc4b56fa0525dd4af874d4d533ab2a985226782d7cdc8d9fd15.css" integrity="sha256-RKuAtun7/8S1b6BSXdSvh01NUzqyqYUiZ4LXzcjZ/RU=" crossorigin="anonymous">
+  <script defer src="/leetcode/flexsearch.min.js"></script>
+  <script defer src="/leetcode/zh.search.min.2c3faba65818d93940ff9658e4a569346c155b28c7158ae2c91bd434f8abea1a.js" integrity="sha256-LD&#43;rplgY2TlA/5ZY5KVpNGwVWyjHFYriyRvUNPir6ho=" crossorigin="anonymous"></script>
+
+  <script defer src="/leetcode/sw.min.8d698a22bbf5eabddb125225de29674ea0338c58e103f5a48ccdc8118d0f922a.js" integrity="sha256-jWmKIrv16r3bElIl3ilnTqAzjFjhA/WkjM3IEY0Pkio=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/leetcode/"><span>LeetCode</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+
+
+
+  
+<ul>
+  
+  <li>
+    <a href="https://github.com/xiaobinqt"  target="_blank" rel="noopener">
+        GitHub
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <ul>
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a href="/leetcode/docs/easy/" class="">Easy</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/leetcode/docs/easy/21/" class="">21. 合并两个有序链表</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/leetcode/docs/easy/27/" class="">27. 移除元素</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/leetcode/docs/easy/203/" class="">203. 移除链表元素</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/leetcode/docs/easy/206/" class="">206. 反转链表</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/leetcode/docs/easy/344/" class="">344. 反转字符串</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/leetcode/docs/easy/704/" class="">704. 二分查找</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/leetcode/docs/easy/977/" class="">977. 有序数组的平方</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a href="/leetcode/docs/medium/" class="">Medium</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/leetcode/docs/medium/24/" class="active">24. 两两交换链表中的节点</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/leetcode/docs/medium/59/" class="">59. 螺旋矩阵 II</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/leetcode/docs/medium/209/" class="">209. 长度最小的子数组</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/leetcode/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>24. 两两交换链表中的节点</strong>
+
+  <label for="toc-control">
+    
+    <img src="/leetcode/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#24-两两交换链表中的节点">24. 两两交换链表中的节点</a>
+      <ul>
+        <li><a href="#解题思路">解题思路</a>
+          <ul>
+            <li><a href="#递归法">递归法</a></li>
+            <li><a href="#迭代法">迭代法</a></li>
+          </ul>
+        </li>
+        <li><a href="#具体实现">具体实现</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown"><h1 id="24-两两交换链表中的节点">
+  24. 两两交换链表中的节点
+  <a class="anchor" href="#24-%e4%b8%a4%e4%b8%a4%e4%ba%a4%e6%8d%a2%e9%93%be%e8%a1%a8%e4%b8%ad%e7%9a%84%e8%8a%82%e7%82%b9">#</a>
+</h1>
+<p>题目地址：
+  <a href="https://leetcode.cn/problems/swap-nodes-in-pairs/">https://leetcode.cn/problems/swap-nodes-in-pairs/</a></p>
+<h2 id="解题思路">
+  解题思路
+  <a class="anchor" href="#%e8%a7%a3%e9%a2%98%e6%80%9d%e8%b7%af">#</a>
+</h2>
+<p>参考 
+  <a href="https://leetcode.cn/problems/swap-nodes-in-pairs/solutions/444474/liang-liang-jiao-huan-lian-biao-zhong-de-jie-di-91/">https://leetcode.cn/problems/swap-nodes-in-pairs/solutions/444474/liang-liang-jiao-huan-lian-biao-zhong-de-jie-di-91/</a></p>
+<h3 id="递归法">
+  递归法
+  <a class="anchor" href="#%e9%80%92%e5%bd%92%e6%b3%95">#</a>
+</h3>
+<p>可以通过递归的方式实现两两交换链表中的节点。递归的终止条件是链表中没有节点，或者链表中只有一个节点，此时无法进行交换。</p>
+<p>如果链表中至少有两个节点，则在两两交换链表中的节点之后，原始链表的头节点变成新的链表的第二个节点，原始链表的第二个节点变成新的链表的头节点。链表中的其余节点的两两交换可以递归地实现。在对链表中的其余节点递归地两两交换之后，更新节点之间的指针关系，即可完成整个链表的两两交换。</p>
+<p>用<code>head</code>表示原始链表的头节点，新的链表的第二个节点，用<code>newHead</code>表示新的链表的头节点，原始链表的第二个节点，则原始链表中的其余节点的头节点是<code>newHead.next</code>。令<code>head.next = swapPairs(newHead.next)</code>，表示将其余节点进行两两交换，交换后的新的头节点为<code>head</code>的下一个节点。然后令<code>newHead.next = head</code>，即完成了所有节点的交换。最后返回新的链表的头节点<code>newHead</code>。</p>
+<p>:warning:好吧，再理解一下，关于递归，我只关注我这一层要干什么，返回什么，至于我的下一层（规模减 1），我不管，我就是一个甩手掌柜:see_no_evil:。</p>
+<p>我其实只需要关心第一层，也就是<code>节点1</code>和<code>节点2</code>的交换，把<code>节点2</code>的<code>next</code>指向<code>节点1</code>，<code>节点2</code>的<code>next</code>给下一层也就是递归函数。而我最后返回的应该是头结点，其实也就是原始节点的<code>节点2</code>。</p>
+<h3 id="迭代法">
+  迭代法
+  <a class="anchor" href="#%e8%bf%ad%e4%bb%a3%e6%b3%95">#</a>
+</h3>
+<p>TODO</p>
+<h2 id="具体实现">
+  具体实现
+  <a class="anchor" href="#%e5%85%b7%e4%bd%93%e5%ae%9e%e7%8e%b0">#</a>
+</h2>
+
+
+
+
+<div class="book-tabs"><input type="radio" class="toggle" name="tabs-uniqueid" id="tabs-uniqueid-0" checked="checked" />
+  <label for="tabs-uniqueid-0">Go递归</label>
+  <div class="book-tabs-content markdown-inner"><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> (
+</span></span><span style="display:flex;"><span>	<span style="color:#e6db74">&#34;fmt&#34;</span>
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">ListNode</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">Val</span>  <span style="color:#66d9ef">int</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">Next</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">ListNode</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">swapPairs</span>(<span style="color:#a6e22e">head</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">ListNode</span>) <span style="color:#f92672">*</span><span style="color:#a6e22e">ListNode</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">head</span> <span style="color:#f92672">==</span> <span style="color:#66d9ef">nil</span> <span style="color:#f92672">||</span> <span style="color:#a6e22e">head</span>.<span style="color:#a6e22e">Next</span> <span style="color:#f92672">==</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">head</span>
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">newHead</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">head</span>.<span style="color:#a6e22e">Next</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">head</span>.<span style="color:#a6e22e">Next</span> = <span style="color:#a6e22e">swapPairs</span>(<span style="color:#a6e22e">head</span>.<span style="color:#a6e22e">Next</span>.<span style="color:#a6e22e">Next</span>)
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">newHead</span>.<span style="color:#a6e22e">Next</span> = <span style="color:#a6e22e">head</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">newHead</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">x</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">swapPairs</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">ListNode</span>{
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">Val</span>: <span style="color:#ae81ff">1</span>,
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">Next</span>: <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">ListNode</span>{
+</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">Val</span>: <span style="color:#ae81ff">2</span>,
+</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">Next</span>: <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">ListNode</span>{
+</span></span><span style="display:flex;"><span>				<span style="color:#a6e22e">Val</span>: <span style="color:#ae81ff">3</span>,
+</span></span><span style="display:flex;"><span>				<span style="color:#a6e22e">Next</span>: <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">ListNode</span>{
+</span></span><span style="display:flex;"><span>					<span style="color:#a6e22e">Val</span>:  <span style="color:#ae81ff">4</span>,
+</span></span><span style="display:flex;"><span>					<span style="color:#a6e22e">Next</span>: <span style="color:#66d9ef">nil</span>,
+</span></span><span style="display:flex;"><span>				},
+</span></span><span style="display:flex;"><span>			},
+</span></span><span style="display:flex;"><span>		},
+</span></span><span style="display:flex;"><span>	})
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">x</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div></div></div>
+
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/52c6218cbcc5088074b613f301a9a155da373acd" title='最后修改者 weibin | December 21, 2022' target="_blank" rel="noopener">
+      <img src="/leetcode/svg/calendar.svg" class="book-icon" alt="Calendar" />
+      <span>December 21, 2022</span>
+    </a>
+  </div>
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/book.leetcode/docs/medium/24.md" target="_blank" rel="noopener">
+      <img src="/leetcode/svg/edit.svg" class="book-icon" alt="Edit" />
+      <span>编辑本页</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#24-两两交换链表中的节点">24. 两两交换链表中的节点</a>
+      <ul>
+        <li><a href="#解题思路">解题思路</a>
+          <ul>
+            <li><a href="#递归法">递归法</a></li>
+            <li><a href="#迭代法">迭代法</a></li>
+          </ul>
+        </li>
+        <li><a href="#具体实现">具体实现</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

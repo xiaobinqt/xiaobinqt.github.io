@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="203. 移除链表元素 # 题目地址： https://leetcode.cn/problems/remove-linked-list-elements/
+解题思路 # 参看 https://leetcode.cn/problems/remove-linked-list-elements/solutions/813358/yi-chu-lian-biao-yuan-su-by-leetcode-sol-654m/
+迭代法 # 用curr 表示当前节点。如果curr的下一个节点不为空且下一个节点的节点值等于给定的val，则需要删除下一个节点。删除下一个节点可以通过curr.next=curr.next.next实现。
+如果curr的下一个节点的节点值不等于给定的val，则保留下一个节点，将curr移动到下一个节点即可。
+当curr的下一个节点为空时，链表遍历结束，此时所有节点值等于val的节点都被删除。
+具体实现方面，由于链表的头节点head有可能需要被删除，因此创建哑节点/虚拟节点dummyHead，令dummyHead.next=head，初始化 curr=dummyHead，然后遍历链表进行删除操作。最终返回dummyHead.next即为删除操作后的头节点。
+:question:为什么要用curr=dummyHead，那么这样curr指向的地址跟dummyHead指向的地址是一样的，如果不提前赋值，那么迭代到最后dummyHead.Next就是nil，不能正确的返回头结点，所以赋值下dummyHead.Next还是正常的。
+递归法 # 链表的定义具有递归的性质，因此链表题目常可以用递归的方法求解。
+递归的核心在于，我只关注我这一层要干什么，返回什么，至于我的下一层（规模减 1），我不管，我就是甩手掌柜。
+那么现在我要删除特定链表元素，我需要怎么做❓
+如果链表是nil我就直接返回，我的 next 让工具人函数去判断，当工具人函数昨晚判断给我之后，我按需 return，也就是如果head.Val == val return head.Next，否则直接 return head。
+具体实现 # Go迭代 package main import ( &#34;fmt&#34; &#34;go.src/leetcode/model&#34; ) func removeElements(head *model.ListNode, val int) *model.ListNode { dummyHead := &amp;model.ListNode{ Val: 0, Next: head, } curr := dummyHead fmt.Println(dummyHead, curr) for curr.Next != nil { if curr.">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="203. 移除链表元素" />
+<meta property="og:description" content="203. 移除链表元素 # 题目地址： https://leetcode.cn/problems/remove-linked-list-elements/
+解题思路 # 参看 https://leetcode.cn/problems/remove-linked-list-elements/solutions/813358/yi-chu-lian-biao-yuan-su-by-leetcode-sol-654m/
+迭代法 # 用curr 表示当前节点。如果curr的下一个节点不为空且下一个节点的节点值等于给定的val，则需要删除下一个节点。删除下一个节点可以通过curr.next=curr.next.next实现。
+如果curr的下一个节点的节点值不等于给定的val，则保留下一个节点，将curr移动到下一个节点即可。
+当curr的下一个节点为空时，链表遍历结束，此时所有节点值等于val的节点都被删除。
+具体实现方面，由于链表的头节点head有可能需要被删除，因此创建哑节点/虚拟节点dummyHead，令dummyHead.next=head，初始化 curr=dummyHead，然后遍历链表进行删除操作。最终返回dummyHead.next即为删除操作后的头节点。
+:question:为什么要用curr=dummyHead，那么这样curr指向的地址跟dummyHead指向的地址是一样的，如果不提前赋值，那么迭代到最后dummyHead.Next就是nil，不能正确的返回头结点，所以赋值下dummyHead.Next还是正常的。
+递归法 # 链表的定义具有递归的性质，因此链表题目常可以用递归的方法求解。
+递归的核心在于，我只关注我这一层要干什么，返回什么，至于我的下一层（规模减 1），我不管，我就是甩手掌柜。
+那么现在我要删除特定链表元素，我需要怎么做❓
+如果链表是nil我就直接返回，我的 next 让工具人函数去判断，当工具人函数昨晚判断给我之后，我按需 return，也就是如果head.Val == val return head.Next，否则直接 return head。
+具体实现 # Go迭代 package main import ( &#34;fmt&#34; &#34;go.src/leetcode/model&#34; ) func removeElements(head *model.ListNode, val int) *model.ListNode { dummyHead := &amp;model.ListNode{ Val: 0, Next: head, } curr := dummyHead fmt.Println(dummyHead, curr) for curr.Next != nil { if curr." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://example.com/leetcode/docs/easy/203/" /><meta property="article:section" content="docs" />
+
+<meta property="article:modified_time" content="2022-12-21T22:12:08+08:00" />
+<title>203. 移除链表元素 | LeetCode</title>
+<link rel="manifest" href="/leetcode/manifest.json">
+<link rel="icon" href="/leetcode/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/leetcode/book.min.44ab80b6e9fbffc4b56fa0525dd4af874d4d533ab2a985226782d7cdc8d9fd15.css" integrity="sha256-RKuAtun7/8S1b6BSXdSvh01NUzqyqYUiZ4LXzcjZ/RU=" crossorigin="anonymous">
+  <script defer src="/leetcode/flexsearch.min.js"></script>
+  <script defer src="/leetcode/zh.search.min.2c3faba65818d93940ff9658e4a569346c155b28c7158ae2c91bd434f8abea1a.js" integrity="sha256-LD&#43;rplgY2TlA/5ZY5KVpNGwVWyjHFYriyRvUNPir6ho=" crossorigin="anonymous"></script>
+
+  <script defer src="/leetcode/sw.min.8d698a22bbf5eabddb125225de29674ea0338c58e103f5a48ccdc8118d0f922a.js" integrity="sha256-jWmKIrv16r3bElIl3ilnTqAzjFjhA/WkjM3IEY0Pkio=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/leetcode/"><span>LeetCode</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+
+
+
+  
+<ul>
+  
+  <li>
+    <a href="https://github.com/xiaobinqt"  target="_blank" rel="noopener">
+        GitHub
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <ul>
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a href="/leetcode/docs/easy/" class="">Easy</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/leetcode/docs/easy/21/" class="">21. 合并两个有序链表</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/leetcode/docs/easy/27/" class="">27. 移除元素</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/leetcode/docs/easy/203/" class="active">203. 移除链表元素</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/leetcode/docs/easy/206/" class="">206. 反转链表</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/leetcode/docs/easy/344/" class="">344. 反转字符串</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/leetcode/docs/easy/704/" class="">704. 二分查找</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/leetcode/docs/easy/977/" class="">977. 有序数组的平方</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a href="/leetcode/docs/medium/" class="">Medium</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/leetcode/docs/medium/24/" class="">24. 两两交换链表中的节点</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/leetcode/docs/medium/59/" class="">59. 螺旋矩阵 II</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/leetcode/docs/medium/209/" class="">209. 长度最小的子数组</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/leetcode/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>203. 移除链表元素</strong>
+
+  <label for="toc-control">
+    
+    <img src="/leetcode/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#203-移除链表元素">203. 移除链表元素</a>
+      <ul>
+        <li><a href="#解题思路">解题思路</a>
+          <ul>
+            <li><a href="#迭代法">迭代法</a></li>
+            <li><a href="#递归法">递归法</a></li>
+          </ul>
+        </li>
+        <li><a href="#具体实现">具体实现</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown"><h1 id="203-移除链表元素">
+  203. 移除链表元素
+  <a class="anchor" href="#203-%e7%a7%bb%e9%99%a4%e9%93%be%e8%a1%a8%e5%85%83%e7%b4%a0">#</a>
+</h1>
+<p>题目地址：
+  <a href="https://leetcode.cn/problems/remove-linked-list-elements/">https://leetcode.cn/problems/remove-linked-list-elements/</a></p>
+<h2 id="解题思路">
+  解题思路
+  <a class="anchor" href="#%e8%a7%a3%e9%a2%98%e6%80%9d%e8%b7%af">#</a>
+</h2>
+<p>参看 
+  <a href="https://leetcode.cn/problems/remove-linked-list-elements/solutions/813358/yi-chu-lian-biao-yuan-su-by-leetcode-sol-654m/">https://leetcode.cn/problems/remove-linked-list-elements/solutions/813358/yi-chu-lian-biao-yuan-su-by-leetcode-sol-654m/</a></p>
+<h3 id="迭代法">
+  迭代法
+  <a class="anchor" href="#%e8%bf%ad%e4%bb%a3%e6%b3%95">#</a>
+</h3>
+<p>用<code>curr</code> 表示当前节点。如果<code>curr</code>的下一个节点不为空且下一个节点的节点值等于给定的<code>val</code>，则需要删除下一个节点。删除下一个节点可以通过<code>curr.next=curr.next.next</code>实现。</p>
+<p>如果<code>curr</code>的下一个节点的节点值不等于给定的<code>val</code>，则保留下一个节点，将<code>curr</code>移动到下一个节点即可。</p>
+<p>当<code>curr</code>的下一个节点为空时，链表遍历结束，此时所有节点值等于<code>val</code>的节点都被删除。</p>
+<p>具体实现方面，由于链表的头节点<code>head</code>有可能需要被删除，因此创建哑节点/虚拟节点<code>dummyHead</code>，令<code>dummyHead.next=head</code>，初始化 <code>curr=dummyHead</code>，然后遍历链表进行删除操作。最终返回<code>dummyHead.next</code>即为删除操作后的头节点。</p>
+<p>:question:为什么要用<code>curr=dummyHead</code>，那么这样<code>curr</code>指向的地址跟<code>dummyHead</code>指向的地址是一样的，如果不提前赋值，那么迭代到最后<code>dummyHead.Next</code>就是<code>nil</code>，不能正确的返回头结点，所以赋值下<code>dummyHead.Next</code>还是正常的。</p>
+<h3 id="递归法">
+  递归法
+  <a class="anchor" href="#%e9%80%92%e5%bd%92%e6%b3%95">#</a>
+</h3>
+<p>链表的定义具有递归的性质，因此链表题目常可以用递归的方法求解。</p>
+<p>递归的核心在于，我只关注我这一层要干什么，返回什么，至于我的下一层（规模减 1），我不管，我就是甩手掌柜。</p>
+<p>那么现在我要删除特定链表元素，我需要怎么做❓</p>
+<p>如果链表是<code>nil</code>我就直接返回，我的 next 让工具人函数去判断，当工具人函数昨晚判断给我之后，我按需 return，也就是如果<code>head.Val == val</code> return <code>head.Next</code>，否则直接 return head。</p>
+<h2 id="具体实现">
+  具体实现
+  <a class="anchor" href="#%e5%85%b7%e4%bd%93%e5%ae%9e%e7%8e%b0">#</a>
+</h2>
+
+
+
+
+<div class="book-tabs"><input type="radio" class="toggle" name="tabs-uniqueid" id="tabs-uniqueid-0" checked="checked" />
+  <label for="tabs-uniqueid-0">Go迭代</label>
+  <div class="book-tabs-content markdown-inner"><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> (
+</span></span><span style="display:flex;"><span>	<span style="color:#e6db74">&#34;fmt&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#e6db74">&#34;go.src/leetcode/model&#34;</span>
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">removeElements</span>(<span style="color:#a6e22e">head</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">model</span>.<span style="color:#a6e22e">ListNode</span>, <span style="color:#a6e22e">val</span> <span style="color:#66d9ef">int</span>) <span style="color:#f92672">*</span><span style="color:#a6e22e">model</span>.<span style="color:#a6e22e">ListNode</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">dummyHead</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">model</span>.<span style="color:#a6e22e">ListNode</span>{
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">Val</span>:  <span style="color:#ae81ff">0</span>,
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">Next</span>: <span style="color:#a6e22e">head</span>,
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">curr</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">dummyHead</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">dummyHead</span>, <span style="color:#a6e22e">curr</span>)
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">curr</span>.<span style="color:#a6e22e">Next</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">curr</span>.<span style="color:#a6e22e">Next</span>.<span style="color:#a6e22e">Val</span> <span style="color:#f92672">==</span> <span style="color:#a6e22e">val</span> {
+</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">curr</span>.<span style="color:#a6e22e">Next</span> = <span style="color:#a6e22e">curr</span>.<span style="color:#a6e22e">Next</span>.<span style="color:#a6e22e">Next</span>
+</span></span><span style="display:flex;"><span>		} <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">curr</span> = <span style="color:#a6e22e">curr</span>.<span style="color:#a6e22e">Next</span>
+</span></span><span style="display:flex;"><span>		}
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">dummyHead</span>.<span style="color:#a6e22e">Next</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">x</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">removeElements</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">model</span>.<span style="color:#a6e22e">ListNode</span>{
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">Val</span>: <span style="color:#ae81ff">1</span>,
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">Next</span>: <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">model</span>.<span style="color:#a6e22e">ListNode</span>{
+</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">Val</span>: <span style="color:#ae81ff">2</span>,
+</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">Next</span>: <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">model</span>.<span style="color:#a6e22e">ListNode</span>{
+</span></span><span style="display:flex;"><span>				<span style="color:#a6e22e">Val</span>: <span style="color:#ae81ff">1</span>,
+</span></span><span style="display:flex;"><span>				<span style="color:#a6e22e">Next</span>: <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">model</span>.<span style="color:#a6e22e">ListNode</span>{
+</span></span><span style="display:flex;"><span>					<span style="color:#a6e22e">Val</span>:  <span style="color:#ae81ff">3</span>,
+</span></span><span style="display:flex;"><span>					<span style="color:#a6e22e">Next</span>: <span style="color:#66d9ef">nil</span>,
+</span></span><span style="display:flex;"><span>				},
+</span></span><span style="display:flex;"><span>			},
+</span></span><span style="display:flex;"><span>		},
+</span></span><span style="display:flex;"><span>	}, <span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">x</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div></div><input type="radio" class="toggle" name="tabs-uniqueid" id="tabs-uniqueid-1"  />
+  <label for="tabs-uniqueid-1">Go递归</label>
+  <div class="book-tabs-content markdown-inner"><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> <span style="color:#e6db74">&#34;fmt&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">ListNode</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">Val</span>  <span style="color:#66d9ef">int</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">Next</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">ListNode</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">removeElements</span>(<span style="color:#a6e22e">head</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">ListNode</span>, <span style="color:#a6e22e">val</span> <span style="color:#66d9ef">int</span>) <span style="color:#f92672">*</span><span style="color:#a6e22e">ListNode</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">head</span> <span style="color:#f92672">==</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">head</span>
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">head</span>.<span style="color:#a6e22e">Next</span> = <span style="color:#a6e22e">removeElements</span>(<span style="color:#a6e22e">head</span>.<span style="color:#a6e22e">Next</span>, <span style="color:#a6e22e">val</span>)
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">head</span>.<span style="color:#a6e22e">Val</span> <span style="color:#f92672">==</span> <span style="color:#a6e22e">val</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">head</span>.<span style="color:#a6e22e">Next</span>
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">head</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">x</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">removeElements</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">ListNode</span>{
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">Val</span>: <span style="color:#ae81ff">1</span>,
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">Next</span>: <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">ListNode</span>{
+</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">Val</span>: <span style="color:#ae81ff">2</span>,
+</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">Next</span>: <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">ListNode</span>{
+</span></span><span style="display:flex;"><span>				<span style="color:#a6e22e">Val</span>: <span style="color:#ae81ff">1</span>,
+</span></span><span style="display:flex;"><span>				<span style="color:#a6e22e">Next</span>: <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">ListNode</span>{
+</span></span><span style="display:flex;"><span>					<span style="color:#a6e22e">Val</span>:  <span style="color:#ae81ff">3</span>,
+</span></span><span style="display:flex;"><span>					<span style="color:#a6e22e">Next</span>: <span style="color:#66d9ef">nil</span>,
+</span></span><span style="display:flex;"><span>				},
+</span></span><span style="display:flex;"><span>			},
+</span></span><span style="display:flex;"><span>		},
+</span></span><span style="display:flex;"><span>	}, <span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">x</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div></div></div>
+
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/52c6218cbcc5088074b613f301a9a155da373acd" title='最后修改者 weibin | December 21, 2022' target="_blank" rel="noopener">
+      <img src="/leetcode/svg/calendar.svg" class="book-icon" alt="Calendar" />
+      <span>December 21, 2022</span>
+    </a>
+  </div>
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/book.leetcode/docs/easy/203.md" target="_blank" rel="noopener">
+      <img src="/leetcode/svg/edit.svg" class="book-icon" alt="Edit" />
+      <span>编辑本页</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#203-移除链表元素">203. 移除链表元素</a>
+      <ul>
+        <li><a href="#解题思路">解题思路</a>
+          <ul>
+            <li><a href="#迭代法">迭代法</a></li>
+            <li><a href="#递归法">递归法</a></li>
+          </ul>
+        </li>
+        <li><a href="#具体实现">具体实现</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
