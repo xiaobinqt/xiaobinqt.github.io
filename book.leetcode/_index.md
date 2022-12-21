@@ -1,10 +1,12 @@
 ---
-title: Introduction
+title: 简介
 
 type: docs
 ---
 
 # LeetCode
+
+![info](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220326/750cc88f8c434944af5eec1c38b02b51.png)
 
 ## 缘起
 
