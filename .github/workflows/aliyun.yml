@@ -57,6 +57,16 @@ jobs:
           mkdir public/leetcode
           cp -r public.book.leetcode/* public/leetcode
 
+      - name: 删除服务上的旧文件
+        uses: JimCronqvist/action-ssh@master
+        with:
+          hosts: '${{ secrets.ALIYUN_HOST }}'
+          privateKey: ${{ secrets.ALIYUN_PRIVATE_KEY }}
+          command: |
+            cd /docker/www.xiaobinqt.cn/src/public/
+            pwd
+            ls -la
+
       #部署到服务器
       - name: Deploy to aliyun server
         uses: easingthemes/ssh-deploy@v2.1.6
