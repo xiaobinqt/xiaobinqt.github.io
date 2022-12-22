@@ -4,27 +4,31 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="704. 二分查找 # 题目地址： https://leetcode.cn/problems/binary-search/
-解题思路 # 参考 https://www.bilibili.com/video/BV1fA4y1o715/?spm_id_from=333.788
-对于常规实现来说，在解题时要区分区间，也就是左闭右闭还是左闭右开区间两种解法。对于左闭右闭来说，包含最右边，因为左边的值要等于右边的值，那么right其实是数组长度-1，但是对于左闭右开来说，因为不包含最右元素，那么right其实就是数组长度。
-具体实现 # Go 区间左闭右闭
+解题思路 # 可以参考
+https://www.bilibili.com/video/BV1fA4y1o715 二分查找 对于常规实现来说，在解题时要区分区间，也就是左闭右闭还是左闭右开区间两种解法，其实就是要区分右闭还是右开，在临界条件判断时包不包含最右边的值。
+对于左闭右闭来说，包含最右边，所以在临界条件判断时，左边的值可以等于右边的值，那么right其实是数组长度-1，也就是数组最后一个值。
+while (left &lt;= right)，因为left == right是有意义的，所以使用&lt;= if (nums[middle] &gt; target)，right要赋值为middle - 1，因为当前这个nums[middle]一定不是target，那么接下来要查找的左区间结束下标位置就是middle - 1 但是对于左闭右开来说，因为不包含最右元素，那么right其实就是数组长度，right 取不到数组最后一个值。
+while (left &lt; right)，因为left == right在区间[left, right)是没有意义的，所以这里要用&lt; if (nums[middle] &gt; target) right更新为middle，因为当前nums[middle]不等于target，去左区间继续寻找，而寻找区间是左闭右开区间，所以right更新为middle，也就是说，下一个查询区间不会去比较nums[middle] 具体实现 # Go 区间左闭右闭
 package main import ( &#34;fmt&#34; ) func main() { arr := []int{0, 1, 2, 3, 4, 5, 10} fmt.Println(binarySearch(arr, 10)) } func binarySearch(nums []int, target int) int { left := 0 right := len(nums) - 1 for left &lt;= right { middle := (left &#43; right) / 2 if target &gt; nums[middle] { left = middle &#43; 1 } else if target &lt; nums[middle] { right = middle - 1 } else { return middle } } return -1 } 区间左闭右开">
 <meta name="theme-color" content="#FFFFFF">
 <meta name="color-scheme" content="light dark"><meta property="og:title" content="704. 二分查找" />
 <meta property="og:description" content="704. 二分查找 # 题目地址： https://leetcode.cn/problems/binary-search/
-解题思路 # 参考 https://www.bilibili.com/video/BV1fA4y1o715/?spm_id_from=333.788
-对于常规实现来说，在解题时要区分区间，也就是左闭右闭还是左闭右开区间两种解法。对于左闭右闭来说，包含最右边，因为左边的值要等于右边的值，那么right其实是数组长度-1，但是对于左闭右开来说，因为不包含最右元素，那么right其实就是数组长度。
-具体实现 # Go 区间左闭右闭
+解题思路 # 可以参考
+https://www.bilibili.com/video/BV1fA4y1o715 二分查找 对于常规实现来说，在解题时要区分区间，也就是左闭右闭还是左闭右开区间两种解法，其实就是要区分右闭还是右开，在临界条件判断时包不包含最右边的值。
+对于左闭右闭来说，包含最右边，所以在临界条件判断时，左边的值可以等于右边的值，那么right其实是数组长度-1，也就是数组最后一个值。
+while (left &lt;= right)，因为left == right是有意义的，所以使用&lt;= if (nums[middle] &gt; target)，right要赋值为middle - 1，因为当前这个nums[middle]一定不是target，那么接下来要查找的左区间结束下标位置就是middle - 1 但是对于左闭右开来说，因为不包含最右元素，那么right其实就是数组长度，right 取不到数组最后一个值。
+while (left &lt; right)，因为left == right在区间[left, right)是没有意义的，所以这里要用&lt; if (nums[middle] &gt; target) right更新为middle，因为当前nums[middle]不等于target，去左区间继续寻找，而寻找区间是左闭右开区间，所以right更新为middle，也就是说，下一个查询区间不会去比较nums[middle] 具体实现 # Go 区间左闭右闭
 package main import ( &#34;fmt&#34; ) func main() { arr := []int{0, 1, 2, 3, 4, 5, 10} fmt.Println(binarySearch(arr, 10)) } func binarySearch(nums []int, target int) int { left := 0 right := len(nums) - 1 for left &lt;= right { middle := (left &#43; right) / 2 if target &gt; nums[middle] { left = middle &#43; 1 } else if target &lt; nums[middle] { right = middle - 1 } else { return middle } } return -1 } 区间左闭右开" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://example.com/leetcode/docs/easy/704/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-12-21T23:37:19+08:00" />
+<meta property="article:modified_time" content="2022-12-22T11:23:34+08:00" />
 <title>704. 二分查找 | LeetCode</title>
 <link rel="manifest" href="/leetcode/manifest.json">
 <link rel="icon" href="/leetcode/favicon.png" type="image/x-icon">
 <link rel="stylesheet" href="/leetcode/book.min.44ab80b6e9fbffc4b56fa0525dd4af874d4d533ab2a985226782d7cdc8d9fd15.css" integrity="sha256-RKuAtun7/8S1b6BSXdSvh01NUzqyqYUiZ4LXzcjZ/RU=" crossorigin="anonymous">
   <script defer src="/leetcode/flexsearch.min.js"></script>
-  <script defer src="/leetcode/zh.search.min.257a6f19755debea4a567f81383969d4d275e76550b592f60c5b105c3b712d77.js" integrity="sha256-JXpvGXVd6&#43;pKVn&#43;BODlp1NJ152VQtZL2DFsQXDtxLXc=" crossorigin="anonymous"></script>
+  <script defer src="/leetcode/zh.search.min.7b4ac66ce89575cbd011c4713af78cbe4479af836915f2c6489e1ae6a39d65ff.js" integrity="sha256-e0rGbOiVdcvQEcRxOveMvkR5r4NpFfLGSJ4a5qOdZf8=" crossorigin="anonymous"></script>
 
   <script defer src="/leetcode/sw.min.8d698a22bbf5eabddb125225de29674ea0338c58e103f5a48ccdc8118d0f922a.js" integrity="sha256-jWmKIrv16r3bElIl3ilnTqAzjFjhA/WkjM3IEY0Pkio=" crossorigin="anonymous"></script>
 <!--
@@ -373,9 +377,24 @@ https://github.com/alex-shpak/hugo-book
   解题思路
   <a class="anchor" href="#%e8%a7%a3%e9%a2%98%e6%80%9d%e8%b7%af">#</a>
 </h2>
-<p>参考 
-  <a href="https://www.bilibili.com/video/BV1fA4y1o715/?spm_id_from=333.788">https://www.bilibili.com/video/BV1fA4y1o715/?spm_id_from=333.788</a></p>
-<p>对于常规实现来说，在解题时要区分区间，也就是<code>左闭右闭</code>还是<code>左闭右开</code>区间两种解法。对于<code>左闭右闭</code>来说，包含最右边，因为左边的值要等于右边的值，那么<code>right</code>其实是<code>数组长度-1</code>，但是对于<code>左闭右开</code>来说，因为不包含最右元素，那么<code>right</code>其实就是数组长度。</p>
+<p>可以参考</p>
+<ul>
+<li>
+  <a href="https://www.bilibili.com/video/BV1fA4y1o715">https://www.bilibili.com/video/BV1fA4y1o715</a></li>
+<li>
+  <a href="https://programmercarl.com/0704.%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE.html#_704-%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE">二分查找</a></li>
+</ul>
+<p>对于常规实现来说，在解题时要区分区间，也就是<code>左闭右闭</code>还是<code>左闭右开</code>区间两种解法，其实就是要区分<code>右闭</code>还是<code>右开</code>，在临界条件判断时包不包含最右边的值。</p>
+<p>对于<code>左闭右闭</code>来说，包含最右边，所以在临界条件判断时，左边的值可以等于右边的值，那么<code>right</code>其实是<code>数组长度-1</code>，也就是数组最后一个值。</p>
+<ul>
+<li><code>while (left &lt;= right)</code>，因为<code>left == right</code>是有意义的，所以使用<code>&lt;=</code></li>
+<li><code>if (nums[middle] &gt; target)</code>，<code>right</code>要赋值为<code>middle - 1</code>，因为当前这个<code>nums[middle]</code>一定不是<code>target</code>，那么接下来要查找的左区间结束下标位置就是<code>middle - 1</code></li>
+</ul>
+<p>但是对于<code>左闭右开</code>来说，因为不包含最右元素，那么<code>right</code>其实就是数组长度，<code>right</code> 取不到数组最后一个值。</p>
+<ul>
+<li><code>while (left &lt; right)</code>，因为<code>left == right</code>在区间<code>[left, right)</code>是没有意义的，所以这里要用<code>&lt;</code></li>
+<li><code>if (nums[middle] &gt; target)</code> <code>right</code>更新为<code>middle</code>，因为当前<code>nums[middle]</code>不等于<code>target</code>，去左区间继续寻找，而寻找区间是左闭右开区间，所以<code>right</code>更新为<code>middle</code>，也就是说，下一个查询区间不会去比较<code>nums[middle]</code></li>
+</ul>
 <h2 id="具体实现">
   具体实现
   <a class="anchor" href="#%e5%85%b7%e4%bd%93%e5%ae%9e%e7%8e%b0">#</a>
@@ -457,9 +476,9 @@ https://github.com/alex-shpak/hugo-book
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/1c3ae644a62601e4071947cb88eea700c7b70c4e" title='最后修改者 weibin | December 21, 2022' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/fd71ca2519d3d6e28056daaae3a8a48083af8956" title='最后修改者 weibin | December 22, 2022' target="_blank" rel="noopener">
       <img src="/leetcode/svg/calendar.svg" class="book-icon" alt="Calendar" />
-      <span>December 21, 2022</span>
+      <span>December 22, 2022</span>
     </a>
   </div>
 
