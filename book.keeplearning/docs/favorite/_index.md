@@ -1,27 +1,16 @@
 ---
+weight: 10
+
+bookFlatSection: true
+
+bookCollapseSection: false
+
+bookToc: true
+
 title: "收藏夹"
-
-init_date: "2022-04-01T21:37:02+08:00"
-
-date: 2022-10-01
-
-lastmod: 2022-04-01
-
-author: "xiaobinqt"
-description: "xiaobinqt,萧十一郎,mysql 面试题,redis,golang,go,BAT 面试题,资料库,工具,www.xiaobinqt.cn,xiaobinqt.github.io"
-
-featuredImage: "https://cdn.xiaobinqt.cn/xiaobinqt.io/20221108/620edba556764c15ad42bc8adab19094.png"
-
-featuredImagePreview: "https://cdn.xiaobinqt.cn/xiaobinqt.io/20221108/620edba556764c15ad42bc8adab19094.png"
-
-tags: [""]
-categories: [""]
-lightgallery: true
-
-toc: true
-
-math: true
 ---
+
+# 收藏夹
 
 ## 面试题
 
