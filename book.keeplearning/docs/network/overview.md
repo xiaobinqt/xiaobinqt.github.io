@@ -30,11 +30,11 @@ title: "网络概述"
 
 + 客户-服务器（C/S）：客户是服务的请求方，服务器是服务的提供方。
 
-![PS-TMP (2).png](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/ca404b51ac3148329dd3236eebbb15b3.png)
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/ca404b51ac3148329dd3236eebbb15b3.png)
 
 + 对等（P2P）：不区分客户和服务器。
 
-![PS-TMP (3).png](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/a3a25588f44b459997e8be8a47bab7c3.png)
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/a3a25588f44b459997e8be8a47bab7c3.png)
 
 ## 电路交换与分组交换
 
@@ -52,7 +52,7 @@ title: "网络概述"
 
 总时延 = 排队时延 + 处理时延 + 传输时延 + 传播时延
 
-![PS-TMP (4).png](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/982be3abcf4c4dc388325fecb159166c.png)
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/982be3abcf4c4dc388325fecb159166c.png)
 
 ### 排队时延
 
@@ -80,7 +80,7 @@ title: "网络概述"
 
 ## 计算机网络体系结构
 
-![ps-tmp (5).png](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/64f2dae1873d4dd7ab0cf3efc34331e3.png)
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/64f2dae1873d4dd7ab0cf3efc34331e3.png)
 
 ### 五层协议
 
@@ -111,7 +111,7 @@ title: "网络概述"
 
 TCP/IP 体系结构不严格遵循 OSI 分层概念，应用层可能会直接使用 IP 层或者网络接口层。
 
-![ps-tmp (6).png](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/6e02e39431814eb193e2f3484dc213c8.png)
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/6e02e39431814eb193e2f3484dc213c8.png)
 
 ### 数据在各层之间的传递过程
 
