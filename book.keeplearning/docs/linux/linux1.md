@@ -12,6 +12,8 @@ title: "Linux（一）"
 
 # Linux（一）
 
+<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/5c91b8b49b19475cb42bc505e1e41fbb.png"/> </div>
+
 ## 常用操作以及概念
 
 ### 快捷键
