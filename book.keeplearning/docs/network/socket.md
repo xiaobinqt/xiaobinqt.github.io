@@ -37,7 +37,7 @@ Unix 有五种 I/O 模型：
 
 下图中，recvfrom() 用于接收 Socket 传来的数据，并复制到应用进程的缓冲区 buf 中。这里把 recvfrom() 当成系统调用。
 
-```shell
+```C
 ssize_t recvfrom(int sockfd, void *buf, size_t len, int flags, struct sockaddr *src_addr, socklen_t *addrlen);
 ```
 
@@ -106,7 +106,7 @@ select 允许应用程序监视一组文件描述符，等待一个或者多个�
 
 + 成功调用返回结果大于 0，出错返回结果为 -1，超时返回结果为 0。
 
-```shell
+```C
 fd_set fd_in, fd_out;
 struct timeval tv;
 
@@ -147,7 +147,7 @@ else
 
 ### poll
 
-```shell
+```C
 int poll(struct pollfd *fds, unsigned int nfds, int timeout);
 ```
 
@@ -155,7 +155,7 @@ poll 的功能与 select 类似，也是等待一组描述符中的一个成为�
 
 poll 中的描述符是 pollfd 类型的数组，pollfd 的定义如下：
 
-```shell
+```C
 struct pollfd {
    int   fd;         /* file descriptor */
    short events;     /* requested events */
@@ -163,7 +163,7 @@ struct pollfd {
 };
 ```
 
-```shell
+```C
 // The structure for two events
 struct pollfd fds[2];
 
@@ -216,7 +216,7 @@ select 和 poll 速度都比较慢，每次调用都需要将全部描述符从�
 
 ### epoll
 
-```shell
+```C
 int epoll_create(int size);
 int epoll_ctl(int epfd, int op, int fd, struct epoll_event *event)；
 int epoll_wait(int epfd, struct epoll_event * events, int maxevents, int timeout);
@@ -232,7 +232,7 @@ epoll 比 select 和 poll 更加灵活而且没有描述符数量限制。
 
 epoll 对多线程编程更有友好，一个线程调用了 epoll_wait() 另一个线程关闭了同一个描述符也不会产生像 select 和 poll 的不确定情况。
 
-```shell
+```C
 // Create the epoll descriptor. Only one is needed per app, and is used to monitor all sockets.
 // The function argument is ignored (it was not before, but now it is), so put your favorite number here
 int pollingfd = epoll_create( 0xCAFE );
