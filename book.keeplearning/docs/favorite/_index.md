@@ -59,6 +59,7 @@ title: "收藏夹"
 + [Pro Git（中文版）](https://gitee.com/progit/)
 + [南京大学 计算机科学与技术系 计算机系统基础 课程实验 2019](https://nju-projectn.github.io/ics-pa-gitbook/ics2019/)
 + [Mysql 实战45讲](https://funnylog.gitee.io/mysql45/)
++ [一份不太简短的 LATEX介绍](http://www.mohu.org/info/lshort-cn.pdf)
 
 ## 博主
 
