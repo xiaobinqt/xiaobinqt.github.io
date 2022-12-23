@@ -6,33 +6,6 @@
     <description>Recent content in 操作系统 on KeepLearning</description>
     <generator>Hugo -- gohugo.io</generator><atom:link href="https://example.com/keeplearning/docs/os/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>进程、线程、协程的区别</title>
-      <link>https://example.com/keeplearning/docs/os/process-thread-coroutine-diff/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://example.com/keeplearning/docs/os/process-thread-coroutine-diff/</guid>
-      <description> 进程、线程、协程的区别 # </description>
-    </item>
-    
-    <item>
-      <title>进程间常用的通信方式</title>
-      <link>https://example.com/keeplearning/docs/os/process-communicate/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://example.com/keeplearning/docs/os/process-communicate/</guid>
-      <description> 进程间常用的通信方式 # </description>
-    </item>
-    
-    <item>
-      <title>常见网络IO模型</title>
-      <link>https://example.com/keeplearning/docs/os/io-model/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://example.com/keeplearning/docs/os/io-model/</guid>
-      <description> 常见网络IO模型 # </description>
-    </item>
-    
-    <item>
       <title>指令集</title>
       <link>https://example.com/keeplearning/docs/os/instruction-set_arch/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -46,6 +19,53 @@
 而精简指令集对指令的数目和寻址方式做了精简，大大减少指令数量的同时更容易实现，指令集中的每一个指令都使用标准的字节长度、执行时间相比复杂指令集会少很多，处理器在处理指令时也可以流水执行，提高了对并行的支持。作为一种常见的精简指令集处理器，arm 使用 4 个字节作为指令的固定长度，省略了判断指令的性能损失3，精简指令集其实就是利用了我们耳熟能详的 20/80 原则，用 20% 的基础指令和它们的组合来解决问题。
 复杂指令集和精简指令集的使用是设计上的权衡，经过这么多年的发展，两种指令集也相互借鉴和学习，与最开始刚被设计出来时已经有了较大的差别。最开始的计算机使用复杂指令集是因为当时计算机的性能和内存比较有限，业界需要尽可能地减少机器需要执行的指令，所以更倾向于高度编码、长度不等以及多操作数的指令。不过随着计算机性能的提升，出现了精简指令集这种牺牲代码密度换取简单实现的设计；除此之外，硬件的飞速提升还带来了更多的寄存器和更高的时钟频率，软件开发人员也不再直接接触汇编代码，而是通过编译器和汇编器生成指令，复杂的机器指令对于编译器来说很难利用，所以精简指令在这种场景下更适合。
 参考 # 机器码生成 </description>
+    </item>
+    
+    <item>
+      <title>操作系统概述</title>
+      <link>https://example.com/keeplearning/docs/os/overview/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://example.com/keeplearning/docs/os/overview/</guid>
+      <description>操作系统概述 # 基本特征 # 1. 并发 # 并发是指宏观上在一段时间内能同时运行多个程序，而并行则指同一时刻能运行多个指令。
+并行需要硬件支持，如多流水线、多核处理器或者分布式计算系统。
+操作系统通过引入进程和线程，使得程序能够并发运行。
+2. 共享 # 共享是指系统中的资源可以被多个并发进程共同使用。
+有两种共享方式：互斥共享和同时共享。
+互斥共享的资源称为临界资源，例如打印机等，在同一时刻只允许一个进程访问，需要用同步机制来实现互斥访问。
+3. 虚拟 # 虚拟技术把一个物理实体转换为多个逻辑实体。
+主要有两种虚拟技术：时（时间）分复用技术和空（空间）分复用技术。
+多个进程能在同一个处理器上并发执行使用了时分复用技术，让每个进程轮流占用处理器，每次只执行一小个时间片并快速切换。
+虚拟内存使用了空分复用技术，它将物理内存抽象为地址空间，每个进程都有各自的地址空间。地址空间的页被映射到物理内存，地址空间的页并不需要全部在物理内存中，当使用到一个没有在物理内存的页时，执行页面置换算法，将该页置换到内存中。
+4. 异步 # 异步指进程不是一次性执行完毕，而是走走停停，以不可知的速度向前推进。
+基本功能 # 1. 进程管理 # 进程控制、进程同步、进程通信、死锁处理、处理机调度等。
+2. 内存管理 # 内存分配、地址映射、内存保护与共享、虚拟内存等。
+3. 文件管理 # 文件存储空间的管理、目录管理、文件读写管理和保护等。
+4. 设备管理 # 完成用户的 I/O 请求，方便用户使用各种设备，并提高设备的利用率。
+主要包括缓冲管理、设备分配、设备处理、虛拟设备等。
+系统调用 # 如果一个进程在用户态需要使用内核态的功能，就进行系统调用从而陷入内核，由操作系统代为完成。
+Linux 的系统调用主要有以下这些：
+Task Commands 进程控制 fork(); exit(); wait(); 进程通信 pipe(); shmget(); mmap(); 文件操作 open(); read(); write(); 设备操作 ioctl(); read(); write(); 信息维护 getpid(); alarm(); sleep(); 安全 chmod(); umask(); chown(); 宏内核和微内核 # 1.</description>
+    </item>
+    
+    <item>
+      <title>进程管理</title>
+      <link>https://example.com/keeplearning/docs/os/process-manage/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://example.com/keeplearning/docs/os/process-manage/</guid>
+      <description>进程管理 # 进程与线程 # 1. 进程 # 进程是资源分配的基本单位。
+进程控制块 (Process Control Block, PCB) 描述进程的基本信息和运行状态，所谓的创建进程和撤销进程，都是指对 PCB 的操作。
+下图显示了 4 个程序创建了 4 个进程，这 4 个进程可以并发地执行。
+2. 线程 # 线程是独立调度的基本单位。
+一个进程中可以有多个线程，它们共享进程资源。
+QQ 和浏览器是两个进程，浏览器进程里面有很多线程，例如 HTTP 请求线程、事件响应线程、渲染线程等等，线程的并发执行使得在浏览器中点击一个新链接从而发起 HTTP 请求时，浏览器还可以响应用户的其它事件。
+3. 区别 # Ⅰ 拥有资源 # 进程是资源分配的基本单位，但是线程不拥有资源，线程可以访问隶属进程的资源。
+Ⅱ 调度 # 线程是独立调度的基本单位，在同一进程中，线程的切换不会引起进程切换，从一个进程中的线程切换到另一个进程中的线程时，会引起进程切换。
+Ⅲ 系统开销 # 由于创建或撤销进程时，系统都要为之分配或回收资源，如内存空间、I/O 设备等，所付出的开销远大于创建或撤销线程时的开销。类似地，在进行进程切换时，涉及当前执行进程 CPU 环境的保存及新调度进程 CPU 环境的设置，而线程切换时只需保存和设置少量寄存器内容，开销很小。
+Ⅳ 通信方面 # 线程间可以通过直接读写同一进程中的数据进行通信，但是进程通信需要借助 IPC。
+进程状态的切换 # 就绪状态（ready）：等待被调度 运行状态（running） 阻塞状态（waiting）：等待资源 应该注意以下内容：
+只有就绪态和运行态可以相互转换，其它的都是单向转换。就绪状态的进程通过调度算法从而获得 CPU 时间，转为运行状态；而运行状态的进程，在分配给它的 CPU 时间片用完之后就会转为就绪状态，等待下一次调度。 阻塞状态是缺少需要的资源从而由运行状态转换而来，但是该资源不包括 CPU 时间，缺少 CPU 时间会从运行态转换为就绪态。 进程调度算法 # 不同环境的调度算法目标不同，因此需要针对不同环境来讨论调度算法。</description>
     </item>
     
   </channel>

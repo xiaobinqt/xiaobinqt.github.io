@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="操作系统概述 # 基本特征 # 1. 并发 # 并发是指宏观上在一段时间内能同时运行多个程序，而并行则指同一时刻能运行多个指令。
+并行需要硬件支持，如多流水线、多核处理器或者分布式计算系统。
+操作系统通过引入进程和线程，使得程序能够并发运行。
+2. 共享 # 共享是指系统中的资源可以被多个并发进程共同使用。
+有两种共享方式：互斥共享和同时共享。
+互斥共享的资源称为临界资源，例如打印机等，在同一时刻只允许一个进程访问，需要用同步机制来实现互斥访问。
+3. 虚拟 # 虚拟技术把一个物理实体转换为多个逻辑实体。
+主要有两种虚拟技术：时（时间）分复用技术和空（空间）分复用技术。
+多个进程能在同一个处理器上并发执行使用了时分复用技术，让每个进程轮流占用处理器，每次只执行一小个时间片并快速切换。
+虚拟内存使用了空分复用技术，它将物理内存抽象为地址空间，每个进程都有各自的地址空间。地址空间的页被映射到物理内存，地址空间的页并不需要全部在物理内存中，当使用到一个没有在物理内存的页时，执行页面置换算法，将该页置换到内存中。
+4. 异步 # 异步指进程不是一次性执行完毕，而是走走停停，以不可知的速度向前推进。
+基本功能 # 1. 进程管理 # 进程控制、进程同步、进程通信、死锁处理、处理机调度等。
+2. 内存管理 # 内存分配、地址映射、内存保护与共享、虚拟内存等。
+3. 文件管理 # 文件存储空间的管理、目录管理、文件读写管理和保护等。
+4. 设备管理 # 完成用户的 I/O 请求，方便用户使用各种设备，并提高设备的利用率。
+主要包括缓冲管理、设备分配、设备处理、虛拟设备等。
+系统调用 # 如果一个进程在用户态需要使用内核态的功能，就进行系统调用从而陷入内核，由操作系统代为完成。
+Linux 的系统调用主要有以下这些：
+Task Commands 进程控制 fork(); exit(); wait(); 进程通信 pipe(); shmget(); mmap(); 文件操作 open(); read(); write(); 设备操作 ioctl(); read(); write(); 信息维护 getpid(); alarm(); sleep(); 安全 chmod(); umask(); chown(); 宏内核和微内核 # 1.">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="操作系统概述" />
+<meta property="og:description" content="操作系统概述 # 基本特征 # 1. 并发 # 并发是指宏观上在一段时间内能同时运行多个程序，而并行则指同一时刻能运行多个指令。
+并行需要硬件支持，如多流水线、多核处理器或者分布式计算系统。
+操作系统通过引入进程和线程，使得程序能够并发运行。
+2. 共享 # 共享是指系统中的资源可以被多个并发进程共同使用。
+有两种共享方式：互斥共享和同时共享。
+互斥共享的资源称为临界资源，例如打印机等，在同一时刻只允许一个进程访问，需要用同步机制来实现互斥访问。
+3. 虚拟 # 虚拟技术把一个物理实体转换为多个逻辑实体。
+主要有两种虚拟技术：时（时间）分复用技术和空（空间）分复用技术。
+多个进程能在同一个处理器上并发执行使用了时分复用技术，让每个进程轮流占用处理器，每次只执行一小个时间片并快速切换。
+虚拟内存使用了空分复用技术，它将物理内存抽象为地址空间，每个进程都有各自的地址空间。地址空间的页被映射到物理内存，地址空间的页并不需要全部在物理内存中，当使用到一个没有在物理内存的页时，执行页面置换算法，将该页置换到内存中。
+4. 异步 # 异步指进程不是一次性执行完毕，而是走走停停，以不可知的速度向前推进。
+基本功能 # 1. 进程管理 # 进程控制、进程同步、进程通信、死锁处理、处理机调度等。
+2. 内存管理 # 内存分配、地址映射、内存保护与共享、虚拟内存等。
+3. 文件管理 # 文件存储空间的管理、目录管理、文件读写管理和保护等。
+4. 设备管理 # 完成用户的 I/O 请求，方便用户使用各种设备，并提高设备的利用率。
+主要包括缓冲管理、设备分配、设备处理、虛拟设备等。
+系统调用 # 如果一个进程在用户态需要使用内核态的功能，就进行系统调用从而陷入内核，由操作系统代为完成。
+Linux 的系统调用主要有以下这些：
+Task Commands 进程控制 fork(); exit(); wait(); 进程通信 pipe(); shmget(); mmap(); 文件操作 open(); read(); write(); 设备操作 ioctl(); read(); write(); 信息维护 getpid(); alarm(); sleep(); 安全 chmod(); umask(); chown(); 宏内核和微内核 # 1." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://example.com/keeplearning/docs/os/overview/" /><meta property="article:section" content="docs" />
+
+<meta property="article:modified_time" content="2022-12-23T15:33:27+08:00" />
+<title>操作系统概述 | KeepLearning</title>
+<link rel="manifest" href="/keeplearning/manifest.json">
+<link rel="icon" href="/keeplearning/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/keeplearning/book.min.44ab80b6e9fbffc4b56fa0525dd4af874d4d533ab2a985226782d7cdc8d9fd15.css" integrity="sha256-RKuAtun7/8S1b6BSXdSvh01NUzqyqYUiZ4LXzcjZ/RU=" crossorigin="anonymous">
+  <script defer src="/keeplearning/flexsearch.min.js"></script>
+  <script defer src="/keeplearning/zh.search.min.ff410841a01235080b21d8e7426972a8a593f10259d53e671286504772a7618b.js" integrity="sha256-/0EIQaASNQgLIdjnQmlyqKWT8QJZ1T5nEoZQR3KnYYs=" crossorigin="anonymous"></script>
+
+  <script defer src="/keeplearning/sw.min.1adfb566b92ba83fd11679d786b02cc6ef24134c579bce6902d173c28305155f.js" integrity="sha256-Gt&#43;1ZrkrqD/RFnnXhrAsxu8kE0xXm85pAtFzwoMFFV8=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/keeplearning/"><span>KeepLearning</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+
+
+
+  
+<ul>
+  
+  <li>
+    <a href="https://github.com/xiaobinqt"  target="_blank" rel="noopener">
+        GitHub
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <ul>
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-3110560962cac834dcd3aead95e804a4" class="toggle"  />
+    <label for="section-3110560962cac834dcd3aead95e804a4" class="flex justify-between">
+      <a role="button" class="">网络</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/network/overview/" class="">网络概述</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/network/http1/" class="">HTTP（一）</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/network/http2/" class="">HTTP（二）</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/network/http3/" class="">HTTP（三）</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/network/socket/" class="">Socket</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-708f0dc81b7f5419c74b48a85bd8146c" class="toggle" checked />
+    <label for="section-708f0dc81b7f5419c74b48a85bd8146c" class="flex justify-between">
+      <a role="button" class="">操作系统</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/os/instruction-set_arch/" class="">指令集</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/os/overview/" class="active">操作系统概述</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/os/process-manage/" class="">进程管理</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/favorite/" class="">收藏夹</a>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/keeplearning/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>操作系统概述</strong>
+
+  <label for="toc-control">
+    
+    <img src="/keeplearning/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#操作系统概述">操作系统概述</a>
+      <ul>
+        <li><a href="#基本特征">基本特征</a>
+          <ul>
+            <li><a href="#1-并发">1. 并发</a></li>
+            <li><a href="#2-共享">2. 共享</a></li>
+            <li><a href="#3-虚拟">3. 虚拟</a></li>
+            <li><a href="#4-异步">4. 异步</a></li>
+          </ul>
+        </li>
+        <li><a href="#基本功能">基本功能</a>
+          <ul>
+            <li><a href="#1-进程管理">1. 进程管理</a></li>
+            <li><a href="#2-内存管理">2. 内存管理</a></li>
+            <li><a href="#3-文件管理">3. 文件管理</a></li>
+            <li><a href="#4-设备管理">4. 设备管理</a></li>
+          </ul>
+        </li>
+        <li><a href="#系统调用">系统调用</a></li>
+        <li><a href="#宏内核和微内核">宏内核和微内核</a>
+          <ul>
+            <li><a href="#1-宏内核">1. 宏内核</a></li>
+            <li><a href="#2-微内核">2. 微内核</a></li>
+          </ul>
+        </li>
+        <li><a href="#中断分类">中断分类</a>
+          <ul>
+            <li><a href="#1-外中断">1. 外中断</a></li>
+            <li><a href="#2-异常">2. 异常</a></li>
+            <li><a href="#3-陷入">3. 陷入</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown"><h1 id="操作系统概述">
+  操作系统概述
+  <a class="anchor" href="#%e6%93%8d%e4%bd%9c%e7%b3%bb%e7%bb%9f%e6%a6%82%e8%bf%b0">#</a>
+</h1>
+<h2 id="基本特征">
+  基本特征
+  <a class="anchor" href="#%e5%9f%ba%e6%9c%ac%e7%89%b9%e5%be%81">#</a>
+</h2>
+<h3 id="1-并发">
+  1. 并发
+  <a class="anchor" href="#1-%e5%b9%b6%e5%8f%91">#</a>
+</h3>
+<p>并发是指宏观上在一段时间内能同时运行多个程序，而并行则指同一时刻能运行多个指令。</p>
+<p>并行需要硬件支持，如多流水线、多核处理器或者分布式计算系统。</p>
+<p>操作系统通过引入进程和线程，使得程序能够并发运行。</p>
+<h3 id="2-共享">
+  2. 共享
+  <a class="anchor" href="#2-%e5%85%b1%e4%ba%ab">#</a>
+</h3>
+<p>共享是指系统中的资源可以被多个并发进程共同使用。</p>
+<p>有两种共享方式：互斥共享和同时共享。</p>
+<p>互斥共享的资源称为临界资源，例如打印机等，在同一时刻只允许一个进程访问，需要用同步机制来实现互斥访问。</p>
+<h3 id="3-虚拟">
+  3. 虚拟
+  <a class="anchor" href="#3-%e8%99%9a%e6%8b%9f">#</a>
+</h3>
+<p>虚拟技术把一个物理实体转换为多个逻辑实体。</p>
+<p>主要有两种虚拟技术：时（时间）分复用技术和空（空间）分复用技术。</p>
+<p>多个进程能在同一个处理器上并发执行使用了时分复用技术，让每个进程轮流占用处理器，每次只执行一小个时间片并快速切换。</p>
+<p>虚拟内存使用了空分复用技术，它将物理内存抽象为地址空间，每个进程都有各自的地址空间。地址空间的页被映射到物理内存，地址空间的页并不需要全部在物理内存中，当使用到一个没有在物理内存的页时，执行页面置换算法，将该页置换到内存中。</p>
+<h3 id="4-异步">
+  4. 异步
+  <a class="anchor" href="#4-%e5%bc%82%e6%ad%a5">#</a>
+</h3>
+<p>异步指进程不是一次性执行完毕，而是走走停停，以不可知的速度向前推进。</p>
+<h2 id="基本功能">
+  基本功能
+  <a class="anchor" href="#%e5%9f%ba%e6%9c%ac%e5%8a%9f%e8%83%bd">#</a>
+</h2>
+<h3 id="1-进程管理">
+  1. 进程管理
+  <a class="anchor" href="#1-%e8%bf%9b%e7%a8%8b%e7%ae%a1%e7%90%86">#</a>
+</h3>
+<p>进程控制、进程同步、进程通信、死锁处理、处理机调度等。</p>
+<h3 id="2-内存管理">
+  2. 内存管理
+  <a class="anchor" href="#2-%e5%86%85%e5%ad%98%e7%ae%a1%e7%90%86">#</a>
+</h3>
+<p>内存分配、地址映射、内存保护与共享、虚拟内存等。</p>
+<h3 id="3-文件管理">
+  3. 文件管理
+  <a class="anchor" href="#3-%e6%96%87%e4%bb%b6%e7%ae%a1%e7%90%86">#</a>
+</h3>
+<p>文件存储空间的管理、目录管理、文件读写管理和保护等。</p>
+<h3 id="4-设备管理">
+  4. 设备管理
+  <a class="anchor" href="#4-%e8%ae%be%e5%a4%87%e7%ae%a1%e7%90%86">#</a>
+</h3>
+<p>完成用户的 I/O 请求，方便用户使用各种设备，并提高设备的利用率。</p>
+<p>主要包括缓冲管理、设备分配、设备处理、虛拟设备等。</p>
+<h2 id="系统调用">
+  系统调用
+  <a class="anchor" href="#%e7%b3%bb%e7%bb%9f%e8%b0%83%e7%94%a8">#</a>
+</h2>
+<p>如果一个进程在用户态需要使用内核态的功能，就进行系统调用从而陷入内核，由操作系统代为完成。</p>
+<p>
+  <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/a31b70c3a2a04481b3e3849408cc4393.png" alt="" /></p>
+<p>Linux 的系统调用主要有以下这些：</p>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Commands</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>进程控制</td>
+<td>fork(); exit(); wait();</td>
+</tr>
+<tr>
+<td>进程通信</td>
+<td>pipe(); shmget(); mmap();</td>
+</tr>
+<tr>
+<td>文件操作</td>
+<td>open(); read(); write();</td>
+</tr>
+<tr>
+<td>设备操作</td>
+<td>ioctl(); read(); write();</td>
+</tr>
+<tr>
+<td>信息维护</td>
+<td>getpid(); alarm(); sleep();</td>
+</tr>
+<tr>
+<td>安全</td>
+<td>chmod(); umask(); chown();</td>
+</tr>
+</tbody>
+</table>
+<h2 id="宏内核和微内核">
+  宏内核和微内核
+  <a class="anchor" href="#%e5%ae%8f%e5%86%85%e6%a0%b8%e5%92%8c%e5%be%ae%e5%86%85%e6%a0%b8">#</a>
+</h2>
+<h3 id="1-宏内核">
+  1. 宏内核
+  <a class="anchor" href="#1-%e5%ae%8f%e5%86%85%e6%a0%b8">#</a>
+</h3>
+<p>宏内核是将操作系统功能作为一个紧密结合的整体放到内核。</p>
+<p>由于各模块共享信息，因此有很高的性能。</p>
+<h3 id="2-微内核">
+  2. 微内核
+  <a class="anchor" href="#2-%e5%be%ae%e5%86%85%e6%a0%b8">#</a>
+</h3>
+<p>由于操作系统不断复杂，因此将一部分操作系统功能移出内核，从而降低内核的复杂性。移出的部分根据分层的原则划分成若干服务，相互独立。</p>
+<p>在微内核结构下，操作系统被划分成小的、定义良好的模块，只有微内核这一个模块运行在内核态，其余模块运行在用户态。</p>
+<p>因为需要频繁地在用户态和核心态之间进行切换，所以会有一定的性能损失。</p>
+<p>
+  <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/c76e3099f4e548628e84e6e89c764330.png" alt="" /></p>
+<h2 id="中断分类">
+  中断分类
+  <a class="anchor" href="#%e4%b8%ad%e6%96%ad%e5%88%86%e7%b1%bb">#</a>
+</h2>
+<h3 id="1-外中断">
+  1. 外中断
+  <a class="anchor" href="#1-%e5%a4%96%e4%b8%ad%e6%96%ad">#</a>
+</h3>
+<p>由 CPU 执行指令以外的事件引起，如 I/O 完成中断，表示设备输入/输出处理已经完成，处理器能够发送下一个输入/输出请求。此外还有时钟中断、控制台中断等。</p>
+<h3 id="2-异常">
+  2. 异常
+  <a class="anchor" href="#2-%e5%bc%82%e5%b8%b8">#</a>
+</h3>
+<p>由 CPU 执行指令的内部事件引起，如非法操作码、地址越界、算术溢出等。</p>
+<h3 id="3-陷入">
+  3. 陷入
+  <a class="anchor" href="#3-%e9%99%b7%e5%85%a5">#</a>
+</h3>
+<p>在用户程序中使用系统调用。</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/038d315e2b9388802c1c6922d2a3de7a2afb8223" title='最后修改者 weibin | December 23, 2022' target="_blank" rel="noopener">
+      <img src="/keeplearning/svg/calendar.svg" class="book-icon" alt="Calendar" />
+      <span>December 23, 2022</span>
+    </a>
+  </div>
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/book.keeplearning/docs/os/overview.md" target="_blank" rel="noopener">
+      <img src="/keeplearning/svg/edit.svg" class="book-icon" alt="Edit" />
+      <span>编辑本页</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#操作系统概述">操作系统概述</a>
+      <ul>
+        <li><a href="#基本特征">基本特征</a>
+          <ul>
+            <li><a href="#1-并发">1. 并发</a></li>
+            <li><a href="#2-共享">2. 共享</a></li>
+            <li><a href="#3-虚拟">3. 虚拟</a></li>
+            <li><a href="#4-异步">4. 异步</a></li>
+          </ul>
+        </li>
+        <li><a href="#基本功能">基本功能</a>
+          <ul>
+            <li><a href="#1-进程管理">1. 进程管理</a></li>
+            <li><a href="#2-内存管理">2. 内存管理</a></li>
+            <li><a href="#3-文件管理">3. 文件管理</a></li>
+            <li><a href="#4-设备管理">4. 设备管理</a></li>
+          </ul>
+        </li>
+        <li><a href="#系统调用">系统调用</a></li>
+        <li><a href="#宏内核和微内核">宏内核和微内核</a>
+          <ul>
+            <li><a href="#1-宏内核">1. 宏内核</a></li>
+            <li><a href="#2-微内核">2. 微内核</a></li>
+          </ul>
+        </li>
+        <li><a href="#中断分类">中断分类</a>
+          <ul>
+            <li><a href="#1-外中断">1. 外中断</a></li>
+            <li><a href="#2-异常">2. 异常</a></li>
+            <li><a href="#3-陷入">3. 陷入</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

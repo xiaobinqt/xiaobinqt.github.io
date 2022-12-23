@@ -26,13 +26,13 @@ I/O 复用 # 使用 select 或者 poll 等待数据，并且可以等待多个�
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://example.com/keeplearning/docs/network/socket/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-12-23T15:01:31+08:00" />
+<meta property="article:modified_time" content="2022-12-23T15:33:27+08:00" />
 <title>Socket | KeepLearning</title>
 <link rel="manifest" href="/keeplearning/manifest.json">
 <link rel="icon" href="/keeplearning/favicon.png" type="image/x-icon">
 <link rel="stylesheet" href="/keeplearning/book.min.44ab80b6e9fbffc4b56fa0525dd4af874d4d533ab2a985226782d7cdc8d9fd15.css" integrity="sha256-RKuAtun7/8S1b6BSXdSvh01NUzqyqYUiZ4LXzcjZ/RU=" crossorigin="anonymous">
   <script defer src="/keeplearning/flexsearch.min.js"></script>
-  <script defer src="/keeplearning/zh.search.min.00a40fdc7082010701e03b1421d5fbc2faac3da70e51666aeed3ff5be2294a4c.js" integrity="sha256-AKQP3HCCAQcB4DsUIdX7wvqsPacOUWZq7tP/W&#43;IpSkw=" crossorigin="anonymous"></script>
+  <script defer src="/keeplearning/zh.search.min.ff410841a01235080b21d8e7426972a8a593f10259d53e671286504772a7618b.js" integrity="sha256-/0EIQaASNQgLIdjnQmlyqKWT8QJZ1T5nEoZQR3KnYYs=" crossorigin="anonymous"></script>
 
   <script defer src="/keeplearning/sw.min.1adfb566b92ba83fd11679d786b02cc6ef24134c579bce6902d173c28305155f.js" integrity="sha256-Gt&#43;1ZrkrqD/RFnnXhrAsxu8kE0xXm85pAtFzwoMFFV8=" crossorigin="anonymous"></script>
 <!--
@@ -200,46 +200,33 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/keeplearning/docs/os/process-thread-coroutine-diff/" class="">进程、线程、协程的区别</a>
-  
-
-        </li>
-      
-    
-      
-        <li>
-          
-  
-  
-
-  
-    <a href="/keeplearning/docs/os/process-communicate/" class="">进程间常用的通信方式</a>
-  
-
-        </li>
-      
-    
-      
-        <li>
-          
-  
-  
-
-  
-    <a href="/keeplearning/docs/os/io-model/" class="">常见网络IO模型</a>
-  
-
-        </li>
-      
-    
-      
-        <li>
-          
-  
-  
-
-  
     <a href="/keeplearning/docs/os/instruction-set_arch/" class="">指令集</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/os/overview/" class="">操作系统概述</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/os/process-manage/" class="">进程管理</a>
   
 
         </li>
@@ -385,7 +372,7 @@ https://github.com/alex-shpak/hugo-book
 <p>应用进程被阻塞，直到数据从内核缓冲区复制到应用进程缓冲区中才返回。</p>
 <p>应该注意到，在阻塞的过程中，其它应用进程还可以执行，因此阻塞不意味着整个操作系统都被阻塞。因为其它应用进程还可以执行，所以不消耗 CPU 时间，这种模型的 CPU 利用率会比较高。</p>
 <p>下图中，recvfrom() 用于接收 Socket 传来的数据，并复制到应用进程的缓冲区 buf 中。这里把 recvfrom() 当成系统调用。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>ssize_t recvfrom<span style="color:#f92672">(</span>int sockfd, void *buf, size_t len, int flags, struct sockaddr *src_addr, socklen_t *addrlen<span style="color:#f92672">)</span>;
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span><span style="color:#66d9ef">ssize_t</span> <span style="color:#a6e22e">recvfrom</span>(<span style="color:#66d9ef">int</span> sockfd, <span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>buf, <span style="color:#66d9ef">size_t</span> len, <span style="color:#66d9ef">int</span> flags, <span style="color:#66d9ef">struct</span> sockaddr <span style="color:#f92672">*</span>src_addr, <span style="color:#66d9ef">socklen_t</span> <span style="color:#f92672">*</span>addrlen);
 </span></span></code></pre></div><p>
   <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/ff94438f086543b4a38be1a93964e8a4.png" alt="" /></p>
 <h3 id="非阻塞式-io">
@@ -455,83 +442,83 @@ https://github.com/alex-shpak/hugo-book
 <p>成功调用返回结果大于 0，出错返回结果为 -1，超时返回结果为 0。</p>
 </li>
 </ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>fd_set fd_in, fd_out;
-</span></span><span style="display:flex;"><span>struct timeval tv;
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span>fd_set fd_in, fd_out;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> timeval tv;
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>// Reset the sets
-</span></span><span style="display:flex;"><span>FD_ZERO<span style="color:#f92672">(</span> &amp;fd_in <span style="color:#f92672">)</span>;
-</span></span><span style="display:flex;"><span>FD_ZERO<span style="color:#f92672">(</span> &amp;fd_out <span style="color:#f92672">)</span>;
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Reset the sets
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">FD_ZERO</span>( <span style="color:#f92672">&amp;</span>fd_in );
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">FD_ZERO</span>( <span style="color:#f92672">&amp;</span>fd_out );
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>// Monitor sock1 <span style="color:#66d9ef">for</span> input events
-</span></span><span style="display:flex;"><span>FD_SET<span style="color:#f92672">(</span> sock1, &amp;fd_in <span style="color:#f92672">)</span>;
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Monitor sock1 for input events
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">FD_SET</span>( sock1, <span style="color:#f92672">&amp;</span>fd_in );
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>// Monitor sock2 <span style="color:#66d9ef">for</span> output events
-</span></span><span style="display:flex;"><span>FD_SET<span style="color:#f92672">(</span> sock2, &amp;fd_out <span style="color:#f92672">)</span>;
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Monitor sock2 for output events
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">FD_SET</span>( sock2, <span style="color:#f92672">&amp;</span>fd_out );
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>// Find out which socket has the largest numeric value as <span style="color:#66d9ef">select</span> requires it
-</span></span><span style="display:flex;"><span>int largest_sock <span style="color:#f92672">=</span> sock1 &gt; sock2 ? sock1 : sock2;
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Find out which socket has the largest numeric value as select requires it
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span> largest_sock <span style="color:#f92672">=</span> sock1 <span style="color:#f92672">&gt;</span> sock2 <span style="color:#f92672">?</span> sock1 : sock2;
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>// Wait up to <span style="color:#ae81ff">10</span> seconds
-</span></span><span style="display:flex;"><span>tv.tv_sec <span style="color:#f92672">=</span> 10;
-</span></span><span style="display:flex;"><span>tv.tv_usec <span style="color:#f92672">=</span> 0;
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Wait up to 10 seconds
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>tv.tv_sec <span style="color:#f92672">=</span> <span style="color:#ae81ff">10</span>;
+</span></span><span style="display:flex;"><span>tv.tv_usec <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>// Call the <span style="color:#66d9ef">select</span>
-</span></span><span style="display:flex;"><span>int ret <span style="color:#f92672">=</span> <span style="color:#66d9ef">select</span><span style="color:#f92672">(</span> largest_sock + 1, &amp;fd_in, &amp;fd_out, NULL, &amp;tv <span style="color:#f92672">)</span>;
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Call the select
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span> ret <span style="color:#f92672">=</span> <span style="color:#a6e22e">select</span>( largest_sock <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>, <span style="color:#f92672">&amp;</span>fd_in, <span style="color:#f92672">&amp;</span>fd_out, NULL, <span style="color:#f92672">&amp;</span>tv );
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>// Check <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">select</span> actually succeed
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span> ret <span style="color:#f92672">==</span> -1 <span style="color:#f92672">)</span>
-</span></span><span style="display:flex;"><span>    // report error and abort
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span> ret <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">)</span>
-</span></span><span style="display:flex;"><span>    // timeout; no event detected
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">else</span>
-</span></span><span style="display:flex;"><span><span style="color:#f92672">{</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span> FD_ISSET<span style="color:#f92672">(</span> sock1, &amp;fd_in <span style="color:#f92672">)</span> <span style="color:#f92672">)</span>
-</span></span><span style="display:flex;"><span>        // input event on sock1
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span> FD_ISSET<span style="color:#f92672">(</span> sock2, &amp;fd_out <span style="color:#f92672">)</span> <span style="color:#f92672">)</span>
-</span></span><span style="display:flex;"><span>        // output event on sock2
-</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Check if select actually succeed
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">if</span> ( ret <span style="color:#f92672">==</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span> )
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// report error and abort
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> ( ret <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span> )
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// timeout; no event detected
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> ( <span style="color:#a6e22e">FD_ISSET</span>( sock1, <span style="color:#f92672">&amp;</span>fd_in ) )
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// input event on sock1
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> ( <span style="color:#a6e22e">FD_ISSET</span>( sock2, <span style="color:#f92672">&amp;</span>fd_out ) )
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// output event on sock2
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
 </span></span></code></pre></div><h3 id="poll">
   poll
   <a class="anchor" href="#poll">#</a>
 </h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>int poll<span style="color:#f92672">(</span>struct pollfd *fds, unsigned int nfds, int timeout<span style="color:#f92672">)</span>;
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">poll</span>(<span style="color:#66d9ef">struct</span> pollfd <span style="color:#f92672">*</span>fds, <span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">int</span> nfds, <span style="color:#66d9ef">int</span> timeout);
 </span></span></code></pre></div><p>poll 的功能与 select 类似，也是等待一组描述符中的一个成为就绪状态。</p>
 <p>poll 中的描述符是 pollfd 类型的数组，pollfd 的定义如下：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>struct pollfd <span style="color:#f92672">{</span>
-</span></span><span style="display:flex;"><span>   int   fd;         /* file descriptor */
-</span></span><span style="display:flex;"><span>   short events;     /* requested events */
-</span></span><span style="display:flex;"><span>   short revents;    /* returned events */
-</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>;
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>// The structure <span style="color:#66d9ef">for</span> two events
-</span></span><span style="display:flex;"><span>struct pollfd fds<span style="color:#f92672">[</span>2<span style="color:#f92672">]</span>;
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> pollfd {
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">int</span>   fd;         <span style="color:#75715e">/* file descriptor */</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">short</span> events;     <span style="color:#75715e">/* requested events */</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">short</span> revents;    <span style="color:#75715e">/* returned events */</span>
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span><span style="color:#75715e">// The structure for two events
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">struct</span> pollfd fds[<span style="color:#ae81ff">2</span>];
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>// Monitor sock1 <span style="color:#66d9ef">for</span> input
-</span></span><span style="display:flex;"><span>fds<span style="color:#f92672">[</span>0<span style="color:#f92672">]</span>.fd <span style="color:#f92672">=</span> sock1;
-</span></span><span style="display:flex;"><span>fds<span style="color:#f92672">[</span>0<span style="color:#f92672">]</span>.events <span style="color:#f92672">=</span> POLLIN;
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Monitor sock1 for input
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>fds[<span style="color:#ae81ff">0</span>].fd <span style="color:#f92672">=</span> sock1;
+</span></span><span style="display:flex;"><span>fds[<span style="color:#ae81ff">0</span>].events <span style="color:#f92672">=</span> POLLIN;
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>// Monitor sock2 <span style="color:#66d9ef">for</span> output
-</span></span><span style="display:flex;"><span>fds<span style="color:#f92672">[</span>1<span style="color:#f92672">]</span>.fd <span style="color:#f92672">=</span> sock2;
-</span></span><span style="display:flex;"><span>fds<span style="color:#f92672">[</span>1<span style="color:#f92672">]</span>.events <span style="color:#f92672">=</span> POLLOUT;
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Monitor sock2 for output
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>fds[<span style="color:#ae81ff">1</span>].fd <span style="color:#f92672">=</span> sock2;
+</span></span><span style="display:flex;"><span>fds[<span style="color:#ae81ff">1</span>].events <span style="color:#f92672">=</span> POLLOUT;
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>// Wait <span style="color:#ae81ff">10</span> seconds
-</span></span><span style="display:flex;"><span>int ret <span style="color:#f92672">=</span> poll<span style="color:#f92672">(</span> &amp;fds, 2, <span style="color:#ae81ff">10000</span> <span style="color:#f92672">)</span>;
-</span></span><span style="display:flex;"><span>// Check <span style="color:#66d9ef">if</span> poll actually succeed
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span> ret <span style="color:#f92672">==</span> -1 <span style="color:#f92672">)</span>
-</span></span><span style="display:flex;"><span>    // report error and abort
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span> ret <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">)</span>
-</span></span><span style="display:flex;"><span>    // timeout; no event detected
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">else</span>
-</span></span><span style="display:flex;"><span><span style="color:#f92672">{</span>
-</span></span><span style="display:flex;"><span>    // If we detect the event, zero it out so we can reuse the structure
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span> fds<span style="color:#f92672">[</span>0<span style="color:#f92672">]</span>.revents &amp; POLLIN <span style="color:#f92672">)</span>
-</span></span><span style="display:flex;"><span>        fds<span style="color:#f92672">[</span>0<span style="color:#f92672">]</span>.revents <span style="color:#f92672">=</span> 0;
-</span></span><span style="display:flex;"><span>        // input event on sock1
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span> fds<span style="color:#f92672">[</span>1<span style="color:#f92672">]</span>.revents &amp; POLLOUT <span style="color:#f92672">)</span>
-</span></span><span style="display:flex;"><span>        fds<span style="color:#f92672">[</span>1<span style="color:#f92672">]</span>.revents <span style="color:#f92672">=</span> 0;
-</span></span><span style="display:flex;"><span>        // output event on sock2
-</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Wait 10 seconds
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span> ret <span style="color:#f92672">=</span> <span style="color:#a6e22e">poll</span>( <span style="color:#f92672">&amp;</span>fds, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">10000</span> );
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Check if poll actually succeed
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">if</span> ( ret <span style="color:#f92672">==</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span> )
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// report error and abort
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> ( ret <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span> )
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// timeout; no event detected
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// If we detect the event, zero it out so we can reuse the structure
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> ( fds[<span style="color:#ae81ff">0</span>].revents <span style="color:#f92672">&amp;</span> POLLIN )
+</span></span><span style="display:flex;"><span>        fds[<span style="color:#ae81ff">0</span>].revents <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// input event on sock1
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> ( fds[<span style="color:#ae81ff">1</span>].revents <span style="color:#f92672">&amp;</span> POLLOUT )
+</span></span><span style="display:flex;"><span>        fds[<span style="color:#ae81ff">1</span>].revents <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// output event on sock2
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
 </span></span></code></pre></div><h3 id="比较">
   比较
   <a class="anchor" href="#%e6%af%94%e8%be%83">#</a>
@@ -561,58 +548,58 @@ https://github.com/alex-shpak/hugo-book
   epoll
   <a class="anchor" href="#epoll">#</a>
 </h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>int epoll_create<span style="color:#f92672">(</span>int size<span style="color:#f92672">)</span>;
-</span></span><span style="display:flex;"><span>int epoll_ctl<span style="color:#f92672">(</span>int epfd, int op, int fd, struct epoll_event *event<span style="color:#f92672">)</span>；
-</span></span><span style="display:flex;"><span>int epoll_wait<span style="color:#f92672">(</span>int epfd, struct epoll_event * events, int maxevents, int timeout<span style="color:#f92672">)</span>;
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">epoll_create</span>(<span style="color:#66d9ef">int</span> size);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">epoll_ctl</span>(<span style="color:#66d9ef">int</span> epfd, <span style="color:#66d9ef">int</span> op, <span style="color:#66d9ef">int</span> fd, <span style="color:#66d9ef">struct</span> epoll_event <span style="color:#f92672">*</span>event)<span style="color:#960050;background-color:#1e0010">；</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">epoll_wait</span>(<span style="color:#66d9ef">int</span> epfd, <span style="color:#66d9ef">struct</span> epoll_event <span style="color:#f92672">*</span> events, <span style="color:#66d9ef">int</span> maxevents, <span style="color:#66d9ef">int</span> timeout);
 </span></span></code></pre></div><p>epoll_ctl() 用于向内核注册新的描述符或者是改变某个文件描述符的状态。已注册的描述符在内核中会被维护在一棵红黑树上，通过回调函数内核会将 I/O 准备好的描述符加入到一个链表中管理，进程调用 epoll_wait() 便可以得到事件完成的描述符。</p>
 <p>从上面的描述可以看出，epoll 只需要将描述符从进程缓冲区向内核缓冲区拷贝一次，并且进程不需要通过轮询来获得事件完成的描述符。</p>
 <p>epoll 仅适用于 Linux OS。</p>
 <p>epoll 比 select 和 poll 更加灵活而且没有描述符数量限制。</p>
 <p>epoll 对多线程编程更有友好，一个线程调用了 epoll_wait() 另一个线程关闭了同一个描述符也不会产生像 select 和 poll 的不确定情况。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>// Create the epoll descriptor. Only one is needed per app, and is used to monitor all sockets.
-</span></span><span style="display:flex;"><span>// The <span style="color:#66d9ef">function</span> argument is ignored <span style="color:#f92672">(</span>it was not before, but now it is<span style="color:#f92672">)</span>, so put your favorite number here
-</span></span><span style="display:flex;"><span>int pollingfd <span style="color:#f92672">=</span> epoll_create<span style="color:#f92672">(</span> 0xCAFE <span style="color:#f92672">)</span>;
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span><span style="color:#75715e">// Create the epoll descriptor. Only one is needed per app, and is used to monitor all sockets.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// The function argument is ignored (it was not before, but now it is), so put your favorite number here
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span> pollingfd <span style="color:#f92672">=</span> <span style="color:#a6e22e">epoll_create</span>( <span style="color:#ae81ff">0xCAFE</span> );
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span> pollingfd &lt; <span style="color:#ae81ff">0</span> <span style="color:#f92672">)</span>
-</span></span><span style="display:flex;"><span> // report error
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> ( pollingfd <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0</span> )
+</span></span><span style="display:flex;"><span> <span style="color:#75715e">// report error
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Initialize the epoll structure in case more members are added in future
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">struct</span> epoll_event ev <span style="color:#f92672">=</span> { <span style="color:#ae81ff">0</span> };
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>// Initialize the epoll structure in <span style="color:#66d9ef">case</span> more members are added in future
-</span></span><span style="display:flex;"><span>struct epoll_event ev <span style="color:#f92672">=</span> <span style="color:#f92672">{</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">}</span>;
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Associate the connection class instance with the event. You can associate anything
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// you want, epoll does not use this information. We store a connection class pointer, pConnection1
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>ev.data.ptr <span style="color:#f92672">=</span> pConnection1;
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>// Associate the connection class instance with the event. You can associate anything
-</span></span><span style="display:flex;"><span>// you want, epoll does not use this information. We store a connection class pointer, pConnection1
-</span></span><span style="display:flex;"><span>ev.data.ptr <span style="color:#f92672">=</span> pConnection1;
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Monitor for input, and do not automatically rearm the descriptor after the event
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>ev.events <span style="color:#f92672">=</span> EPOLLIN <span style="color:#f92672">|</span> EPOLLONESHOT;
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Add the descriptor into the monitoring list. We can do it even if another thread is
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// waiting in epoll_wait - the descriptor will be properly added
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">if</span> ( <span style="color:#a6e22e">epoll_ctl</span>( epollfd, EPOLL_CTL_ADD, pConnection1<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">getSocket</span>(), <span style="color:#f92672">&amp;</span>ev ) <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span> )
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// report error
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Wait for up to 20 events (assuming we have added maybe 200 sockets before that it may happen)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">struct</span> epoll_event pevents[ <span style="color:#ae81ff">20</span> ];
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>// Monitor <span style="color:#66d9ef">for</span> input, and <span style="color:#66d9ef">do</span> not automatically rearm the descriptor after the event
-</span></span><span style="display:flex;"><span>ev.events <span style="color:#f92672">=</span> EPOLLIN | EPOLLONESHOT;
-</span></span><span style="display:flex;"><span>// Add the descriptor into the monitoring list. We can <span style="color:#66d9ef">do</span> it even <span style="color:#66d9ef">if</span> another thread is
-</span></span><span style="display:flex;"><span>// waiting in epoll_wait - the descriptor will be properly added
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span> epoll_ctl<span style="color:#f92672">(</span> epollfd, EPOLL_CTL_ADD, pConnection1-&gt;getSocket<span style="color:#f92672">()</span>, &amp;ev <span style="color:#f92672">)</span> !<span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">)</span>
-</span></span><span style="display:flex;"><span>    // report error
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>// Wait <span style="color:#66d9ef">for</span> up to <span style="color:#ae81ff">20</span> events <span style="color:#f92672">(</span>assuming we have added maybe <span style="color:#ae81ff">200</span> sockets before that it may happen<span style="color:#f92672">)</span>
-</span></span><span style="display:flex;"><span>struct epoll_event pevents<span style="color:#f92672">[</span> <span style="color:#ae81ff">20</span> <span style="color:#f92672">]</span>;
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>// Wait <span style="color:#66d9ef">for</span> <span style="color:#ae81ff">10</span> seconds, and retrieve less than <span style="color:#ae81ff">20</span> epoll_event and store them into epoll_event array
-</span></span><span style="display:flex;"><span>int ready <span style="color:#f92672">=</span> epoll_wait<span style="color:#f92672">(</span> pollingfd, pevents, 20, <span style="color:#ae81ff">10000</span> <span style="color:#f92672">)</span>;
-</span></span><span style="display:flex;"><span>// Check <span style="color:#66d9ef">if</span> epoll actually succeed
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span> ret <span style="color:#f92672">==</span> -1 <span style="color:#f92672">)</span>
-</span></span><span style="display:flex;"><span>    // report error and abort
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span> ret <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">)</span>
-</span></span><span style="display:flex;"><span>    // timeout; no event detected
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">else</span>
-</span></span><span style="display:flex;"><span><span style="color:#f92672">{</span>
-</span></span><span style="display:flex;"><span>    // Check <span style="color:#66d9ef">if</span> any events detected
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span> int i <span style="color:#f92672">=</span> 0; i &lt; ready; i++ <span style="color:#f92672">)</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">{</span>
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span> pevents<span style="color:#f92672">[</span>i<span style="color:#f92672">]</span>.events &amp; EPOLLIN <span style="color:#f92672">)</span>
-</span></span><span style="display:flex;"><span>        <span style="color:#f92672">{</span>
-</span></span><span style="display:flex;"><span>            // Get back our connection pointer
-</span></span><span style="display:flex;"><span>            Connection * c <span style="color:#f92672">=</span> <span style="color:#f92672">(</span>Connection*<span style="color:#f92672">)</span> pevents<span style="color:#f92672">[</span>i<span style="color:#f92672">]</span>.data.ptr;
-</span></span><span style="display:flex;"><span>            c-&gt;handleReadEvent<span style="color:#f92672">()</span>;
-</span></span><span style="display:flex;"><span>         <span style="color:#f92672">}</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
-</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Wait for 10 seconds, and retrieve less than 20 epoll_event and store them into epoll_event array
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span> ready <span style="color:#f92672">=</span> <span style="color:#a6e22e">epoll_wait</span>( pollingfd, pevents, <span style="color:#ae81ff">20</span>, <span style="color:#ae81ff">10000</span> );
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Check if epoll actually succeed
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">if</span> ( ret <span style="color:#f92672">==</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span> )
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// report error and abort
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> ( ret <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span> )
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// timeout; no event detected
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Check if any events detected
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">for</span> ( <span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> ready; i<span style="color:#f92672">++</span> )
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> ( pevents[i].events <span style="color:#f92672">&amp;</span> EPOLLIN )
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// Get back our connection pointer
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            Connection <span style="color:#f92672">*</span> c <span style="color:#f92672">=</span> (Connection<span style="color:#f92672">*</span>) pevents[i].data.ptr;
+</span></span><span style="display:flex;"><span>            c<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">handleReadEvent</span>();
+</span></span><span style="display:flex;"><span>         }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h3 id="工作模式">
   工作模式
   <a class="anchor" href="#%e5%b7%a5%e4%bd%9c%e6%a8%a1%e5%bc%8f">#</a>
@@ -661,7 +648,7 @@ https://github.com/alex-shpak/hugo-book
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/9e572f3cfaa4c37ccce390142d99a0a6fa0c2597" title='最后修改者 weibin | December 23, 2022' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/038d315e2b9388802c1c6922d2a3de7a2afb8223" title='最后修改者 weibin | December 23, 2022' target="_blank" rel="noopener">
       <img src="/keeplearning/svg/calendar.svg" class="book-icon" alt="Calendar" />
       <span>December 23, 2022</span>
     </a>
