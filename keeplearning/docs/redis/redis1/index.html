@@ -1,0 +1,1391 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Redis（一） # 一、概述 # Redis 是速度非常快的非关系型（NoSQL）内存键值数据库，可以存储键和五种不同类型的值之间的映射。
+键的类型只能为字符串，值支持五种数据类型：字符串、列表、集合、散列表、有序集合。
+Redis 支持很多特性，例如将内存中的数据持久化到硬盘中，使用复制来扩展读性能，使用分片来扩展写性能。
+二、数据类型 # 数据类型 可以存储的值 操作 STRING 字符串、整数或者浮点数 对整个字符串或者字符串的其中一部分执行操作
+对整数和浮点数执行自增或者自减操作 LIST 列表 从两端压入或者弹出元素 对单个或者多个元素进行修剪，
+只保留一个范围内的元素 SET 无序集合 添加、获取、移除单个元素
+检查一个元素是否存在于集合中
+计算交集、并集、差集
+从集合里面随机获取元素 HASH 包含键值对的无序散列表 添加、获取、移除单个键值对 获取所有键值对
+检查某个键是否存在 ZSET 有序集合 添加、获取、删除元素 根据分值范围或者成员来获取元素
+计算一个键的排名 STRING # &gt; set hello world OK &gt; get hello &#34;world&#34; &gt; del hello (integer) 1 &gt; get hello (nil) LIST # &gt; rpush list-key item (integer) 1 &gt; rpush list-key item2 (integer) 2 &gt; rpush list-key item (integer) 3 &gt; lrange list-key 0 -1 1) &#34;item&#34; 2) &#34;item2&#34; 3) &#34;item&#34; &gt; lindex list-key 1 &#34;item2&#34; &gt; lpop list-key &#34;item&#34; &gt; lrange list-key 0 -1 1) &#34;item2&#34; 2) &#34;item&#34; SET # &gt; sadd set-key item (integer) 1 &gt; sadd set-key item2 (integer) 1 &gt; sadd set-key item3 (integer) 1 &gt; sadd set-key item (integer) 0 &gt; smembers set-key 1) &#34;item&#34; 2) &#34;item2&#34; 3) &#34;item3&#34; &gt; sismember set-key item4 (integer) 0 &gt; sismember set-key item (integer) 1 &gt; srem set-key item2 (integer) 1 &gt; srem set-key item2 (integer) 0 &gt; smembers set-key 1) &#34;item&#34; 2) &#34;item3&#34; HASH # &gt; hset hash-key sub-key1 value1 (integer) 1 &gt; hset hash-key sub-key2 value2 (integer) 1 &gt; hset hash-key sub-key1 value1 (integer) 0 &gt; hgetall hash-key 1) &#34;sub-key1&#34; 2) &#34;value1&#34; 3) &#34;sub-key2&#34; 4) &#34;value2&#34; &gt; hdel hash-key sub-key2 (integer) 1 &gt; hdel hash-key sub-key2 (integer) 0 &gt; hget hash-key sub-key1 &#34;value1&#34; &gt; hgetall hash-key 1) &#34;sub-key1&#34; 2) &#34;value1&#34; ZSET # &gt; zadd zset-key 728 member1 (integer) 1 &gt; zadd zset-key 982 member0 (integer) 1 &gt; zadd zset-key 982 member0 (integer) 0 &gt; zrange zset-key 0 -1 withscores 1) &#34;member1&#34; 2) &#34;728&#34; 3) &#34;member0&#34; 4) &#34;982&#34; &gt; zrangebyscore zset-key 0 800 withscores 1) &#34;member1&#34; 2) &#34;728&#34; &gt; zrem zset-key member1 (integer) 1 &gt; zrem zset-key member1 (integer) 0 &gt; zrange zset-key 0 -1 withscores 1) &#34;member0&#34; 2) &#34;982&#34; 三、数据结构 # 字典 # dictht 是一个散列表结构，使用拉链法解决哈希冲突。">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="Redis（一）" />
+<meta property="og:description" content="Redis（一） # 一、概述 # Redis 是速度非常快的非关系型（NoSQL）内存键值数据库，可以存储键和五种不同类型的值之间的映射。
+键的类型只能为字符串，值支持五种数据类型：字符串、列表、集合、散列表、有序集合。
+Redis 支持很多特性，例如将内存中的数据持久化到硬盘中，使用复制来扩展读性能，使用分片来扩展写性能。
+二、数据类型 # 数据类型 可以存储的值 操作 STRING 字符串、整数或者浮点数 对整个字符串或者字符串的其中一部分执行操作
+对整数和浮点数执行自增或者自减操作 LIST 列表 从两端压入或者弹出元素 对单个或者多个元素进行修剪，
+只保留一个范围内的元素 SET 无序集合 添加、获取、移除单个元素
+检查一个元素是否存在于集合中
+计算交集、并集、差集
+从集合里面随机获取元素 HASH 包含键值对的无序散列表 添加、获取、移除单个键值对 获取所有键值对
+检查某个键是否存在 ZSET 有序集合 添加、获取、删除元素 根据分值范围或者成员来获取元素
+计算一个键的排名 STRING # &gt; set hello world OK &gt; get hello &#34;world&#34; &gt; del hello (integer) 1 &gt; get hello (nil) LIST # &gt; rpush list-key item (integer) 1 &gt; rpush list-key item2 (integer) 2 &gt; rpush list-key item (integer) 3 &gt; lrange list-key 0 -1 1) &#34;item&#34; 2) &#34;item2&#34; 3) &#34;item&#34; &gt; lindex list-key 1 &#34;item2&#34; &gt; lpop list-key &#34;item&#34; &gt; lrange list-key 0 -1 1) &#34;item2&#34; 2) &#34;item&#34; SET # &gt; sadd set-key item (integer) 1 &gt; sadd set-key item2 (integer) 1 &gt; sadd set-key item3 (integer) 1 &gt; sadd set-key item (integer) 0 &gt; smembers set-key 1) &#34;item&#34; 2) &#34;item2&#34; 3) &#34;item3&#34; &gt; sismember set-key item4 (integer) 0 &gt; sismember set-key item (integer) 1 &gt; srem set-key item2 (integer) 1 &gt; srem set-key item2 (integer) 0 &gt; smembers set-key 1) &#34;item&#34; 2) &#34;item3&#34; HASH # &gt; hset hash-key sub-key1 value1 (integer) 1 &gt; hset hash-key sub-key2 value2 (integer) 1 &gt; hset hash-key sub-key1 value1 (integer) 0 &gt; hgetall hash-key 1) &#34;sub-key1&#34; 2) &#34;value1&#34; 3) &#34;sub-key2&#34; 4) &#34;value2&#34; &gt; hdel hash-key sub-key2 (integer) 1 &gt; hdel hash-key sub-key2 (integer) 0 &gt; hget hash-key sub-key1 &#34;value1&#34; &gt; hgetall hash-key 1) &#34;sub-key1&#34; 2) &#34;value1&#34; ZSET # &gt; zadd zset-key 728 member1 (integer) 1 &gt; zadd zset-key 982 member0 (integer) 1 &gt; zadd zset-key 982 member0 (integer) 0 &gt; zrange zset-key 0 -1 withscores 1) &#34;member1&#34; 2) &#34;728&#34; 3) &#34;member0&#34; 4) &#34;982&#34; &gt; zrangebyscore zset-key 0 800 withscores 1) &#34;member1&#34; 2) &#34;728&#34; &gt; zrem zset-key member1 (integer) 1 &gt; zrem zset-key member1 (integer) 0 &gt; zrange zset-key 0 -1 withscores 1) &#34;member0&#34; 2) &#34;982&#34; 三、数据结构 # 字典 # dictht 是一个散列表结构，使用拉链法解决哈希冲突。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://example.com/keeplearning/docs/redis/redis1/" /><meta property="article:section" content="docs" />
+
+<meta property="article:modified_time" content="2022-12-26T11:35:58+08:00" />
+<title>Redis（一） | KeepLearning</title>
+<link rel="manifest" href="/keeplearning/manifest.json">
+<link rel="icon" href="/keeplearning/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/keeplearning/book.min.44ab80b6e9fbffc4b56fa0525dd4af874d4d533ab2a985226782d7cdc8d9fd15.css" integrity="sha256-RKuAtun7/8S1b6BSXdSvh01NUzqyqYUiZ4LXzcjZ/RU=" crossorigin="anonymous">
+  <script defer src="/keeplearning/flexsearch.min.js"></script>
+  <script defer src="/keeplearning/zh.search.min.95901f155d7e43edd528f3257a6368bfaa892682cfc3316ac1c60fe3afd3505b.js" integrity="sha256-lZAfFV1&#43;Q&#43;3VKPMlemNov6qJJoLPwzFqwcYP46/TUFs=" crossorigin="anonymous"></script>
+
+  <script defer src="/keeplearning/sw.min.1adfb566b92ba83fd11679d786b02cc6ef24134c579bce6902d173c28305155f.js" integrity="sha256-Gt&#43;1ZrkrqD/RFnnXhrAsxu8kE0xXm85pAtFzwoMFFV8=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/keeplearning/"><span>KeepLearning</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+
+
+
+  
+<ul>
+  
+  <li>
+    <a href="https://github.com/xiaobinqt"  target="_blank" rel="noopener">
+        GitHub
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <ul>
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-3110560962cac834dcd3aead95e804a4" class="toggle"  />
+    <label for="section-3110560962cac834dcd3aead95e804a4" class="flex justify-between">
+      <a role="button" class="">网络</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/network/overview/" class="">网络概述</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/network/physical-layer/" class="">物理层</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/network/link-layer/" class="">链路层</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/network/network-layer/" class="">网络层</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/network/transport-layer/" class="">传输层</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/network/application-layer/" class="">应用层</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/network/socket/" class="">Socket</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-9caa6ae5221742cea46cb40ee3162cf1" class="toggle"  />
+    <label for="section-9caa6ae5221742cea46cb40ee3162cf1" class="flex justify-between">
+      <a role="button" class="">HTTP</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/http/http1/" class="">HTTP（一）</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/http/http2/" class="">HTTP（二）</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/http/http3/" class="">HTTP（三）</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-708f0dc81b7f5419c74b48a85bd8146c" class="toggle"  />
+    <label for="section-708f0dc81b7f5419c74b48a85bd8146c" class="flex justify-between">
+      <a role="button" class="">操作系统</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/os/instruction-set_arch/" class="">指令集</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/os/overview/" class="">操作系统概述</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/os/process-manage/" class="">进程管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/os/deadlock/" class="">死锁</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/os/memory-manage/" class="">内存管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/os/device-manage/" class="">设备管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/os/link/" class="">链接</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-e66e2e478c81786f553bd82d3931b216" class="toggle"  />
+    <label for="section-e66e2e478c81786f553bd82d3931b216" class="flex justify-between">
+      <a role="button" class="">MySQL</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/mysql/dbs-theory/" class="">数据库系统原理（一）</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/mysql/dbs-theory2/" class="">数据库系统原理（二）</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/mysql/sql-grammar/" class="">SQL 语法</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/mysql/mysql-faq1/" class="">MySQL</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-a27d7ef673b519721b4909eba7547282" class="toggle" checked />
+    <label for="section-a27d7ef673b519721b4909eba7547282" class="flex justify-between">
+      <a role="button" class="">Redis</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/redis/redis1/" class="active">Redis（一）</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/redis/redis2/" class="">Redis（二）</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-6ae1a891fb3a3f71d71273fc61b29b76" class="toggle"  />
+    <label for="section-6ae1a891fb3a3f71d71273fc61b29b76" class="flex justify-between">
+      <a role="button" class="">Linux</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/linux/linux1/" class="">Linux（一）</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/linux/linux2/" class="">Linux（二）</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/linux/linux3/" class="">Linux（三）</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-2e68b18a2908c2a0b6e57142acd3643f" class="toggle"  />
+    <label for="section-2e68b18a2908c2a0b6e57142acd3643f" class="flex justify-between">
+      <a role="button" class="">系统设计</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/system-design/overview/" class="">系统设计基础</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/system-design/distributed/" class="">分布式</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/system-design/cluster/" class="">集群</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/system-design/attack/" class="">攻击技术</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/system-design/cache/" class="">缓存</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/system-design/queue-message/" class="">消息队列</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-caceb4c0534f60c75e13f33d748c0f33" class="toggle"  />
+    <label for="section-caceb4c0534f60c75e13f33d748c0f33" class="flex justify-between">
+      <a role="button" class="">编码实践</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/coding-practice/regex/" class="">正则表达式</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/coding-practice/docker/" class="">Docker</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/coding-practice/git/" class="">Git</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/coding-practice/code-readability/" class="">代码可读性</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/favorite/" class="">收藏夹</a>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/keeplearning/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>Redis（一）</strong>
+
+  <label for="toc-control">
+    
+    <img src="/keeplearning/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#redis一">Redis（一）</a>
+      <ul>
+        <li><a href="#一概述">一、概述</a></li>
+        <li><a href="#二数据类型">二、数据类型</a>
+          <ul>
+            <li><a href="#string">STRING</a></li>
+            <li><a href="#list">LIST</a></li>
+            <li><a href="#set">SET</a></li>
+            <li><a href="#hash">HASH</a></li>
+            <li><a href="#zset">ZSET</a></li>
+          </ul>
+        </li>
+        <li><a href="#三数据结构">三、数据结构</a>
+          <ul>
+            <li><a href="#字典">字典</a></li>
+            <li><a href="#跳跃表">跳跃表</a></li>
+          </ul>
+        </li>
+        <li><a href="#四使用场景">四、使用场景</a>
+          <ul>
+            <li><a href="#计数器">计数器</a></li>
+            <li><a href="#缓存">缓存</a></li>
+            <li><a href="#查找表">查找表</a></li>
+            <li><a href="#消息队列">消息队列</a></li>
+            <li><a href="#会话缓存">会话缓存</a></li>
+            <li><a href="#分布式锁实现">分布式锁实现</a></li>
+            <li><a href="#其它">其它</a></li>
+          </ul>
+        </li>
+        <li><a href="#五redis-与-memcached">五、Redis 与 Memcached</a>
+          <ul>
+            <li><a href="#数据类型">数据类型</a></li>
+            <li><a href="#数据持久化">数据持久化</a></li>
+            <li><a href="#分布式">分布式</a></li>
+            <li><a href="#内存管理机制">内存管理机制</a></li>
+          </ul>
+        </li>
+        <li><a href="#六键的过期时间">六、键的过期时间</a></li>
+        <li><a href="#七数据淘汰策略">七、数据淘汰策略</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown"><h1 id="redis一">
+  Redis（一）
+  <a class="anchor" href="#redis%e4%b8%80">#</a>
+</h1>
+<h2 id="一概述">
+  一、概述
+  <a class="anchor" href="#%e4%b8%80%e6%a6%82%e8%bf%b0">#</a>
+</h2>
+<p>Redis 是速度非常快的非关系型（NoSQL）内存键值数据库，可以存储键和五种不同类型的值之间的映射。</p>
+<p>键的类型只能为字符串，值支持五种数据类型：字符串、列表、集合、散列表、有序集合。</p>
+<p>Redis 支持很多特性，例如将内存中的数据持久化到硬盘中，使用复制来扩展读性能，使用分片来扩展写性能。</p>
+<h2 id="二数据类型">
+  二、数据类型
+  <a class="anchor" href="#%e4%ba%8c%e6%95%b0%e6%8d%ae%e7%b1%bb%e5%9e%8b">#</a>
+</h2>
+<table>
+<thead>
+<tr>
+<th>数据类型</th>
+<th>可以存储的值</th>
+<th>操作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>STRING</td>
+<td>字符串、整数或者浮点数</td>
+<td>对整个字符串或者字符串的其中一部分执行操作<br> 对整数和浮点数执行自增或者自减操作</td>
+</tr>
+<tr>
+<td>LIST</td>
+<td>列表</td>
+<td>从两端压入或者弹出元素 <br> 对单个或者多个元素进行修剪，<br> 只保留一个范围内的元素</td>
+</tr>
+<tr>
+<td>SET</td>
+<td>无序集合</td>
+<td>添加、获取、移除单个元素<br> 检查一个元素是否存在于集合中<br> 计算交集、并集、差集<br> 从集合里面随机获取元素</td>
+</tr>
+<tr>
+<td>HASH</td>
+<td>包含键值对的无序散列表</td>
+<td>添加、获取、移除单个键值对</br> 获取所有键值对<br> 检查某个键是否存在</td>
+</tr>
+<tr>
+<td>ZSET</td>
+<td>有序集合</td>
+<td>添加、获取、删除元素</br> 根据分值范围或者成员来获取元素<br> 计算一个键的排名</td>
+</tr>
+</tbody>
+</table>
+<h3 id="string">
+  STRING
+  <a class="anchor" href="#string">#</a>
+</h3>
+<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/4cd2f8dfd39c41b0a14a9f8cad3d9ee7.png" width="400"/> </div><br>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>&gt; set hello world
+</span></span><span style="display:flex;"><span>OK
+</span></span><span style="display:flex;"><span>&gt; get hello
+</span></span><span style="display:flex;"><span>&#34;world&#34;
+</span></span><span style="display:flex;"><span>&gt; del hello
+</span></span><span style="display:flex;"><span>(integer) 1
+</span></span><span style="display:flex;"><span>&gt; get hello
+</span></span><span style="display:flex;"><span>(nil)
+</span></span></code></pre></div><h3 id="list">
+  LIST
+  <a class="anchor" href="#list">#</a>
+</h3>
+<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/dc2b3cf5d03b41119a00820944579611.png" width="400"/> </div><br>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>&gt; rpush list-key item
+</span></span><span style="display:flex;"><span>(integer) 1
+</span></span><span style="display:flex;"><span>&gt; rpush list-key item2
+</span></span><span style="display:flex;"><span>(integer) 2
+</span></span><span style="display:flex;"><span>&gt; rpush list-key item
+</span></span><span style="display:flex;"><span>(integer) 3
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>&gt; lrange list-key 0 -1
+</span></span><span style="display:flex;"><span>1) &#34;item&#34;
+</span></span><span style="display:flex;"><span>2) &#34;item2&#34;
+</span></span><span style="display:flex;"><span>3) &#34;item&#34;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>&gt; lindex list-key 1
+</span></span><span style="display:flex;"><span>&#34;item2&#34;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>&gt; lpop list-key
+</span></span><span style="display:flex;"><span>&#34;item&#34;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>&gt; lrange list-key 0 -1
+</span></span><span style="display:flex;"><span>1) &#34;item2&#34;
+</span></span><span style="display:flex;"><span>2) &#34;item&#34;
+</span></span></code></pre></div><h3 id="set">
+  SET
+  <a class="anchor" href="#set">#</a>
+</h3>
+<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/9352e7d62d574d7a8c4287d7b326fb08.png" width="400"/> </div><br>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>&gt; sadd set-key item
+</span></span><span style="display:flex;"><span>(integer) 1
+</span></span><span style="display:flex;"><span>&gt; sadd set-key item2
+</span></span><span style="display:flex;"><span>(integer) 1
+</span></span><span style="display:flex;"><span>&gt; sadd set-key item3
+</span></span><span style="display:flex;"><span>(integer) 1
+</span></span><span style="display:flex;"><span>&gt; sadd set-key item
+</span></span><span style="display:flex;"><span>(integer) 0
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>&gt; smembers set-key
+</span></span><span style="display:flex;"><span>1) &#34;item&#34;
+</span></span><span style="display:flex;"><span>2) &#34;item2&#34;
+</span></span><span style="display:flex;"><span>3) &#34;item3&#34;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>&gt; sismember set-key item4
+</span></span><span style="display:flex;"><span>(integer) 0
+</span></span><span style="display:flex;"><span>&gt; sismember set-key item
+</span></span><span style="display:flex;"><span>(integer) 1
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>&gt; srem set-key item2
+</span></span><span style="display:flex;"><span>(integer) 1
+</span></span><span style="display:flex;"><span>&gt; srem set-key item2
+</span></span><span style="display:flex;"><span>(integer) 0
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>&gt; smembers set-key
+</span></span><span style="display:flex;"><span>1) &#34;item&#34;
+</span></span><span style="display:flex;"><span>2) &#34;item3&#34;
+</span></span></code></pre></div><h3 id="hash">
+  HASH
+  <a class="anchor" href="#hash">#</a>
+</h3>
+<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/786b12641c13468b920d52f674ca1e4d.png" width="400"/> </div><br>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>&gt; hset hash-key sub-key1 value1
+</span></span><span style="display:flex;"><span>(integer) 1
+</span></span><span style="display:flex;"><span>&gt; hset hash-key sub-key2 value2
+</span></span><span style="display:flex;"><span>(integer) 1
+</span></span><span style="display:flex;"><span>&gt; hset hash-key sub-key1 value1
+</span></span><span style="display:flex;"><span>(integer) 0
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>&gt; hgetall hash-key
+</span></span><span style="display:flex;"><span>1) &#34;sub-key1&#34;
+</span></span><span style="display:flex;"><span>2) &#34;value1&#34;
+</span></span><span style="display:flex;"><span>3) &#34;sub-key2&#34;
+</span></span><span style="display:flex;"><span>4) &#34;value2&#34;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>&gt; hdel hash-key sub-key2
+</span></span><span style="display:flex;"><span>(integer) 1
+</span></span><span style="display:flex;"><span>&gt; hdel hash-key sub-key2
+</span></span><span style="display:flex;"><span>(integer) 0
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>&gt; hget hash-key sub-key1
+</span></span><span style="display:flex;"><span>&#34;value1&#34;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>&gt; hgetall hash-key
+</span></span><span style="display:flex;"><span>1) &#34;sub-key1&#34;
+</span></span><span style="display:flex;"><span>2) &#34;value1&#34;
+</span></span></code></pre></div><h3 id="zset">
+  ZSET
+  <a class="anchor" href="#zset">#</a>
+</h3>
+<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/dc2c35b63788455e9a80310b3cd9a33a.png" width="400"/> </div><br>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>&gt; zadd zset-key 728 member1
+</span></span><span style="display:flex;"><span>(integer) 1
+</span></span><span style="display:flex;"><span>&gt; zadd zset-key 982 member0
+</span></span><span style="display:flex;"><span>(integer) 1
+</span></span><span style="display:flex;"><span>&gt; zadd zset-key 982 member0
+</span></span><span style="display:flex;"><span>(integer) 0
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>&gt; zrange zset-key 0 -1 withscores
+</span></span><span style="display:flex;"><span>1) &#34;member1&#34;
+</span></span><span style="display:flex;"><span>2) &#34;728&#34;
+</span></span><span style="display:flex;"><span>3) &#34;member0&#34;
+</span></span><span style="display:flex;"><span>4) &#34;982&#34;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>&gt; zrangebyscore zset-key 0 800 withscores
+</span></span><span style="display:flex;"><span>1) &#34;member1&#34;
+</span></span><span style="display:flex;"><span>2) &#34;728&#34;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>&gt; zrem zset-key member1
+</span></span><span style="display:flex;"><span>(integer) 1
+</span></span><span style="display:flex;"><span>&gt; zrem zset-key member1
+</span></span><span style="display:flex;"><span>(integer) 0
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>&gt; zrange zset-key 0 -1 withscores
+</span></span><span style="display:flex;"><span>1) &#34;member0&#34;
+</span></span><span style="display:flex;"><span>2) &#34;982&#34;
+</span></span></code></pre></div><h2 id="三数据结构">
+  三、数据结构
+  <a class="anchor" href="#%e4%b8%89%e6%95%b0%e6%8d%ae%e7%bb%93%e6%9e%84">#</a>
+</h2>
+<h3 id="字典">
+  字典
+  <a class="anchor" href="#%e5%ad%97%e5%85%b8">#</a>
+</h3>
+<p>dictht 是一个散列表结构，使用拉链法解决哈希冲突。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#75715e">/* This is our hash table structure. Every dictionary has two of this as we
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * implement incremental rehashing, for the old to the new table. */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">struct</span> dictht {
+</span></span><span style="display:flex;"><span>    dictEntry <span style="color:#f92672">**</span>table;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">long</span> size;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">long</span> sizemask;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">long</span> used;
+</span></span><span style="display:flex;"><span>} dictht;
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">struct</span> dictEntry {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>key;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">union</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>val;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">uint64_t</span> u64;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int64_t</span> s64;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">double</span> d;
+</span></span><span style="display:flex;"><span>    } v;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">struct</span> dictEntry <span style="color:#f92672">*</span>next;
+</span></span><span style="display:flex;"><span>} dictEntry;
+</span></span></code></pre></div><p>Redis 的字典 dict 中包含两个哈希表 dictht，这是为了方便进行 rehash 操作。在扩容时，将其中一个 dictht 上的键值对 rehash 到另一个 dictht 上面，完成之后释放空间并交换两个 dictht 的角色。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">struct</span> dict {
+</span></span><span style="display:flex;"><span>    dictType <span style="color:#f92672">*</span>type;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>privdata;
+</span></span><span style="display:flex;"><span>    dictht ht[<span style="color:#ae81ff">2</span>];
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">long</span> rehashidx; <span style="color:#75715e">/* rehashing not in progress if rehashidx == -1 */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">long</span> iterators; <span style="color:#75715e">/* number of iterators currently running */</span>
+</span></span><span style="display:flex;"><span>} dict;
+</span></span></code></pre></div><p>rehash 操作不是一次性完成，而是采用渐进方式，这是为了避免一次性执行过多的 rehash 操作给服务器带来过大的负担。</p>
+<p>渐进式 rehash 通过记录 dict 的 rehashidx 完成，它从 0 开始，然后每执行一次 rehash 都会递增。例如在一次 rehash 中，要把 dict[0] rehash 到 dict[1]，这一次会把 dict[0] 上 table[rehashidx] 的键值对 rehash 到 dict[1] 上，dict[0] 的 table[rehashidx] 指向 null，并令 rehashidx++。</p>
+<p>在 rehash 期间，每次对字典执行添加、删除、查找或者更新操作时，都会执行一次渐进式 rehash。</p>
+<p>采用渐进式 rehash 会导致字典中的数据分散在两个 dictht 上，因此对字典的查找操作也需要到对应的 dictht 去执行。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#75715e">/* Performs N steps of incremental rehashing. Returns 1 if there are still
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * keys to move from the old to the new hash table, otherwise 0 is returned.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Note that a rehashing step consists in moving a bucket (that may have more
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * than one key as we use chaining) from the old to the new hash table, however
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * since part of the hash table may be composed of empty spaces, it is not
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * guaranteed that this function will rehash even a single bucket, since it
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * will visit at max N*10 empty buckets in total, otherwise the amount of
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * work it does would be unbound and the function may block for a long time. */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">dictRehash</span>(dict <span style="color:#f92672">*</span>d, <span style="color:#66d9ef">int</span> n) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> empty_visits <span style="color:#f92672">=</span> n <span style="color:#f92672">*</span> <span style="color:#ae81ff">10</span>; <span style="color:#75715e">/* Max number of empty buckets to visit. */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span><span style="color:#a6e22e">dictIsRehashing</span>(d)) <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">while</span> (n<span style="color:#f92672">--</span> <span style="color:#f92672">&amp;&amp;</span> d<span style="color:#f92672">-&gt;</span>ht[<span style="color:#ae81ff">0</span>].used <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span>) {
+</span></span><span style="display:flex;"><span>        dictEntry <span style="color:#f92672">*</span>de, <span style="color:#f92672">*</span>nextde;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">/* Note that rehashidx can&#39;t overflow as we are sure there are more
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">         * elements because ht[0].used != 0 */</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">assert</span>(d<span style="color:#f92672">-&gt;</span>ht[<span style="color:#ae81ff">0</span>].size <span style="color:#f92672">&gt;</span> (<span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">long</span>) d<span style="color:#f92672">-&gt;</span>rehashidx);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">while</span> (d<span style="color:#f92672">-&gt;</span>ht[<span style="color:#ae81ff">0</span>].table[d<span style="color:#f92672">-&gt;</span>rehashidx] <span style="color:#f92672">==</span> NULL) {
+</span></span><span style="display:flex;"><span>            d<span style="color:#f92672">-&gt;</span>rehashidx<span style="color:#f92672">++</span>;
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (<span style="color:#f92672">--</span>empty_visits <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>) <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        de <span style="color:#f92672">=</span> d<span style="color:#f92672">-&gt;</span>ht[<span style="color:#ae81ff">0</span>].table[d<span style="color:#f92672">-&gt;</span>rehashidx];
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">/* Move all the keys in this bucket from the old to the new hash HT */</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">while</span> (de) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">uint64_t</span> h;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            nextde <span style="color:#f92672">=</span> de<span style="color:#f92672">-&gt;</span>next;
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">/* Get the index in the new hash table */</span>
+</span></span><span style="display:flex;"><span>            h <span style="color:#f92672">=</span> <span style="color:#a6e22e">dictHashKey</span>(d, de<span style="color:#f92672">-&gt;</span>key) <span style="color:#f92672">&amp;</span> d<span style="color:#f92672">-&gt;</span>ht[<span style="color:#ae81ff">1</span>].sizemask;
+</span></span><span style="display:flex;"><span>            de<span style="color:#f92672">-&gt;</span>next <span style="color:#f92672">=</span> d<span style="color:#f92672">-&gt;</span>ht[<span style="color:#ae81ff">1</span>].table[h];
+</span></span><span style="display:flex;"><span>            d<span style="color:#f92672">-&gt;</span>ht[<span style="color:#ae81ff">1</span>].table[h] <span style="color:#f92672">=</span> de;
+</span></span><span style="display:flex;"><span>            d<span style="color:#f92672">-&gt;</span>ht[<span style="color:#ae81ff">0</span>].used<span style="color:#f92672">--</span>;
+</span></span><span style="display:flex;"><span>            d<span style="color:#f92672">-&gt;</span>ht[<span style="color:#ae81ff">1</span>].used<span style="color:#f92672">++</span>;
+</span></span><span style="display:flex;"><span>            de <span style="color:#f92672">=</span> nextde;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        d<span style="color:#f92672">-&gt;</span>ht[<span style="color:#ae81ff">0</span>].table[d<span style="color:#f92672">-&gt;</span>rehashidx] <span style="color:#f92672">=</span> NULL;
+</span></span><span style="display:flex;"><span>        d<span style="color:#f92672">-&gt;</span>rehashidx<span style="color:#f92672">++</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/* Check if we already rehashed the whole table... */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (d<span style="color:#f92672">-&gt;</span>ht[<span style="color:#ae81ff">0</span>].used <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">zfree</span>(d<span style="color:#f92672">-&gt;</span>ht[<span style="color:#ae81ff">0</span>].table);
+</span></span><span style="display:flex;"><span>        d<span style="color:#f92672">-&gt;</span>ht[<span style="color:#ae81ff">0</span>] <span style="color:#f92672">=</span> d<span style="color:#f92672">-&gt;</span>ht[<span style="color:#ae81ff">1</span>];
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">_dictReset</span>(<span style="color:#f92672">&amp;</span>d<span style="color:#f92672">-&gt;</span>ht[<span style="color:#ae81ff">1</span>]);
+</span></span><span style="display:flex;"><span>        d<span style="color:#f92672">-&gt;</span>rehashidx <span style="color:#f92672">=</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/* More to rehash... */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="跳跃表">
+  跳跃表
+  <a class="anchor" href="#%e8%b7%b3%e8%b7%83%e8%a1%a8">#</a>
+</h3>
+<p>是有序集合的底层实现之一。</p>
+<p>跳跃表是基于多指针有序链表实现的，可以看成多个有序链表。</p>
+<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/984d4bdee0274ccdbb0527bc98ef7056.png" width="600px"/> </div><br>
+<p>在查找时，从上层指针开始查找，找到对应的区间之后再到下一层去查找。下图演示了查找 22 的过程。</p>
+<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/f107e0fa88be47f1b0e8e25a155753c0.png" width="600px"/> </div><br>
+<p>与红黑树等平衡树相比，跳跃表具有以下优点：</p>
+<ul>
+<li>插入速度非常快速，因为不需要进行旋转等操作来维护平衡性；</li>
+<li>更容易实现；</li>
+<li>支持无锁操作。</li>
+</ul>
+<h2 id="四使用场景">
+  四、使用场景
+  <a class="anchor" href="#%e5%9b%9b%e4%bd%bf%e7%94%a8%e5%9c%ba%e6%99%af">#</a>
+</h2>
+<h3 id="计数器">
+  计数器
+  <a class="anchor" href="#%e8%ae%a1%e6%95%b0%e5%99%a8">#</a>
+</h3>
+<p>可以对 String 进行自增自减运算，从而实现计数器功能。</p>
+<p>Redis 这种内存型数据库的读写性能非常高，很适合存储频繁读写的计数量。</p>
+<h3 id="缓存">
+  缓存
+  <a class="anchor" href="#%e7%bc%93%e5%ad%98">#</a>
+</h3>
+<p>将热点数据放到内存中，设置内存的最大使用量以及淘汰策略来保证缓存的命中率。</p>
+<h3 id="查找表">
+  查找表
+  <a class="anchor" href="#%e6%9f%a5%e6%89%be%e8%a1%a8">#</a>
+</h3>
+<p>例如 DNS 记录就很适合使用 Redis 进行存储。</p>
+<p>查找表和缓存类似，也是利用了 Redis 快速的查找特性。但是查找表的内容不能失效，而缓存的内容可以失效，因为缓存不作为可靠的数据来源。</p>
+<h3 id="消息队列">
+  消息队列
+  <a class="anchor" href="#%e6%b6%88%e6%81%af%e9%98%9f%e5%88%97">#</a>
+</h3>
+<p>List 是一个双向链表，可以通过 lpush 和 rpop 写入和读取消息</p>
+<p>不过最好使用 Kafka、RabbitMQ 等消息中间件。</p>
+<h3 id="会话缓存">
+  会话缓存
+  <a class="anchor" href="#%e4%bc%9a%e8%af%9d%e7%bc%93%e5%ad%98">#</a>
+</h3>
+<p>可以使用 Redis 来统一存储多台应用服务器的会话信息。</p>
+<p>当应用服务器不再存储用户的会话信息，也就不再具有状态，一个用户可以请求任意一个应用服务器，从而更容易实现高可用性以及可伸缩性。</p>
+<h3 id="分布式锁实现">
+  分布式锁实现
+  <a class="anchor" href="#%e5%88%86%e5%b8%83%e5%bc%8f%e9%94%81%e5%ae%9e%e7%8e%b0">#</a>
+</h3>
+<p>在分布式场景下，无法使用单机环境下的锁来对多个节点上的进程进行同步。</p>
+<p>可以使用 Redis 自带的 SETNX 命令实现分布式锁，除此之外，还可以使用官方提供的 RedLock 分布式锁实现。</p>
+<h3 id="其它">
+  其它
+  <a class="anchor" href="#%e5%85%b6%e5%ae%83">#</a>
+</h3>
+<p>Set 可以实现交集、并集等操作，从而实现共同好友等功能。</p>
+<p>ZSet 可以实现有序性操作，从而实现排行榜等功能。</p>
+<h2 id="五redis-与-memcached">
+  五、Redis 与 Memcached
+  <a class="anchor" href="#%e4%ba%94redis-%e4%b8%8e-memcached">#</a>
+</h2>
+<p>两者都是非关系型内存键值数据库，主要有以下不同：</p>
+<h3 id="数据类型">
+  数据类型
+  <a class="anchor" href="#%e6%95%b0%e6%8d%ae%e7%b1%bb%e5%9e%8b">#</a>
+</h3>
+<p>Memcached 仅支持字符串类型，而 Redis 支持五种不同的数据类型，可以更灵活地解决问题。</p>
+<h3 id="数据持久化">
+  数据持久化
+  <a class="anchor" href="#%e6%95%b0%e6%8d%ae%e6%8c%81%e4%b9%85%e5%8c%96">#</a>
+</h3>
+<p>Redis 支持两种持久化策略：RDB 快照和 AOF 日志，而 Memcached 不支持持久化。</p>
+<h3 id="分布式">
+  分布式
+  <a class="anchor" href="#%e5%88%86%e5%b8%83%e5%bc%8f">#</a>
+</h3>
+<p>Memcached 不支持分布式，只能通过在客户端使用一致性哈希来实现分布式存储，这种方式在存储和查询时都需要先在客户端计算一次数据所在的节点。</p>
+<p>Redis Cluster 实现了分布式的支持。</p>
+<h3 id="内存管理机制">
+  内存管理机制
+  <a class="anchor" href="#%e5%86%85%e5%ad%98%e7%ae%a1%e7%90%86%e6%9c%ba%e5%88%b6">#</a>
+</h3>
+<ul>
+<li>
+<p>在 Redis 中，并不是所有数据都一直存储在内存中，可以将一些很久没用的 value 交换到磁盘，而 Memcached 的数据则会一直在内存中。</p>
+</li>
+<li>
+<p>Memcached 将内存分割成特定长度的块来存储数据，以完全解决内存碎片的问题。但是这种方式会使得内存的利用率不高，例如块的大小为 128 bytes，只存储 100 bytes 的数据，那么剩下的 28 bytes 就浪费掉了。</p>
+</li>
+</ul>
+<h2 id="六键的过期时间">
+  六、键的过期时间
+  <a class="anchor" href="#%e5%85%ad%e9%94%ae%e7%9a%84%e8%bf%87%e6%9c%9f%e6%97%b6%e9%97%b4">#</a>
+</h2>
+<p>Redis 可以为每个键设置过期时间，当键过期时，会自动删除该键。</p>
+<p>对于散列表这种容器，只能为整个键设置过期时间（整个散列表），而不能为键里面的单个元素设置过期时间。</p>
+<h2 id="七数据淘汰策略">
+  七、数据淘汰策略
+  <a class="anchor" href="#%e4%b8%83%e6%95%b0%e6%8d%ae%e6%b7%98%e6%b1%b0%e7%ad%96%e7%95%a5">#</a>
+</h2>
+<p>可以设置内存最大使用量，当内存使用量超出时，会施行数据淘汰策略。</p>
+<p>Redis 具体有 6 种淘汰策略：</p>
+<table>
+<thead>
+<tr>
+<th>策略</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>volatile-lru</td>
+<td>从已设置过期时间的数据集中挑选最近最少使用的数据淘汰</td>
+</tr>
+<tr>
+<td>volatile-ttl</td>
+<td>从已设置过期时间的数据集中挑选将要过期的数据淘汰</td>
+</tr>
+<tr>
+<td>volatile-random</td>
+<td>从已设置过期时间的数据集中任意选择数据淘汰</td>
+</tr>
+<tr>
+<td>allkeys-lru</td>
+<td>从所有数据集中挑选最近最少使用的数据淘汰</td>
+</tr>
+<tr>
+<td>allkeys-random</td>
+<td>从所有数据集中任意选择数据进行淘汰</td>
+</tr>
+<tr>
+<td>noeviction</td>
+<td>禁止驱逐数据</td>
+</tr>
+</tbody>
+</table>
+<p>作为内存数据库，出于对性能和内存消耗的考虑，Redis 的淘汰算法实际实现上并非针对所有 key，而是抽样一小部分并且从中选出被淘汰的 key。</p>
+<p>使用 Redis 缓存数据时，为了提高缓存命中率，需要保证缓存数据都是热点数据。可以将内存最大使用量设置为热点数据占用的内存量，然后启用 allkeys-lru 淘汰策略，将最近最少使用的数据淘汰。</p>
+<p>Redis 4.0 引入了 volatile-lfu 和 allkeys-lfu 淘汰策略，LFU 策略通过统计访问频率，将访问频率最少的键值对淘汰。</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/9caaeca2cfea2b23cc8f97741c37ea0009f1a382" title='最后修改者 weibin | December 26, 2022' target="_blank" rel="noopener">
+      <img src="/keeplearning/svg/calendar.svg" class="book-icon" alt="Calendar" />
+      <span>December 26, 2022</span>
+    </a>
+  </div>
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/book.keeplearning/docs/redis/redis1.md" target="_blank" rel="noopener">
+      <img src="/keeplearning/svg/edit.svg" class="book-icon" alt="Edit" />
+      <span>编辑本页</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#redis一">Redis（一）</a>
+      <ul>
+        <li><a href="#一概述">一、概述</a></li>
+        <li><a href="#二数据类型">二、数据类型</a>
+          <ul>
+            <li><a href="#string">STRING</a></li>
+            <li><a href="#list">LIST</a></li>
+            <li><a href="#set">SET</a></li>
+            <li><a href="#hash">HASH</a></li>
+            <li><a href="#zset">ZSET</a></li>
+          </ul>
+        </li>
+        <li><a href="#三数据结构">三、数据结构</a>
+          <ul>
+            <li><a href="#字典">字典</a></li>
+            <li><a href="#跳跃表">跳跃表</a></li>
+          </ul>
+        </li>
+        <li><a href="#四使用场景">四、使用场景</a>
+          <ul>
+            <li><a href="#计数器">计数器</a></li>
+            <li><a href="#缓存">缓存</a></li>
+            <li><a href="#查找表">查找表</a></li>
+            <li><a href="#消息队列">消息队列</a></li>
+            <li><a href="#会话缓存">会话缓存</a></li>
+            <li><a href="#分布式锁实现">分布式锁实现</a></li>
+            <li><a href="#其它">其它</a></li>
+          </ul>
+        </li>
+        <li><a href="#五redis-与-memcached">五、Redis 与 Memcached</a>
+          <ul>
+            <li><a href="#数据类型">数据类型</a></li>
+            <li><a href="#数据持久化">数据持久化</a></li>
+            <li><a href="#分布式">分布式</a></li>
+            <li><a href="#内存管理机制">内存管理机制</a></li>
+          </ul>
+        </li>
+        <li><a href="#六键的过期时间">六、键的过期时间</a></li>
+        <li><a href="#七数据淘汰策略">七、数据淘汰策略</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
