@@ -18,11 +18,11 @@ title: "网络概述"
 
 ## ISP
 
-互联网服务提供商 ISP 可以从互联网管理机构获得许多 IP 地址，同时拥有通信线路以及路由器等联网设备，个人或机构向 ISP 缴纳一定的费用就可以接入互联网。
+互联网服务提供商 ISP（Internet Service Provider） 可以从互联网管理机构获得许多 IP 地址，同时拥有通信线路以及路由器等联网设备，个人或机构向 ISP 缴纳一定的费用就可以接入互联网。
 
 ![ISP](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/cd45b18ae3bf4d2ebb149cff2ceead6b.png)
 
-目前的互联网是一种多层次 ISP 结构，ISP 根据覆盖面积的大小分为第一层 ISP、区域 ISP 和接入 ISP。互联网交换点 IXP 允许两个 ISP 直接相连而不用经过第三个 ISP。
+目前的互联网是一种多层次 ISP 结构，ISP 根据覆盖面积的大小分为第一层 ISP、区域 ISP 和接入 ISP。互联网交换点 IXP（Internet Exchange Point） 允许两个 ISP 直接相连而不用经过第三个 ISP。
 
 ![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/2d51d56777b2465da286d9c65f8df01a.png)
 

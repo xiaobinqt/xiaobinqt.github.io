@@ -12,7 +12,7 @@ title: "Linux（一）"
 
 # Linux（一）
 
-<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/5c91b8b49b19475cb42bc505e1e41fbb.png"/> </div>
+[//]: # (<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/5c91b8b49b19475cb42bc505e1e41fbb.png"/> </div>)
 
 ## 常用操作以及概念
 
@@ -181,7 +181,7 @@ GPT 第 1 个区块记录了主要开机记录（MBR），紧接着是 33 个区
 
 GPT 没有扩展分区概念，都是主分区，每个 LBA 可以分 4 个分区，因此总共可以分 4 * 32 = 128 个分区。
 
-MBR 不支持 2.2 TB 以上的硬盘，GPT 则最多支持到 2^33 TB = 8 ZB。
+MBR 不支持 2.2 TB 以上的硬盘，GPT 则最多支持到 2<sup>33</sup> TB = 8 ZB。
 
 ![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/19aaac15173b43e4af24eb7d0689ba52.png)
 
