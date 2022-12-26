@@ -1,5 +1,5 @@
 ---
-weight: 3
+weight: 5
 
 bookFlatSection: true
 
@@ -88,11 +88,11 @@ HTTPS 并不是新协议，而是让 HTTP 先和 SSL（Secure Sockets Layer）�
 + 使用非对称密钥加密方式，传输对称密钥加密方式所需要的 Secret Key，从而保证安全性;
 + 获取到 Secret Key 后，再使用对称密钥加密方式进行通信，从而保证效率。（下图中的 Session Key 就是 Secret Key）
 
-![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/1f68b72ffccb4c70b22a32224740a570.png)
+<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/1f68b72ffccb4c70b22a32224740a570.png" width="600"/> </div><br>
 
 ### 认证
 
-通过使用 证书 来对通信方进行认证。
+通过使用 **证书** 来对通信方进行认证。
 
 数字证书认证机构（CA，Certificate Authority）是客户端与服务器双方都可信赖的第三方机构。
 
@@ -137,7 +137,7 @@ HTTP/2.0 将报文分成 HEADERS 帧和 DATA 帧，它们都是二进制格式�
 + 消息（Message）是与逻辑请求或响应对应的完整的一系列帧。
 + 帧（Frame）是最小的通信单位，来自不同数据流的帧可以交错发送，然后再根据每个帧头的数据流标识符重新组装。
 
-![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/afd8a3b361e04a049121cae535381e1b.png)
+<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/afd8a3b361e04a049121cae535381e1b.png" width="600"/> </div>
 
 ### 服务端推送
 
@@ -153,7 +153,7 @@ HTTP/2.0 要求客户端和服务器同时维护和更新一个包含之前见�
 
 不仅如此，HTTP/2.0 也使用 Huffman 编码对首部字段进行压缩。
 
-![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/3da44c14ea194bc2b17372109f3a97c0.png)
+<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/3da44c14ea194bc2b17372109f3a97c0.png" width="600"/> </div>
 
 ## HTTP/1.1 新特性
 
@@ -165,7 +165,35 @@ HTTP/2.0 要求客户端和服务器同时维护和更新一个包含之前见�
 + 支持分块传输编码
 + 新增缓存处理指令 max-age
 
+## 参考资料
 
+- 上野宣. 图解 HTTP[M]. 人民邮电出版社, 2014.
+- [MDN : HTTP](https://developer.mozilla.org/en-US/docs/Web/HTTP)
+- [HTTP/2 简介](https://developers.google.com/web/fundamentals/performance/http2/?hl=zh-cn)
+- [htmlspecialchars](http://php.net/manual/zh/function.htmlspecialchars.php)
+- [Difference between file URI and URL in java](http://java2db.com/java-io/how-to-get-and-the-difference-between-file-uri-and-url-in-java)
+- [How to Fix SQL Injection Using Java PreparedStatement & CallableStatement](https://software-security.sans.org/developer-how-to/fix-sql-injection-in-java-using-prepared-callable-statement)
+- [浅谈 HTTP 中 Get 与 Post 的区别](https://www.cnblogs.com/hyddd/archive/2009/03/31/1426026.html)
+- [Are http:// and www really necessary?](https://www.webdancers.com/are-http-and-www-necesary/)
+- [HTTP (HyperText Transfer Protocol)](https://www.ntu.edu.sg/home/ehchua/programming/webprogramming/HTTP_Basics.html)
+- [Web-VPN: Secure Proxies with SPDY & Chrome](https://www.igvita.com/2011/12/01/web-vpn-secure-proxies-with-spdy-chrome/)
+- [File:HTTP persistent connection.svg](http://en.wikipedia.org/wiki/File:HTTP_persistent_connection.svg)
+- [Proxy server](https://en.wikipedia.org/wiki/Proxy_server)
+- [What Is This HTTPS/SSL Thing And Why Should You Care?](https://www.x-cart.com/blog/what-is-https-and-ssl.html)
+- [What is SSL Offloading?](https://securebox.comodo.com/ssl-sniffing/ssl-offloading/)
+- [Sun Directory Server Enterprise Edition 7.0 Reference - Key Encryption](https://docs.oracle.com/cd/E19424-01/820-4811/6ng8i26bn/index.html)
+- [An Introduction to Mutual SSL Authentication](https://www.codeproject.com/Articles/326574/An-Introduction-to-Mutual-SSL-Authentication)
+- [The Difference Between URLs and URIs](https://danielmiessler.com/study/url-uri/)
+- [Cookie 与 Session 的区别](https://juejin.im/entry/5766c29d6be3ff006a31b84e#comment)
+- [COOKIE 和 SESSION 有什么区别](https://www.zhihu.com/question/19786827)
+- [Cookie/Session 的机制与安全](https://harttle.land/2015/08/10/cookie-session.html)
+- [HTTPS 证书原理](https://shijianan.com/2017/06/11/https/)
+- [What is the difference between a URI, a URL and a URN?](https://stackoverflow.com/questions/176264/what-is-the-difference-between-a-uri-a-url-and-a-urn)
+- [XMLHttpRequest](https://developer.mozilla.org/zh-CN/docs/Web/API/XMLHttpRequest)
+- [XMLHttpRequest (XHR) Uses Multiple Packets for HTTP POST?](https://blog.josephscott.org/2009/08/27/xmlhttprequest-xhr-uses-multiple-packets-for-http-post/)
+- [Symmetric vs. Asymmetric Encryption – What are differences?](https://www.ssl2buy.com/wiki/symmetric-vs-asymmetric-encryption-what-are-differences)
+- [Web 性能优化与 HTTP/2](https://www.kancloud.cn/digest/web-performance-http2)
+- [HTTP/2 简介](https://developers.google.com/web/fundamentals/performance/http2/?hl=zh-cn)
 
 
 

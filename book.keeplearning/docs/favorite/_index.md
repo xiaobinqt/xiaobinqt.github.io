@@ -108,4 +108,5 @@ title: "收藏夹"
 + [可能是最用心的「Go学习建议」](https://mp.weixin.qq.com/s/DIIpLUrGj2_-7Qd6vu0kuA)
 + [编程书籍的整理和收集](https://github.com/KeKe-Li/books)
 + [Go 书籍](https://www.aliyundrive.com/s/UXNyrpuVXP1/folder/62047b990bff5f1a5d3a4c069b551e457c686687)
++ [Concurrency in Go](https://edu.anarcho-copy.org/Programming%20Languages/Go/Concurrency%20in%20Go.pdf)
 

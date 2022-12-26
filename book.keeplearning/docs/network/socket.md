@@ -1,5 +1,5 @@
 ---
-weight: 4
+weight: 7
 
 bookFlatSection: true
 
@@ -315,7 +315,17 @@ poll 没有最大描述符数量的限制，如果平台支持并且对实时性
 
 需要监控的描述符状态变化多，而且都是非常短暂的，也没有必要使用 epoll。因为 epoll 中的所有描述符都存储在内核中，造成每次需要对描述符的状态改变都需要通过 epoll_ctl() 进行系统调用，频繁系统调用降低效率。并且 epoll 的描述符存储在内核，不容易调试。
 
+## 参考资料
 
+- Stevens W R, Fenner B, Rudoff A M. UNIX network programming[M]. Addison-Wesley Professional, 2004.
+- http://man7.org/linux/man-pages/man2/select.2.html
+- http://man7.org/linux/man-pages/man2/poll.2.html
+- [Boost application performance using asynchronous I/O](https://www.ibm.com/developerworks/linux/library/l-async/)
+- [Synchronous and Asynchronous I/O](https://msdn.microsoft.com/en-us/library/windows/desktop/aa365683(v=vs.85).aspx)
+- [Linux IO 模式及 select、poll、epoll 详解](https://segmentfault.com/a/1190000003063859)
+- [poll vs select vs event-based](https://daniel.haxx.se/docs/poll-vs-select.html)
+- [select / poll / epoll: practical difference for system architects](http://www.ulduzsoft.com/2014/01/select-poll-epoll-practical-difference-for-system-architects/)
+- [Browse the source code of userspace/glibc/sysdeps/unix/sysv/linux/ online](https://code.woboq.org/userspace/glibc/sysdeps/unix/sysv/linux/)
 
 
 
