@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="正则表达式 # 一、概述 # 正则表达式用于文本内容的查找和替换。
+正则表达式内置于其它语言或者软件产品中，它本身不是一种语言或者软件。
+正则表达式在线工具
+二、匹配单个字符 # . 可以用来匹配任何的单个字符，但是在绝大多数实现里面，不能匹配换行符；
+. 是元字符，表示它有特殊的含义，而不是字符本身的含义。如果需要匹配 . ，那么要用 \ 进行转义，即在 . 前面加上 \ 。
+正则表达式一般是区分大小写的，但也有些实现不区分。
+正则表达式
+C.C2018 匹配结果
+My name is CyC2018 .
+三、匹配一组字符 # [ ] 定义一个字符集合；
+0-9、a-z 定义了一个字符区间，区间使用 ASCII 码来确定，字符区间在 [ ] 中使用。
+- 只有在 [ ] 之间才是元字符，在 [ ] 之外就是一个普通字符；
+^ 在 [ ] 中是取非操作。
+应用
+匹配以 abc 为开头，并且最后一个字母不为数字的字符串：
+正则表达式
+abc[^0-9] 匹配结果
+abcd abc1 abc2 四、使用元字符 # 匹配空白字符 # 元字符 说明 [\b] 回退（删除）一个字符 \f 换页符 \n 换行符 \r 回车符 \t 制表符 \v 垂直制表符 \r\n 是 Windows 中的文本行结束标签，在 Unix/Linux 则是 \n。">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="正则表达式" />
+<meta property="og:description" content="正则表达式 # 一、概述 # 正则表达式用于文本内容的查找和替换。
+正则表达式内置于其它语言或者软件产品中，它本身不是一种语言或者软件。
+正则表达式在线工具
+二、匹配单个字符 # . 可以用来匹配任何的单个字符，但是在绝大多数实现里面，不能匹配换行符；
+. 是元字符，表示它有特殊的含义，而不是字符本身的含义。如果需要匹配 . ，那么要用 \ 进行转义，即在 . 前面加上 \ 。
+正则表达式一般是区分大小写的，但也有些实现不区分。
+正则表达式
+C.C2018 匹配结果
+My name is CyC2018 .
+三、匹配一组字符 # [ ] 定义一个字符集合；
+0-9、a-z 定义了一个字符区间，区间使用 ASCII 码来确定，字符区间在 [ ] 中使用。
+- 只有在 [ ] 之间才是元字符，在 [ ] 之外就是一个普通字符；
+^ 在 [ ] 中是取非操作。
+应用
+匹配以 abc 为开头，并且最后一个字母不为数字的字符串：
+正则表达式
+abc[^0-9] 匹配结果
+abcd abc1 abc2 四、使用元字符 # 匹配空白字符 # 元字符 说明 [\b] 回退（删除）一个字符 \f 换页符 \n 换行符 \r 回车符 \t 制表符 \v 垂直制表符 \r\n 是 Windows 中的文本行结束标签，在 Unix/Linux 则是 \n。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://example.com/keeplearning/docs/coding-practice/regex/" /><meta property="article:section" content="docs" />
+
+<meta property="article:modified_time" content="2022-12-26T11:35:58+08:00" />
+<title>正则表达式 | KeepLearning</title>
+<link rel="manifest" href="/keeplearning/manifest.json">
+<link rel="icon" href="/keeplearning/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/keeplearning/book.min.44ab80b6e9fbffc4b56fa0525dd4af874d4d533ab2a985226782d7cdc8d9fd15.css" integrity="sha256-RKuAtun7/8S1b6BSXdSvh01NUzqyqYUiZ4LXzcjZ/RU=" crossorigin="anonymous">
+  <script defer src="/keeplearning/flexsearch.min.js"></script>
+  <script defer src="/keeplearning/zh.search.min.95901f155d7e43edd528f3257a6368bfaa892682cfc3316ac1c60fe3afd3505b.js" integrity="sha256-lZAfFV1&#43;Q&#43;3VKPMlemNov6qJJoLPwzFqwcYP46/TUFs=" crossorigin="anonymous"></script>
+
+  <script defer src="/keeplearning/sw.min.1adfb566b92ba83fd11679d786b02cc6ef24134c579bce6902d173c28305155f.js" integrity="sha256-Gt&#43;1ZrkrqD/RFnnXhrAsxu8kE0xXm85pAtFzwoMFFV8=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/keeplearning/"><span>KeepLearning</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+
+
+
+  
+<ul>
+  
+  <li>
+    <a href="https://github.com/xiaobinqt"  target="_blank" rel="noopener">
+        GitHub
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <ul>
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-3110560962cac834dcd3aead95e804a4" class="toggle"  />
+    <label for="section-3110560962cac834dcd3aead95e804a4" class="flex justify-between">
+      <a role="button" class="">网络</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/network/overview/" class="">网络概述</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/network/physical-layer/" class="">物理层</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/network/link-layer/" class="">链路层</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/network/network-layer/" class="">网络层</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/network/transport-layer/" class="">传输层</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/network/application-layer/" class="">应用层</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/network/socket/" class="">Socket</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-9caa6ae5221742cea46cb40ee3162cf1" class="toggle"  />
+    <label for="section-9caa6ae5221742cea46cb40ee3162cf1" class="flex justify-between">
+      <a role="button" class="">HTTP</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/http/http1/" class="">HTTP（一）</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/http/http2/" class="">HTTP（二）</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/http/http3/" class="">HTTP（三）</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-708f0dc81b7f5419c74b48a85bd8146c" class="toggle"  />
+    <label for="section-708f0dc81b7f5419c74b48a85bd8146c" class="flex justify-between">
+      <a role="button" class="">操作系统</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/os/instruction-set_arch/" class="">指令集</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/os/overview/" class="">操作系统概述</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/os/process-manage/" class="">进程管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/os/deadlock/" class="">死锁</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/os/memory-manage/" class="">内存管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/os/device-manage/" class="">设备管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/os/link/" class="">链接</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-e66e2e478c81786f553bd82d3931b216" class="toggle"  />
+    <label for="section-e66e2e478c81786f553bd82d3931b216" class="flex justify-between">
+      <a role="button" class="">MySQL</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/mysql/dbs-theory/" class="">数据库系统原理（一）</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/mysql/dbs-theory2/" class="">数据库系统原理（二）</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/mysql/sql-grammar/" class="">SQL 语法</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/mysql/mysql-faq1/" class="">MySQL</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-a27d7ef673b519721b4909eba7547282" class="toggle"  />
+    <label for="section-a27d7ef673b519721b4909eba7547282" class="flex justify-between">
+      <a role="button" class="">Redis</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/redis/redis1/" class="">Redis（一）</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/redis/redis2/" class="">Redis（二）</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-6ae1a891fb3a3f71d71273fc61b29b76" class="toggle"  />
+    <label for="section-6ae1a891fb3a3f71d71273fc61b29b76" class="flex justify-between">
+      <a role="button" class="">Linux</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/linux/linux1/" class="">Linux（一）</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/linux/linux2/" class="">Linux（二）</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/linux/linux3/" class="">Linux（三）</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-2e68b18a2908c2a0b6e57142acd3643f" class="toggle"  />
+    <label for="section-2e68b18a2908c2a0b6e57142acd3643f" class="flex justify-between">
+      <a role="button" class="">系统设计</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/system-design/overview/" class="">系统设计基础</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/system-design/distributed/" class="">分布式</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/system-design/cluster/" class="">集群</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/system-design/attack/" class="">攻击技术</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/system-design/cache/" class="">缓存</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/system-design/queue-message/" class="">消息队列</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-caceb4c0534f60c75e13f33d748c0f33" class="toggle" checked />
+    <label for="section-caceb4c0534f60c75e13f33d748c0f33" class="flex justify-between">
+      <a role="button" class="">编码实践</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/coding-practice/regex/" class="active">正则表达式</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/coding-practice/docker/" class="">Docker</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/coding-practice/git/" class="">Git</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/coding-practice/code-readability/" class="">代码可读性</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/favorite/" class="">收藏夹</a>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/keeplearning/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>正则表达式</strong>
+
+  <label for="toc-control">
+    
+    <img src="/keeplearning/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#正则表达式">正则表达式</a>
+      <ul>
+        <li><a href="#一概述">一、概述</a></li>
+        <li><a href="#二匹配单个字符">二、匹配单个字符</a></li>
+        <li><a href="#三匹配一组字符">三、匹配一组字符</a></li>
+        <li><a href="#四使用元字符">四、使用元字符</a>
+          <ul>
+            <li><a href="#匹配空白字符">匹配空白字符</a></li>
+            <li><a href="#匹配特定的字符">匹配特定的字符</a></li>
+          </ul>
+        </li>
+        <li><a href="#五重复匹配">五、重复匹配</a></li>
+        <li><a href="#六位置匹配">六、位置匹配</a>
+          <ul>
+            <li><a href="#单词边界">单词边界</a></li>
+            <li><a href="#字符串边界">字符串边界</a></li>
+          </ul>
+        </li>
+        <li><a href="#七使用子表达式">七、使用子表达式</a></li>
+        <li><a href="#八回溯引用">八、回溯引用</a>
+          <ul>
+            <li><a href="#替换">替换</a></li>
+            <li><a href="#大小写转换">大小写转换</a></li>
+          </ul>
+        </li>
+        <li><a href="#九前后查找">九、前后查找</a></li>
+        <li><a href="#十嵌入条件">十、嵌入条件</a>
+          <ul>
+            <li><a href="#回溯引用条件">回溯引用条件</a></li>
+            <li><a href="#前后查找条件">前后查找条件</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown"><h1 id="正则表达式">
+  正则表达式
+  <a class="anchor" href="#%e6%ad%a3%e5%88%99%e8%a1%a8%e8%be%be%e5%bc%8f">#</a>
+</h1>
+<h2 id="一概述">
+  一、概述
+  <a class="anchor" href="#%e4%b8%80%e6%a6%82%e8%bf%b0">#</a>
+</h2>
+<p>正则表达式用于文本内容的查找和替换。</p>
+<p>正则表达式内置于其它语言或者软件产品中，它本身不是一种语言或者软件。</p>
+<p>
+  <a href="https://regexr.com/">正则表达式在线工具</a></p>
+<h2 id="二匹配单个字符">
+  二、匹配单个字符
+  <a class="anchor" href="#%e4%ba%8c%e5%8c%b9%e9%85%8d%e5%8d%95%e4%b8%aa%e5%ad%97%e7%ac%a6">#</a>
+</h2>
+<p><strong>.</strong>   可以用来匹配任何的单个字符，但是在绝大多数实现里面，不能匹配换行符；</p>
+<p><strong>.</strong>   是元字符，表示它有特殊的含义，而不是字符本身的含义。如果需要匹配 <code>.</code> ，那么要用 \ 进行转义，即在 <code>.</code> 前面加上 \ 。</p>
+<p>正则表达式一般是区分大小写的，但也有些实现不区分。</p>
+<p><strong>正则表达式</strong></p>
+<pre tabindex="0"><code>C.C2018
+</code></pre><p><strong>匹配结果</strong></p>
+<p>My name is   <strong>CyC2018</strong>  .</p>
+<h2 id="三匹配一组字符">
+  三、匹配一组字符
+  <a class="anchor" href="#%e4%b8%89%e5%8c%b9%e9%85%8d%e4%b8%80%e7%bb%84%e5%ad%97%e7%ac%a6">#</a>
+</h2>
+<p><strong>[ ]</strong>   定义一个字符集合；</p>
+<p>0-9、a-z 定义了一个字符区间，区间使用 ASCII 码来确定，字符区间在 [ ] 中使用。</p>
+<p><strong>-</strong>   只有在 [ ] 之间才是元字符，在 [ ] 之外就是一个普通字符；</p>
+<p><strong>^</strong>   在 [ ] 中是取非操作。</p>
+<p><strong>应用</strong></p>
+<p>匹配以 abc 为开头，并且最后一个字母不为数字的字符串：</p>
+<p><strong>正则表达式</strong></p>
+<pre tabindex="0"><code>abc[^0-9]
+</code></pre><p><strong>匹配结果</strong></p>
+<ol>
+<li><strong>abcd</strong></li>
+<li>abc1</li>
+<li>abc2</li>
+</ol>
+<h2 id="四使用元字符">
+  四、使用元字符
+  <a class="anchor" href="#%e5%9b%9b%e4%bd%bf%e7%94%a8%e5%85%83%e5%ad%97%e7%ac%a6">#</a>
+</h2>
+<h3 id="匹配空白字符">
+  匹配空白字符
+  <a class="anchor" href="#%e5%8c%b9%e9%85%8d%e7%a9%ba%e7%99%bd%e5%ad%97%e7%ac%a6">#</a>
+</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">元字符</th>
+<th style="text-align:center">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">[\b]</td>
+<td style="text-align:center">回退（删除）一个字符</td>
+</tr>
+<tr>
+<td style="text-align:center">\f</td>
+<td style="text-align:center">换页符</td>
+</tr>
+<tr>
+<td style="text-align:center">\n</td>
+<td style="text-align:center">换行符</td>
+</tr>
+<tr>
+<td style="text-align:center">\r</td>
+<td style="text-align:center">回车符</td>
+</tr>
+<tr>
+<td style="text-align:center">\t</td>
+<td style="text-align:center">制表符</td>
+</tr>
+<tr>
+<td style="text-align:center">\v</td>
+<td style="text-align:center">垂直制表符</td>
+</tr>
+</tbody>
+</table>
+<p>\r\n 是 Windows 中的文本行结束标签，在 Unix/Linux 则是 \n。</p>
+<p>\r\n\r\n 可以匹配 Windows 下的空白行，因为它匹配两个连续的行尾标签，而这正是两条记录之间的空白行；</p>
+<h3 id="匹配特定的字符">
+  匹配特定的字符
+  <a class="anchor" href="#%e5%8c%b9%e9%85%8d%e7%89%b9%e5%ae%9a%e7%9a%84%e5%ad%97%e7%ac%a6">#</a>
+</h3>
+<h4 id="1-数字元字符">
+  1. 数字元字符
+  <a class="anchor" href="#1-%e6%95%b0%e5%ad%97%e5%85%83%e5%ad%97%e7%ac%a6">#</a>
+</h4>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">元字符</th>
+<th style="text-align:center">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">\d</td>
+<td style="text-align:center">数字字符，等价于 [0-9]</td>
+</tr>
+<tr>
+<td style="text-align:center">\D</td>
+<td style="text-align:center">非数字字符，等价于 [^0-9]</td>
+</tr>
+</tbody>
+</table>
+<h4 id="2-字母数字元字符">
+  2. 字母数字元字符
+  <a class="anchor" href="#2-%e5%ad%97%e6%af%8d%e6%95%b0%e5%ad%97%e5%85%83%e5%ad%97%e7%ac%a6">#</a>
+</h4>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">元字符</th>
+<th style="text-align:center">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">\w</td>
+<td style="text-align:center">大小写字母，下划线和数字，等价于 [a-zA-Z0-9_]</td>
+</tr>
+<tr>
+<td style="text-align:center">\W</td>
+<td style="text-align:center">对 \w 取非</td>
+</tr>
+</tbody>
+</table>
+<h4 id="3-空白字符元字符">
+  3. 空白字符元字符
+  <a class="anchor" href="#3-%e7%a9%ba%e7%99%bd%e5%ad%97%e7%ac%a6%e5%85%83%e5%ad%97%e7%ac%a6">#</a>
+</h4>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">元字符</th>
+<th style="text-align:center">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">\s</td>
+<td style="text-align:center">任何一个空白字符，等价于 [\f\n\r\t\v]</td>
+</tr>
+<tr>
+<td style="text-align:center">\S</td>
+<td style="text-align:center">对 \s 取非</td>
+</tr>
+</tbody>
+</table>
+<p>\x 匹配十六进制字符，\0 匹配八进制，例如 \xA 对应值为 10 的 ASCII 字符 ，即 \n。</p>
+<h2 id="五重复匹配">
+  五、重复匹配
+  <a class="anchor" href="#%e4%ba%94%e9%87%8d%e5%a4%8d%e5%8c%b9%e9%85%8d">#</a>
+</h2>
+<ul>
+<li><strong>+</strong>   匹配 1 个或者多个字符</li>
+<li>*<em>*</em>  * 匹配 0 个或者多个字符</li>
+<li><strong>?</strong>   匹配 0 个或者 1 个字符</li>
+</ul>
+<p><strong>应用</strong></p>
+<p>匹配邮箱地址。</p>
+<p><strong>正则表达式</strong></p>
+<pre tabindex="0"><code>[\w.]+@\w+\.\w+
+</code></pre><p>[\w.] 匹配的是字母数字或者 . ，在其后面加上 + ，表示匹配多次。在字符集合 [ ] 里，. 不是元字符；</p>
+<p><strong>匹配结果</strong></p>
+<p><strong>abc.def&lt;span&gt;@&lt;/span&gt;qq.com</strong></p>
+<ul>
+<li><strong>{n}</strong>   匹配 n 个字符</li>
+<li><strong>{m,n}</strong>   匹配 m~n 个字符</li>
+<li><strong>{m,}</strong>   至少匹配 m 个字符</li>
+</ul>
+<p>* 和 + 都是贪婪型元字符，会匹配尽可能多的内容。在后面加 ? 可以转换为懒惰型元字符，例如 *?、+? 和 {m,n}? 。</p>
+<p><strong>正则表达式</strong></p>
+<pre tabindex="0"><code>a.+c
+</code></pre><p><strong>匹配结果</strong></p>
+<p><strong>abcabcabc</strong></p>
+<p>由于 + 是贪婪型的，因此 .+ 会匹配更可能多的内容，所以会把整个 abcabcabc 文本都匹配，而不是只匹配前面的 abc 文本。用懒惰型可以实现匹配前面的。</p>
+<h2 id="六位置匹配">
+  六、位置匹配
+  <a class="anchor" href="#%e5%85%ad%e4%bd%8d%e7%bd%ae%e5%8c%b9%e9%85%8d">#</a>
+</h2>
+<h3 id="单词边界">
+  单词边界
+  <a class="anchor" href="#%e5%8d%95%e8%af%8d%e8%be%b9%e7%95%8c">#</a>
+</h3>
+<p><strong>\b</strong>   可以匹配一个单词的边界，边界是指位于 \w 和 \W 之间的位置；<strong>\B</strong> 匹配一个不是单词边界的位置。</p>
+<p>\b 只匹配位置，不匹配字符，因此 \babc\b 匹配出来的结果为 3 个字符。</p>
+<h3 id="字符串边界">
+  字符串边界
+  <a class="anchor" href="#%e5%ad%97%e7%ac%a6%e4%b8%b2%e8%be%b9%e7%95%8c">#</a>
+</h3>
+<p><strong>^</strong>   匹配整个字符串的开头，<strong>$</strong> 匹配结尾。</p>
+<p>^ 元字符在字符集合中用作求非，在字符集合外用作匹配字符串的开头。</p>
+<p>分行匹配模式（multiline）下，换行被当做字符串的边界。</p>
+<p><strong>应用</strong></p>
+<p>匹配代码中以 // 开始的注释行</p>
+<p><strong>正则表达式</strong></p>
+<pre tabindex="0"><code>^\s*\/\/.*$
+</code></pre><div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221225/8022fe792b514619b3d0cc0526b077d3.png"/> </div><br>
+<p><strong>匹配结果</strong></p>
+<ol>
+<li>public void fun() {</li>
+<li>          <strong>// 注释 1</strong></li>
+<li>     int a = 1;</li>
+<li>     int b = 2;</li>
+<li>          <strong>// 注释 2</strong></li>
+<li>     int c = a + b;</li>
+<li>}</li>
+</ol>
+<h2 id="七使用子表达式">
+  七、使用子表达式
+  <a class="anchor" href="#%e4%b8%83%e4%bd%bf%e7%94%a8%e5%ad%90%e8%a1%a8%e8%be%be%e5%bc%8f">#</a>
+</h2>
+<p>使用   <strong>( )</strong>   定义一个子表达式。子表达式的内容可以当成一个独立元素，即可以将它看成一个字符，并且使用 * 等元字符。</p>
+<p>子表达式可以嵌套，但是嵌套层次过深会变得很难理解。</p>
+<p><strong>正则表达式</strong></p>
+<pre tabindex="0"><code>(ab){2,}
+</code></pre><p><strong>匹配结果</strong></p>
+<p><strong>ababab</strong></p>
+<p><strong>|</strong>   是或元字符，它把左边和右边所有的部分都看成单独的两个部分，两个部分只要有一个匹配就行。</p>
+<p><strong>正则表达式</strong></p>
+<pre tabindex="0"><code>(19|20)\d{2}
+</code></pre><p><strong>匹配结果</strong></p>
+<ol>
+<li><strong>1900</strong></li>
+<li><strong>2010</strong></li>
+<li>1020</li>
+</ol>
+<p><strong>应用</strong></p>
+<p>匹配 IP 地址。</p>
+<p>IP 地址中每部分都是 0-255 的数字，用正则表达式匹配时以下情况是合法的：</p>
+<ul>
+<li>一位数字</li>
+<li>不以 0 开头的两位数字</li>
+<li>1 开头的三位数</li>
+<li>2 开头，第 2 位是 0-4 的三位数</li>
+<li>25 开头，第 3 位是 0-5 的三位数</li>
+</ul>
+<p><strong>正则表达式</strong></p>
+<pre tabindex="0"><code>((25[0-5]|(2[0-4]\d)|(1\d{2})|([1-9]\d)|(\d))\.){3}(25[0-5]|(2[0-4]\d)|(1\d{2})|([1-9]\d)|(\d))
+</code></pre><p><strong>匹配结果</strong></p>
+<ol>
+<li><strong>192.168.0.1</strong></li>
+<li>00.00.00.00</li>
+<li>555.555.555.555</li>
+</ol>
+<h2 id="八回溯引用">
+  八、回溯引用
+  <a class="anchor" href="#%e5%85%ab%e5%9b%9e%e6%ba%af%e5%bc%95%e7%94%a8">#</a>
+</h2>
+<p>回溯引用使用   **\n
+**   来引用某个子表达式，其中 n 代表的是子表达式的序号，从 1 开始。它和子表达式匹配的内容一致，比如子表达式匹配到 abc，那么回溯引用部分也需要匹配 abc 。</p>
+<p><strong>应用</strong></p>
+<p>匹配 HTML 中合法的标题元素。</p>
+<p><strong>正则表达式</strong></p>
+<p>\1 将回溯引用子表达式 (h[1-6]) 匹配的内容，也就是说必须和子表达式匹配的内容一致。</p>
+<pre tabindex="0"><code>&lt;(h[1-6])&gt;\w*?&lt;\/\1&gt;
+</code></pre><p><strong>匹配结果</strong></p>
+<ol>
+<li><strong>&lt;h1&gt;x&lt;/h1&gt;</strong></li>
+<li><strong>&lt;h2&gt;x&lt;/h2&gt;</strong></li>
+<li>&lt;h3&gt;x&lt;/h1&gt;</li>
+</ol>
+<h3 id="替换">
+  替换
+  <a class="anchor" href="#%e6%9b%bf%e6%8d%a2">#</a>
+</h3>
+<p>需要用到两个正则表达式。</p>
+<p><strong>应用</strong></p>
+<p>修改电话号码格式。</p>
+<p><strong>文本</strong></p>
+<p>313-555-1234</p>
+<p><strong>查找正则表达式</strong></p>
+<pre tabindex="0"><code>(\d{3})(-)(\d{3})(-)(\d{4})
+</code></pre><p><strong>替换正则表达式</strong></p>
+<p>在第一个子表达式查找的结果加上 () ，然后加一个空格，在第三个和第五个字表达式查找的结果中间加上 - 进行分隔。</p>
+<pre tabindex="0"><code>($1) $3-$5
+</code></pre><p><strong>结果</strong></p>
+<p>(313) 555-1234</p>
+<h3 id="大小写转换">
+  大小写转换
+  <a class="anchor" href="#%e5%a4%a7%e5%b0%8f%e5%86%99%e8%bd%ac%e6%8d%a2">#</a>
+</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">元字符</th>
+<th style="text-align:center">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">\l</td>
+<td style="text-align:center">把下个字符转换为小写</td>
+</tr>
+<tr>
+<td style="text-align:center">\u</td>
+<td style="text-align:center">把下个字符转换为大写</td>
+</tr>
+<tr>
+<td style="text-align:center">\L</td>
+<td style="text-align:center">把\L 和\E 之间的字符全部转换为小写</td>
+</tr>
+<tr>
+<td style="text-align:center">\U</td>
+<td style="text-align:center">把\U 和\E 之间的字符全部转换为大写</td>
+</tr>
+<tr>
+<td style="text-align:center">\E</td>
+<td style="text-align:center">结束\L 或者\U</td>
+</tr>
+</tbody>
+</table>
+<p><strong>应用</strong></p>
+<p>把文本的第二个和第三个字符转换为大写。</p>
+<p><strong>文本</strong></p>
+<p>abcd</p>
+<p><strong>查找</strong></p>
+<pre tabindex="0"><code>(\w)(\w{2})(\w)
+</code></pre><p><strong>替换</strong></p>
+<pre tabindex="0"><code>$1\U$2\E$3
+</code></pre><p><strong>结果</strong></p>
+<p>aBCd</p>
+<h2 id="九前后查找">
+  九、前后查找
+  <a class="anchor" href="#%e4%b9%9d%e5%89%8d%e5%90%8e%e6%9f%a5%e6%89%be">#</a>
+</h2>
+<p>前后查找规定了匹配的内容首尾应该匹配的内容，但是又不包含首尾匹配的内容。</p>
+<p>向前查找使用   **?=
+**   定义，它规定了尾部匹配的内容，这个匹配的内容在 ?= 之后定义。所谓向前查找，就是规定了一个匹配的内容，然后以这个内容为尾部向前面查找需要匹配的内容。向后匹配用 ?&lt;= 定义（注: JavaScript 不支持向后匹配，Java 对其支持也不完善）。</p>
+<p><strong>应用</strong></p>
+<p>查找出邮件地址 @ 字符前面的部分。</p>
+<p><strong>正则表达式</strong></p>
+<pre tabindex="0"><code>\w+(?=@)
+</code></pre><p><strong>结果</strong></p>
+<p><strong>abc</strong>  @qq.com</p>
+<p>对向前和向后查找取非，只要把 = 替换成 ! 即可，比如 (?=) 替换成 (?!) 。取非操作使得匹配那些首尾不符合要求的内容。</p>
+<h2 id="十嵌入条件">
+  十、嵌入条件
+  <a class="anchor" href="#%e5%8d%81%e5%b5%8c%e5%85%a5%e6%9d%a1%e4%bb%b6">#</a>
+</h2>
+<h3 id="回溯引用条件">
+  回溯引用条件
+  <a class="anchor" href="#%e5%9b%9e%e6%ba%af%e5%bc%95%e7%94%a8%e6%9d%a1%e4%bb%b6">#</a>
+</h3>
+<p>条件为某个子表达式是否匹配，如果匹配则需要继续匹配条件表达式后面的内容。</p>
+<p><strong>正则表达式</strong></p>
+<p>子表达式 (\() 匹配一个左括号，其后的 ? 表示匹配 0 个或者 1 个。 ?(1) 为条件，当子表达式 1 匹配时条件成立，需要执行 ) 匹配，也就是匹配右括号。</p>
+<pre tabindex="0"><code>(\()?abc(?(1)\))
+</code></pre><p><strong>结果</strong></p>
+<ol>
+<li><strong>(abc)</strong></li>
+<li><strong>abc</strong></li>
+<li>(abc</li>
+</ol>
+<h3 id="前后查找条件">
+  前后查找条件
+  <a class="anchor" href="#%e5%89%8d%e5%90%8e%e6%9f%a5%e6%89%be%e6%9d%a1%e4%bb%b6">#</a>
+</h3>
+<p>条件为定义的首尾是否匹配，如果匹配，则继续执行后面的匹配。注意，首尾不包含在匹配的内容中。</p>
+<p><strong>正则表达式</strong></p>
+<p>?(?=-) 为前向查找条件，只有在以 - 为前向查找的结尾能匹配 \d{5} ，才继续匹配 -\d{4} 。</p>
+<pre tabindex="0"><code>\d{5}(?(?=-)-\d{4})
+</code></pre><p><strong>结果</strong></p>
+<ol>
+<li><strong>11111</strong></li>
+<li>22222-</li>
+<li><strong>33333-4444</strong></li>
+</ol>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/9caaeca2cfea2b23cc8f97741c37ea0009f1a382" title='最后修改者 weibin | December 26, 2022' target="_blank" rel="noopener">
+      <img src="/keeplearning/svg/calendar.svg" class="book-icon" alt="Calendar" />
+      <span>December 26, 2022</span>
+    </a>
+  </div>
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/book.keeplearning/docs/coding-practice/regex.md" target="_blank" rel="noopener">
+      <img src="/keeplearning/svg/edit.svg" class="book-icon" alt="Edit" />
+      <span>编辑本页</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#正则表达式">正则表达式</a>
+      <ul>
+        <li><a href="#一概述">一、概述</a></li>
+        <li><a href="#二匹配单个字符">二、匹配单个字符</a></li>
+        <li><a href="#三匹配一组字符">三、匹配一组字符</a></li>
+        <li><a href="#四使用元字符">四、使用元字符</a>
+          <ul>
+            <li><a href="#匹配空白字符">匹配空白字符</a></li>
+            <li><a href="#匹配特定的字符">匹配特定的字符</a></li>
+          </ul>
+        </li>
+        <li><a href="#五重复匹配">五、重复匹配</a></li>
+        <li><a href="#六位置匹配">六、位置匹配</a>
+          <ul>
+            <li><a href="#单词边界">单词边界</a></li>
+            <li><a href="#字符串边界">字符串边界</a></li>
+          </ul>
+        </li>
+        <li><a href="#七使用子表达式">七、使用子表达式</a></li>
+        <li><a href="#八回溯引用">八、回溯引用</a>
+          <ul>
+            <li><a href="#替换">替换</a></li>
+            <li><a href="#大小写转换">大小写转换</a></li>
+          </ul>
+        </li>
+        <li><a href="#九前后查找">九、前后查找</a></li>
+        <li><a href="#十嵌入条件">十、嵌入条件</a>
+          <ul>
+            <li><a href="#回溯引用条件">回溯引用条件</a></li>
+            <li><a href="#前后查找条件">前后查找条件</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

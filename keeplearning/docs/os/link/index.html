@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content=" 链接 # 编译系统 # 以下是一个 hello.c 程序：
+#include &lt;stdio.h&gt; int main() { printf(&#34;hello, world\n&#34;); return 0; } 在 Unix 系统上，由编译器把源文件转换为目标文件。
+gcc -o hello hello.c 这个过程大致如下：
+预处理阶段：处理以 # 开头的预处理命令； 编译阶段：翻译成汇编文件； 汇编阶段：将汇编文件翻译成可重定位目标文件； 链接阶段：将可重定位目标文件和 printf.o 等单独预编译好的目标文件进行合并，得到最终的可执行目标文件。 静态链接 # 静态链接器以一组可重定位目标文件为输入，生成一个完全链接的可执行目标文件作为输出。链接器主要完成以下两个任务：
+符号解析：每个符号对应于一个函数、一个全局变量或一个静态变量，符号解析的目的是将每个符号引用与一个符号定义关联起来。 重定位：链接器通过把每个符号定义与一个内存位置关联起来，然后修改所有对这些符号的引用，使得它们指向这个内存位置。 目标文件 # 可执行目标文件：可以直接在内存中执行； 可重定位目标文件：可与其它可重定位目标文件在链接阶段合并，创建一个可执行目标文件； 共享目标文件：这是一种特殊的可重定位目标文件，可以在运行时被动态加载进内存并链接； 动态链接 # 静态库有以下两个问题：
+当静态库更新时那么整个程序都要重新进行链接； 对于 printf 这种标准函数库，如果每个程序都要有代码，这会极大浪费资源。 共享库是为了解决静态库的这两个问题而设计的，在 Linux 系统中通常用 .so 后缀来表示，Windows 系统上它们被称为 DLL。它具有以下特点：
+在给定的文件系统中一个库只有一个文件，所有引用该库的可执行目标文件都共享这个文件，它不会被复制到引用它的可执行文件中； 在内存中，一个共享库的 .text 节（已编译程序的机器代码）的一个副本可以被不同的正在运行的进程共享。 ">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="链接" />
+<meta property="og:description" content=" 链接 # 编译系统 # 以下是一个 hello.c 程序：
+#include &lt;stdio.h&gt; int main() { printf(&#34;hello, world\n&#34;); return 0; } 在 Unix 系统上，由编译器把源文件转换为目标文件。
+gcc -o hello hello.c 这个过程大致如下：
+预处理阶段：处理以 # 开头的预处理命令； 编译阶段：翻译成汇编文件； 汇编阶段：将汇编文件翻译成可重定位目标文件； 链接阶段：将可重定位目标文件和 printf.o 等单独预编译好的目标文件进行合并，得到最终的可执行目标文件。 静态链接 # 静态链接器以一组可重定位目标文件为输入，生成一个完全链接的可执行目标文件作为输出。链接器主要完成以下两个任务：
+符号解析：每个符号对应于一个函数、一个全局变量或一个静态变量，符号解析的目的是将每个符号引用与一个符号定义关联起来。 重定位：链接器通过把每个符号定义与一个内存位置关联起来，然后修改所有对这些符号的引用，使得它们指向这个内存位置。 目标文件 # 可执行目标文件：可以直接在内存中执行； 可重定位目标文件：可与其它可重定位目标文件在链接阶段合并，创建一个可执行目标文件； 共享目标文件：这是一种特殊的可重定位目标文件，可以在运行时被动态加载进内存并链接； 动态链接 # 静态库有以下两个问题：
+当静态库更新时那么整个程序都要重新进行链接； 对于 printf 这种标准函数库，如果每个程序都要有代码，这会极大浪费资源。 共享库是为了解决静态库的这两个问题而设计的，在 Linux 系统中通常用 .so 后缀来表示，Windows 系统上它们被称为 DLL。它具有以下特点：
+在给定的文件系统中一个库只有一个文件，所有引用该库的可执行目标文件都共享这个文件，它不会被复制到引用它的可执行文件中； 在内存中，一个共享库的 .text 节（已编译程序的机器代码）的一个副本可以被不同的正在运行的进程共享。 " />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://example.com/keeplearning/docs/os/link/" /><meta property="article:section" content="docs" />
+
+<meta property="article:modified_time" content="2022-12-26T11:35:58+08:00" />
+<title>链接 | KeepLearning</title>
+<link rel="manifest" href="/keeplearning/manifest.json">
+<link rel="icon" href="/keeplearning/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/keeplearning/book.min.44ab80b6e9fbffc4b56fa0525dd4af874d4d533ab2a985226782d7cdc8d9fd15.css" integrity="sha256-RKuAtun7/8S1b6BSXdSvh01NUzqyqYUiZ4LXzcjZ/RU=" crossorigin="anonymous">
+  <script defer src="/keeplearning/flexsearch.min.js"></script>
+  <script defer src="/keeplearning/zh.search.min.95901f155d7e43edd528f3257a6368bfaa892682cfc3316ac1c60fe3afd3505b.js" integrity="sha256-lZAfFV1&#43;Q&#43;3VKPMlemNov6qJJoLPwzFqwcYP46/TUFs=" crossorigin="anonymous"></script>
+
+  <script defer src="/keeplearning/sw.min.1adfb566b92ba83fd11679d786b02cc6ef24134c579bce6902d173c28305155f.js" integrity="sha256-Gt&#43;1ZrkrqD/RFnnXhrAsxu8kE0xXm85pAtFzwoMFFV8=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/keeplearning/"><span>KeepLearning</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+
+
+
+  
+<ul>
+  
+  <li>
+    <a href="https://github.com/xiaobinqt"  target="_blank" rel="noopener">
+        GitHub
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <ul>
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-3110560962cac834dcd3aead95e804a4" class="toggle"  />
+    <label for="section-3110560962cac834dcd3aead95e804a4" class="flex justify-between">
+      <a role="button" class="">网络</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/network/overview/" class="">网络概述</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/network/physical-layer/" class="">物理层</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/network/link-layer/" class="">链路层</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/network/network-layer/" class="">网络层</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/network/transport-layer/" class="">传输层</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/network/application-layer/" class="">应用层</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/network/socket/" class="">Socket</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-9caa6ae5221742cea46cb40ee3162cf1" class="toggle"  />
+    <label for="section-9caa6ae5221742cea46cb40ee3162cf1" class="flex justify-between">
+      <a role="button" class="">HTTP</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/http/http1/" class="">HTTP（一）</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/http/http2/" class="">HTTP（二）</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/http/http3/" class="">HTTP（三）</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-708f0dc81b7f5419c74b48a85bd8146c" class="toggle" checked />
+    <label for="section-708f0dc81b7f5419c74b48a85bd8146c" class="flex justify-between">
+      <a role="button" class="">操作系统</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/os/instruction-set_arch/" class="">指令集</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/os/overview/" class="">操作系统概述</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/os/process-manage/" class="">进程管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/os/deadlock/" class="">死锁</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/os/memory-manage/" class="">内存管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/os/device-manage/" class="">设备管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/os/link/" class="active">链接</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-e66e2e478c81786f553bd82d3931b216" class="toggle"  />
+    <label for="section-e66e2e478c81786f553bd82d3931b216" class="flex justify-between">
+      <a role="button" class="">MySQL</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/mysql/dbs-theory/" class="">数据库系统原理（一）</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/mysql/dbs-theory2/" class="">数据库系统原理（二）</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/mysql/sql-grammar/" class="">SQL 语法</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/mysql/mysql-faq1/" class="">MySQL</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-a27d7ef673b519721b4909eba7547282" class="toggle"  />
+    <label for="section-a27d7ef673b519721b4909eba7547282" class="flex justify-between">
+      <a role="button" class="">Redis</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/redis/redis1/" class="">Redis（一）</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/redis/redis2/" class="">Redis（二）</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-6ae1a891fb3a3f71d71273fc61b29b76" class="toggle"  />
+    <label for="section-6ae1a891fb3a3f71d71273fc61b29b76" class="flex justify-between">
+      <a role="button" class="">Linux</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/linux/linux1/" class="">Linux（一）</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/linux/linux2/" class="">Linux（二）</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/linux/linux3/" class="">Linux（三）</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-2e68b18a2908c2a0b6e57142acd3643f" class="toggle"  />
+    <label for="section-2e68b18a2908c2a0b6e57142acd3643f" class="flex justify-between">
+      <a role="button" class="">系统设计</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/system-design/overview/" class="">系统设计基础</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/system-design/distributed/" class="">分布式</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/system-design/cluster/" class="">集群</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/system-design/attack/" class="">攻击技术</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/system-design/cache/" class="">缓存</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/system-design/queue-message/" class="">消息队列</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-caceb4c0534f60c75e13f33d748c0f33" class="toggle"  />
+    <label for="section-caceb4c0534f60c75e13f33d748c0f33" class="flex justify-between">
+      <a role="button" class="">编码实践</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/coding-practice/regex/" class="">正则表达式</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/coding-practice/docker/" class="">Docker</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/coding-practice/git/" class="">Git</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/coding-practice/code-readability/" class="">代码可读性</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/favorite/" class="">收藏夹</a>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/keeplearning/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>链接</strong>
+
+  <label for="toc-control">
+    
+    <img src="/keeplearning/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#链接">链接</a>
+      <ul>
+        <li><a href="#编译系统">编译系统</a></li>
+        <li><a href="#静态链接">静态链接</a></li>
+        <li><a href="#目标文件">目标文件</a></li>
+        <li><a href="#动态链接">动态链接</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown"><h1 id="链接">
+  链接
+  <a class="anchor" href="#%e9%93%be%e6%8e%a5">#</a>
+</h1>
+<h2 id="编译系统">
+  编译系统
+  <a class="anchor" href="#%e7%bc%96%e8%af%91%e7%b3%bb%e7%bb%9f">#</a>
+</h2>
+<p>以下是一个 hello.c 程序：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdio.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">printf</span>(<span style="color:#e6db74">&#34;hello, world</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>在 Unix 系统上，由编译器把源文件转换为目标文件。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>gcc -o hello hello.c
+</span></span></code></pre></div><p>这个过程大致如下：</p>
+<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221225/0c6bc5a167884e4dac7d45103829b825.png" width="800"/> </div><br>
+<ul>
+<li>预处理阶段：处理以 # 开头的预处理命令；</li>
+<li>编译阶段：翻译成汇编文件；</li>
+<li>汇编阶段：将汇编文件翻译成可重定位目标文件；</li>
+<li>链接阶段：将可重定位目标文件和 printf.o 等单独预编译好的目标文件进行合并，得到最终的可执行目标文件。</li>
+</ul>
+<h2 id="静态链接">
+  静态链接
+  <a class="anchor" href="#%e9%9d%99%e6%80%81%e9%93%be%e6%8e%a5">#</a>
+</h2>
+<p>静态链接器以一组可重定位目标文件为输入，生成一个完全链接的可执行目标文件作为输出。链接器主要完成以下两个任务：</p>
+<ul>
+<li>符号解析：每个符号对应于一个函数、一个全局变量或一个静态变量，符号解析的目的是将每个符号引用与一个符号定义关联起来。</li>
+<li>重定位：链接器通过把每个符号定义与一个内存位置关联起来，然后修改所有对这些符号的引用，使得它们指向这个内存位置。</li>
+</ul>
+<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221225/7973d607297f438aa42f709167c80f1f.png"/> </div><br>
+<h2 id="目标文件">
+  目标文件
+  <a class="anchor" href="#%e7%9b%ae%e6%a0%87%e6%96%87%e4%bb%b6">#</a>
+</h2>
+<ul>
+<li>可执行目标文件：可以直接在内存中执行；</li>
+<li>可重定位目标文件：可与其它可重定位目标文件在链接阶段合并，创建一个可执行目标文件；</li>
+<li>共享目标文件：这是一种特殊的可重定位目标文件，可以在运行时被动态加载进内存并链接；</li>
+</ul>
+<h2 id="动态链接">
+  动态链接
+  <a class="anchor" href="#%e5%8a%a8%e6%80%81%e9%93%be%e6%8e%a5">#</a>
+</h2>
+<p>静态库有以下两个问题：</p>
+<ul>
+<li>当静态库更新时那么整个程序都要重新进行链接；</li>
+<li>对于 printf 这种标准函数库，如果每个程序都要有代码，这会极大浪费资源。</li>
+</ul>
+<p>共享库是为了解决静态库的这两个问题而设计的，在 Linux 系统中通常用 .so 后缀来表示，Windows 系统上它们被称为 DLL。它具有以下特点：</p>
+<ul>
+<li>在给定的文件系统中一个库只有一个文件，所有引用该库的可执行目标文件都共享这个文件，它不会被复制到引用它的可执行文件中；</li>
+<li>在内存中，一个共享库的 .text 节（已编译程序的机器代码）的一个副本可以被不同的正在运行的进程共享。</li>
+</ul>
+<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221225/dbb44187be594a5fb9f7a874a1881545.png"/> </div><br></article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/9caaeca2cfea2b23cc8f97741c37ea0009f1a382" title='最后修改者 weibin | December 26, 2022' target="_blank" rel="noopener">
+      <img src="/keeplearning/svg/calendar.svg" class="book-icon" alt="Calendar" />
+      <span>December 26, 2022</span>
+    </a>
+  </div>
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/book.keeplearning/docs/os/link.md" target="_blank" rel="noopener">
+      <img src="/keeplearning/svg/edit.svg" class="book-icon" alt="Edit" />
+      <span>编辑本页</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#链接">链接</a>
+      <ul>
+        <li><a href="#编译系统">编译系统</a></li>
+        <li><a href="#静态链接">静态链接</a></li>
+        <li><a href="#目标文件">目标文件</a></li>
+        <li><a href="#动态链接">动态链接</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

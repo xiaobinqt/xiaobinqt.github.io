@@ -5,5 +5,71 @@
     <link>https://example.com/keeplearning/docs/mysql/</link>
     <description>Recent content in MySQL on KeepLearning</description>
     <generator>Hugo -- gohugo.io</generator><atom:link href="https://example.com/keeplearning/docs/mysql/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>数据库系统原理（一）</title>
+      <link>https://example.com/keeplearning/docs/mysql/dbs-theory/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://example.com/keeplearning/docs/mysql/dbs-theory/</guid>
+      <description>数据库系统原理（一） # 一、事务 # 概念 # 事务指的是满足 ACID 特性的一组操作，可以通过 Commit 提交一个事务，也可以使用 Rollback 进行回滚。
+ACID # 1. 原子性（Atomicity） # 事务被视为不可分割的最小单元，事务的所有操作要么全部提交成功，要么全部失败回滚。
+回滚可以用回滚日志（Undo Log）来实现，回滚日志记录着事务所执行的修改操作，在回滚时反向执行这些修改操作即可。
+2. 一致性（Consistency） # 数据库在事务执行前后都保持一致性状态。在一致性状态下，所有事务对同一个数据的读取结果都是相同的。
+3. 隔离性（Isolation） # 一个事务所做的修改在最终提交以前，对其它事务是不可见的。
+4. 持久性（Durability） # 一旦事务提交，则其所做的修改将会永远保存到数据库中。即使系统发生崩溃，事务执行的结果也不能丢失。
+系统发生崩溃可以用重做日志（Redo Log）进行恢复，从而实现持久性。与回滚日志记录数据的逻辑修改不同，重做日志记录的是数据页的物理修改。
+事务的 ACID 特性概念简单，但不是很好理解，主要是因为这几个特性不是一种平级关系：
+只有满足一致性，事务的执行结果才是正确的。 在无并发的情况下，事务串行执行，隔离性一定能够满足。此时只要能满足原子性，就一定能满足一致性。 在并发的情况下，多个事务并行执行，事务不仅要满足原子性，还需要满足隔离性，才能满足一致性。 事务满足持久化是为了能应对系统崩溃的情况。 AUTOCOMMIT # MySQL 默认采用自动提交模式。也就是说，如果不显式使用START TRANSACTION语句来开始一个事务，那么每个查询操作都会被当做一个事务并自动提交。
+二、并发一致性问题 # 在并发环境下，事务的隔离性很难保证，因此会出现很多并发一致性问题。
+丢失修改 # 丢失修改指一个事务的更新操作被另外一个事务的更新操作替换。一般在现实生活中常会遇到，例如：T1 和 T2 两个事务都对一个数据进行修改，T1 先修改并提交生效，T2 随后修改，T2 的修改覆盖了 T1 的修改。
+读脏数据 # 读脏数据指在不同的事务下，当前事务可以读到另外事务未提交的数据。例如：T1 修改一个数据但未提交，T2 随后读取这个数据。如果 T1 撤销了这次修改，那么 T2 读取的数据是脏数据。</description>
+    </item>
+    
+    <item>
+      <title>数据库系统原理（二）</title>
+      <link>https://example.com/keeplearning/docs/mysql/dbs-theory2/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://example.com/keeplearning/docs/mysql/dbs-theory2/</guid>
+      <description>数据库系统原理（二） # 五、多版本并发控制 # 多版本并发控制（Multi-Version Concurrency Control, MVCC）是 MySQL 的 InnoDB 存储引擎实现隔离级别的一种具体方式，用于实现提交读和可重复读这两种隔离级别。而未提交读隔离级别总是读取最新的数据行，要求很低，无需使用 MVCC。可串行化隔离级别需要对所有读取的行都加锁，单纯使用 MVCC 无法实现。
+基本思想 # 在封锁一节中提到，加锁能解决多个事务同时执行时出现的并发一致性问题。在实际场景中读操作往往多于写操作，因此又引入了读写锁来避免不必要的加锁操作，例如读和读没有互斥关系。读写锁中读和写操作仍然是互斥的，而 MVCC 利用了多版本的思想，写操作更新最新的版本快照，而读操作去读旧版本快照，没有互斥关系，这一点和 CopyOnWrite 类似。
+在 MVCC 中事务的修改操作（DELETE、INSERT、UPDATE）会为数据行新增一个版本快照。
+脏读和不可重复读最根本的原因是事务读取到其它事务未提交的修改。在事务进行读取操作时，为了解决脏读和不可重复读问题，MVCC 规定只能读取已经提交的快照。当然一个事务可以读取自身未提交的快照，这不算是脏读。
+版本号 # 系统版本号 SYS_ID：是一个递增的数字，每开始一个新的事务，系统版本号就会自动递增。 事务版本号 TRX_ID ：事务开始时的系统版本号。 Undo 日志 # MVCC 的多版本指的是多个版本的快照，快照存储在 Undo 日志中，该日志通过回滚指针 ROLL_PTR 把一个数据行的所有快照连接起来。
+例如在 MySQL 创建一个表 t，包含主键 id 和一个字段 x。我们先插入一个数据行，然后对该数据行执行两次更新操作。
+INSERT INTO t(id, x) VALUES(1, &amp;#34;a&amp;#34;); UPDATE t SET x=&amp;#34;b&amp;#34; WHERE id=1; UPDATE t SET x=&amp;#34;c&amp;#34; WHERE id=1; 因为没有使用 START TRANSACTION 将上面的操作当成一个事务来执行，根据 MySQL 的 AUTOCOMMIT 机制，每个操作都会被当成一个事务来执行，所以上面的操作总共涉及到三个事务。快照中除了记录事务版本号 TRX_ID 和操作之外，还记录了一个 bit 的 DEL 字段，用于标记是否被删除。</description>
+    </item>
+    
+    <item>
+      <title>SQL 语法</title>
+      <link>https://example.com/keeplearning/docs/mysql/sql-grammar/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://example.com/keeplearning/docs/mysql/sql-grammar/</guid>
+      <description>SQL 语法 # 基础 # 模式定义了数据如何存储、存储什么样的数据以及数据如何分解等信息，数据库和表都有模式。
+主键的值不允许修改，也不允许复用（不能将已经删除的主键值赋给新数据行的主键）。
+SQL（Structured Query Language)，标准 SQL 由 ANSI 标准委员会管理，从而称为 ANSI SQL。各个 DBMS 都有自己的实现，如 PL/SQL、Transact-SQL 等。
+SQL 语句不区分大小写，但是数据库表名、列名和值是否区分依赖于具体的 DBMS 以及配置。
+SQL 支持以下三种注释：
+-- 注释 SELECT * FROM mytable; -- 注释 /* 注释1 注释2 */ 数据库创建与使用：
+CREATE DATABASE test; USE test; 创建表 # CREATE TABLE mytable ( -- int 类型，不为空，自增 id INT NOT NULL AUTO_INCREMENT, -- int 类型，不可为空，默认值为 1，不为空 col1 INT NOT NULL DEFAULT 1, -- 变长字符串类型，最长为 45 个字符，可以为空 col2 VARCHAR(45) NULL, -- 日期类型，可为空 col3 DATE NULL, -- 设置主键为 id PRIMARY KEY (`id`)); 修改表 # 添加列</description>
+    </item>
+    
+    <item>
+      <title>MySQL</title>
+      <link>https://example.com/keeplearning/docs/mysql/mysql-faq1/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://example.com/keeplearning/docs/mysql/mysql-faq1/</guid>
+      <description>MySQL # 一、索引 # B+ Tree 原理 # 1. 数据结构 # B Tree 指的是 Balance Tree，也就是平衡树。平衡树是一颗查找树，并且所有叶子节点位于同一层。
+B+ Tree 是基于 B Tree 和叶子节点顺序访问指针进行实现，它具有 B Tree 的平衡性，并且通过顺序访问指针来提高区间查询的性能。
+在 B+ Tree 中，一个节点中的 key 从左到右非递减排列，如果某个指针的左右相邻 key 分别是 keyi 和 keyi+1，且不为 null，则该指针指向节点的所有 key 大于等于 keyi 且小于等于 keyi+1。
+2. 操作 # 进行查找操作时，首先在根节点进行二分查找，找到一个 key 所在的指针，然后递归地在指针所指向的节点进行查找。直到查找到叶子节点，然后在叶子节点上进行二分查找，找出 key 所对应的 data。
+插入删除操作会破坏平衡树的平衡性，因此在进行插入删除操作之后，需要对树进行分裂、合并、旋转等操作来维护平衡性。
+3. 与红黑树的比较 # 红黑树等平衡树也可以用来实现索引，但是文件系统及数据库系统普遍采用 B+ Tree 作为索引结构，这是因为使用 B+ 树访问磁盘数据有更高的性能。
+（一）B+ 树有更低的树高
+平衡树的树高 O(h)=O(logdN)，其中 d 为每个节点的出度。红黑树的出度为 2，而 B+ Tree 的出度一般都非常大，所以红黑树的树高 h 很明显比 B+ Tree 大非常多。</description>
+    </item>
+    
   </channel>
 </rss>

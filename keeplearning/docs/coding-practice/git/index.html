@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Git # 集中式与分布式 # Git 属于分布式版本控制系统，而 SVN 属于集中式。
+集中式版本控制只有中心服务器拥有一份代码，而分布式版本控制每个人的电脑上就有一份完整的代码。
+集中式版本控制有安全性问题，当中心服务器挂了所有人都没办法工作了。
+集中式版本控制需要连网才能工作，如果网速过慢，那么提交一个文件会慢的无法让人忍受。而分布式版本控制不需要连网就能工作。
+分布式版本控制新建分支、合并分支操作速度非常快，而集中式版本控制新建一个分支相当于复制一份完整代码。
+中心服务器 # 中心服务器用来交换每个用户的修改，没有中心服务器也能工作，但是中心服务器能够 24 小时保持开机状态，这样就能更方便的交换修改。
+Github 就是一个中心服务器。
+工作流 # 新建一个仓库之后，当前目录就成为了工作区，工作区下有一个隐藏目录 .git，它属于 Git 的版本库。
+Git 的版本库有一个称为 Stage 的暂存区以及最后的 History 版本库，History 存储所有分支信息，使用一个 HEAD 指针指向当前分支。
+git add files 把文件的修改添加到暂存区 git commit 把暂存区的修改提交到当前分支，提交之后暂存区就被清空了 git reset &ndash; files 使用当前分支上的修改覆盖暂存区，用来撤销最后一次 git add files git checkout &ndash; files 使用暂存区的修改覆盖工作目录，用来撤销本地修改 可以跳过暂存区域直接从分支中取出修改，或者直接提交修改到分支中。
+git commit -a 直接把所有文件的修改添加到暂存区然后执行提交 git checkout HEAD &ndash; files 取出最后一次修改，可以用来进行回滚操作 分支实现 # 使用指针将每个提交连接成一条时间线，HEAD 指针指向当前分支指针。">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="Git" />
+<meta property="og:description" content="Git # 集中式与分布式 # Git 属于分布式版本控制系统，而 SVN 属于集中式。
+集中式版本控制只有中心服务器拥有一份代码，而分布式版本控制每个人的电脑上就有一份完整的代码。
+集中式版本控制有安全性问题，当中心服务器挂了所有人都没办法工作了。
+集中式版本控制需要连网才能工作，如果网速过慢，那么提交一个文件会慢的无法让人忍受。而分布式版本控制不需要连网就能工作。
+分布式版本控制新建分支、合并分支操作速度非常快，而集中式版本控制新建一个分支相当于复制一份完整代码。
+中心服务器 # 中心服务器用来交换每个用户的修改，没有中心服务器也能工作，但是中心服务器能够 24 小时保持开机状态，这样就能更方便的交换修改。
+Github 就是一个中心服务器。
+工作流 # 新建一个仓库之后，当前目录就成为了工作区，工作区下有一个隐藏目录 .git，它属于 Git 的版本库。
+Git 的版本库有一个称为 Stage 的暂存区以及最后的 History 版本库，History 存储所有分支信息，使用一个 HEAD 指针指向当前分支。
+git add files 把文件的修改添加到暂存区 git commit 把暂存区的修改提交到当前分支，提交之后暂存区就被清空了 git reset &ndash; files 使用当前分支上的修改覆盖暂存区，用来撤销最后一次 git add files git checkout &ndash; files 使用暂存区的修改覆盖工作目录，用来撤销本地修改 可以跳过暂存区域直接从分支中取出修改，或者直接提交修改到分支中。
+git commit -a 直接把所有文件的修改添加到暂存区然后执行提交 git checkout HEAD &ndash; files 取出最后一次修改，可以用来进行回滚操作 分支实现 # 使用指针将每个提交连接成一条时间线，HEAD 指针指向当前分支指针。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://example.com/keeplearning/docs/coding-practice/git/" /><meta property="article:section" content="docs" />
+
+<meta property="article:modified_time" content="2022-12-26T11:35:58+08:00" />
+<title>Git | KeepLearning</title>
+<link rel="manifest" href="/keeplearning/manifest.json">
+<link rel="icon" href="/keeplearning/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/keeplearning/book.min.44ab80b6e9fbffc4b56fa0525dd4af874d4d533ab2a985226782d7cdc8d9fd15.css" integrity="sha256-RKuAtun7/8S1b6BSXdSvh01NUzqyqYUiZ4LXzcjZ/RU=" crossorigin="anonymous">
+  <script defer src="/keeplearning/flexsearch.min.js"></script>
+  <script defer src="/keeplearning/zh.search.min.95901f155d7e43edd528f3257a6368bfaa892682cfc3316ac1c60fe3afd3505b.js" integrity="sha256-lZAfFV1&#43;Q&#43;3VKPMlemNov6qJJoLPwzFqwcYP46/TUFs=" crossorigin="anonymous"></script>
+
+  <script defer src="/keeplearning/sw.min.1adfb566b92ba83fd11679d786b02cc6ef24134c579bce6902d173c28305155f.js" integrity="sha256-Gt&#43;1ZrkrqD/RFnnXhrAsxu8kE0xXm85pAtFzwoMFFV8=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/keeplearning/"><span>KeepLearning</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+
+
+
+  
+<ul>
+  
+  <li>
+    <a href="https://github.com/xiaobinqt"  target="_blank" rel="noopener">
+        GitHub
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <ul>
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-3110560962cac834dcd3aead95e804a4" class="toggle"  />
+    <label for="section-3110560962cac834dcd3aead95e804a4" class="flex justify-between">
+      <a role="button" class="">网络</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/network/overview/" class="">网络概述</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/network/physical-layer/" class="">物理层</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/network/link-layer/" class="">链路层</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/network/network-layer/" class="">网络层</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/network/transport-layer/" class="">传输层</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/network/application-layer/" class="">应用层</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/network/socket/" class="">Socket</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-9caa6ae5221742cea46cb40ee3162cf1" class="toggle"  />
+    <label for="section-9caa6ae5221742cea46cb40ee3162cf1" class="flex justify-between">
+      <a role="button" class="">HTTP</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/http/http1/" class="">HTTP（一）</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/http/http2/" class="">HTTP（二）</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/http/http3/" class="">HTTP（三）</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-708f0dc81b7f5419c74b48a85bd8146c" class="toggle"  />
+    <label for="section-708f0dc81b7f5419c74b48a85bd8146c" class="flex justify-between">
+      <a role="button" class="">操作系统</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/os/instruction-set_arch/" class="">指令集</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/os/overview/" class="">操作系统概述</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/os/process-manage/" class="">进程管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/os/deadlock/" class="">死锁</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/os/memory-manage/" class="">内存管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/os/device-manage/" class="">设备管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/os/link/" class="">链接</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-e66e2e478c81786f553bd82d3931b216" class="toggle"  />
+    <label for="section-e66e2e478c81786f553bd82d3931b216" class="flex justify-between">
+      <a role="button" class="">MySQL</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/mysql/dbs-theory/" class="">数据库系统原理（一）</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/mysql/dbs-theory2/" class="">数据库系统原理（二）</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/mysql/sql-grammar/" class="">SQL 语法</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/mysql/mysql-faq1/" class="">MySQL</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-a27d7ef673b519721b4909eba7547282" class="toggle"  />
+    <label for="section-a27d7ef673b519721b4909eba7547282" class="flex justify-between">
+      <a role="button" class="">Redis</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/redis/redis1/" class="">Redis（一）</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/redis/redis2/" class="">Redis（二）</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-6ae1a891fb3a3f71d71273fc61b29b76" class="toggle"  />
+    <label for="section-6ae1a891fb3a3f71d71273fc61b29b76" class="flex justify-between">
+      <a role="button" class="">Linux</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/linux/linux1/" class="">Linux（一）</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/linux/linux2/" class="">Linux（二）</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/linux/linux3/" class="">Linux（三）</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-2e68b18a2908c2a0b6e57142acd3643f" class="toggle"  />
+    <label for="section-2e68b18a2908c2a0b6e57142acd3643f" class="flex justify-between">
+      <a role="button" class="">系统设计</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/system-design/overview/" class="">系统设计基础</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/system-design/distributed/" class="">分布式</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/system-design/cluster/" class="">集群</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/system-design/attack/" class="">攻击技术</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/system-design/cache/" class="">缓存</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/system-design/queue-message/" class="">消息队列</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <input type="checkbox" id="section-caceb4c0534f60c75e13f33d748c0f33" class="toggle" checked />
+    <label for="section-caceb4c0534f60c75e13f33d748c0f33" class="flex justify-between">
+      <a role="button" class="">编码实践</a>
+    </label>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/coding-practice/regex/" class="">正则表达式</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/coding-practice/docker/" class="">Docker</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/coding-practice/git/" class="active">Git</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/coding-practice/code-readability/" class="">代码可读性</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/favorite/" class="">收藏夹</a>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/keeplearning/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>Git</strong>
+
+  <label for="toc-control">
+    
+    <img src="/keeplearning/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#git">Git</a>
+      <ul>
+        <li><a href="#集中式与分布式">集中式与分布式</a></li>
+        <li><a href="#中心服务器">中心服务器</a></li>
+        <li><a href="#工作流">工作流</a></li>
+        <li><a href="#分支实现">分支实现</a></li>
+        <li><a href="#冲突">冲突</a></li>
+        <li><a href="#fast-forward">Fast forward</a></li>
+        <li><a href="#储藏stashing">储藏（Stashing）</a></li>
+        <li><a href="#ssh-传输设置">SSH 传输设置</a></li>
+        <li><a href="#gitignore-文件">.gitignore 文件</a></li>
+        <li><a href="#git-命令一览">Git 命令一览</a></li>
+        <li><a href="#参考资料">参考资料</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown"><h1 id="git">
+  Git
+  <a class="anchor" href="#git">#</a>
+</h1>
+<h2 id="集中式与分布式">
+  集中式与分布式
+  <a class="anchor" href="#%e9%9b%86%e4%b8%ad%e5%bc%8f%e4%b8%8e%e5%88%86%e5%b8%83%e5%bc%8f">#</a>
+</h2>
+<p>Git 属于分布式版本控制系统，而 SVN 属于集中式。</p>
+<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221225/503d355bf115438cb00e0f49b6f35afd.png"/> </div><br>
+<p>集中式版本控制只有中心服务器拥有一份代码，而分布式版本控制每个人的电脑上就有一份完整的代码。</p>
+<p>集中式版本控制有安全性问题，当中心服务器挂了所有人都没办法工作了。</p>
+<p>集中式版本控制需要连网才能工作，如果网速过慢，那么提交一个文件会慢的无法让人忍受。而分布式版本控制不需要连网就能工作。</p>
+<p>分布式版本控制新建分支、合并分支操作速度非常快，而集中式版本控制新建一个分支相当于复制一份完整代码。</p>
+<h2 id="中心服务器">
+  中心服务器
+  <a class="anchor" href="#%e4%b8%ad%e5%bf%83%e6%9c%8d%e5%8a%a1%e5%99%a8">#</a>
+</h2>
+<p>中心服务器用来交换每个用户的修改，没有中心服务器也能工作，但是中心服务器能够 24 小时保持开机状态，这样就能更方便的交换修改。</p>
+<p>Github 就是一个中心服务器。</p>
+<h2 id="工作流">
+  工作流
+  <a class="anchor" href="#%e5%b7%a5%e4%bd%9c%e6%b5%81">#</a>
+</h2>
+<p>新建一个仓库之后，当前目录就成为了工作区，工作区下有一个隐藏目录 .git，它属于 Git 的版本库。</p>
+<p>Git 的版本库有一个称为 Stage 的暂存区以及最后的 History 版本库，History 存储所有分支信息，使用一个 HEAD 指针指向当前分支。</p>
+<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221225/205cf11c4db24c89a4572bf616576fc0.png"/> </div><br>
+<ul>
+<li>git add files 把文件的修改添加到暂存区</li>
+<li>git commit 把暂存区的修改提交到当前分支，提交之后暂存区就被清空了</li>
+<li>git reset &ndash; files 使用当前分支上的修改覆盖暂存区，用来撤销最后一次 git add files</li>
+<li>git checkout &ndash; files 使用暂存区的修改覆盖工作目录，用来撤销本地修改</li>
+</ul>
+<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221225/6e41d818677645a2917223c8cd41b839.png"/> </div><br>
+<p>可以跳过暂存区域直接从分支中取出修改，或者直接提交修改到分支中。</p>
+<ul>
+<li>git commit -a 直接把所有文件的修改添加到暂存区然后执行提交</li>
+<li>git checkout HEAD &ndash; files 取出最后一次修改，可以用来进行回滚操作</li>
+</ul>
+<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221225/5fe796bd5d37429b863ab97b4e65f7c5.png"/> </div><br>
+<h2 id="分支实现">
+  分支实现
+  <a class="anchor" href="#%e5%88%86%e6%94%af%e5%ae%9e%e7%8e%b0">#</a>
+</h2>
+<p>使用指针将每个提交连接成一条时间线，HEAD 指针指向当前分支指针。</p>
+<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221225/ee2bf3430f64470b9985760ea5428128.png"/> </div><br>
+<p>新建分支是新建一个指针指向时间线的最后一个节点，并让 HEAD 指针指向新分支，表示新分支成为当前分支。</p>
+<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221225/e9752fef9d2744909bfaaf67953ae1a1.png"/> </div><br>
+<p>每次提交只会让当前分支指针向前移动，而其它分支指针不会移动。</p>
+<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221225/3eac66085b1145f19437d452ae787990.png"/> </div><br>
+<p>合并分支也只需要改变指针即可。</p>
+<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221225/e4ea0a681dac4277bcda97e966203143.png"/> </div><br>
+<h2 id="冲突">
+  冲突
+  <a class="anchor" href="#%e5%86%b2%e7%aa%81">#</a>
+</h2>
+<p>当两个分支都对同一个文件的同一行进行了修改，在分支合并时就会产生冲突。</p>
+<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221225/d3b36555d3a140e2b7c00933c0d87d5e.png"/> </div><br>
+<p>Git 会使用 &lt;&lt;&lt;&lt;&lt;&lt;&lt; ，======= ，&gt;&gt;&gt;&gt;&gt;&gt;&gt; 标记出不同分支的内容，只需要把不同分支中冲突部分修改成一样就能解决冲突。</p>
+<pre tabindex="0"><code>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+Creating a new branch is quick &amp; simple.
+=======
+Creating a new branch is quick AND simple.
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; feature1
+</code></pre><h2 id="fast-forward">
+  Fast forward
+  <a class="anchor" href="#fast-forward">#</a>
+</h2>
+<p>&ldquo;快进式合并&rdquo;（fast-farward merge），会直接将 master 分支指向合并的分支，这种模式下进行分支合并会丢失分支信息，也就不能在分支历史上看出分支信息。</p>
+<p>可以在合并时加上 &ndash;no-ff 参数来禁用 Fast forward 模式，并且加上 -m 参数让合并时产生一个新的 commit。</p>
+<pre tabindex="0"><code>$ git merge --no-ff -m &#34;merge with no-ff&#34; dev
+</code></pre><div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221225/e25d33a9822d4553bddd15eb975b846b.png"/> </div><br>
+<h2 id="储藏stashing">
+  储藏（Stashing）
+  <a class="anchor" href="#%e5%82%a8%e8%97%8fstashing">#</a>
+</h2>
+<p>在一个分支上操作之后，如果还没有将修改提交到分支上，此时进行切换分支，那么另一个分支上也能看到新的修改。这是因为所有分支都共用一个工作区的缘故。</p>
+<p>可以使用 git stash 将当前分支的修改储藏起来，此时当前工作区的所有修改都会被存到栈中，也就是说当前工作区是干净的，没有任何未提交的修改。此时就可以安全的切换到其它分支上了。</p>
+<pre tabindex="0"><code>$ git stash
+Saved working directory and index state \ &#34;WIP on master: 049d078 added the index file&#34;
+HEAD is now at 049d078 added the index file (To restore them type &#34;git stash apply&#34;)
+</code></pre><p>该功能可以用于 bug 分支的实现。如果当前正在 dev 分支上进行开发，但是此时 master 上有个 bug 需要修复，但是 dev 分支上的开发还未完成，不想立即提交。在新建 bug 分支并切换到 bug 分支之前就需要使用 git stash 将 dev 分支的未提交修改储藏起来。</p>
+<h2 id="ssh-传输设置">
+  SSH 传输设置
+  <a class="anchor" href="#ssh-%e4%bc%a0%e8%be%93%e8%ae%be%e7%bd%ae">#</a>
+</h2>
+<p>Git 仓库和 Github 中心仓库之间的传输是通过 SSH 加密。</p>
+<p>如果工作区下没有 .ssh 目录，或者该目录下没有 id_rsa 和 id_rsa.pub 这两个文件，可以通过以下命令来创建 SSH Key：</p>
+<pre tabindex="0"><code>$ ssh-keygen -t rsa -C &#34;youremail@example.com&#34;
+</code></pre><p>然后把公钥 id_rsa.pub 的内容复制到 Github &ldquo;Account settings&rdquo; 的 SSH Keys 中。</p>
+<h2 id="gitignore-文件">
+  .gitignore 文件
+  <a class="anchor" href="#gitignore-%e6%96%87%e4%bb%b6">#</a>
+</h2>
+<p>忽略以下文件：</p>
+<ul>
+<li>操作系统自动生成的文件，比如缩略图；</li>
+<li>编译生成的中间文件，比如 Java 编译产生的 .class 文件；</li>
+<li>自己的敏感信息，比如存放口令的配置文件。</li>
+</ul>
+<p>不需要全部自己编写，可以到 
+  <a href="https://github.com/github/gitignore">https://github.com/github/gitignore</a> 中进行查询。</p>
+<h2 id="git-命令一览">
+  Git 命令一览
+  <a class="anchor" href="#git-%e5%91%bd%e4%bb%a4%e4%b8%80%e8%a7%88">#</a>
+</h2>
+<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221225/3e87a94abab54acbbddca3c8e618e5a9.png" width=""> </div><br>
+<p>比较详细的地址：http://www.cheat-sheets.org/saved-copy/git-cheat-sheet.pdf</p>
+<h2 id="参考资料">
+  参考资料
+  <a class="anchor" href="#%e5%8f%82%e8%80%83%e8%b5%84%e6%96%99">#</a>
+</h2>
+<ul>
+<li>
+  <a href="http://rogerdudler.github.io/git-guide/index.zh.html">Git - 简明指南</a></li>
+<li>
+  <a href="http://marklodato.github.io/visual-git-guide/index-zh-cn.html">图解 Git</a></li>
+<li>
+  <a href="https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000">廖雪峰 : Git 教程</a></li>
+<li>
+  <a href="https://learngitbranching.js.org/">Learn Git Branching</a></li>
+</ul>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/9caaeca2cfea2b23cc8f97741c37ea0009f1a382" title='最后修改者 weibin | December 26, 2022' target="_blank" rel="noopener">
+      <img src="/keeplearning/svg/calendar.svg" class="book-icon" alt="Calendar" />
+      <span>December 26, 2022</span>
+    </a>
+  </div>
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/book.keeplearning/docs/coding-practice/git.md" target="_blank" rel="noopener">
+      <img src="/keeplearning/svg/edit.svg" class="book-icon" alt="Edit" />
+      <span>编辑本页</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#git">Git</a>
+      <ul>
+        <li><a href="#集中式与分布式">集中式与分布式</a></li>
+        <li><a href="#中心服务器">中心服务器</a></li>
+        <li><a href="#工作流">工作流</a></li>
+        <li><a href="#分支实现">分支实现</a></li>
+        <li><a href="#冲突">冲突</a></li>
+        <li><a href="#fast-forward">Fast forward</a></li>
+        <li><a href="#储藏stashing">储藏（Stashing）</a></li>
+        <li><a href="#ssh-传输设置">SSH 传输设置</a></li>
+        <li><a href="#gitignore-文件">.gitignore 文件</a></li>
+        <li><a href="#git-命令一览">Git 命令一览</a></li>
+        <li><a href="#参考资料">参考资料</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
