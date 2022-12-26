@@ -52,7 +52,6 @@ title: "收藏夹"
 + [Uber Go 语言编码规范](https://github.com/xxjwxc/uber_go_guide_cn)
 + [地鼠文档](https://www.topgoer.cn/)
 + [go Standard library](https://pkg.go.dev/std)
-+ [~~alblue~~](http://alblue.cn/tags/go)
 + [床长人工智能教程](https://www.captainbed.net/)
 + [Golang开发手记](https://github.com/kevinyan815/gocookbook)
 + [Git飞行规则(Flight Rules)](https://github.com/k88hudson/git-flight-rules/blob/master/README_zh-CN.md)
@@ -60,6 +59,7 @@ title: "收藏夹"
 + [南京大学 计算机科学与技术系 计算机系统基础 课程实验 2019](https://nju-projectn.github.io/ics-pa-gitbook/ics2019/)
 + [Mysql 实战45讲](https://funnylog.gitee.io/mysql45/)
 + [一份不太简短的 LATEX介绍](http://www.mohu.org/info/lshort-cn.pdf)
++ [A Programmer's Guide to English](https://a-programmers-guide-to-english.harryyu.me/)
 
 ## 博主
 
