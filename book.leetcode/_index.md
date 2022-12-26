@@ -31,4 +31,15 @@ type: docs
 
 {{< /columns >}}
 
+## 博主推荐
+
++ [B站-代码随想录](https://www.bilibili.com/video/BV1SL4y1N7mV)
++ [代码随想录](https://programmercarl.com/)
++ [《 Hello，算法 》](https://www.hello-algo.com/)
+
+## 版权说明
+
+本站来自互联网的图片和文字资源的原版权所有者可在任何时候、以任何理由要求本站停止使用，其中包括被本站编辑（比如加注说明）过的资源， 联系方式见下
+
++ Email：[xiaobinqt@163.com](mailto:xiaobinqt@163.com)
 
