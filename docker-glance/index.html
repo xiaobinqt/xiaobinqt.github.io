@@ -10,7 +10,7 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://www.xiaobinqt.cn/docker-glance/" /><meta property="og:image" content="https://www.xiaobinqt.cn/logo.png"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2018-03-18T00:00:00+00:00" />
-<meta property="article:modified_time" content="2022-12-05T11:12:48+08:00" />
+<meta property="article:modified_time" content="2022-12-31T22:06:58+08:00" />
 
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://www.xiaobinqt.cn/logo.png"/>
@@ -34,8 +34,8 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/www.xiaobinqt.cn\/docker-glance\/"
-        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "docker","wordcount":  8412 ,
-        "url": "https:\/\/www.xiaobinqt.cn\/docker-glance\/","datePublished": "2018-03-18T00:00:00+00:00","dateModified": "2022-12-05T11:12:48+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "docker","wordcount":  8782 ,
+        "url": "https:\/\/www.xiaobinqt.cn\/docker-glance\/","datePublished": "2018-03-18T00:00:00+00:00","dateModified": "2022-12-31T22:06:58+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "xxxx","logo": {
                     "@type": "ImageObject",
@@ -172,6 +172,7 @@
         <li><a href="#写时复制">写时复制</a></li>
         <li><a href="#docker-saveexport-区别">docker save、export 区别</a></li>
         <li><a href="#-v-和---mount-的区别">-v 和 &ndash;mount 的区别</a></li>
+        <li><a href="#镜像里的层都是只读不可修改的但容器运行的时候经常会写入数据这个冲突应该怎么解决">镜像里的层都是只读不可修改的，但容器运行的时候经常会写入数据，这个冲突应该怎么解决</a></li>
       </ul>
     </li>
     <li><a href="#参考">参考</a></li>
@@ -180,8 +181,8 @@
     </div><script>document.getElementsByTagName("main")[0].setAttribute("pageStyle", "normal")</script><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Docker 学习笔记</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><i class="author fas fa-user-circle fa-fw"></i><a href="/" title="Author" rel=" author" class="author">xiaobinqt</a>
                 </span>&nbsp;<span class="post-category">收录于 </span>&nbsp;<span class="post-category">类别 <a href="/categories/%E5%BC%80%E5%8F%91%E8%80%85%E6%89%8B%E5%86%8C/"><i class="far fa-folder fa-fw"></i>开发者手册</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2018-03-18">2018-03-18</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2022-12-05">2022-12-05</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 8412 字&nbsp;
-                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 17 分钟&nbsp;</div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2018-03-18">2018-03-18</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2022-12-31">2022-12-31</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 8782 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 18 分钟&nbsp;</div>
         </div><div class="featured-image"><img
         class="lazyload"
         data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220428/21100b3b2f8b4afb9e6df1a48bee2c33.png"
@@ -245,6 +246,7 @@
         <li><a href="#写时复制">写时复制</a></li>
         <li><a href="#docker-saveexport-区别">docker save、export 区别</a></li>
         <li><a href="#-v-和---mount-的区别">-v 和 &ndash;mount 的区别</a></li>
+        <li><a href="#镜像里的层都是只读不可修改的但容器运行的时候经常会写入数据这个冲突应该怎么解决">镜像里的层都是只读不可修改的，但容器运行的时候经常会写入数据，这个冲突应该怎么解决</a></li>
       </ul>
     </li>
     <li><a href="#参考">参考</a></li>
@@ -266,28 +268,37 @@
 <p>每个容器内运行着一个应用，不同的容器相互隔离，容器之间也可以通过网络互相通信。容器的创建和停止十分快速，几乎跟创建和终止原生应用一致；另外，容器自身对系统资源的额外需求也十分有限，远远低于传统虚拟机。很多时候，甚至直接把容器当作应用本身也没有任何问题。</p>
 <p>Docker 并没有和虚拟机一样利用一个独立的 OS 执行环境的隔离，它利用的是目前 Linux 内核本身支持的容器方式，实现了资源和环境的隔离。</p>
 <p>支撑 docker 的核心技术有三个：<code>Namespace</code>，<code>Cgroup</code>，<code>UnionFS</code>。</p>
-<p><code>Namespace</code> 提供了虚拟层面的隔离，比如文件隔离，网络隔离等等。每个命名空间中的应用看到的，都是不同的IP地址，用户空间，进程 ID 等。</p>
-<p><code>Cgroup</code>提供了物理资源的隔离，比如 CPU，内存，磁盘等等。</p>
+<p><code>Namespace</code> 是 2002 年从 Linux 2.4.19 开始出现的，提供了虚拟层面的隔离，比如文件隔离，网络隔离等等。每个命名空间中的应用看到的，都是不同的IP地址，用户空间，进程 ID 等。</p>
+<p><code>Cgroup</code>是 2008 年从 Linux 2.6.24 开始出现的，它的全称是 Linux Control Group。提供了物理资源的隔离，比如 CPU，内存，磁盘等等。</p>
 <p><code>UnionFS</code> 给 docker 镜像提供了技术支撑。在 Docker 中，提供了一种对 UnionFS 的改进实现，也就是 <strong><ruby>AUFS<rt>Advanced Union File System</rt></ruby></strong>。 AUFS 将文件的更新挂载到老的文件之上，而不去修改那些不更新的内容，这意味着即使虚拟的文件系统被反复修改，也能保证对真实文件系统的空间占用保持一个较低水平。就像在 Git 中每进行一次提交，Git 并不是将我们所有的内容打包成一个版本，而只是将修改的部分进行记录，这样即使我们提交很多次后，代码库的空间占用也不会倍数增加。 通过 AUFS，Docker
 <strong>大幅减少了虚拟文件系统对物理存储空间的占用</strong>。</p>
 <h3 id="虚拟机和-docker" class="headerLink">
     <a href="#%e8%99%9a%e6%8b%9f%e6%9c%ba%e5%92%8c-docker" class="header-mark"></a>虚拟机和 Docker</h3><p><strong><ruby>虚拟机<rt>Virtual Machine</rt></ruby></strong>，通常来说就是通过一个<strong><ruby>虚拟机监视器<rt>Virtual Machine Monitor</rt></ruby></strong>
 的设施来隔离操作系统与硬件或者应用程序和操作系统，以此达到虚拟化的目的。这个夹在其中的虚拟机监视器，常常被称为
 <strong>Hypervisor</strong>。👇是虚拟机和 Docker 的对比：</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220506/c869ee3cf8d94b20ae793d98e6022afd.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="虚拟机和容器" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220506/c869ee3cf8d94b20ae793d98e6022afd.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>虚拟机和容器</h2><p>虚拟机和容器</p>">
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220506/c869ee3cf8d94b20ae793d98e6022afd.png" title="虚拟机和容器" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220506/c869ee3cf8d94b20ae793d98e6022afd.png" data-sub-html="<h2>虚拟机和容器</h2><p>虚拟机和容器</p>">
         <img
             class="lazyload"
-            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220506/c869ee3cf8d94b20ae793d98e6022afd.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
-            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220506/c869ee3cf8d94b20ae793d98e6022afd.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220506/c869ee3cf8d94b20ae793d98e6022afd.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220506/c869ee3cf8d94b20ae793d98e6022afd.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220506/c869ee3cf8d94b20ae793d98e6022afd.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220506/c869ee3cf8d94b20ae793d98e6022afd.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220506/c869ee3cf8d94b20ae793d98e6022afd.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220506/c869ee3cf8d94b20ae793d98e6022afd.png 2x"
             data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220506/c869ee3cf8d94b20ae793d98e6022afd.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15">
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220506/c869ee3cf8d94b20ae793d98e6022afd.png">
     </a><figcaption class="image-caption">虚拟机和容器</figcaption>
     </figure></p>
 <p>传统方式是在硬件层面实现虚拟化，需要有额外的虚拟机管理应用和虚拟机操作系统层。Docker容器是在操作系统层面上实现虚拟化，直接
 <strong>复用本地主机的操作系统</strong>，因此更加轻量级。</p>
 <p>虚拟机更擅长彻底隔离整个运行环境。例如，云服务提供商通常采用虚拟机技术隔离不同的用户。而 Docker 通常用于隔离不同的应用，例如前端，后端以及数据库。</p>
 <h2 id="常用命令" class="headerLink">
-    <a href="#%e5%b8%b8%e7%94%a8%e5%91%bd%e4%bb%a4" class="header-mark"></a>常用命令</h2><table>
+    <a href="#%e5%b8%b8%e7%94%a8%e5%91%bd%e4%bb%a4" class="header-mark"></a>常用命令</h2><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221231/e5053d518f254d20ac99dc5324bdb51f.png" title="官方架构图" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221231/e5053d518f254d20ac99dc5324bdb51f.png" data-sub-html="<h2>官方架构图</h2><p>官方架构图</p>">
+        <img
+            class="lazyload"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221231/e5053d518f254d20ac99dc5324bdb51f.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221231/e5053d518f254d20ac99dc5324bdb51f.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20221231/e5053d518f254d20ac99dc5324bdb51f.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20221231/e5053d518f254d20ac99dc5324bdb51f.png 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221231/e5053d518f254d20ac99dc5324bdb51f.png">
+    </a><figcaption class="image-caption">官方架构图</figcaption>
+    </figure></p>
+<table>
 <thead>
 <tr>
 <th>CMD</th>
@@ -551,9 +562,11 @@
             alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220426/2e40239883264b8fa413bcd39eaf701a.png">
     </a><figcaption class="image-caption">网络驱动</figcaption>
     </figure></p>
-<p><code>Bridge</code> 网络是 Docker 容器的默认网络驱动，通过网桥来实现网络通讯。为容器创建独立的网络命名空间，分配网卡、IP 地址等网络配置，并通过 veth 接口对将容器挂载到一个虚拟网桥（默认为docker0）上。</p>
-<p><code>none</code>为容器创建独立的网络命名空间，但不进行网络配置，即容器内没有创建网卡、IP地址等。</p>
-<p><code>host</code>不为容器创建独立的网络命名空间，容器内看到的网络配置（网卡信息、路由表、Iptables 规则等）均与主机上的保持一致。注意其他资源还是与主机隔离的。</p>
+<p><code>Bridge</code> 网络是 Docker 容器的默认网络驱动，通过网桥来实现网络通讯。为容器创建独立的网络命名空间，分配网卡、IP 地址等网络配置，并通过 veth 接口对将容器挂载到一个虚拟网桥（默认为docker0）上。bridge 模式多了虚拟网桥和网卡，通信效率会低一些，但是可以灵活配置应用端口。</p>
+<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221231/92f31a89783a4f8c95abe007d7633f45.png" width="600"/> </div>
+<p><code>none</code>为容器创建独立的网络命名空间，但不进行网络配置，即容器内没有创建网卡、IP地址等。允许其他的网络插件来自定义网络连接。</p>
+<p><code>host</code>不为容器创建独立的网络命名空间，容器内看到的网络配置（网卡信息、路由表、Iptables 规则等）均与主机上的保持一致。注意其他资源还是与主机隔离的。这种模式没有中间层，相当于去掉了容器的网络隔离，自然通信效率高，但缺少了隔离，运行太多的容器也容易
+<strong>导致端口冲突</strong>，比如宿主机和容器不能运行端口相同的应用。</p>
 <p><code>Overlay</code> 驱动默认采用 VXLAN 协议，在 <strong>IP 地址可以互相访问</strong>的多个主机之间搭建隧道，让容器可以互相访问，并且让这些容器感觉这个网络与其他类型的网络没有区别。</p>
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220428/982405a94bc347559812099a15aabeb2.png" title="Overlay network" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220428/982405a94bc347559812099a15aabeb2.png" data-sub-html="<h2>Overlay network</h2><p>Overlay network</p>">
         <img
@@ -860,6 +873,10 @@
             alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220509/02c21142855e479a8826db7fcfbd438d.png">
     </a><figcaption class="image-caption">常用指令</figcaption>
     </figure></p>
+<blockquote>
+<p>Only the instructions <code>RUN</code>, <code>COPY</code>, <code>ADD</code> create layers. Other instructions create temporary intermediate images, and do not increase the size of the build.</p>
+</blockquote>
+<p>只有 RUN, COPY, ADD 会生成新的镜像层，其它指令只会产生临时层，不影响构建大小。</p>
 <ul>
 <li>🏆<code>FROM</code></li>
 </ul>
@@ -1169,6 +1186,9 @@
 <h3 id="-v-和---mount-的区别" class="headerLink">
     <a href="#-v-%e5%92%8c---mount-%e7%9a%84%e5%8c%ba%e5%88%ab" class="header-mark"></a>-v 和 &ndash;mount 的区别</h3><p>使用<code>-v</code>时，如果宿主机上没有这个文件，也会自动创建，如果使用<code>--mount</code>时，宿主机中没有这个文件会报错找不到这个文件，并创建失败。</p>
 <p><code>--mount</code>由多个键-值对组成，以逗号分隔，每个键-值对由一个<code>&lt;key&gt;=&lt;value&gt;</code>元组组成。<code>--mount</code>语法比<code>-v</code>或<code>--volume</code>更冗长，但是键的顺序并不重要，标记的值也更容易理解。 挂载的类型<code>type</code>，可以是<code>bind</code>、<code>volume</code>或者<code>tmpfs</code>。</p>
+<h3 id="镜像里的层都是只读不可修改的但容器运行的时候经常会写入数据这个冲突应该怎么解决" class="headerLink">
+    <a href="#%e9%95%9c%e5%83%8f%e9%87%8c%e7%9a%84%e5%b1%82%e9%83%bd%e6%98%af%e5%8f%aa%e8%af%bb%e4%b8%8d%e5%8f%af%e4%bf%ae%e6%94%b9%e7%9a%84%e4%bd%86%e5%ae%b9%e5%99%a8%e8%bf%90%e8%a1%8c%e7%9a%84%e6%97%b6%e5%80%99%e7%bb%8f%e5%b8%b8%e4%bc%9a%e5%86%99%e5%85%a5%e6%95%b0%e6%8d%ae%e8%bf%99%e4%b8%aa%e5%86%b2%e7%aa%81%e5%ba%94%e8%af%a5%e6%80%8e%e4%b9%88%e8%a7%a3%e5%86%b3" class="header-mark"></a>镜像里的层都是只读不可修改的，但容器运行的时候经常会写入数据，这个冲突应该怎么解决</h3><div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221231/1f2e25d662f84aefa3599f6f4d20b843.png" width="600"/> </div>
+<p>Docker 采用 UNION FS 文件系统，将文件系统分为上层和下层。即上层为容器层，下层为镜像层。如果下层有修改，运行容器时，上层会同步修改。如果上层有数据修改（即容器层数据修改），不会影响到下层（即镜像层）。</p>
 <h2 id="参考" class="headerLink">
     <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
 <li><a href="https://book.douban.com/subject/30329430/" target="_blank" rel="noopener noreferrer">Docker技术入门与实战(第三版)</a></li>
@@ -1176,6 +1196,7 @@
 <li><a href="https://juejin.cn/book/6844733746462064654" target="_blank" rel="noopener noreferrer">开发者必备的 Docker 实践指南</a></li>
 <li><a href="https://www.cnblogs.com/ittranslator/p/13352727.html" target="_blank" rel="noopener noreferrer">Docker 基础知识 - 使用绑定挂载(bind mounts)管理应用程序数据</a></li>
 <li><a href="https://www.php.cn/docker/" target="_blank" rel="noopener noreferrer">php 中文网 docker</a></li>
+<li><a href="https://docs.docker.com/engine/reference/builder/" target="_blank" rel="noopener noreferrer">Dockerfile reference</a></li>
 </ul>
 </div>
 
@@ -1183,8 +1204,8 @@
     <div class="post-info">
         <div class="post-info-line">
             <div class="post-info-mod">
-                <span>更新于 2022-12-05&nbsp;<a class="git-hash" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/986d7e2be28f20f99375bbe0939d21188b579db1" target="_blank" title="commit by weibin(xiaobinqt@163.com) 986d7e2be28f20f99375bbe0939d21188b579db1: update docker-glance.md" rel="noopener noreferrer">
-                                    <i class="fas fa-hashtag fa-fw"></i>986d7e2b</a></span>
+                <span>更新于 2022-12-31&nbsp;<a class="git-hash" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/24da5f393d6b2db9e7b2d1f1b057a1c155029353" target="_blank" title="commit by weibin(xiaobinqt@163.com) 24da5f393d6b2db9e7b2d1f1b057a1c155029353: update docker-glance.md" rel="noopener noreferrer">
+                                    <i class="fas fa-hashtag fa-fw"></i>24da5f39</a></span>
             </div>
             <div class="post-info-license"></div>
         </div>
