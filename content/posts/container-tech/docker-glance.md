@@ -55,9 +55,9 @@ Docker 并没有和虚拟机一样利用一个独立的 OS 执行环境的隔离
 
 支撑 docker 的核心技术有三个：`Namespace`，`Cgroup`，`UnionFS`。
 
-`Namespace` 提供了虚拟层面的隔离，比如文件隔离，网络隔离等等。每个命名空间中的应用看到的，都是不同的IP地址，用户空间，进程 ID 等。
+`Namespace` 是 2002 年从 Linux 2.4.19 开始出现的，提供了虚拟层面的隔离，比如文件隔离，网络隔离等等。每个命名空间中的应用看到的，都是不同的IP地址，用户空间，进程 ID 等。
 
-`Cgroup`提供了物理资源的隔离，比如 CPU，内存，磁盘等等。
+`Cgroup`是 2008 年从 Linux 2.6.24 开始出现的，它的全称是 Linux Control Group。提供了物理资源的隔离，比如 CPU，内存，磁盘等等。
 
 `UnionFS` 给 docker 镜像提供了技术支撑。在 Docker 中，提供了一种对 UnionFS 的改进实现，也就是 [AUFS]^(Advanced Union File System)。 AUFS 将文件的更新挂载到老的文件之上，而不去修改那些不更新的内容，这意味着即使虚拟的文件系统被反复修改，也能保证对真实文件系统的空间占用保持一个较低水平。就像在 Git 中每进行一次提交，Git 并不是将我们所有的内容打包成一个版本，而只是将修改的部分进行记录，这样即使我们提交很多次后，代码库的空间占用也不会倍数增加。 通过 AUFS，Docker
 **大幅减少了虚拟文件系统对物理存储空间的占用**。
@@ -68,7 +68,7 @@ Docker 并没有和虚拟机一样利用一个独立的 OS 执行环境的隔离
 的设施来隔离操作系统与硬件或者应用程序和操作系统，以此达到虚拟化的目的。这个夹在其中的虚拟机监视器，常常被称为
 **Hypervisor**。:point_down:是虚拟机和 Docker 的对比：
 
-![虚拟机和容器](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220506/c869ee3cf8d94b20ae793d98e6022afd.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '虚拟机和容器')
+![虚拟机和容器](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220506/c869ee3cf8d94b20ae793d98e6022afd.png '虚拟机和容器')
 
 
 [//]: # (![虚拟机和容器]&#40;https://cdn.xiaobinqt.cn/xiaobinqt.io/20220428/2763785408b64bfa92d0263dfd6c6e77.png '虚拟机和容器'&#41;)
@@ -79,6 +79,8 @@ Docker 并没有和虚拟机一样利用一个独立的 OS 执行环境的隔离
 虚拟机更擅长彻底隔离整个运行环境。例如，云服务提供商通常采用虚拟机技术隔离不同的用户。而 Docker 通常用于隔离不同的应用，例如前端，后端以及数据库。
 
 ## 常用命令
+
+![官方架构图](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221231/e5053d518f254d20ac99dc5324bdb51f.png '官方架构图')
 
 | CMD                                    | 说明                                                   |
 |----------------------------------------|------------------------------------------------------|
@@ -186,11 +188,14 @@ Docker 官方提供了五种 Docker 网络驱动：`Bridge Driver`、`Host Drive
 
 ![网络驱动](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220426/2e40239883264b8fa413bcd39eaf701a.png '网络驱动')
 
-`Bridge` 网络是 Docker 容器的默认网络驱动，通过网桥来实现网络通讯。为容器创建独立的网络命名空间，分配网卡、IP 地址等网络配置，并通过 veth 接口对将容器挂载到一个虚拟网桥（默认为docker0）上。
+`Bridge` 网络是 Docker 容器的默认网络驱动，通过网桥来实现网络通讯。为容器创建独立的网络命名空间，分配网卡、IP 地址等网络配置，并通过 veth 接口对将容器挂载到一个虚拟网桥（默认为docker0）上。bridge 模式多了虚拟网桥和网卡，通信效率会低一些，但是可以灵活配置应用端口。
 
-`none`为容器创建独立的网络命名空间，但不进行网络配置，即容器内没有创建网卡、IP地址等。
+<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221231/92f31a89783a4f8c95abe007d7633f45.png" width="600"/> </div>
 
-`host`不为容器创建独立的网络命名空间，容器内看到的网络配置（网卡信息、路由表、Iptables 规则等）均与主机上的保持一致。注意其他资源还是与主机隔离的。
+`none`为容器创建独立的网络命名空间，但不进行网络配置，即容器内没有创建网卡、IP地址等。允许其他的网络插件来自定义网络连接。
+
+`host`不为容器创建独立的网络命名空间，容器内看到的网络配置（网卡信息、路由表、Iptables 规则等）均与主机上的保持一致。注意其他资源还是与主机隔离的。这种模式没有中间层，相当于去掉了容器的网络隔离，自然通信效率高，但缺少了隔离，运行太多的容器也容易
+**导致端口冲突**，比如宿主机和容器不能运行端口相同的应用。
 
 `Overlay` 驱动默认采用 VXLAN 协议，在 **IP 地址可以互相访问**的多个主机之间搭建隧道，让容器可以互相访问，并且让这些容器感觉这个网络与其他类型的网络没有区别。
 
@@ -405,6 +410,10 @@ docker run --name mynginx -d nginx:1.12
 ### 常用指令
 
 ![常用指令](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220509/02c21142855e479a8826db7fcfbd438d.png '常用指令')
+
+> Only the instructions `RUN`, `COPY`, `ADD` create layers. Other instructions create temporary intermediate images, and do not increase the size of the build.
+
+只有 RUN, COPY, ADD 会生成新的镜像层，其它指令只会产生临时层，不影响构建大小。
 
 + :trophy:`FROM`
 
@@ -625,6 +634,12 @@ Docker 的写时复制与编程中的相类似，在通过镜像运行容器时�
 
 `--mount`由多个键-值对组成，以逗号分隔，每个键-值对由一个`<key>=<value>`元组组成。`--mount`语法比`-v`或`--volume`更冗长，但是键的顺序并不重要，标记的值也更容易理解。 挂载的类型`type`，可以是`bind`、`volume`或者`tmpfs`。
 
+### 镜像里的层都是只读不可修改的，但容器运行的时候经常会写入数据，这个冲突应该怎么解决
+
+<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221231/1f2e25d662f84aefa3599f6f4d20b843.png" width="600"/> </div>
+
+Docker 采用 UNION FS 文件系统，将文件系统分为上层和下层。即上层为容器层，下层为镜像层。如果下层有修改，运行容器时，上层会同步修改。如果上层有数据修改（即容器层数据修改），不会影响到下层（即镜像层）。
+
 ## 参考
 
 + [Docker技术入门与实战(第三版)](https://book.douban.com/subject/30329430/)
@@ -632,3 +647,4 @@ Docker 的写时复制与编程中的相类似，在通过镜像运行容器时�
 + [开发者必备的 Docker 实践指南](https://juejin.cn/book/6844733746462064654)
 + [Docker 基础知识 - 使用绑定挂载(bind mounts)管理应用程序数据](https://www.cnblogs.com/ittranslator/p/13352727.html)
 + [php 中文网 docker](https://www.php.cn/docker/)
++ [Dockerfile reference](https://docs.docker.com/engine/reference/builder/)
