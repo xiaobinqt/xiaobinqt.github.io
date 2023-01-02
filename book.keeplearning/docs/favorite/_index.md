@@ -3,7 +3,7 @@ weight: 100
 
 bookFlatSection: true
 
-bookCollapseSection: false
+bookCollapseSection: true
 
 bookToc: true
 
@@ -82,6 +82,7 @@ title: "收藏夹"
 + [LABULADONG 的算法网站](https://labuladong.github.io/algo/)
 + [CS-Notes](http://www.cyc2018.xyz/)
 + [Hello 算法](https://www.hello-algo.com/)
++ [小惡魔 - AppleBOY](https://blog.wu-boy.com/)
 
 ## 工具
 
@@ -96,6 +97,8 @@ title: "收藏夹"
 + [身份证号码生成器](https://www.dute.org/fake-id-card-number)
 + [PlantUML简述](https://plantuml.com/zh/)
 + [在线PS-Photopea](https://www.logosc.cn/online-ps) / [在线PS-toolwa](https://toolwa.com/ps/)
++ [json2yaml](https://www.json2yaml.com/)
++ [crontab.guru](https://crontab.guru/)
 
 ## 资料库
 
