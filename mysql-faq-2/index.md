@@ -135,7 +135,8 @@ update table set age = age + 1 where id = 1;
 
 ## 为什么需要两阶段提交
 
-两阶段提交主要是为了解决主从数据同步的问题。如果没有两阶段提交，那么 binlog 和 redolog 的提交，无非就是两种形式:point_down:
+两阶段提交主要是**为了解决主从数据同步的问题**
+。如果没有两阶段提交，那么 binlog 和 redolog 的提交，无非就是两种形式:point_down:
 
 1. 先写 bin-log 再写 redo-log
 2. 先写 redo-log 再写 bin-log
