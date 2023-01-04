@@ -12,7 +12,7 @@ QQ 和浏览器是两个进程，浏览器进程里面有很多线程，例如 H
 3. 区别 # Ⅰ 拥有资源 # 进程是资源分配的基本单位，但是线程不拥有资源，线程可以访问隶属进程的资源。
 Ⅱ 调度 # 线程是独立调度的基本单位，在同一进程中，线程的切换不会引起进程切换，从一个进程中的线程切换到另一个进程中的线程时，会引起进程切换。
 Ⅲ 系统开销 # 由于创建或撤销进程时，系统都要为之分配或回收资源，如内存空间、I/O 设备等，所付出的开销远大于创建或撤销线程时的开销。类似地，在进行进程切换时，涉及当前执行进程 CPU 环境的保存及新调度进程 CPU 环境的设置，而线程切换时只需保存和设置少量寄存器内容，开销很小。
-Ⅳ 通信方面 # 线程间可以通过直接读写同一进程中的数据进行通信，但是进程通信需要借助 IPC。
+Ⅳ 通信方面 # 线程间可以通过直接读写同一进程中的数据进行通信，但是进程通信需要借助 IPC（Inter-Process Communication，进程间通信）。
 进程状态的切换 # 就绪状态（ready）：等待被调度 运行状态（running） 阻塞状态（waiting）：等待资源 应该注意以下内容：
 只有就绪态和运行态可以相互转换，其它的都是单向转换。就绪状态的进程通过调度算法从而获得 CPU 时间，转为运行状态；而运行状态的进程，在分配给它的 CPU 时间片用完之后就会转为就绪状态，等待下一次调度。 阻塞状态是缺少需要的资源从而由运行状态转换而来，但是该资源不包括 CPU 时间，缺少 CPU 时间会从运行态转换为就绪态。 进程调度算法 # 不同环境的调度算法目标不同，因此需要针对不同环境来讨论调度算法。">
 <meta name="theme-color" content="#FFFFFF">
@@ -26,19 +26,19 @@ QQ 和浏览器是两个进程，浏览器进程里面有很多线程，例如 H
 3. 区别 # Ⅰ 拥有资源 # 进程是资源分配的基本单位，但是线程不拥有资源，线程可以访问隶属进程的资源。
 Ⅱ 调度 # 线程是独立调度的基本单位，在同一进程中，线程的切换不会引起进程切换，从一个进程中的线程切换到另一个进程中的线程时，会引起进程切换。
 Ⅲ 系统开销 # 由于创建或撤销进程时，系统都要为之分配或回收资源，如内存空间、I/O 设备等，所付出的开销远大于创建或撤销线程时的开销。类似地，在进行进程切换时，涉及当前执行进程 CPU 环境的保存及新调度进程 CPU 环境的设置，而线程切换时只需保存和设置少量寄存器内容，开销很小。
-Ⅳ 通信方面 # 线程间可以通过直接读写同一进程中的数据进行通信，但是进程通信需要借助 IPC。
+Ⅳ 通信方面 # 线程间可以通过直接读写同一进程中的数据进行通信，但是进程通信需要借助 IPC（Inter-Process Communication，进程间通信）。
 进程状态的切换 # 就绪状态（ready）：等待被调度 运行状态（running） 阻塞状态（waiting）：等待资源 应该注意以下内容：
 只有就绪态和运行态可以相互转换，其它的都是单向转换。就绪状态的进程通过调度算法从而获得 CPU 时间，转为运行状态；而运行状态的进程，在分配给它的 CPU 时间片用完之后就会转为就绪状态，等待下一次调度。 阻塞状态是缺少需要的资源从而由运行状态转换而来，但是该资源不包括 CPU 时间，缺少 CPU 时间会从运行态转换为就绪态。 进程调度算法 # 不同环境的调度算法目标不同，因此需要针对不同环境来讨论调度算法。" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://example.com/keeplearning/docs/os/process-manage/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-12-23T15:33:27+08:00" />
+<meta property="article:modified_time" content="2023-01-04T22:03:37+08:00" />
 <title>进程管理 | KeepLearning</title>
 <link rel="manifest" href="/keeplearning/manifest.json">
 <link rel="icon" href="/keeplearning/favicon.png" type="image/x-icon">
 <link rel="stylesheet" href="/keeplearning/book.min.44ab80b6e9fbffc4b56fa0525dd4af874d4d533ab2a985226782d7cdc8d9fd15.css" integrity="sha256-RKuAtun7/8S1b6BSXdSvh01NUzqyqYUiZ4LXzcjZ/RU=" crossorigin="anonymous">
   <script defer src="/keeplearning/flexsearch.min.js"></script>
-  <script defer src="/keeplearning/zh.search.min.7ac62371140188dbbfca75f92d6a462d73adaea4a8bb2bb65587ccd2fedbabb4.js" integrity="sha256-esYjcRQBiNu/ynX5LWpGLXOtrqSouyu2VYfM0v7bq7Q=" crossorigin="anonymous"></script>
+  <script defer src="/keeplearning/zh.search.min.1c6140334c37c960dba6c648eb00e4b0211b2b222c420d5379d7e7e1cedde790.js" integrity="sha256-HGFAM0w3yWDbpsZI6wDksCEbKyIsQg1Tedfn4c7d55A=" crossorigin="anonymous"></script>
 
   <script defer src="/keeplearning/sw.min.1adfb566b92ba83fd11679d786b02cc6ef24134c579bce6902d173c28305155f.js" integrity="sha256-Gt&#43;1ZrkrqD/RFnnXhrAsxu8kE0xXm85pAtFzwoMFFV8=" crossorigin="anonymous"></script>
 <!--
@@ -910,7 +910,7 @@ https://github.com/alex-shpak/hugo-book
   Ⅳ 通信方面
   <a class="anchor" href="#-%e9%80%9a%e4%bf%a1%e6%96%b9%e9%9d%a2">#</a>
 </h4>
-<p>线程间可以通过直接读写同一进程中的数据进行通信，但是进程通信需要借助 IPC。</p>
+<p>线程间可以通过直接读写同一进程中的数据进行通信，但是进程通信需要借助 IPC（Inter-Process Communication，进程间通信）。</p>
 <h2 id="进程状态的切换">
   进程状态的切换
   <a class="anchor" href="#%e8%bf%9b%e7%a8%8b%e7%8a%b6%e6%80%81%e7%9a%84%e5%88%87%e6%8d%a2">#</a>
@@ -1003,10 +1003,10 @@ https://github.com/alex-shpak/hugo-book
 </h3>
 <p>对临界资源进行访问的那段代码称为临界区。</p>
 <p>为了互斥访问临界资源，每个进程在进入临界区之前，需要先进行检查。</p>
-<pre tabindex="0"><code>// entry section
-// critical section;
-// exit section
-</code></pre><h3 id="2-同步与互斥">
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>// entry section
+</span></span><span style="display:flex;"><span>// critical section;
+</span></span><span style="display:flex;"><span>// exit section
+</span></span></code></pre></div><h3 id="2-同步与互斥">
   2. 同步与互斥
   <a class="anchor" href="#2-%e5%90%8c%e6%ad%a5%e4%b8%8e%e4%ba%92%e6%96%a5">#</a>
 </h3>
@@ -1091,7 +1091,8 @@ https://github.com/alex-shpak/hugo-book
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    end;
 </span></span><span style="display:flex;"><span>end monitor;
 </span></span></code></pre></div><p>管程有一个重要特性：在一个时刻只能有一个进程使用管程。进程在无法继续执行的时候不能一直占用管程，否则其它进程永远不能使用管程。</p>
-<p>管程引入了 条件变量 以及相关的操作：wait() 和 signal() 来实现同步操作。对条件变量执行 wait() 操作会导致调用进程阻塞，把管程让出来给另一个进程持有。signal() 操作用于唤醒被阻塞的进程。</p>
+<p>管程引入了 <strong>条件变量</strong>
+以及相关的操作：wait() 和 signal() 来实现同步操作。对条件变量执行 wait() 操作会导致调用进程阻塞，把管程让出来给另一个进程持有。signal() 操作用于唤醒被阻塞的进程。</p>
 <p><strong>使用管程实现生产者-消费者问题</strong></p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span><span style="color:#75715e">// 管程
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>monitor ProducerConsumer
@@ -1316,9 +1317,9 @@ https://github.com/alex-shpak/hugo-book
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/038d315e2b9388802c1c6922d2a3de7a2afb8223" title='最后修改者 weibin | December 23, 2022' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/1c0ff9cc6e54e0993d585a098d4f03ae318631de" title='最后修改者 weibin | January 4, 2023' target="_blank" rel="noopener">
       <img src="/keeplearning/svg/calendar.svg" class="book-icon" alt="Calendar" />
-      <span>December 23, 2022</span>
+      <span>January 4, 2023</span>
     </a>
   </div>
 
