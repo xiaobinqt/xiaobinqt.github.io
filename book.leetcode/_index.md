@@ -24,10 +24,11 @@ type: docs
 现在面试实在是太卷了，除了问底层实现，还有必问的就是算法题。从刚开始的让写一个「二分查找」，「冒泡排序」到现在的「二叉树最大数字所在的深度」，「输入一个链表，求解链表中环的长度」我™真的觉得👇
 
 {{< columns >}}
-![别卷了](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221222/9d0f981aa1b84d02995597aa4576284d.png '别卷了')
+
+![别卷了](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221222/05335d157661480dab35fad57a965f40.png '别卷了')
 
 <--->
-![别卷了](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221222/05335d157661480dab35fad57a965f40.png '别卷了')
+![别卷了](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221222/9d0f981aa1b84d02995597aa4576284d.png '别卷了')
 
 {{< /columns >}}
 
