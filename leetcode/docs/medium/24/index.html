@@ -3,36 +3,34 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="24. 两两交换链表中的节点 # 题目地址： https://leetcode.cn/problems/swap-nodes-in-pairs/
-解题思路 # 参考 https://leetcode.cn/problems/swap-nodes-in-pairs/solutions/444474/liang-liang-jiao-huan-lian-biao-zhong-de-jie-di-91/
+<meta name="description" content="24. 两两交换链表中的节点 # 题目地址 # 力扣 LeetCode 解题思路 # 参考 https://leetcode.cn/problems/swap-nodes-in-pairs/solutions/444474/liang-liang-jiao-huan-lian-biao-zhong-de-jie-di-91/
 递归法 # 可以通过递归的方式实现两两交换链表中的节点。递归的终止条件是链表中没有节点，或者链表中只有一个节点，此时无法进行交换。
 如果链表中至少有两个节点，则在两两交换链表中的节点之后，原始链表的头节点变成新的链表的第二个节点，原始链表的第二个节点变成新的链表的头节点。链表中的其余节点的两两交换可以递归地实现。在对链表中的其余节点递归地两两交换之后，更新节点之间的指针关系，即可完成整个链表的两两交换。
 用head表示原始链表的头节点，新的链表的第二个节点，用newHead表示新的链表的头节点，原始链表的第二个节点，则原始链表中的其余节点的头节点是newHead.next。令head.next = swapPairs(newHead.next)，表示将其余节点进行两两交换，交换后的新的头节点为head的下一个节点。然后令newHead.next = head，即完成了所有节点的交换。最后返回新的链表的头节点newHead。
-:warning:好吧，再理解一下，关于递归，我只关注我这一层要干什么，返回什么，至于我的下一层（规模减 1），我不管，我就是一个甩手掌柜:see_no_evil:。
+⚠️好吧，再理解一下，关于递归，我只关注我这一层要干什么，返回什么，至于我的下一层（规模减 1），我不管，我就是一个甩手掌柜🙈。
 我其实只需要关心第一层，也就是节点1和节点2的交换，把节点2的next指向节点1，节点2的next给下一层也就是递归函数。而我最后返回的应该是头结点，其实也就是原始节点的节点2。
 迭代法 # TODO
-具体实现 # Go递归 package main import ( &#34;fmt&#34; ) type ListNode struct { Val int Next *ListNode } func swapPairs(head *ListNode) *ListNode { if head == nil || head.Next == nil { return head } newHead := head.Next head.Next = swapPairs(head.Next.Next) newHead.Next = head return newHead } func main() { x := swapPairs(&amp;ListNode{ Val: 1, Next: &amp;ListNode{ Val: 2, Next: &amp;ListNode{ Val: 3, Next: &amp;ListNode{ Val: 4, Next: nil, }, }, }, }) fmt.">
+具体实现 # Go迭代 package main import ( &#34;fmt&#34; ) type ListNode struct { Val int Next *ListNode } func swapPairs(head *ListNode) *ListNode { if head == nil { return head } dummy := &amp;ListNode{ Val: 0, Next: head, } curr := dummy // 如果是链表长度是奇数那就没有必要交换，只有偶数才需要交换，所以这里的判断条件是 &amp;&amp; // 这里不能用一个临时参数，因为链表指针后的值会变化 for curr.">
 <meta name="theme-color" content="#FFFFFF">
 <meta name="color-scheme" content="light dark"><meta property="og:title" content="24. 两两交换链表中的节点" />
-<meta property="og:description" content="24. 两两交换链表中的节点 # 题目地址： https://leetcode.cn/problems/swap-nodes-in-pairs/
-解题思路 # 参考 https://leetcode.cn/problems/swap-nodes-in-pairs/solutions/444474/liang-liang-jiao-huan-lian-biao-zhong-de-jie-di-91/
+<meta property="og:description" content="24. 两两交换链表中的节点 # 题目地址 # 力扣 LeetCode 解题思路 # 参考 https://leetcode.cn/problems/swap-nodes-in-pairs/solutions/444474/liang-liang-jiao-huan-lian-biao-zhong-de-jie-di-91/
 递归法 # 可以通过递归的方式实现两两交换链表中的节点。递归的终止条件是链表中没有节点，或者链表中只有一个节点，此时无法进行交换。
 如果链表中至少有两个节点，则在两两交换链表中的节点之后，原始链表的头节点变成新的链表的第二个节点，原始链表的第二个节点变成新的链表的头节点。链表中的其余节点的两两交换可以递归地实现。在对链表中的其余节点递归地两两交换之后，更新节点之间的指针关系，即可完成整个链表的两两交换。
 用head表示原始链表的头节点，新的链表的第二个节点，用newHead表示新的链表的头节点，原始链表的第二个节点，则原始链表中的其余节点的头节点是newHead.next。令head.next = swapPairs(newHead.next)，表示将其余节点进行两两交换，交换后的新的头节点为head的下一个节点。然后令newHead.next = head，即完成了所有节点的交换。最后返回新的链表的头节点newHead。
-:warning:好吧，再理解一下，关于递归，我只关注我这一层要干什么，返回什么，至于我的下一层（规模减 1），我不管，我就是一个甩手掌柜:see_no_evil:。
+⚠️好吧，再理解一下，关于递归，我只关注我这一层要干什么，返回什么，至于我的下一层（规模减 1），我不管，我就是一个甩手掌柜🙈。
 我其实只需要关心第一层，也就是节点1和节点2的交换，把节点2的next指向节点1，节点2的next给下一层也就是递归函数。而我最后返回的应该是头结点，其实也就是原始节点的节点2。
 迭代法 # TODO
-具体实现 # Go递归 package main import ( &#34;fmt&#34; ) type ListNode struct { Val int Next *ListNode } func swapPairs(head *ListNode) *ListNode { if head == nil || head.Next == nil { return head } newHead := head.Next head.Next = swapPairs(head.Next.Next) newHead.Next = head return newHead } func main() { x := swapPairs(&amp;ListNode{ Val: 1, Next: &amp;ListNode{ Val: 2, Next: &amp;ListNode{ Val: 3, Next: &amp;ListNode{ Val: 4, Next: nil, }, }, }, }) fmt." />
+具体实现 # Go迭代 package main import ( &#34;fmt&#34; ) type ListNode struct { Val int Next *ListNode } func swapPairs(head *ListNode) *ListNode { if head == nil { return head } dummy := &amp;ListNode{ Val: 0, Next: head, } curr := dummy // 如果是链表长度是奇数那就没有必要交换，只有偶数才需要交换，所以这里的判断条件是 &amp;&amp; // 这里不能用一个临时参数，因为链表指针后的值会变化 for curr." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://example.com/leetcode/docs/medium/24/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2023-01-04T18:28:53+08:00" />
+<meta property="article:modified_time" content="2023-01-05T10:37:59+08:00" />
 <title>24. 两两交换链表中的节点 | LeetCode</title>
 <link rel="manifest" href="/leetcode/manifest.json">
 <link rel="icon" href="/leetcode/favicon.png" type="image/x-icon">
 <link rel="stylesheet" href="/leetcode/book.min.44ab80b6e9fbffc4b56fa0525dd4af874d4d533ab2a985226782d7cdc8d9fd15.css" integrity="sha256-RKuAtun7/8S1b6BSXdSvh01NUzqyqYUiZ4LXzcjZ/RU=" crossorigin="anonymous">
   <script defer src="/leetcode/flexsearch.min.js"></script>
-  <script defer src="/leetcode/zh.search.min.b08261ff64ec21a254da67c305929debaac9c94a39fc261aaa510823bcf0c567.js" integrity="sha256-sIJh/2TsIaJU2mfDBZKd66rJyUo5/CYaqlEII7zwxWc=" crossorigin="anonymous"></script>
+  <script defer src="/leetcode/zh.search.min.b7adf5cffa823b6875175a5ec877d98351a496ada81dcf339a07dc1b8ba93b89.js" integrity="sha256-t631z/qCO2h1F1peyHfZg1Gklq2oHc8zmgfcG4upO4k=" crossorigin="anonymous"></script>
 
   <script defer src="/leetcode/sw.min.8d698a22bbf5eabddb125225de29674ea0338c58e103f5a48ccdc8118d0f922a.js" integrity="sha256-jWmKIrv16r3bElIl3ilnTqAzjFjhA/WkjM3IEY0Pkio=" crossorigin="anonymous"></script>
 <!--
@@ -98,10 +96,7 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <input type="checkbox" id="section-30b23d581404d7435ed665fd38aba427" class="toggle"  />
-    <label for="section-30b23d581404d7435ed665fd38aba427" class="flex justify-between">
-      <a href="/leetcode/docs/easy/" class="">Easy</a>
-    </label>
+    <a href="/leetcode/docs/easy/" class="">Easy</a>
   
 
           
@@ -223,10 +218,7 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <input type="checkbox" id="section-d466dc3508acb3fa5e16abb02b770404" class="toggle" checked />
-    <label for="section-d466dc3508acb3fa5e16abb02b770404" class="flex justify-between">
-      <a href="/leetcode/docs/medium/" class="">Medium</a>
-    </label>
+    <a href="/leetcode/docs/medium/" class="">Medium</a>
   
 
           
@@ -296,10 +288,7 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <input type="checkbox" id="section-d98996bb18af21c5846a659fc6875750" class="toggle"  />
-    <label for="section-d98996bb18af21c5846a659fc6875750" class="flex justify-between">
-      <a href="/leetcode/docs/hard/" class="">Hard</a>
-    </label>
+    <a href="/leetcode/docs/hard/" class="">Hard</a>
   
 
           
@@ -330,10 +319,7 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <input type="checkbox" id="section-fcc79f15a26c235c62a19c5d17c1697c" class="toggle"  />
-    <label for="section-fcc79f15a26c235c62a19c5d17c1697c" class="flex justify-between">
-      <a href="/leetcode/docs/hot100/" class="">热题 HOT 100</a>
-    </label>
+    <a href="/leetcode/docs/hot100/" class="">热题 HOT 100</a>
   
 
           
@@ -377,10 +363,7 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <input type="checkbox" id="section-df0032c292233614eb120498739e8356" class="toggle"  />
-    <label for="section-df0032c292233614eb120498739e8356" class="flex justify-between">
-      <a href="/leetcode/docs/other/" class="">其他</a>
-    </label>
+    <a href="/leetcode/docs/other/" class="">其他</a>
   
 
           
@@ -471,6 +454,7 @@ https://github.com/alex-shpak/hugo-book
   <ul>
     <li><a href="#24-两两交换链表中的节点">24. 两两交换链表中的节点</a>
       <ul>
+        <li><a href="#题目地址">题目地址</a></li>
         <li><a href="#解题思路">解题思路</a>
           <ul>
             <li><a href="#递归法">递归法</a></li>
@@ -496,8 +480,16 @@ https://github.com/alex-shpak/hugo-book
   24. 两两交换链表中的节点
   <a class="anchor" href="#24-%e4%b8%a4%e4%b8%a4%e4%ba%a4%e6%8d%a2%e9%93%be%e8%a1%a8%e4%b8%ad%e7%9a%84%e8%8a%82%e7%82%b9">#</a>
 </h1>
-<p>题目地址：
-  <a href="https://leetcode.cn/problems/swap-nodes-in-pairs/">https://leetcode.cn/problems/swap-nodes-in-pairs/</a></p>
+<h2 id="题目地址">
+  题目地址
+  <a class="anchor" href="#%e9%a2%98%e7%9b%ae%e5%9c%b0%e5%9d%80">#</a>
+</h2>
+<ul>
+<li>
+  <a href="https://leetcode.cn/problems/swap-nodes-in-pairs/">力扣</a></li>
+<li>
+  <a href="https://leetcode.com/problems/swap-nodes-in-pairs/">LeetCode</a></li>
+</ul>
 <h2 id="解题思路">
   解题思路
   <a class="anchor" href="#%e8%a7%a3%e9%a2%98%e6%80%9d%e8%b7%af">#</a>
@@ -511,7 +503,7 @@ https://github.com/alex-shpak/hugo-book
 <p>可以通过递归的方式实现两两交换链表中的节点。递归的终止条件是链表中没有节点，或者链表中只有一个节点，此时无法进行交换。</p>
 <p>如果链表中至少有两个节点，则在两两交换链表中的节点之后，原始链表的头节点变成新的链表的第二个节点，原始链表的第二个节点变成新的链表的头节点。链表中的其余节点的两两交换可以递归地实现。在对链表中的其余节点递归地两两交换之后，更新节点之间的指针关系，即可完成整个链表的两两交换。</p>
 <p>用<code>head</code>表示原始链表的头节点，新的链表的第二个节点，用<code>newHead</code>表示新的链表的头节点，原始链表的第二个节点，则原始链表中的其余节点的头节点是<code>newHead.next</code>。令<code>head.next = swapPairs(newHead.next)</code>，表示将其余节点进行两两交换，交换后的新的头节点为<code>head</code>的下一个节点。然后令<code>newHead.next = head</code>，即完成了所有节点的交换。最后返回新的链表的头节点<code>newHead</code>。</p>
-<p>:warning:好吧，再理解一下，关于递归，我只关注我这一层要干什么，返回什么，至于我的下一层（规模减 1），我不管，我就是一个甩手掌柜:see_no_evil:。</p>
+<p>⚠️好吧，再理解一下，关于递归，我只关注我这一层要干什么，返回什么，至于我的下一层（规模减 1），我不管，我就是一个甩手掌柜🙈。</p>
 <p>我其实只需要关心第一层，也就是<code>节点1</code>和<code>节点2</code>的交换，把<code>节点2</code>的<code>next</code>指向<code>节点1</code>，<code>节点2</code>的<code>next</code>给下一层也就是递归函数。而我最后返回的应该是头结点，其实也就是原始节点的<code>节点2</code>。</p>
 <h3 id="迭代法">
   迭代法
@@ -527,7 +519,63 @@ https://github.com/alex-shpak/hugo-book
 
 
 <div class="book-tabs"><input type="radio" class="toggle" name="tabs-uniqueid" id="tabs-uniqueid-0" checked="checked" />
-  <label for="tabs-uniqueid-0">Go递归</label>
+  <label for="tabs-uniqueid-0">Go迭代</label>
+  <div class="book-tabs-content markdown-inner"><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> (
+</span></span><span style="display:flex;"><span>	<span style="color:#e6db74">&#34;fmt&#34;</span>
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">ListNode</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">Val</span>  <span style="color:#66d9ef">int</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">Next</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">ListNode</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">swapPairs</span>(<span style="color:#a6e22e">head</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">ListNode</span>) <span style="color:#f92672">*</span><span style="color:#a6e22e">ListNode</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">head</span> <span style="color:#f92672">==</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">head</span>
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">dummy</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">ListNode</span>{
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">Val</span>:  <span style="color:#ae81ff">0</span>,
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">Next</span>: <span style="color:#a6e22e">head</span>,
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">curr</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">dummy</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// 如果是链表长度是奇数那就没有必要交换，只有偶数才需要交换，所以这里的判断条件是 &amp;&amp;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#75715e">// 这里不能用一个临时参数，因为链表指针后的值会变化
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">curr</span>.<span style="color:#a6e22e">Next</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#a6e22e">curr</span>.<span style="color:#a6e22e">Next</span>.<span style="color:#a6e22e">Next</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">tmp</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">curr</span>.<span style="color:#a6e22e">Next</span>
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">tmp1</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">curr</span>.<span style="color:#a6e22e">Next</span>.<span style="color:#a6e22e">Next</span>.<span style="color:#a6e22e">Next</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">curr</span>.<span style="color:#a6e22e">Next</span> = <span style="color:#a6e22e">curr</span>.<span style="color:#a6e22e">Next</span>.<span style="color:#a6e22e">Next</span>
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">curr</span>.<span style="color:#a6e22e">Next</span>.<span style="color:#a6e22e">Next</span> = <span style="color:#a6e22e">tmp</span>
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">curr</span>.<span style="color:#a6e22e">Next</span>.<span style="color:#a6e22e">Next</span>.<span style="color:#a6e22e">Next</span> = <span style="color:#a6e22e">tmp1</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">curr</span> = <span style="color:#a6e22e">curr</span>.<span style="color:#a6e22e">Next</span>.<span style="color:#a6e22e">Next</span>
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">dummy</span>.<span style="color:#a6e22e">Next</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">x</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">swapPairs</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">ListNode</span>{
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">Val</span>: <span style="color:#ae81ff">1</span>,
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">Next</span>: <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">ListNode</span>{
+</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">Val</span>: <span style="color:#ae81ff">2</span>,
+</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">Next</span>: <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">ListNode</span>{
+</span></span><span style="display:flex;"><span>				<span style="color:#a6e22e">Val</span>: <span style="color:#ae81ff">3</span>,
+</span></span><span style="display:flex;"><span>				<span style="color:#a6e22e">Next</span>: <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">ListNode</span>{
+</span></span><span style="display:flex;"><span>					<span style="color:#a6e22e">Val</span>:  <span style="color:#ae81ff">4</span>,
+</span></span><span style="display:flex;"><span>					<span style="color:#a6e22e">Next</span>: <span style="color:#66d9ef">nil</span>,
+</span></span><span style="display:flex;"><span>				},
+</span></span><span style="display:flex;"><span>			},
+</span></span><span style="display:flex;"><span>		},
+</span></span><span style="display:flex;"><span>	})
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">x</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div></div><input type="radio" class="toggle" name="tabs-uniqueid" id="tabs-uniqueid-1"  />
+  <label for="tabs-uniqueid-1">Go递归</label>
   <div class="book-tabs-content markdown-inner"><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> (
@@ -566,60 +614,6 @@ https://github.com/alex-shpak/hugo-book
 </span></span><span style="display:flex;"><span>	})
 </span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">x</span>)
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div></div><input type="radio" class="toggle" name="tabs-uniqueid" id="tabs-uniqueid-1"  />
-  <label for="tabs-uniqueid-1">Go迭代</label>
-  <div class="book-tabs-content markdown-inner"><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> (
-</span></span><span style="display:flex;"><span>	<span style="color:#e6db74">&#34;fmt&#34;</span>
-</span></span><span style="display:flex;"><span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">ListNode</span> <span style="color:#66d9ef">struct</span> {
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">Val</span>  <span style="color:#66d9ef">int</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">Next</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">ListNode</span>
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">swapPairs</span>(<span style="color:#a6e22e">head</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">ListNode</span>) <span style="color:#f92672">*</span><span style="color:#a6e22e">ListNode</span> {
-</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">head</span> <span style="color:#f92672">==</span> <span style="color:#66d9ef">nil</span> {
-</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">head</span>
-</span></span><span style="display:flex;"><span>	}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">dummy</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">ListNode</span>{
-</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">Val</span>:  <span style="color:#ae81ff">0</span>,
-</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">Next</span>: <span style="color:#a6e22e">head</span>,
-</span></span><span style="display:flex;"><span>	}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">curr</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">dummy</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">curr</span>.<span style="color:#a6e22e">Next</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#a6e22e">curr</span>.<span style="color:#a6e22e">Next</span>.<span style="color:#a6e22e">Next</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">tmp</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">curr</span>.<span style="color:#a6e22e">Next</span>
-</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">tmp1</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">curr</span>.<span style="color:#a6e22e">Next</span>.<span style="color:#a6e22e">Next</span>.<span style="color:#a6e22e">Next</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">curr</span>.<span style="color:#a6e22e">Next</span> = <span style="color:#a6e22e">curr</span>.<span style="color:#a6e22e">Next</span>.<span style="color:#a6e22e">Next</span>
-</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">curr</span>.<span style="color:#a6e22e">Next</span>.<span style="color:#a6e22e">Next</span> = <span style="color:#a6e22e">tmp</span>
-</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">curr</span>.<span style="color:#a6e22e">Next</span>.<span style="color:#a6e22e">Next</span>.<span style="color:#a6e22e">Next</span> = <span style="color:#a6e22e">tmp1</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">curr</span> = <span style="color:#a6e22e">curr</span>.<span style="color:#a6e22e">Next</span>.<span style="color:#a6e22e">Next</span>
-</span></span><span style="display:flex;"><span>	}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">dummy</span>.<span style="color:#a6e22e">Next</span>
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">x</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">swapPairs</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">ListNode</span>{
-</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">Val</span>: <span style="color:#ae81ff">1</span>,
-</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">Next</span>: <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">ListNode</span>{
-</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">Val</span>: <span style="color:#ae81ff">2</span>,
-</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">Next</span>: <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">ListNode</span>{
-</span></span><span style="display:flex;"><span>				<span style="color:#a6e22e">Val</span>: <span style="color:#ae81ff">3</span>,
-</span></span><span style="display:flex;"><span>				<span style="color:#a6e22e">Next</span>: <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">ListNode</span>{
-</span></span><span style="display:flex;"><span>					<span style="color:#a6e22e">Val</span>:  <span style="color:#ae81ff">4</span>,
-</span></span><span style="display:flex;"><span>					<span style="color:#a6e22e">Next</span>: <span style="color:#66d9ef">nil</span>,
-</span></span><span style="display:flex;"><span>				},
-</span></span><span style="display:flex;"><span>			},
-</span></span><span style="display:flex;"><span>		},
-</span></span><span style="display:flex;"><span>	})
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">x</span>)
-</span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div></div></div>
 
 </article>
@@ -631,9 +625,9 @@ https://github.com/alex-shpak/hugo-book
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/ca2a0c93fb2cb96bec90e8d58a9372b23044299d" title='最后修改者 weibin | January 4, 2023' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/da889656e6194cbaa9ce92646295d6185594a95c" title='最后修改者 weibin | January 5, 2023' target="_blank" rel="noopener">
       <img src="/leetcode/svg/calendar.svg" class="book-icon" alt="Calendar" />
-      <span>January 4, 2023</span>
+      <span>January 5, 2023</span>
     </a>
   </div>
 
@@ -678,6 +672,7 @@ https://github.com/alex-shpak/hugo-book
   <ul>
     <li><a href="#24-两两交换链表中的节点">24. 两两交换链表中的节点</a>
       <ul>
+        <li><a href="#题目地址">题目地址</a></li>
         <li><a href="#解题思路">解题思路</a>
           <ul>
             <li><a href="#递归法">递归法</a></li>
