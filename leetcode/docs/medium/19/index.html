@@ -14,13 +14,13 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://example.com/leetcode/docs/medium/19/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2023-01-05T14:11:01+08:00" />
+<meta property="article:modified_time" content="2023-01-10T23:24:41+08:00" />
 <title>19. 删除链表的倒数第 N 个结点 | LeetCode</title>
 <link rel="manifest" href="/leetcode/manifest.json">
 <link rel="icon" href="/leetcode/favicon.png" type="image/x-icon">
 <link rel="stylesheet" href="/leetcode/book.min.44ab80b6e9fbffc4b56fa0525dd4af874d4d533ab2a985226782d7cdc8d9fd15.css" integrity="sha256-RKuAtun7/8S1b6BSXdSvh01NUzqyqYUiZ4LXzcjZ/RU=" crossorigin="anonymous">
   <script defer src="/leetcode/flexsearch.min.js"></script>
-  <script defer src="/leetcode/zh.search.min.b78b64a9db100155af3a3fa7a14dc8eece9cf8cf619874b1f9f57da305d73d0c.js" integrity="sha256-t4tkqdsQAVWvOj&#43;noU3I7s6c&#43;M9hmHSx&#43;fV9owXXPQw=" crossorigin="anonymous"></script>
+  <script defer src="/leetcode/zh.search.min.8f946b3065bcdcc8ce47e89207e0e1076234d70c6ddd5abf747155a992f9f413.js" integrity="sha256-j5RrMGW83MjOR&#43;iSB&#43;DhB2I01wxt3Vq/dHFVqZL59BM=" crossorigin="anonymous"></script>
 
   <script defer src="/leetcode/sw.min.8d698a22bbf5eabddb125225de29674ea0338c58e103f5a48ccdc8118d0f922a.js" integrity="sha256-jWmKIrv16r3bElIl3ilnTqAzjFjhA/WkjM3IEY0Pkio=" crossorigin="anonymous"></script>
 <!--
@@ -586,6 +586,62 @@ https://github.com/alex-shpak/hugo-book
 </span></span><span style="display:flex;"><span>	}, <span style="color:#ae81ff">2</span>)
 </span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">ret</span>)
 </span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div></div><input type="radio" class="toggle" name="tabs-uniqueid" id="tabs-uniqueid-1"  />
+  <label for="tabs-uniqueid-1">Go双指针</label>
+  <div class="book-tabs-content markdown-inner"><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> <span style="color:#e6db74">&#34;fmt&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">ListNode</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">Val</span>  <span style="color:#66d9ef">int</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">Next</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">ListNode</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">removeNthFromEnd</span>(<span style="color:#a6e22e">head</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">ListNode</span>, <span style="color:#a6e22e">n</span> <span style="color:#66d9ef">int</span>) <span style="color:#f92672">*</span><span style="color:#a6e22e">ListNode</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">head</span> <span style="color:#f92672">==</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">head</span>
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">dummy</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">ListNode</span>{
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">Next</span>: <span style="color:#a6e22e">head</span>,
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">fast</span>,<span style="color:#a6e22e">low</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">dummy</span>,<span style="color:#a6e22e">dummy</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span><span style="color:#f92672">:=</span><span style="color:#ae81ff">1</span>;<span style="color:#a6e22e">i</span><span style="color:#f92672">&lt;=</span><span style="color:#a6e22e">n</span>;<span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">fast</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">fast</span> = <span style="color:#a6e22e">fast</span>.<span style="color:#a6e22e">Next</span>
+</span></span><span style="display:flex;"><span>		}
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">fast</span> = <span style="color:#a6e22e">fast</span>.<span style="color:#a6e22e">Next</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">fast</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">fast</span> = <span style="color:#a6e22e">fast</span>.<span style="color:#a6e22e">Next</span>
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">low</span> = <span style="color:#a6e22e">low</span>.<span style="color:#a6e22e">Next</span>
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">low</span>.<span style="color:#a6e22e">Next</span> = <span style="color:#a6e22e">low</span>.<span style="color:#a6e22e">Next</span>.<span style="color:#a6e22e">Next</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">dummy</span>.<span style="color:#a6e22e">Next</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">ret</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">removeNthFromEnd</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">ListNode</span>{
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">Val</span>: <span style="color:#ae81ff">1</span>,
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">Next</span>: <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">ListNode</span>{
+</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">Val</span>: <span style="color:#ae81ff">2</span>,
+</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">Next</span>: <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">ListNode</span>{
+</span></span><span style="display:flex;"><span>				<span style="color:#a6e22e">Val</span>: <span style="color:#ae81ff">3</span>,
+</span></span><span style="display:flex;"><span>				<span style="color:#a6e22e">Next</span>: <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">ListNode</span>{
+</span></span><span style="display:flex;"><span>					<span style="color:#a6e22e">Val</span>: <span style="color:#ae81ff">4</span>,
+</span></span><span style="display:flex;"><span>					<span style="color:#a6e22e">Next</span>: <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">ListNode</span>{
+</span></span><span style="display:flex;"><span>						<span style="color:#a6e22e">Val</span>:  <span style="color:#ae81ff">5</span>,
+</span></span><span style="display:flex;"><span>						<span style="color:#a6e22e">Next</span>: <span style="color:#66d9ef">nil</span>,
+</span></span><span style="display:flex;"><span>					},
+</span></span><span style="display:flex;"><span>				},
+</span></span><span style="display:flex;"><span>			},
+</span></span><span style="display:flex;"><span>		},
+</span></span><span style="display:flex;"><span>	}, <span style="color:#ae81ff">2</span>)
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">ret</span>)
+</span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div></div></div>
 
 </article>
@@ -597,9 +653,9 @@ https://github.com/alex-shpak/hugo-book
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/d0fd0d21cf1a089fb4f5bf1ed0d078ce9110af4c" title='最后修改者 weibin | January 5, 2023' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/b96292e502d8159751ea7598040f93c2da385317" title='最后修改者 weibin | January 10, 2023' target="_blank" rel="noopener">
       <img src="/leetcode/svg/calendar.svg" class="book-icon" alt="Calendar" />
-      <span>January 5, 2023</span>
+      <span>January 10, 2023</span>
     </a>
   </div>
 
