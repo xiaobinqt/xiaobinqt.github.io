@@ -1,5 +1,5 @@
 ---
-title: "Docker 常用命令备忘"
+title: "Docker 备忘"
 subtitle: "Docker Summary of common Usage"
 
 init_date: "2022-05-06T16:49:05+08:00"
@@ -27,8 +27,7 @@ lightgallery: true
 
 toc: true
 
-math:
-    enable: true
+math: true
 ---
 
 <!-- author： xiaobinqt -->
@@ -58,7 +57,11 @@ docker exec  -u root -it 容器名  sh
 
 ![图02](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220506/fbee690400664f6d88aea131abc00465.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '图02')
 
+## 仓库和注册服务器
 
+有时候会把仓库（Repository）和仓库注册服务器（Registry）混为一谈，并不严格区分。实际上，仓库注册服务器上往往存放着多个仓库，每个仓库中又包含了多个镜像，每个镜像有不同的标签（tag）。
+
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230117/349e1fe5821a4b5b81e44465dc279867.png" width=600  /></div>
 
 
 
