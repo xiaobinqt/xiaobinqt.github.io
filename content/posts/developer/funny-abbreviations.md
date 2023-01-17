@@ -47,4 +47,5 @@ math: true
 | `NFS`                            | Network File System，使用者访问网络上别处的文件就像在使用自己的计算机一样                                                                  |
 | `FAQ`                            | frequently asked questions，常见问题                                                                                 |
 | `CS/cs`                          | cs 是计算机科学的缩写，全称叫 Client Server                                                                                  |
+| `CNCF`                          | Cloud Native Computing Foundation，云原生基金会                                                                                |
 
