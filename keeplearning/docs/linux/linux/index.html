@@ -3,34 +3,34 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Linux（二） # 文件 # 文件属性 # 用户分为三种：文件拥有者、群组以及其它人，对不同的用户有不同的文件权限。
-使用 ls 查看一个文件时，会显示一个文件的信息，例如
-drwxr-xr-x 3 root root 17 May 6 00:14 .config 对这个信息的解释如下：
-drwxr-xr-x：文件类型以及权限，第 1 位为文件类型字段，后 9 位为文件权限字段 3：链接数 root：文件拥有者 root：所属群组 17：文件大小 May 6 00:14：文件最后被修改的时间 .config：文件名 常见的文件类型及其含义有：
-d：目录 -：文件 l：链接文件 9 位的文件权限字段中，每 3 个为一组，共 3 组，每一组分别代表对文件拥有者、所属群组以及其它人的文件权限。一组权限中的 3 位分别为 r、w、x 权限，表示可读、可写、可执行。
-文件时间有以下三种：
-modification time (mtime)：文件的内容更新就会更新； status time (ctime)：文件的状态（权限、属性）更新就会更新； access time (atime)：读取文件时就会更新。 文件与目录的基本操作 # 1. ls # 列出文件或者目录的信息，目录的信息就是其中包含的文件。
-## ls [-aAdfFhilnrRSt] file|dir -a ：列出全部的文件 -d ：仅列出目录本身 -l ：以长数据串行列出，包含文件的属性与权限等等数据 2.">
+<meta name="description" content="Linux # 一、常用操作以及概念 # 快捷键 # Tab：命令和文件名补全； Ctrl&#43;C：中断正在运行的程序； Ctrl&#43;D：结束键盘输入（End Of File，EOF） 求助 # 1. &ndash;help # 指令的基本用法与选项介绍。
+2. man # man 是 manual 的缩写，将指令的具体信息显示出来。
+当执行man date时，有 DATE(1) 出现，其中的数字代表指令的类型，常用的数字及其类型如下：
+代号 类型 1 用户在 shell 环境中可以操作的指令或者可执行文件 5 配置文件 8 系统管理员可以使用的管理指令 3. info # info 与 man 类似，但是 info 将文档分成一个个页面，每个页面可以跳转。
+4. doc # /usr/share/doc 存放着软件的一整套说明文件。
+关机 # 1. who # 在关机前需要先使用 who 命令查看有没有其它用户在线。
+2. sync # 为了加快对磁盘文件的读写速度，位于内存中的文件数据不会立即同步到磁盘，因此关机之前需要先进行 sync 同步操作。
+3. shutdown # ## shutdown [-krhc] 时间 [信息] -k ： 不会关机，只是发送警告信息，通知所有在线的用户 -r ： 将系统的服务停掉后就重新启动 -h ： 将系统的服务停掉后就立即关机 -c ： 取消已经在进行的 shutdown PATH # 可以在环境变量 PATH 中声明可执行文件的路径，路径之间用 : 分隔。">
 <meta name="theme-color" content="#FFFFFF">
-<meta name="color-scheme" content="light dark"><meta property="og:title" content="Linux（二）" />
-<meta property="og:description" content="Linux（二） # 文件 # 文件属性 # 用户分为三种：文件拥有者、群组以及其它人，对不同的用户有不同的文件权限。
-使用 ls 查看一个文件时，会显示一个文件的信息，例如
-drwxr-xr-x 3 root root 17 May 6 00:14 .config 对这个信息的解释如下：
-drwxr-xr-x：文件类型以及权限，第 1 位为文件类型字段，后 9 位为文件权限字段 3：链接数 root：文件拥有者 root：所属群组 17：文件大小 May 6 00:14：文件最后被修改的时间 .config：文件名 常见的文件类型及其含义有：
-d：目录 -：文件 l：链接文件 9 位的文件权限字段中，每 3 个为一组，共 3 组，每一组分别代表对文件拥有者、所属群组以及其它人的文件权限。一组权限中的 3 位分别为 r、w、x 权限，表示可读、可写、可执行。
-文件时间有以下三种：
-modification time (mtime)：文件的内容更新就会更新； status time (ctime)：文件的状态（权限、属性）更新就会更新； access time (atime)：读取文件时就会更新。 文件与目录的基本操作 # 1. ls # 列出文件或者目录的信息，目录的信息就是其中包含的文件。
-## ls [-aAdfFhilnrRSt] file|dir -a ：列出全部的文件 -d ：仅列出目录本身 -l ：以长数据串行列出，包含文件的属性与权限等等数据 2." />
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="Linux" />
+<meta property="og:description" content="Linux # 一、常用操作以及概念 # 快捷键 # Tab：命令和文件名补全； Ctrl&#43;C：中断正在运行的程序； Ctrl&#43;D：结束键盘输入（End Of File，EOF） 求助 # 1. &ndash;help # 指令的基本用法与选项介绍。
+2. man # man 是 manual 的缩写，将指令的具体信息显示出来。
+当执行man date时，有 DATE(1) 出现，其中的数字代表指令的类型，常用的数字及其类型如下：
+代号 类型 1 用户在 shell 环境中可以操作的指令或者可执行文件 5 配置文件 8 系统管理员可以使用的管理指令 3. info # info 与 man 类似，但是 info 将文档分成一个个页面，每个页面可以跳转。
+4. doc # /usr/share/doc 存放着软件的一整套说明文件。
+关机 # 1. who # 在关机前需要先使用 who 命令查看有没有其它用户在线。
+2. sync # 为了加快对磁盘文件的读写速度，位于内存中的文件数据不会立即同步到磁盘，因此关机之前需要先进行 sync 同步操作。
+3. shutdown # ## shutdown [-krhc] 时间 [信息] -k ： 不会关机，只是发送警告信息，通知所有在线的用户 -r ： 将系统的服务停掉后就重新启动 -h ： 将系统的服务停掉后就立即关机 -c ： 取消已经在进行的 shutdown PATH # 可以在环境变量 PATH 中声明可执行文件的路径，路径之间用 : 分隔。" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://example.com/keeplearning/docs/linux/linux2/" /><meta property="article:section" content="docs" />
+<meta property="og:url" content="https://example.com/keeplearning/docs/linux/linux/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-12-23T18:03:55+08:00" />
-<title>Linux（二） | KeepLearning</title>
+<meta property="article:modified_time" content="2023-01-17T13:57:54+08:00" />
+<title>Linux | KeepLearning</title>
 <link rel="manifest" href="/keeplearning/manifest.json">
 <link rel="icon" href="/keeplearning/favicon.png" type="image/x-icon">
 <link rel="stylesheet" href="/keeplearning/book.min.44ab80b6e9fbffc4b56fa0525dd4af874d4d533ab2a985226782d7cdc8d9fd15.css" integrity="sha256-RKuAtun7/8S1b6BSXdSvh01NUzqyqYUiZ4LXzcjZ/RU=" crossorigin="anonymous">
   <script defer src="/keeplearning/flexsearch.min.js"></script>
-  <script defer src="/keeplearning/zh.search.min.1c6140334c37c960dba6c648eb00e4b0211b2b222c420d5379d7e7e1cedde790.js" integrity="sha256-HGFAM0w3yWDbpsZI6wDksCEbKyIsQg1Tedfn4c7d55A=" crossorigin="anonymous"></script>
+  <script defer src="/keeplearning/zh.search.min.5b02a93327952778720abce5c3a4075cc8a6d9e27092e5d6cae2a13d039a6f12.js" integrity="sha256-WwKpMyeVJ3hyCrzlw6QHXMim2eJwkuXWyuKhPQOabxI=" crossorigin="anonymous"></script>
 
   <script defer src="/keeplearning/sw.min.1adfb566b92ba83fd11679d786b02cc6ef24134c579bce6902d173c28305155f.js" integrity="sha256-Gt&#43;1ZrkrqD/RFnnXhrAsxu8kE0xXm85pAtFzwoMFFV8=" crossorigin="anonymous"></script>
 <!--
@@ -96,10 +96,7 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <input type="checkbox" id="section-3110560962cac834dcd3aead95e804a4" class="toggle"  />
-    <label for="section-3110560962cac834dcd3aead95e804a4" class="flex justify-between">
-      <a role="button" class="">网络</a>
-    </label>
+    <span>网络</span>
   
 
           
@@ -208,10 +205,7 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <input type="checkbox" id="section-9caa6ae5221742cea46cb40ee3162cf1" class="toggle"  />
-    <label for="section-9caa6ae5221742cea46cb40ee3162cf1" class="flex justify-between">
-      <a role="button" class="">HTTP</a>
-    </label>
+    <span>HTTP</span>
   
 
           
@@ -224,33 +218,7 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/keeplearning/docs/http/http1/" class="">HTTP（一）</a>
-  
-
-        </li>
-      
-    
-      
-        <li>
-          
-  
-  
-
-  
-    <a href="/keeplearning/docs/http/http2/" class="">HTTP（二）</a>
-  
-
-        </li>
-      
-    
-      
-        <li>
-          
-  
-  
-
-  
-    <a href="/keeplearning/docs/http/http3/" class="">HTTP（三）</a>
+    <a href="/keeplearning/docs/http/http/" class="">HTTP</a>
   
 
         </li>
@@ -268,10 +236,7 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <input type="checkbox" id="section-708f0dc81b7f5419c74b48a85bd8146c" class="toggle"  />
-    <label for="section-708f0dc81b7f5419c74b48a85bd8146c" class="flex justify-between">
-      <a role="button" class="">操作系统</a>
-    </label>
+    <span>操作系统</span>
   
 
           
@@ -380,10 +345,7 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <input type="checkbox" id="section-e66e2e478c81786f553bd82d3931b216" class="toggle"  />
-    <label for="section-e66e2e478c81786f553bd82d3931b216" class="flex justify-between">
-      <a role="button" class="">MySQL</a>
-    </label>
+    <span>MySQL</span>
   
 
           
@@ -396,20 +358,7 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/keeplearning/docs/mysql/dbs-theory/" class="">数据库系统原理（一）</a>
-  
-
-        </li>
-      
-    
-      
-        <li>
-          
-  
-  
-
-  
-    <a href="/keeplearning/docs/mysql/dbs-theory2/" class="">数据库系统原理（二）</a>
+    <a href="/keeplearning/docs/mysql/dbs-theory/" class="">数据库系统原理</a>
   
 
         </li>
@@ -453,10 +402,7 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <input type="checkbox" id="section-a27d7ef673b519721b4909eba7547282" class="toggle"  />
-    <label for="section-a27d7ef673b519721b4909eba7547282" class="flex justify-between">
-      <a role="button" class="">Redis</a>
-    </label>
+    <span>Redis</span>
   
 
           
@@ -469,7 +415,7 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/keeplearning/docs/redis/redis1/" class="">Redis（一）</a>
+    <a href="/keeplearning/docs/redis/data-type-cmd/" class="">数据类型和常用命令</a>
   
 
         </li>
@@ -482,7 +428,7 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/keeplearning/docs/redis/redis2/" class="">Redis（二）</a>
+    <a href="/keeplearning/docs/redis/overview/" class="">Redis</a>
   
 
         </li>
@@ -500,10 +446,7 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <input type="checkbox" id="section-6ae1a891fb3a3f71d71273fc61b29b76" class="toggle" checked />
-    <label for="section-6ae1a891fb3a3f71d71273fc61b29b76" class="flex justify-between">
-      <a role="button" class="">Linux</a>
-    </label>
+    <span>Linux</span>
   
 
           
@@ -516,33 +459,7 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/keeplearning/docs/linux/linux1/" class="">Linux（一）</a>
-  
-
-        </li>
-      
-    
-      
-        <li>
-          
-  
-  
-
-  
-    <a href="/keeplearning/docs/linux/linux2/" class="active">Linux（二）</a>
-  
-
-        </li>
-      
-    
-      
-        <li>
-          
-  
-  
-
-  
-    <a href="/keeplearning/docs/linux/linux3/" class="">Linux（三）</a>
+    <a href="/keeplearning/docs/linux/linux/" class="active">Linux</a>
   
 
         </li>
@@ -560,10 +477,7 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <input type="checkbox" id="section-2e68b18a2908c2a0b6e57142acd3643f" class="toggle"  />
-    <label for="section-2e68b18a2908c2a0b6e57142acd3643f" class="flex justify-between">
-      <a role="button" class="">系统设计</a>
-    </label>
+    <span>系统设计</span>
   
 
           
@@ -659,10 +573,7 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <input type="checkbox" id="section-caceb4c0534f60c75e13f33d748c0f33" class="toggle"  />
-    <label for="section-caceb4c0534f60c75e13f33d748c0f33" class="flex justify-between">
-      <a role="button" class="">编码实践</a>
-    </label>
+    <span>编码实践</span>
   
 
           
@@ -732,14 +643,24 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <input type="checkbox" id="section-c3a410f01a5ce1def5ccda436822e583" class="toggle"  />
-    <label for="section-c3a410f01a5ce1def5ccda436822e583" class="flex justify-between">
-      <a href="/keeplearning/docs/favorite/" class="">收藏夹</a>
-    </label>
+    <a href="/keeplearning/docs/favorite/" class="">收藏夹</a>
   
 
           
   <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/favorite/cs-learn/" class="">计算机基础书籍推荐</a>
+  
+
+        </li>
+      
     
   </ul>
 
@@ -782,7 +703,7 @@ https://github.com/alex-shpak/hugo-book
     <img src="/keeplearning/svg/menu.svg" class="book-icon" alt="Menu" />
   </label>
 
-  <strong>Linux（二）</strong>
+  <strong>Linux</strong>
 
   <label for="toc-control">
     
@@ -798,9 +719,49 @@ https://github.com/alex-shpak/hugo-book
   
 <nav id="TableOfContents">
   <ul>
-    <li><a href="#linux二">Linux（二）</a>
+    <li><a href="#linux">Linux</a>
       <ul>
-        <li><a href="#文件">文件</a>
+        <li><a href="#一常用操作以及概念">一、常用操作以及概念</a>
+          <ul>
+            <li><a href="#快捷键">快捷键</a></li>
+            <li><a href="#求助">求助</a></li>
+            <li><a href="#关机">关机</a></li>
+            <li><a href="#path">PATH</a></li>
+            <li><a href="#sudo">sudo</a></li>
+            <li><a href="#包管理工具">包管理工具</a></li>
+            <li><a href="#发行版">发行版</a></li>
+            <li><a href="#vim-三个模式">VIM 三个模式</a></li>
+            <li><a href="#gnu">GNU</a></li>
+            <li><a href="#开源协议">开源协议</a></li>
+          </ul>
+        </li>
+        <li><a href="#二磁盘">二、磁盘</a>
+          <ul>
+            <li><a href="#磁盘接口">磁盘接口</a></li>
+            <li><a href="#磁盘的文件名">磁盘的文件名</a></li>
+          </ul>
+        </li>
+        <li><a href="#三分区">三、分区</a>
+          <ul>
+            <li><a href="#分区表">分区表</a></li>
+            <li><a href="#开机检测程序">开机检测程序</a></li>
+          </ul>
+        </li>
+        <li><a href="#四文件系统">四、文件系统</a>
+          <ul>
+            <li><a href="#分区与文件系统">分区与文件系统</a></li>
+            <li><a href="#组成">组成</a></li>
+            <li><a href="#文件读取">文件读取</a></li>
+            <li><a href="#磁盘碎片">磁盘碎片</a></li>
+            <li><a href="#block">block</a></li>
+            <li><a href="#inode">inode</a></li>
+            <li><a href="#目录">目录</a></li>
+            <li><a href="#日志">日志</a></li>
+            <li><a href="#挂载">挂载</a></li>
+            <li><a href="#目录配置">目录配置</a></li>
+          </ul>
+        </li>
+        <li><a href="#五文件">五、文件</a>
           <ul>
             <li><a href="#文件属性">文件属性</a></li>
             <li><a href="#文件与目录的基本操作">文件与目录的基本操作</a></li>
@@ -812,14 +773,14 @@ https://github.com/alex-shpak/hugo-book
             <li><a href="#指令与文件搜索">指令与文件搜索</a></li>
           </ul>
         </li>
-        <li><a href="#压缩与打包">压缩与打包</a>
+        <li><a href="#六压缩与打包">六、压缩与打包</a>
           <ul>
             <li><a href="#压缩文件名">压缩文件名</a></li>
             <li><a href="#压缩指令">压缩指令</a></li>
             <li><a href="#打包">打包</a></li>
           </ul>
         </li>
-        <li><a href="#bash">Bash</a>
+        <li><a href="#七bash">七、Bash</a>
           <ul>
             <li><a href="#特性">特性</a></li>
             <li><a href="#变量操作">变量操作</a></li>
@@ -827,7 +788,7 @@ https://github.com/alex-shpak/hugo-book
             <li><a href="#数据流重定向">数据流重定向</a></li>
           </ul>
         </li>
-        <li><a href="#管道指令">管道指令</a>
+        <li><a href="#八管道指令">八、管道指令</a>
           <ul>
             <li><a href="#提取指令">提取指令</a></li>
             <li><a href="#排序指令">排序指令</a></li>
@@ -836,6 +797,25 @@ https://github.com/alex-shpak/hugo-book
             <li><a href="#分区指令">分区指令</a></li>
           </ul>
         </li>
+        <li><a href="#九正则表达式">九、正则表达式</a>
+          <ul>
+            <li><a href="#grep">grep</a></li>
+            <li><a href="#printf">printf</a></li>
+            <li><a href="#awk">awk</a></li>
+          </ul>
+        </li>
+        <li><a href="#十进程管理">十、进程管理</a>
+          <ul>
+            <li><a href="#查看进程">查看进程</a></li>
+            <li><a href="#进程状态">进程状态</a></li>
+            <li><a href="#sigchld">SIGCHLD</a></li>
+            <li><a href="#wait">wait()</a></li>
+            <li><a href="#waitpid">waitpid()</a></li>
+            <li><a href="#孤儿进程">孤儿进程</a></li>
+            <li><a href="#僵尸进程">僵尸进程</a></li>
+          </ul>
+        </li>
+        <li><a href="#参考资料">参考资料</a></li>
       </ul>
     </li>
   </ul>
@@ -850,13 +830,417 @@ https://github.com/alex-shpak/hugo-book
 
       
       
-  <article class="markdown"><h1 id="linux二">
-  Linux（二）
-  <a class="anchor" href="#linux%e4%ba%8c">#</a>
+  <article class="markdown"><h1 id="linux">
+  Linux
+  <a class="anchor" href="#linux">#</a>
 </h1>
-<h2 id="文件">
-  文件
-  <a class="anchor" href="#%e6%96%87%e4%bb%b6">#</a>
+<h2 id="一常用操作以及概念">
+  一、常用操作以及概念
+  <a class="anchor" href="#%e4%b8%80%e5%b8%b8%e7%94%a8%e6%93%8d%e4%bd%9c%e4%bb%a5%e5%8f%8a%e6%a6%82%e5%bf%b5">#</a>
+</h2>
+<h3 id="快捷键">
+  快捷键
+  <a class="anchor" href="#%e5%bf%ab%e6%8d%b7%e9%94%ae">#</a>
+</h3>
+<ul>
+<li>Tab：命令和文件名补全；</li>
+<li>Ctrl+C：中断正在运行的程序；</li>
+<li>Ctrl+D：结束键盘输入（End Of File，EOF）</li>
+</ul>
+<h3 id="求助">
+  求助
+  <a class="anchor" href="#%e6%b1%82%e5%8a%a9">#</a>
+</h3>
+<h4 id="1---help">
+  1. &ndash;help
+  <a class="anchor" href="#1---help">#</a>
+</h4>
+<p>指令的基本用法与选项介绍。</p>
+<h4 id="2-man">
+  2. man
+  <a class="anchor" href="#2-man">#</a>
+</h4>
+<p>man 是 manual 的缩写，将指令的具体信息显示出来。</p>
+<p>当执行<code>man date</code>时，有 DATE(1) 出现，其中的数字代表指令的类型，常用的数字及其类型如下：</p>
+<table>
+<thead>
+<tr>
+<th>代号</th>
+<th>类型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>用户在 shell 环境中可以操作的指令或者可执行文件</td>
+</tr>
+<tr>
+<td>5</td>
+<td>配置文件</td>
+</tr>
+<tr>
+<td>8</td>
+<td>系统管理员可以使用的管理指令</td>
+</tr>
+</tbody>
+</table>
+<h4 id="3-info">
+  3. info
+  <a class="anchor" href="#3-info">#</a>
+</h4>
+<p>info 与 man 类似，但是 info 将文档分成一个个页面，每个页面可以跳转。</p>
+<h4 id="4-doc">
+  4. doc
+  <a class="anchor" href="#4-doc">#</a>
+</h4>
+<p>/usr/share/doc 存放着软件的一整套说明文件。</p>
+<h3 id="关机">
+  关机
+  <a class="anchor" href="#%e5%85%b3%e6%9c%ba">#</a>
+</h3>
+<h4 id="1-who">
+  1. who
+  <a class="anchor" href="#1-who">#</a>
+</h4>
+<p>在关机前需要先使用 who 命令查看有没有其它用户在线。</p>
+<h4 id="2-sync">
+  2. sync
+  <a class="anchor" href="#2-sync">#</a>
+</h4>
+<p>为了加快对磁盘文件的读写速度，位于内存中的文件数据不会立即同步到磁盘，因此关机之前需要先进行 sync 同步操作。</p>
+<h4 id="3-shutdown">
+  3. shutdown
+  <a class="anchor" href="#3-shutdown">#</a>
+</h4>
+<pre tabindex="0"><code>## shutdown [-krhc] 时间 [信息]
+-k ： 不会关机，只是发送警告信息，通知所有在线的用户
+-r ： 将系统的服务停掉后就重新启动
+-h ： 将系统的服务停掉后就立即关机
+-c ： 取消已经在进行的 shutdown
+</code></pre><h3 id="path">
+  PATH
+  <a class="anchor" href="#path">#</a>
+</h3>
+<p>可以在环境变量 PATH 中声明可执行文件的路径，路径之间用 : 分隔。</p>
+<pre tabindex="0"><code>/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/home/dmtsai/.local/bin:/home/dmtsai/bin
+</code></pre><h3 id="sudo">
+  sudo
+  <a class="anchor" href="#sudo">#</a>
+</h3>
+<p>sudo 允许一般用户使用 root 可执行的命令，不过只有在 /etc/sudoers 配置文件中添加的用户才能使用该指令。</p>
+<h3 id="包管理工具">
+  包管理工具
+  <a class="anchor" href="#%e5%8c%85%e7%ae%a1%e7%90%86%e5%b7%a5%e5%85%b7">#</a>
+</h3>
+<p>RPM 和 DPKG 为最常见的两类软件包管理工具：</p>
+<ul>
+<li>RPM 全称为 Redhat Package Manager，最早由 Red Hat 公司制定实施，随后被 GNU 开源操作系统接受并成为许多 Linux 系统的既定软件标准。YUM 基于 RPM，具有依赖管理和软件升级功能。</li>
+<li>与 RPM 竞争的是基于 Debian 操作系统的 DEB 软件包管理工具 DPKG，全称为 Debian Package，功能方面与 RPM 相似。</li>
+</ul>
+<h3 id="发行版">
+  发行版
+  <a class="anchor" href="#%e5%8f%91%e8%a1%8c%e7%89%88">#</a>
+</h3>
+<p>Linux 发行版是 Linux 内核及各种应用软件的集成版本。</p>
+<table>
+<thead>
+<tr>
+<th>基于的包管理工具</th>
+<th>商业发行版</th>
+<th>社区发行版</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RPM</td>
+<td>Red Hat</td>
+<td>Fedora / CentOS</td>
+</tr>
+<tr>
+<td>DPKG</td>
+<td>Ubuntu</td>
+<td>Debian</td>
+</tr>
+</tbody>
+</table>
+<h3 id="vim-三个模式">
+  VIM 三个模式
+  <a class="anchor" href="#vim-%e4%b8%89%e4%b8%aa%e6%a8%a1%e5%bc%8f">#</a>
+</h3>
+<p>
+  <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/922f08bad9444c9b9933b218edb2ce3a.png" alt="" /></p>
+<ul>
+<li>一般指令模式（Command mode）：VIM 的默认模式，可以用于移动游标查看内容；</li>
+<li>编辑模式（Insert mode）：按下<code>i</code>等按键之后进入，可以对文本进行编辑；</li>
+<li>指令列模式（Bottom-line mode）：按下<code>:</code>按键之后进入，用于保存退出等操作。</li>
+</ul>
+<p>在指令列模式下，有以下命令用于离开或者保存文件。</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>:w</td>
+<td>写入磁盘</td>
+</tr>
+<tr>
+<td>:w!</td>
+<td>当文件为只读时，强制写入磁盘。到底能不能写入，与用户对该文件的权限有关</td>
+</tr>
+<tr>
+<td>:q</td>
+<td>离开</td>
+</tr>
+<tr>
+<td>:q!</td>
+<td>强制离开不保存</td>
+</tr>
+<tr>
+<td>:wq</td>
+<td>写入磁盘后离开</td>
+</tr>
+<tr>
+<td>:wq!</td>
+<td>强制写入磁盘后离开</td>
+</tr>
+</tbody>
+</table>
+<h3 id="gnu">
+  GNU
+  <a class="anchor" href="#gnu">#</a>
+</h3>
+<p>GNU 计划，译为革奴计划，它的目标是创建一套完全自由的操作系统，称为 GNU，其内容软件完全以 GPL 方式发布。其中 GPL 全称为 GNU 通用公共许可协议（GNU General Public License），包含了以下内容：</p>
+<ul>
+<li>以任何目的运行此程序的自由；</li>
+<li>再复制的自由；</li>
+<li>改进此程序，并公开发布改进的自由。</li>
+</ul>
+<h3 id="开源协议">
+  开源协议
+  <a class="anchor" href="#%e5%bc%80%e6%ba%90%e5%8d%8f%e8%ae%ae">#</a>
+</h3>
+<ul>
+<li>
+  <a href="https://choosealicense.com/">Choose an open source license(opens new window)</a></li>
+<li>
+  <a href="http://www.ruanyifeng.com/blog/2011/05/how_to_choose_free_software_licenses.html">如何选择开源许可证？</a></li>
+</ul>
+<h2 id="二磁盘">
+  二、磁盘
+  <a class="anchor" href="#%e4%ba%8c%e7%a3%81%e7%9b%98">#</a>
+</h2>
+<h3 id="磁盘接口">
+  磁盘接口
+  <a class="anchor" href="#%e7%a3%81%e7%9b%98%e6%8e%a5%e5%8f%a3">#</a>
+</h3>
+<h4 id="1-ide">
+  1. IDE
+  <a class="anchor" href="#1-ide">#</a>
+</h4>
+<p>IDE（ATA）全称 Advanced Technology Attachment，接口速度最大为 133MB/s，因为并口线的抗干扰性太差，且排线占用空间较大，不利电脑内部散热，已逐渐被 SATA 所取代。</p>
+<p>
+  <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/0c949e06d9ba4da5845537b484a64384.png" alt="" /></p>
+<h4 id="2-sata">
+  2. SATA
+  <a class="anchor" href="#2-sata">#</a>
+</h4>
+<p>SATA 全称 Serial ATA，也就是使用串口的 ATA 接口，抗干扰性强，且对数据线的长度要求比 ATA 低很多，支持热插拔等功能。SATA-II 的接口速度为 300MB/s，而 SATA-III 标准可达到 600MB/s 的传输速度。SATA 的数据线也比 ATA 的细得多，有利于机箱内的空气流通，整理线材也比较方便。</p>
+<p>
+  <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/a33b90d030ea4e66836a411ef116b9ad.png" alt="" /></p>
+<h4 id="3-scsi">
+  3. SCSI
+  <a class="anchor" href="#3-scsi">#</a>
+</h4>
+<p>SCSI 全称是 Small Computer System Interface（小型机系统接口），SCSI 硬盘广为工作站以及个人电脑以及服务器所使用，因此会使用较为先进的技术，如碟片转速 15000rpm 的高转速，且传输时 CPU 占用率较低，但是单价也比相同容量的 ATA 及 SATA 硬盘更加昂贵。</p>
+<p>
+  <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/6c1853ebc100480e8aace7ece58f17e0.png" alt="" /></p>
+<h3 id="磁盘的文件名">
+  磁盘的文件名
+  <a class="anchor" href="#%e7%a3%81%e7%9b%98%e7%9a%84%e6%96%87%e4%bb%b6%e5%90%8d">#</a>
+</h3>
+<p>Linux 中每个硬件都被当做一个文件，包括磁盘。磁盘以磁盘接口类型进行命名，常见磁盘的文件名如下：</p>
+<ul>
+<li>IDE 磁盘：/dev/hd[a-d]</li>
+<li>SATA/SCSI/SAS 磁盘：/dev/sd[a-p]</li>
+</ul>
+<p>其中文件名后面的序号的确定与系统检测到磁盘的顺序有关，而与磁盘所插入的插槽位置无关。</p>
+<h2 id="三分区">
+  三、分区
+  <a class="anchor" href="#%e4%b8%89%e5%88%86%e5%8c%ba">#</a>
+</h2>
+<h3 id="分区表">
+  分区表
+  <a class="anchor" href="#%e5%88%86%e5%8c%ba%e8%a1%a8">#</a>
+</h3>
+<p>磁盘分区表主要有两种格式，一种是限制较多的 MBR 分区表，一种是较新且限制较少的 GPT 分区表。</p>
+<h4 id="1-mbr">
+  1. MBR
+  <a class="anchor" href="#1-mbr">#</a>
+</h4>
+<p>MBR 中，第一个扇区最重要，里面有主要开机记录（Master boot record, MBR）及分区表（partition table），其中主要开机记录占 446 bytes，分区表占 64 bytes。</p>
+<p>分区表只有 64 bytes，最多只能存储 4 个分区，这 4 个分区为主分区（Primary）和扩展分区（Extended）。其中扩展分区只有一个，它使用其它扇区来记录额外的分区表，因此通过扩展分区可以分出更多分区，这些分区称为逻辑分区。</p>
+<p>Linux 也把分区当成文件，分区文件的命名方式为：磁盘文件名 + 编号，例如 /dev/sda1。注意，逻辑分区的编号从 5 开始。</p>
+<h4 id="2-gpt">
+  2. GPT
+  <a class="anchor" href="#2-gpt">#</a>
+</h4>
+<p>扇区是磁盘的最小存储单位，旧磁盘的扇区大小通常为 512 bytes，而最新的磁盘支持 4 k。GPT 为了兼容所有磁盘，在定义扇区上使用逻辑区块地址（Logical Block Address, LBA），LBA 默认大小为 512 bytes。</p>
+<p>GPT 第 1 个区块记录了主要开机记录（MBR），紧接着是 33 个区块记录分区信息，并把最后的 33 个区块用于对分区信息进行备份。这 33 个区块第一个为 GPT 表头纪录，这个部份纪录了分区表本身的位置与大小和备份分区的位置，同时放置了分区表的校验码 (CRC32)，操作系统可以根据这个校验码来判断 GPT 是否正确。若有错误，可以使用备份分区进行恢复。</p>
+<p>GPT 没有扩展分区概念，都是主分区，每个 LBA 可以分 4 个分区，因此总共可以分 4 * 32 = 128 个分区。</p>
+<p>MBR 不支持 2.2 TB 以上的硬盘，GPT 则最多支持到 2<sup>33</sup> TB = 8 ZB。</p>
+<p>
+  <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/19aaac15173b43e4af24eb7d0689ba52.png" alt="" /></p>
+<h3 id="开机检测程序">
+  开机检测程序
+  <a class="anchor" href="#%e5%bc%80%e6%9c%ba%e6%a3%80%e6%b5%8b%e7%a8%8b%e5%ba%8f">#</a>
+</h3>
+<h4 id="1-bios">
+  1. BIOS
+  <a class="anchor" href="#1-bios">#</a>
+</h4>
+<p>BIOS（Basic Input/Output System，基本输入输出系统），它是一个固件（嵌入在硬件中的软件），BIOS 程序存放在断电后内容不会丢失的只读内存中。</p>
+<p>
+  <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/91193eb72c704b8882e37424d6d70c6f.png" alt="" /></p>
+<p>BIOS 是开机的时候计算机执行的第一个程序，这个程序知道可以开机的磁盘，并读取磁盘第一个扇区的主要开机记录（MBR），由主要开机记录（MBR）执行其中的开机管理程序，这个开机管理程序会加载操作系统的核心文件。</p>
+<p>主要开机记录（MBR）中的开机管理程序提供以下功能：选单、载入核心文件以及转交其它开机管理程序。转交这个功能可以用来实现多重引导，只需要将另一个操作系统的开机管理程序安装在其它分区的启动扇区上，在启动开机管理程序时，就可以通过选单选择启动当前的操作系统或者转交给其它开机管理程序从而启动另一个操作系统。</p>
+<p>下图中，第一扇区的主要开机记录（MBR）中的开机管理程序提供了两个选单：M1、M2，M1 指向了 Windows 操作系统，而 M2 指向其它分区的启动扇区，里面包含了另外一个开机管理程序，提供了一个指向 Linux 的选单。</p>
+<p>
+  <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/d26e47410ef54d779c44bea562a09c5b.png" alt="" /></p>
+<p>安装多重引导，最好先安装 Windows 再安装 Linux。因为安装 Windows 时会覆盖掉主要开机记录（MBR），而 Linux 可以选择将开机管理程序安装在主要开机记录（MBR）或者其它分区的启动扇区，并且可以设置开机管理程序的选单。</p>
+<h4 id="2-uefi">
+  2. UEFI
+  <a class="anchor" href="#2-uefi">#</a>
+</h4>
+<p>BIOS 不可以读取 GPT 分区表，而 UEFI 可以。</p>
+<h2 id="四文件系统">
+  四、文件系统
+  <a class="anchor" href="#%e5%9b%9b%e6%96%87%e4%bb%b6%e7%b3%bb%e7%bb%9f">#</a>
+</h2>
+<h3 id="分区与文件系统">
+  分区与文件系统
+  <a class="anchor" href="#%e5%88%86%e5%8c%ba%e4%b8%8e%e6%96%87%e4%bb%b6%e7%b3%bb%e7%bb%9f">#</a>
+</h3>
+<p>对分区进行格式化是为了在分区上建立文件系统。一个分区通常只能格式化为一个文件系统，但是磁盘阵列等技术可以将一个分区格式化为多个文件系统。</p>
+<h3 id="组成">
+  组成
+  <a class="anchor" href="#%e7%bb%84%e6%88%90">#</a>
+</h3>
+<p>最主要的几个组成部分如下：</p>
+<ul>
+<li>inode：一个文件占用一个 inode，记录文件的属性，同时记录此文件的内容所在的 block 编号；</li>
+<li>block：记录文件的内容，文件太大时，会占用多个 block。</li>
+</ul>
+<p>除此之外还包括：</p>
+<ul>
+<li>superblock：记录文件系统的整体信息，包括 inode 和 block 的总量、使用量、剩余量，以及文件系统的格式与相关信息等；</li>
+<li>block bitmap：记录 block 是否被使用的位图。</li>
+</ul>
+<p>
+  <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/160be039582242049c3f53c15d4d5258.png" alt="" /></p>
+<h3 id="文件读取">
+  文件读取
+  <a class="anchor" href="#%e6%96%87%e4%bb%b6%e8%af%bb%e5%8f%96">#</a>
+</h3>
+<p>对于 Ext2 文件系统，当要读取一个文件的内容时，先在 inode 中查找文件内容所在的所有 block，然后把所有 block 的内容读出来。</p>
+<p>
+  <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/92608f9da3a74fb1b4d99a2c68e7d046.png" alt="" /></p>
+<p>而对于 FAT 文件系统，它没有 inode，每个 block 中存储着下一个 block 的编号。</p>
+<p>
+  <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/cdc5220c4fbc4781af440217a4fc0135.png" alt="" /></p>
+<h3 id="磁盘碎片">
+  磁盘碎片
+  <a class="anchor" href="#%e7%a3%81%e7%9b%98%e7%a2%8e%e7%89%87">#</a>
+</h3>
+<p>指一个文件内容所在的 block 过于分散，导致磁盘磁头移动距离过大，从而降低磁盘读写性能。</p>
+<h3 id="block">
+  block
+  <a class="anchor" href="#block">#</a>
+</h3>
+<p>在 Ext2 文件系统中所支持的 block 大小有 1K，2K 及 4K 三种，不同的大小限制了单个文件和文件系统的最大大小。</p>
+<table>
+<thead>
+<tr>
+<th>大小</th>
+<th>1KB</th>
+<th>2KB</th>
+<th>4KB</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>最大单一文件</td>
+<td>16GB</td>
+<td>256GB</td>
+<td>2TB</td>
+</tr>
+<tr>
+<td>最大文件系统</td>
+<td>2TB</td>
+<td>8TB</td>
+<td>16TB</td>
+</tr>
+</tbody>
+</table>
+<p>一个 block 只能被一个文件所使用，未使用的部分直接浪费了。因此如果需要存储大量的小文件，那么最好选用比较小的 block。</p>
+<h3 id="inode">
+  inode
+  <a class="anchor" href="#inode">#</a>
+</h3>
+<p>inode 具体包含以下信息：</p>
+<ul>
+<li>权限 (read/write/excute)；</li>
+<li>拥有者与群组 (owner/group)；</li>
+<li>容量；</li>
+<li>建立或状态改变的时间 (ctime)；</li>
+<li>最近读取时间 (atime)；</li>
+<li>最近修改时间 (mtime)；</li>
+<li>定义文件特性的旗标 (flag)，如 SetUID&hellip;；</li>
+<li>该文件真正内容的指向 (pointer)。</li>
+</ul>
+<p>inode 具有以下特点：</p>
+<ul>
+<li>每个 inode 大小均固定为 128 bytes (新的 ext4 与 xfs 可设定到 256 bytes)；</li>
+<li>每个文件都仅会占用一个 inode。</li>
+</ul>
+<p>inode 中记录了文件内容所在的 block 编号，但是每个 block 非常小，一个大文件随便都需要几十万的 block。而一个 inode 大小有限，无法直接引用这么多 block 编号。因此引入了间接、双间接、三间接引用。间接引用让 inode 记录的引用 block 块记录引用信息。</p>
+<p>
+  <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/88c9cbcae9a343bb9bdb2b6ee3b0f1e2.png" alt="" /></p>
+<h3 id="目录">
+  目录
+  <a class="anchor" href="#%e7%9b%ae%e5%bd%95">#</a>
+</h3>
+<p>建立一个目录时，会分配一个 inode 与至少一个 block。block 记录的内容是目录下所有文件的 inode 编号以及文件名。</p>
+<p>可以看到文件的 inode 本身不记录文件名，文件名记录在目录中，因此新增文件、删除文件、更改文件名这些操作与目录的写权限有关。</p>
+<h3 id="日志">
+  日志
+  <a class="anchor" href="#%e6%97%a5%e5%bf%97">#</a>
+</h3>
+<p>如果突然断电，那么文件系统会发生错误，例如断电前只修改了 block bitmap，而还没有将数据真正写入 block 中。</p>
+<p>ext3/ext4 文件系统引入了日志功能，可以利用日志来修复文件系统。</p>
+<h3 id="挂载">
+  挂载
+  <a class="anchor" href="#%e6%8c%82%e8%bd%bd">#</a>
+</h3>
+<p>挂载利用目录作为文件系统的进入点，也就是说，进入目录之后就可以读取文件系统的数据。</p>
+<h3 id="目录配置">
+  目录配置
+  <a class="anchor" href="#%e7%9b%ae%e5%bd%95%e9%85%8d%e7%bd%ae">#</a>
+</h3>
+<p>为了使不同 Linux 发行版本的目录结构保持一致性，Filesystem Hierarchy Standard (FHS) 规定了 Linux 的目录结构。最基础的三个目录如下：</p>
+<ul>
+<li>/ (root, 根目录)</li>
+<li>/usr (unix software resource)：所有系统默认软件都会安装到这个目录；</li>
+<li>/var (variable)：存放系统或程序运行过程中的数据文件。</li>
+</ul>
+<p>
+  <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/2219bc86741241ec8ccbfe7c6e500036.png" alt="" /></p>
+<h2 id="五文件">
+  五、文件
+  <a class="anchor" href="#%e4%ba%94%e6%96%87%e4%bb%b6">#</a>
 </h2>
 <h3 id="文件属性">
   文件属性
@@ -1122,9 +1506,9 @@ https://github.com/alex-shpak/hugo-book
 </span></span><span style="display:flex;"><span>-perm mode  ：搜索权限等于 mode 的文件
 </span></span><span style="display:flex;"><span>-perm -mode ：搜索权限包含 mode 的文件
 </span></span><span style="display:flex;"><span>-perm /mode ：搜索权限包含任一 mode 的文件
-</span></span></code></pre></div><h2 id="压缩与打包">
-  压缩与打包
-  <a class="anchor" href="#%e5%8e%8b%e7%bc%a9%e4%b8%8e%e6%89%93%e5%8c%85">#</a>
+</span></span></code></pre></div><h2 id="六压缩与打包">
+  六、压缩与打包
+  <a class="anchor" href="#%e5%85%ad%e5%8e%8b%e7%bc%a9%e4%b8%8e%e6%89%93%e5%8c%85">#</a>
 </h2>
 <h3 id="压缩文件名">
   压缩文件名
@@ -1250,9 +1634,9 @@ https://github.com/alex-shpak/hugo-book
 </tr>
 </tbody>
 </table>
-<h2 id="bash">
-  Bash
-  <a class="anchor" href="#bash">#</a>
+<h2 id="七bash">
+  七、Bash
+  <a class="anchor" href="#%e4%b8%83bash">#</a>
 </h2>
 <p>可以通过 Shell 请求内核提供服务，Bash 正是 Shell 的一种。</p>
 <h3 id="特性">
@@ -1273,9 +1657,9 @@ https://github.com/alex-shpak/hugo-book
 <p>对一个变量赋值直接使用 =。</p>
 <p>对变量取用需要在变量前加上 $ ，也可以用 ${} 的形式；</p>
 <p>输出变量使用 echo 命令。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>$ x=abc
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>$ x<span style="color:#f92672">=</span>abc
 </span></span><span style="display:flex;"><span>$ echo $x
-</span></span><span style="display:flex;"><span>$ echo ${x}
+</span></span><span style="display:flex;"><span>$ echo <span style="color:#e6db74">${</span>x<span style="color:#e6db74">}</span>
 </span></span></code></pre></div><p>变量内容如果有空格，必须使用双引号或者单引号。</p>
 <ul>
 <li>双引号内的特殊字符可以保留原本特性，例如 x=&ldquo;lang is $LANG&rdquo;，则 x 的值为 lang is zh_TW.UTF-8；</li>
@@ -1284,15 +1668,15 @@ https://github.com/alex-shpak/hugo-book
 <p>可以使用 <code>指令</code> 或者 $(指令) 的方式将指令的执行结果赋值给变量。例如 version=$(uname -r)，则 version 的值为 4.15.0-22-generic。</p>
 <p>可以使用 export 命令将自定义变量转成环境变量，环境变量可以在子程序中使用，所谓子程序就是由当前 Bash 而产生的子 Bash。</p>
 <p>Bash 的变量可以声明为数组和整数数字。注意数字类型没有浮点数。如果不进行声明，默认是字符串类型。变量的声明使用 declare 命令：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>$ declare [-aixr] variable
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>$ declare <span style="color:#f92672">[</span>-aixr<span style="color:#f92672">]</span> variable
 </span></span><span style="display:flex;"><span>-a ： 定义为数组类型
 </span></span><span style="display:flex;"><span>-i ： 定义为整数类型
 </span></span><span style="display:flex;"><span>-x ： 定义为环境变量
 </span></span><span style="display:flex;"><span>-r ： 定义为 readonly 类型
 </span></span></code></pre></div><p>使用 [ ] 来对数组进行索引操作：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>$ array[1]=a
-</span></span><span style="display:flex;"><span>$ array[2]=b
-</span></span><span style="display:flex;"><span>$ echo ${array[1]}
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>$ array<span style="color:#f92672">[</span>1<span style="color:#f92672">]=</span>a
+</span></span><span style="display:flex;"><span>$ array<span style="color:#f92672">[</span>2<span style="color:#f92672">]=</span>b
+</span></span><span style="display:flex;"><span>$ echo <span style="color:#e6db74">${</span>array[1]<span style="color:#e6db74">}</span>
 </span></span></code></pre></div><h3 id="指令搜索顺序">
   指令搜索顺序
   <a class="anchor" href="#%e6%8c%87%e4%bb%a4%e6%90%9c%e7%b4%a2%e9%a1%ba%e5%ba%8f">#</a>
@@ -1338,20 +1722,20 @@ https://github.com/alex-shpak/hugo-book
 <p>可以将不需要的标准输出以及标准错误输出重定向到 /dev/null，相当于扔进垃圾箱。</p>
 <p>如果需要将标准输出以及标准错误输出同时重定向到一个文件，需要将某个输出转换为另一个输出，例如 2&gt;&amp;1 表示将标准错误输出转换为标准输出。</p>
 <pre tabindex="0"><code>$ find /home -name .bashrc &gt; list 2&gt;&amp;1
-</code></pre><h2 id="管道指令">
-  管道指令
-  <a class="anchor" href="#%e7%ae%a1%e9%81%93%e6%8c%87%e4%bb%a4">#</a>
+</code></pre><h2 id="八管道指令">
+  八、管道指令
+  <a class="anchor" href="#%e5%85%ab%e7%ae%a1%e9%81%93%e6%8c%87%e4%bb%a4">#</a>
 </h2>
 <p>管道是将一个命令的标准输出作为另一个命令的标准输入，在数据需要经过多个步骤的处理之后才能得到我们想要的内容时就可以使用管道。</p>
 <p>在命令之间使用 | 分隔各个管道命令。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>$ ls -al /etc | less
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>$ ls -al /etc | less
 </span></span></code></pre></div><h3 id="提取指令">
   提取指令
   <a class="anchor" href="#%e6%8f%90%e5%8f%96%e6%8c%87%e4%bb%a4">#</a>
 </h3>
 <p>cut 对数据进行切分，取出想要的部分。</p>
 <p>切分过程一行一行地进行。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>$ cut
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>$ cut
 </span></span><span style="display:flex;"><span>-d ：分隔符
 </span></span><span style="display:flex;"><span>-f ：经过 -d 分隔后，使用 -f n 取出第 n 个区间
 </span></span><span style="display:flex;"><span>-c ：以字符为单位取出区间
@@ -1442,7 +1826,255 @@ https://github.com/alex-shpak/hugo-book
 </span></span><span style="display:flex;"><span>-b ：以大小来进行分区，可加单位，例如 b, k, m 等
 </span></span><span style="display:flex;"><span>-l ：以行数来进行分区。
 </span></span><span style="display:flex;"><span>- PREFIX ：分区文件的前导名称
-</span></span></code></pre></div></article>
+</span></span></code></pre></div><h2 id="九正则表达式">
+  九、正则表达式
+  <a class="anchor" href="#%e4%b9%9d%e6%ad%a3%e5%88%99%e8%a1%a8%e8%be%be%e5%bc%8f">#</a>
+</h2>
+<h3 id="grep">
+  grep
+  <a class="anchor" href="#grep">#</a>
+</h3>
+<p>g/re/p（globally search a regular expression and print)，使用正则表示式进行全局查找并打印。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>$ grep [-acinv] [--color=auto] 搜寻字符串 filename
+</span></span><span style="display:flex;"><span>-c ： 统计匹配到行的个数
+</span></span><span style="display:flex;"><span>-i ： 忽略大小写
+</span></span><span style="display:flex;"><span>-n ： 输出行号
+</span></span><span style="display:flex;"><span>-v ： 反向选择，也就是显示出没有 搜寻字符串 内容的那一行
+</span></span><span style="display:flex;"><span>--color=auto ：找到的关键字加颜色显示
+</span></span></code></pre></div><p>示例：把含有 the 字符串的行提取出来（注意默认会有 &ndash;color=auto 选项，因此以下内容在 Linux 中有颜色显示 the 字符串）</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>$ grep -n &#39;the&#39; regular_express.txt
+</span></span><span style="display:flex;"><span>8:I can&#39;t finish the test.
+</span></span><span style="display:flex;"><span>12:the symbol &#39;*&#39; is represented as start.
+</span></span><span style="display:flex;"><span>15:You are the best is mean you are the no. 1.
+</span></span><span style="display:flex;"><span>16:The world Happy is the same with &#34;glad&#34;.
+</span></span><span style="display:flex;"><span>18:google is the best tools for search keyword
+</span></span></code></pre></div><p>示例：正则表达式 a{m,n} 用来匹配字符 a m~n 次，这里需要将 { 和 } 进行转义，因为它们在 shell 是有特殊意义的。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>$ grep -n &#39;a\{2,5\}&#39; regular_express.txt
+</span></span></code></pre></div><h3 id="printf">
+  printf
+  <a class="anchor" href="#printf">#</a>
+</h3>
+<p>用于格式化输出。它不属于管道命令，在给 printf 传数据时需要使用 $( ) 形式。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>$ printf &#39;%10s %5i %5i %5i %8.2f \n&#39; $(cat printf.txt)
+</span></span><span style="display:flex;"><span>DmTsai    80    60    92    77.33
+</span></span><span style="display:flex;"><span>VBird    75    55    80    70.00
+</span></span><span style="display:flex;"><span>Ken    60    90    70    73.33
+</span></span></code></pre></div><h3 id="awk">
+  awk
+  <a class="anchor" href="#awk">#</a>
+</h3>
+<p>是由 Alfred Aho，Peter Weinberger 和 Brian Kernighan 创造，awk 这个名字就是这三个创始人名字的首字母。</p>
+<p>awk 每次处理一行，处理的最小单位是字段，每个字段的命名方式为：$n，n 为字段号，从 1 开始，$0 表示一整行。</p>
+<p>示例：取出最近五个登录用户的用户名和 IP。首先用 last -n 5 取出用最近五个登录用户的所有信息，可以看到用户名和 IP 分别在第 1 列和第 3 列，我们用 $1 和 $3 就能取出这两个字段，然后用 print 进行打印。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>$ last -n 5
+</span></span><span style="display:flex;"><span>dmtsai pts/0 192.168.1.100 Tue Jul 14 17:32 still logged in
+</span></span><span style="display:flex;"><span>dmtsai pts/0 192.168.1.100 Thu Jul 9 23:36 - 02:58 (03:22)
+</span></span><span style="display:flex;"><span>dmtsai pts/0 192.168.1.100 Thu Jul 9 17:23 - 23:36 (06:12)
+</span></span><span style="display:flex;"><span>dmtsai pts/0 192.168.1.100 Thu Jul 9 08:02 - 08:17 (00:14)
+</span></span><span style="display:flex;"><span>dmtsai tty1 Fri May 29 11:55 - 12:11 (00:15)
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>$ last -n 5 | awk &#39;{print $1 &#34;\t&#34; $3}&#39;
+</span></span><span style="display:flex;"><span>dmtsai   192.168.1.100
+</span></span><span style="display:flex;"><span>dmtsai   192.168.1.100
+</span></span><span style="display:flex;"><span>dmtsai   192.168.1.100
+</span></span><span style="display:flex;"><span>dmtsai   192.168.1.100
+</span></span><span style="display:flex;"><span>dmtsai   Fri
+</span></span></code></pre></div><p>可以根据字段的某些条件进行匹配，例如匹配字段小于某个值的那一行数据。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>$ awk &#39;条件类型 1 {动作 1} 条件类型 2 {动作 2} ...&#39; filename
+</span></span></code></pre></div><p>示例：/etc/passwd 文件第三个字段为 UID，对 UID 小于 10 的数据进行处理。</p>
+<pre tabindex="0"><code>$ cat /etc/passwd | awk &#39;BEGIN {FS=&#34;:&#34;} $3 &lt; 10 {print $1 &#34;\t &#34; $3}&#39;
+root 0
+bin 1
+daemon 2
+</code></pre><p>awk 变量：</p>
+<table>
+<thead>
+<tr>
+<th>变量名称</th>
+<th>代表意义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NF</td>
+<td>每一行拥有的字段总数</td>
+</tr>
+<tr>
+<td>NR</td>
+<td>目前所处理的是第几行数据</td>
+</tr>
+<tr>
+<td>FS</td>
+<td>目前的分隔字符，默认是空格键</td>
+</tr>
+</tbody>
+</table>
+<p>示例：显示正在处理的行号以及每一行有多少字段</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>$ last -n 5 | awk &#39;{print $1 &#34;\t lines: &#34; NR &#34;\t columns: &#34; NF}&#39;
+</span></span><span style="display:flex;"><span>dmtsai lines: 1 columns: 10
+</span></span><span style="display:flex;"><span>dmtsai lines: 2 columns: 10
+</span></span><span style="display:flex;"><span>dmtsai lines: 3 columns: 10
+</span></span><span style="display:flex;"><span>dmtsai lines: 4 columns: 10
+</span></span><span style="display:flex;"><span>dmtsai lines: 5 columns: 9
+</span></span></code></pre></div><h2 id="十进程管理">
+  十、进程管理
+  <a class="anchor" href="#%e5%8d%81%e8%bf%9b%e7%a8%8b%e7%ae%a1%e7%90%86">#</a>
+</h2>
+<h3 id="查看进程">
+  查看进程
+  <a class="anchor" href="#%e6%9f%a5%e7%9c%8b%e8%bf%9b%e7%a8%8b">#</a>
+</h3>
+<h4 id="1-ps">
+  1. ps
+  <a class="anchor" href="#1-ps">#</a>
+</h4>
+<p>查看某个时间点的进程信息。</p>
+<p>示例：查看自己的进程</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>## ps -l
+</span></span></code></pre></div><p>示例：查看系统所有进程</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>## ps aux
+</span></span></code></pre></div><p>示例：查看特定的进程</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>## ps aux | grep threadx
+</span></span></code></pre></div><h4 id="2-pstree">
+  2. pstree
+  <a class="anchor" href="#2-pstree">#</a>
+</h4>
+<p>查看进程树。</p>
+<p>示例：查看所有进程树</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>## pstree -A
+</span></span></code></pre></div><h4 id="3-top">
+  3. top
+  <a class="anchor" href="#3-top">#</a>
+</h4>
+<p>实时显示进程信息。</p>
+<p>示例：两秒钟刷新一次</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>## top -d 2
+</span></span></code></pre></div><h4 id="4-netstat">
+  4. netstat
+  <a class="anchor" href="#4-netstat">#</a>
+</h4>
+<p>查看占用端口的进程</p>
+<p>示例：查看特定端口的进程</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>## netstat -anp | grep port
+</span></span></code></pre></div><h3 id="进程状态">
+  进程状态
+  <a class="anchor" href="#%e8%bf%9b%e7%a8%8b%e7%8a%b6%e6%80%81">#</a>
+</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">状态</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">R</td>
+<td>running or runnable (on run queue)<br>正在执行或者可执行，此时进程位于执行队列中。</td>
+</tr>
+<tr>
+<td style="text-align:center">D</td>
+<td>uninterruptible sleep (usually I/O)<br>不可中断阻塞，通常为 IO 阻塞。</td>
+</tr>
+<tr>
+<td style="text-align:center">S</td>
+<td>interruptible sleep (waiting for an event to complete) <br> 可中断阻塞，此时进程正在等待某个事件完成。</td>
+</tr>
+<tr>
+<td style="text-align:center">Z</td>
+<td>zombie (terminated but not reaped by its parent)<br>僵死，进程已经终止但是尚未被其父进程获取信息。</td>
+</tr>
+<tr>
+<td style="text-align:center">T</td>
+<td>stopped (either by a job control signal or because it is being traced) <br> 结束，进程既可以被作业控制信号结束，也可能是正在被追踪。</td>
+</tr>
+</tbody>
+</table>
+<p>
+  <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/327091cefceb4fc7af985592cf5f9fa2.png" alt="" /></p>
+<h3 id="sigchld">
+  SIGCHLD
+  <a class="anchor" href="#sigchld">#</a>
+</h3>
+<p>当一个子进程改变了它的状态时（停止运行，继续运行或者退出），有两件事会发生在父进程中：</p>
+<ul>
+<li>得到 SIGCHLD 信号；</li>
+<li>waitpid() 或者 wait() 调用会返回。</li>
+</ul>
+<p>其中子进程发送的 SIGCHLD 信号包含了子进程的信息，比如进程 ID、进程状态、进程使用 CPU 的时间等。</p>
+<p>在子进程退出时，它的进程描述符不会立即释放，这是为了让父进程得到子进程信息，父进程通过 wait() 和 waitpid() 来获得一个已经退出的子进程的信息。</p>
+<h3 id="wait">
+  wait()
+  <a class="anchor" href="#wait">#</a>
+</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>pid_t wait(int *status)
+</span></span></code></pre></div><p>父进程调用 wait() 会一直阻塞，直到收到一个子进程退出的 SIGCHLD 信号，之后 wait() 函数会销毁子进程并返回。</p>
+<p>如果成功，返回被收集的子进程的进程 ID；如果调用进程没有子进程，调用就会失败，此时返回 -1，同时 errno 被置为 ECHILD。</p>
+<p>参数 status 用来保存被收集的子进程退出时的一些状态，如果对这个子进程是如何死掉的毫不在意，只想把这个子进程消灭掉，可以设置这个参数为 NULL。</p>
+<h3 id="waitpid">
+  waitpid()
+  <a class="anchor" href="#waitpid">#</a>
+</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>pid_t waitpid(pid_t pid, int *status, int options)
+</span></span></code></pre></div><p>作用和 wait() 完全相同，但是多了两个可由用户控制的参数 pid 和 options。</p>
+<p>pid 参数指示一个子进程的 ID，表示只关心这个子进程退出的 SIGCHLD 信号。如果 pid=-1 时，那么和 wait() 作用相同，都是关心所有子进程退出的 SIGCHLD 信号。</p>
+<p>options 参数主要有 WNOHANG 和 WUNTRACED 两个选项，WNOHANG 可以使 waitpid() 调用变成非阻塞的，也就是说它会立即返回，父进程可以继续执行其它任务。</p>
+<h3 id="孤儿进程">
+  孤儿进程
+  <a class="anchor" href="#%e5%ad%a4%e5%84%bf%e8%bf%9b%e7%a8%8b">#</a>
+</h3>
+<p>一个父进程退出，而它的一个或多个子进程还在运行，那么这些子进程将成为孤儿进程。</p>
+<p>孤儿进程将被 init 进程（进程号为 1）所收养，并由 init 进程对它们完成状态收集工作。</p>
+<p>由于孤儿进程会被 init 进程收养，所以孤儿进程不会对系统造成危害。</p>
+<h3 id="僵尸进程">
+  僵尸进程
+  <a class="anchor" href="#%e5%83%b5%e5%b0%b8%e8%bf%9b%e7%a8%8b">#</a>
+</h3>
+<p>一个子进程的进程描述符在子进程退出时不会释放，只有当父进程通过 wait() 或 waitpid() 获取了子进程信息后才会释放。如果子进程退出，而父进程并没有调用 wait() 或 waitpid()，那么子进程的进程描述符仍然保存在系统中，这种进程称之为僵尸进程。</p>
+<p>僵尸进程通过 ps 命令显示出来的状态为 Z（zombie）。</p>
+<p>系统所能使用的进程号是有限的，如果产生大量僵尸进程，将因为没有可用的进程号而导致系统不能产生新的进程。</p>
+<p>要消灭系统中大量的僵尸进程，只需要将其父进程杀死，此时僵尸进程就会变成孤儿进程，从而被 init 进程所收养，这样 init 进程就会释放所有的僵尸进程所占有的资源，从而结束僵尸进程。</p>
+<h2 id="参考资料">
+  参考资料
+  <a class="anchor" href="#%e5%8f%82%e8%80%83%e8%b5%84%e6%96%99">#</a>
+</h2>
+<ul>
+<li>鸟哥. 鸟 哥 的 Linux 私 房 菜 基 础 篇 第 三 版[J]. 2009.</li>
+<li>
+  <a href="https://www.ibm.com/developerworks/cn/linux/l-cn-rpmdpkg/index.html">Linux 平台上的软件包管理</a></li>
+<li>
+  <a href="http://liubigbin.github.io/2016/03/11/Linux-%E4%B9%8B%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B%E3%80%81%E5%83%B5%E6%AD%BB%E8%BF%9B%E7%A8%8B%E4%B8%8E%E5%AD%A4%E5%84%BF%E8%BF%9B%E7%A8%8B/">Linux 之守护进程、僵死进程与孤儿进程</a></li>
+<li>
+  <a href="https://stackoverflow.com/questions/185899/what-is-the-difference-between-a-symbolic-link-and-a-hard-link">What is the difference between a symbolic link and a hard link?</a></li>
+<li>
+  <a href="https://idea.popcount.org/2012-12-11-linux-process-states/">Linux process states</a></li>
+<li>
+  <a href="https://en.wikipedia.org/wiki/GUID_Partition_Table">GUID Partition Table</a></li>
+<li>
+  <a href="https://blog.csdn.net/kevinhg/article/details/7001719">详解 wait 和 waitpid 函数</a></li>
+<li>
+  <a href="https://blog.csdn.net/tianlesoftware/article/details/6009110">IDE、SATA、SCSI、SAS、FC、SSD 硬盘类型介绍</a></li>
+<li>
+  <a href="http://www.mpchunter.com/s3000/akai-ib-301s-scsi-interface-for-s2800s3000/">Akai IB-301S SCSI Interface for S2800,S3000</a></li>
+<li>
+  <a href="https://en.wikipedia.org/wiki/Parallel_ATA">Parallel ATA</a></li>
+<li>
+  <a href="http://www.thessdreview.com/our-reviews/adata-xpg-sx900-256gb-sata-3-ssd-review-expanded-capacity-and-sandforce-driven-speed/4/">ADATA XPG SX900 256GB SATA 3 SSD Review – Expanded Capacity and SandForce Driven Speed</a></li>
+<li>
+  <a href="https://blogs.cisco.com/datacenter/decoding-ucs-invicta-part-1">Decoding UCS Invicta – Part 1</a></li>
+<li>
+  <a href="https://zh.wikipedia.org/wiki/%E7%A1%AC%E7%9B%98">硬盘</a></li>
+<li>
+  <a href="http://www.differencebetween.info/difference-between-sas-and-sata">Difference between SAS and SATA</a></li>
+<li>
+  <a href="https://zh.wikipedia.org/wiki/BIOS">BIOS</a></li>
+<li>
+  <a href="https://www.cs.rutgers.edu/%5c~pxk/416/notes/13-fs-studies.html">File system design case studies</a></li>
+<li>
+  <a href="https://classes.soe.ucsc.edu/cmps111/Fall08/proj4.shtml">Programming Project #4</a></li>
+<li>
+  <a href="http://web.cs.ucla.edu/classes/fall14/cs111/scribe/11a/index.html">FILE SYSTEM DESIGN</a></li>
+</ul>
+</article>
  
       
 
@@ -1451,16 +2083,16 @@ https://github.com/alex-shpak/hugo-book
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/190fc634ca74ceef5ebbc72c1fbf0b0507c57ba6" title='最后修改者 weibin | December 23, 2022' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/af3c8e78808b07a54825267cff479a27736758ee" title='最后修改者 weibin | January 17, 2023' target="_blank" rel="noopener">
       <img src="/keeplearning/svg/calendar.svg" class="book-icon" alt="Calendar" />
-      <span>December 23, 2022</span>
+      <span>January 17, 2023</span>
     </a>
   </div>
 
 
 
   <div>
-    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/book.keeplearning/docs/linux/linux2.md" target="_blank" rel="noopener">
+    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/book.keeplearning/docs/linux/linux.md" target="_blank" rel="noopener">
       <img src="/keeplearning/svg/edit.svg" class="book-icon" alt="Edit" />
       <span>编辑本页</span>
     </a>
@@ -1496,9 +2128,49 @@ https://github.com/alex-shpak/hugo-book
   
 <nav id="TableOfContents">
   <ul>
-    <li><a href="#linux二">Linux（二）</a>
+    <li><a href="#linux">Linux</a>
       <ul>
-        <li><a href="#文件">文件</a>
+        <li><a href="#一常用操作以及概念">一、常用操作以及概念</a>
+          <ul>
+            <li><a href="#快捷键">快捷键</a></li>
+            <li><a href="#求助">求助</a></li>
+            <li><a href="#关机">关机</a></li>
+            <li><a href="#path">PATH</a></li>
+            <li><a href="#sudo">sudo</a></li>
+            <li><a href="#包管理工具">包管理工具</a></li>
+            <li><a href="#发行版">发行版</a></li>
+            <li><a href="#vim-三个模式">VIM 三个模式</a></li>
+            <li><a href="#gnu">GNU</a></li>
+            <li><a href="#开源协议">开源协议</a></li>
+          </ul>
+        </li>
+        <li><a href="#二磁盘">二、磁盘</a>
+          <ul>
+            <li><a href="#磁盘接口">磁盘接口</a></li>
+            <li><a href="#磁盘的文件名">磁盘的文件名</a></li>
+          </ul>
+        </li>
+        <li><a href="#三分区">三、分区</a>
+          <ul>
+            <li><a href="#分区表">分区表</a></li>
+            <li><a href="#开机检测程序">开机检测程序</a></li>
+          </ul>
+        </li>
+        <li><a href="#四文件系统">四、文件系统</a>
+          <ul>
+            <li><a href="#分区与文件系统">分区与文件系统</a></li>
+            <li><a href="#组成">组成</a></li>
+            <li><a href="#文件读取">文件读取</a></li>
+            <li><a href="#磁盘碎片">磁盘碎片</a></li>
+            <li><a href="#block">block</a></li>
+            <li><a href="#inode">inode</a></li>
+            <li><a href="#目录">目录</a></li>
+            <li><a href="#日志">日志</a></li>
+            <li><a href="#挂载">挂载</a></li>
+            <li><a href="#目录配置">目录配置</a></li>
+          </ul>
+        </li>
+        <li><a href="#五文件">五、文件</a>
           <ul>
             <li><a href="#文件属性">文件属性</a></li>
             <li><a href="#文件与目录的基本操作">文件与目录的基本操作</a></li>
@@ -1510,14 +2182,14 @@ https://github.com/alex-shpak/hugo-book
             <li><a href="#指令与文件搜索">指令与文件搜索</a></li>
           </ul>
         </li>
-        <li><a href="#压缩与打包">压缩与打包</a>
+        <li><a href="#六压缩与打包">六、压缩与打包</a>
           <ul>
             <li><a href="#压缩文件名">压缩文件名</a></li>
             <li><a href="#压缩指令">压缩指令</a></li>
             <li><a href="#打包">打包</a></li>
           </ul>
         </li>
-        <li><a href="#bash">Bash</a>
+        <li><a href="#七bash">七、Bash</a>
           <ul>
             <li><a href="#特性">特性</a></li>
             <li><a href="#变量操作">变量操作</a></li>
@@ -1525,7 +2197,7 @@ https://github.com/alex-shpak/hugo-book
             <li><a href="#数据流重定向">数据流重定向</a></li>
           </ul>
         </li>
-        <li><a href="#管道指令">管道指令</a>
+        <li><a href="#八管道指令">八、管道指令</a>
           <ul>
             <li><a href="#提取指令">提取指令</a></li>
             <li><a href="#排序指令">排序指令</a></li>
@@ -1534,6 +2206,25 @@ https://github.com/alex-shpak/hugo-book
             <li><a href="#分区指令">分区指令</a></li>
           </ul>
         </li>
+        <li><a href="#九正则表达式">九、正则表达式</a>
+          <ul>
+            <li><a href="#grep">grep</a></li>
+            <li><a href="#printf">printf</a></li>
+            <li><a href="#awk">awk</a></li>
+          </ul>
+        </li>
+        <li><a href="#十进程管理">十、进程管理</a>
+          <ul>
+            <li><a href="#查看进程">查看进程</a></li>
+            <li><a href="#进程状态">进程状态</a></li>
+            <li><a href="#sigchld">SIGCHLD</a></li>
+            <li><a href="#wait">wait()</a></li>
+            <li><a href="#waitpid">waitpid()</a></li>
+            <li><a href="#孤儿进程">孤儿进程</a></li>
+            <li><a href="#僵尸进程">僵尸进程</a></li>
+          </ul>
+        </li>
+        <li><a href="#参考资料">参考资料</a></li>
       </ul>
     </li>
   </ul>

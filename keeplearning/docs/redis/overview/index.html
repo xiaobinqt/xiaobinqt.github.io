@@ -3,40 +3,28 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Redis（一） # 一、概述 # Redis 是速度非常快的非关系型（NoSQL）内存键值数据库，可以存储键和五种不同类型的值之间的映射。
+<meta name="description" content="Redis # 一、概述 # Redis 是速度非常快的非关系型（NoSQL）内存键值数据库，可以存储键和五种不同类型的值之间的映射。
 键的类型只能为字符串，值支持五种数据类型：字符串、列表、集合、散列表、有序集合。
 Redis 支持很多特性，例如将内存中的数据持久化到硬盘中，使用复制来扩展读性能，使用分片来扩展写性能。
-二、数据类型 # 数据类型 可以存储的值 操作 STRING 字符串、整数或者浮点数 对整个字符串或者字符串的其中一部分执行操作
-对整数和浮点数执行自增或者自减操作 LIST 列表 从两端压入或者弹出元素 对单个或者多个元素进行修剪，
-只保留一个范围内的元素 SET 无序集合 添加、获取、移除单个元素
-检查一个元素是否存在于集合中
-计算交集、并集、差集
-从集合里面随机获取元素 HASH 包含键值对的无序散列表 添加、获取、移除单个键值对 获取所有键值对
-检查某个键是否存在 ZSET 有序集合 添加、获取、删除元素 根据分值范围或者成员来获取元素
-计算一个键的排名 STRING # &gt; set hello world OK &gt; get hello &#34;world&#34; &gt; del hello (integer) 1 &gt; get hello (nil) LIST # &gt; rpush list-key item (integer) 1 &gt; rpush list-key item2 (integer) 2 &gt; rpush list-key item (integer) 3 &gt; lrange list-key 0 -1 1) &#34;item&#34; 2) &#34;item2&#34; 3) &#34;item&#34; &gt; lindex list-key 1 &#34;item2&#34; &gt; lpop list-key &#34;item&#34; &gt; lrange list-key 0 -1 1) &#34;item2&#34; 2) &#34;item&#34; SET # &gt; sadd set-key item (integer) 1 &gt; sadd set-key item2 (integer) 1 &gt; sadd set-key item3 (integer) 1 &gt; sadd set-key item (integer) 0 &gt; smembers set-key 1) &#34;item&#34; 2) &#34;item2&#34; 3) &#34;item3&#34; &gt; sismember set-key item4 (integer) 0 &gt; sismember set-key item (integer) 1 &gt; srem set-key item2 (integer) 1 &gt; srem set-key item2 (integer) 0 &gt; smembers set-key 1) &#34;item&#34; 2) &#34;item3&#34; HASH # &gt; hset hash-key sub-key1 value1 (integer) 1 &gt; hset hash-key sub-key2 value2 (integer) 1 &gt; hset hash-key sub-key1 value1 (integer) 0 &gt; hgetall hash-key 1) &#34;sub-key1&#34; 2) &#34;value1&#34; 3) &#34;sub-key2&#34; 4) &#34;value2&#34; &gt; hdel hash-key sub-key2 (integer) 1 &gt; hdel hash-key sub-key2 (integer) 0 &gt; hget hash-key sub-key1 &#34;value1&#34; &gt; hgetall hash-key 1) &#34;sub-key1&#34; 2) &#34;value1&#34; ZSET # &gt; zadd zset-key 728 member1 (integer) 1 &gt; zadd zset-key 982 member0 (integer) 1 &gt; zadd zset-key 982 member0 (integer) 0 &gt; zrange zset-key 0 -1 withscores 1) &#34;member1&#34; 2) &#34;728&#34; 3) &#34;member0&#34; 4) &#34;982&#34; &gt; zrangebyscore zset-key 0 800 withscores 1) &#34;member1&#34; 2) &#34;728&#34; &gt; zrem zset-key member1 (integer) 1 &gt; zrem zset-key member1 (integer) 0 &gt; zrange zset-key 0 -1 withscores 1) &#34;member0&#34; 2) &#34;982&#34; 三、数据结构 # 字典 # dictht 是一个散列表结构，使用拉链法解决哈希冲突。">
+二、数据结构 # 字典 # dictht 是一个散列表结构，使用拉链法解决哈希冲突。
+/* This is our hash table structure. Every dictionary has two of this as we * implement incremental rehashing, for the old to the new table. */ typedef struct dictht { dictEntry **table; unsigned long size; unsigned long sizemask; unsigned long used; } dictht; typedef struct dictEntry { void *key; union { void *val; uint64_t u64; int64_t s64; double d; } v; struct dictEntry *next; } dictEntry; Redis 的字典 dict 中包含两个哈希表 dictht，这是为了方便进行 rehash 操作。在扩容时，将其中一个 dictht 上的键值对 rehash 到另一个 dictht 上面，完成之后释放空间并交换两个 dictht 的角色。">
 <meta name="theme-color" content="#FFFFFF">
-<meta name="color-scheme" content="light dark"><meta property="og:title" content="Redis（一）" />
-<meta property="og:description" content="Redis（一） # 一、概述 # Redis 是速度非常快的非关系型（NoSQL）内存键值数据库，可以存储键和五种不同类型的值之间的映射。
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="Redis" />
+<meta property="og:description" content="Redis # 一、概述 # Redis 是速度非常快的非关系型（NoSQL）内存键值数据库，可以存储键和五种不同类型的值之间的映射。
 键的类型只能为字符串，值支持五种数据类型：字符串、列表、集合、散列表、有序集合。
 Redis 支持很多特性，例如将内存中的数据持久化到硬盘中，使用复制来扩展读性能，使用分片来扩展写性能。
-二、数据类型 # 数据类型 可以存储的值 操作 STRING 字符串、整数或者浮点数 对整个字符串或者字符串的其中一部分执行操作
-对整数和浮点数执行自增或者自减操作 LIST 列表 从两端压入或者弹出元素 对单个或者多个元素进行修剪，
-只保留一个范围内的元素 SET 无序集合 添加、获取、移除单个元素
-检查一个元素是否存在于集合中
-计算交集、并集、差集
-从集合里面随机获取元素 HASH 包含键值对的无序散列表 添加、获取、移除单个键值对 获取所有键值对
-检查某个键是否存在 ZSET 有序集合 添加、获取、删除元素 根据分值范围或者成员来获取元素
-计算一个键的排名 STRING # &gt; set hello world OK &gt; get hello &#34;world&#34; &gt; del hello (integer) 1 &gt; get hello (nil) LIST # &gt; rpush list-key item (integer) 1 &gt; rpush list-key item2 (integer) 2 &gt; rpush list-key item (integer) 3 &gt; lrange list-key 0 -1 1) &#34;item&#34; 2) &#34;item2&#34; 3) &#34;item&#34; &gt; lindex list-key 1 &#34;item2&#34; &gt; lpop list-key &#34;item&#34; &gt; lrange list-key 0 -1 1) &#34;item2&#34; 2) &#34;item&#34; SET # &gt; sadd set-key item (integer) 1 &gt; sadd set-key item2 (integer) 1 &gt; sadd set-key item3 (integer) 1 &gt; sadd set-key item (integer) 0 &gt; smembers set-key 1) &#34;item&#34; 2) &#34;item2&#34; 3) &#34;item3&#34; &gt; sismember set-key item4 (integer) 0 &gt; sismember set-key item (integer) 1 &gt; srem set-key item2 (integer) 1 &gt; srem set-key item2 (integer) 0 &gt; smembers set-key 1) &#34;item&#34; 2) &#34;item3&#34; HASH # &gt; hset hash-key sub-key1 value1 (integer) 1 &gt; hset hash-key sub-key2 value2 (integer) 1 &gt; hset hash-key sub-key1 value1 (integer) 0 &gt; hgetall hash-key 1) &#34;sub-key1&#34; 2) &#34;value1&#34; 3) &#34;sub-key2&#34; 4) &#34;value2&#34; &gt; hdel hash-key sub-key2 (integer) 1 &gt; hdel hash-key sub-key2 (integer) 0 &gt; hget hash-key sub-key1 &#34;value1&#34; &gt; hgetall hash-key 1) &#34;sub-key1&#34; 2) &#34;value1&#34; ZSET # &gt; zadd zset-key 728 member1 (integer) 1 &gt; zadd zset-key 982 member0 (integer) 1 &gt; zadd zset-key 982 member0 (integer) 0 &gt; zrange zset-key 0 -1 withscores 1) &#34;member1&#34; 2) &#34;728&#34; 3) &#34;member0&#34; 4) &#34;982&#34; &gt; zrangebyscore zset-key 0 800 withscores 1) &#34;member1&#34; 2) &#34;728&#34; &gt; zrem zset-key member1 (integer) 1 &gt; zrem zset-key member1 (integer) 0 &gt; zrange zset-key 0 -1 withscores 1) &#34;member0&#34; 2) &#34;982&#34; 三、数据结构 # 字典 # dictht 是一个散列表结构，使用拉链法解决哈希冲突。" />
+二、数据结构 # 字典 # dictht 是一个散列表结构，使用拉链法解决哈希冲突。
+/* This is our hash table structure. Every dictionary has two of this as we * implement incremental rehashing, for the old to the new table. */ typedef struct dictht { dictEntry **table; unsigned long size; unsigned long sizemask; unsigned long used; } dictht; typedef struct dictEntry { void *key; union { void *val; uint64_t u64; int64_t s64; double d; } v; struct dictEntry *next; } dictEntry; Redis 的字典 dict 中包含两个哈希表 dictht，这是为了方便进行 rehash 操作。在扩容时，将其中一个 dictht 上的键值对 rehash 到另一个 dictht 上面，完成之后释放空间并交换两个 dictht 的角色。" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://example.com/keeplearning/docs/redis/redis1/" /><meta property="article:section" content="docs" />
+<meta property="og:url" content="https://example.com/keeplearning/docs/redis/overview/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2022-12-26T11:35:58+08:00" />
-<title>Redis（一） | KeepLearning</title>
+<meta property="article:modified_time" content="2023-01-17T13:56:58+08:00" />
+<title>Redis | KeepLearning</title>
 <link rel="manifest" href="/keeplearning/manifest.json">
 <link rel="icon" href="/keeplearning/favicon.png" type="image/x-icon">
 <link rel="stylesheet" href="/keeplearning/book.min.44ab80b6e9fbffc4b56fa0525dd4af874d4d533ab2a985226782d7cdc8d9fd15.css" integrity="sha256-RKuAtun7/8S1b6BSXdSvh01NUzqyqYUiZ4LXzcjZ/RU=" crossorigin="anonymous">
   <script defer src="/keeplearning/flexsearch.min.js"></script>
-  <script defer src="/keeplearning/zh.search.min.1c6140334c37c960dba6c648eb00e4b0211b2b222c420d5379d7e7e1cedde790.js" integrity="sha256-HGFAM0w3yWDbpsZI6wDksCEbKyIsQg1Tedfn4c7d55A=" crossorigin="anonymous"></script>
+  <script defer src="/keeplearning/zh.search.min.5b02a93327952778720abce5c3a4075cc8a6d9e27092e5d6cae2a13d039a6f12.js" integrity="sha256-WwKpMyeVJ3hyCrzlw6QHXMim2eJwkuXWyuKhPQOabxI=" crossorigin="anonymous"></script>
 
   <script defer src="/keeplearning/sw.min.1adfb566b92ba83fd11679d786b02cc6ef24134c579bce6902d173c28305155f.js" integrity="sha256-Gt&#43;1ZrkrqD/RFnnXhrAsxu8kE0xXm85pAtFzwoMFFV8=" crossorigin="anonymous"></script>
 <!--
@@ -102,10 +90,7 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <input type="checkbox" id="section-3110560962cac834dcd3aead95e804a4" class="toggle"  />
-    <label for="section-3110560962cac834dcd3aead95e804a4" class="flex justify-between">
-      <a role="button" class="">网络</a>
-    </label>
+    <span>网络</span>
   
 
           
@@ -214,10 +199,7 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <input type="checkbox" id="section-9caa6ae5221742cea46cb40ee3162cf1" class="toggle"  />
-    <label for="section-9caa6ae5221742cea46cb40ee3162cf1" class="flex justify-between">
-      <a role="button" class="">HTTP</a>
-    </label>
+    <span>HTTP</span>
   
 
           
@@ -230,33 +212,7 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/keeplearning/docs/http/http1/" class="">HTTP（一）</a>
-  
-
-        </li>
-      
-    
-      
-        <li>
-          
-  
-  
-
-  
-    <a href="/keeplearning/docs/http/http2/" class="">HTTP（二）</a>
-  
-
-        </li>
-      
-    
-      
-        <li>
-          
-  
-  
-
-  
-    <a href="/keeplearning/docs/http/http3/" class="">HTTP（三）</a>
+    <a href="/keeplearning/docs/http/http/" class="">HTTP</a>
   
 
         </li>
@@ -274,10 +230,7 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <input type="checkbox" id="section-708f0dc81b7f5419c74b48a85bd8146c" class="toggle"  />
-    <label for="section-708f0dc81b7f5419c74b48a85bd8146c" class="flex justify-between">
-      <a role="button" class="">操作系统</a>
-    </label>
+    <span>操作系统</span>
   
 
           
@@ -386,10 +339,7 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <input type="checkbox" id="section-e66e2e478c81786f553bd82d3931b216" class="toggle"  />
-    <label for="section-e66e2e478c81786f553bd82d3931b216" class="flex justify-between">
-      <a role="button" class="">MySQL</a>
-    </label>
+    <span>MySQL</span>
   
 
           
@@ -402,20 +352,7 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/keeplearning/docs/mysql/dbs-theory/" class="">数据库系统原理（一）</a>
-  
-
-        </li>
-      
-    
-      
-        <li>
-          
-  
-  
-
-  
-    <a href="/keeplearning/docs/mysql/dbs-theory2/" class="">数据库系统原理（二）</a>
+    <a href="/keeplearning/docs/mysql/dbs-theory/" class="">数据库系统原理</a>
   
 
         </li>
@@ -459,10 +396,7 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <input type="checkbox" id="section-a27d7ef673b519721b4909eba7547282" class="toggle" checked />
-    <label for="section-a27d7ef673b519721b4909eba7547282" class="flex justify-between">
-      <a role="button" class="">Redis</a>
-    </label>
+    <span>Redis</span>
   
 
           
@@ -475,7 +409,7 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/keeplearning/docs/redis/redis1/" class="active">Redis（一）</a>
+    <a href="/keeplearning/docs/redis/data-type-cmd/" class="">数据类型和常用命令</a>
   
 
         </li>
@@ -488,7 +422,7 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/keeplearning/docs/redis/redis2/" class="">Redis（二）</a>
+    <a href="/keeplearning/docs/redis/overview/" class="active">Redis</a>
   
 
         </li>
@@ -506,10 +440,7 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <input type="checkbox" id="section-6ae1a891fb3a3f71d71273fc61b29b76" class="toggle"  />
-    <label for="section-6ae1a891fb3a3f71d71273fc61b29b76" class="flex justify-between">
-      <a role="button" class="">Linux</a>
-    </label>
+    <span>Linux</span>
   
 
           
@@ -522,33 +453,7 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/keeplearning/docs/linux/linux1/" class="">Linux（一）</a>
-  
-
-        </li>
-      
-    
-      
-        <li>
-          
-  
-  
-
-  
-    <a href="/keeplearning/docs/linux/linux2/" class="">Linux（二）</a>
-  
-
-        </li>
-      
-    
-      
-        <li>
-          
-  
-  
-
-  
-    <a href="/keeplearning/docs/linux/linux3/" class="">Linux（三）</a>
+    <a href="/keeplearning/docs/linux/linux/" class="">Linux</a>
   
 
         </li>
@@ -566,10 +471,7 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <input type="checkbox" id="section-2e68b18a2908c2a0b6e57142acd3643f" class="toggle"  />
-    <label for="section-2e68b18a2908c2a0b6e57142acd3643f" class="flex justify-between">
-      <a role="button" class="">系统设计</a>
-    </label>
+    <span>系统设计</span>
   
 
           
@@ -665,10 +567,7 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <input type="checkbox" id="section-caceb4c0534f60c75e13f33d748c0f33" class="toggle"  />
-    <label for="section-caceb4c0534f60c75e13f33d748c0f33" class="flex justify-between">
-      <a role="button" class="">编码实践</a>
-    </label>
+    <span>编码实践</span>
   
 
           
@@ -738,14 +637,24 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <input type="checkbox" id="section-c3a410f01a5ce1def5ccda436822e583" class="toggle"  />
-    <label for="section-c3a410f01a5ce1def5ccda436822e583" class="flex justify-between">
-      <a href="/keeplearning/docs/favorite/" class="">收藏夹</a>
-    </label>
+    <a href="/keeplearning/docs/favorite/" class="">收藏夹</a>
   
 
           
   <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/favorite/cs-learn/" class="">计算机基础书籍推荐</a>
+  
+
+        </li>
+      
     
   </ul>
 
@@ -788,7 +697,7 @@ https://github.com/alex-shpak/hugo-book
     <img src="/keeplearning/svg/menu.svg" class="book-icon" alt="Menu" />
   </label>
 
-  <strong>Redis（一）</strong>
+  <strong>Redis</strong>
 
   <label for="toc-control">
     
@@ -804,25 +713,16 @@ https://github.com/alex-shpak/hugo-book
   
 <nav id="TableOfContents">
   <ul>
-    <li><a href="#redis一">Redis（一）</a>
+    <li><a href="#redis">Redis</a>
       <ul>
         <li><a href="#一概述">一、概述</a></li>
-        <li><a href="#二数据类型">二、数据类型</a>
-          <ul>
-            <li><a href="#string">STRING</a></li>
-            <li><a href="#list">LIST</a></li>
-            <li><a href="#set">SET</a></li>
-            <li><a href="#hash">HASH</a></li>
-            <li><a href="#zset">ZSET</a></li>
-          </ul>
-        </li>
-        <li><a href="#三数据结构">三、数据结构</a>
+        <li><a href="#二数据结构">二、数据结构</a>
           <ul>
             <li><a href="#字典">字典</a></li>
             <li><a href="#跳跃表">跳跃表</a></li>
           </ul>
         </li>
-        <li><a href="#四使用场景">四、使用场景</a>
+        <li><a href="#三使用场景">三、使用场景</a>
           <ul>
             <li><a href="#计数器">计数器</a></li>
             <li><a href="#缓存">缓存</a></li>
@@ -833,7 +733,7 @@ https://github.com/alex-shpak/hugo-book
             <li><a href="#其它">其它</a></li>
           </ul>
         </li>
-        <li><a href="#五redis-与-memcached">五、Redis 与 Memcached</a>
+        <li><a href="#四redis-与-memcached">四、Redis 与 Memcached</a>
           <ul>
             <li><a href="#数据类型">数据类型</a></li>
             <li><a href="#数据持久化">数据持久化</a></li>
@@ -841,8 +741,37 @@ https://github.com/alex-shpak/hugo-book
             <li><a href="#内存管理机制">内存管理机制</a></li>
           </ul>
         </li>
-        <li><a href="#六键的过期时间">六、键的过期时间</a></li>
-        <li><a href="#七数据淘汰策略">七、数据淘汰策略</a></li>
+        <li><a href="#五键的过期时间">五、键的过期时间</a></li>
+        <li><a href="#六数据淘汰策略">六、数据淘汰策略</a></li>
+        <li><a href="#七持久化">七、持久化</a>
+          <ul>
+            <li><a href="#rdb-持久化">RDB 持久化</a></li>
+            <li><a href="#aof-持久化">AOF 持久化</a></li>
+          </ul>
+        </li>
+        <li><a href="#八事务">八、事务</a></li>
+        <li><a href="#九事件">九、事件</a>
+          <ul>
+            <li><a href="#文件事件">文件事件</a></li>
+            <li><a href="#时间事件">时间事件</a></li>
+            <li><a href="#事件的调度与执行">事件的调度与执行</a></li>
+          </ul>
+        </li>
+        <li><a href="#十复制">十、复制</a>
+          <ul>
+            <li><a href="#连接过程">连接过程</a></li>
+            <li><a href="#主从链">主从链</a></li>
+          </ul>
+        </li>
+        <li><a href="#十一sentinel">十一、Sentinel</a></li>
+        <li><a href="#十二分片">十二、分片</a></li>
+        <li><a href="#十三一个简单的论坛系统分析">十三、一个简单的论坛系统分析</a>
+          <ul>
+            <li><a href="#文章信息">文章信息</a></li>
+            <li><a href="#点赞功能">点赞功能</a></li>
+            <li><a href="#对文章进行排序">对文章进行排序</a></li>
+          </ul>
+        </li>
       </ul>
     </li>
   </ul>
@@ -857,9 +786,9 @@ https://github.com/alex-shpak/hugo-book
 
       
       
-  <article class="markdown"><h1 id="redis一">
-  Redis（一）
-  <a class="anchor" href="#redis%e4%b8%80">#</a>
+  <article class="markdown"><h1 id="redis">
+  Redis
+  <a class="anchor" href="#redis">#</a>
 </h1>
 <h2 id="一概述">
   一、概述
@@ -868,179 +797,9 @@ https://github.com/alex-shpak/hugo-book
 <p>Redis 是速度非常快的非关系型（NoSQL）内存键值数据库，可以存储键和五种不同类型的值之间的映射。</p>
 <p>键的类型只能为字符串，值支持五种数据类型：字符串、列表、集合、散列表、有序集合。</p>
 <p>Redis 支持很多特性，例如将内存中的数据持久化到硬盘中，使用复制来扩展读性能，使用分片来扩展写性能。</p>
-<h2 id="二数据类型">
-  二、数据类型
-  <a class="anchor" href="#%e4%ba%8c%e6%95%b0%e6%8d%ae%e7%b1%bb%e5%9e%8b">#</a>
-</h2>
-<table>
-<thead>
-<tr>
-<th>数据类型</th>
-<th>可以存储的值</th>
-<th>操作</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>STRING</td>
-<td>字符串、整数或者浮点数</td>
-<td>对整个字符串或者字符串的其中一部分执行操作<br> 对整数和浮点数执行自增或者自减操作</td>
-</tr>
-<tr>
-<td>LIST</td>
-<td>列表</td>
-<td>从两端压入或者弹出元素 <br> 对单个或者多个元素进行修剪，<br> 只保留一个范围内的元素</td>
-</tr>
-<tr>
-<td>SET</td>
-<td>无序集合</td>
-<td>添加、获取、移除单个元素<br> 检查一个元素是否存在于集合中<br> 计算交集、并集、差集<br> 从集合里面随机获取元素</td>
-</tr>
-<tr>
-<td>HASH</td>
-<td>包含键值对的无序散列表</td>
-<td>添加、获取、移除单个键值对</br> 获取所有键值对<br> 检查某个键是否存在</td>
-</tr>
-<tr>
-<td>ZSET</td>
-<td>有序集合</td>
-<td>添加、获取、删除元素</br> 根据分值范围或者成员来获取元素<br> 计算一个键的排名</td>
-</tr>
-</tbody>
-</table>
-<h3 id="string">
-  STRING
-  <a class="anchor" href="#string">#</a>
-</h3>
-<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/4cd2f8dfd39c41b0a14a9f8cad3d9ee7.png" width="400"/> </div><br>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>&gt; set hello world
-</span></span><span style="display:flex;"><span>OK
-</span></span><span style="display:flex;"><span>&gt; get hello
-</span></span><span style="display:flex;"><span>&#34;world&#34;
-</span></span><span style="display:flex;"><span>&gt; del hello
-</span></span><span style="display:flex;"><span>(integer) 1
-</span></span><span style="display:flex;"><span>&gt; get hello
-</span></span><span style="display:flex;"><span>(nil)
-</span></span></code></pre></div><h3 id="list">
-  LIST
-  <a class="anchor" href="#list">#</a>
-</h3>
-<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/dc2b3cf5d03b41119a00820944579611.png" width="400"/> </div><br>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>&gt; rpush list-key item
-</span></span><span style="display:flex;"><span>(integer) 1
-</span></span><span style="display:flex;"><span>&gt; rpush list-key item2
-</span></span><span style="display:flex;"><span>(integer) 2
-</span></span><span style="display:flex;"><span>&gt; rpush list-key item
-</span></span><span style="display:flex;"><span>(integer) 3
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>&gt; lrange list-key 0 -1
-</span></span><span style="display:flex;"><span>1) &#34;item&#34;
-</span></span><span style="display:flex;"><span>2) &#34;item2&#34;
-</span></span><span style="display:flex;"><span>3) &#34;item&#34;
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>&gt; lindex list-key 1
-</span></span><span style="display:flex;"><span>&#34;item2&#34;
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>&gt; lpop list-key
-</span></span><span style="display:flex;"><span>&#34;item&#34;
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>&gt; lrange list-key 0 -1
-</span></span><span style="display:flex;"><span>1) &#34;item2&#34;
-</span></span><span style="display:flex;"><span>2) &#34;item&#34;
-</span></span></code></pre></div><h3 id="set">
-  SET
-  <a class="anchor" href="#set">#</a>
-</h3>
-<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/9352e7d62d574d7a8c4287d7b326fb08.png" width="400"/> </div><br>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>&gt; sadd set-key item
-</span></span><span style="display:flex;"><span>(integer) 1
-</span></span><span style="display:flex;"><span>&gt; sadd set-key item2
-</span></span><span style="display:flex;"><span>(integer) 1
-</span></span><span style="display:flex;"><span>&gt; sadd set-key item3
-</span></span><span style="display:flex;"><span>(integer) 1
-</span></span><span style="display:flex;"><span>&gt; sadd set-key item
-</span></span><span style="display:flex;"><span>(integer) 0
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>&gt; smembers set-key
-</span></span><span style="display:flex;"><span>1) &#34;item&#34;
-</span></span><span style="display:flex;"><span>2) &#34;item2&#34;
-</span></span><span style="display:flex;"><span>3) &#34;item3&#34;
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>&gt; sismember set-key item4
-</span></span><span style="display:flex;"><span>(integer) 0
-</span></span><span style="display:flex;"><span>&gt; sismember set-key item
-</span></span><span style="display:flex;"><span>(integer) 1
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>&gt; srem set-key item2
-</span></span><span style="display:flex;"><span>(integer) 1
-</span></span><span style="display:flex;"><span>&gt; srem set-key item2
-</span></span><span style="display:flex;"><span>(integer) 0
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>&gt; smembers set-key
-</span></span><span style="display:flex;"><span>1) &#34;item&#34;
-</span></span><span style="display:flex;"><span>2) &#34;item3&#34;
-</span></span></code></pre></div><h3 id="hash">
-  HASH
-  <a class="anchor" href="#hash">#</a>
-</h3>
-<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/786b12641c13468b920d52f674ca1e4d.png" width="400"/> </div><br>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>&gt; hset hash-key sub-key1 value1
-</span></span><span style="display:flex;"><span>(integer) 1
-</span></span><span style="display:flex;"><span>&gt; hset hash-key sub-key2 value2
-</span></span><span style="display:flex;"><span>(integer) 1
-</span></span><span style="display:flex;"><span>&gt; hset hash-key sub-key1 value1
-</span></span><span style="display:flex;"><span>(integer) 0
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>&gt; hgetall hash-key
-</span></span><span style="display:flex;"><span>1) &#34;sub-key1&#34;
-</span></span><span style="display:flex;"><span>2) &#34;value1&#34;
-</span></span><span style="display:flex;"><span>3) &#34;sub-key2&#34;
-</span></span><span style="display:flex;"><span>4) &#34;value2&#34;
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>&gt; hdel hash-key sub-key2
-</span></span><span style="display:flex;"><span>(integer) 1
-</span></span><span style="display:flex;"><span>&gt; hdel hash-key sub-key2
-</span></span><span style="display:flex;"><span>(integer) 0
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>&gt; hget hash-key sub-key1
-</span></span><span style="display:flex;"><span>&#34;value1&#34;
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>&gt; hgetall hash-key
-</span></span><span style="display:flex;"><span>1) &#34;sub-key1&#34;
-</span></span><span style="display:flex;"><span>2) &#34;value1&#34;
-</span></span></code></pre></div><h3 id="zset">
-  ZSET
-  <a class="anchor" href="#zset">#</a>
-</h3>
-<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/dc2c35b63788455e9a80310b3cd9a33a.png" width="400"/> </div><br>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>&gt; zadd zset-key 728 member1
-</span></span><span style="display:flex;"><span>(integer) 1
-</span></span><span style="display:flex;"><span>&gt; zadd zset-key 982 member0
-</span></span><span style="display:flex;"><span>(integer) 1
-</span></span><span style="display:flex;"><span>&gt; zadd zset-key 982 member0
-</span></span><span style="display:flex;"><span>(integer) 0
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>&gt; zrange zset-key 0 -1 withscores
-</span></span><span style="display:flex;"><span>1) &#34;member1&#34;
-</span></span><span style="display:flex;"><span>2) &#34;728&#34;
-</span></span><span style="display:flex;"><span>3) &#34;member0&#34;
-</span></span><span style="display:flex;"><span>4) &#34;982&#34;
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>&gt; zrangebyscore zset-key 0 800 withscores
-</span></span><span style="display:flex;"><span>1) &#34;member1&#34;
-</span></span><span style="display:flex;"><span>2) &#34;728&#34;
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>&gt; zrem zset-key member1
-</span></span><span style="display:flex;"><span>(integer) 1
-</span></span><span style="display:flex;"><span>&gt; zrem zset-key member1
-</span></span><span style="display:flex;"><span>(integer) 0
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>&gt; zrange zset-key 0 -1 withscores
-</span></span><span style="display:flex;"><span>1) &#34;member0&#34;
-</span></span><span style="display:flex;"><span>2) &#34;982&#34;
-</span></span></code></pre></div><h2 id="三数据结构">
-  三、数据结构
-  <a class="anchor" href="#%e4%b8%89%e6%95%b0%e6%8d%ae%e7%bb%93%e6%9e%84">#</a>
+<h2 id="二数据结构">
+  二、数据结构
+  <a class="anchor" href="#%e4%ba%8c%e6%95%b0%e6%8d%ae%e7%bb%93%e6%9e%84">#</a>
 </h2>
 <h3 id="字典">
   字典
@@ -1145,9 +904,9 @@ https://github.com/alex-shpak/hugo-book
 <li>更容易实现；</li>
 <li>支持无锁操作。</li>
 </ul>
-<h2 id="四使用场景">
-  四、使用场景
-  <a class="anchor" href="#%e5%9b%9b%e4%bd%bf%e7%94%a8%e5%9c%ba%e6%99%af">#</a>
+<h2 id="三使用场景">
+  三、使用场景
+  <a class="anchor" href="#%e4%b8%89%e4%bd%bf%e7%94%a8%e5%9c%ba%e6%99%af">#</a>
 </h2>
 <h3 id="计数器">
   计数器
@@ -1190,9 +949,9 @@ https://github.com/alex-shpak/hugo-book
 </h3>
 <p>Set 可以实现交集、并集等操作，从而实现共同好友等功能。</p>
 <p>ZSet 可以实现有序性操作，从而实现排行榜等功能。</p>
-<h2 id="五redis-与-memcached">
-  五、Redis 与 Memcached
-  <a class="anchor" href="#%e4%ba%94redis-%e4%b8%8e-memcached">#</a>
+<h2 id="四redis-与-memcached">
+  四、Redis 与 Memcached
+  <a class="anchor" href="#%e5%9b%9bredis-%e4%b8%8e-memcached">#</a>
 </h2>
 <p>两者都是非关系型内存键值数据库，主要有以下不同：</p>
 <h3 id="数据类型">
@@ -1223,15 +982,15 @@ https://github.com/alex-shpak/hugo-book
 <p>Memcached 将内存分割成特定长度的块来存储数据，以完全解决内存碎片的问题。但是这种方式会使得内存的利用率不高，例如块的大小为 128 bytes，只存储 100 bytes 的数据，那么剩下的 28 bytes 就浪费掉了。</p>
 </li>
 </ul>
-<h2 id="六键的过期时间">
-  六、键的过期时间
-  <a class="anchor" href="#%e5%85%ad%e9%94%ae%e7%9a%84%e8%bf%87%e6%9c%9f%e6%97%b6%e9%97%b4">#</a>
+<h2 id="五键的过期时间">
+  五、键的过期时间
+  <a class="anchor" href="#%e4%ba%94%e9%94%ae%e7%9a%84%e8%bf%87%e6%9c%9f%e6%97%b6%e9%97%b4">#</a>
 </h2>
 <p>Redis 可以为每个键设置过期时间，当键过期时，会自动删除该键。</p>
 <p>对于散列表这种容器，只能为整个键设置过期时间（整个散列表），而不能为键里面的单个元素设置过期时间。</p>
-<h2 id="七数据淘汰策略">
-  七、数据淘汰策略
-  <a class="anchor" href="#%e4%b8%83%e6%95%b0%e6%8d%ae%e6%b7%98%e6%b1%b0%e7%ad%96%e7%95%a5">#</a>
+<h2 id="六数据淘汰策略">
+  六、数据淘汰策略
+  <a class="anchor" href="#%e5%85%ad%e6%95%b0%e6%8d%ae%e6%b7%98%e6%b1%b0%e7%ad%96%e7%95%a5">#</a>
 </h2>
 <p>可以设置内存最大使用量，当内存使用量超出时，会施行数据淘汰策略。</p>
 <p>Redis 具体有 6 种淘汰策略：</p>
@@ -1272,6 +1031,194 @@ https://github.com/alex-shpak/hugo-book
 <p>作为内存数据库，出于对性能和内存消耗的考虑，Redis 的淘汰算法实际实现上并非针对所有 key，而是抽样一小部分并且从中选出被淘汰的 key。</p>
 <p>使用 Redis 缓存数据时，为了提高缓存命中率，需要保证缓存数据都是热点数据。可以将内存最大使用量设置为热点数据占用的内存量，然后启用 allkeys-lru 淘汰策略，将最近最少使用的数据淘汰。</p>
 <p>Redis 4.0 引入了 volatile-lfu 和 allkeys-lfu 淘汰策略，LFU 策略通过统计访问频率，将访问频率最少的键值对淘汰。</p>
+<h2 id="七持久化">
+  七、持久化
+  <a class="anchor" href="#%e4%b8%83%e6%8c%81%e4%b9%85%e5%8c%96">#</a>
+</h2>
+<p>Redis 是内存型数据库，为了保证数据在断电后不会丢失，需要将内存中的数据持久化到硬盘上。</p>
+<h3 id="rdb-持久化">
+  RDB 持久化
+  <a class="anchor" href="#rdb-%e6%8c%81%e4%b9%85%e5%8c%96">#</a>
+</h3>
+<p>将某个时间点的所有数据都存放到硬盘上。</p>
+<p>可以将快照复制到其它服务器从而创建具有相同数据的服务器副本。</p>
+<p>如果系统发生故障，将会丢失最后一次创建快照之后的数据。</p>
+<p>如果数据量很大，保存快照的时间会很长。</p>
+<h3 id="aof-持久化">
+  AOF 持久化
+  <a class="anchor" href="#aof-%e6%8c%81%e4%b9%85%e5%8c%96">#</a>
+</h3>
+<p>将写命令添加到 AOF 文件（Append Only File）的末尾。</p>
+<p>使用 AOF 持久化需要设置同步选项，从而确保写命令同步到磁盘文件上的时机。这是因为对文件进行写入并不会马上将内容同步到磁盘上，而是先存储到缓冲区，然后由操作系统决定什么时候同步到磁盘。有以下同步选项：</p>
+<table>
+<thead>
+<tr>
+<th>选项</th>
+<th>同步频率</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>always</td>
+<td>每个写命令都同步</td>
+</tr>
+<tr>
+<td>everysec</td>
+<td>每秒同步一次</td>
+</tr>
+<tr>
+<td>no</td>
+<td>让操作系统来决定何时同步</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>always 选项会严重减低服务器的性能；</li>
+<li>everysec 选项比较合适，可以保证系统崩溃时只会丢失一秒左右的数据，并且 Redis 每秒执行一次同步对服务器性能几乎没有任何影响；</li>
+<li>no 选项并不能给服务器性能带来多大的提升，而且也会增加系统崩溃时数据丢失的数量。</li>
+</ul>
+<p>随着服务器写请求的增多，AOF 文件会越来越大。Redis 提供了一种将 AOF 重写的特性，能够去除 AOF 文件中的冗余写命令。</p>
+<h2 id="八事务">
+  八、事务
+  <a class="anchor" href="#%e5%85%ab%e4%ba%8b%e5%8a%a1">#</a>
+</h2>
+<p>一个事务包含了多个命令，服务器在执行事务期间，不会改去执行其它客户端的命令请求。</p>
+<p>事务中的多个命令被一次性发送给服务器，而不是一条一条发送，这种方式被称为流水线，它可以减少客户端与服务器之间的网络通信次数从而提升性能。</p>
+<p>Redis 最简单的事务实现方式是使用 MULTI 和 EXEC 命令将事务操作包围起来。</p>
+<h2 id="九事件">
+  九、事件
+  <a class="anchor" href="#%e4%b9%9d%e4%ba%8b%e4%bb%b6">#</a>
+</h2>
+<p>Redis 服务器是一个事件驱动程序。</p>
+<h3 id="文件事件">
+  文件事件
+  <a class="anchor" href="#%e6%96%87%e4%bb%b6%e4%ba%8b%e4%bb%b6">#</a>
+</h3>
+<p>服务器通过套接字与客户端或者其它服务器进行通信，文件事件就是对套接字操作的抽象。</p>
+<p>Redis 基于 Reactor 模式开发了自己的网络事件处理器，使用 I/O 多路复用程序来同时监听多个套接字，并将到达的事件传送给文件事件分派器，分派器会根据套接字产生的事件类型调用相应的事件处理器。</p>
+<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/48affed38a61445ba42b6e44ac08f589.png" width=""/> </div><br>
+<h3 id="时间事件">
+  时间事件
+  <a class="anchor" href="#%e6%97%b6%e9%97%b4%e4%ba%8b%e4%bb%b6">#</a>
+</h3>
+<p>服务器有一些操作需要在给定的时间点执行，时间事件是对这类定时操作的抽象。</p>
+<p>时间事件又分为：</p>
+<ul>
+<li>定时事件：是让一段程序在指定的时间之内执行一次；</li>
+<li>周期性事件：是让一段程序每隔指定时间就执行一次。</li>
+</ul>
+<p>Redis 将所有时间事件都放在一个无序链表中，通过遍历整个链表查找出已到达的时间事件，并调用相应的事件处理器。</p>
+<h3 id="事件的调度与执行">
+  事件的调度与执行
+  <a class="anchor" href="#%e4%ba%8b%e4%bb%b6%e7%9a%84%e8%b0%83%e5%ba%a6%e4%b8%8e%e6%89%a7%e8%a1%8c">#</a>
+</h3>
+<p>服务器需要不断监听文件事件的套接字才能得到待处理的文件事件，但是不能一直监听，否则时间事件无法在规定的时间内执行，因此监听时间应该根据距离现在最近的时间事件来决定。</p>
+<p>事件调度与执行由 aeProcessEvents 函数负责，伪代码如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">aeProcessEvents</span>():
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># 获取到达时间离当前时间最接近的时间事件</span>
+</span></span><span style="display:flex;"><span>    time_event <span style="color:#f92672">=</span> aeSearchNearestTimer()
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># 计算最接近的时间事件距离到达还有多少毫秒</span>
+</span></span><span style="display:flex;"><span>    remaind_ms <span style="color:#f92672">=</span> time_event<span style="color:#f92672">.</span>when <span style="color:#f92672">-</span> unix_ts_now()
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># 如果事件已到达，那么 remaind_ms 的值可能为负数，将它设为 0</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> remaind_ms <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0</span>:
+</span></span><span style="display:flex;"><span>        remaind_ms <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># 根据 remaind_ms 的值，创建 timeval</span>
+</span></span><span style="display:flex;"><span>    timeval <span style="color:#f92672">=</span> create_timeval_with_ms(remaind_ms)
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># 阻塞并等待文件事件产生，最大阻塞时间由传入的 timeval 决定</span>
+</span></span><span style="display:flex;"><span>    aeApiPoll(timeval)
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># 处理所有已产生的文件事件</span>
+</span></span><span style="display:flex;"><span>    procesFileEvents()
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># 处理所有已到达的时间事件</span>
+</span></span><span style="display:flex;"><span>    processTimeEvents()
+</span></span></code></pre></div><p>将 aeProcessEvents 函数置于一个循环里面，加上初始化和清理函数，就构成了 Redis 服务器的主函数，伪代码如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">main</span>():
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># 初始化服务器</span>
+</span></span><span style="display:flex;"><span>    init_server()
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># 一直处理事件，直到服务器关闭为止</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">while</span> server_is_not_shutdown():
+</span></span><span style="display:flex;"><span>        aeProcessEvents()
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># 服务器关闭，执行清理操作</span>
+</span></span><span style="display:flex;"><span>    clean_server()
+</span></span></code></pre></div><p>从事件处理的角度来看，服务器运行流程如下：</p>
+<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/daf6cdce5f954217b676f127fe95d102.png" width="350"/> </div><br>
+<h2 id="十复制">
+  十、复制
+  <a class="anchor" href="#%e5%8d%81%e5%a4%8d%e5%88%b6">#</a>
+</h2>
+<p>通过使用 slaveof host port 命令来让一个服务器成为另一个服务器的从服务器。</p>
+<p>一个从服务器只能有一个主服务器，并且不支持主主复制。</p>
+<h3 id="连接过程">
+  连接过程
+  <a class="anchor" href="#%e8%bf%9e%e6%8e%a5%e8%bf%87%e7%a8%8b">#</a>
+</h3>
+<ol>
+<li>
+<p>主服务器创建快照文件，发送给从服务器，并在发送期间使用缓冲区记录执行的写命令。快照文件发送完毕之后，开始向从服务器发送存储在缓冲区中的写命令；</p>
+</li>
+<li>
+<p>从服务器丢弃所有旧数据，载入主服务器发来的快照文件，之后从服务器开始接受主服务器发来的写命令；</p>
+</li>
+<li>
+<p>主服务器每执行一次写命令，就向从服务器发送相同的写命令。</p>
+</li>
+</ol>
+<h3 id="主从链">
+  主从链
+  <a class="anchor" href="#%e4%b8%bb%e4%bb%8e%e9%93%be">#</a>
+</h3>
+<p>随着负载不断上升，主服务器可能无法很快地更新所有从服务器，或者重新连接和重新同步从服务器将导致系统超载。为了解决这个问题，可以创建一个中间层来分担主服务器的复制工作。中间层的服务器是最上层服务器的从服务器，又是最下层服务器的主服务器。</p>
+<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/02ee47783eb845b895d528f61cd599f3.png" width="600"/> </div><br>
+<h2 id="十一sentinel">
+  十一、Sentinel
+  <a class="anchor" href="#%e5%8d%81%e4%b8%80sentinel">#</a>
+</h2>
+<p>Sentinel（哨兵）可以监听集群中的服务器，并在主服务器进入下线状态时，自动从从服务器中选举出新的主服务器。</p>
+<h2 id="十二分片">
+  十二、分片
+  <a class="anchor" href="#%e5%8d%81%e4%ba%8c%e5%88%86%e7%89%87">#</a>
+</h2>
+<p>分片是将数据划分为多个部分的方法，可以将数据存储到多台机器里面，这种方法在解决某些问题时可以获得线性级别的性能提升。</p>
+<p>假设有 4 个 Redis 实例 R0，R1，R2，R3，还有很多表示用户的键 user:1，user:2，&hellip; ，有不同的方式来选择一个指定的键存储在哪个实例中。</p>
+<ul>
+<li>最简单的方式是范围分片，例如用户 id 从 0~1000 的存储到实例 R0 中，用户 id 从 1001~2000 的存储到实例 R1 中，等等。但是这样需要维护一张映射范围表，维护操作代价很高。</li>
+<li>还有一种方式是哈希分片，使用 CRC32 哈希函数将键转换为一个数字，再对实例数量求模就能知道应该存储的实例。</li>
+</ul>
+<p>根据执行分片的位置，可以分为三种分片方式：</p>
+<ul>
+<li>客户端分片：客户端使用一致性哈希等算法决定键应当分布到哪个节点。</li>
+<li>代理分片：将客户端请求发送到代理上，由代理转发请求到正确的节点上。</li>
+<li>服务器分片：Redis Cluster。</li>
+</ul>
+<h2 id="十三一个简单的论坛系统分析">
+  十三、一个简单的论坛系统分析
+  <a class="anchor" href="#%e5%8d%81%e4%b8%89%e4%b8%80%e4%b8%aa%e7%ae%80%e5%8d%95%e7%9a%84%e8%ae%ba%e5%9d%9b%e7%b3%bb%e7%bb%9f%e5%88%86%e6%9e%90">#</a>
+</h2>
+<p>该论坛系统功能如下：</p>
+<ul>
+<li>可以发布文章；</li>
+<li>可以对文章进行点赞；</li>
+<li>在首页可以按文章的发布时间或者文章的点赞数进行排序显示。</li>
+</ul>
+<h3 id="文章信息">
+  文章信息
+  <a class="anchor" href="#%e6%96%87%e7%ab%a0%e4%bf%a1%e6%81%af">#</a>
+</h3>
+<p>文章包括标题、作者、赞数等信息，在关系型数据库中很容易构建一张表来存储这些信息，在 Redis 中可以使用 HASH 来存储每种信息以及其对应的值的映射。</p>
+<p>Redis 没有关系型数据库中的表这一概念来将同种类型的数据存放在一起，而是使用命名空间的方式来实现这一功能。键名的前面部分存储命名空间，后面部分的内容存储 ID，通常使用 : 来进行分隔。例如下面的 HASH 的键名为 article:92617，其中 article 为命名空间，ID 为 92617。</p>
+<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/9dd2829c18bf4c739b66614168dc5ae4.png" width="400"/> </div><br>
+<h3 id="点赞功能">
+  点赞功能
+  <a class="anchor" href="#%e7%82%b9%e8%b5%9e%e5%8a%9f%e8%83%bd">#</a>
+</h3>
+<p>当有用户为一篇文章点赞时，除了要对该文章的 votes 字段进行加 1 操作，还必须记录该用户已经对该文章进行了点赞，防止用户点赞次数超过 1。可以建立文章的已投票用户集合来进行记录。</p>
+<p>为了节约内存，规定一篇文章发布满一周之后，就不能再对它进行投票，而文章的已投票集合也会被删除，可以为文章的已投票集合设置一个一周的过期时间就能实现这个规定。</p>
+<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/91f4f4c943c94f0c9312f35c2d9810e4.png" width="400"/> </div><br>
+<h3 id="对文章进行排序">
+  对文章进行排序
+  <a class="anchor" href="#%e5%af%b9%e6%96%87%e7%ab%a0%e8%bf%9b%e8%a1%8c%e6%8e%92%e5%ba%8f">#</a>
+</h3>
+<p>为了按发布时间和点赞数进行排序，可以建立一个文章发布时间的有序集合和一个文章点赞数的有序集合。（下图中的 score 就是这里所说的点赞数；下面所示的有序集合分值并不直接是时间和点赞数，而是根据时间和点赞数间接计算出来的）</p>
+<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/4345ce666fca4a63b17f3006a21bc9cf.png" width="800"/> </div>
 </article>
  
       
@@ -1281,16 +1228,16 @@ https://github.com/alex-shpak/hugo-book
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/9caaeca2cfea2b23cc8f97741c37ea0009f1a382" title='最后修改者 weibin | December 26, 2022' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/ef0471645739e7312e5f4de3ddb2966a2758bb3c" title='最后修改者 weibin | January 17, 2023' target="_blank" rel="noopener">
       <img src="/keeplearning/svg/calendar.svg" class="book-icon" alt="Calendar" />
-      <span>December 26, 2022</span>
+      <span>January 17, 2023</span>
     </a>
   </div>
 
 
 
   <div>
-    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/book.keeplearning/docs/redis/redis1.md" target="_blank" rel="noopener">
+    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/book.keeplearning/docs/redis/overview.md" target="_blank" rel="noopener">
       <img src="/keeplearning/svg/edit.svg" class="book-icon" alt="Edit" />
       <span>编辑本页</span>
     </a>
@@ -1326,25 +1273,16 @@ https://github.com/alex-shpak/hugo-book
   
 <nav id="TableOfContents">
   <ul>
-    <li><a href="#redis一">Redis（一）</a>
+    <li><a href="#redis">Redis</a>
       <ul>
         <li><a href="#一概述">一、概述</a></li>
-        <li><a href="#二数据类型">二、数据类型</a>
-          <ul>
-            <li><a href="#string">STRING</a></li>
-            <li><a href="#list">LIST</a></li>
-            <li><a href="#set">SET</a></li>
-            <li><a href="#hash">HASH</a></li>
-            <li><a href="#zset">ZSET</a></li>
-          </ul>
-        </li>
-        <li><a href="#三数据结构">三、数据结构</a>
+        <li><a href="#二数据结构">二、数据结构</a>
           <ul>
             <li><a href="#字典">字典</a></li>
             <li><a href="#跳跃表">跳跃表</a></li>
           </ul>
         </li>
-        <li><a href="#四使用场景">四、使用场景</a>
+        <li><a href="#三使用场景">三、使用场景</a>
           <ul>
             <li><a href="#计数器">计数器</a></li>
             <li><a href="#缓存">缓存</a></li>
@@ -1355,7 +1293,7 @@ https://github.com/alex-shpak/hugo-book
             <li><a href="#其它">其它</a></li>
           </ul>
         </li>
-        <li><a href="#五redis-与-memcached">五、Redis 与 Memcached</a>
+        <li><a href="#四redis-与-memcached">四、Redis 与 Memcached</a>
           <ul>
             <li><a href="#数据类型">数据类型</a></li>
             <li><a href="#数据持久化">数据持久化</a></li>
@@ -1363,8 +1301,37 @@ https://github.com/alex-shpak/hugo-book
             <li><a href="#内存管理机制">内存管理机制</a></li>
           </ul>
         </li>
-        <li><a href="#六键的过期时间">六、键的过期时间</a></li>
-        <li><a href="#七数据淘汰策略">七、数据淘汰策略</a></li>
+        <li><a href="#五键的过期时间">五、键的过期时间</a></li>
+        <li><a href="#六数据淘汰策略">六、数据淘汰策略</a></li>
+        <li><a href="#七持久化">七、持久化</a>
+          <ul>
+            <li><a href="#rdb-持久化">RDB 持久化</a></li>
+            <li><a href="#aof-持久化">AOF 持久化</a></li>
+          </ul>
+        </li>
+        <li><a href="#八事务">八、事务</a></li>
+        <li><a href="#九事件">九、事件</a>
+          <ul>
+            <li><a href="#文件事件">文件事件</a></li>
+            <li><a href="#时间事件">时间事件</a></li>
+            <li><a href="#事件的调度与执行">事件的调度与执行</a></li>
+          </ul>
+        </li>
+        <li><a href="#十复制">十、复制</a>
+          <ul>
+            <li><a href="#连接过程">连接过程</a></li>
+            <li><a href="#主从链">主从链</a></li>
+          </ul>
+        </li>
+        <li><a href="#十一sentinel">十一、Sentinel</a></li>
+        <li><a href="#十二分片">十二、分片</a></li>
+        <li><a href="#十三一个简单的论坛系统分析">十三、一个简单的论坛系统分析</a>
+          <ul>
+            <li><a href="#文章信息">文章信息</a></li>
+            <li><a href="#点赞功能">点赞功能</a></li>
+            <li><a href="#对文章进行排序">对文章进行排序</a></li>
+          </ul>
+        </li>
       </ul>
     </li>
   </ul>

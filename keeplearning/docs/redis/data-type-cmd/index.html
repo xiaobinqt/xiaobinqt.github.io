@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content=" 数据类型和常用命令 # 数据类型 # 数据类型 可以存储的值 操作 STRING 字符串、整数或者浮点数 对整个字符串或者字符串的其中一部分执行操作
+对整数和浮点数执行自增或者自减操作 LIST 列表 从两端压入或者弹出元素 对单个或者多个元素进行修剪，
+只保留一个范围内的元素 SET 无序集合 添加、获取、移除单个元素
+检查一个元素是否存在于集合中
+计算交集、并集、差集
+从集合里面随机获取元素 HASH 包含键值对的无序散列表 添加、获取、移除单个键值对 获取所有键值对
+检查某个键是否存在 ZSET 有序集合 添加、获取、删除元素 根据分值范围或者成员来获取元素
+计算一个键的排名 STRING # &gt; set hello world OK &gt; get hello &#34;world&#34; &gt; del hello (integer) 1 &gt; get hello (nil) LIST # &gt; rpush list-key item (integer) 1 &gt; rpush list-key item2 (integer) 2 &gt; rpush list-key item (integer) 3 &gt; lrange list-key 0 -1 1) &#34;item&#34; 2) &#34;item2&#34; 3) &#34;item&#34; &gt; lindex list-key 1 &#34;item2&#34; &gt; lpop list-key &#34;item&#34; &gt; lrange list-key 0 -1 1) &#34;item2&#34; 2) &#34;item&#34; SET # &gt; sadd set-key item (integer) 1 &gt; sadd set-key item2 (integer) 1 &gt; sadd set-key item3 (integer) 1 &gt; sadd set-key item (integer) 0 &gt; smembers set-key 1) &#34;item&#34; 2) &#34;item2&#34; 3) &#34;item3&#34; &gt; sismember set-key item4 (integer) 0 &gt; sismember set-key item (integer) 1 &gt; srem set-key item2 (integer) 1 &gt; srem set-key item2 (integer) 0 &gt; smembers set-key 1) &#34;item&#34; 2) &#34;item3&#34; HASH # &gt; hset hash-key sub-key1 value1 (integer) 1 &gt; hset hash-key sub-key2 value2 (integer) 1 &gt; hset hash-key sub-key1 value1 (integer) 0 &gt; hgetall hash-key 1) &#34;sub-key1&#34; 2) &#34;value1&#34; 3) &#34;sub-key2&#34; 4) &#34;value2&#34; &gt; hdel hash-key sub-key2 (integer) 1 &gt; hdel hash-key sub-key2 (integer) 0 &gt; hget hash-key sub-key1 &#34;value1&#34; &gt; hgetall hash-key 1) &#34;sub-key1&#34; 2) &#34;value1&#34; ZSET # &gt; zadd zset-key 728 member1 (integer) 1 &gt; zadd zset-key 982 member0 (integer) 1 &gt; zadd zset-key 982 member0 (integer) 0 &gt; zrange zset-key 0 -1 withscores 1) &#34;member1&#34; 2) &#34;728&#34; 3) &#34;member0&#34; 4) &#34;982&#34; &gt; zrangebyscore zset-key 0 800 withscores 1) &#34;member1&#34; 2) &#34;728&#34; &gt; zrem zset-key member1 (integer) 1 &gt; zrem zset-key member1 (integer) 0 &gt; zrange zset-key 0 -1 withscores 1) &#34;member0&#34; 2) &#34;982&#34; ">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="数据类型和常用命令" />
+<meta property="og:description" content=" 数据类型和常用命令 # 数据类型 # 数据类型 可以存储的值 操作 STRING 字符串、整数或者浮点数 对整个字符串或者字符串的其中一部分执行操作
+对整数和浮点数执行自增或者自减操作 LIST 列表 从两端压入或者弹出元素 对单个或者多个元素进行修剪，
+只保留一个范围内的元素 SET 无序集合 添加、获取、移除单个元素
+检查一个元素是否存在于集合中
+计算交集、并集、差集
+从集合里面随机获取元素 HASH 包含键值对的无序散列表 添加、获取、移除单个键值对 获取所有键值对
+检查某个键是否存在 ZSET 有序集合 添加、获取、删除元素 根据分值范围或者成员来获取元素
+计算一个键的排名 STRING # &gt; set hello world OK &gt; get hello &#34;world&#34; &gt; del hello (integer) 1 &gt; get hello (nil) LIST # &gt; rpush list-key item (integer) 1 &gt; rpush list-key item2 (integer) 2 &gt; rpush list-key item (integer) 3 &gt; lrange list-key 0 -1 1) &#34;item&#34; 2) &#34;item2&#34; 3) &#34;item&#34; &gt; lindex list-key 1 &#34;item2&#34; &gt; lpop list-key &#34;item&#34; &gt; lrange list-key 0 -1 1) &#34;item2&#34; 2) &#34;item&#34; SET # &gt; sadd set-key item (integer) 1 &gt; sadd set-key item2 (integer) 1 &gt; sadd set-key item3 (integer) 1 &gt; sadd set-key item (integer) 0 &gt; smembers set-key 1) &#34;item&#34; 2) &#34;item2&#34; 3) &#34;item3&#34; &gt; sismember set-key item4 (integer) 0 &gt; sismember set-key item (integer) 1 &gt; srem set-key item2 (integer) 1 &gt; srem set-key item2 (integer) 0 &gt; smembers set-key 1) &#34;item&#34; 2) &#34;item3&#34; HASH # &gt; hset hash-key sub-key1 value1 (integer) 1 &gt; hset hash-key sub-key2 value2 (integer) 1 &gt; hset hash-key sub-key1 value1 (integer) 0 &gt; hgetall hash-key 1) &#34;sub-key1&#34; 2) &#34;value1&#34; 3) &#34;sub-key2&#34; 4) &#34;value2&#34; &gt; hdel hash-key sub-key2 (integer) 1 &gt; hdel hash-key sub-key2 (integer) 0 &gt; hget hash-key sub-key1 &#34;value1&#34; &gt; hgetall hash-key 1) &#34;sub-key1&#34; 2) &#34;value1&#34; ZSET # &gt; zadd zset-key 728 member1 (integer) 1 &gt; zadd zset-key 982 member0 (integer) 1 &gt; zadd zset-key 982 member0 (integer) 0 &gt; zrange zset-key 0 -1 withscores 1) &#34;member1&#34; 2) &#34;728&#34; 3) &#34;member0&#34; 4) &#34;982&#34; &gt; zrangebyscore zset-key 0 800 withscores 1) &#34;member1&#34; 2) &#34;728&#34; &gt; zrem zset-key member1 (integer) 1 &gt; zrem zset-key member1 (integer) 0 &gt; zrange zset-key 0 -1 withscores 1) &#34;member0&#34; 2) &#34;982&#34; " />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://example.com/keeplearning/docs/redis/data-type-cmd/" /><meta property="article:section" content="docs" />
+
+<meta property="article:modified_time" content="2023-01-17T13:56:58+08:00" />
+<title>数据类型和常用命令 | KeepLearning</title>
+<link rel="manifest" href="/keeplearning/manifest.json">
+<link rel="icon" href="/keeplearning/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/keeplearning/book.min.44ab80b6e9fbffc4b56fa0525dd4af874d4d533ab2a985226782d7cdc8d9fd15.css" integrity="sha256-RKuAtun7/8S1b6BSXdSvh01NUzqyqYUiZ4LXzcjZ/RU=" crossorigin="anonymous">
+  <script defer src="/keeplearning/flexsearch.min.js"></script>
+  <script defer src="/keeplearning/zh.search.min.5b02a93327952778720abce5c3a4075cc8a6d9e27092e5d6cae2a13d039a6f12.js" integrity="sha256-WwKpMyeVJ3hyCrzlw6QHXMim2eJwkuXWyuKhPQOabxI=" crossorigin="anonymous"></script>
+
+  <script defer src="/keeplearning/sw.min.1adfb566b92ba83fd11679d786b02cc6ef24134c579bce6902d173c28305155f.js" integrity="sha256-Gt&#43;1ZrkrqD/RFnnXhrAsxu8kE0xXm85pAtFzwoMFFV8=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/keeplearning/"><span>KeepLearning</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+
+
+
+  
+<ul>
+  
+  <li>
+    <a href="https://github.com/xiaobinqt"  target="_blank" rel="noopener">
+        GitHub
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <ul>
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <span>网络</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/network/overview/" class="">网络概述</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/network/physical-layer/" class="">物理层</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/network/link-layer/" class="">链路层</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/network/network-layer/" class="">网络层</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/network/transport-layer/" class="">传输层</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/network/application-layer/" class="">应用层</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/network/socket/" class="">Socket</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <span>HTTP</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/http/http/" class="">HTTP</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <span>操作系统</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/os/instruction-set_arch/" class="">指令集</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/os/overview/" class="">操作系统概述</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/os/process-manage/" class="">进程管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/os/deadlock/" class="">死锁</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/os/memory-manage/" class="">内存管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/os/device-manage/" class="">设备管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/os/link/" class="">链接</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <span>MySQL</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/mysql/dbs-theory/" class="">数据库系统原理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/mysql/sql-grammar/" class="">SQL 语法</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/mysql/mysql-faq1/" class="">MySQL</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <span>Redis</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/redis/data-type-cmd/" class="active">数据类型和常用命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/redis/overview/" class="">Redis</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <span>Linux</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/linux/linux/" class="">Linux</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <span>系统设计</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/system-design/overview/" class="">系统设计基础</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/system-design/distributed/" class="">分布式</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/system-design/cluster/" class="">集群</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/system-design/attack/" class="">攻击技术</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/system-design/cache/" class="">缓存</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/system-design/queue-message/" class="">消息队列</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <span>编码实践</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/coding-practice/regex/" class="">正则表达式</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/coding-practice/docker/" class="">Docker</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/coding-practice/git/" class="">Git</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/coding-practice/code-readability/" class="">代码可读性</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/favorite/" class="">收藏夹</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/keeplearning/docs/favorite/cs-learn/" class="">计算机基础书籍推荐</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/keeplearning/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>数据类型和常用命令</strong>
+
+  <label for="toc-control">
+    
+    <img src="/keeplearning/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#数据类型和常用命令">数据类型和常用命令</a>
+      <ul>
+        <li><a href="#数据类型">数据类型</a></li>
+        <li><a href="#string">STRING</a></li>
+        <li><a href="#list">LIST</a></li>
+        <li><a href="#set">SET</a></li>
+        <li><a href="#hash">HASH</a></li>
+        <li><a href="#zset">ZSET</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown"><h1 id="数据类型和常用命令">
+  数据类型和常用命令
+  <a class="anchor" href="#%e6%95%b0%e6%8d%ae%e7%b1%bb%e5%9e%8b%e5%92%8c%e5%b8%b8%e7%94%a8%e5%91%bd%e4%bb%a4">#</a>
+</h1>
+<h2 id="数据类型">
+  数据类型
+  <a class="anchor" href="#%e6%95%b0%e6%8d%ae%e7%b1%bb%e5%9e%8b">#</a>
+</h2>
+<table>
+<thead>
+<tr>
+<th>数据类型</th>
+<th>可以存储的值</th>
+<th>操作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>STRING</td>
+<td>字符串、整数或者浮点数</td>
+<td>对整个字符串或者字符串的其中一部分执行操作<br> 对整数和浮点数执行自增或者自减操作</td>
+</tr>
+<tr>
+<td>LIST</td>
+<td>列表</td>
+<td>从两端压入或者弹出元素 <br> 对单个或者多个元素进行修剪，<br> 只保留一个范围内的元素</td>
+</tr>
+<tr>
+<td>SET</td>
+<td>无序集合</td>
+<td>添加、获取、移除单个元素<br> 检查一个元素是否存在于集合中<br> 计算交集、并集、差集<br> 从集合里面随机获取元素</td>
+</tr>
+<tr>
+<td>HASH</td>
+<td>包含键值对的无序散列表</td>
+<td>添加、获取、移除单个键值对</br> 获取所有键值对<br> 检查某个键是否存在</td>
+</tr>
+<tr>
+<td>ZSET</td>
+<td>有序集合</td>
+<td>添加、获取、删除元素</br> 根据分值范围或者成员来获取元素<br> 计算一个键的排名</td>
+</tr>
+</tbody>
+</table>
+<h2 id="string">
+  STRING
+  <a class="anchor" href="#string">#</a>
+</h2>
+<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/4cd2f8dfd39c41b0a14a9f8cad3d9ee7.png" width="400"/> </div><br>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>&gt; set hello world
+</span></span><span style="display:flex;"><span>OK
+</span></span><span style="display:flex;"><span>&gt; get hello
+</span></span><span style="display:flex;"><span>&#34;world&#34;
+</span></span><span style="display:flex;"><span>&gt; del hello
+</span></span><span style="display:flex;"><span>(integer) 1
+</span></span><span style="display:flex;"><span>&gt; get hello
+</span></span><span style="display:flex;"><span>(nil)
+</span></span></code></pre></div><h2 id="list">
+  LIST
+  <a class="anchor" href="#list">#</a>
+</h2>
+<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/dc2b3cf5d03b41119a00820944579611.png" width="400"/> </div><br>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>&gt; rpush list-key item
+</span></span><span style="display:flex;"><span>(integer) 1
+</span></span><span style="display:flex;"><span>&gt; rpush list-key item2
+</span></span><span style="display:flex;"><span>(integer) 2
+</span></span><span style="display:flex;"><span>&gt; rpush list-key item
+</span></span><span style="display:flex;"><span>(integer) 3
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>&gt; lrange list-key 0 -1
+</span></span><span style="display:flex;"><span>1) &#34;item&#34;
+</span></span><span style="display:flex;"><span>2) &#34;item2&#34;
+</span></span><span style="display:flex;"><span>3) &#34;item&#34;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>&gt; lindex list-key 1
+</span></span><span style="display:flex;"><span>&#34;item2&#34;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>&gt; lpop list-key
+</span></span><span style="display:flex;"><span>&#34;item&#34;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>&gt; lrange list-key 0 -1
+</span></span><span style="display:flex;"><span>1) &#34;item2&#34;
+</span></span><span style="display:flex;"><span>2) &#34;item&#34;
+</span></span></code></pre></div><h2 id="set">
+  SET
+  <a class="anchor" href="#set">#</a>
+</h2>
+<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/9352e7d62d574d7a8c4287d7b326fb08.png" width="400"/> </div><br>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>&gt; sadd set-key item
+</span></span><span style="display:flex;"><span>(integer) 1
+</span></span><span style="display:flex;"><span>&gt; sadd set-key item2
+</span></span><span style="display:flex;"><span>(integer) 1
+</span></span><span style="display:flex;"><span>&gt; sadd set-key item3
+</span></span><span style="display:flex;"><span>(integer) 1
+</span></span><span style="display:flex;"><span>&gt; sadd set-key item
+</span></span><span style="display:flex;"><span>(integer) 0
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>&gt; smembers set-key
+</span></span><span style="display:flex;"><span>1) &#34;item&#34;
+</span></span><span style="display:flex;"><span>2) &#34;item2&#34;
+</span></span><span style="display:flex;"><span>3) &#34;item3&#34;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>&gt; sismember set-key item4
+</span></span><span style="display:flex;"><span>(integer) 0
+</span></span><span style="display:flex;"><span>&gt; sismember set-key item
+</span></span><span style="display:flex;"><span>(integer) 1
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>&gt; srem set-key item2
+</span></span><span style="display:flex;"><span>(integer) 1
+</span></span><span style="display:flex;"><span>&gt; srem set-key item2
+</span></span><span style="display:flex;"><span>(integer) 0
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>&gt; smembers set-key
+</span></span><span style="display:flex;"><span>1) &#34;item&#34;
+</span></span><span style="display:flex;"><span>2) &#34;item3&#34;
+</span></span></code></pre></div><h2 id="hash">
+  HASH
+  <a class="anchor" href="#hash">#</a>
+</h2>
+<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/786b12641c13468b920d52f674ca1e4d.png" width="400"/> </div><br>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>&gt; hset hash-key sub-key1 value1
+</span></span><span style="display:flex;"><span>(integer) 1
+</span></span><span style="display:flex;"><span>&gt; hset hash-key sub-key2 value2
+</span></span><span style="display:flex;"><span>(integer) 1
+</span></span><span style="display:flex;"><span>&gt; hset hash-key sub-key1 value1
+</span></span><span style="display:flex;"><span>(integer) 0
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>&gt; hgetall hash-key
+</span></span><span style="display:flex;"><span>1) &#34;sub-key1&#34;
+</span></span><span style="display:flex;"><span>2) &#34;value1&#34;
+</span></span><span style="display:flex;"><span>3) &#34;sub-key2&#34;
+</span></span><span style="display:flex;"><span>4) &#34;value2&#34;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>&gt; hdel hash-key sub-key2
+</span></span><span style="display:flex;"><span>(integer) 1
+</span></span><span style="display:flex;"><span>&gt; hdel hash-key sub-key2
+</span></span><span style="display:flex;"><span>(integer) 0
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>&gt; hget hash-key sub-key1
+</span></span><span style="display:flex;"><span>&#34;value1&#34;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>&gt; hgetall hash-key
+</span></span><span style="display:flex;"><span>1) &#34;sub-key1&#34;
+</span></span><span style="display:flex;"><span>2) &#34;value1&#34;
+</span></span></code></pre></div><h2 id="zset">
+  ZSET
+  <a class="anchor" href="#zset">#</a>
+</h2>
+<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/dc2c35b63788455e9a80310b3cd9a33a.png" width="400"/> </div><br>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>&gt; zadd zset-key 728 member1
+</span></span><span style="display:flex;"><span>(integer) 1
+</span></span><span style="display:flex;"><span>&gt; zadd zset-key 982 member0
+</span></span><span style="display:flex;"><span>(integer) 1
+</span></span><span style="display:flex;"><span>&gt; zadd zset-key 982 member0
+</span></span><span style="display:flex;"><span>(integer) 0
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>&gt; zrange zset-key 0 -1 withscores
+</span></span><span style="display:flex;"><span>1) &#34;member1&#34;
+</span></span><span style="display:flex;"><span>2) &#34;728&#34;
+</span></span><span style="display:flex;"><span>3) &#34;member0&#34;
+</span></span><span style="display:flex;"><span>4) &#34;982&#34;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>&gt; zrangebyscore zset-key 0 800 withscores
+</span></span><span style="display:flex;"><span>1) &#34;member1&#34;
+</span></span><span style="display:flex;"><span>2) &#34;728&#34;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>&gt; zrem zset-key member1
+</span></span><span style="display:flex;"><span>(integer) 1
+</span></span><span style="display:flex;"><span>&gt; zrem zset-key member1
+</span></span><span style="display:flex;"><span>(integer) 0
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>&gt; zrange zset-key 0 -1 withscores
+</span></span><span style="display:flex;"><span>1) &#34;member0&#34;
+</span></span><span style="display:flex;"><span>2) &#34;982&#34;
+</span></span></code></pre></div></article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/ef0471645739e7312e5f4de3ddb2966a2758bb3c" title='最后修改者 weibin | January 17, 2023' target="_blank" rel="noopener">
+      <img src="/keeplearning/svg/calendar.svg" class="book-icon" alt="Calendar" />
+      <span>January 17, 2023</span>
+    </a>
+  </div>
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/book.keeplearning/docs/redis/data-type-cmd.md" target="_blank" rel="noopener">
+      <img src="/keeplearning/svg/edit.svg" class="book-icon" alt="Edit" />
+      <span>编辑本页</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#数据类型和常用命令">数据类型和常用命令</a>
+      <ul>
+        <li><a href="#数据类型">数据类型</a></li>
+        <li><a href="#string">STRING</a></li>
+        <li><a href="#list">LIST</a></li>
+        <li><a href="#set">SET</a></li>
+        <li><a href="#hash">HASH</a></li>
+        <li><a href="#zset">ZSET</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
