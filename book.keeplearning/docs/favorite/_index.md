@@ -3,7 +3,7 @@ weight: 100
 
 bookFlatSection: true
 
-bookCollapseSection: true
+bookCollapseSection: false
 
 bookToc: true
 
@@ -60,6 +60,7 @@ title: "收藏夹"
 + [Mysql 实战45讲](https://funnylog.gitee.io/mysql45/)
 + [一份不太简短的 LATEX介绍](http://www.mohu.org/info/lshort-cn.pdf)
 + [A Programmer's Guide to English](https://a-programmers-guide-to-english.harryyu.me/)
++ [Unix & Linux](https://unix.stackexchange.com/)
 
 ## 博主
 
@@ -99,6 +100,8 @@ title: "收藏夹"
 + [在线PS-Photopea](https://www.logosc.cn/online-ps) / [在线PS-toolwa](https://toolwa.com/ps/)
 + [json2yaml](https://www.json2yaml.com/)
 + [crontab.guru](https://crontab.guru/)
++ [tree.nathanfriend.io](https://tree.nathanfriend.io/)
++ [markdown book HonKit](https://github.com/honkit/honkit)
 
 ## 资料库
 
@@ -114,3 +117,6 @@ title: "收藏夹"
 + [Concurrency in Go](https://edu.anarcho-copy.org/Programming%20Languages/Go/Concurrency%20in%20Go.pdf)
 + [大鹏教育所有课程/提取码：q21b](https://www.aliyundrive.com/s/BYFEa1wFUNf)
 
+## 云盘
+
++ [MEGA](https://mega.io/)
