@@ -39,11 +39,11 @@ math: true
 
 ## 英文简称
 
-| 英文简称 | 中文       |
-| -------- | ---------- |
+| 英文简称     | 中文    |
+|----------|-------|
 | SMILE    | 全飞秒激光 |
 | FS-LASIK | 半飞秒激光 |
-| ICL      | 晶体植入   |
+| ICL      | 晶体植入  |
 
 ## 近视度数划分
 
@@ -80,7 +80,7 @@ math: true
 
 近视是因为长时间看较近的物体，导致睫状肌痉挛，不能有效的调节牵引晶状体，所以这个时候就出现了假性近视。假性近视患者的眼轴没有发生根本的改变，适当的休息和锻炼是可以恢复过来。
 
-![''](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221105/9b1f335439844943b756152374a002e5.png ' ')
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221105/9b1f335439844943b756152374a002e5.png" width=500  /></div>
 
 当出现假性近视的情况没有采取合适的治疗手段就会发生以上病变的过程。晶状体收缩变厚可以对眼睛产生两种力。一种力是轴向上由于晶状体变厚产生的压力，这个压力可以压到玻璃体，进而把眼轴撑长。另一种力是垂直于轴向的拉力，相当于晶状体这块肌肉收缩时的拉力，这个拉力可以把眼球拉扁，从而间接使眼轴变长。这两种力共同作用把眼睛从圆球形变成橄榄形，这就是晶状体的调节力造成的近视眼变形。
 
@@ -126,11 +126,11 @@ math: true
 
 ### 主流近视手术的光学区范围
 
-| 手术类型 | 最大光区 |
-|------|------|
-|   全飞秒   |   7.0mm   |
-|   半飞秒激   |   6.5mm   |
-|   晶体植入   |   7.3mm   |  
+| 手术类型 | 最大光区  |
+|------|-------|
+| 全飞秒  | 7.0mm |
+| 半飞秒激 | 6.5mm |
+| 晶体植入 | 7.3mm |  
 
 其实，手术切削区域也受到手术设备的影响而有所差异。
 
@@ -188,7 +188,7 @@ math: true
 
 大部分人黑乌珠的角膜直径是在 11~12 毫米大小，做激光手术时是在角膜的中心，大约 6~7 个毫米的中间进行，平均是在大约 6.5 毫米的区域当中做。由于白天的瞳孔只有 2~3 个毫米，都在 6.5 毫米的覆盖范围之内，所以术后白天视力都是好的；到了晚上，人的瞳孔会慢慢放大，有的人可能放大到 6.7、6.5 毫米，这种人白天和晚上的视觉质量跟手术之前差别一般不会很大。但是有的人瞳孔会放大到很大，比如到 7点几、8.0 毫米以上，这时候不难想象，当8.0毫米的瞳孔大小范围之内，中间部分 6.5 毫米的范围是做过激光手术的，而边上的这一圈还是没有做过激光手术之前的近视状态的角膜，晚上看东西的时候就会有两个屈光界面的图像投射到他的视网膜上，这时候他的大脑会感受到两套清晰度不一样的图像，从而对视觉产生干扰，会觉得有点光晕、光圈。
 
-![炫光问题](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221103/bc69af50f3794776a3080f6d58c15970.jpg '炫光问题')
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221103/bc69af50f3794776a3080f6d58c15970.jpg" width=600  /></div>
 
 所以做了激光手术以后，一部分人一开始可能会有夜间视觉质量点下降的感觉。随着时间慢慢的延长，人晚上的瞳孔大小，也就是暗瞳的直径，会逐渐缩小。因为暗瞳直径是受人体的交感神经和副交感神经控制，当交感神经兴奋的时候，瞳孔就会变大；当副交感神经兴奋的时候，瞳孔就会变小。所以激光手术后，当晚上有眩光时，副交感神经就会慢慢兴奋起来，他的瞳孔就会逐渐缩小，缩小到一定程度以后，夜间眩光的现象就会消失。
 
@@ -202,7 +202,7 @@ math: true
 
 **但是，但是，但是**，我觉得干眼可能跟医生的水平和设备有关，很多都只是理论上没问题，比如我老表很早之前在我们市里做的手术，到现在了还一直干眼:point_down:
 
-![可能干眼会一直存在](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221103/94002adec4ac44ff89b3760d2118d789.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 "可能干眼会一直存在")
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221103/94002adec4ac44ff89b3760d2118d789.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" width=650  /></div>
 
 因为全飞秒的对角膜的损伤是非常小的，所以对角膜的神经的损伤也是非常小的，相对而言，全飞秒对干眼的症状理论上会小很多。
 
@@ -227,17 +227,17 @@ math: true
 
 ### 近视手术是否会导致飞蚊
 
-![玻璃体](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221105/c2fc278abe0e485e8faf04387fd7514f.png '玻璃体图')
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221105/c2fc278abe0e485e8faf04387fd7514f.png" width=450  /></div>
 
 在知乎很多这样的回答中，出现了 2 个比较高赞的观点，一个是手术过程损伤了玻璃体，导致了飞蚊现象，比如这个:point_down:
 
-![有问题的解释](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221105/2d8547db9f67427fadc7677436bf0315.png '有问题的解释')
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221105/2d8547db9f67427fadc7677436bf0315.png" width=600  /></div>
 
 近视手术是在角膜上进行的手术，由【玻璃体图】可知，角膜和玻璃体之间还隔了一个水晶体或是叫晶状体，在手术过程中根本不会接触到玻璃体，所以近视手术破坏晶状体的一些回答应该是不可靠的。这个回答还说了会导致夜盲症，这里的夜盲应该是夜视力下降，而夜视力下降是光学区和暗瞳不一定导致的，具体可以看[光学区和暗瞳的关系](#光学区与暗瞳的关系)。当然这只是我的个人分析。
 
 还有一个导致飞蚊的观点是负压吸引导致的，比如这个回答：
 
-![负压吸引](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221105/5569278947204155beef94322473d6ba.png '负压吸引')
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221105/5569278947204155beef94322473d6ba.png" width=800  /></div>
 
 负压是手术过程中，负压环对眼球产生的压力。负压高，会导致眼压升高，视神经和视网膜受到压迫，术中出现短暂的黑朦情况。我查到的资料是，蔡司的机器，半飞秒负压极低，术中不会出现眼压升高，全程可视，所以我觉得这个可能跟机器有关系，跟手术本身关系不大。
 
@@ -290,13 +290,13 @@ math: true
 
 我觉得我可以不用考虑手术了:cry:，毕竟我暗瞳已经大与 7mm 了。以下是我在同仁医院的挂号医生跟我说的我的暗瞳。
 
-![我的暗瞳](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221103/e4722c3129314d5487d52c5b6097e1af.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '我的暗瞳')
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221103/e4722c3129314d5487d52c5b6097e1af.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" width=600  /></div>
 
 而且我眼底也有问题，做过次全视网膜凝光术。
 
-![凝光术](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221105/673cf5c0b2184f9d97eff7d4a3cab611.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '凝光术')
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221105/673cf5c0b2184f9d97eff7d4a3cab611.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" width=650  /></div>
 
-其实这几天查了一些资料，包括跟朋友的交流，我对做手术的欲望已经不是很大了，但是，23333，我觉得可以通过一些锻炼来恢复自己的视力，:joy: 个人觉得理论上，只要反向训练，就可以恢复视力，但是这个过程可能会很漫长:see_no_evil:。
+这几天查了一些资料，包括跟朋友的交流，我对做手术的欲望已经不是很大了，但是，个人觉得可以通过一些锻炼来恢复自己的视力:joy::see_no_evil:。
 
 ## 参考
 
