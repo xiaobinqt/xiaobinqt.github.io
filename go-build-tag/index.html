@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noodp" />
+    <title class="pjax-title">Go 编译标签 build tag - xiaobinqt 博客 - 技术改变生活</title><meta name="Description" content="xiaobinqt,编译标签，build tag"><meta property="og:title" content="Go 编译标签 build tag" />
+<meta property="og:description" content="xiaobinqt,编译标签，build tag" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.xiaobinqt.cn/go-build-tag/" /><meta property="og:image" content="https://www.xiaobinqt.cn/logo.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-01-28T00:00:00+00:00" />
+<meta property="article:modified_time" content="2023-01-30T10:37:23+08:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://www.xiaobinqt.cn/logo.png"/>
+
+<meta name="twitter:title" content="Go 编译标签 build tag"/>
+<meta name="twitter:description" content="xiaobinqt,编译标签，build tag"/>
+<meta name="application-name" content="xiaobinqt">
+<meta name="apple-mobile-web-app-title" content="xiaobinqt">
+
+<meta name="theme-color" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c">
+<link rel="stylesheet" href="//at.alicdn.com/t/font_3267767_dz25dtwdgdc.css"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://www.xiaobinqt.cn/go-build-tag/" /><link rel="prev" href="https://www.xiaobinqt.cn/curl-ertificate-has-expired/" /><link rel="next" href="https://www.xiaobinqt.cn/old-pal/" /><link rel="stylesheet" href="/lib/md5/md5.min.js"><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/fontawesome-free/all.min.css">
+        <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/animate/animate.min.css">
+        <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><meta name="google-site-verification" content="hFkClWMTOtPBuE0lQaXNiNb707E7P6O2CwexZoSm3VQ" /><meta name="msvalidate.01" content="A961D393878F86E04112E1198500FDBD" /><meta name="baidu-site-verification" content="code-cMh5ORsrP2" /><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Go 编译标签 build tag",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/www.xiaobinqt.cn\/go-build-tag\/"
+        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "golang","wordcount":  1056 ,
+        "url": "https:\/\/www.xiaobinqt.cn\/go-build-tag\/","datePublished": "2023-01-28T00:00:00+00:00","dateModified": "2023-01-30T10:37:23+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+            "@type": "Organization",
+            "name": "xxxx","logo": {
+                    "@type": "ImageObject",
+                    "url": "https:\/\/www.xiaobinqt.cn\/images\/avatar.png",
+                    "width":  528 ,
+                    "height":  560 
+                }},"author": {
+                "@type": "Person",
+                "name": "xiaobinqt"
+            },"description": "xiaobinqt,编译标签，build tag"
+    }
+    </script></head>
+
+<body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">
+        function setTheme(theme) {document.body.setAttribute('theme', theme); document.documentElement.style.setProperty('color-scheme', theme === 'light' ? 'light' : 'dark');}
+        function saveTheme(theme) {window.localStorage && localStorage.setItem('theme', theme);}
+        function getMeta(metaName) {const metas = document.getElementsByTagName('meta'); for (let i = 0; i < metas.length; i++) if (metas[i].getAttribute('name') === metaName) return metas[i]; return '';}
+        if (window.localStorage && localStorage.getItem('theme')) {let theme = localStorage.getItem('theme');theme === 'light' || theme === 'dark' || theme === 'black' ? setTheme(theme) : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? setTheme('dark') : setTheme('light')); } else { if ('auto' === 'light' || 'auto' === 'dark' || 'auto' === 'black') setTheme('auto'), saveTheme('auto'); else saveTheme('auto'), window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? setTheme('dark') : setTheme('light');}
+        let metaColors = {'light': '#f8f8f8','dark': '#252627','black': '#000000'}
+        getMeta('theme-color').content = metaColors[document.body.getAttribute('theme')];
+    </script>
+    <div id="back-to-top"></div>
+    <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="xiaobinqt 博客 - 技术改变生活"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>萧十一郎</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/" > 所有文章 </a><a class="menu-item" href="/tags/" > 标签 </a><a class="menu-item" href="/categories/" > 分类 </a><a class="menu-item" href="/series/" > 系列 </a><a class="menu-item" href="/keeplearning/"  rel="noopener noreferrer" target="_blank"> KeepLearning </a><a class="menu-item" href="/leetcode/"  rel="noopener noreferrer" target="_blank"> LeetCode </a><a class="menu-item" href="/links/" > 友链 </a><a class="menu-item" href="/about/" > 关于 </a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" rel="noopener noreferrer" target="_blank" ><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
+                        <a href="#" onclick="return false;" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="#" onclick="return false;" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="#" onclick="return false;" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a></div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="xiaobinqt 博客 - 技术改变生活"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>萧十一郎</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
+                        <a href="#" onclick="return false;" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="#" onclick="return false;" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="#" onclick="return false;" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="" >所有文章</a><a class="menu-item" href="/tags/" title="" >标签</a><a class="menu-item" href="/categories/" title="" >分类</a><a class="menu-item" href="/series/" title="" >系列</a><a class="menu-item" href="/keeplearning/" title=""  rel="noopener noreferrer" target="_blank">KeepLearning</a><a class="menu-item" href="/leetcode/" title=""  rel="noopener noreferrer" target="_blank">LeetCode</a><a class="menu-item" href="/links/" title="" >友链</a><a class="menu-item" href="/about/" title="" >关于</a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" rel="noopener noreferrer" target="_blank" ><i class='fab fa-github fa-fw'></i></a><a href="#" onclick="return false;" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+            <div class="container"><div class="toc" id="toc-auto">
+        <h2 class="toc-title">目录</h2>
+        <div class="toc-content" id="toc-content-auto"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#简介">简介</a></li>
+    <li><a href="#编译标签的逻辑">编译标签的逻辑</a>
+      <ul>
+        <li><a href="#or-标签逻辑">or 标签逻辑</a></li>
+        <li><a href="#and-标签逻辑">and 标签逻辑</a></li>
+        <li><a href="#非标签逻辑">！非标签逻辑</a></li>
+      </ul>
+    </li>
+    <li><a href="#如何使用">如何使用</a>
+      <ul>
+        <li><a href="#新建-build-tag">新建 build tag</a></li>
+        <li><a href="#使用-tags-编译">使用 tags 编译</a>
+          <ul>
+            <li><a href="#1-没有tag编译">1. 没有tag编译</a></li>
+            <li><a href="#2-单个tag编译">2. 单个tag编译</a></li>
+            <li><a href="#3-多个tag编译">3. 多个tag编译</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#gobuild-与-build-的区别">go:build 与 +build 的区别</a></li>
+    <li><a href="#参考">参考</a></li>
+  </ul>
+</nav></div>
+    </div><script>document.getElementsByTagName("main")[0].setAttribute("pageStyle", "normal")</script><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Go 编译标签 build tag</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><i class="author fas fa-user-circle fa-fw"></i><a href="/" title="Author" rel=" author" class="author">xiaobinqt</a>
+                </span>&nbsp;<span class="post-category">收录于 </span>&nbsp;<span class="post-category">类别 <a href="/categories/golang/"><i class="far fa-folder fa-fw"></i>golang</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2023-01-28">2023-01-28</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2023-01-30">2023-01-30</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1056 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 3 分钟&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#简介">简介</a></li>
+    <li><a href="#编译标签的逻辑">编译标签的逻辑</a>
+      <ul>
+        <li><a href="#or-标签逻辑">or 标签逻辑</a></li>
+        <li><a href="#and-标签逻辑">and 标签逻辑</a></li>
+        <li><a href="#非标签逻辑">！非标签逻辑</a></li>
+      </ul>
+    </li>
+    <li><a href="#如何使用">如何使用</a>
+      <ul>
+        <li><a href="#新建-build-tag">新建 build tag</a></li>
+        <li><a href="#使用-tags-编译">使用 tags 编译</a>
+          <ul>
+            <li><a href="#1-没有tag编译">1. 没有tag编译</a></li>
+            <li><a href="#2-单个tag编译">2. 单个tag编译</a></li>
+            <li><a href="#3-多个tag编译">3. 多个tag编译</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#gobuild-与-build-的区别">go:build 与 +build 的区别</a></li>
+    <li><a href="#参考">参考</a></li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><!-- author： xiaobinqt -->
+<!-- email： xiaobinqt@163.com -->
+<!-- https://xiaobinqt.github.io -->
+<!-- https://www.xiaobinqt.cn -->
+<h2 id="简介" class="headerLink">
+    <a href="#%e7%ae%80%e4%bb%8b" class="header-mark"></a>简介</h2><p>在 Go 中，build tag 是添加到代码中第一行，来标识编译相关信息的，build tag 决定了当前文件是否会被当前 package 所包含，用于限制一整个文件是否应该被编译入最终的二进制文件，而不是一个文件中的部分代码片段。</p>
+<p>Go <strong><ruby>编译标签<rt>build tag</rt></ruby></strong>语法如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// +build [tag]
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>build tags 文件顶部附近，前面只能有空行和其他行注释。</li>
+<li>编译标记必须出现在 package 子句之前，并且为了与包文档区分开来，它<strong>必须</strong>后跟一个空行。</li>
+</ul>
+<h2 id="编译标签的逻辑" class="headerLink">
+    <a href="#%e7%bc%96%e8%af%91%e6%a0%87%e7%ad%be%e7%9a%84%e9%80%bb%e8%be%91" class="header-mark"></a>编译标签的逻辑</h2><p>当在一个包中使用多个标签时会使用 bool 逻辑进行交互，具体取决于我们如何进行声明的。</p>
+<p>Build tags 遵循以下三个规则：</p>
+<ul>
+<li>以空格分隔的标签将在<code>OR</code>逻辑下进行解释。</li>
+<li>逗号分隔的标签将在<code>AND</code>逻辑下进行解释。</li>
+<li>每个术语都是一个字母数字单词，如果前面有<code>!</code>它意味着它被否定。</li>
+</ul>
+<h3 id="or-标签逻辑" class="headerLink">
+    <a href="#or-%e6%a0%87%e7%ad%be%e9%80%bb%e8%be%91" class="header-mark"></a>or 标签逻辑</h3><p>给定标签：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// +build tag1 tag2
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>OR 解释是，如果在执行 build 构建命令时存在 tag1 或 tag2，则将包含此文件。</p>
+<h3 id="and-标签逻辑" class="headerLink">
+    <a href="#and-%e6%a0%87%e7%ad%be%e9%80%bb%e8%be%91" class="header-mark"></a>and 标签逻辑</h3><p>如果我们使用标签：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// +build tag1, tag2
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>解释是 tag1 且（AND） tag2 必须存在于 build 构建命令中，我们的文件才能包含在编译中。</p>
+<h3 id="非标签逻辑" class="headerLink">
+    <a href="#%e9%9d%9e%e6%a0%87%e7%ad%be%e9%80%bb%e8%be%91" class="header-mark"></a>！非标签逻辑</h3><p>如果我们使用标签</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"> // +build !tag1
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>解释是，非 tag1，我们的文件才会 build 编译</p>
+<h2 id="如何使用" class="headerLink">
+    <a href="#%e5%a6%82%e4%bd%95%e4%bd%bf%e7%94%a8" class="header-mark"></a>如何使用</h2><h3 id="新建-build-tag" class="headerLink">
+    <a href="#%e6%96%b0%e5%bb%ba-build-tag" class="header-mark"></a>新建 build tag</h3><p>我们新建一个 buildtag 文件夹，并在文件夹下新建如下4个空文件，如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">.
+</span></span><span class="line"><span class="cl">├── dev.go
+</span></span><span class="line"><span class="cl">├── main.go
+</span></span><span class="line"><span class="cl">├── prod.go
+</span></span><span class="line"><span class="cl">├── test.go
+</span></span><span class="line"><span class="cl">└── without.go
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>我们打开 main.go 输入代码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">configArr</span> <span class="p">[]</span><span class="kt">string</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">conf</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">configArr</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">conf</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>我们打开 dev.go 输入代码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// +build dev
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">init</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">configArr</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">configArr</span><span class="p">,</span> <span class="s">&#34;mysql dev&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>我们打开 prod.go 输入代码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// +build prod
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">init</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">configArr</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">configArr</span><span class="p">,</span> <span class="s">&#34;mysql prod&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>我们打开 test.go 输入代码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// +build test1
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">init</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">configArr</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">configArr</span><span class="p">,</span> <span class="s">&#34;mysql test&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>我们打开 without.go 输入代码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// +build !without
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">init</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">configArr</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">configArr</span><span class="p">,</span> <span class="s">&#34;mysql without&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="使用-tags-编译" class="headerLink">
+    <a href="#%e4%bd%bf%e7%94%a8-tags-%e7%bc%96%e8%af%91" class="header-mark"></a>使用 tags 编译</h3><h4 id="1-没有tag编译" class="headerLink">
+    <a href="#1-%e6%b2%a1%e6%9c%89tag%e7%bc%96%e8%af%91" class="header-mark"></a>1. 没有tag编译</h4><p>我们使用</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">go build
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>在文件夹里生成了二进制执行文件 buildtag，我们执行一下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">➜ ./buildtag 
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>输出：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">mysql without
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="2-单个tag编译" class="headerLink">
+    <a href="#2-%e5%8d%95%e4%b8%aatag%e7%bc%96%e8%af%91" class="header-mark"></a>2. 单个tag编译</h4><p>我们使用</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">go build  -tags &#34;dev&#34; 
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>在文件夹里生成了二进制执行文件 buildtag，我们执行一下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">➜ ./buildtag 
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>输出：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">mysql dev
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="3-多个tag编译" class="headerLink">
+    <a href="#3-%e5%a4%9a%e4%b8%aatag%e7%bc%96%e8%af%91" class="header-mark"></a>3. 多个tag编译</h4><p>我们使用</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">go build  -tags &#34;dev prod&#34; 
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>在文件夹里生成了二进制执行文件 buildtag，我们执行一下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">➜ ./buildtag 
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>输出：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">mysql dev
+</span></span><span class="line"><span class="cl">mysql prod
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="gobuild-与-build-的区别" class="headerLink">
+    <a href="#gobuild-%e4%b8%8e-build-%e7%9a%84%e5%8c%ba%e5%88%ab" class="header-mark"></a>go:build 与 +build 的区别</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">//go:build
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>☝️是 Go 1.17 中引入的新条件编译指令格式。它旨在替换</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// +build
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>指令。那么为何要采用新的格式呢？对比一下新旧格式的区别就知道了👇</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// go:build linux &amp;&amp; amd64 || darwin
+</span></span><span class="line"><span class="cl">// +build linux,amd64 darwin
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>go:build</code>这种格式，对 coder 来说，更容易理解其逻辑组合，与<code>//go:embed</code>和<code>//go:generate</code>这些命令相比较，格式上进行了统一。</p>
+<h2 id="参考" class="headerLink">
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
+<li><a href="https://github.com/xiaobinqt/go.src/tree/master/dev/buildtag" target="_blank" rel="noopener noreferrer">代码地址</a></li>
+<li><a href="https://segmentfault.com/a/1190000042007310" target="_blank" rel="noopener noreferrer">go 编译标签( build tag)-注释里的编译语法</a></li>
+<li><a href="https://wrfly.kfd.me/posts/golang-netgo-vs-cgo/" target="_blank" rel="noopener noreferrer">golang: netgo vs cgo</a></li>
+</ul>
+</div>
+
+        <div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2023-01-30&nbsp;<a class="git-hash" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/101134a95ee880711834760004629abb690b4699" target="_blank" title="commit by weibin(xiaobinqt@163.com) 101134a95ee880711834760004629abb690b4699: add go-build-tag.md" rel="noopener noreferrer">
+                                    <i class="fas fa-hashtag fa-fw"></i>101134a9</a></span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span><a class="link-to-mardown" href=/go-build-tag/index.md target="_blank" rel="noopener noreferrer">阅读原始文档</a>
+                    </span></div>
+            <div class="post-info-share">
+                <span><a href="#" onclick="return false;" title="分享到 Twitter" data-sharer="twitter" data-url="https://www.xiaobinqt.cn/go-build-tag/" data-title="Go 编译标签 build tag" data-hashtags="golang"><i class="fab fa-twitter fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Facebook" data-sharer="facebook" data-url="https://www.xiaobinqt.cn/go-build-tag/" data-hashtag="golang"><i class="fab fa-facebook-square fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Hacker News" data-sharer="hackernews" data-url="https://www.xiaobinqt.cn/go-build-tag/" data-title="Go 编译标签 build tag"><i class="fab fa-hacker-news fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Line" data-sharer="line" data-url="https://www.xiaobinqt.cn/go-build-tag/" data-title="Go 编译标签 build tag"><i data-svg-src="/lib/simple-icons/icons/line.min.svg"></i></a><a href="#" onclick="return false;" title="分享到 微博" data-sharer="weibo" data-url="https://www.xiaobinqt.cn/go-build-tag/" data-title="Go 编译标签 build tag"><i class="fab fa-weibo fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 百度" data-sharer="baidu" data-url="https://www.xiaobinqt.cn/go-build-tag/" data-title="Go 编译标签 build tag"><i data-svg-src="/lib/simple-icons/icons/baidu.min.svg"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/golang/">golang</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/curl-ertificate-has-expired/" class="prev" rel="prev" title="curl: (60) Peer&#39;s Certificate has expired 问题解决"><i class="fas fa-angle-left fa-fw"></i>curl: (60) Peer&#39;s Certificate has expired 问题解决</a>
+            <a href="/old-pal/" class="next" rel="next" title="纪念一位老友">纪念一位老友<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+<div id="comments"><div id="gitalk" class="comment"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://github.com/gitalk/gitalk"></a>Gitalk</a>.
+            </noscript></div></article></div>
+        </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2018 - 2023</span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+            <div class="footer-line"></div>
+            <div class="footer-line">
+            </div>
+        </div></footer></div>
+
+    <div id="fixed-buttons"><a href="#back-to-top" id="back-to-top-button" class="fixed-button" title="回到顶部">
+            <i class="fas fa-arrow-up fa-fw"></i>
+        </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+            <i class="fas fa-comment fa-fw"></i>
+        </a>
+    </div><div class="assets"><script type="text/javascript" src="/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="/lib/algoliasearch/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/topbar/topbar.min.js"></script><script type="text/javascript" src="/lib/pjax/pjax.min.js"></script><script type="text/javascript" src="/js/theme.min.js" defer></script></div>
+
+<div class="pjax-assets"><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":35},"comment":{"gitalk":{"admin":["xiaobinqt"],"clientID":"47b15de6c2d8a0f8d707","clientSecret":"c70556c8b3a3b38ea7c72e539ff3b37d5bc1b4f3","id":"69b819f997310dc6dc1b05ab6a7a35e4","owner":"xiaobinqt","repo":"xiaobinqt.github.io","title":"Go 编译标签 build tag"}},"lightGallery":{"actualSize":false,"exThumbImage":"data-thumbnail","hideBarsDelay":2000,"selector":".lightgallery","speed":400,"thumbContHeight":80,"thumbWidth":80,"thumbnail":true},"search":{"algoliaAppID":"CPNWIDNX0Y","algoliaIndex":"xiaobinqt.io","algoliaSearchKey":"80b84de0ebc766371dd27cd3e651c41e","highlightTag":"em","maxResultLength":20,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"},"sharerjs":true};</script><script type="text/javascript" src="/lib/gitalk/gitalk.min.js"></script><script type="text/javascript" src="/js/gitalk.min.js" defer></script><script type="text/javascript" src="/lib/lightgallery/lightgallery.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-thumbnail.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-zoom.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><link rel="stylesheet" href="/lib/gitalk/gitalk.min.css"><link rel="stylesheet" href="/lib/lightgallery/lightgallery.min.css"></div>
+</body>
+
+</html>
