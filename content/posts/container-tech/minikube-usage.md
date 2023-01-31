@@ -177,6 +177,14 @@ minikube kubectl -- run ngx --image=nginx:alpine
 
 命令执行之后可以看到，在 Kubernetes 集群里就有了一个名字叫 ngx 的 Pod 正在运行，表示这个单节点 minikube 环境已经搭建成功。
 
+## 什么是容器编排
+
+容器，是现代程序的运行方式。编排就是部署、管理应用程序的系统，能动态地响应变化，如：回滚、滚动升级、故障自愈、自动扩缩容。自动完成这些所有任务，需要人工最初进行一些配置，就可以一劳永逸。所以，运行容器形式的应用程序，这些应用程序的构建方式，使它们能够实现回滚、滚动升级、故障自愈、自动扩缩容等就是容器编排。
+
+## K8s 和 Docker 的区别
+
+Docker 应用打包、测试、交付，Kubernetes 是基于 Docker 的产物，进行编排、运行。例如有 1 个集群，3 个节点。这些节点，都以 Docker 作为容器运行时，Docker 是更偏向底层的技术。Kubernetes 更偏向上层的技术 ，它实现了对容器运行时的抽象，抽象的目的是兼容底层容器运行时（容器进行时技术不仅有 Docker，还有 containerd、kata 等，无论哪种容器运行时，Kubernetes 层面的操作都是一样的）以及解耦，同时还提供了一套容器运行时的标准。抽象的产物是容器运行时接口 CRI（Container Runtime Interface）。
+
 ## 参考
 
 + [minikube start](https://minikube.sigs.k8s.io/docs/start/)
