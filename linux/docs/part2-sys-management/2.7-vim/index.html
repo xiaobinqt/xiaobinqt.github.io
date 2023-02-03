@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="2.7 vim # 2.7.1 vim 三种模式 # 一般指令模式（Command mode）：vim 的默认模式，可以用于移动游标查看内容； 编辑模式（Insert mode）：按下i等按键之后进入，可以对文本进行编辑； 指令列模式（Bottom-line mode）：按下:按键之后进入，用于保存退出等操作。 在指令列模式下，有以下命令用于离开或者保存文件。
+命令 作用 :w 写入磁盘，也可以加上保存路径，如 :w /tmp/test.txt :w! 当文件为只读时，强制写入磁盘。到底能不能写入，与用户对该文件的权限有关 :q 离开 :q! 强制离开不保存 :wq 写入磁盘后离开 :wq! 强制写入磁盘后离开 2.7.2 正常模式 # 按键 作用 I 进入插入模式，光标会移到当前行的开头位置 a 进入插入模式，光标会移动到下一个字符位置 A 进入插入模式，光标会移动到当前行末尾位置 o 进入插入模式，会向下新开一行，光标会移动到新行开头位置 O 进入插入模式，会向上新开一行，光标会移动到新行开头位置 h 前移 l 后移 j 下移 k 上移 u 撤销操作，可以多次撤销 x 单个字符删除 r 替换字符 ^ 回到当前行首 $ 回到当前行尾 ctrl&#43;r 重做，恢复撤销 yy 和 p yy 复制一行，p 粘贴 复制多行 # 比如复制 3 行，光标移到要复制的开头位置，先按 3，再按 yy，就复制了 3 行。">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="2.7 vim" />
+<meta property="og:description" content="2.7 vim # 2.7.1 vim 三种模式 # 一般指令模式（Command mode）：vim 的默认模式，可以用于移动游标查看内容； 编辑模式（Insert mode）：按下i等按键之后进入，可以对文本进行编辑； 指令列模式（Bottom-line mode）：按下:按键之后进入，用于保存退出等操作。 在指令列模式下，有以下命令用于离开或者保存文件。
+命令 作用 :w 写入磁盘，也可以加上保存路径，如 :w /tmp/test.txt :w! 当文件为只读时，强制写入磁盘。到底能不能写入，与用户对该文件的权限有关 :q 离开 :q! 强制离开不保存 :wq 写入磁盘后离开 :wq! 强制写入磁盘后离开 2.7.2 正常模式 # 按键 作用 I 进入插入模式，光标会移到当前行的开头位置 a 进入插入模式，光标会移动到下一个字符位置 A 进入插入模式，光标会移动到当前行末尾位置 o 进入插入模式，会向下新开一行，光标会移动到新行开头位置 O 进入插入模式，会向上新开一行，光标会移动到新行开头位置 h 前移 l 后移 j 下移 k 上移 u 撤销操作，可以多次撤销 x 单个字符删除 r 替换字符 ^ 回到当前行首 $ 回到当前行尾 ctrl&#43;r 重做，恢复撤销 yy 和 p yy 复制一行，p 粘贴 复制多行 # 比如复制 3 行，光标移到要复制的开头位置，先按 3，再按 yy，就复制了 3 行。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://example.com/linux/docs/part2-sys-management/2.7-vim/" /><meta property="article:section" content="docs" />
+
+<meta property="article:modified_time" content="2023-02-03T15:56:33+08:00" />
+<title>2.7 vim | Linux 学习笔记</title>
+<link rel="manifest" href="/linux/manifest.json">
+<link rel="icon" href="/linux/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/linux/book.min.44ab80b6e9fbffc4b56fa0525dd4af874d4d533ab2a985226782d7cdc8d9fd15.css" integrity="sha256-RKuAtun7/8S1b6BSXdSvh01NUzqyqYUiZ4LXzcjZ/RU=" crossorigin="anonymous">
+  <script defer src="/linux/flexsearch.min.js"></script>
+  <script defer src="/linux/zh.search.min.de8088bb9895d0f514d86f4f55bdbb405a9be92e81a6f48b44b9fb129b58f366.js" integrity="sha256-3oCIu5iV0PUU2G9PVb27QFqb6S6BpvSLRLn7EptY82Y=" crossorigin="anonymous"></script>
+
+  <script defer src="/linux/sw.min.e3338ad661715b83bfd6397040a613605d8bb26c10798773e2176216e2123560.js" integrity="sha256-4zOK1mFxW4O/1jlwQKYTYF2LsmwQeYdz4hdiFuISNWA=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/linux/"><span>Linux 学习笔记</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+
+
+
+  
+<ul>
+  
+  <li>
+    <a href="https://github.com/xiaobinqt"  target="_blank" rel="noopener">
+        GitHub
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第一部分 基础知识</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.1-linux-release/" class="">1.1 简介和常见发行版</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.2-common-dir/" class="">1.2 常见目录</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第二部分 系统操作</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-management/2.1-help/" class="">2.1 帮助命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-management/2.2-ls/" class="">2.2 ls 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-management/2.3-shutdown/" class="">2.3 关机</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-management/2.4-cp/" class="">2.4 cp 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-management/2.5-file-view/" class="">2.5 文件查看命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-management/2.6-backup-compression/" class="">2.6 压缩和打包</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-management/2.7-vim/" class="active">2.7 vim</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-management/2.8-user-manage/" class="">2.8 用户管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-management/2.9-switch-user/" class="">2.9 切换用户</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-management/2.10-file-dir/" class="">2.10 文件和文件夹</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/linux/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>2.7 vim</strong>
+
+  <label for="toc-control">
+    
+    <img src="/linux/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#27-vim">2.7 vim</a>
+      <ul>
+        <li><a href="#271-vim-三种模式">2.7.1 vim 三种模式</a></li>
+        <li><a href="#272-正常模式">2.7.2 正常模式</a>
+          <ul>
+            <li><a href="#复制多行">复制多行</a></li>
+            <li><a href="#复制光标到行结尾">复制光标到行结尾</a></li>
+            <li><a href="#跳到指定行">跳到指定行</a></li>
+          </ul>
+        </li>
+        <li><a href="#273-命令模式">2.7.3 命令模式</a>
+          <ul>
+            <li><a href="#临时执行命令">临时执行命令</a></li>
+            <li><a href="#查找替换">查找替换</a></li>
+          </ul>
+        </li>
+        <li><a href="#274-可视模式">2.7.4 可视模式</a></li>
+        <li><a href="#275-常见问题">2.7.5 常见问题</a>
+          <ul>
+            <li><a href="#1-e388-couldnt-find-definition">1. E388: Couldn&rsquo;t find definition</a></li>
+            <li><a href="#2-warning-terminal-is-not-fully-functional">2. WARNING: terminal is not fully functional</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown"><h1 id="27-vim">
+  2.7 vim
+  <a class="anchor" href="#27-vim">#</a>
+</h1>
+<h2 id="271-vim-三种模式">
+  2.7.1 vim 三种模式
+  <a class="anchor" href="#271-vim-%e4%b8%89%e7%a7%8d%e6%a8%a1%e5%bc%8f">#</a>
+</h2>
+<p>
+  <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/922f08bad9444c9b9933b218edb2ce3a.png" alt="" /></p>
+<ul>
+<li>一般指令模式（Command mode）：vim 的默认模式，可以用于移动游标查看内容；</li>
+<li>编辑模式（Insert mode）：按下<code>i</code>等按键之后进入，可以对文本进行编辑；</li>
+<li>指令列模式（Bottom-line mode）：按下<code>:</code>按键之后进入，用于保存退出等操作。</li>
+</ul>
+<p>在指令列模式下，有以下命令用于离开或者保存文件。</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>:w</td>
+<td>写入磁盘，也可以加上保存路径，如 :w /tmp/test.txt</td>
+</tr>
+<tr>
+<td>:w!</td>
+<td>当文件为只读时，强制写入磁盘。到底能不能写入，与用户对该文件的权限有关</td>
+</tr>
+<tr>
+<td>:q</td>
+<td>离开</td>
+</tr>
+<tr>
+<td>:q!</td>
+<td>强制离开不保存</td>
+</tr>
+<tr>
+<td>:wq</td>
+<td>写入磁盘后离开</td>
+</tr>
+<tr>
+<td>:wq!</td>
+<td>强制写入磁盘后离开</td>
+</tr>
+</tbody>
+</table>
+<h2 id="272-正常模式">
+  2.7.2 正常模式
+  <a class="anchor" href="#272-%e6%ad%a3%e5%b8%b8%e6%a8%a1%e5%bc%8f">#</a>
+</h2>
+<table>
+<thead>
+<tr>
+<th>按键</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>I</code></td>
+<td>进入插入模式，光标会移到当前行的开头位置</td>
+</tr>
+<tr>
+<td>a</td>
+<td>进入插入模式，光标会移动到下一个字符位置</td>
+</tr>
+<tr>
+<td>A</td>
+<td>进入插入模式，光标会移动到当前行末尾位置</td>
+</tr>
+<tr>
+<td>o</td>
+<td>进入插入模式，会<strong>向下</strong>新开一行，光标会移动到新行开头位置</td>
+</tr>
+<tr>
+<td>O</td>
+<td>进入插入模式，会<strong>向上</strong>新开一行，光标会移动到新行开头位置</td>
+</tr>
+<tr>
+<td>h</td>
+<td>前移</td>
+</tr>
+<tr>
+<td>l</td>
+<td>后移</td>
+</tr>
+<tr>
+<td>j</td>
+<td>下移</td>
+</tr>
+<tr>
+<td>k</td>
+<td>上移</td>
+</tr>
+<tr>
+<td>u</td>
+<td>撤销操作，可以多次撤销</td>
+</tr>
+<tr>
+<td>x</td>
+<td>单个字符删除</td>
+</tr>
+<tr>
+<td>r</td>
+<td>替换字符</td>
+</tr>
+<tr>
+<td>^</td>
+<td>回到当前行首</td>
+</tr>
+<tr>
+<td>$</td>
+<td>回到当前行尾</td>
+</tr>
+<tr>
+<td>ctrl+r</td>
+<td>重做，恢复撤销</td>
+</tr>
+<tr>
+<td>yy 和 p</td>
+<td>yy 复制一行，p 粘贴</td>
+</tr>
+</tbody>
+</table>
+<h3 id="复制多行">
+  复制多行
+  <a class="anchor" href="#%e5%a4%8d%e5%88%b6%e5%a4%9a%e8%a1%8c">#</a>
+</h3>
+<p>比如复制 3 行，光标移到要复制的开头位置，先按 3，再按 yy，就复制了 3 行。</p>
+<h3 id="复制光标到行结尾">
+  复制光标到行结尾
+  <a class="anchor" href="#%e5%a4%8d%e5%88%b6%e5%85%89%e6%a0%87%e5%88%b0%e8%a1%8c%e7%bb%93%e5%b0%be">#</a>
+</h3>
+<p>在光标位置，先按 y 再按 $。</p>
+<h3 id="跳到指定行">
+  跳到指定行
+  <a class="anchor" href="#%e8%b7%b3%e5%88%b0%e6%8c%87%e5%ae%9a%e8%a1%8c">#</a>
+</h3>
+<p>先输入行号，比如 11，再按 ctrl+g 或是 G。</p>
+<p>按 2 下 g（小写的 g），gg 会直接跳到第一行。GG 会跳到文本最后一行。</p>
+<h2 id="273-命令模式">
+  2.7.3 命令模式
+  <a class="anchor" href="#273-%e5%91%bd%e4%bb%a4%e6%a8%a1%e5%bc%8f">#</a>
+</h2>
+<h3 id="临时执行命令">
+  临时执行命令
+  <a class="anchor" href="#%e4%b8%b4%e6%97%b6%e6%89%a7%e8%a1%8c%e5%91%bd%e4%bb%a4">#</a>
+</h3>
+<p><code>:! 命令</code>可以在命令模式临时执行命令。比如临时执行<code>ifconfig</code>命令。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230201/58076cd03ced4cdea4a394a4419186c1.png" width=  /></div>
+<h3 id="查找替换">
+  查找替换
+  <a class="anchor" href="#%e6%9f%a5%e6%89%be%e6%9b%bf%e6%8d%a2">#</a>
+</h3>
+<p><code>:/要查找的字符串</code>，按 n 往下继续查找。shift+n 定位到上一个查找到的结果。</p>
+<p><code>:s/old/new</code> <strong>只</strong>在光标所在行进行替换。</p>
+<p><code>:3,5s/old/new</code> 对 3-5 行指定行进行替换。</p>
+<p><code>:%s/old/new</code> 全文替换。可以加上 g，<code>:%s/old/new/g</code>进行全局替换。</p>
+<h2 id="274-可视模式">
+  2.7.4 可视模式
+  <a class="anchor" href="#274-%e5%8f%af%e8%a7%86%e6%a8%a1%e5%bc%8f">#</a>
+</h2>
+<table>
+<thead>
+<tr>
+<th>按键</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>v</td>
+<td>字符可视模式</td>
+</tr>
+<tr>
+<td>V（shift+v）</td>
+<td>行可视模式</td>
+</tr>
+<tr>
+<td>ctrl+v</td>
+<td>块可视模式，配合 d 和<code>I</code>命令可以进行块的便利操作</td>
+</tr>
+</tbody>
+</table>
+<h2 id="275-常见问题">
+  2.7.5 常见问题
+  <a class="anchor" href="#275-%e5%b8%b8%e8%a7%81%e9%97%ae%e9%a2%98">#</a>
+</h2>
+<h3 id="1-e388-couldnt-find-definition">
+  1. E388: Couldn&rsquo;t find definition
+  <a class="anchor" href="#1-e388-couldnt-find-definition">#</a>
+</h3>
+<p>这个问题会导致 vim 的上下左右方向键不能使用。解决方法如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>vim ~/.vimrc
+</span></span></code></pre></div><p>如果家目录没有 .vimrc 文件可以 touch 新建一个。在 .vimrc 文件中<strong>添加</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>:set term<span style="color:#f92672">=</span>builtin_ansi
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230131/c24c4c436ae84ab89dab2ba3718643c1.png" width=  /></div>
+<h3 id="2-warning-terminal-is-not-fully-functional">
+  2. WARNING: terminal is not fully functional
+  <a class="anchor" href="#2-warning-terminal-is-not-fully-functional">#</a>
+</h3>
+<p>修改环境变量 TERM</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>export TERM<span style="color:#f92672">=</span>xterm
+</span></span></code></pre></div></article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/c7f6031f84d8ada885435f7fd3ffe224d1ce29f8" title='最后修改者 weibin | February 3, 2023' target="_blank" rel="noopener">
+      <img src="/linux/svg/calendar.svg" class="book-icon" alt="Calendar" />
+      <span>February 3, 2023</span>
+    </a>
+  </div>
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/book.linux/docs/part2-sys-management/2.7-vim.md" target="_blank" rel="noopener">
+      <img src="/linux/svg/edit.svg" class="book-icon" alt="Edit" />
+      <span>编辑本页</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#27-vim">2.7 vim</a>
+      <ul>
+        <li><a href="#271-vim-三种模式">2.7.1 vim 三种模式</a></li>
+        <li><a href="#272-正常模式">2.7.2 正常模式</a>
+          <ul>
+            <li><a href="#复制多行">复制多行</a></li>
+            <li><a href="#复制光标到行结尾">复制光标到行结尾</a></li>
+            <li><a href="#跳到指定行">跳到指定行</a></li>
+          </ul>
+        </li>
+        <li><a href="#273-命令模式">2.7.3 命令模式</a>
+          <ul>
+            <li><a href="#临时执行命令">临时执行命令</a></li>
+            <li><a href="#查找替换">查找替换</a></li>
+          </ul>
+        </li>
+        <li><a href="#274-可视模式">2.7.4 可视模式</a></li>
+        <li><a href="#275-常见问题">2.7.5 常见问题</a>
+          <ul>
+            <li><a href="#1-e388-couldnt-find-definition">1. E388: Couldn&rsquo;t find definition</a></li>
+            <li><a href="#2-warning-terminal-is-not-fully-functional">2. WARNING: terminal is not fully functional</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

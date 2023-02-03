@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="2.8 用户管理 # 命令 作用 useradd 新建用户 userdel 删除用户 passwd 修改用户密码 usermod 修改用户属性 chage 修改帐号和密码的有效期限 groupadd 新建用户组 groupdel 删除用户组 2.8.1 useradd # useradd 用户名 useradd -g 用户组 用户名 当不指定用户组时，会创建一个同名的用户组。
+2.8.2 passwd # passwd wislon 当修改自己的密码时，直接输入 passwd 回车。
+2.8.3 userdel # userdel 用户名 当加上-r选项时，会删除用户的家目录。
+2.8.4 usermod # 用于修改用户的基本信息。
+常用选项 # -d 选项 # 修改用户登入时的目录，只是修改/etc/passwd中用户的家目录配置信息，不会自动创建新的家目录，通常和-m一起使用。
+-m 选项 # 移动用户家目录到新的位置，不能单独使用，一般与-d一起使用。
+-g 选项 # 修改用户所属的用户组。
+usermod -g 用户组 用户名 2.8.5 groupadd # 创建一个新的用户组。">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="2.8 用户管理" />
+<meta property="og:description" content="2.8 用户管理 # 命令 作用 useradd 新建用户 userdel 删除用户 passwd 修改用户密码 usermod 修改用户属性 chage 修改帐号和密码的有效期限 groupadd 新建用户组 groupdel 删除用户组 2.8.1 useradd # useradd 用户名 useradd -g 用户组 用户名 当不指定用户组时，会创建一个同名的用户组。
+2.8.2 passwd # passwd wislon 当修改自己的密码时，直接输入 passwd 回车。
+2.8.3 userdel # userdel 用户名 当加上-r选项时，会删除用户的家目录。
+2.8.4 usermod # 用于修改用户的基本信息。
+常用选项 # -d 选项 # 修改用户登入时的目录，只是修改/etc/passwd中用户的家目录配置信息，不会自动创建新的家目录，通常和-m一起使用。
+-m 选项 # 移动用户家目录到新的位置，不能单独使用，一般与-d一起使用。
+-g 选项 # 修改用户所属的用户组。
+usermod -g 用户组 用户名 2.8.5 groupadd # 创建一个新的用户组。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://example.com/linux/docs/part2-sys-management/2.8-user-manage/" /><meta property="article:section" content="docs" />
+
+<meta property="article:modified_time" content="2023-02-03T15:56:33+08:00" />
+<title>2.8 用户管理 | Linux 学习笔记</title>
+<link rel="manifest" href="/linux/manifest.json">
+<link rel="icon" href="/linux/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/linux/book.min.44ab80b6e9fbffc4b56fa0525dd4af874d4d533ab2a985226782d7cdc8d9fd15.css" integrity="sha256-RKuAtun7/8S1b6BSXdSvh01NUzqyqYUiZ4LXzcjZ/RU=" crossorigin="anonymous">
+  <script defer src="/linux/flexsearch.min.js"></script>
+  <script defer src="/linux/zh.search.min.de8088bb9895d0f514d86f4f55bdbb405a9be92e81a6f48b44b9fb129b58f366.js" integrity="sha256-3oCIu5iV0PUU2G9PVb27QFqb6S6BpvSLRLn7EptY82Y=" crossorigin="anonymous"></script>
+
+  <script defer src="/linux/sw.min.e3338ad661715b83bfd6397040a613605d8bb26c10798773e2176216e2123560.js" integrity="sha256-4zOK1mFxW4O/1jlwQKYTYF2LsmwQeYdz4hdiFuISNWA=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/linux/"><span>Linux 学习笔记</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+
+
+
+  
+<ul>
+  
+  <li>
+    <a href="https://github.com/xiaobinqt"  target="_blank" rel="noopener">
+        GitHub
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第一部分 基础知识</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.1-linux-release/" class="">1.1 简介和常见发行版</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.2-common-dir/" class="">1.2 常见目录</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第二部分 系统操作</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-management/2.1-help/" class="">2.1 帮助命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-management/2.2-ls/" class="">2.2 ls 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-management/2.3-shutdown/" class="">2.3 关机</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-management/2.4-cp/" class="">2.4 cp 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-management/2.5-file-view/" class="">2.5 文件查看命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-management/2.6-backup-compression/" class="">2.6 压缩和打包</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-management/2.7-vim/" class="">2.7 vim</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-management/2.8-user-manage/" class="active">2.8 用户管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-management/2.9-switch-user/" class="">2.9 切换用户</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-management/2.10-file-dir/" class="">2.10 文件和文件夹</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/linux/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>2.8 用户管理</strong>
+
+  <label for="toc-control">
+    
+    <img src="/linux/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#28-用户管理">2.8 用户管理</a>
+      <ul>
+        <li><a href="#281-useradd">2.8.1 useradd</a></li>
+        <li><a href="#282-passwd">2.8.2 passwd</a></li>
+        <li><a href="#283-userdel">2.8.3 userdel</a></li>
+        <li><a href="#284-usermod">2.8.4 usermod</a>
+          <ul>
+            <li><a href="#常用选项">常用选项</a></li>
+          </ul>
+        </li>
+        <li><a href="#285-groupadd">2.8.5 groupadd</a></li>
+        <li><a href="#286-passwd-配置文件">2.8.6 passwd 配置文件</a></li>
+        <li><a href="#286-shadow-配置文件">2.8.6 shadow 配置文件</a></li>
+        <li><a href="#287-group-配置文件">2.8.7 group 配置文件</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown"><h1 id="28-用户管理">
+  2.8 用户管理
+  <a class="anchor" href="#28-%e7%94%a8%e6%88%b7%e7%ae%a1%e7%90%86">#</a>
+</h1>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>useradd</td>
+<td>新建用户</td>
+</tr>
+<tr>
+<td>userdel</td>
+<td>删除用户</td>
+</tr>
+<tr>
+<td>passwd</td>
+<td>修改用户密码</td>
+</tr>
+<tr>
+<td>usermod</td>
+<td>修改用户属性</td>
+</tr>
+<tr>
+<td>chage</td>
+<td>修改帐号和密码的有效期限</td>
+</tr>
+<tr>
+<td>groupadd</td>
+<td>新建用户组</td>
+</tr>
+<tr>
+<td>groupdel</td>
+<td>删除用户组</td>
+</tr>
+</tbody>
+</table>
+<h2 id="281-useradd">
+  2.8.1 useradd
+  <a class="anchor" href="#281-useradd">#</a>
+</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>useradd 用户名
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>useradd -g 用户组 用户名
+</span></span></code></pre></div><p>当不指定用户组时，会创建一个同名的用户组。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230202/267939b0a9c34f8d995672c1f7f83073.png" width=  /></div>
+<h2 id="282-passwd">
+  2.8.2 passwd
+  <a class="anchor" href="#282-passwd">#</a>
+</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>passwd wislon 
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230202/95effd9841ef42379fffff6fe297f1d6.png" width=  /></div>
+<p>当修改自己的密码时，直接输入 passwd 回车。</p>
+<h2 id="283-userdel">
+  2.8.3 userdel
+  <a class="anchor" href="#283-userdel">#</a>
+</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>userdel 用户名
+</span></span></code></pre></div><p>当加上<code>-r</code>选项时，会删除用户的家目录。</p>
+<h2 id="284-usermod">
+  2.8.4 usermod
+  <a class="anchor" href="#284-usermod">#</a>
+</h2>
+<p>用于修改用户的基本信息。</p>
+<h3 id="常用选项">
+  常用选项
+  <a class="anchor" href="#%e5%b8%b8%e7%94%a8%e9%80%89%e9%a1%b9">#</a>
+</h3>
+<h4 id="-d-选项">
+  -d 选项
+  <a class="anchor" href="#-d-%e9%80%89%e9%a1%b9">#</a>
+</h4>
+<p>修改用户登入时的目录，只是修改<code>/etc/passwd</code>中用户的家目录配置信息，不会自动创建新的家目录，通常和<code>-m</code>一起使用。</p>
+<h4 id="-m-选项">
+  -m 选项
+  <a class="anchor" href="#-m-%e9%80%89%e9%a1%b9">#</a>
+</h4>
+<p>移动用户家目录到新的位置，不能单独使用，一般与<code>-d</code>一起使用。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230202/91828d83c6eb4a46a395b62bbcd7ca30.png" width=  /></div>
+<h4 id="-g-选项">
+  -g 选项
+  <a class="anchor" href="#-g-%e9%80%89%e9%a1%b9">#</a>
+</h4>
+<p>修改用户所属的用户组。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>usermod -g 用户组 用户名
+</span></span></code></pre></div><h2 id="285-groupadd">
+  2.8.5 groupadd
+  <a class="anchor" href="#285-groupadd">#</a>
+</h2>
+<p>创建一个新的用户组。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230202/b8b4dde663774b72bb518dc27f2f0002.png" width=  /></div>
+<h2 id="286-passwd-配置文件">
+  2.8.6 passwd 配置文件
+  <a class="anchor" href="#286-passwd-%e9%85%8d%e7%bd%ae%e6%96%87%e4%bb%b6">#</a>
+</h2>
+<p>/etc/passwd 文件中，各个字段以<code>:</code>分隔，如下</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>ntp:x:38:38::/etc/ntp:/sbin/nologin
+</span></span><span style="display:flex;"><span>user1:x:1004:1004::/home/user1:/bin/bash
+</span></span></code></pre></div><ul>
+<li>值1：表示用户名</li>
+<li>值2：是否需要密码验证，<code>x</code>需要，空为不需要。</li>
+<li>值3：用户 ID</li>
+<li>值4：用户组 ID</li>
+<li>值5：注释</li>
+<li>值6：家目录</li>
+<li>值7：用户登录后的命令解释器，当值为<code>/sbin/nologin</code>时不能登录终端。</li>
+</ul>
+<h2 id="286-shadow-配置文件">
+  2.8.6 shadow 配置文件
+  <a class="anchor" href="#286-shadow-%e9%85%8d%e7%bd%ae%e6%96%87%e4%bb%b6">#</a>
+</h2>
+<p>/etc/shadow 文件跟用户密码相关。各个字段以<code>:</code>分隔，如下</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>wilson:$6$OlPoziO9$SvSfAjR4yHWkUpAYIEHL6jUxF7FypoiOWRhVTftR3CZJUIwpWZcSguhVHfc1xVj9A9tr8ArZxvH.G//tyR0Qm/:19390:0:99999:7:::
+</span></span><span style="display:flex;"><span>w:!!:19390:0:99999:7:::
+</span></span><span style="display:flex;"><span>user1:!!:19390:0:99999:7:::
+</span></span></code></pre></div><ul>
+<li>值1：用户名</li>
+<li>值2：加密后的密码</li>
+</ul>
+<h2 id="287-group-配置文件">
+  2.8.7 group 配置文件
+  <a class="anchor" href="#287-group-%e9%85%8d%e7%bd%ae%e6%96%87%e4%bb%b6">#</a>
+</h2>
+<p>/etc/group 文件跟用户组相关。各个字段以<code>:</code>分隔，如下</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>stapsys:x:157:
+</span></span><span style="display:flex;"><span>mail:x:12:postfix
+</span></span><span style="display:flex;"><span>wilson:x:1002:
+</span></span><span style="display:flex;"><span>w:x:1003:
+</span></span><span style="display:flex;"><span>group1:x:1004:
+</span></span><span style="display:flex;"><span>user1:x:1005:
+</span></span></code></pre></div><ul>
+<li>值1：用户组名</li>
+<li>值2：是否需要密码验证</li>
+<li>值3：用户组 GID</li>
+<li>值4：其他组设置</li>
+</ul>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/c7f6031f84d8ada885435f7fd3ffe224d1ce29f8" title='最后修改者 weibin | February 3, 2023' target="_blank" rel="noopener">
+      <img src="/linux/svg/calendar.svg" class="book-icon" alt="Calendar" />
+      <span>February 3, 2023</span>
+    </a>
+  </div>
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/book.linux/docs/part2-sys-management/2.8-user-manage.md" target="_blank" rel="noopener">
+      <img src="/linux/svg/edit.svg" class="book-icon" alt="Edit" />
+      <span>编辑本页</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#28-用户管理">2.8 用户管理</a>
+      <ul>
+        <li><a href="#281-useradd">2.8.1 useradd</a></li>
+        <li><a href="#282-passwd">2.8.2 passwd</a></li>
+        <li><a href="#283-userdel">2.8.3 userdel</a></li>
+        <li><a href="#284-usermod">2.8.4 usermod</a>
+          <ul>
+            <li><a href="#常用选项">常用选项</a></li>
+          </ul>
+        </li>
+        <li><a href="#285-groupadd">2.8.5 groupadd</a></li>
+        <li><a href="#286-passwd-配置文件">2.8.6 passwd 配置文件</a></li>
+        <li><a href="#286-shadow-配置文件">2.8.6 shadow 配置文件</a></li>
+        <li><a href="#287-group-配置文件">2.8.7 group 配置文件</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
