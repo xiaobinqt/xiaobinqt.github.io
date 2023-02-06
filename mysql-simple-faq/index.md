@@ -85,8 +85,7 @@ limit 和 offset 都可以用来限制查询条数，一般用做分页。
 + 当 limit 后面跟一个参数的时候，该参数表示要取的数据的数量
 
 ```sql
-select*
-from user limit 3 
+select * from user limit 3 
 ```
 
 表示直接取前三条数据。
@@ -94,8 +93,7 @@ from user limit 3
 + 当 limit 后面跟两个参数的时候，第一个数表示**开始行**，后一位表示要取的数量，例如
 
 ```sql
-select *
-from user limit 1,3;
+select * from user limit 1,3;
 ```
 
 从 0 行开始计算，取第 1 - 3 条数据，也就是取 1,2,3 三条数据。
@@ -103,9 +101,7 @@ from user limit 1,3;
 + 当 limit 和 offset 组合使用的时候，limit 后面只能有一个参数，表示要取的的数量，offset 表示开始行。
 
 ```sql
-select *
-from user limit 3
-offset 1;
+select * from user limit 3 offset 1;
 ```
 
 从 0 行开始计算，取第 1 - 3 条数据，也就是取 1,2,3 三条数据。
