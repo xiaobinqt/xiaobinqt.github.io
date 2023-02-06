@@ -10,7 +10,7 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://www.xiaobinqt.cn/mysql-faq-2/" /><meta property="og:image" content="https://www.xiaobinqt.cn/logo.png"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2022-05-21T00:00:00+00:00" />
-<meta property="article:modified_time" content="2023-01-02T16:39:47+08:00" />
+<meta property="article:modified_time" content="2023-02-06T17:36:51+08:00" />
 <meta property="og:see_also" content="https://www.xiaobinqt.cn/go-sync-map/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/highly-concurrent-architecture-evolution/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/session-cookie-token-difference/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/why-mysql-index-use-btree/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/redis-break-pierce-avalanche/" />
 <meta property="og:see_also" content="https://www.xiaobinqt.cn/mysql-faq-3/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/problems-in-work/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/mysql-simple-faq/" />
 
@@ -36,8 +36,8 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/www.xiaobinqt.cn\/mysql-faq-2\/"
-        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "mysql, 索引, MVCC","wordcount":  8035 ,
-        "url": "https:\/\/www.xiaobinqt.cn\/mysql-faq-2\/","datePublished": "2022-05-21T00:00:00+00:00","dateModified": "2023-01-02T16:39:47+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "mysql, 索引, MVCC","wordcount":  8029 ,
+        "url": "https:\/\/www.xiaobinqt.cn\/mysql-faq-2\/","datePublished": "2022-05-21T00:00:00+00:00","dateModified": "2023-02-06T17:36:51+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "xxxx","logo": {
                     "@type": "ImageObject",
@@ -148,7 +148,7 @@
             <div class="post-meta-line"><span class="post-author">
                     <i class="custom-icon iconfont icon-weibiaoti-"></i>
                 </span>&nbsp;&nbsp;<span class="post-category">收录于 </span>&nbsp;<span class="post-category">类别 <a href="/categories/mysql/"><i class="far fa-folder fa-fw"></i>mysql</a></span>&nbsp;<span class="post-category">和</span>&nbsp;<span class="post-series">系列 <a href="/series/reproduce/"><i class="far fa-list-alt fa-fw"></i>转载</a>&nbsp;<a href="/series/interview/"><i class="far fa-list-alt fa-fw"></i>八股文</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-05-21">2022-05-21</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2023-01-02">2023-01-02</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 8035 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-05-21">2022-05-21</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2023-02-06">2023-02-06</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 8029 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 17 分钟&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
@@ -213,8 +213,7 @@
 <pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="k">select</span> * from user where id &gt;<span class="o">=</span> <span class="m">10</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div><p>那只要定位到 id 为 10 的记录，然后在叶子节点之间通过遍历链表（叶子节点组成的链表），即可找到往后的记录了。由于 B 树是会在非叶子节点也存储数据，要遍历的时候可能就得
-<strong>跨层</strong>检索，相对麻烦些。基于树的层级以及业务使用场景的特性，所以 MySQL 选择了 B+ 树作为索引的底层数据结构。</p>
+</div><p>那只要定位到 id 为 10 的记录，然后在叶子节点之间通过遍历链表（叶子节点组成的链表），即可找到往后的记录了。由于 B 树是会在非叶子节点也存储数据，要遍历的时候可能就得<strong>跨层</strong>检索，相对麻烦些。基于树的层级以及业务使用场景的特性，所以 MySQL 选择了 B+ 树作为索引的底层数据结构。</p>
 <h2 id="什么叫做回表" class="headerLink">
     <a href="#%e4%bb%80%e4%b9%88%e5%8f%ab%e5%81%9a%e5%9b%9e%e8%a1%a8" class="header-mark"></a>什么叫做回表</h2><p>当我们使用索引查询数据时，检索出来的数据可能包含其他列，但走的索引树叶子节点只能查到当前列值以及主键 ID，所以需要根据主键 ID 再去查一遍数据，得到SQL 所需的列。</p>
 <p>举个栗子，如果给订单号字段<code>orderId</code>建了个索引，但查询的 SQL 是</p>
@@ -383,7 +382,7 @@
             alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221202/00282fd01288429b8b03a1407b7c5227.png">
     </a><figcaption class="image-caption"> </figcaption>
     </figure></p>
-<p>前面提到过 read uncommitted 隔离级别下会产生脏读，而<strong><ruby>read committed<rt>读已提交</rt></ruby></strong> 隔离级别解决了脏读。思想其实很简单：在读取的时候生成一个”版本号”，等到其他事务commit 了之后，才会读取最新已 commit 的“版本号”数据。</p>
+<p>前面提到过 read uncommitted 隔离级别下会产生脏读，而<strong><ruby>read committed<rt>读已提交</rt></ruby></strong> 隔离级别解决了脏读。思想其实很简单：在读取的时候生成一个”版本号”，等到其他事务 commit 了之后，才会读取最新已 commit 的“版本号”数据。</p>
 <p>比如说：事务 A 读取了记录（生成版本号），事务 B 修改了记录，此时加了写锁，事务 A 再读取的时候，是依据最新的版本号来读取的（当事务 B 执行 commit 了之后，会生成一个新的版本号），如果事务 B 还没有 commit，那事务 A 读取的还是之前版本号的数据。</p>
 <p>通过「版本」的概念，这样就解决了脏读的问题，而「版本」其实就是对应快照的数据。</p>
 <p><strong><ruby>read committed<rt>读已提交</rt></ruby></strong> 解决了脏读，但也会有其他并发的问题。「不可重复读」：一个事务读取到另外一个事务已经提交的数据，也就是说一个事务可以看到其他事务所做的修改。</p>
@@ -399,8 +398,7 @@
             alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221202/c8d49279d79f4b5fb09d26aba8a809bd.png">
     </a><figcaption class="image-caption"> </figcaption>
     </figure></p>
-<p>而<strong><ruby>repeatable read<rt>可重复复读</rt></ruby></strong> 隔离级别会存在幻读的问题，「幻读」指的是指在一个事务内读取到了别的事务
-<strong>插入</strong>的数据，导致前后读取不一致。</p>
+<p>而<strong><ruby>repeatable read<rt>可重复复读</rt></ruby></strong> 隔离级别会存在幻读的问题，「幻读」指的是指在一个事务内读取到了别的事务<strong>插入</strong>的数据，导致前后读取不一致。</p>
 <p>在 InnoDB 引擎下的的<strong><ruby>repeatable read<rt>可重复复读</rt></ruby></strong>隔离级别下，快照读 MVCC 影响下，已经解决了幻读的问题（因为它是读历史版本的数据）。</p>
 <p>而如果是当前读（指的是<code>select * from table for update</code>），则需要配合间隙锁来解决幻读的问题。</p>
 <p>剩下的就是<strong><ruby>serializable<rt>串行</rt></ruby></strong>隔离级别了，它的最高的隔离级别，相当于不允许事务的并发，事务与事务之间执行是串行的，它的效率最低，但同时也是最安全的。</p>
@@ -446,7 +444,7 @@
 <p>对索引进行函数操作或者表达式计算会导致索引失效</p>
 </li>
 <li>
-<p>利用子查询优化超多分页场景。比如<code>limit offset</code>, n 在 MySQL 是获取 offset + n 的记录，再返回 n 条。而利用子查询则是查出 n 条，通过ID检索对应的记录出来，提高查询效率。</p>
+<p>利用子查询优化超多分页场景。比如<code>limit offset</code>, n 在 MySQL 是获取 offset + n 的记录，再返回 n 条。而利用子查询则是查出 n 条，通过 ID 检索对应的记录出来，提高查询效率。</p>
 </li>
 <li>
 <p>通过 explain 命令来查看 SQL 的执行计划，看看自己写的 SQL 是否走了索引，走了什么索引。通过 show profile 来查看 SQL 对系统资源的损耗情况（不过一般还是比较少用到的）</p>
@@ -487,7 +485,7 @@
 <p>再看看是不是有「字符串」检索的场景导致查询低效，如果是的话，可以考虑把表的数据导入至 Elasticsearch 类的搜索引擎，后续的线上查询就直接走 Elasticsearch 了。</p>
 <p><code>MySQL-&gt;Elasticsearch</code> 需要有对应的同步程序（一般就是监听 MySQL 的 binlog，解析 binlog 后导入到 Elasticsearch)。</p>
 <p>如果还不是的话，那考虑要不要根据查询条件的维度，做相对应的聚合表，线上的请求就查询聚合表的数据，不走原表。</p>
-<p>比如，用户下单后，有一份订单明细，而订单明细表的量级太大。但在产品侧(前台)透出的查询功能是以「天」维度来展示的，那就可以将每个用户的每天数据聚合起来，在聚合表就是一个用户一天只有一条汇总后的数据。查询走聚合后的表，那速度肯定很快的（聚合后的表数据量肯定比原始表要少很多）。</p>
+<p>比如，用户下单后，有一份订单明细，而订单明细表的量级太大。但在产品侧（前台）透出的查询功能是以「天」维度来展示的，那就可以将每个用户的每天数据聚合起来，在聚合表就是一个用户一天只有一条汇总后的数据。查询走聚合后的表，那速度肯定很快的（聚合后的表数据量肯定比原始表要少很多）。</p>
 <p>思路大致的就是「以空间换时间」，相同的数据换别的地方也存储一份，提高查询效率。</p>
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221202/9861ea4c29cb40a583593ce747b146d6.png" title="空间换时间" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221202/9861ea4c29cb40a583593ce747b146d6.png" data-sub-html="<h2>空间换时间</h2><p>空间换时间</p>">
         <img
@@ -544,8 +542,8 @@
     <div class="post-info">
         <div class="post-info-line">
             <div class="post-info-mod">
-                <span>更新于 2023-01-02&nbsp;<a class="git-hash" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/aeff39b2be356adf31595eea8c72d84e6c7c25d6" target="_blank" title="commit by weibin(xiaobinqt@163.com) aeff39b2be356adf31595eea8c72d84e6c7c25d6: update mysql-faq-2.md" rel="noopener noreferrer">
-                                    <i class="fas fa-hashtag fa-fw"></i>aeff39b2</a></span>
+                <span>更新于 2023-02-06&nbsp;<a class="git-hash" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/97c0742a034669736aac8d344ce70c2cc1f152a0" target="_blank" title="commit by weibin(xiaobinqt@163.com) 97c0742a034669736aac8d344ce70c2cc1f152a0: update article" rel="noopener noreferrer">
+                                    <i class="fas fa-hashtag fa-fw"></i>97c0742a</a></span>
             </div>
             <div class="post-info-license"></div>
         </div>
