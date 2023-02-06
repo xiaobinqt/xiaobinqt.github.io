@@ -83,7 +83,7 @@ math: true
 
 + 支持业务快速迭代，客户在使用过程中系统稳定运行。
 + 获得反向代理，多路复用和 node，npm，docker 等使用经验。
-+ 参与开源并贡献代码 [mojocn/base64Captcha#7c33ebb7](https://github.com/mojocn/base64Captcha/commit/7c33ebb78373a5dd5f7e9a4988e09bbcbc01bd14)，[node-red/node-red#380a0824](https://github.com/node-red/node-red/commit/380a08242af44b1ee54453790b0df076b445bbd5)。
++ 参与开源并贡献代码 [mojocn/base64Captcha#7c33ebb7](https://github.com/mojocn/base64Captcha/commit/7c33ebb78373a5dd5f7e9a4988e09bbcbc01bd14)，[node-red/node-red#380a0824](https://github.com/node-red/node-red/commit/380a08242af44b1ee54453790b0df076b445bbd5)，[node-red/node-red#fd42becb](https://github.com/node-red/node-red/commit/fd42becbdcb6546351474c4966b189d3ced68c3c)。
 
 ### xae
 
