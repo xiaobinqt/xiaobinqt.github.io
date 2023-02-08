@@ -24,8 +24,9 @@ math: true
 
 + 卫彬/男/1994
 + 本科/通信工程
-+ Github：[https://github.com/xiaobinqt](https://github.com/xiaobinqt)
 + 手机/微信：15209272743
++ Github：[https://github.com/xiaobinqt](https://github.com/xiaobinqt)
++ 个人网站：[https://xiaobinqt.github.io](https://xiaobinqt.github.io/) / [https://www.xiaobinqt.cn](https://www.xiaobinqt.cn/)
 + Email：[xiaobinqt@163.com](mailto:xiaobinqt@163.com)
 + 开源项目：[Go微信机器人](https://github.com/xiaobinqt/go-wxbot)
 
@@ -48,7 +49,7 @@ math: true
 + 熟悉 Git 版本控制软件，具有良好的编码风格和习惯，热爱开源。
 + 了解 Python 的使用，可使用 Python 进行常用脚本的编写。
 + 了解 Linux 常用命令。了解 Docker 容器的基本使用。
-+ 了解 JS、Node、npm、jQuery、CSS+DIV 盒模型等 web 前端技术。（[个人前端学习网站示例](https://html.dev.xiaobinqt.cn)）。
++ 了解 JS、Node、npm、jQuery、CSS+DIV 盒模型等 web 前端技术（[个人前端学习网站示例](https://html.dev.xiaobinqt.cn)）。
 + 了解 [wordpress](https://wordpress.com/) 的基本使用。了解常用的设计模式。
 
 ## 工作经历
