@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="2.13 cut、sort、uniq、tr 命令 # 2.13.1 cut # 概述 # cut 是列截取工具。cut 命令从文件的每一行剪切字节、字符和字段并将这些字节、字符和字段写至标准输出。
+如果不指定 file 参数，cut 命令将读取标准输入。必须指定 -b(字节) 、-c(字符) 或 -f(第几列) 标志之一。
+字符和字节的区别
+字节（byte）是计量单位，表示数据量多少，是计算机信息技术用于计量存储容量的一种计量单位，通常情况下 1 字节等于 8 位。 字符（character）计算机中使用的字母、数字、字和符号。 一般在英文状态下，一个字母或字符占用一个字节， 一个汉字占用两个字节 。
+常用选线 # 格式：cut [选项] [文件路径] 选项 功能 -b 按字节截取 -c 按字符截取，常用于中文 -d 指定以什么为分割符截取，默认为制表符 -f 通常和 -d 一起使用（表示截取第几列） 案例演示 # 截取 /etc/passwd 文件的中 root 用户的第 7 列（-d -f） 按字节截取（-b） 按字符截取（-c） 截取第一位是 1，不是 0。
+2.13.2 sort # 概述 # sort 是一个以行为单位对文件内容进行排序的工具，也可以根据不同的数据类型来排序。例如：数据和字符的排序就不一样。">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="2.13 cut、sort、uniq、tr 命令" />
+<meta property="og:description" content="2.13 cut、sort、uniq、tr 命令 # 2.13.1 cut # 概述 # cut 是列截取工具。cut 命令从文件的每一行剪切字节、字符和字段并将这些字节、字符和字段写至标准输出。
+如果不指定 file 参数，cut 命令将读取标准输入。必须指定 -b(字节) 、-c(字符) 或 -f(第几列) 标志之一。
+字符和字节的区别
+字节（byte）是计量单位，表示数据量多少，是计算机信息技术用于计量存储容量的一种计量单位，通常情况下 1 字节等于 8 位。 字符（character）计算机中使用的字母、数字、字和符号。 一般在英文状态下，一个字母或字符占用一个字节， 一个汉字占用两个字节 。
+常用选线 # 格式：cut [选项] [文件路径] 选项 功能 -b 按字节截取 -c 按字符截取，常用于中文 -d 指定以什么为分割符截取，默认为制表符 -f 通常和 -d 一起使用（表示截取第几列） 案例演示 # 截取 /etc/passwd 文件的中 root 用户的第 7 列（-d -f） 按字节截取（-b） 按字符截取（-c） 截取第一位是 1，不是 0。
+2.13.2 sort # 概述 # sort 是一个以行为单位对文件内容进行排序的工具，也可以根据不同的数据类型来排序。例如：数据和字符的排序就不一样。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://example.com/linux/docs/part2-sys-operate/2.13-cut-sort-uniq-tr/" /><meta property="article:section" content="docs" />
+
+<meta property="article:modified_time" content="2023-02-09T15:06:05+08:00" />
+<title>2.13 cut、sort、uniq、tr 命令 | Linux 学习笔记</title>
+<link rel="manifest" href="/linux/manifest.json">
+<link rel="icon" href="/linux/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/linux/book.min.44ab80b6e9fbffc4b56fa0525dd4af874d4d533ab2a985226782d7cdc8d9fd15.css" integrity="sha256-RKuAtun7/8S1b6BSXdSvh01NUzqyqYUiZ4LXzcjZ/RU=" crossorigin="anonymous">
+  <script defer src="/linux/flexsearch.min.js"></script>
+  <script defer src="/linux/zh.search.min.1c1ada430ea6a9d55b436a24d6eb890e2c6febd841fb31bec1017e75a80532d2.js" integrity="sha256-HBraQw6mqdVbQ2ok1uuJDixv69hB&#43;zG&#43;wQF&#43;dagFMtI=" crossorigin="anonymous"></script>
+
+  <script defer src="/linux/sw.min.e3338ad661715b83bfd6397040a613605d8bb26c10798773e2176216e2123560.js" integrity="sha256-4zOK1mFxW4O/1jlwQKYTYF2LsmwQeYdz4hdiFuISNWA=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/linux/"><span>Linux 学习笔记</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+
+
+
+  
+<ul>
+  
+  <li>
+    <a href="https://github.com/xiaobinqt"  target="_blank" rel="noopener">
+        GitHub
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第一部分 基础知识</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.1-linux-release/" class="">1.1 简介和常见发行版</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.2-common-dir/" class="">1.2 常见目录</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第二部分 系统操作</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.1-help/" class="">2.1 帮助命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.2-ls/" class="">2.2 ls 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.3-shutdown/" class="">2.3 关机</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.4-cp/" class="">2.4 cp 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.5-file-view/" class="">2.5 文件查看命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.6-backup-compression/" class="">2.6 压缩和打包</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.7-vim/" class="">2.7 vim</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.8-user-manage/" class="">2.8 用户管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.9-switch-user/" class="">2.9 切换用户</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.10-file-dir/" class="">2.10 文件和文件夹</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.11-awk/" class="">2.11 awk 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.12-sed/" class="">2.12 sed 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.13-cut-sort-uniq-tr/" class="active">2.13 cut、sort、uniq、tr 命令</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/linux/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>2.13 cut、sort、uniq、tr 命令</strong>
+
+  <label for="toc-control">
+    
+    <img src="/linux/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#213-cutsortuniqtr-命令">2.13 cut、sort、uniq、tr 命令</a>
+      <ul>
+        <li><a href="#2131-cut">2.13.1 cut</a>
+          <ul>
+            <li><a href="#概述">概述</a></li>
+            <li><a href="#常用选线">常用选线</a></li>
+            <li><a href="#案例演示">案例演示</a></li>
+          </ul>
+        </li>
+        <li><a href="#2132-sort">2.13.2 sort</a>
+          <ul>
+            <li><a href="#概述-1">概述</a></li>
+            <li><a href="#常用选线-1">常用选线</a></li>
+            <li><a href="#案例演示-1">案例演示</a></li>
+          </ul>
+        </li>
+        <li><a href="#2133-uniq">2.13.3 uniq</a>
+          <ul>
+            <li><a href="#概述-2">概述</a></li>
+            <li><a href="#常用选线-2">常用选线</a></li>
+            <li><a href="#案例演示-2">案例演示</a></li>
+          </ul>
+        </li>
+        <li><a href="#2134-tr">2.13.4 tr</a>
+          <ul>
+            <li><a href="#概述-3">概述</a></li>
+            <li><a href="#常用选线-3">常用选线</a></li>
+            <li><a href="#案例演示-3">案例演示</a></li>
+          </ul>
+        </li>
+        <li><a href="#2135-面试题">2.13.5 面试题</a>
+          <ul>
+            <li><a href="#1-统计当前连接主机数">1. 统计当前连接主机数</a></li>
+            <li><a href="#2-统计当前主机的连接状态">2. 统计当前主机的连接状态</a></li>
+          </ul>
+        </li>
+        <li><a href="#2136-总结">2.13.6 总结</a>
+          <ul>
+            <li><a href="#cut-表示截取列">cut ：表示截取列</a></li>
+            <li><a href="#sort表示排序">sort：表示排序</a></li>
+            <li><a href="#uniq表示去重">uniq：表示去重</a></li>
+            <li><a href="#tr表示修改字符">tr：表示修改字符</a></li>
+          </ul>
+        </li>
+        <li><a href="#参考">参考</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown"><h1 id="213-cutsortuniqtr-命令">
+  2.13 cut、sort、uniq、tr 命令
+  <a class="anchor" href="#213-cutsortuniqtr-%e5%91%bd%e4%bb%a4">#</a>
+</h1>
+<h2 id="2131-cut">
+  2.13.1 cut
+  <a class="anchor" href="#2131-cut">#</a>
+</h2>
+<h3 id="概述">
+  概述
+  <a class="anchor" href="#%e6%a6%82%e8%bf%b0">#</a>
+</h3>
+<p>cut 是<strong>列截取</strong>工具。cut 命令从文件的每一行剪切字节、字符和字段并将这些字节、字符和字段写至标准输出。</p>
+<p>如果不指定 file 参数，cut 命令将读取标准输入。必须指定 -b(字节) 、-c(字符) 或 -f(第几列) 标志之一。</p>
+<p>字符和字节的区别</p>
+<ul>
+<li>字节（byte）是计量单位，表示数据量多少，是计算机信息技术用于计量存储容量的一种计量单位，通常情况下 1 字节等于 8 位。</li>
+<li>字符（character）计算机中使用的字母、数字、字和符号。</li>
+</ul>
+<p>一般在英文状态下，一个字母或字符占用一个字节， 一个汉字占用两个字节 。</p>
+<h3 id="常用选线">
+  常用选线
+  <a class="anchor" href="#%e5%b8%b8%e7%94%a8%e9%80%89%e7%ba%bf">#</a>
+</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>格式：cut <span style="color:#f92672">[</span>选项<span style="color:#f92672">]</span> <span style="color:#f92672">[</span>文件路径<span style="color:#f92672">]</span>
+</span></span></code></pre></div><table>
+<thead>
+<tr>
+<th>选项</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-b</td>
+<td>按字节截取</td>
+</tr>
+<tr>
+<td>-c</td>
+<td>按字符截取，常用于中文</td>
+</tr>
+<tr>
+<td>-d</td>
+<td>指定以什么为分割符截取，默认为制表符</td>
+</tr>
+<tr>
+<td>-f</td>
+<td>通常和 -d 一起使用（表示截取第几列）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="案例演示">
+  案例演示
+  <a class="anchor" href="#%e6%a1%88%e4%be%8b%e6%bc%94%e7%a4%ba">#</a>
+</h3>
+<ol>
+<li>截取 /etc/passwd 文件的中 root 用户的第 7 列（-d -f）</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230209/1f8ca1bb3b4b4406bb576f898c421c3e.png" width=  /></div>
+<ol start="2">
+<li>按字节截取（-b）</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230209/fada999aaed7440d874c42165c6979f8.png" width=  /></div>
+<ol start="3">
+<li>按字符截取（-c）</li>
+</ol>
+<p>截取第一位是 1，不是 0。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230209/5ab7ad80fb5f4925b0b4f0786ef5251c.png" width=  /></div>
+<h2 id="2132-sort">
+  2.13.2 sort
+  <a class="anchor" href="#2132-sort">#</a>
+</h2>
+<h3 id="概述-1">
+  概述
+  <a class="anchor" href="#%e6%a6%82%e8%bf%b0-1">#</a>
+</h3>
+<p>sort 是一个以<strong>行为单位</strong>对文件内容进行排序的工具，也可以根据不同的数据类型来排序。例如：数据和字符的排序就不一样。</p>
+<h3 id="常用选线-1">
+  常用选线
+  <a class="anchor" href="#%e5%b8%b8%e7%94%a8%e9%80%89%e7%ba%bf-1">#</a>
+</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>格式：sort <span style="color:#f92672">[</span>选项<span style="color:#f92672">]</span> <span style="color:#f92672">[</span>文件路径<span style="color:#f92672">]</span>
+</span></span></code></pre></div><table>
+<thead>
+<tr>
+<th>选项</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-t</td>
+<td>指定分隔符，默认使用[Tab]键或空格分隔</td>
+</tr>
+<tr>
+<td>-k</td>
+<td>指定排序区域，哪个区间排序</td>
+</tr>
+<tr>
+<td>-n</td>
+<td>按照数字进行排序，默认是以字母形式排序</td>
+</tr>
+<tr>
+<td>-u</td>
+<td>等同于uniq，表示相同的数据仅显示一行，注意：如果行尾有空格就去重就不成功</td>
+</tr>
+<tr>
+<td>-r</td>
+<td>反向排序，默认升序</td>
+</tr>
+<tr>
+<td>-o</td>
+<td>将排序的结果转存至指定文件</td>
+</tr>
+</tbody>
+</table>
+<h3 id="案例演示-1">
+  案例演示
+  <a class="anchor" href="#%e6%a1%88%e4%be%8b%e6%bc%94%e7%a4%ba-1">#</a>
+</h3>
+<ol>
+<li>不加任何选项，默认按照第一列升序，字母的话就是从 a 到 z</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230209/276b39023d1d4b668941cc100a87e4c4.png" width=800  /></div>
+<ol start="2">
+<li>指定分隔符（-t），指定排序的列（-k），升序排列</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230209/e6ba7cedc5a24a97a8df22a0ad5d9923.png" width=  /></div>
+<ol start="3">
+<li>指定分隔符，指定排序的列，降序排列（-r）</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230209/88bdf9307f234519bc12f2707ed794c0.png" width=  /></div>
+<ol start="4">
+<li>指定分隔符，指定排序的列，降序排列，并将排序后的内容输入到/home/ydq/ydq.txt中（-o）</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230209/e3337a7014534c7bbebd4b9a430b8210.png" width=  /></div>
+<ol start="5">
+<li>去掉文件中重复（可以是不连续的）的行（-u）</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230209/e90ac7c4e4114b758abb15f06bc6ea80.png" width=  /></div>
+<h2 id="2133-uniq">
+  2.13.3 uniq
+  <a class="anchor" href="#2133-uniq">#</a>
+</h2>
+<h3 id="概述-2">
+  概述
+  <a class="anchor" href="#%e6%a6%82%e8%bf%b0-2">#</a>
+</h3>
+<p>uniq 主要用于去除<strong>连续</strong>的重复行，注意，是连续的行。通常和 sort 结合使用，先排序使之变成连续的行，再执行去重操作，否则不连续的重复行它不能去重。</p>
+<h3 id="常用选线-2">
+  常用选线
+  <a class="anchor" href="#%e5%b8%b8%e7%94%a8%e9%80%89%e7%ba%bf-2">#</a>
+</h3>
+<p>不加选项的话，是直接去掉重复的行。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>格式：uniq <span style="color:#f92672">[</span>选项<span style="color:#f92672">]</span> 文件路径
+</span></span></code></pre></div><table>
+<thead>
+<tr>
+<th>选项</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-c</td>
+<td>统计重复的行（在它前面标上重复的次数）</td>
+</tr>
+<tr>
+<td>-d</td>
+<td>仅显示重复的行</td>
+</tr>
+<tr>
+<td>-u</td>
+<td>仅显示出现一次的行（不重复的行）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="案例演示-2">
+  案例演示
+  <a class="anchor" href="#%e6%a1%88%e4%be%8b%e6%bc%94%e7%a4%ba-2">#</a>
+</h3>
+<ol>
+<li>统计连续重复的行（-c）</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230209/d96f1e07371f42d3b831ae22e52d485a.png" width=800  /></div>
+<ol start="2">
+<li>显示连续重复的行（-d），显示不连续重复的行（-u）</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230209/27906254f9ab4c6d91a3d0a15f1d1d1c.png" width=800  /></div>
+<ol start="3">
+<li>查看当前登录用户，去掉重复的行</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230209/82a80bc4e7784967a95ebb542ed070f3.png" width=800  /></div>
+<ol start="4">
+<li>统计历史登录过系统的用户</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230209/6b46e1899c004a5fb66c52c8f696a715.png" width=800  /></div>
+<h2 id="2134-tr">
+  2.13.4 tr
+  <a class="anchor" href="#2134-tr">#</a>
+</h2>
+<p>tr 是修改工具，可以转换或删除文件中的字符。</p>
+<h3 id="概述-3">
+  概述
+  <a class="anchor" href="#%e6%a6%82%e8%bf%b0-3">#</a>
+</h3>
+<ul>
+<li>可以用一个字符来替换另一个字符</li>
+<li>可以完全除去一些字符</li>
+<li>可以用来去掉重复的字符</li>
+<li>从标准输入中替换，缩减和注释或删除字符，并将结果写到标准输出</li>
+</ul>
+<h3 id="常用选线-3">
+  常用选线
+  <a class="anchor" href="#%e5%b8%b8%e7%94%a8%e9%80%89%e7%ba%bf-3">#</a>
+</h3>
+<p>从标准输入中替换、缩减和/或删除字符，并将结果写到标准输出。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>格式： tr <span style="color:#f92672">[</span>选项<span style="color:#f92672">]</span> <span style="color:#e6db74">&#39;字符集1&#39;</span> <span style="color:#e6db74">&#39;字符集2&#39;</span>
+</span></span></code></pre></div><table>
+<thead>
+<tr>
+<th>选项</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-d</td>
+<td>删除字符</td>
+</tr>
+<tr>
+<td>-s</td>
+<td>删除所有重复出现的字符，只保留一个（如果是空行，全部去掉）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="案例演示-3">
+  案例演示
+  <a class="anchor" href="#%e6%a1%88%e4%be%8b%e6%bc%94%e7%a4%ba-3">#</a>
+</h3>
+<ol>
+<li>将所有小写的改成大写</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230209/e01fb796535e4260b41f80f5d91e57f3.png" width=  /></div>
+<ol start="2">
+<li>替换字母，一一对应替换</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230209/d1070f9fd64841f69beb8f087ea719da.png" width=800  /></div>
+<ol start="3">
+<li>替换字符，不是一一对应</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230209/95fcffade6ae4454856d207e920f6490.png" width=650  /></div>
+<ol start="4">
+<li>将字符替换成特殊字符</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230209/14f445e703ef4e1eb5df196245328cd8.png" width=650  /></div>
+<ol start="5">
+<li>删除字符（-d）</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230209/5a69b8ba59d44431b8878bdb811f1af1.png" width=  /></div>
+<ol start="6">
+<li>对字符去重（-s）</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230209/ca38aa897cff41abb3a8bd31ed041830.png" width=650  /></div>
+<ol start="7">
+<li>去掉所有的空行</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230209/8e4b494721514dba9ed15e2fbc81e101.png" width=650  /></div>
+<h2 id="2135-面试题">
+  2.13.5 面试题
+  <a class="anchor" href="#2135-%e9%9d%a2%e8%af%95%e9%a2%98">#</a>
+</h2>
+<h3 id="1-统计当前连接主机数">
+  1. 统计当前连接主机数
+  <a class="anchor" href="#1-%e7%bb%9f%e8%ae%a1%e5%bd%93%e5%89%8d%e8%bf%9e%e6%8e%a5%e4%b8%bb%e6%9c%ba%e6%95%b0">#</a>
+</h3>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230209/1a73a178c3f846b7bfc05688ee6523d0.png" width=  /></div>
+<h3 id="2-统计当前主机的连接状态">
+  2. 统计当前主机的连接状态
+  <a class="anchor" href="#2-%e7%bb%9f%e8%ae%a1%e5%bd%93%e5%89%8d%e4%b8%bb%e6%9c%ba%e7%9a%84%e8%bf%9e%e6%8e%a5%e7%8a%b6%e6%80%81">#</a>
+</h3>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230209/98e303ef1bf24baa8b5eb832f6264591.png" width=  /></div>
+<h2 id="2136-总结">
+  2.13.6 总结
+  <a class="anchor" href="#2136-%e6%80%bb%e7%bb%93">#</a>
+</h2>
+<h3 id="cut-表示截取列">
+  cut ：表示截取列
+  <a class="anchor" href="#cut-%e8%a1%a8%e7%a4%ba%e6%88%aa%e5%8f%96%e5%88%97">#</a>
+</h3>
+<p>可以按照字符（-c）按照字节（-b）或者根据分割符（-d）来选取要截取的列（-f）。</p>
+<h3 id="sort表示排序">
+  sort：表示排序
+  <a class="anchor" href="#sort%e8%a1%a8%e7%a4%ba%e6%8e%92%e5%ba%8f">#</a>
+</h3>
+<ul>
+<li>默认以字母排序，数字排序需要加选项（-n），反向排序需要加选项（-r）。</li>
+<li>还可以选择按照哪一列进行排序，需要先定义分割符（-t），然后根据分割符去选取对应的列（-k），最后进行排序。</li>
+<li>可以将排序后的内容输入到其它文件，使用选项（-o）可以指定需要注入的文件名。</li>
+<li>还可以将进行去重（-u），可以是不连续的行，进行去重。</li>
+</ul>
+<h3 id="uniq表示去重">
+  uniq：表示去重
+  <a class="anchor" href="#uniq%e8%a1%a8%e7%a4%ba%e5%8e%bb%e9%87%8d">#</a>
+</h3>
+<ul>
+<li>主要注意的是它必须是连续的行，不然无法去重</li>
+<li>可以根据选项，选择显示不重复的行（-u）</li>
+<li>还可以选择显示重复的行（-d）</li>
+<li>还可以统计连续重复的数量（-c）</li>
+</ul>
+<h3 id="tr表示修改字符">
+  tr：表示修改字符
+  <a class="anchor" href="#tr%e8%a1%a8%e7%a4%ba%e4%bf%ae%e6%94%b9%e5%ad%97%e7%ac%a6">#</a>
+</h3>
+<ul>
+<li>可以修改对应的字符，按照字符对应一一修改，如果有重复的字符，它会按照最后一个字符对应的修改字符进行替换，如果对应的字符不够时，它会将修改的最后一个字符进替换。</li>
+<li>还可以进行删除（-d），删除文本中所对应的字符</li>
+<li>还可以进行去重（-s），但是去重的字符必须是连续在一起的两个字符（会保留其中一个），不然无法去重成功。</li>
+</ul>
+<h2 id="参考">
+  参考
+  <a class="anchor" href="#%e5%8f%82%e8%80%83">#</a>
+</h2>
+<ul>
+<li>
+  <a href="https://blog.csdn.net/m0_57515995/article/details/125713394">shell之常用工具（cut、sort、uniq、tr）</a></li>
+</ul>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/c7f489a4297205c29275178126ff7f9a85575e23" title='最后修改者 weibin | February 9, 2023' target="_blank" rel="noopener">
+      <img src="/linux/svg/calendar.svg" class="book-icon" alt="Calendar" />
+      <span>February 9, 2023</span>
+    </a>
+  </div>
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/book.linux/docs/part2-sys-operate/2.13-cut-sort-uniq-tr.md" target="_blank" rel="noopener">
+      <img src="/linux/svg/edit.svg" class="book-icon" alt="Edit" />
+      <span>编辑本页</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#213-cutsortuniqtr-命令">2.13 cut、sort、uniq、tr 命令</a>
+      <ul>
+        <li><a href="#2131-cut">2.13.1 cut</a>
+          <ul>
+            <li><a href="#概述">概述</a></li>
+            <li><a href="#常用选线">常用选线</a></li>
+            <li><a href="#案例演示">案例演示</a></li>
+          </ul>
+        </li>
+        <li><a href="#2132-sort">2.13.2 sort</a>
+          <ul>
+            <li><a href="#概述-1">概述</a></li>
+            <li><a href="#常用选线-1">常用选线</a></li>
+            <li><a href="#案例演示-1">案例演示</a></li>
+          </ul>
+        </li>
+        <li><a href="#2133-uniq">2.13.3 uniq</a>
+          <ul>
+            <li><a href="#概述-2">概述</a></li>
+            <li><a href="#常用选线-2">常用选线</a></li>
+            <li><a href="#案例演示-2">案例演示</a></li>
+          </ul>
+        </li>
+        <li><a href="#2134-tr">2.13.4 tr</a>
+          <ul>
+            <li><a href="#概述-3">概述</a></li>
+            <li><a href="#常用选线-3">常用选线</a></li>
+            <li><a href="#案例演示-3">案例演示</a></li>
+          </ul>
+        </li>
+        <li><a href="#2135-面试题">2.13.5 面试题</a>
+          <ul>
+            <li><a href="#1-统计当前连接主机数">1. 统计当前连接主机数</a></li>
+            <li><a href="#2-统计当前主机的连接状态">2. 统计当前主机的连接状态</a></li>
+          </ul>
+        </li>
+        <li><a href="#2136-总结">2.13.6 总结</a>
+          <ul>
+            <li><a href="#cut-表示截取列">cut ：表示截取列</a></li>
+            <li><a href="#sort表示排序">sort：表示排序</a></li>
+            <li><a href="#uniq表示去重">uniq：表示去重</a></li>
+            <li><a href="#tr表示修改字符">tr：表示修改字符</a></li>
+          </ul>
+        </li>
+        <li><a href="#参考">参考</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
