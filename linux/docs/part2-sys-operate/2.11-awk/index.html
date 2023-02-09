@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="2.11 awk 命令 # awk 是一种处理文本文件的语言，是一个强大的文件分析工具。
+awk 比较倾向于将一行分成多个 “字段” 进行处理。awk 信息的读入是逐行读取的，执行结果可以通过 print 将字段数据打印显示。在使用 awk 命令的过程中，可以使用逻辑操作符，&amp;&amp;、|| 、!，还可以进行简单的数学运算，如&#43;、-、*、/、%、^分别表示加、减、乘、除、取余和乘方。
+2.11.1 使用格式 # awk 「选项」 &#39;模式或条件{操作}&#39; 文件名 # 格式1 awk -f 脚本文件 文件名 # 格式2 2.11.2 内置变量 # 内置变量 功能 NF 当前处理的行的字段个数（就是：有多少列） NR 当前处理的行的行号（就是：有多少行） FNR 读取文件的记录数（行号），从1开始，新的文件重新从1开始计数 $0 当前处理的行的整行内容（就是：表示一行的内容） $n 当前处理行的第n个字段（就是：第n列） FILENAME 被处理的文件名 FS 指定每行的字段分隔符，默认为空格或制表位（相当于选项 -F ） OFS 输出字段的分隔符，默认也是空格 RS 行分割符。awk 从文件上读取资料时，将根据 RS 的定义把资料切割成许多条记录，而 awk 一次仅读取一条记录，预设值是\n ORS 输出分割符，默认也是换行符 $n 用法 # n 为数字，数字为几就表示第几列。
+直接输入全部内容。 要求输出的是第 1 列。但是没有指定分隔符，awk 默认是以空格位分割。所有它认为这整个一行都是一列。 设定分割符号:，输出第 5 列。 设定分割符号x，输出第 1 列。 输出时，显示列的空格。 设置多个分割符。 $0 用法 # $0 表示整行。">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="2.11 awk 命令" />
+<meta property="og:description" content="2.11 awk 命令 # awk 是一种处理文本文件的语言，是一个强大的文件分析工具。
+awk 比较倾向于将一行分成多个 “字段” 进行处理。awk 信息的读入是逐行读取的，执行结果可以通过 print 将字段数据打印显示。在使用 awk 命令的过程中，可以使用逻辑操作符，&amp;&amp;、|| 、!，还可以进行简单的数学运算，如&#43;、-、*、/、%、^分别表示加、减、乘、除、取余和乘方。
+2.11.1 使用格式 # awk 「选项」 &#39;模式或条件{操作}&#39; 文件名 # 格式1 awk -f 脚本文件 文件名 # 格式2 2.11.2 内置变量 # 内置变量 功能 NF 当前处理的行的字段个数（就是：有多少列） NR 当前处理的行的行号（就是：有多少行） FNR 读取文件的记录数（行号），从1开始，新的文件重新从1开始计数 $0 当前处理的行的整行内容（就是：表示一行的内容） $n 当前处理行的第n个字段（就是：第n列） FILENAME 被处理的文件名 FS 指定每行的字段分隔符，默认为空格或制表位（相当于选项 -F ） OFS 输出字段的分隔符，默认也是空格 RS 行分割符。awk 从文件上读取资料时，将根据 RS 的定义把资料切割成许多条记录，而 awk 一次仅读取一条记录，预设值是\n ORS 输出分割符，默认也是换行符 $n 用法 # n 为数字，数字为几就表示第几列。
+直接输入全部内容。 要求输出的是第 1 列。但是没有指定分隔符，awk 默认是以空格位分割。所有它认为这整个一行都是一列。 设定分割符号:，输出第 5 列。 设定分割符号x，输出第 1 列。 输出时，显示列的空格。 设置多个分割符。 $0 用法 # $0 表示整行。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://example.com/linux/docs/part2-sys-operate/2.11-awk/" /><meta property="article:section" content="docs" />
+
+<meta property="article:modified_time" content="2023-02-09T15:06:05+08:00" />
+<title>2.11 awk 命令 | Linux 学习笔记</title>
+<link rel="manifest" href="/linux/manifest.json">
+<link rel="icon" href="/linux/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/linux/book.min.44ab80b6e9fbffc4b56fa0525dd4af874d4d533ab2a985226782d7cdc8d9fd15.css" integrity="sha256-RKuAtun7/8S1b6BSXdSvh01NUzqyqYUiZ4LXzcjZ/RU=" crossorigin="anonymous">
+  <script defer src="/linux/flexsearch.min.js"></script>
+  <script defer src="/linux/zh.search.min.1c1ada430ea6a9d55b436a24d6eb890e2c6febd841fb31bec1017e75a80532d2.js" integrity="sha256-HBraQw6mqdVbQ2ok1uuJDixv69hB&#43;zG&#43;wQF&#43;dagFMtI=" crossorigin="anonymous"></script>
+
+  <script defer src="/linux/sw.min.e3338ad661715b83bfd6397040a613605d8bb26c10798773e2176216e2123560.js" integrity="sha256-4zOK1mFxW4O/1jlwQKYTYF2LsmwQeYdz4hdiFuISNWA=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/linux/"><span>Linux 学习笔记</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+
+
+
+  
+<ul>
+  
+  <li>
+    <a href="https://github.com/xiaobinqt"  target="_blank" rel="noopener">
+        GitHub
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第一部分 基础知识</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.1-linux-release/" class="">1.1 简介和常见发行版</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.2-common-dir/" class="">1.2 常见目录</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第二部分 系统操作</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.1-help/" class="">2.1 帮助命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.2-ls/" class="">2.2 ls 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.3-shutdown/" class="">2.3 关机</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.4-cp/" class="">2.4 cp 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.5-file-view/" class="">2.5 文件查看命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.6-backup-compression/" class="">2.6 压缩和打包</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.7-vim/" class="">2.7 vim</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.8-user-manage/" class="">2.8 用户管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.9-switch-user/" class="">2.9 切换用户</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.10-file-dir/" class="">2.10 文件和文件夹</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.11-awk/" class="active">2.11 awk 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.12-sed/" class="">2.12 sed 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.13-cut-sort-uniq-tr/" class="">2.13 cut、sort、uniq、tr 命令</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/linux/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>2.11 awk 命令</strong>
+
+  <label for="toc-control">
+    
+    <img src="/linux/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#211-awk-命令">2.11 awk 命令</a>
+      <ul>
+        <li><a href="#2111-使用格式">2.11.1 使用格式</a></li>
+        <li><a href="#2112-内置变量">2.11.2 内置变量</a>
+          <ul>
+            <li><a href="#n-用法">$n 用法</a></li>
+            <li><a href="#0-用法">$0 用法</a></li>
+            <li><a href="#nf-和-nr-用法">NF 和 NR 用法</a></li>
+            <li><a href="#fnr-用法">FNR 用法</a></li>
+            <li><a href="#rs-用法">RS 用法</a></li>
+          </ul>
+        </li>
+        <li><a href="#2113-begin-和-end-用法">2.11.3 BEGIN 和 END 用法</a>
+          <ul>
+            <li><a href="#常见用法">常见用法</a></li>
+          </ul>
+        </li>
+        <li><a href="#2114-包含与不包含">2.11.4 包含与不包含</a></li>
+        <li><a href="#2115-数值与字符串比较">2.11.5 数值与字符串比较</a>
+          <ul>
+            <li><a href="#逻辑运算">逻辑运算</a></li>
+          </ul>
+        </li>
+        <li><a href="#2116-常见问题">2.11.6 常见问题</a>
+          <ul>
+            <li><a href="#获取本机-ip-地址">获取本机 ip 地址</a></li>
+            <li><a href="#查看本机流量有多少字节">查看本机流量有多少字节</a></li>
+            <li><a href="#查看根分区的可用量">查看根分区的可用量</a></li>
+          </ul>
+        </li>
+        <li><a href="#2117-总结">2.11.7 总结</a></li>
+        <li><a href="#参考">参考</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown"><h1 id="211-awk-命令">
+  2.11 awk 命令
+  <a class="anchor" href="#211-awk-%e5%91%bd%e4%bb%a4">#</a>
+</h1>
+<p>awk 是一种处理文本文件的语言，是一个强大的文件分析工具。</p>
+<p>awk 比较倾向于将一行分成多个 “字段” 进行处理。awk 信息的读入是逐行读取的，执行结果可以通过 print 将字段数据打印显示。在使用 awk 命令的过程中，可以使用逻辑操作符，<code>&amp;&amp;</code>、<code>||</code> 、<code>!</code>，还可以进行简单的数学运算，如<code>+</code>、<code>-</code>、<code>*</code>、<code>/</code>、<code>%</code>、<code>^</code>分别表示加、减、乘、除、取余和乘方。</p>
+<h2 id="2111-使用格式">
+  2.11.1 使用格式
+  <a class="anchor" href="#2111-%e4%bd%bf%e7%94%a8%e6%a0%bc%e5%bc%8f">#</a>
+</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>awk 「选项」 <span style="color:#e6db74">&#39;模式或条件{操作}&#39;</span> 文件名 <span style="color:#75715e"># 格式1</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>awk -f 脚本文件 文件名 <span style="color:#75715e"># 格式2</span>
+</span></span></code></pre></div><h2 id="2112-内置变量">
+  2.11.2 内置变量
+  <a class="anchor" href="#2112-%e5%86%85%e7%bd%ae%e5%8f%98%e9%87%8f">#</a>
+</h2>
+<table>
+<thead>
+<tr>
+<th>内置变量</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NF</td>
+<td>当前处理的行的字段个数（就是：有多少列）</td>
+</tr>
+<tr>
+<td>NR</td>
+<td>当前处理的行的行号（就是：有多少行）</td>
+</tr>
+<tr>
+<td>FNR</td>
+<td>读取文件的记录数（行号），从1开始，新的文件重新从1开始计数</td>
+</tr>
+<tr>
+<td>$0</td>
+<td>当前处理的行的整行内容（就是：表示一行的内容）</td>
+</tr>
+<tr>
+<td>$n</td>
+<td>当前处理行的第n个字段（就是：第n列）</td>
+</tr>
+<tr>
+<td>FILENAME</td>
+<td>被处理的文件名</td>
+</tr>
+<tr>
+<td>FS</td>
+<td>指定每行的字段分隔符，默认为空格或制表位（相当于选项 -F ）</td>
+</tr>
+<tr>
+<td>OFS</td>
+<td>输出字段的分隔符，默认也是空格</td>
+</tr>
+<tr>
+<td>RS</td>
+<td>行分割符。awk 从文件上读取资料时，将根据 RS 的定义把资料切割成许多条记录，而 awk 一次仅读取一条记录，预设值是<code>\n</code></td>
+</tr>
+<tr>
+<td>ORS</td>
+<td>输出分割符，默认也是换行符</td>
+</tr>
+</tbody>
+</table>
+<h3 id="n-用法">
+  $n 用法
+  <a class="anchor" href="#n-%e7%94%a8%e6%b3%95">#</a>
+</h3>
+<p>n 为数字，数字为几就表示第几列。</p>
+<ol>
+<li>直接输入全部内容。</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230207/97c7e287194b4bf38cf611cb493361da.png" width=  /></div>
+<ol start="2">
+<li>要求输出的是第 1 列。但是没有指定分隔符，awk 默认是以空格位分割。所有它认为这整个一行都是一列。</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230207/3b89da489910447180c987cadef98ee2.png" width=  /></div>
+<ol start="3">
+<li>设定分割符号<code>:</code>，输出第 5 列。</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230207/7fb9b16f75c94a1b8ad0bcb8fdf1fe7b.png" width=  /></div>
+<ol start="4">
+<li>设定分割符号<code>x</code>，输出第 1 列。</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230207/6b15059118444e1da0f608cede92789c.png" width=  /></div>
+<ol start="5">
+<li>输出时，显示列的空格。</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230207/3d5d2948f36544e09af80e1cb0076dfb.png" width=850  /></div>
+<ol start="6">
+<li>设置多个分割符。</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230207/233215aa460742a4a60704b029d1db59.png" width=800  /></div>
+<h3 id="0-用法">
+  $0 用法
+  <a class="anchor" href="#0-%e7%94%a8%e6%b3%95">#</a>
+</h3>
+<p>$0 表示整行。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230207/84fb10b564d749daa41b6ca7f1e696f9.png" width=  /></div>
+<h3 id="nf-和-nr-用法">
+  NF 和 NR 用法
+  <a class="anchor" href="#nf-%e5%92%8c-nr-%e7%94%a8%e6%b3%95">#</a>
+</h3>
+<p>NF 表示该处理的行序号是多少，表示多少列。NR 表示该处理的行，有多少行。</p>
+<ol>
+<li>打印每一行的列数。</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230207/7f8206c9bc894ecbac1068b2ea267f44.png" width=850  /></div>
+<ol start="2">
+<li>显示行号。</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230207/43d6dd1962f3404d9d8ab8373b28e9d6.png" width=850  /></div>
+<ol start="3">
+<li>显示行号，并显示每一行的内容。</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230207/44cf28e626364ebd91623b7ee54942ba.png" width=  /></div>
+<ol start="4">
+<li>打印第 2 行，不加 print 也一样，默认就是打印。</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230207/185220cc2f954add9d5d7593a01e8720.png" width=  /></div>
+<ol start="5">
+<li>打印第 2 行的第 1 列。</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230208/9002fe4f2d8544b39564a30d5ca0c046.png" width=800  /></div>
+<ol start="6">
+<li>打印最后一列。</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230208/5de72e539b824d96a70c8de50f08bc83.png" width=800  /></div>
+<ol start="7">
+<li>打印总行数。</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230208/fb5d950bf9a74a1f9cc9d3afd04a92a8.png" width=800  /></div>
+<ol start="8">
+<li>打印文件最后一行。</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230208/a9028b3351a94e5e9202473f142e734e.png" width=  /></div>
+<ol start="9">
+<li>加上文字描述行数和列数。</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230208/be65579345c14316b6f0054da1cb8ff3.png" width=750  /></div>
+<h3 id="fnr-用法">
+  FNR 用法
+  <a class="anchor" href="#fnr-%e7%94%a8%e6%b3%95">#</a>
+</h3>
+<p>可以看到当有多个文件时，序号会分别标好每一个文件内容的行号，不同文件会从头开始。（NR会连续在一起）。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230208/c26bc11305734769a6f9bc62b2c6a1d7.png" width=800  /></div>
+<h3 id="rs-用法">
+  RS 用法
+  <a class="anchor" href="#rs-%e7%94%a8%e6%b3%95">#</a>
+</h3>
+<p>指定以什么为换行符，这里指定是冒号，指定的必须是原文里存在的字符。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230208/eec20ded6a8d4a078881dbeef8997305.png" width=800  /></div>
+<h2 id="2113-begin-和-end-用法">
+  2.11.3 BEGIN 和 END 用法
+  <a class="anchor" href="#2113-begin-%e5%92%8c-end-%e7%94%a8%e6%b3%95">#</a>
+</h2>
+<p>逐行执行开始之前执行什么任务，结束之后再执行什么任务，用 BEGIN、END。</p>
+<ul>
+<li>BEGIN：一般用来做初始化操作，仅在读取数据记录之前执行一次。</li>
+<li>END：一般用来做汇总操作，仅在读取完数据记录之后执行一次。</li>
+</ul>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230208/4c905ae9566c437da23655e748a8a960.png" width=800  /></div>
+<h3 id="常见用法">
+  常见用法
+  <a class="anchor" href="#%e5%b8%b8%e8%a7%81%e7%94%a8%e6%b3%95">#</a>
+</h3>
+<ol>
+<li>在打印之前定义字段分割符为冒号<code>:</code>。</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230208/41807d50da1946369d480c12a316c086.png" width=800  /></div>
+<ol start="2">
+<li>OFS 定义了输出时以什么分隔，$1$2 中间要用逗号分隔，因为逗号默认被映射为 OFS 变量，而这个变量默认是空格。</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230208/fd2a0a75478e4e02b3322eab6a55f4ea.png" width=800  /></div>
+<ol start="3">
+<li>把多行合并成一行输出，输出的时候自定义以空格分隔每行，本来默认的是回车键。</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230208/5113512d5c3e4d22b66a0f0ec906fbc0.png" width=  /></div>
+<h2 id="2114-包含与不包含">
+  2.11.4 包含与不包含
+  <a class="anchor" href="#2114-%e5%8c%85%e5%90%ab%e4%b8%8e%e4%b8%8d%e5%8c%85%e5%90%ab">#</a>
+</h2>
+<p>用<code>~</code>表示包含，用<code>!~</code>表示不包含。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230208/e7a9dd2b55a54ba7bdda7194185a7100.png" width=  /></div>
+<h2 id="2115-数值与字符串比较">
+  2.11.5 数值与字符串比较
+  <a class="anchor" href="#2115-%e6%95%b0%e5%80%bc%e4%b8%8e%e5%ad%97%e7%ac%a6%e4%b8%b2%e6%af%94%e8%be%83">#</a>
+</h2>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230208/397242fed20647c39b064e19b248612a.png" width=  /></div>
+<h3 id="逻辑运算">
+  逻辑运算
+  <a class="anchor" href="#%e9%80%bb%e8%be%91%e8%bf%90%e7%ae%97">#</a>
+</h3>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230208/c7d824316c0a4beb909dd1b553d4ea5b.png" width=  /></div>
+<h2 id="2116-常见问题">
+  2.11.6 常见问题
+  <a class="anchor" href="#2116-%e5%b8%b8%e8%a7%81%e9%97%ae%e9%a2%98">#</a>
+</h2>
+<h3 id="获取本机-ip-地址">
+  获取本机 ip 地址
+  <a class="anchor" href="#%e8%8e%b7%e5%8f%96%e6%9c%ac%e6%9c%ba-ip-%e5%9c%b0%e5%9d%80">#</a>
+</h3>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230208/39e936b7caf74ad8b8840d9f3d468612.png" width=  /></div>
+<h3 id="查看本机流量有多少字节">
+  查看本机流量有多少字节
+  <a class="anchor" href="#%e6%9f%a5%e7%9c%8b%e6%9c%ac%e6%9c%ba%e6%b5%81%e9%87%8f%e6%9c%89%e5%a4%9a%e5%b0%91%e5%ad%97%e8%8a%82">#</a>
+</h3>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230208/fc581ae54de34fdbac12ce03d2899b37.png" width=  /></div>
+<h3 id="查看根分区的可用量">
+  查看根分区的可用量
+  <a class="anchor" href="#%e6%9f%a5%e7%9c%8b%e6%a0%b9%e5%88%86%e5%8c%ba%e7%9a%84%e5%8f%af%e7%94%a8%e9%87%8f">#</a>
+</h3>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230208/b31fd58dee0a4cccb095d0c621814a14.png" width=  /></div>
+<h2 id="2117-总结">
+  2.11.7 总结
+  <a class="anchor" href="#2117-%e6%80%bb%e7%bb%93">#</a>
+</h2>
+<p>awk 常用操作是提取转换文本文件内容，awk 功能十分强大，几乎其它文本处理命令能做的，awk 都能做。</p>
+<ul>
+<li>$n ：表示截取哪一列，通常和print一起使用</li>
+<li>$0 ：表示整行内容</li>
+<li>NF ：表示该行有多少列</li>
+<li>NR ：表示该行的行号</li>
+<li>FNR ：表示读取两个文件时，序号会分别从0开始标</li>
+<li>FS ：表示读取文件的分隔符（默认空格）</li>
+<li>OFS ：表示输入的内容以什么为分割符（默认空格）</li>
+<li>RS ：表示读取文件的以什么为换行符（默认\n）</li>
+<li>ORS ：表示输出的内容以什么为换行符（默认\n）</li>
+<li>~ ：表示包含</li>
+<li>!~ ：表示不包含</li>
+</ul>
+<h2 id="参考">
+  参考
+  <a class="anchor" href="#%e5%8f%82%e8%80%83">#</a>
+</h2>
+<ul>
+<li>
+  <a href="https://blog.csdn.net/m0_57515995/article/details/125713566">shell之三剑客awk（基础用法）</a></li>
+</ul>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/c7f489a4297205c29275178126ff7f9a85575e23" title='最后修改者 weibin | February 9, 2023' target="_blank" rel="noopener">
+      <img src="/linux/svg/calendar.svg" class="book-icon" alt="Calendar" />
+      <span>February 9, 2023</span>
+    </a>
+  </div>
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/book.linux/docs/part2-sys-operate/2.11-awk.md" target="_blank" rel="noopener">
+      <img src="/linux/svg/edit.svg" class="book-icon" alt="Edit" />
+      <span>编辑本页</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#211-awk-命令">2.11 awk 命令</a>
+      <ul>
+        <li><a href="#2111-使用格式">2.11.1 使用格式</a></li>
+        <li><a href="#2112-内置变量">2.11.2 内置变量</a>
+          <ul>
+            <li><a href="#n-用法">$n 用法</a></li>
+            <li><a href="#0-用法">$0 用法</a></li>
+            <li><a href="#nf-和-nr-用法">NF 和 NR 用法</a></li>
+            <li><a href="#fnr-用法">FNR 用法</a></li>
+            <li><a href="#rs-用法">RS 用法</a></li>
+          </ul>
+        </li>
+        <li><a href="#2113-begin-和-end-用法">2.11.3 BEGIN 和 END 用法</a>
+          <ul>
+            <li><a href="#常见用法">常见用法</a></li>
+          </ul>
+        </li>
+        <li><a href="#2114-包含与不包含">2.11.4 包含与不包含</a></li>
+        <li><a href="#2115-数值与字符串比较">2.11.5 数值与字符串比较</a>
+          <ul>
+            <li><a href="#逻辑运算">逻辑运算</a></li>
+          </ul>
+        </li>
+        <li><a href="#2116-常见问题">2.11.6 常见问题</a>
+          <ul>
+            <li><a href="#获取本机-ip-地址">获取本机 ip 地址</a></li>
+            <li><a href="#查看本机流量有多少字节">查看本机流量有多少字节</a></li>
+            <li><a href="#查看根分区的可用量">查看根分区的可用量</a></li>
+          </ul>
+        </li>
+        <li><a href="#2117-总结">2.11.7 总结</a></li>
+        <li><a href="#参考">参考</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

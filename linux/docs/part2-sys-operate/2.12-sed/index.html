@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="2.12 sed 命令 # 2.12.1 简介 # sed（stream EDitor）是一个强大而简单的文本解析转换工具，可以读取文本，并根据指定的条件对文本内容进行编辑（删除、替换，添加、移动等），最后输出所有行或仅输出处理的某些行。
+sed 也可以在无交互的情况下实现相当复杂的文本处理操作，被广泛应用于 shell 脚本中，用以完成各种自动化处理任务。
+sed 的工作流程主要包括读取、执行和显示三个过程：
+读取： sed 从输入流（文件、管道、标准输入）中读取一行内容并存储到临时的缓冲区（又称模式空间）。 执行： 默认情况下，所有的 sed 命令都在模式空间中顺序地执行，除非指定了行的地址，否则 sed 命令将会在所有行上一次执行。 显示： 发送修改后的内容到输出流，在发送数据后，模式空间将会被清空。 在所有的文件内容都被处理完成之前，上述过程将重复执行，直至所有内容被处理完。
+默认情况下所有的 sed 命令，都是在模式空间内执行的，因此输入的文件并不会发生变化。
+2.12.2 选项操作 # 通常情况下调用 sed 命令有两种格式。
+“参数” 是指操作的目标文件，当存在多个操作对象时，文件之间用逗号分隔。 sed [选项] &#39;操作&#39; 参数 scriptfile 表示脚本文件，需要用-f选项指定，当脚本文件出现在目标文件之前时，表示通过指定的脚本文件来处理输入的目标文件。 sed [选项] -f scriptfile 参数 常见选项 # 选项 功能 -e 表示用指定命令或者脚本来处理输入的文本文件 -f 表示用指定的脚本文件来处理输入的文本文件 -h 显示帮助 -n 表示仅显示处理后的结果 -i 直接编辑文本文件 -r或-E 使用扩展正则表达式 -s 将多个文件视为独立文件，而不是单个连续的长文件流 操作指令 # 「操作」用于指定文件对操作的动作行为，也就是 sed 的命令。">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="2.12 sed 命令" />
+<meta property="og:description" content="2.12 sed 命令 # 2.12.1 简介 # sed（stream EDitor）是一个强大而简单的文本解析转换工具，可以读取文本，并根据指定的条件对文本内容进行编辑（删除、替换，添加、移动等），最后输出所有行或仅输出处理的某些行。
+sed 也可以在无交互的情况下实现相当复杂的文本处理操作，被广泛应用于 shell 脚本中，用以完成各种自动化处理任务。
+sed 的工作流程主要包括读取、执行和显示三个过程：
+读取： sed 从输入流（文件、管道、标准输入）中读取一行内容并存储到临时的缓冲区（又称模式空间）。 执行： 默认情况下，所有的 sed 命令都在模式空间中顺序地执行，除非指定了行的地址，否则 sed 命令将会在所有行上一次执行。 显示： 发送修改后的内容到输出流，在发送数据后，模式空间将会被清空。 在所有的文件内容都被处理完成之前，上述过程将重复执行，直至所有内容被处理完。
+默认情况下所有的 sed 命令，都是在模式空间内执行的，因此输入的文件并不会发生变化。
+2.12.2 选项操作 # 通常情况下调用 sed 命令有两种格式。
+“参数” 是指操作的目标文件，当存在多个操作对象时，文件之间用逗号分隔。 sed [选项] &#39;操作&#39; 参数 scriptfile 表示脚本文件，需要用-f选项指定，当脚本文件出现在目标文件之前时，表示通过指定的脚本文件来处理输入的目标文件。 sed [选项] -f scriptfile 参数 常见选项 # 选项 功能 -e 表示用指定命令或者脚本来处理输入的文本文件 -f 表示用指定的脚本文件来处理输入的文本文件 -h 显示帮助 -n 表示仅显示处理后的结果 -i 直接编辑文本文件 -r或-E 使用扩展正则表达式 -s 将多个文件视为独立文件，而不是单个连续的长文件流 操作指令 # 「操作」用于指定文件对操作的动作行为，也就是 sed 的命令。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://example.com/linux/docs/part2-sys-operate/2.12-sed/" /><meta property="article:section" content="docs" />
+
+<meta property="article:modified_time" content="2023-02-09T15:06:05+08:00" />
+<title>2.12 sed 命令 | Linux 学习笔记</title>
+<link rel="manifest" href="/linux/manifest.json">
+<link rel="icon" href="/linux/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/linux/book.min.44ab80b6e9fbffc4b56fa0525dd4af874d4d533ab2a985226782d7cdc8d9fd15.css" integrity="sha256-RKuAtun7/8S1b6BSXdSvh01NUzqyqYUiZ4LXzcjZ/RU=" crossorigin="anonymous">
+  <script defer src="/linux/flexsearch.min.js"></script>
+  <script defer src="/linux/zh.search.min.1c1ada430ea6a9d55b436a24d6eb890e2c6febd841fb31bec1017e75a80532d2.js" integrity="sha256-HBraQw6mqdVbQ2ok1uuJDixv69hB&#43;zG&#43;wQF&#43;dagFMtI=" crossorigin="anonymous"></script>
+
+  <script defer src="/linux/sw.min.e3338ad661715b83bfd6397040a613605d8bb26c10798773e2176216e2123560.js" integrity="sha256-4zOK1mFxW4O/1jlwQKYTYF2LsmwQeYdz4hdiFuISNWA=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/linux/"><span>Linux 学习笔记</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+
+
+
+  
+<ul>
+  
+  <li>
+    <a href="https://github.com/xiaobinqt"  target="_blank" rel="noopener">
+        GitHub
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第一部分 基础知识</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.1-linux-release/" class="">1.1 简介和常见发行版</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.2-common-dir/" class="">1.2 常见目录</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第二部分 系统操作</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.1-help/" class="">2.1 帮助命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.2-ls/" class="">2.2 ls 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.3-shutdown/" class="">2.3 关机</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.4-cp/" class="">2.4 cp 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.5-file-view/" class="">2.5 文件查看命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.6-backup-compression/" class="">2.6 压缩和打包</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.7-vim/" class="">2.7 vim</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.8-user-manage/" class="">2.8 用户管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.9-switch-user/" class="">2.9 切换用户</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.10-file-dir/" class="">2.10 文件和文件夹</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.11-awk/" class="">2.11 awk 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.12-sed/" class="active">2.12 sed 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.13-cut-sort-uniq-tr/" class="">2.13 cut、sort、uniq、tr 命令</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/linux/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>2.12 sed 命令</strong>
+
+  <label for="toc-control">
+    
+    <img src="/linux/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#212-sed-命令">2.12 sed 命令</a>
+      <ul>
+        <li><a href="#2121-简介">2.12.1 简介</a></li>
+        <li><a href="#2122-选项操作">2.12.2 选项操作</a>
+          <ul>
+            <li><a href="#常见选项">常见选项</a></li>
+            <li><a href="#操作指令">操作指令</a></li>
+          </ul>
+        </li>
+        <li><a href="#2123-选项案例">2.12.3 选项案例</a>
+          <ul>
+            <li><a href="#-n-仅显示处理后的结果">-n 仅显示处理后的结果</a></li>
+            <li><a href="#-e-设置多个命令">-e 设置多个命令</a></li>
+            <li><a href="#-f-文件编辑">-f 文件编辑</a></li>
+            <li><a href="#-i-进行修改文件">-i 进行修改文件</a></li>
+          </ul>
+        </li>
+        <li><a href="#2124-操作案例">2.12.4 操作案例</a>
+          <ul>
+            <li><a href="#p-输出指定行">p 输出指定行</a></li>
+            <li><a href="#结合正则表达式">结合正则表达式</a></li>
+            <li><a href="#d-删除指定行">d 删除指定行</a></li>
+            <li><a href="#s-替换符合条件的文件">s 替换符合条件的文件</a></li>
+            <li><a href="#y-替换字符">y 替换字符</a></li>
+            <li><a href="#移动-hd-插入-a-指定内容">移动 {H;d} 插入 a 指定内容</a></li>
+          </ul>
+        </li>
+        <li><a href="#2125-总结">2.12.5 总结</a></li>
+        <li><a href="#参考">参考</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown"><h1 id="212-sed-命令">
+  2.12 sed 命令
+  <a class="anchor" href="#212-sed-%e5%91%bd%e4%bb%a4">#</a>
+</h1>
+<h2 id="2121-简介">
+  2.12.1 简介
+  <a class="anchor" href="#2121-%e7%ae%80%e4%bb%8b">#</a>
+</h2>
+<p>sed（stream EDitor）是一个强大而简单的文本解析转换工具，可以读取文本，并根据指定的条件对文本内容进行编辑（删除、替换，添加、移动等），最后输出所有行或仅输出处理的某些行。</p>
+<p>sed 也可以在无交互的情况下实现相当复杂的文本处理操作，被广泛应用于 shell 脚本中，用以完成各种自动化处理任务。</p>
+<p>sed 的工作流程主要包括读取、执行和显示三个过程：</p>
+<ul>
+<li>读取： sed 从输入流（文件、管道、标准输入）中读取一行内容并存储到临时的缓冲区（又称模式空间）。</li>
+<li>执行： 默认情况下，所有的 sed 命令都在模式空间中顺序地执行，除非指定了行的地址，否则 sed 命令将会在所有行上一次执行。</li>
+<li>显示： 发送修改后的内容到输出流，在发送数据后，模式空间将会被清空。</li>
+</ul>
+<p>在所有的文件内容都被处理完成之前，上述过程将重复执行，直至所有内容被处理完。</p>
+<p>默认情况下所有的 sed 命令，都是在模式空间内执行的，因此输入的文件并不会发生变化。</p>
+<h2 id="2122-选项操作">
+  2.12.2 选项操作
+  <a class="anchor" href="#2122-%e9%80%89%e9%a1%b9%e6%93%8d%e4%bd%9c">#</a>
+</h2>
+<p>通常情况下调用 sed 命令有两种格式。</p>
+<ol>
+<li>“参数” 是指操作的<strong>目标文件</strong>，当存在多个操作对象时，文件之间用逗号分隔。</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sed <span style="color:#f92672">[</span>选项<span style="color:#f92672">]</span> <span style="color:#e6db74">&#39;操作&#39;</span> 参数
+</span></span></code></pre></div><ol start="2">
+<li>scriptfile 表示脚本文件，需要用<code>-f</code>选项指定，当脚本文件出现在目标文件之前时，表示通过指定的脚本文件来处理输入的目标文件。</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sed <span style="color:#f92672">[</span>选项<span style="color:#f92672">]</span> -f scriptfile 参数
+</span></span></code></pre></div><h3 id="常见选项">
+  常见选项
+  <a class="anchor" href="#%e5%b8%b8%e8%a7%81%e9%80%89%e9%a1%b9">#</a>
+</h3>
+<table>
+<thead>
+<tr>
+<th>选项</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-e</td>
+<td>表示用指定命令或者脚本来处理输入的文本文件</td>
+</tr>
+<tr>
+<td>-f</td>
+<td>表示用指定的脚本文件来处理输入的文本文件</td>
+</tr>
+<tr>
+<td>-h</td>
+<td>显示帮助</td>
+</tr>
+<tr>
+<td>-n</td>
+<td>表示仅显示处理后的结果</td>
+</tr>
+<tr>
+<td>-i</td>
+<td>直接编辑文本文件</td>
+</tr>
+<tr>
+<td>-r或-E</td>
+<td>使用扩展正则表达式</td>
+</tr>
+<tr>
+<td>-s</td>
+<td>将多个文件视为独立文件，而不是单个连续的长文件流</td>
+</tr>
+</tbody>
+</table>
+<h3 id="操作指令">
+  操作指令
+  <a class="anchor" href="#%e6%93%8d%e4%bd%9c%e6%8c%87%e4%bb%a4">#</a>
+</h3>
+<p>「操作」用于指定文件对操作的动作行为，也就是 sed 的命令。</p>
+<p>通常情况下是采用的<code>[n1[,n2]]</code>操作参数的格式。n1、n2 是可选的，代表选择进行操作的行数，如操作需要在 5~20 行之间进行，则表示为「5,20 动作行为」。</p>
+<table>
+<thead>
+<tr>
+<th>选项</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>a</td>
+<td>增加，在当前行<strong>下面</strong>增加一行指定内容</td>
+</tr>
+<tr>
+<td>i</td>
+<td>插入，在选定行<strong>上面</strong>插入一行指定内容</td>
+</tr>
+<tr>
+<td>c</td>
+<td>替换，将选定行替换为指定内容</td>
+</tr>
+<tr>
+<td>s</td>
+<td>替换，替换指定的字符串</td>
+</tr>
+<tr>
+<td>y</td>
+<td>字符替换（字符一一替换）</td>
+</tr>
+<tr>
+<td>p</td>
+<td>打印，如果同时指定行，表示打印指定行，如果不指定行，则表示打印所有内容，如果有非打印字符，则以 ASCII 码输出。其通常与<code>-n</code>选项一起使用。</td>
+</tr>
+<tr>
+<td>d</td>
+<td>删除，删除选定的行</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2123-选项案例">
+  2.12.3 选项案例
+  <a class="anchor" href="#2123-%e9%80%89%e9%a1%b9%e6%a1%88%e4%be%8b">#</a>
+</h2>
+<h3 id="-n-仅显示处理后的结果">
+  -n 仅显示处理后的结果
+  <a class="anchor" href="#-n-%e4%bb%85%e6%98%be%e7%a4%ba%e5%a4%84%e7%90%86%e5%90%8e%e7%9a%84%e7%bb%93%e6%9e%9c">#</a>
+</h3>
+<p>sed 在处理文件时，会将处理的内容放入到缓冲区（模式空间）中进行处理，然后在模式空间中对内容进行（增删改查）最后以标准输出的形式将内容输出出来。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230208/440c30d9fbfa44bda7bc5cc43ce45295.png" width=  /></div>
+<p>sed 从标准输入中读取 hahah.txt 文件的内容到缓冲区中，然后再在缓冲区中对 3p 进行打印，最后不仅将第 3 行打印，也将源文件打印。</p>
+<p>如果加上 -n 选项，-n 选项的意思就是，仅显示处理后的结果。文件内容被标准输入到缓冲空间后，sed 通过设定的选项知道了，需要输出哪些内容，仅输出处理的行。所以 -n 选项通常和 p 动作放在一起使用。</p>
+<h3 id="-e-设置多个命令">
+  -e 设置多个命令
+  <a class="anchor" href="#-e-%e8%ae%be%e7%bd%ae%e5%a4%9a%e4%b8%aa%e5%91%bd%e4%bb%a4">#</a>
+</h3>
+<p>sed 命令可以不只包含一个命令。如果要包含多个命令，只需要每个命令前加上一个 -e 选项即可。</p>
+<p>注意：-e 选项的后面要接命令内容，不允许再夹杂其它选项</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230208/006de4c06efc4a4c92089ba85fa2bbb1.png" width=  /></div>
+<h3 id="-f-文件编辑">
+  -f 文件编辑
+  <a class="anchor" href="#-f-%e6%96%87%e4%bb%b6%e7%bc%96%e8%be%91">#</a>
+</h3>
+<p>使用sed脚本将多个编辑指令存放到文件中（每行一条编辑指定），然后通过 -f 选项来调用。</p>
+<p>例如：执行一下命令即将第 1~5 行内容转移至第 15 行后。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230208/e43b5c668a7e426b95e87549a6820d12.png" width=  /></div>
+<h3 id="-i-进行修改文件">
+  -i 进行修改文件
+  <a class="anchor" href="#-i-%e8%bf%9b%e8%a1%8c%e4%bf%ae%e6%94%b9%e6%96%87%e4%bb%b6">#</a>
+</h3>
+<p>可以使用 -i 选项直接修改到文件中的内容，对源文件进行生效。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230208/9a40f2849c44427d99443cc4a226e038.png" width=  /></div>
+<h2 id="2124-操作案例">
+  2.12.4 操作案例
+  <a class="anchor" href="#2124-%e6%93%8d%e4%bd%9c%e6%a1%88%e4%be%8b">#</a>
+</h2>
+<h3 id="p-输出指定行">
+  p 输出指定行
+  <a class="anchor" href="#p-%e8%be%93%e5%87%ba%e6%8c%87%e5%ae%9a%e8%a1%8c">#</a>
+</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sed -n <span style="color:#e6db74">&#39;3p&#39;</span> test.txt        <span style="color:#75715e"># 输出第 3 行</span>
+</span></span><span style="display:flex;"><span>sed -n <span style="color:#e6db74">&#39;3,5p&#39;</span> test.txt      <span style="color:#75715e"># 输出 3~5 行</span>
+</span></span><span style="display:flex;"><span>sed -n <span style="color:#e6db74">&#39;p;n&#39;</span> test.txt       <span style="color:#75715e"># 输出所有奇数行,n 表示读入下一行资料</span>
+</span></span><span style="display:flex;"><span>sed -n <span style="color:#e6db74">&#39;n;p&#39;</span> test.txt       <span style="color:#75715e"># 输出所有偶数行,n 表示读入下一行资料</span>
+</span></span><span style="display:flex;"><span>sed -n <span style="color:#e6db74">&#39;1,5{p;n}&#39;</span> test.txt  <span style="color:#75715e"># 输出第 1~5 行之间的奇数行(第 1、3、5 行)</span>
+</span></span><span style="display:flex;"><span>sed -n <span style="color:#e6db74">&#39;10,${n;p}&#39;</span> test.txt <span style="color:#75715e"># 输出第 10 行至文件尾之间的偶数行</span>
+</span></span><span style="display:flex;"><span>sed -n p test.txt           <span style="color:#75715e"># 输出所有行</span>
+</span></span><span style="display:flex;"><span>sed -n <span style="color:#e6db74">&#39;3,$p&#39;</span> test.txt      <span style="color:#75715e"># 输出第 3 行至文件尾之间的行</span>
+</span></span></code></pre></div><h3 id="结合正则表达式">
+  结合正则表达式
+  <a class="anchor" href="#%e7%bb%93%e5%90%88%e6%ad%a3%e5%88%99%e8%a1%a8%e8%be%be%e5%bc%8f">#</a>
+</h3>
+<p>sed 命令结合正则表达式，格式略有不同，正则表达式以<code>/</code>包围。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sed -n <span style="color:#e6db74">&#39;/the/p&#39;</span> test.txt      <span style="color:#75715e"># 输出包含 the 的行</span>
+</span></span><span style="display:flex;"><span>sed -n <span style="color:#e6db74">&#39;4,/the/p&#39;</span> test.txt    <span style="color:#75715e"># 输出从第 4 行至最后一个包含 the 的行</span>
+</span></span><span style="display:flex;"><span>sed -n <span style="color:#e6db74">&#39;/the/=&#39;</span> test.txt      <span style="color:#75715e"># 输出包含the 的行所在的行号,等号(=)用来输出行号</span>
+</span></span><span style="display:flex;"><span>sed -n <span style="color:#e6db74">&#39;/^PI/p&#39;</span> test.txt      <span style="color:#75715e"># 输出以PI 开头的行</span>
+</span></span><span style="display:flex;"><span>sed -n <span style="color:#e6db74">&#39;/[0-9]$/p&#39;</span> test.txt   <span style="color:#75715e"># 输出以数字结尾的行</span>
+</span></span><span style="display:flex;"><span>sed -n <span style="color:#e6db74">&#39;/\&lt;wood\&gt;/p&#39;</span> test.txt <span style="color:#75715e"># 输出包含单词wood 的行,\&lt;、\&gt;代表单词边界</span>
+</span></span></code></pre></div><h3 id="d-删除指定行">
+  d 删除指定行
+  <a class="anchor" href="#d-%e5%88%a0%e9%99%a4%e6%8c%87%e5%ae%9a%e8%a1%8c">#</a>
+</h3>
+<p><code>nl 文件名</code>可以输出文件内容加上行号。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>nl test.txt | sed <span style="color:#e6db74">&#39;3d&#39;</span>   <span style="color:#75715e"># 删除第 3 行</span>
+</span></span><span style="display:flex;"><span>nl test.txt | sed <span style="color:#e6db74">&#39;3,5d&#39;</span> <span style="color:#75715e"># 删除第 3~5 行</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 删除包含 cross 的行,如果要删除不包含 cross 的行,用 ! 符号表示取反操作, 如&#39;/cross/!d&#39;</span>
+</span></span><span style="display:flex;"><span>nl test.txt | sed <span style="color:#e6db74">&#39;/cross/d&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>sed <span style="color:#e6db74">&#39;/^[a-z]/d&#39;</span> test.txt <span style="color:#75715e"># 删除以小写字母开头的行</span>
+</span></span><span style="display:flex;"><span>sed <span style="color:#e6db74">&#39;/\.$/d&#39;</span> test.txt    <span style="color:#75715e"># 删除以&#34;.&#34;结尾的行</span>
+</span></span><span style="display:flex;"><span>sed <span style="color:#e6db74">&#39;/^$/d&#39;</span> test.txt     <span style="color:#75715e"># 删除所有空行</span>
+</span></span></code></pre></div><h3 id="s-替换符合条件的文件">
+  s 替换符合条件的文件
+  <a class="anchor" href="#s-%e6%9b%bf%e6%8d%a2%e7%ac%a6%e5%90%88%e6%9d%a1%e4%bb%b6%e7%9a%84%e6%96%87%e4%bb%b6">#</a>
+</h3>
+<p>在使用 sed 命令进行替换操作时需要用到 s（字符串替换）、c（整行/整块替换）、y（字符转换）。</p>
+<p>g 表示全局替换。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sed <span style="color:#e6db74">&#39;s/the/THE/&#39;</span> test.txt  <span style="color:#75715e"># 将每行中的第一个 the 替换为 THE</span>
+</span></span><span style="display:flex;"><span>sed <span style="color:#e6db74">&#39;s/l/L/2&#39;</span> test.txt     <span style="color:#75715e"># 将每行中的第 2 个 l 替换为 L</span>
+</span></span><span style="display:flex;"><span>sed <span style="color:#e6db74">&#39;s/the/THE/g&#39;</span> test.txt <span style="color:#75715e"># 将文件中的所有 the 替换为 THE</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>sed <span style="color:#e6db74">&#39;s/o//g&#39;</span> test.txt         <span style="color:#75715e"># 将文件中的所有 o 删除(替换为空串（就是不存在的，不是空格）)</span>
+</span></span><span style="display:flex;"><span>sed <span style="color:#e6db74">&#39;s/^/#/&#39;</span> test.txt         <span style="color:#75715e"># 在每行行首插入 # 号</span>
+</span></span><span style="display:flex;"><span>sed <span style="color:#e6db74">&#39;/the/s/^/#/&#39;</span> test.txt    <span style="color:#75715e"># 在包含 the 的每行行首插入 # 号</span>
+</span></span><span style="display:flex;"><span>sed <span style="color:#e6db74">&#39;s/$/EOF/&#39;</span> test.txt       <span style="color:#75715e"># 在每行行尾插入字符串 EOF</span>
+</span></span><span style="display:flex;"><span>sed <span style="color:#e6db74">&#39;3,5s/the/THE/g&#39;</span> test.txt <span style="color:#75715e"># 将第 3~5 行中的所有 the 替换为 THE</span>
+</span></span><span style="display:flex;"><span>sed <span style="color:#e6db74">&#39;/the/s/o/O/g&#39;</span> test.txt   <span style="color:#75715e"># 将包含 the 的所有行中的 o 都替换为 O</span>
+</span></span></code></pre></div><h3 id="y-替换字符">
+  y 替换字符
+  <a class="anchor" href="#y-%e6%9b%bf%e6%8d%a2%e5%ad%97%e7%ac%a6">#</a>
+</h3>
+<p><code>y///</code>和<code>s///</code>有什么区别呢？主要有以下两点：</p>
+<ul>
+<li>
+<p>y 的语法格式是<code>y/source/dest/</code>，表示将 源 中的字符对位替换为 目的 中的字符。而 s 的语法格式是<code>s/regexp/replacement/</code>，表示通过正则匹配到的内容替换为 replacement 部分。</p>
+</li>
+<li>
+<p>y 只是简单的逐字替换，没有很多花样。s 支持 &amp; 符号和预存储等特性，可以实现更多灵活的替换效果。</p>
+</li>
+</ul>
+<p>y 动作只是简单的替换字符，逐个替换。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230208/e778a41499384185b42058eb78802160.png" width=  /></div>
+<h3 id="移动-hd-插入-a-指定内容">
+  移动 {H;d} 插入 a 指定内容
+  <a class="anchor" href="#%e7%a7%bb%e5%8a%a8-hd-%e6%8f%92%e5%85%a5-a-%e6%8c%87%e5%ae%9a%e5%86%85%e5%ae%b9">#</a>
+</h3>
+<p>常用参数</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>H</td>
+<td>复制到剪切板</td>
+</tr>
+<tr>
+<td>g、G</td>
+<td>将剪切板的数据覆盖/追加到指定行</td>
+</tr>
+<tr>
+<td>w</td>
+<td>保存为文件</td>
+</tr>
+<tr>
+<td>r</td>
+<td>读取指定文件</td>
+</tr>
+<tr>
+<td>a</td>
+<td>追加指定内容（a 是加入在行后，i 是加入在前行，6a 是指定多少行进行加入）</td>
+</tr>
+<tr>
+<td>I，i</td>
+<td>忽略大小写</td>
+</tr>
+<tr>
+<td>d</td>
+<td>将以前的删除</td>
+</tr>
+<tr>
+<td>$</td>
+<td>表示最后</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sed <span style="color:#e6db74">&#39;/the/{H;d};$G&#39;</span> test.txt        <span style="color:#75715e"># 将包含 the 的行迁移至文件末尾,{;}用于多个操作</span>
+</span></span><span style="display:flex;"><span>sed <span style="color:#e6db74">&#39;1,5{H;d};17G&#39;</span> test.txt         <span style="color:#75715e"># 将第 1~5 行内容转移至第 17 行后</span>
+</span></span><span style="display:flex;"><span>sed <span style="color:#e6db74">&#39;/the/w out.file&#39;</span> test.txt      <span style="color:#75715e"># 将包含the 的行另存为文件 out.file</span>
+</span></span><span style="display:flex;"><span>sed <span style="color:#e6db74">&#39;/the/r /etc/hostname&#39;</span> test.txt <span style="color:#75715e"># 将文件/etc/hostname 的内容添加到包含 the 的每行以后</span>
+</span></span><span style="display:flex;"><span>sed <span style="color:#e6db74">&#39;3aNew&#39;</span> test.txt                <span style="color:#75715e"># 在第 3 行后插入一个新行,内容为New</span>
+</span></span><span style="display:flex;"><span>sed <span style="color:#e6db74">&#39;/the/aNew&#39;</span> test.txt            <span style="color:#75715e"># 在包含the 的每行后插入一个新行,内容为 New</span>
+</span></span><span style="display:flex;"><span>sed <span style="color:#e6db74">&#39;3aNew1\nNew2&#39;</span> test.txt         <span style="color:#75715e"># 在第 3 行后插入多行内容,中间的\n 表示换行</span>
+</span></span></code></pre></div><ol>
+<li>将包含 the 的行迁移至文件末尾，<code>{ ; }</code>用于多个操作。</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230208/d52a95060c4247779fc61ecc8f94bd72.png" width=  /></div>
+<ol start="2">
+<li>将第 1~2 行内容转移至第 5 行后。</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230208/e4a724cf825c4e879e6e98d826cf5b88.png" width=  /></div>
+<ol start="3">
+<li>将包含 the 的行另存为文件 out.file。</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230208/c041aa94f797495eb6f2b62bd68b1d9d.png" width=  /></div>
+<ol start="4">
+<li>在第 3 行后插入一个新行，内容为 NEW。</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230208/4b84dd64457446fc9f9558500109894a.png" width=  /></div>
+<h2 id="2125-总结">
+  2.12.5 总结
+  <a class="anchor" href="#2125-%e6%80%bb%e7%bb%93">#</a>
+</h2>
+<p>sed 命令，主要用于修改配置文件中的内容，通过 -i 选项，可以使得文件修改内容生效。可以结合正则表达式进行一些复杂的修改，在一键部署各种服务中，可以实现免交互，直接进行修改。</p>
+<h2 id="参考">
+  参考
+  <a class="anchor" href="#%e5%8f%82%e8%80%83">#</a>
+</h2>
+<ul>
+<li>
+  <a href="https://blog.csdn.net/m0_57515995/article/details/125713470">shell之三剑客sed命令</a></li>
+<li>
+  <a href="https://zhuanlan.zhihu.com/p/530980715">sed 高级命令用例</a></li>
+</ul>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/c7f489a4297205c29275178126ff7f9a85575e23" title='最后修改者 weibin | February 9, 2023' target="_blank" rel="noopener">
+      <img src="/linux/svg/calendar.svg" class="book-icon" alt="Calendar" />
+      <span>February 9, 2023</span>
+    </a>
+  </div>
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/book.linux/docs/part2-sys-operate/2.12-sed.md" target="_blank" rel="noopener">
+      <img src="/linux/svg/edit.svg" class="book-icon" alt="Edit" />
+      <span>编辑本页</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#212-sed-命令">2.12 sed 命令</a>
+      <ul>
+        <li><a href="#2121-简介">2.12.1 简介</a></li>
+        <li><a href="#2122-选项操作">2.12.2 选项操作</a>
+          <ul>
+            <li><a href="#常见选项">常见选项</a></li>
+            <li><a href="#操作指令">操作指令</a></li>
+          </ul>
+        </li>
+        <li><a href="#2123-选项案例">2.12.3 选项案例</a>
+          <ul>
+            <li><a href="#-n-仅显示处理后的结果">-n 仅显示处理后的结果</a></li>
+            <li><a href="#-e-设置多个命令">-e 设置多个命令</a></li>
+            <li><a href="#-f-文件编辑">-f 文件编辑</a></li>
+            <li><a href="#-i-进行修改文件">-i 进行修改文件</a></li>
+          </ul>
+        </li>
+        <li><a href="#2124-操作案例">2.12.4 操作案例</a>
+          <ul>
+            <li><a href="#p-输出指定行">p 输出指定行</a></li>
+            <li><a href="#结合正则表达式">结合正则表达式</a></li>
+            <li><a href="#d-删除指定行">d 删除指定行</a></li>
+            <li><a href="#s-替换符合条件的文件">s 替换符合条件的文件</a></li>
+            <li><a href="#y-替换字符">y 替换字符</a></li>
+            <li><a href="#移动-hd-插入-a-指定内容">移动 {H;d} 插入 a 指定内容</a></li>
+          </ul>
+        </li>
+        <li><a href="#2125-总结">2.12.5 总结</a></li>
+        <li><a href="#参考">参考</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
