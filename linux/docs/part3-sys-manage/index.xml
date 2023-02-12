@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>第三部分 系统管理 on Linux 学习笔记</title>
+    <link>https://example.com/linux/docs/part3-sys-manage/</link>
+    <description>Recent content in 第三部分 系统管理 on Linux 学习笔记</description>
+    <generator>Hugo -- gohugo.io</generator><atom:link href="https://example.com/linux/docs/part3-sys-manage/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>3.1 网络</title>
+      <link>https://example.com/linux/docs/part3-sys-manage/3.1-network/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://example.com/linux/docs/part3-sys-manage/3.1-network/</guid>
+      <description>3.1 网络 # 3.1.1 网络状态 # net-tools &amp;amp; iproute # Centos 7 之前一般使用 net-tools，Centos 7 之后主推 iproute / iproute2。
+ifconfig # eth0 第一块网卡（网络接口)。很多时候，第一个网络接口也可能叫做下面的名字：
+eno1 板载网卡 ens33 PCI-E网卡 enp0s3 无法获取物理信息的PCI-E网卡 CentOS 7 使用了一致性网络设备命名，以上都不匹配则使用 eth0。
+网关/路由 # route -n 使用-n参数不解析主机名，因为默认每个 ip 都会反解成域名，如果解析耗时会一直等待。
+网卡物理连接情况 # 在 Centos 6 上可以直接输入mii-tool回车，但是 Centos 7 上必须要加上网络接口名。
+因为用的是虚拟机，所以会有 SIOCGMIIPHY on &amp;rsquo;eth0&amp;rsquo; failed: Operation not supported 错误
+网络接口/网卡名称修改 # 网卡命名规则受 biosdevname 和 net.ifnames 两个参数影响。
+biosdevname net.ifnames 网卡名 默认 0 1 ens33 组合1 1 0 em1 组合2 0 0 eth0 编辑/etc/default/grub文件，在 GRUB_CMDLINE_LINUX 中增加biosdevname=0 net.</description>
+    </item>
+    
+    <item>
+      <title>3.2 网络故障排除</title>
+      <link>https://example.com/linux/docs/part3-sys-manage/3.2-net-trouble-removal/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://example.com/linux/docs/part3-sys-manage/3.2-net-trouble-removal/</guid>
+      <description>3.2 网络故障排除 # 3.2.1 ping # 测试主机之间网络的连通性。
+-c 参数 # 设置完成要求回应的次数。
+3.2.2 traceroute # 3.2.3 mtr # 3.2.4 nslookup # 3.2.4 telnet # 端口是否畅通 # telnet www.baidu.com 80 # 我当前主机到对方主机的 80 端口是否畅通 3.2.5 tcpdump # tcpdump -i any -n port 80 -i 选线 # 指定网卡，可以用 -i any 表示所有网卡或是-i eth0指定网络接口/网卡的数据包。
+-n 选项 # 不要使用域名的形式进行显示。
+port # 指定端口。
+指定主机和端口 # tcpdump -i any -n host 10.0.0.1 and port 80 tcpdump -i any -n host 10.</description>
+    </item>
+    
+    <item>
+      <title>3.3 网络服务管理</title>
+      <link>https://example.com/linux/docs/part3-sys-manage/3.3-net-manage/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://example.com/linux/docs/part3-sys-manage/3.3-net-manage/</guid>
+      <description> 3.3 网络服务管理 # 网络管理工具常用的有 2 套，一个是 network，另一个是 networkManger。在 Centos 6 中只有 network，在某些 Centos 7 机器中可能 2 套都存在，不要把 2 套工具都 enable，在工作中，一般只用一个禁用另外一个。
+systemctl disable NetworkManager systemctl enable NetworkManager service network status service network restart 一般在服务器上常用 network 工具。networkManager 常用在个人电脑上。
+3.3.1 设置主机名 # 临时修改主机名：hostname 临时主机名 系统重启后会被重置。
+永久修改主机名：hostnamectl 永久主机名 是对 /etc/hostname 文件的内容进行修改。
+3.3.1 service # 参考 # linux下/etc/hosts 和hostname文件的区别 </description>
+    </item>
+    
+    <item>
+      <title>3.4 软件安装</title>
+      <link>https://example.com/linux/docs/part3-sys-manage/3.4-soft-install/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://example.com/linux/docs/part3-sys-manage/3.4-soft-install/</guid>
+      <description>3.4 软件安装 # 3.4.1 软件包管理器 # 包管理器是方便软件安装、卸载，解决软件依赖关系的重要工具。
+CentOS、RedHat 使用 yum 包管理器，软件安装包格式为 rpm。 Debian、Ubuntu 使用 apt 包管理器，软件安装包格式为 deb。 3.4.2 rpm 包和 rpm 命令 # 包格式 # 命令常用参数 # -q 查询软件包，-qa 查看所有。 rpm -qa -i 安装软件包
+-e 卸载软件包
+问题 # 使用 rpm 时需要手动解决依赖关系，在实际应用中用的不多，常用 yum 命令安装。软件包来源不可靠。
+3.4.3 yum 仓库 # 修改 yum 源 # 阿里巴巴官方镜像站 https://developer.aliyun.com/mirror/
+常用选项 # install 安装软件包 remove 卸载软件包 list | grouplist 查看软件包 update 升级软件包 yum update 如果加上软件包名会去升级指定的软件，如果什么都不加会去升级所有的软件包。
+3.4.4 源代码编译安装 # 有时 yum 源中没有最新的软件包，这时可以通过源代码编译安装的方式。</description>
+    </item>
+    
+  </channel>
+</rss>

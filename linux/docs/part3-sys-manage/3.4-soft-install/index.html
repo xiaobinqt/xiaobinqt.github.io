@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="3.4 软件安装 # 3.4.1 软件包管理器 # 包管理器是方便软件安装、卸载，解决软件依赖关系的重要工具。
+CentOS、RedHat 使用 yum 包管理器，软件安装包格式为 rpm。 Debian、Ubuntu 使用 apt 包管理器，软件安装包格式为 deb。 3.4.2 rpm 包和 rpm 命令 # 包格式 # 命令常用参数 # -q 查询软件包，-qa 查看所有。 rpm -qa -i 安装软件包
+-e 卸载软件包
+问题 # 使用 rpm 时需要手动解决依赖关系，在实际应用中用的不多，常用 yum 命令安装。软件包来源不可靠。
+3.4.3 yum 仓库 # 修改 yum 源 # 阿里巴巴官方镜像站 https://developer.aliyun.com/mirror/
+常用选项 # install 安装软件包 remove 卸载软件包 list | grouplist 查看软件包 update 升级软件包 yum update 如果加上软件包名会去升级指定的软件，如果什么都不加会去升级所有的软件包。
+3.4.4 源代码编译安装 # 有时 yum 源中没有最新的软件包，这时可以通过源代码编译安装的方式。">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="3.4 软件安装" />
+<meta property="og:description" content="3.4 软件安装 # 3.4.1 软件包管理器 # 包管理器是方便软件安装、卸载，解决软件依赖关系的重要工具。
+CentOS、RedHat 使用 yum 包管理器，软件安装包格式为 rpm。 Debian、Ubuntu 使用 apt 包管理器，软件安装包格式为 deb。 3.4.2 rpm 包和 rpm 命令 # 包格式 # 命令常用参数 # -q 查询软件包，-qa 查看所有。 rpm -qa -i 安装软件包
+-e 卸载软件包
+问题 # 使用 rpm 时需要手动解决依赖关系，在实际应用中用的不多，常用 yum 命令安装。软件包来源不可靠。
+3.4.3 yum 仓库 # 修改 yum 源 # 阿里巴巴官方镜像站 https://developer.aliyun.com/mirror/
+常用选项 # install 安装软件包 remove 卸载软件包 list | grouplist 查看软件包 update 升级软件包 yum update 如果加上软件包名会去升级指定的软件，如果什么都不加会去升级所有的软件包。
+3.4.4 源代码编译安装 # 有时 yum 源中没有最新的软件包，这时可以通过源代码编译安装的方式。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://example.com/linux/docs/part3-sys-manage/3.4-soft-install/" /><meta property="article:section" content="docs" />
+
+<meta property="article:modified_time" content="2023-02-12T20:34:19+08:00" />
+<title>3.4 软件安装 | Linux 学习笔记</title>
+<link rel="manifest" href="/linux/manifest.json">
+<link rel="icon" href="/linux/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/linux/book.min.44ab80b6e9fbffc4b56fa0525dd4af874d4d533ab2a985226782d7cdc8d9fd15.css" integrity="sha256-RKuAtun7/8S1b6BSXdSvh01NUzqyqYUiZ4LXzcjZ/RU=" crossorigin="anonymous">
+  <script defer src="/linux/flexsearch.min.js"></script>
+  <script defer src="/linux/zh.search.min.6b83c6e546a3fa7edc731a99a34459447bcf5599521c511bbdac35cda08ed04e.js" integrity="sha256-a4PG5Uaj&#43;n7ccxqZo0RZRHvPVZlSHFEbvaw1zaCO0E4=" crossorigin="anonymous"></script>
+
+  <script defer src="/linux/sw.min.e3338ad661715b83bfd6397040a613605d8bb26c10798773e2176216e2123560.js" integrity="sha256-4zOK1mFxW4O/1jlwQKYTYF2LsmwQeYdz4hdiFuISNWA=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/linux/"><span>Linux 学习笔记</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+
+
+
+  
+<ul>
+  
+  <li>
+    <a href="https://github.com/xiaobinqt"  target="_blank" rel="noopener">
+        GitHub
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第一部分 基础知识</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.1-linux-release/" class="">1.1 简介和常见发行版</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.2-common-dir/" class="">1.2 常见目录</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第二部分 系统操作</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.1-help/" class="">2.1 帮助命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.2-ls/" class="">2.2 ls 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.3-shutdown/" class="">2.3 关机</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.4-cp/" class="">2.4 cp 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.5-file-view/" class="">2.5 文件查看命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.6-backup-compression/" class="">2.6 压缩和打包</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.7-vim/" class="">2.7 vim</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.8-user-manage/" class="">2.8 用户管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.9-switch-user/" class="">2.9 切换用户</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.10-file-dir/" class="">2.10 文件和文件夹</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.11-awk/" class="">2.11 awk 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.12-sed/" class="">2.12 sed 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.13-cut-sort-uniq-tr/" class="">2.13 cut、sort、uniq、tr 命令</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第三部分 系统管理</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.1-network/" class="">3.1 网络</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.2-net-trouble-removal/" class="">3.2 网络故障排除</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.3-net-manage/" class="">3.3 网络服务管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.4-soft-install/" class="active">3.4 软件安装</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/linux/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>3.4 软件安装</strong>
+
+  <label for="toc-control">
+    
+    <img src="/linux/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#34-软件安装">3.4 软件安装</a>
+      <ul>
+        <li><a href="#341-软件包管理器">3.4.1 软件包管理器</a></li>
+        <li><a href="#342-rpm-包和-rpm-命令">3.4.2 rpm 包和 rpm 命令</a>
+          <ul>
+            <li><a href="#包格式">包格式</a></li>
+            <li><a href="#命令常用参数">命令常用参数</a></li>
+            <li><a href="#问题">问题</a></li>
+          </ul>
+        </li>
+        <li><a href="#343-yum-仓库">3.4.3 yum 仓库</a>
+          <ul>
+            <li><a href="#修改-yum-源">修改 yum 源</a></li>
+            <li><a href="#常用选项">常用选项</a></li>
+          </ul>
+        </li>
+        <li><a href="#344-源代码编译安装">3.4.4 源代码编译安装</a></li>
+        <li><a href="#345-内核升级">3.4.5 内核升级</a></li>
+        <li><a href="#346-grub-配置文件">3.4.6 grub 配置文件</a></li>
+        <li><a href="#参考">参考</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown"><h1 id="34-软件安装">
+  3.4 软件安装
+  <a class="anchor" href="#34-%e8%bd%af%e4%bb%b6%e5%ae%89%e8%a3%85">#</a>
+</h1>
+<h2 id="341-软件包管理器">
+  3.4.1 软件包管理器
+  <a class="anchor" href="#341-%e8%bd%af%e4%bb%b6%e5%8c%85%e7%ae%a1%e7%90%86%e5%99%a8">#</a>
+</h2>
+<p>包管理器是方便软件安装、卸载，解决软件依赖关系的重要工具。</p>
+<ul>
+<li>CentOS、RedHat 使用 yum 包管理器，软件安装包格式为 rpm。</li>
+<li>Debian、Ubuntu 使用 apt 包管理器，软件安装包格式为 deb。</li>
+</ul>
+<h2 id="342-rpm-包和-rpm-命令">
+  3.4.2 rpm 包和 rpm 命令
+  <a class="anchor" href="#342-rpm-%e5%8c%85%e5%92%8c-rpm-%e5%91%bd%e4%bb%a4">#</a>
+</h2>
+<h3 id="包格式">
+  包格式
+  <a class="anchor" href="#%e5%8c%85%e6%a0%bc%e5%bc%8f">#</a>
+</h3>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230211/04dbfea5d4a64e07861ee337712a0bea.png" width=  /></div>
+<h3 id="命令常用参数">
+  命令常用参数
+  <a class="anchor" href="#%e5%91%bd%e4%bb%a4%e5%b8%b8%e7%94%a8%e5%8f%82%e6%95%b0">#</a>
+</h3>
+<ul>
+<li>-q 查询软件包，-qa 查看所有。</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>rpm -qa
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230211/e7b2fe4a010d484690790b60e08e5a9f.png" width=  /></div>
+<ul>
+<li>
+<p>-i 安装软件包</p>
+</li>
+<li>
+<p>-e 卸载软件包</p>
+</li>
+</ul>
+<h3 id="问题">
+  问题
+  <a class="anchor" href="#%e9%97%ae%e9%a2%98">#</a>
+</h3>
+<p>使用 rpm 时需要手动解决依赖关系，在实际应用中用的不多，常用 yum 命令安装。软件包来源不可靠。</p>
+<h2 id="343-yum-仓库">
+  3.4.3 yum 仓库
+  <a class="anchor" href="#343-yum-%e4%bb%93%e5%ba%93">#</a>
+</h2>
+<h3 id="修改-yum-源">
+  修改 yum 源
+  <a class="anchor" href="#%e4%bf%ae%e6%94%b9-yum-%e6%ba%90">#</a>
+</h3>
+<p>
+  <a href="https://developer.aliyun.com/mirror/">阿里巴巴官方镜像站 https://developer.aliyun.com/mirror/</a></p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230212/07f5b92546494d019ba93f2d8c506cf2.png" width=  /></div>
+<h3 id="常用选项">
+  常用选项
+  <a class="anchor" href="#%e5%b8%b8%e7%94%a8%e9%80%89%e9%a1%b9">#</a>
+</h3>
+<ul>
+<li>install 安装软件包</li>
+<li>remove 卸载软件包</li>
+<li>list | grouplist 查看软件包</li>
+<li>update 升级软件包</li>
+</ul>
+<p>yum update 如果加上软件包名会去升级指定的软件，如果什么都不加会去升级所有的软件包。</p>
+<h2 id="344-源代码编译安装">
+  3.4.4 源代码编译安装
+  <a class="anchor" href="#344-%e6%ba%90%e4%bb%a3%e7%a0%81%e7%bc%96%e8%af%91%e5%ae%89%e8%a3%85">#</a>
+</h2>
+<p>有时 yum 源中没有最新的软件包，这时可以通过源代码编译安装的方式。</p>
+<p>以下通过编译安装 openresty 示例：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>wget https://openresty.org/download/openresty-1.15.8.1.tar.gz <span style="color:#75715e">## 下载</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>tar -zxf openresty-1.15.8.1.tar.gz
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>cd openresty-1.15.8.1/
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>./configure --prefix<span style="color:#f92672">=</span>/usr/local/openresty <span style="color:#75715e">## prefix 指定安装目录</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>make -j2 <span style="color:#75715e"># -j2 使用 2 个逻辑 CPU 进行编译,如果代码之间没有一定的依赖关系一般会加快编译速度</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>make install
+</span></span></code></pre></div><p>安装过程中可能需要 gcc 和 c++，需要提前安装下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>yum install gcc gcc-c++
+</span></span></code></pre></div><p>如果遇到以下错误：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>./configure: error: the HTTP rewrite module requires the PCRE library
+</span></span></code></pre></div><p>需要安装下 pcre</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>yum install pcre-devel
+</span></span></code></pre></div><p>如果遇到以下错误</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span> error: SSL modules require the OpenSSL library
+</span></span></code></pre></div><p>需要安装下 openssl</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>yum -y install openssl openssl-devel
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230212/58db1bb8bf65406da17398d0161c9b7b.png" width=  /></div>
+<p>通过安装 openresty 可知，在安装过程中需要手动去解决依赖关系，而且经常不能一次性的去解决，往往需要通过经验和 google 才能解决问题，这也是源代码编译安装不太流行的原因。</p>
+<h2 id="345-内核升级">
+  3.4.5 内核升级
+  <a class="anchor" href="#345-%e5%86%85%e6%a0%b8%e5%8d%87%e7%ba%a7">#</a>
+</h2>
+<h2 id="346-grub-配置文件">
+  3.4.6 grub 配置文件
+  <a class="anchor" href="#346-grub-%e9%85%8d%e7%bd%ae%e6%96%87%e4%bb%b6">#</a>
+</h2>
+<h2 id="参考">
+  参考
+  <a class="anchor" href="#%e5%8f%82%e8%80%83">#</a>
+</h2>
+<ul>
+<li>
+  <a href="https://www.cpming.top/p/nginx-http-rewrite-module-requires-pcre">the HTTP rewrite module requires the PCRE library</a></li>
+<li>
+  <a href="https://blog.csdn.net/en_joker/article/details/109463411">configure: error: SSL modules require the OpenSSL library.</a></li>
+</ul>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/bdacdb767ad27120ea38f1a251da7b10c7e0cd71" title='最后修改者 weibin | February 12, 2023' target="_blank" rel="noopener">
+      <img src="/linux/svg/calendar.svg" class="book-icon" alt="Calendar" />
+      <span>February 12, 2023</span>
+    </a>
+  </div>
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/book.linux/docs/part3-sys-manage/3.4-soft-install.md" target="_blank" rel="noopener">
+      <img src="/linux/svg/edit.svg" class="book-icon" alt="Edit" />
+      <span>编辑本页</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#34-软件安装">3.4 软件安装</a>
+      <ul>
+        <li><a href="#341-软件包管理器">3.4.1 软件包管理器</a></li>
+        <li><a href="#342-rpm-包和-rpm-命令">3.4.2 rpm 包和 rpm 命令</a>
+          <ul>
+            <li><a href="#包格式">包格式</a></li>
+            <li><a href="#命令常用参数">命令常用参数</a></li>
+            <li><a href="#问题">问题</a></li>
+          </ul>
+        </li>
+        <li><a href="#343-yum-仓库">3.4.3 yum 仓库</a>
+          <ul>
+            <li><a href="#修改-yum-源">修改 yum 源</a></li>
+            <li><a href="#常用选项">常用选项</a></li>
+          </ul>
+        </li>
+        <li><a href="#344-源代码编译安装">3.4.4 源代码编译安装</a></li>
+        <li><a href="#345-内核升级">3.4.5 内核升级</a></li>
+        <li><a href="#346-grub-配置文件">3.4.6 grub 配置文件</a></li>
+        <li><a href="#参考">参考</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
