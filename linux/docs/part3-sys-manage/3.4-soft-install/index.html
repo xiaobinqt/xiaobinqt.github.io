@@ -8,8 +8,8 @@ CentOS、RedHat 使用 yum 包管理器，软件安装包格式为 rpm。 Debian
 -e 卸载软件包
 问题 # 使用 rpm 时需要手动解决依赖关系，在实际应用中用的不多，常用 yum 命令安装。软件包来源不可靠。
 3.4.3 yum 仓库 # 修改 yum 源 # 阿里巴巴官方镜像站 https://developer.aliyun.com/mirror/
-常用选项 # install 安装软件包 remove 卸载软件包 list | grouplist 查看软件包 update 升级软件包 yum update 如果加上软件包名会去升级指定的软件，如果什么都不加会去升级所有的软件包。
-3.4.4 源代码编译安装 # 有时 yum 源中没有最新的软件包，这时可以通过源代码编译安装的方式。">
+经常需要安装 epel 来扩展 yum 仓库源，不常见的一些软件可以通过 epel 仓库来安装：
+yum install epel-release -y 常用选项 # install 安装软件包 remove 卸载软件包 list | grouplist 查看软件包 update 升级软件包 yum update 如果加上软件包名会去升级指定的软件，如果什么都不加会去升级所有的软件包。">
 <meta name="theme-color" content="#FFFFFF">
 <meta name="color-scheme" content="light dark"><meta property="og:title" content="3.4 软件安装" />
 <meta property="og:description" content="3.4 软件安装 # 3.4.1 软件包管理器 # 包管理器是方便软件安装、卸载，解决软件依赖关系的重要工具。
@@ -17,18 +17,18 @@ CentOS、RedHat 使用 yum 包管理器，软件安装包格式为 rpm。 Debian
 -e 卸载软件包
 问题 # 使用 rpm 时需要手动解决依赖关系，在实际应用中用的不多，常用 yum 命令安装。软件包来源不可靠。
 3.4.3 yum 仓库 # 修改 yum 源 # 阿里巴巴官方镜像站 https://developer.aliyun.com/mirror/
-常用选项 # install 安装软件包 remove 卸载软件包 list | grouplist 查看软件包 update 升级软件包 yum update 如果加上软件包名会去升级指定的软件，如果什么都不加会去升级所有的软件包。
-3.4.4 源代码编译安装 # 有时 yum 源中没有最新的软件包，这时可以通过源代码编译安装的方式。" />
+经常需要安装 epel 来扩展 yum 仓库源，不常见的一些软件可以通过 epel 仓库来安装：
+yum install epel-release -y 常用选项 # install 安装软件包 remove 卸载软件包 list | grouplist 查看软件包 update 升级软件包 yum update 如果加上软件包名会去升级指定的软件，如果什么都不加会去升级所有的软件包。" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://example.com/linux/docs/part3-sys-manage/3.4-soft-install/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2023-02-12T20:34:19+08:00" />
+<meta property="article:modified_time" content="2023-02-16T16:55:48+08:00" />
 <title>3.4 软件安装 | Linux 学习笔记</title>
 <link rel="manifest" href="/linux/manifest.json">
 <link rel="icon" href="/linux/favicon.png" type="image/x-icon">
 <link rel="stylesheet" href="/linux/book.min.44ab80b6e9fbffc4b56fa0525dd4af874d4d533ab2a985226782d7cdc8d9fd15.css" integrity="sha256-RKuAtun7/8S1b6BSXdSvh01NUzqyqYUiZ4LXzcjZ/RU=" crossorigin="anonymous">
   <script defer src="/linux/flexsearch.min.js"></script>
-  <script defer src="/linux/zh.search.min.6b83c6e546a3fa7edc731a99a34459447bcf5599521c511bbdac35cda08ed04e.js" integrity="sha256-a4PG5Uaj&#43;n7ccxqZo0RZRHvPVZlSHFEbvaw1zaCO0E4=" crossorigin="anonymous"></script>
+  <script defer src="/linux/zh.search.min.0ce7fa17a4beba14680b8a2a54dec5c4ed14f4269ada2bb1dcfd23204a45f8d5.js" integrity="sha256-DOf6F6S&#43;uhRoC4oqVN7FxO0U9Caa2iux3P0jIEpF&#43;NU=" crossorigin="anonymous"></script>
 
   <script defer src="/linux/sw.min.e3338ad661715b83bfd6397040a613605d8bb26c10798773e2176216e2123560.js" integrity="sha256-4zOK1mFxW4O/1jlwQKYTYF2LsmwQeYdz4hdiFuISNWA=" crossorigin="anonymous"></script>
 <!--
@@ -383,6 +383,19 @@ https://github.com/alex-shpak/hugo-book
         </li>
       
     
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.5-process/" class="">3.5 进程管理</a>
+  
+
+        </li>
+      
+    
   </ul>
 
         </li>
@@ -457,8 +470,17 @@ https://github.com/alex-shpak/hugo-book
           </ul>
         </li>
         <li><a href="#344-源代码编译安装">3.4.4 源代码编译安装</a></li>
-        <li><a href="#345-内核升级">3.4.5 内核升级</a></li>
-        <li><a href="#346-grub-配置文件">3.4.6 grub 配置文件</a></li>
+        <li><a href="#345-内核升级">3.4.5 内核升级</a>
+          <ul>
+            <li><a href="#yum-方式">yum 方式</a></li>
+            <li><a href="#源代码方式">源代码方式</a></li>
+          </ul>
+        </li>
+        <li><a href="#346-grub-配置文件">3.4.6 grub 配置文件</a>
+          <ul>
+            <li><a href="#常见配置项">常见配置项</a></li>
+          </ul>
+        </li>
         <li><a href="#参考">参考</a></li>
       </ul>
     </li>
@@ -529,7 +551,9 @@ https://github.com/alex-shpak/hugo-book
 <p>
   <a href="https://developer.aliyun.com/mirror/">阿里巴巴官方镜像站 https://developer.aliyun.com/mirror/</a></p>
 <div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230212/07f5b92546494d019ba93f2d8c506cf2.png" width=  /></div>
-<h3 id="常用选项">
+<p>经常需要安装 epel 来扩展 yum 仓库源，不常见的一些软件可以通过 epel 仓库来安装：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>yum install epel-release -y
+</span></span></code></pre></div><h3 id="常用选项">
   常用选项
   <a class="anchor" href="#%e5%b8%b8%e7%94%a8%e9%80%89%e9%a1%b9">#</a>
 </h3>
@@ -573,10 +597,77 @@ https://github.com/alex-shpak/hugo-book
   3.4.5 内核升级
   <a class="anchor" href="#345-%e5%86%85%e6%a0%b8%e5%8d%87%e7%ba%a7">#</a>
 </h2>
+<p>查看内核版本可以使用 <code>uname -r</code>。</p>
+<h3 id="yum-方式">
+  yum 方式
+  <a class="anchor" href="#yum-%e6%96%b9%e5%bc%8f">#</a>
+</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>uname -r
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>yum update <span style="color:#75715e"># 升级已安装的其他软件包和补丁</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>yum install kernel-3.10.0 <span style="color:#75715e"># 升级内核版本</span>
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230216/30f9f42aef8f413f8e43bdf9b615d6e1.png" width=  /></div>
+<h3 id="源代码方式">
+  源代码方式
+  <a class="anchor" href="#%e6%ba%90%e4%bb%a3%e7%a0%81%e6%96%b9%e5%bc%8f">#</a>
+</h3>
+<p>源代码方式并不推荐，因为不会自动解决依赖关系，需要手动去解决。编译内核根分区至少要有 10G 的空间，如果小于 10G 可能会出现安装失败的情况。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># 1. 安装依赖包</span>
+</span></span><span style="display:flex;"><span>yum install gcc gcc-c++ make ncurses-devel openssl-devel elfutils-libelf-devel -y
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 2. 去官方网站下载并解压缩内核 https://www.kernel.org</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 可以在 https://mirrors.edge.kernel.org/pub/linux/kernel/ 这里找到需要的版本</span>
+</span></span><span style="display:flex;"><span>wget https://mirrors.edge.kernel.org/pub/linux/kernel/v5.x/linux-5.1.10.tar.xz
+</span></span><span style="display:flex;"><span>tar xvf linux-5.1.10.tar.xz -C /usr/src/kernels
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 3. 配置内核编译参数（可选），可以直接使用当前系统的配置，参看 4</span>
+</span></span><span style="display:flex;"><span>cd /usr/src/kernels/linux-5.1.10/
+</span></span><span style="display:flex;"><span>make menuconfig | allyesconfig | allnoconfig <span style="color:#75715e"># make menuconfig allyesconfig 所有我都选 yes..</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 4. 使用当前系统内核配置</span>
+</span></span><span style="display:flex;"><span>cp /boot/config-kernelversion.platform /usr/src/kernels/linux-5.1.10/.config <span style="color:#75715e"># kernelversion 内核版本 platform 平台，比如 config-3.10.0-957.el7.x86_64</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 5. 查看CPU</span>
+</span></span><span style="display:flex;"><span>lscpu
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 6. 编译</span>
+</span></span><span style="display:flex;"><span>make -j2 all
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 7. 安装内核</span>
+</span></span><span style="display:flex;"><span>make modules_install
+</span></span><span style="display:flex;"><span>make install
+</span></span></code></pre></div><p>安装成功后 reboot 重启引导使用新内核启动即可。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230216/34af4ac56bea41a6bb1acca26002d056.png" width=  /></div>
 <h2 id="346-grub-配置文件">
   3.4.6 grub 配置文件
   <a class="anchor" href="#346-grub-%e9%85%8d%e7%bd%ae%e6%96%87%e4%bb%b6">#</a>
 </h2>
+<p>grub 全称 “Grand unified bootloader”，是 GNU 项目的一个启动加载包。grub 的作用就是负责加载所选择的内核，当有多个系统内核时，可以手动选择要启动的系统，在 grub 图形界面上有多系统选项菜单。</p>
+<ul>
+<li>/etc/default/grub 模板的一些配置</li>
+<li>/etc/grub.d/ 在这个文件夹下有写高级配置</li>
+<li>/boot/grub2/grub.cfg 不直接编辑，通过命令生成</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>grub2-mkconfig -o /boot/grub2/grub.cfg
+</span></span></code></pre></div><h3 id="常见配置项">
+  常见配置项
+  <a class="anchor" href="#%e5%b8%b8%e8%a7%81%e9%85%8d%e7%bd%ae%e9%a1%b9">#</a>
+</h3>
+<ol>
+<li>引导内核</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>grub2-editenv list <span style="color:#75715e"># 查看当前引导内核</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>grep ^menu /boot/grub2/grub.cfg <span style="color:#75715e"># 查看有几个内核版本</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>grub2-set-default X <span style="color:#75715e"># 设置引导内核，X 从 0 开始</span>
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230216/619d1ebb18f34fdf8a0936748166c139.png" width=  /></div>
+<ol start="2">
+<li>查看错误信息</li>
+</ol>
+<p>当内核引导出现问题时，可以把 GRUB_CMDLINE_LINUX 配置中的<code>rhgb quiet</code>参数去掉，让打印出更详细的信息。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230216/e8140961c39246fba894f9a0c9e5e962.png" width=  /></div>
 <h2 id="参考">
   参考
   <a class="anchor" href="#%e5%8f%82%e8%80%83">#</a>
@@ -596,9 +687,9 @@ https://github.com/alex-shpak/hugo-book
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/bdacdb767ad27120ea38f1a251da7b10c7e0cd71" title='最后修改者 weibin | February 12, 2023' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/87e4b979efb8451c725a8a86fc3779d2d83caca3" title='最后修改者 weibin | February 16, 2023' target="_blank" rel="noopener">
       <img src="/linux/svg/calendar.svg" class="book-icon" alt="Calendar" />
-      <span>February 12, 2023</span>
+      <span>February 16, 2023</span>
     </a>
   </div>
 
@@ -658,8 +749,17 @@ https://github.com/alex-shpak/hugo-book
           </ul>
         </li>
         <li><a href="#344-源代码编译安装">3.4.4 源代码编译安装</a></li>
-        <li><a href="#345-内核升级">3.4.5 内核升级</a></li>
-        <li><a href="#346-grub-配置文件">3.4.6 grub 配置文件</a></li>
+        <li><a href="#345-内核升级">3.4.5 内核升级</a>
+          <ul>
+            <li><a href="#yum-方式">yum 方式</a></li>
+            <li><a href="#源代码方式">源代码方式</a></li>
+          </ul>
+        </li>
+        <li><a href="#346-grub-配置文件">3.4.6 grub 配置文件</a>
+          <ul>
+            <li><a href="#常见配置项">常见配置项</a></li>
+          </ul>
+        </li>
         <li><a href="#参考">参考</a></li>
       </ul>
     </li>
