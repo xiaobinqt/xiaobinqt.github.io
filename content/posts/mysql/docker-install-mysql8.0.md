@@ -135,7 +135,7 @@ docker run -d \
     --name mysql8.0 \
     -v /root/weibin/mysql8.0/conf/my.cnf:/etc/mysql/cnf \
     -v /root/weibin/mysql8.0/data:/var/lib/mysql \
-    -e MYSQL_ROOT_PASSWORD=mHJP8LXFMoZtqhST \
+    -e MYSQL_ROOT_PASSWORD=123456 \
     mysql:8.0
 ```
 
