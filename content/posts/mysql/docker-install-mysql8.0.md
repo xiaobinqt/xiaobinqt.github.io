@@ -141,6 +141,14 @@ docker run -d \
 
 ![启动容器](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221121/2c0a7dbf9628400a98fcfaaa341c6970.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '启动容器')
 
+这里还可以在启动容器时初始化一些工作，比如建库建表，可以把 sql 或是 sh 文件放在容器的`/docker-entrypoint-initdb.d`目录下，可以直接通过宿主机映射到容器目录，比如
+
+```shell
+-v /root/dockerdata/mysql/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+```
+
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230307/f4a351ea0e654164b078634826de0033.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'docker-entrypoint-initdb.d 目录')
+
 ## 开启远程连接
 
 如果不能远程连接可以进入容器后连接数据库，修改 mysql 库的 user 表。
