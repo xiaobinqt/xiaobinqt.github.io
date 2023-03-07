@@ -10,7 +10,7 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://www.xiaobinqt.cn/mysql-faq-3/" /><meta property="og:image" content="https://www.xiaobinqt.cn/logo.png"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2022-07-11T00:00:00+00:00" />
-<meta property="article:modified_time" content="2023-02-06T17:36:51+08:00" />
+<meta property="article:modified_time" content="2023-03-07T21:44:05+08:00" />
 <meta property="og:see_also" content="https://www.xiaobinqt.cn/mysql-faq-2/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/problems-in-work/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/mysql-simple-faq/" />
 
 <meta name="twitter:card" content="summary_large_image"/>
@@ -35,8 +35,8 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/www.xiaobinqt.cn\/mysql-faq-3\/"
-        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "mysql","wordcount":  4028 ,
-        "url": "https:\/\/www.xiaobinqt.cn\/mysql-faq-3\/","datePublished": "2022-07-11T00:00:00+00:00","dateModified": "2023-02-06T17:36:51+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "mysql","wordcount":  4041 ,
+        "url": "https:\/\/www.xiaobinqt.cn\/mysql-faq-3\/","datePublished": "2022-07-11T00:00:00+00:00","dateModified": "2023-03-07T21:44:05+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "xxxx","logo": {
                     "@type": "ImageObject",
@@ -141,7 +141,7 @@
     </div><script>document.getElementsByTagName("main")[0].setAttribute("pageStyle", "normal")</script><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single"><h1 class="single-title animate__animated animate__flipInX">MySQL 常见问题（三）</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><i class="author fas fa-user-circle fa-fw"></i><a href="/" title="Author" rel=" author" class="author">xiaobinqt</a>
                 </span>&nbsp;<span class="post-category">收录于 </span>&nbsp;<span class="post-category">类别 <a href="/categories/mysql/"><i class="far fa-folder fa-fw"></i>mysql</a></span>&nbsp;<span class="post-category">和</span>&nbsp;<span class="post-series">系列 <a href="/series/interview/"><i class="far fa-list-alt fa-fw"></i>八股文</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-07-11">2022-07-11</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2023-02-06">2023-02-06</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 4028 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-07-11">2022-07-11</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2023-03-07">2023-03-07</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 4041 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 9 分钟&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
@@ -292,7 +292,7 @@
 <p>相较于没有索引下推之前，原本需要做「2、5」两次回表查询，但在拥有索引下推之后，仅需做「2」一次回表查询。</p>
 <h2 id="什么是脏读幻读不可重复读" class="headerLink">
     <a href="#%e4%bb%80%e4%b9%88%e6%98%af%e8%84%8f%e8%af%bb%e5%b9%bb%e8%af%bb%e4%b8%8d%e5%8f%af%e9%87%8d%e5%a4%8d%e8%af%bb" class="header-mark"></a>什么是脏读、幻读、不可重复读</h2><p><strong>脏读</strong>：指一个事务读到了其他事务还未提交的数据，也就是当前事务读到的数据，由于还未提交，因此有可能会回滚。</p>
-<p><strong>幻读</strong>：另外一个事务在第一个事务要处理的目标数据范围之内<strong>新增</strong>了数据，然后先于第一个事务提交造成的问题。</p>
+<p><strong>幻读</strong>：另外一个事务在第一个事务要处理的目标数据范围之内<strong>新增</strong>了数据，然后先于第一个事务提交造成的问题。<strong>幻读仅专指 “新插入的行”</strong>。</p>
 <p>幻读是对自己来说的，比如，事务 A 在对表中多行数据进行修改，将性别「男、女」改为「0、1」，此时事务 B 又插入了一条性别为男的数据，当事务 A 提交后，再次查询表时，会发现表中依旧存在一条性别为男的数据。</p>
 <p><strong>不可重复读</strong>：指在一个事务中，多次读取同一数据，先后读取到的数据不一致。</p>
 <p>事务 A 执行下单业务时，因为添加物流信息的时候出错了，导致整个事务回滚，事务回滚完成后，事务 A 就结束了。但事务 B 却并未结束，在事务 B 中，在事务 A 执行时读取了一次剩余库存，然后在事务 A 回滚后又读取了一次剩余库存，仔细想想：B 事务第一次读到的剩余库存是扣减之后的，第二次读到的剩余库存则是扣减之前的（因为 A 事务回滚又加回去了），导致两次读取的数据不一致，这就是不可重复读。</p>
@@ -310,8 +310,8 @@
     <div class="post-info">
         <div class="post-info-line">
             <div class="post-info-mod">
-                <span>更新于 2023-02-06&nbsp;<a class="git-hash" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/97c0742a034669736aac8d344ce70c2cc1f152a0" target="_blank" title="commit by weibin(xiaobinqt@163.com) 97c0742a034669736aac8d344ce70c2cc1f152a0: update article" rel="noopener noreferrer">
-                                    <i class="fas fa-hashtag fa-fw"></i>97c0742a</a></span>
+                <span>更新于 2023-03-07&nbsp;<a class="git-hash" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/fed23df408fc20ef4e4e8e7eca887ec0b59f0c8f" target="_blank" title="commit by weibin(xiaobinqt@163.com) fed23df408fc20ef4e4e8e7eca887ec0b59f0c8f: update mysql-faq-3.md" rel="noopener noreferrer">
+                                    <i class="fas fa-hashtag fa-fw"></i>fed23df4</a></span>
             </div>
             <div class="post-info-license"></div>
         </div>
