@@ -1,5 +1,5 @@
 ---
-weight: 2
+weight: 1
 
 bookFlatSection: true
 
@@ -7,10 +7,10 @@ bookCollapseSection: false
 
 bookToc: true
 
-title: "Redis"
+title: "总览"
 ---
 
-# Redis
+# 总览
 
 ## 一、概述
 
@@ -20,7 +20,159 @@ Redis 是速度非常快的非关系型（NoSQL）内存键值数据库，可以
 
 Redis 支持很多特性，例如将内存中的数据持久化到硬盘中，使用复制来扩展读性能，使用分片来扩展写性能。
 
-## 二、数据结构
+## 二、数据类型
+
+| 数据类型   | 可以存储的值      | 操作                                                                |
+|--------|-------------|-------------------------------------------------------------------|
+| STRING | 字符串、整数或者浮点数 | 对整个字符串或者字符串的其中一部分执行操作 </br> 对整数和浮点数执行自增或者自减操作                     |
+| LIST   | 列表          | 从两端压入或者弹出元素 </br> 对单个或者多个元素进行修剪，</br> 只保留一个范围内的元素                 |
+| SET    | 无序集合        | 添加、获取、移除单个元素</br> 检查一个元素是否存在于集合中</br> 计算交集、并集、差集</br> 从集合里面随机获取元素 |
+| HASH   | 包含键值对的无序散列表 | 添加、获取、移除单个键值对</br> 获取所有键值对</br> 检查某个键是否存在                         |
+| ZSET   | 有序集合        | 添加、获取、删除元素</br> 根据分值范围或者成员来获取元素</br> 计算一个键的排名                     |
+
+> [What Redis data structures look like](https://redislabs.com/ebook/part-1-getting-started/chapter-1-getting-to-know-redis/1-2-what-redis-data-structures-look-like/)
+
+### STRING
+
+<div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/6019b2db-bc3e-4408-b6d8-96025f4481d6.png" width="400"/> </div><br>
+
+```html
+> set hello world
+OK
+> get hello
+"world"
+> del hello
+(integer) 1
+> get hello
+(nil)
+```
+
+### LIST
+
+<div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/fb327611-7e2b-4f2f-9f5b-38592d408f07.png" width="400"/> </div><br>
+
+```html
+> rpush list-key item
+(integer) 1
+> rpush list-key item2
+(integer) 2
+> rpush list-key item
+(integer) 3
+
+> lrange list-key 0 -1
+1) "item"
+2) "item2"
+3) "item"
+
+> lindex list-key 1
+"item2"
+
+> lpop list-key
+"item"
+
+> lrange list-key 0 -1
+1) "item2"
+2) "item"
+```
+
+### SET
+
+<div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/cd5fbcff-3f35-43a6-8ffa-082a93ce0f0e.png" width="400"/> </div><br>
+
+```html
+> sadd set-key item
+(integer) 1
+> sadd set-key item2
+(integer) 1
+> sadd set-key item3
+(integer) 1
+> sadd set-key item
+(integer) 0
+
+> smembers set-key
+1) "item"
+2) "item2"
+3) "item3"
+
+> sismember set-key item4
+(integer) 0
+> sismember set-key item
+(integer) 1
+
+> srem set-key item2
+(integer) 1
+> srem set-key item2
+(integer) 0
+
+> smembers set-key
+1) "item"
+2) "item3"
+```
+
+### HASH
+
+<div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/7bd202a7-93d4-4f3a-a878-af68ae25539a.png" width="400"/> </div><br>
+
+```html
+> hset hash-key sub-key1 value1
+(integer) 1
+> hset hash-key sub-key2 value2
+(integer) 1
+> hset hash-key sub-key1 value1
+(integer) 0
+
+> hgetall hash-key
+1) "sub-key1"
+2) "value1"
+3) "sub-key2"
+4) "value2"
+
+> hdel hash-key sub-key2
+(integer) 1
+> hdel hash-key sub-key2
+(integer) 0
+
+> hget hash-key sub-key1
+"value1"
+
+> hgetall hash-key
+1) "sub-key1"
+2) "value1"
+```
+
+### ZSET
+
+<div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/1202b2d6-9469-4251-bd47-ca6034fb6116.png" width="400"/> </div><br>
+
+```html
+> zadd zset-key 728 member1
+(integer) 1
+> zadd zset-key 982 member0
+(integer) 1
+> zadd zset-key 982 member0
+(integer) 0
+
+> zrange zset-key 0 -1 withscores
+1) "member1"
+2) "728"
+3) "member0"
+4) "982"
+
+> zrangebyscore zset-key 0 800 withscores
+1) "member1"
+2) "728"
+
+> zrem zset-key member1
+(integer) 1
+> zrem zset-key member1
+(integer) 0
+
+> zrange zset-key 0 -1 withscores
+1) "member0"
+2) "982"
+```
+
+## 三、数据结构
 
 ### 字典
 
@@ -144,7 +296,7 @@ int dictRehash(dict *d, int n) {
 - 更容易实现；
 - 支持无锁操作。
 
-## 三、使用场景
+## 四、使用场景
 
 ### 计数器
 
@@ -186,7 +338,7 @@ Set 可以实现交集、并集等操作，从而实现共同好友等功能。
 
 ZSet 可以实现有序性操作，从而实现排行榜等功能。
 
-## 四、Redis 与 Memcached
+## 五、Redis 与 Memcached
 
 两者都是非关系型内存键值数据库，主要有以下不同：
 
@@ -210,22 +362,22 @@ Redis Cluster 实现了分布式的支持。
 
 - Memcached 将内存分割成特定长度的块来存储数据，以完全解决内存碎片的问题。但是这种方式会使得内存的利用率不高，例如块的大小为 128 bytes，只存储 100 bytes 的数据，那么剩下的 28 bytes 就浪费掉了。
 
-## 五、键的过期时间
+## 六、键的过期时间
 
 Redis 可以为每个键设置过期时间，当键过期时，会自动删除该键。
 
 对于散列表这种容器，只能为整个键设置过期时间（整个散列表），而不能为键里面的单个元素设置过期时间。
 
-## 六、数据淘汰策略
+## 七、数据淘汰策略
 
 可以设置内存最大使用量，当内存使用量超出时，会施行数据淘汰策略。
 
 Redis 具体有 6 种淘汰策略：
 
 | 策略              | 描述                         | 
-|-----------------|----------------------------| 
-| volatile-lru    | 从已设置过期时间的数据集中挑选最近最少使用的数据淘汰 |
-| volatile-ttl    | 从已设置过期时间的数据集中挑选将要过期的数据淘汰   |
+|-----------------|----------------------------|
+| volatile-lru    | 从已设置过期时间的数据集中挑选最近最少使用的数据淘汰 | 
+| volatile-ttl    | 从已设置过期时间的数据集中挑选将要过期的数据淘汰   | 
 | volatile-random | 从已设置过期时间的数据集中任意选择数据淘汰      | 
 | allkeys-lru     | 从所有数据集中挑选最近最少使用的数据淘汰       | 
 | allkeys-random  | 从所有数据集中任意选择数据进行淘汰          |
@@ -237,7 +389,7 @@ Redis 具体有 6 种淘汰策略：
 
 Redis 4.0 引入了 volatile-lfu 和 allkeys-lfu 淘汰策略，LFU 策略通过统计访问频率，将访问频率最少的键值对淘汰。
 
-## 七、持久化
+## 八、持久化
 
 Redis 是内存型数据库，为了保证数据在断电后不会丢失，需要将内存中的数据持久化到硬盘上。
 
@@ -257,10 +409,10 @@ Redis 是内存型数据库，为了保证数据在断电后不会丢失，需�
 
 使用 AOF 持久化需要设置同步选项，从而确保写命令同步到磁盘文件上的时机。这是因为对文件进行写入并不会马上将内容同步到磁盘上，而是先存储到缓冲区，然后由操作系统决定什么时候同步到磁盘。有以下同步选项：
 
-| 选项       | 同步频率         | 
-|----------|--------------| 
+| 选项       | 同步频率         |
+|----------|--------------|
 | always   | 每个写命令都同步     |
-| everysec | 每秒同步一次       | 
+| everysec | 每秒同步一次       |
 | no       | 让操作系统来决定何时同步 |
 
 - always 选项会严重减低服务器的性能；
@@ -269,7 +421,7 @@ Redis 是内存型数据库，为了保证数据在断电后不会丢失，需�
 
 随着服务器写请求的增多，AOF 文件会越来越大。Redis 提供了一种将 AOF 重写的特性，能够去除 AOF 文件中的冗余写命令。
 
-## 八、事务
+## 九、事务
 
 一个事务包含了多个命令，服务器在执行事务期间，不会改去执行其它客户端的命令请求。
 
@@ -277,7 +429,7 @@ Redis 是内存型数据库，为了保证数据在断电后不会丢失，需�
 
 Redis 最简单的事务实现方式是使用 MULTI 和 EXEC 命令将事务操作包围起来。
 
-## 九、事件
+## 十、事件
 
 Redis 服务器是一个事件驱动程序。
 
@@ -342,7 +494,7 @@ def main():
 
 <div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/daf6cdce5f954217b676f127fe95d102.png" width="350"/> </div><br>
 
-## 十、复制
+## 十一、复制
 
 通过使用 slaveof host port 命令来让一个服务器成为另一个服务器的从服务器。
 
@@ -362,11 +514,11 @@ def main():
 
 <div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/02ee47783eb845b895d528f61cd599f3.png" width="600"/> </div><br>
 
-## 十一、Sentinel
+## 十二、Sentinel
 
 Sentinel（哨兵）可以监听集群中的服务器，并在主服务器进入下线状态时，自动从从服务器中选举出新的主服务器。
 
-## 十二、分片
+## 十三、分片
 
 分片是将数据划分为多个部分的方法，可以将数据存储到多台机器里面，这种方法在解决某些问题时可以获得线性级别的性能提升。
 
@@ -381,7 +533,7 @@ Sentinel（哨兵）可以监听集群中的服务器，并在主服务器进入
 - 代理分片：将客户端请求发送到代理上，由代理转发请求到正确的节点上。
 - 服务器分片：Redis Cluster。
 
-## 十三、一个简单的论坛系统分析
+## 十四、一个简单的论坛系统分析
 
 该论坛系统功能如下：
 
@@ -410,3 +562,14 @@ Redis 没有关系型数据库中的表这一概念来将同种类型的数据�
 为了按发布时间和点赞数进行排序，可以建立一个文章发布时间的有序集合和一个文章点赞数的有序集合。（下图中的 score 就是这里所说的点赞数；下面所示的有序集合分值并不直接是时间和点赞数，而是根据时间和点赞数间接计算出来的）
 
 <div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/4345ce666fca4a63b17f3006a21bc9cf.png" width="800"/> </div>
+
+## 参考资料
+
+- Carlson J L. Redis in Action[J]. Media.johnwiley.com.au, 2013.
+- [黄健宏. Redis 设计与实现 [M]. 机械工业出版社, 2014.](http://redisbook.com/index.html)
+- [REDIS IN ACTION](https://redislabs.com/ebook/foreword/)
+- [Skip Lists: Done Right](http://ticki.github.io/blog/skip-lists-done-right/)
+- [论述 Redis 和 Memcached 的差异](http://www.cnblogs.com/loveincode/p/7411911.html)
+- [Redis 3.0 中文版- 分片](http://wiki.jikexueyuan.com/project/redis-guide)
+- [Redis 应用场景](http://www.scienjus.com/redis-use-case/)
+- [Using Redis as an LRU cache](https://redis.io/topics/lru-cache)
