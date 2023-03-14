@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content=" 1.8 指令集 # 1.8.1 指令集架构 # 指令集架构是指一套软硬件的标准规范，CPU芯片和软件应用会围绕这套规范设计。从CPU发明到现在，有非常多种架构，从常见的x86、ARM，到不太常见的RISC-V，MIPS、IA64，它们之间的差距都非常大。
+有些时候我们会遇到在本地开发环境编译和运行正常的代码，在生产环境却无法正常工作，当然这个问题背后会有多种原因，而不同机器使用的不同指令集可能是原因之一。
+指令集架构是计算机的抽象模型，在很多时候也被称作架构或者计算机架构，它是计算机软件和硬件之间的接口和桥梁。一个为特定指令集架构编写的应用程序能够运行在所有支持这种指令集架构的机器上，也就是说如果当前应用程序支持 x86 的指令集，那么就可以运行在所有使用 x86 指令集的机器上，这其实就是抽象层的作用，每一个指令集架构都定义了支持的数据结构、寄存器、管理主内存的硬件支持（例如内存一致、地址模型和虚拟内存）、支持的指令集和 IO 模型，它的引入其实就在软件和硬件之间引入了一个抽象层，让同一个二进制文件能够在不同版本的硬件上运行。如果一个编程语言想要在所有的机器上运行，它就可以将中间代码转换成使用不同指令集架构的机器码，这可比为不同硬件单独移植要简单的太多了。
+1.8.2 复杂指令集（CISC）和精简指令集（RISC） # 最常见的指令集架构分类方法是根据指令的复杂度将其分为复杂指令集（CISC）和精简指令集（RISC），复杂指令集架构包含了很多特定的指令，但是其中的一些指令很少会被程序使用，而精简指令集只实现了经常被使用的指令，不常用的操作都会通过组合简单指令来实现。
+复杂指令集的特点就是指令数目多并且复杂，每条指令的字节长度并不相等，x86 就是常见的复杂指令集处理器，它的指令长度大小范围非常广，从 1 到 15 字节不等，对于长度不固定的指令，计算机必须额外对指令进行判断，这需要付出额外的性能损失。
+而精简指令集对指令的数目和寻址方式做了精简，大大减少指令数量的同时更容易实现，指令集中的每一个指令都使用标准的字节长度、执行时间相比复杂指令集会少很多，处理器在处理指令时也可以流水执行，提高了对并行的支持。作为一种常见的精简指令集处理器，arm 使用 4 个字节作为指令的固定长度，省略了判断指令的性能损失3，精简指令集其实就是利用了我们耳熟能详的 20/80 原则，用 20% 的基础指令和它们的组合来解决问题。
+复杂指令集和精简指令集的使用是设计上的权衡，经过这么多年的发展，两种指令集也相互借鉴和学习，与最开始刚被设计出来时已经有了较大的差别。最开始的计算机使用复杂指令集是因为当时计算机的性能和内存比较有限，业界需要尽可能地减少机器需要执行的指令，所以更倾向于高度编码、长度不等以及多操作数的指令。不过随着计算机性能的提升，出现了精简指令集这种牺牲代码密度换取简单实现的设计；除此之外，硬件的飞速提升还带来了更多的寄存器和更高的时钟频率，软件开发人员也不再直接接触汇编代码，而是通过编译器和汇编器生成指令，复杂的机器指令对于编译器来说很难利用，所以精简指令在这种场景下更适合。
+参考 # 机器码生成 ">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="1.8 指令集" />
+<meta property="og:description" content=" 1.8 指令集 # 1.8.1 指令集架构 # 指令集架构是指一套软硬件的标准规范，CPU芯片和软件应用会围绕这套规范设计。从CPU发明到现在，有非常多种架构，从常见的x86、ARM，到不太常见的RISC-V，MIPS、IA64，它们之间的差距都非常大。
+有些时候我们会遇到在本地开发环境编译和运行正常的代码，在生产环境却无法正常工作，当然这个问题背后会有多种原因，而不同机器使用的不同指令集可能是原因之一。
+指令集架构是计算机的抽象模型，在很多时候也被称作架构或者计算机架构，它是计算机软件和硬件之间的接口和桥梁。一个为特定指令集架构编写的应用程序能够运行在所有支持这种指令集架构的机器上，也就是说如果当前应用程序支持 x86 的指令集，那么就可以运行在所有使用 x86 指令集的机器上，这其实就是抽象层的作用，每一个指令集架构都定义了支持的数据结构、寄存器、管理主内存的硬件支持（例如内存一致、地址模型和虚拟内存）、支持的指令集和 IO 模型，它的引入其实就在软件和硬件之间引入了一个抽象层，让同一个二进制文件能够在不同版本的硬件上运行。如果一个编程语言想要在所有的机器上运行，它就可以将中间代码转换成使用不同指令集架构的机器码，这可比为不同硬件单独移植要简单的太多了。
+1.8.2 复杂指令集（CISC）和精简指令集（RISC） # 最常见的指令集架构分类方法是根据指令的复杂度将其分为复杂指令集（CISC）和精简指令集（RISC），复杂指令集架构包含了很多特定的指令，但是其中的一些指令很少会被程序使用，而精简指令集只实现了经常被使用的指令，不常用的操作都会通过组合简单指令来实现。
+复杂指令集的特点就是指令数目多并且复杂，每条指令的字节长度并不相等，x86 就是常见的复杂指令集处理器，它的指令长度大小范围非常广，从 1 到 15 字节不等，对于长度不固定的指令，计算机必须额外对指令进行判断，这需要付出额外的性能损失。
+而精简指令集对指令的数目和寻址方式做了精简，大大减少指令数量的同时更容易实现，指令集中的每一个指令都使用标准的字节长度、执行时间相比复杂指令集会少很多，处理器在处理指令时也可以流水执行，提高了对并行的支持。作为一种常见的精简指令集处理器，arm 使用 4 个字节作为指令的固定长度，省略了判断指令的性能损失3，精简指令集其实就是利用了我们耳熟能详的 20/80 原则，用 20% 的基础指令和它们的组合来解决问题。
+复杂指令集和精简指令集的使用是设计上的权衡，经过这么多年的发展，两种指令集也相互借鉴和学习，与最开始刚被设计出来时已经有了较大的差别。最开始的计算机使用复杂指令集是因为当时计算机的性能和内存比较有限，业界需要尽可能地减少机器需要执行的指令，所以更倾向于高度编码、长度不等以及多操作数的指令。不过随着计算机性能的提升，出现了精简指令集这种牺牲代码密度换取简单实现的设计；除此之外，硬件的飞速提升还带来了更多的寄存器和更高的时钟频率，软件开发人员也不再直接接触汇编代码，而是通过编译器和汇编器生成指令，复杂的机器指令对于编译器来说很难利用，所以精简指令在这种场景下更适合。
+参考 # 机器码生成 " />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://example.com/linux/docs/part1-primary/1.8-instruction-arch/" /><meta property="article:section" content="docs" />
+
+<meta property="article:modified_time" content="2023-03-14T10:05:56+08:00" />
+<title>1.8 指令集 | Linux 学习笔记</title>
+<link rel="manifest" href="/linux/manifest.json">
+<link rel="icon" href="/linux/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/linux/book.min.847b04c2762099936313ae2170f09eaa6ef0a3e5ae0295b32803e29839e82279.css" integrity="sha256-hHsEwnYgmZNjE64hcPCeqm7wo&#43;WuApWzKAPimDnoInk=" crossorigin="anonymous">
+  <script defer src="/linux/flexsearch.min.js"></script>
+  <script defer src="/linux/zh.search.min.9bfe596a9cc0d26990f175e4f8b9b082b8c835449f16f0fe5491a8de129cb592.js" integrity="sha256-m/5ZapzA0mmQ8XXk&#43;LmwgrjINUSfFvD&#43;VJGo3hKctZI=" crossorigin="anonymous"></script>
+
+  <script defer src="/linux/sw.min.e3338ad661715b83bfd6397040a613605d8bb26c10798773e2176216e2123560.js" integrity="sha256-4zOK1mFxW4O/1jlwQKYTYF2LsmwQeYdz4hdiFuISNWA=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/linux/"><span>Linux 学习笔记</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+<ul>
+    <li>
+        <a href="javascript:void(0)" onclick="hrefIndex()" rel="noopener">主页</a>
+    </li>
+    <li>
+        <a href="https://github.com/xiaobinqt" target="_blank" rel="noopener">GitHub</a>
+    </li>
+</ul>
+
+<hr>
+
+<script>
+    function hrefIndex() {
+        window.location = window.location.origin;
+    }
+</script>
+
+
+  
+<ul>
+  
+  <li>
+    <a href=""  target="_blank" rel="noopener">
+        
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第一部分 基础知识</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.1-overview/" class="">1.1 操作系统概述</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.2-linux-release/" class="">1.2 简介和常见发行版</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.3-common-dir/" class="">1.3 常见目录</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.4-process-manage/" class="">1.4 进程管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.5-deadlock/" class="">1.5 死锁</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.6-memory-manage/" class="">1.6 内存管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.7-link/" class="">1.7 链接</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.7-device-manage/" class="">1.7 设备管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.8-instruction-arch/" class="active">1.8 指令集</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第二部分 系统操作</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.1-help/" class="">2.1 帮助命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.2-ls/" class="">2.2 ls 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.3-shutdown/" class="">2.3 关机</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.4-cp/" class="">2.4 cp 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.5-file-view/" class="">2.5 文件查看命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.6-backup-compression/" class="">2.6 压缩和打包</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.7-vim/" class="">2.7 vim</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.8-user-manage/" class="">2.8 用户管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.9-switch-user/" class="">2.9 切换用户</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.10-file-dir/" class="">2.10 文件和文件夹</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.11-awk/" class="">2.11 awk 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.12-sed/" class="">2.12 sed 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.13-cut-sort-uniq-tr/" class="">2.13 cut、sort、uniq、tr 命令</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第三部分 系统管理</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.1-network/" class="">3.1 网络</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.2-net-trouble-removal/" class="">3.2 网络故障排除</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.3-net-manage/" class="">3.3 网络服务管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.4-soft-install/" class="">3.4 软件安装</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.5-process/" class="">3.5 进程管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.6-memory-disk/" class="">3.6 内存和磁盘管理</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第四部分 Shell</span>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第五部分 文本操作</span>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第六部分 服务管理</span>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第七部分 常见问题</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part7-faq/7.1-cmd/" class="">7.1 命令相关</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/linux/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>1.8 指令集</strong>
+
+  <label for="toc-control">
+    
+    <img src="/linux/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#18-指令集">1.8 指令集</a>
+      <ul>
+        <li><a href="#181-指令集架构">1.8.1 指令集架构</a></li>
+        <li><a href="#182-复杂指令集cisc和精简指令集risc">1.8.2 复杂指令集（CISC）和精简指令集（RISC）</a></li>
+        <li><a href="#参考">参考</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown"><h1 id="18-指令集">
+  1.8 指令集
+  <a class="anchor" href="#18-%e6%8c%87%e4%bb%a4%e9%9b%86">#</a>
+</h1>
+<h2 id="181-指令集架构">
+  1.8.1 指令集架构
+  <a class="anchor" href="#181-%e6%8c%87%e4%bb%a4%e9%9b%86%e6%9e%b6%e6%9e%84">#</a>
+</h2>
+<p>指令集架构是指一套软硬件的标准规范，CPU芯片和软件应用会围绕这套规范设计。从CPU发明到现在，有非常多种架构，从常见的x86、ARM，到不太常见的RISC-V，MIPS、IA64，它们之间的差距都非常大。</p>
+<p>有些时候我们会遇到在本地开发环境编译和运行正常的代码，在生产环境却无法正常工作，当然这个问题背后会有多种原因，而不同机器使用的不同指令集可能是原因之一。</p>
+<p>指令集架构是计算机的抽象模型，在很多时候也被称作架构或者计算机架构，它是计算机软件和硬件之间的接口和桥梁。一个为特定指令集架构编写的应用程序能够运行在所有支持这种指令集架构的机器上，也就是说如果当前应用程序支持 x86 的指令集，那么就可以运行在所有使用 x86 指令集的机器上，这其实就是抽象层的作用，每一个指令集架构都定义了支持的数据结构、寄存器、管理主内存的硬件支持（例如内存一致、地址模型和虚拟内存）、支持的指令集和 IO 模型，它的引入其实就在软件和硬件之间引入了一个抽象层，让同一个二进制文件能够在不同版本的硬件上运行。如果一个编程语言想要在所有的机器上运行，它就可以将中间代码转换成使用不同指令集架构的机器码，这可比为不同硬件单独移植要简单的太多了。</p>
+<h2 id="182-复杂指令集cisc和精简指令集risc">
+  1.8.2 复杂指令集（CISC）和精简指令集（RISC）
+  <a class="anchor" href="#182-%e5%a4%8d%e6%9d%82%e6%8c%87%e4%bb%a4%e9%9b%86cisc%e5%92%8c%e7%b2%be%e7%ae%80%e6%8c%87%e4%bb%a4%e9%9b%86risc">#</a>
+</h2>
+<p>最常见的指令集架构分类方法是根据指令的复杂度将其分为复杂指令集（CISC）和精简指令集（RISC），复杂指令集架构包含了很多特定的指令，但是其中的一些指令很少会被程序使用，而精简指令集只实现了经常被使用的指令，不常用的操作都会通过组合简单指令来实现。</p>
+<p>复杂指令集的特点就是指令数目多并且复杂，每条指令的字节长度并不相等，x86 就是常见的复杂指令集处理器，它的指令长度大小范围非常广，从 1 到 15 字节不等，对于长度不固定的指令，计算机必须额外对指令进行判断，这需要付出额外的性能损失。</p>
+<p>而精简指令集对指令的数目和寻址方式做了精简，大大减少指令数量的同时更容易实现，指令集中的每一个指令都使用标准的字节长度、执行时间相比复杂指令集会少很多，处理器在处理指令时也可以流水执行，提高了对并行的支持。作为一种常见的精简指令集处理器，arm 使用 4 个字节作为指令的固定长度，省略了判断指令的性能损失3，精简指令集其实就是利用了我们耳熟能详的 20/80 原则，用 20% 的基础指令和它们的组合来解决问题。</p>
+<p>复杂指令集和精简指令集的使用是设计上的权衡，经过这么多年的发展，两种指令集也相互借鉴和学习，与最开始刚被设计出来时已经有了较大的差别。最开始的计算机使用复杂指令集是因为当时计算机的性能和内存比较有限，业界需要尽可能地减少机器需要执行的指令，所以更倾向于高度编码、长度不等以及多操作数的指令。不过随着计算机性能的提升，出现了精简指令集这种牺牲代码密度换取简单实现的设计；除此之外，硬件的飞速提升还带来了更多的寄存器和更高的时钟频率，软件开发人员也不再直接接触汇编代码，而是通过编译器和汇编器生成指令，复杂的机器指令对于编译器来说很难利用，所以精简指令在这种场景下更适合。</p>
+<h2 id="参考">
+  参考
+  <a class="anchor" href="#%e5%8f%82%e8%80%83">#</a>
+</h2>
+<ul>
+<li>
+  <a href="https://draveness.me/golang/docs/part1-prerequisite/ch02-compile/golang-machinecode/">机器码生成</a></li>
+</ul>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/b0cc6c190723e17328db57a4e1d41d8d2dec5880" title='最后修改者 weibin | March 14, 2023' target="_blank" rel="noopener">
+      <img src="/linux/svg/calendar.svg" class="book-icon" alt="Calendar" />
+      <span>March 14, 2023</span>
+    </a>
+  </div>
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/book.linux/docs/part1-primary/1.8-instruction-arch.md" target="_blank" rel="noopener">
+      <img src="/linux/svg/edit.svg" class="book-icon" alt="Edit" />
+      <span>编辑本页</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#18-指令集">1.8 指令集</a>
+      <ul>
+        <li><a href="#181-指令集架构">1.8.1 指令集架构</a></li>
+        <li><a href="#182-复杂指令集cisc和精简指令集risc">1.8.2 复杂指令集（CISC）和精简指令集（RISC）</a></li>
+        <li><a href="#参考">参考</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
