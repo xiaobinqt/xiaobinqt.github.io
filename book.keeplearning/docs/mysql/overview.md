@@ -1,5 +1,5 @@
 ---
-weight: 3
+weight: 1
 
 bookFlatSection: true
 
@@ -7,10 +7,10 @@ bookCollapseSection: false
 
 bookToc: true
 
-title: "MySQL"
+title: "总览"
 ---
 
-# MySQL
+# 总览
 
 ## 一、索引
 
