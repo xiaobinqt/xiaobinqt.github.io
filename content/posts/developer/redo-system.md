@@ -29,7 +29,7 @@ math: true
 
 ![image](https://cdn.xiaobinqt.cn/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20181007201814.jpg  " ")
 
-进入[大白菜网站](http://dabaicai.aichyi.cn)下载大白菜装机版安装到电脑
+进入[大白菜网站](http://www.bigbaicai.com/)下载大白菜装机版安装到电脑，好吧，之前一直叫大白菜，不知道什么时候改成叫老白菜了:cry:。
 
 ![image](https://cdn.xiaobinqt.cn/TIM%E6%88%AA%E5%9B%BE20181007195445.png " ")
 
@@ -100,4 +100,29 @@ math: true
 ![image](https://cdn.xiaobinqt.cn/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20181007215500.jpg " ")
 
 ![image](https://cdn.xiaobinqt.cn/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20181007215505.jpg " ")
+
+## WinNTSetup 使用
+
+最新的大白菜桌面是这样:point_down:
+
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230320/533790d147e3404fa9e457357d5aab5f.jpg?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" width=400  /></div>
+
+可以使用 WinNTSetup 安装纯净版系统。双击 WinNTSetup 进入，选择 windows 安装源为下载的 ISO 镜像，选择引导驱动器和安装驱动器盘符。
+
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230320/1a6fa186dda6407f86f4a16dcc531484.jpg?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '使用 WinNTSetup')
+
+## 系统激活
+
+1. 进入系统后按 Win+X 键，选择命令提示符（管理员）
+2. 复制以下内容并运行
+
+```shell
+# 第一步
+slmgr.vbs /skms  222.184.9.98
+
+## 第二步
+slmgr.vbs /ato 
+```
+
+
 
