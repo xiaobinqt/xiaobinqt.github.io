@@ -105,6 +105,10 @@ title: "收藏夹"
 + [markdown book HonKit](https://github.com/honkit/honkit)
 + [www.boce.com](https://www.boce.com)
 + [qwerty-learner](https://qwerty.kaiyi.cool/)
++ [VMware Workstation Pro 16 官方正式版下载（含密钥）](https://www.ssymon.com/archives/vmware-download-key)
++ Xmind 下载
+    + [XMind 2022中文破解版 v22.11.3656 最新版](https://www.whg6.com/22302.html)
+    + [思维导图工具-XMind 2022 破解版](https://www.waodown.com/3309.html)
 
 ## 资料库
 
@@ -119,6 +123,7 @@ title: "收藏夹"
 + [Go 书籍](https://www.aliyundrive.com/s/UXNyrpuVXP1/folder/62047b990bff5f1a5d3a4c069b551e457c686687)
 + [Concurrency in Go](https://edu.anarcho-copy.org/Programming%20Languages/Go/Concurrency%20in%20Go.pdf)
 + [大鹏教育所有课程/提取码：q21b](https://www.aliyundrive.com/s/BYFEa1wFUNf)
++ [万门大学（目前最全的合集）](https://www.aliyundrive.com/s/DTiR5RRGGZC)
 
 ## 云盘
 
