@@ -59,14 +59,14 @@ windows 安转教程可以参考[navicat premium15破解教程](http://www.downc
 | table joins | -            | 表连接，MongoDB 不支持              |
 | primary key | primary key  | 主键，MongoDB 自动将 `_id` 字段设置为主键 |
 
-| RDBMS（关系型数据库） |    MongoDB|
-|---------------|--------|
-| 数据库           |数据库|
-| 表格            |    集合|
-| 行             |    文档|
-| 列             |    字段|
-| 表联合           |    嵌入文档|
-| 主键            |主键 (MongoDB 提供了 key 为 `_id` )|
+| RDBMS（关系型数据库） | MongoDB                       |
+|---------------|-------------------------------|
+| 数据库           | 数据库                           |
+| 表格            | 集合                            |
+| 行             | 文档                            |
+| 列             | 字段                            |
+| 表联合           | 嵌入文档                          |
+| 主键            | 主键 (MongoDB 提供了 key 为 `_id` ) |
 
 ![对比图](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/c1e37e969c744f2bb82f3f68d4b73804.png '对比图')
 
@@ -426,6 +426,37 @@ func main() {
 
 ```
 
+## 角色
+
+对于非 admin 库，不能拥有`clusterAdmin`、`readAnyDatabase`、`readWriteAnyDatabase`、`userAdminAnyDatabase`、`dbAdminAnyDatabase`这些角色。
+
+MongoDB 目前内置了 7 个角色。
+
++ 数据库用户角色：`read`、`readWrite`;
++ 数据库管理角色：`dbAdmin`、`dbOwner`、`userAdmin`；
++ 集群管理角色：`clusterAdmin`、`clusterManager`、`clusterMonitor`、`hostManager`；
++ 备份恢复角色：`backup`、`restore`；
++ 所有数据库角色：`readAnyDatabase`、`readWriteAnyDatabase`、`userAdminAnyDatabase`、`dbAdminAnyDatabase`
++ 超级用户角色 root；这里还有几个角色间接或直接提供了系统超级用户的访问（`dbOwner`、`userAdmin`、`userAdminAnyDatabase`）
++ 内部角色：`__system`
+
+这些角色对应的作用如下：
+
++ `Read`：允许用户读取指定数据库
++ `readWrite`：允许用户读写指定数据库
++ `dbAdmin`：允许用户在指定数据库中执行管理函数，如索引创建、删除，查看统计或访问`system.profile`
++ `userAdmin`：允许用户向`system.users`集合写入，可以找指定数据库里创建、删除和管理用户
++ `clusterAdmin`：只在 admin 数据库中可用，赋予用户所有分片和复制集相关函数的管理权限。
++ `readAnyDatabase`：只在 admin 数据库中可用，赋予用户所有数据库的读权限
++ `readWriteAnyDatabase`：只在 admin 数据库中可用，赋予用户所有数据库的读写权限
++ `userAdminAnyDatabase`：只在 admin 数据库中可用，赋予用户所有数据库的 userAdmin 权限
++ `dbAdminAnyDatabase`：只在 admin 数据库中可用，赋予用户所有数据库的 dbAdmin 权限。
++ `root`：只在 admin 数据库中可用。超级账号，超级权限
+
+一般在新建用户时常见的错误有:point_down:
+
+> uncaught exception: Error: couldn't add user: No role named userAdminAnyDatabase@xxxxxx
+
 ## FAQ
 
 ### 空库不显示
@@ -449,12 +480,12 @@ func main() {
 
 options 可以是如下参数：
 
-| 字段       | 类型  <div style="width: 40px;"> | 描述                                                                                      |
-|----------|--------------------------------|-----------------------------------------------------------------------------------------|
-| capped   | 布尔                             | （可选）如果为 true，则创建固定集合。固定集合是指有着固定大小的集合，当达到最大值时，它会自动覆盖最早的文档。当该值为 true 时，必须指定 size 参数。      |
+| 字段          | 类型  <div style="width: 40px;"> | 描述                                                                                      |
+|-------------|--------------------------------|-----------------------------------------------------------------------------------------|
+| capped      | 布尔                             | （可选）如果为 true，则创建固定集合。固定集合是指有着固定大小的集合，当达到最大值时，它会自动覆盖最早的文档。当该值为 true 时，必须指定 size 参数。      |
 | autoIndexId | 布尔                             | <font color="red">3.2 之后不再支持该参数。</font>（可选）如为 true，自动在 `_id` 字段创建索引。默认为 false。          |
-| size     | 数值                             | （可选）为固定集合指定一个最大值，即<font style="font-weight:bold">字节数 </font>。如果 capped 为 true，也需要指定该字段。 |
-| max      | 数值                             | （可选）指定固定集合中包含文档的最大数量。                                                                   |
+| size        | 数值                             | （可选）为固定集合指定一个最大值，即<font style="font-weight:bold">字节数 </font>。如果 capped 为 true，也需要指定该字段。 |
+| max         | 数值                             | （可选）指定固定集合中包含文档的最大数量。                                                                   |
 
 如果是新建一个集合，这种方式肯定是可以的，但是如果要同步老数据呢？
 
@@ -495,4 +526,5 @@ db.daily_report_bak.find().forEach(function(doc){db.daily_report.insert(doc)})
 + [MongoDB常用操作命令大全](https://www.jb51.net/article/48217.htm)
 + [查询, 更新, 投射, 和集合算符](https://mongodb-documentation.readthedocs.io/en/latest/reference/operator.html#gsc.tab=0)
 + [Field Update Operators](https://www.mongodb.com/docs/manual/reference/operator/update-field/)
++ [解决 Error: couldn’t add user: No role named userAdminAnyDatabase@ 异常问题](https://www.jianshu.com/p/40b44a5fcfa0)
 
