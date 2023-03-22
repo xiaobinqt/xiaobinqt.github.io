@@ -109,6 +109,7 @@ title: "收藏夹"
 + Xmind 下载
     + [XMind 2022中文破解版 v22.11.3656 最新版](https://www.whg6.com/22302.html)
     + [思维导图工具-XMind 2022 破解版](https://www.waodown.com/3309.html)
++ [Typora 破解教程（2022最新方法，亲测有效）](https://www.bmabk.com/index.php/post/35726.html)
 
 ## 资料库
 
