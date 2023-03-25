@@ -38,7 +38,7 @@ math: true
 
 我使用的是 windows 10 企业版，在安装时出现了个问题，如下：
 
-![问题截图](https://img-blog.csdnimg.cn/202104142157593.png '问题截图')
+![问题截图](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230325/e5f7304f5527496590e80849459354ac.png '问题截图')
 
 我是在网上找了大半天没有找到解决的办法，都是写文章作者可用，但是我一直不生效，我觉得的必须要用管理员权限安装导致的。后来我直接忽略了，用管理员权限运行。
 
@@ -46,13 +46,13 @@ math: true
 
 用管理员 power shell 运行 具体命令可以参看[文档](https://www.runoob.com/mongodb/mongodb-window-install.html)
 
-![运行 mongodb 服务 01](https://img-blog.csdnimg.cn/20210414220324785.png '运行 mongodb 服务 01')
+![运行 mongodb 服务 01](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230325/729bcbd9bd9845a09340ed05d4518c9b.png '运行 mongodb 服务 01')
 
 ```shell
  .\mongod.exe  --dbpath D:\mySoft\mongoDB\data\db
 ```
 
-![运行 mongodb 服务 02](https://img-blog.csdnimg.cn/20210414220357328.png '运行 mongodb 服务 02')
+![运行 mongodb 服务 02](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230325/1d84e81628134fb581b5e63eb1959d20.png '运行 mongodb 服务 02')
 
 ### 运行客户端
 
@@ -60,7 +60,7 @@ math: true
  .\mongo.exe
 ```
 
-![客户端连接](https://img-blog.csdnimg.cn/20210414220831739.png '客户端连接')
+![客户端连接](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230325/066bb62ff99a4ac28b22a0decda8bd21.png '客户端连接')
 
 ## Navicat Premium
 
