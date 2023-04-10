@@ -110,6 +110,7 @@ title: "收藏夹"
     + [XMind 2022中文破解版 v22.11.3656 最新版](https://www.whg6.com/22302.html)
     + [思维导图工具-XMind 2022 破解版](https://www.waodown.com/3309.html)
 + [Typora 破解教程（2022最新方法，亲测有效）](https://www.bmabk.com/index.php/post/35726.html)
++ [demo.unlock-music.dev](https://demo.unlock-music.dev/)
 
 ## 资料库
 
@@ -125,6 +126,7 @@ title: "收藏夹"
 + [Concurrency in Go](https://edu.anarcho-copy.org/Programming%20Languages/Go/Concurrency%20in%20Go.pdf)
 + [大鹏教育所有课程/提取码：q21b](https://www.aliyundrive.com/s/BYFEa1wFUNf)
 + [万门大学（目前最全的合集）](https://www.aliyundrive.com/s/DTiR5RRGGZC)
++ [cheap-vps](https://renzhn.github.io/posts/cheap-vps/)
 
 ## 云盘
 
