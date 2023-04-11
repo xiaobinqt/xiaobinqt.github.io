@@ -85,7 +85,7 @@ func main() {
 
 :point_up:是一个例子，从请求后的打印结果可以看出是按着代码顺序执行的。
 
-![执行结果](https://img-blog.csdnimg.cn/20210416101310431.png '执行结果')
+![执行结果](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230411/e43dc5c102c34b9297d0985712ac6a19.png '执行结果')
 
 ### Handlers 方式的中间件
 
@@ -135,11 +135,12 @@ func main() {
 
 执行后打印结果如下:point_down:，说明只执行了 `Handlers` 函数中的中间件和 `group` 组中的中间件。
 
-![示例结果](https://img-blog.csdnimg.cn/20210416101629300.png '示例结果')
+![示例结果](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230411/c017c320ee134446accf5db1b525f6a4.png '示例结果')
 
 ## Next 函数的使用
 
-`Context.Next()`是一个可选的函数用于中间件处理器暂时放弃执行直到其他的处理器都执行完毕. 这样就可以很好的处理在 http 请求完成后需要做的操作。
+`Context.Next()`是一个可选的函数用于中间件处理器暂时放弃执行直到其他的处理器都执行完毕. 这样就可以很好的处理在 http
+请求完成后需要做的操作。
 
 对于 Next 我觉得可以理解成遇到 `Next()` 后就**入栈**，先进后出。 以下我也是通过有没有 `Handlers` 函数中间件来举例。
 
@@ -188,7 +189,7 @@ func main() {
 
 执行后的打印结果如下：
 
-![示例结果](https://img-blog.csdnimg.cn/20210416104629946.png '示例结果')
+![示例结果](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230411/ccd2bd45636d498cbefbb6973c69d1f1.png '示例结果')
 
 请注意第 5 和第 6 个中间件是最后执行的，是在 **http请求完成后** 执行的。
 
@@ -234,7 +235,7 @@ func main() {
 
 执行后的打印结果如下：
 
-![示例结果](https://img-blog.csdnimg.cn/20210416105157390.png '示例结果')
+![示例结果](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230411/3827426abb174e22a7bf3890dca041d5.png '示例结果')
 
 ## 依赖注入和控制反转
 
@@ -296,11 +297,13 @@ func main() {
 
 ```
 
-这是一个简单的全局映射的服务，`gv1`，`gv2`，`age` 这几个服务(参数) 将可以在所有的处理器中被使用到。我们的 `myHandle()` 处理器(方法) 就直接用了，且没有报错。执行后打印的结果如下：
+这是一个简单的全局映射的服务，`gv1`，`gv2`，`age` 这几个服务(参数) 将可以在所有的处理器中被使用到。我们的 `myHandle()`
+处理器(方法) 就直接用了，且没有报错。执行后打印的结果如下：
 
 ![示例结果](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220603/5f3712dec1824fa399279589a14f8bff.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '示例结果')
 
-:warning:这里有个点需要**注意**，同一个类型的服务，如果多次 map 映射，后面的值会把前面的**覆盖**，:point_up:上面的，`gv2`的值就把 `gv1`的值覆盖了。
+:warning:这里有个点需要**注意**，同一个类型的服务，如果多次 map 映射，后面的值会把前面的**覆盖**，:point_up:上面的，`gv2`
+的值就把 `gv1`的值覆盖了。
 
 ### 请求级别的映射
 
@@ -362,7 +365,8 @@ func main() {
 
 ![执行结果](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220603/806cccbc956b4b30802b11a34167da4e.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '执行结果')
 
-:heavy_check_mark:这是一个简单的请求级别的映射，我们对 `/api/test` 做了映射，所以在 `/api/test` 请求中 `ReqContext` 参数是全局可以用，这也就是 `do()`
+:heavy_check_mark:这是一个简单的请求级别的映射，我们对 `/api/test` 做了映射，所以在 `/api/test` 请求中 `ReqContext`
+参数是全局可以用，这也就是 `do()`
 方法中的参数 `do(reqCtx *ReqContext)` 中的来历。
 
 :heavy_check_mark:在 `/api/test3` 中我们没有用任何其他的参数，上下文用的是`*http.Request`，所以可以正确执行请求。
@@ -465,7 +469,7 @@ func main() {
 这个例子主要是想把 ReqContext 中的 Svr 从 Tmp 类型替换为 Service 类型。
 执行后的打印结果如下：
 
-![执行结果](https://img-blog.csdnimg.cn/20210416145026148.png '执行结果')
+![执行结果](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230411/6a3069dc42fd4eccb152a9c52cef2944.png '执行结果')
 
 ## 参考
 
