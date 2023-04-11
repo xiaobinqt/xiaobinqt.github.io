@@ -60,7 +60,6 @@ title: "收藏夹"
 + [Mysql 实战45讲](https://funnylog.gitee.io/mysql45/)
 + [一份不太简短的 LATEX介绍](http://www.mohu.org/info/lshort-cn.pdf)
 + [A Programmer's Guide to English](https://a-programmers-guide-to-english.harryyu.me/)
-+ [Unix & Linux](https://unix.stackexchange.com/)
 + [麦晓杰-专栏分享](https://doc.vercel.app/ds/)
 
 ## 博主
