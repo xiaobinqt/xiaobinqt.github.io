@@ -61,6 +61,7 @@ title: "收藏夹"
 + [一份不太简短的 LATEX介绍](http://www.mohu.org/info/lshort-cn.pdf)
 + [A Programmer's Guide to English](https://a-programmers-guide-to-english.harryyu.me/)
 + [麦晓杰-专栏分享](https://doc.vercel.app/ds/)
++ [鳥哥的首頁](https://linux.vbird.org/)
 
 ## 博主
 
