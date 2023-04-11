@@ -11,11 +11,8 @@ author: "xiaobinqt"
 description: "阿里云,SSL,免费证书使用,aliyun,ali,证书,TLS"
 resources:
 
-- name: ""
-  src: ""
-
-tags: ["SSL","aliyun"]
-categories: ["开发者手册"]
+tags: [ "SSL","aliyun" ]
+categories: [ "开发者手册" ]
 lightgallery: true
 
 toc: true
@@ -27,29 +24,31 @@ math: true
 
 证书[申请地址](https://common-buy.aliyun.com/?spm=5176.2020520163.cas.20.165a56a7xopCbo&commodityCode=cas#/buy)
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20190607203929789.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW9iaW5xdA==,size_16,color_FFFFFF,t_70 " ")
+![在这里插入图片描述](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230411/af2d82e50c1d4f81b8d878a5ce6ee92f.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 " ")
 
 申请完成页面
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20190607204004466.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW9iaW5xdA==,size_16,color_FFFFFF,t_70 " ")
+![在这里插入图片描述](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230411/8fa701498a7748cd8ec53c5acc80eb25.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 " ")
 
 将主机记录解析
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20190607204129284.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW9iaW5xdA==,size_16,color_FFFFFF,t_70 " ")
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20190607204157300.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW9iaW5xdA==,size_16,color_FFFFFF,t_70 " ")
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20190607204230499.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW9iaW5xdA==,size_16,color_FFFFFF,t_70 " ")
+![在这里插入图片描述](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230411/d1d6c628525f4214a7ac654228401539.png " ")
+
+![在这里插入图片描述](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230411/550891bae21245c6aa955c1060ca44b2.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 " ")
+
+![在这里插入图片描述](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230411/17a0ae3842ca467b918832e858a48429.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 " ")
 
 将主机记录和记录值填写
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/2019060720435450.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW9iaW5xdA==,size_16,color_FFFFFF,t_70 " ")
+![在这里插入图片描述](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230411/60fff0291dc849dd882d8bc4e5bb5dc2.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 " ")
 
 解析成功后下载证书
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20190607204727926.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW9iaW5xdA==,size_16,color_FFFFFF,t_70 " ")
+![在这里插入图片描述](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230411/427ce91858d242669ecdb0c66228dcb7.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 " ")
 
 我用的是 Apache ,所以下载的是 Apache
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20190607204822312.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW9iaW5xdA==,size_16,color_FFFFFF,t_70 " ")
+![在这里插入图片描述](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230411/e92feeef5ab6443d98269ae145a913da.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 " ")
 
 ## 上传证书
 
@@ -58,15 +57,15 @@ math: true
 
 在 apache 的路径下新建一个 cert 目录,其实该目录建在哪里都可以,但是放在 apache 下方便管理。
 
-![](https://img-blog.csdnimg.cn/20190607225644252.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW9iaW5xdA==,size_16,color_FFFFFF,t_70 " ")
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230411/ce5f177ef433482ab19fb7b48103f1ff.png " ")
 
 在 cert 目录下可以建不同的文件夹放在不同域名或子域名的 ssl 文件。
 
-![](https://img-blog.csdnimg.cn/20190607225749622.png " ")
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230325/030ee91945dc4ac0baf3cfb472bf0f29.png " ")
 
 把我们刚才下载的证书上传到服务器上
 
-![](https://img-blog.csdnimg.cn/20190607231234686.png " ")
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230325/29efb0e83dd941f5b1fdc616c06baa49.png " ")
 
 ## 配置
 
@@ -184,12 +183,12 @@ SSLCertificateChainFile cert/xiaobinqt.cn/chain.pem
 curl -I localhost:xxx
 ```
 
-![](https://img-blog.csdnimg.cn/20190608192331596.png " ")
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230411/aa9763dace4e44cd9f1b416b2c845d24.png " ")
 
 对于 ssl 是否配置成功可以通过浏览器查看.
 
-![](https://img-blog.csdnimg.cn/20190608192741852.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW9iaW5xdA==,size_16,color_FFFFFF,t_70 " ")
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230411/8cdde707a4884ffeaa70f5980dbe777c.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 " ")
 
 可以看到这是我们最新申请的一年的 ssl 证书.
 
-![](https://img-blog.csdnimg.cn/20190608192809335.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW9iaW5xdA==,size_16,color_FFFFFF,t_70 " ")
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230325/f4d3193e954d461f8c769af582eef01e.png " ")
