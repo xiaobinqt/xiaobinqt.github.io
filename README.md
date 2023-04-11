@@ -12,7 +12,7 @@
 
 + 微信:
 
-  ![个人微信](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220316/fa2dcf94966c4070936ef469d0c184af.jpg?imageView2/0/interlace/1/q/50|imageslim)
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220316/fa2dcf94966c4070936ef469d0c184af.jpg?imageView2/0/interlace/1/q/50|imageslim" width=380  /></div>
 
 
 
