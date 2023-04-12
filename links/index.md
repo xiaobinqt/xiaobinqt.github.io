@@ -16,10 +16,10 @@
 </a>
 
 
-<a target="_blank" href="https://www.lihuanting.com/" title="MakerLi" class="friendurl">
+<a target="_blank" href="https://lihuanting.com/" title="MakerLi" class="friendurl">
     <div class="frienddiv">
         <div class="frienddivleft">
-            <img class="myfriend" src="https://www.lihuanting.com/logo.png">
+            <img class="myfriend" src="https://lihuanting.com/logo.png">
         </div>
         <div class="frienddivright">
             <div class="friendname">MakerLi</div>
