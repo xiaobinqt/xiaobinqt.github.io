@@ -130,6 +130,7 @@ title: "收藏夹"
 + [万门大学（目前最全的合集）](https://www.aliyundrive.com/s/DTiR5RRGGZC)
 + [cheap-vps](https://renzhn.github.io/posts/cheap-vps/)
 + [全国图书馆参考咨询联盟](http://www.ucdrs.superlib.net/)
++ [technical_books](https://github.com/TIM168/technical_books)
 
 ## 云盘
 
