@@ -20,6 +20,11 @@ ide 下载完成后，去 [https://jetbra.in/s](https://jetbra.in/s) 页面下�
 
 将下载的 ja-netfilter-all.zip 解压到不带中文的任意目录，
 
+解压完成后执行下 scripts 文件夹中的脚本，如何是类 unix 系统比如 mac 就执行 .sh 文件，如果是 windows 系统就执行 .vbs
+文件。是选择执行`install-all-users` 还是`install-current-user`就看你自己的喜好了。
+
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230418/e0971cf6237a4ed490efbb4da9c545cd.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'scripts')
+
 ## 配置 vmoptions
 
 在 ide 的安装目录中找打 `idea64.exe.vmoptions` 文件，比如我的路径是 `D:\mySoft\GoLand\GoLand 2021.1\bin`：
