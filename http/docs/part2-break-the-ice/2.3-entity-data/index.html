@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="2.3 实体数据 # 2.3.1 MIME # “多用途互联网邮件扩展”（Multipurpose Internet Mail Extensions），简称为 MIME。
+HTTP 用 MIME 标准规范来标记 body 的数据类型，这就是 “MIME type”。MIME 把数据分成了八大类，每个大类下再细分出多个子类，形式是“type/subtype” 的字符串。
+简单列举一下在 HTTP 里经常遇到的几个类别：
+text：文本格式的可读数据，最熟悉的应该就是 text/html 了，表示超文本文档，此外还有纯文本 text/plain、样式表 text/css 等。
+image：图像文件，有 image/gif、image/jpeg、image/png 等。audio/video：音频和视频数据，例如 audio/mpeg、video/mp4 等。
+application：数据格式不固定，可能是文本也可能是二进制，必须由上层应用程序来解释。常见的有 application/json，application/javascript、application/pdf 等，另外，如果实在是不知道数据是什么类型，像刚才说的 “黑盒”，就会是 application/octet-stream，即不透明的二进制数据。
+HTTP 在传输时为了节约带宽，有时候还会压缩数据，为了不要让浏览器 “猜”，还需要有一个 “Encoding type”，告诉数据是用的什么编码格式，这样对方才能正确解压缩，还原出原始的数据。比起 MIME type 来说，Encoding type 就少了很多，常用的只有下面三种：
+gzip：GNU zip 压缩格式，也是互联网上最流行的压缩格式；
+deflate：zlib（deflate）压缩格式，流行程度仅次于 gzip；
+br：一种专门为 HTTP 优化的新压缩算法（Brotli）。
+Accept 字段标记的是客户端可理解的 MIME type，可以用 “,” 做分隔符列出多个类型，让服务器有更多的选择余地，例如下面的这个头：
+Accept: text/html,application/xml,image/webp,image/png 这就是告诉服务器：“我能够看懂 HTML、XML 的文本，还有 webp 和 png 的图片，请给我这四类格式的数据”。相应的，服务器会在响应报文里用头字段 Content-Type 告诉实体数据的真实类型：">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="2.3 实体数据" />
+<meta property="og:description" content="2.3 实体数据 # 2.3.1 MIME # “多用途互联网邮件扩展”（Multipurpose Internet Mail Extensions），简称为 MIME。
+HTTP 用 MIME 标准规范来标记 body 的数据类型，这就是 “MIME type”。MIME 把数据分成了八大类，每个大类下再细分出多个子类，形式是“type/subtype” 的字符串。
+简单列举一下在 HTTP 里经常遇到的几个类别：
+text：文本格式的可读数据，最熟悉的应该就是 text/html 了，表示超文本文档，此外还有纯文本 text/plain、样式表 text/css 等。
+image：图像文件，有 image/gif、image/jpeg、image/png 等。audio/video：音频和视频数据，例如 audio/mpeg、video/mp4 等。
+application：数据格式不固定，可能是文本也可能是二进制，必须由上层应用程序来解释。常见的有 application/json，application/javascript、application/pdf 等，另外，如果实在是不知道数据是什么类型，像刚才说的 “黑盒”，就会是 application/octet-stream，即不透明的二进制数据。
+HTTP 在传输时为了节约带宽，有时候还会压缩数据，为了不要让浏览器 “猜”，还需要有一个 “Encoding type”，告诉数据是用的什么编码格式，这样对方才能正确解压缩，还原出原始的数据。比起 MIME type 来说，Encoding type 就少了很多，常用的只有下面三种：
+gzip：GNU zip 压缩格式，也是互联网上最流行的压缩格式；
+deflate：zlib（deflate）压缩格式，流行程度仅次于 gzip；
+br：一种专门为 HTTP 优化的新压缩算法（Brotli）。
+Accept 字段标记的是客户端可理解的 MIME type，可以用 “,” 做分隔符列出多个类型，让服务器有更多的选择余地，例如下面的这个头：
+Accept: text/html,application/xml,image/webp,image/png 这就是告诉服务器：“我能够看懂 HTML、XML 的文本，还有 webp 和 png 的图片，请给我这四类格式的数据”。相应的，服务器会在响应报文里用头字段 Content-Type 告诉实体数据的真实类型：" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://example.com/http/docs/part2-break-the-ice/2.3-entity-data/" /><meta property="article:section" content="docs" />
+
+<meta property="article:modified_time" content="2023-05-04T18:24:15+08:00" />
+<title>2.3 实体数据 | HTTP 协议学习笔记</title>
+<link rel="manifest" href="/http/manifest.json">
+<link rel="icon" href="/http/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/http/book.min.cad59a3be22b32d901c8b99a5bf0c00f01535383d8d0e86742e5449f598d17af.css" integrity="sha256-ytWaO&#43;IrMtkByLmaW/DADwFTU4PY0OhnQuVEn1mNF68=" crossorigin="anonymous">
+  <script defer src="/http/flexsearch.min.js"></script>
+  <script defer src="/http/zh.search.min.dcb9174bf2cc884d676276e8a217afa6f7059c66aa46c13a8af10371509029ca.js" integrity="sha256-3LkXS/LMiE1nYnboohevpvcFnGaqRsE6ivEDcVCQKco=" crossorigin="anonymous"></script>
+
+  <script defer src="/http/sw.min.ec0a06eafc9cbe0e763898565619289d1cc6675fd3e61b207a2fb42ee592dca0.js" integrity="sha256-7AoG6vycvg52OJhWVhkonRzGZ1/T5hsgei&#43;0LuWS3KA=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/http/"><span>HTTP 协议学习笔记</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+<ul>
+    <li>
+        <a href="javascript:void(0)" onclick="hrefIndex()" rel="noopener">主页</a>
+    </li>
+    <li>
+        <a href="https://github.com/xiaobinqt" target="_blank" rel="noopener">GitHub</a>
+    </li>
+</ul>
+
+<hr>
+
+<script>
+    function hrefIndex() {
+        window.location = window.location.origin;
+    }
+</script>
+
+
+  
+<ul>
+  
+  <li>
+    <a href=""  target="_blank" rel="noopener">
+        
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第一部分 总览</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part1-overview/1.1-basic-concept/" class="">1.1 基础概念</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part1-overview/1.2-net-overview/" class="">1.2 概述</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part1-overview/1.3-physical-layer/" class="">1.3 物理层</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part1-overview/1.4-link-layer/" class="">1.4 链路层</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part1-overview/1.5-network-layer/" class="">1.5 网络层</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part1-overview/1.6-transport-layer/" class="">1.6 传输层</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part1-overview/1.7-application-layer/" class="">1.7 应用层</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part1-overview/1.8-socket/" class="">1.8 Socket</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第二部分 破冰</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part2-break-the-ice/2.1-proxy/" class="">2.1 代理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part2-break-the-ice/2.2-network-layer-model/" class="">2.2 网络分层模型</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part2-break-the-ice/2.3-entity-data/" class="active">2.3 实体数据</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part2-break-the-ice/2.4-connection-management/" class="">2.4 连接管理</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/http/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>2.3 实体数据</strong>
+
+  <label for="toc-control">
+    
+    <img src="/http/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#23-实体数据">2.3 实体数据</a>
+      <ul>
+        <li><a href="#231-mime">2.3.1 MIME</a></li>
+        <li><a href="#232-编码">2.3.2 编码</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown"><h1 id="23-实体数据">
+  2.3 实体数据
+  <a class="anchor" href="#23-%e5%ae%9e%e4%bd%93%e6%95%b0%e6%8d%ae">#</a>
+</h1>
+<h2 id="231-mime">
+  2.3.1 MIME
+  <a class="anchor" href="#231-mime">#</a>
+</h2>
+<p>“多用途互联网邮件扩展”（Multipurpose Internet Mail Extensions），简称为 MIME。</p>
+<p>HTTP 用 MIME 标准规范来标记 body 的数据类型，这就是 “MIME type”。MIME 把数据分成了八大类，每个大类下再细分出多个子类，形式是“type/subtype” 的字符串。</p>
+<p>简单列举一下在 HTTP 里经常遇到的几个类别：</p>
+<ul>
+<li>
+<p>text：文本格式的可读数据，最熟悉的应该就是 text/html 了，表示超文本文档，此外还有纯文本 text/plain、样式表 text/css 等。</p>
+</li>
+<li>
+<p>image：图像文件，有 image/gif、image/jpeg、image/png 等。audio/video：音频和视频数据，例如 audio/mpeg、video/mp4 等。</p>
+</li>
+<li>
+<p>application：数据格式不固定，可能是文本也可能是二进制，必须由上层应用程序来解释。常见的有 application/json，application/javascript、application/pdf 等，另外，如果实在是不知道数据是什么类型，像刚才说的 “黑盒”，就会是 application/octet-stream，即不透明的二进制数据。</p>
+</li>
+</ul>
+<p>HTTP 在传输时为了节约带宽，有时候还会压缩数据，为了不要让浏览器 “猜”，还需要有一个 “Encoding type”，告诉数据是用的什么编码格式，这样对方才能正确解压缩，还原出原始的数据。比起 MIME type 来说，Encoding type 就少了很多，常用的只有下面三种：</p>
+<ul>
+<li>
+<p>gzip：GNU zip 压缩格式，也是互联网上最流行的压缩格式；</p>
+</li>
+<li>
+<p>deflate：zlib（deflate）压缩格式，流行程度仅次于 gzip；</p>
+</li>
+<li>
+<p>br：一种专门为 HTTP 优化的新压缩算法（Brotli）。</p>
+</li>
+</ul>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230504/d821efc789304039a01b0ca1e22885b1.png" width=  /></div>
+<p>Accept 字段标记的是客户端可理解的 MIME type，可以用 “,” 做分隔符列出多个类型，让服务器有更多的选择余地，例如下面的这个头：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span>Accept: text<span style="color:#f92672">/</span>html,application<span style="color:#f92672">/</span>xml,image<span style="color:#f92672">/</span>webp,image<span style="color:#f92672">/</span>png
+</span></span></code></pre></div><p>这就是告诉服务器：“我能够看懂 HTML、XML 的文本，还有 webp 和 png 的图片，请给我这四类格式的数据”。相应的，服务器会在响应报文里用头字段 Content-Type 告诉实体数据的真实类型：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span>Content<span style="color:#f92672">-</span>Type: text<span style="color:#f92672">/</span>html
+</span></span><span style="display:flex;"><span>Content<span style="color:#f92672">-</span>Type: image<span style="color:#f92672">/</span>png
+</span></span></code></pre></div><p>这样浏览器看到报文里的类型是 “text/html” 就知道是 HTML 文件，会调用排版引擎渲染出页面，看到 “image/png” 就知道是一个 PNG 文件，就会在页面上显示出图像。</p>
+<p>Accept-Encoding 字段标记的是客户端支持的压缩格式，例如上面说的 gzip、deflate 等，同样也可以用 “,” 列出多个，服务器可以选择其中一种来压缩数据，实际使用的压缩格式放在响应头字段 Content-Encoding 里。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span>Accept<span style="color:#f92672">-</span>Encoding: gzip, deflate, br
+</span></span><span style="display:flex;"><span>Content<span style="color:#f92672">-</span>Encoding: gzip
+</span></span></code></pre></div><p>不过这两个字段是可以省略的，如果请求报文里没有 Accept-Encoding 字段，就表示客户端不支持压缩数据；如果响应报文里没有 Content-Encoding 字段，就表示响应数据没有被压缩。</p>
+<h2 id="232-编码">
+  2.3.2 编码
+  <a class="anchor" href="#232-%e7%bc%96%e7%a0%81">#</a>
+</h2>
+<p>在计算机发展的早期，各个国家和地区的人们 “各自为政”，发明了许多字符编码方式来处理文字，比如英语世界用的 ASCII、汉语世界用的 GBK、BIG5，日语世界用的 Shift_JIS 等。</p>
+<p>同样的一段文字，用一种编码显示正常，换另一种编码后可能就会变得一团糟。所以后来就出现了 Unicode 和 UTF-8，把世界上所有的语言都容纳在一种编码方案里，遵循 UTF-8 字符编码方式的 Unicode 字符集也成为了互联网上的标准字符集。</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/7b41dfe3311ca81de0a40943b3b2def6d8f5aa59" title='最后修改者 weibin | May 4, 2023' target="_blank" rel="noopener">
+      <img src="/http/svg/calendar.svg" class="book-icon" alt="Calendar" />
+      <span>May 4, 2023</span>
+    </a>
+  </div>
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/book.http/docs/part2-break-the-ice/2.3-entity-data.md" target="_blank" rel="noopener">
+      <img src="/http/svg/edit.svg" class="book-icon" alt="Edit" />
+      <span>编辑本页</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#23-实体数据">2.3 实体数据</a>
+      <ul>
+        <li><a href="#231-mime">2.3.1 MIME</a></li>
+        <li><a href="#232-编码">2.3.2 编码</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
