@@ -3,34 +3,52 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="2.1 代理 # 2.1.1 匿名代理 # 匿名代理（Anonymous Proxy）用于隐藏客户端的真实 IP 地址，使客户端在互联网上的活动难以被追踪。匿名代理通常是由第三方提供的，客户端需要将网络流量转发给代理服务器，代理服务器会替代客户端向目标服务器发送请求，并将响应返回给客户端。
+<meta name="description" content="2.1 代理 # 代理最基本的一个功能是负载均衡。因为在面向客户端时屏蔽了源服务器，客户端看到的只是代理服务器，源服务器究竟有多少台、是哪些 IP 地址都不知道。于是代理服务器就可以掌握请求分发的 “大权”，决定由后面的哪台服务器来响应请求。
+在负载均衡的同时，代理服务还可以执行更多的功能，比如：
+健康检查：使用“心跳”等机制监控后端服务器，发现有故障就及时“踢出”集群，保证服务高可用；
+安全防护：保护被代理的后端服务器，限制 IP 地址或流量，抵御网络攻击和过载；
+加密卸载：对外网使用 SSL/TLS 加密通信认证，而在安全的内网不加密，消除加解密成本；
+数据过滤：拦截上下行的数据，任意指定策略修改请求或者响应；
+内容缓存：暂存、复用服务器响应。
+2.1.1 匿名代理 # 匿名代理（Anonymous Proxy）用于隐藏客户端的真实 IP 地址，使客户端在互联网上的活动难以被追踪。匿名代理通常是由第三方提供的，客户端需要将网络流量转发给代理服务器，代理服务器会替代客户端向目标服务器发送请求，并将响应返回给客户端。
 匿名代理的主要功能是隐藏客户端的真实 IP 地址，使客户端在互联网上的活动更加隐秘和安全。因为许多网站和服务都会记录访问者的 IP 地址，如果客户端使用匿名代理进行访问，就可以避免自己的真实 IP 地址被记录和追踪。匿名代理也可以用于访问被封锁的网站和服务，因为代理服务器的 IP 地址通常不会被封锁。
 需要注意的是，匿名代理并不能完全保障客户端的隐私和安全，因为代理服务器仍然可以访问客户端的真实 IP 地址和网络流量。此外，一些不良的匿名代理可能会收集客户端的个人信息或恶意篡改网络流量，导致客户端的网络安全受到威胁。因此，使用匿名代理时应该选择可靠的服务提供商，并保持警惕。
 2.1.2 透明代理 # 透明代理（Transparent Proxy）在转发客户端请求时不会修改任何请求头信息，目标服务器可以获取到客户端的真实 IP 地址和其他相关信息。透明代理通常是由 ISP（Internet Service Provider，互联网服务提供商）或公司内部网络部署的。
 与匿名代理和高匿代理不同，透明代理不会对客户端的请求进行任何加密或隐藏，客户端无法隐匿自己的真实身份和位置。这种代理的主要作用是提高访问速度、节约带宽和监控网络流量。例如，ISP 可以通过透明代理实现流量控制、缓存加速、防火墙过滤等功能，公司可以通过透明代理实现员工网络访问的管理和监控。
 需要注意的是，透明代理在传输数据时不会加密，因此在使用透明代理时，用户应该注意保护自己的数据安全。另外，一些不良的透明代理可能会篡改用户的网络流量或收集用户的个人信息，因此用户需要选择可靠的代理服务提供商，并保持警惕。
 2.1.3 正向代理 # 正向代理的代理服务器是部署在客户端，而对服务端来说，它以为对它发起请求的是代理服务器，而真正请求的客户端对服务端来说是不可见的。
-2.1.4 反向代理 # 反向代理的代理服务器是部署在服务端，而对客户端来说，它以为对它做出响应的是代理服务器，而真正响应的服务端对客户端来说是不可见的。">
+2.1.4 反向代理 # 反向代理的代理服务器是部署在服务端，而对客户端来说，它以为对它做出响应的是代理服务器，而真正响应的服务端对客户端来说是不可见的。
+2.1.5 头字段 # Via # Via 是一个通用字段，请求头或响应头里都可以出现。每当报文经过一个代理节点，代理服务器就会把自身的信息追加到字段的末尾，就像是经手人盖了一个章。如果通信链路中有很多中间代理，就会在 Via 里形成一个链表，这样就可以知道报文究竟走过了多少个环节才到达了目的地。
+X-Forwarded-For # “X-Forwarded-For” 的字面意思是 “为谁而转发”，形式上和 “Via” 差不多，也是每经过一个代理节点就会在字段里追加一个信息。但 “Via” 追加的是代理主机名（或者域名），而 “X-Forwarded-For” 追加的是请求方的 IP 地址。所以，在字段里最左边的 IP 地址就是客户端的地址。">
 <meta name="theme-color" content="#FFFFFF">
 <meta name="color-scheme" content="light dark"><meta property="og:title" content="2.1 代理" />
-<meta property="og:description" content="2.1 代理 # 2.1.1 匿名代理 # 匿名代理（Anonymous Proxy）用于隐藏客户端的真实 IP 地址，使客户端在互联网上的活动难以被追踪。匿名代理通常是由第三方提供的，客户端需要将网络流量转发给代理服务器，代理服务器会替代客户端向目标服务器发送请求，并将响应返回给客户端。
+<meta property="og:description" content="2.1 代理 # 代理最基本的一个功能是负载均衡。因为在面向客户端时屏蔽了源服务器，客户端看到的只是代理服务器，源服务器究竟有多少台、是哪些 IP 地址都不知道。于是代理服务器就可以掌握请求分发的 “大权”，决定由后面的哪台服务器来响应请求。
+在负载均衡的同时，代理服务还可以执行更多的功能，比如：
+健康检查：使用“心跳”等机制监控后端服务器，发现有故障就及时“踢出”集群，保证服务高可用；
+安全防护：保护被代理的后端服务器，限制 IP 地址或流量，抵御网络攻击和过载；
+加密卸载：对外网使用 SSL/TLS 加密通信认证，而在安全的内网不加密，消除加解密成本；
+数据过滤：拦截上下行的数据，任意指定策略修改请求或者响应；
+内容缓存：暂存、复用服务器响应。
+2.1.1 匿名代理 # 匿名代理（Anonymous Proxy）用于隐藏客户端的真实 IP 地址，使客户端在互联网上的活动难以被追踪。匿名代理通常是由第三方提供的，客户端需要将网络流量转发给代理服务器，代理服务器会替代客户端向目标服务器发送请求，并将响应返回给客户端。
 匿名代理的主要功能是隐藏客户端的真实 IP 地址，使客户端在互联网上的活动更加隐秘和安全。因为许多网站和服务都会记录访问者的 IP 地址，如果客户端使用匿名代理进行访问，就可以避免自己的真实 IP 地址被记录和追踪。匿名代理也可以用于访问被封锁的网站和服务，因为代理服务器的 IP 地址通常不会被封锁。
 需要注意的是，匿名代理并不能完全保障客户端的隐私和安全，因为代理服务器仍然可以访问客户端的真实 IP 地址和网络流量。此外，一些不良的匿名代理可能会收集客户端的个人信息或恶意篡改网络流量，导致客户端的网络安全受到威胁。因此，使用匿名代理时应该选择可靠的服务提供商，并保持警惕。
 2.1.2 透明代理 # 透明代理（Transparent Proxy）在转发客户端请求时不会修改任何请求头信息，目标服务器可以获取到客户端的真实 IP 地址和其他相关信息。透明代理通常是由 ISP（Internet Service Provider，互联网服务提供商）或公司内部网络部署的。
 与匿名代理和高匿代理不同，透明代理不会对客户端的请求进行任何加密或隐藏，客户端无法隐匿自己的真实身份和位置。这种代理的主要作用是提高访问速度、节约带宽和监控网络流量。例如，ISP 可以通过透明代理实现流量控制、缓存加速、防火墙过滤等功能，公司可以通过透明代理实现员工网络访问的管理和监控。
 需要注意的是，透明代理在传输数据时不会加密，因此在使用透明代理时，用户应该注意保护自己的数据安全。另外，一些不良的透明代理可能会篡改用户的网络流量或收集用户的个人信息，因此用户需要选择可靠的代理服务提供商，并保持警惕。
 2.1.3 正向代理 # 正向代理的代理服务器是部署在客户端，而对服务端来说，它以为对它发起请求的是代理服务器，而真正请求的客户端对服务端来说是不可见的。
-2.1.4 反向代理 # 反向代理的代理服务器是部署在服务端，而对客户端来说，它以为对它做出响应的是代理服务器，而真正响应的服务端对客户端来说是不可见的。" />
+2.1.4 反向代理 # 反向代理的代理服务器是部署在服务端，而对客户端来说，它以为对它做出响应的是代理服务器，而真正响应的服务端对客户端来说是不可见的。
+2.1.5 头字段 # Via # Via 是一个通用字段，请求头或响应头里都可以出现。每当报文经过一个代理节点，代理服务器就会把自身的信息追加到字段的末尾，就像是经手人盖了一个章。如果通信链路中有很多中间代理，就会在 Via 里形成一个链表，这样就可以知道报文究竟走过了多少个环节才到达了目的地。
+X-Forwarded-For # “X-Forwarded-For” 的字面意思是 “为谁而转发”，形式上和 “Via” 差不多，也是每经过一个代理节点就会在字段里追加一个信息。但 “Via” 追加的是代理主机名（或者域名），而 “X-Forwarded-For” 追加的是请求方的 IP 地址。所以，在字段里最左边的 IP 地址就是客户端的地址。" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://example.com/http/docs/part2-break-ice/2.1-proxy/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2023-05-05T14:19:13+08:00" />
+<meta property="article:modified_time" content="2023-05-05T16:45:13+08:00" />
 <title>2.1 代理 | HTTP 协议学习笔记</title>
 <link rel="manifest" href="/http/manifest.json">
 <link rel="icon" href="/http/favicon.png" type="image/x-icon">
 <link rel="stylesheet" href="/http/book.min.cad59a3be22b32d901c8b99a5bf0c00f01535383d8d0e86742e5449f598d17af.css" integrity="sha256-ytWaO&#43;IrMtkByLmaW/DADwFTU4PY0OhnQuVEn1mNF68=" crossorigin="anonymous">
   <script defer src="/http/flexsearch.min.js"></script>
-  <script defer src="/http/zh.search.min.bfcaa2a9aeb1ea315096d27574e44f1b5dfc6aaaadf9d17ad3b4b3f9a6ad1369.js" integrity="sha256-v8qiqa6x6jFQltJ1dORPG138aqqt&#43;dF607Sz&#43;aatE2k=" crossorigin="anonymous"></script>
+  <script defer src="/http/zh.search.min.cd1734c81f812bb307d74ed0dbba2d4b89dd43b427c35e1fe83e7d020b5188da.js" integrity="sha256-zRc0yB&#43;BK7MH107Q27otS4ndQ7Qnw14f6D59AgtRiNo=" crossorigin="anonymous"></script>
 
   <script defer src="/http/sw.min.ec0a06eafc9cbe0e763898565619289d1cc6675fd3e61b207a2fb42ee592dca0.js" integrity="sha256-7AoG6vycvg52OJhWVhkonRzGZ1/T5hsgei&#43;0LuWS3KA=" crossorigin="anonymous"></script>
 <!--
@@ -304,6 +322,19 @@ https://github.com/alex-shpak/hugo-book
         </li>
       
     
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part2-break-ice/2.6-cache/" class="">2.6 Cache</a>
+  
+
+        </li>
+      
+    
   </ul>
 
         </li>
@@ -367,6 +398,13 @@ https://github.com/alex-shpak/hugo-book
         <li><a href="#212-透明代理">2.1.2 透明代理</a></li>
         <li><a href="#213-正向代理">2.1.3 正向代理</a></li>
         <li><a href="#214-反向代理">2.1.4 反向代理</a></li>
+        <li><a href="#215-头字段">2.1.5 头字段</a>
+          <ul>
+            <li><a href="#via">Via</a></li>
+            <li><a href="#x-forwarded-for">X-Forwarded-For</a></li>
+            <li><a href="#x-real-ip">X-Real-IP</a></li>
+          </ul>
+        </li>
       </ul>
     </li>
   </ul>
@@ -385,6 +423,27 @@ https://github.com/alex-shpak/hugo-book
   2.1 代理
   <a class="anchor" href="#21-%e4%bb%a3%e7%90%86">#</a>
 </h1>
+<p>代理最基本的一个功能是<strong>负载均衡</strong>。因为在面向客户端时屏蔽了源服务器，客户端看到的只是代理服务器，源服务器究竟有多少台、是哪些
+IP 地址都不知道。于是代理服务器就可以掌握请求分发的 “大权”，决定由后面的哪台服务器来响应请求。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230505/32a9bd32b05f43e59ce0a32d7273ea17.png" width=600  /></div>
+<p>在负载均衡的同时，代理服务还可以执行更多的功能，比如：</p>
+<ul>
+<li>
+<p>健康检查：使用“心跳”等机制监控后端服务器，发现有故障就及时“踢出”集群，保证服务高可用；</p>
+</li>
+<li>
+<p>安全防护：保护被代理的后端服务器，限制 IP 地址或流量，抵御网络攻击和过载；</p>
+</li>
+<li>
+<p>加密卸载：对外网使用 SSL/TLS 加密通信认证，而在安全的内网不加密，消除加解密成本；</p>
+</li>
+<li>
+<p>数据过滤：拦截上下行的数据，任意指定策略修改请求或者响应；</p>
+</li>
+<li>
+<p>内容缓存：暂存、复用服务器响应。</p>
+</li>
+</ul>
 <h2 id="211-匿名代理">
   2.1.1 匿名代理
   <a class="anchor" href="#211-%e5%8c%bf%e5%90%8d%e4%bb%a3%e7%90%86">#</a>
@@ -409,6 +468,32 @@ https://github.com/alex-shpak/hugo-book
   <a class="anchor" href="#214-%e5%8f%8d%e5%90%91%e4%bb%a3%e7%90%86">#</a>
 </h2>
 <p>反向代理的代理服务器是部署在服务端，而对客户端来说，它以为对它做出响应的是代理服务器，而真正响应的服务端对客户端来说是不可见的。</p>
+<h2 id="215-头字段">
+  2.1.5 头字段
+  <a class="anchor" href="#215-%e5%a4%b4%e5%ad%97%e6%ae%b5">#</a>
+</h2>
+<h3 id="via">
+  Via
+  <a class="anchor" href="#via">#</a>
+</h3>
+<p>Via 是一个通用字段，请求头或响应头里都可以出现。每当报文经过一个代理节点，代理服务器就会把自身的信息追加到字段的末尾，就像是经手人盖了一个章。如果通信链路中有很多中间代理，就会在 Via 里形成一个链表，这样就可以知道报文究竟走过了多少个环节才到达了目的地。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230505/7cf1a1f827ac40398e40724d5b646d1f.png" width=  /></div>
+<h3 id="x-forwarded-for">
+  X-Forwarded-For
+  <a class="anchor" href="#x-forwarded-for">#</a>
+</h3>
+<p>“X-Forwarded-For” 的字面意思是 “为谁而转发”，形式上和 “Via” 差不多，也是每经过一个代理节点就会在字段里追加一个信息。但 “Via” 追加的是代理主机名（或者域名），而 “X-Forwarded-For” 追加的是请求方的 IP 地址。所以，在字段里最左边的 IP 地址就是客户端的地址。</p>
+<h3 id="x-real-ip">
+  X-Real-IP
+  <a class="anchor" href="#x-real-ip">#</a>
+</h3>
+<p>“X-Real-IP” 是另一种获取客户端真实 IP 的手段，它的作用很简单，就是记录客户端 IP 地址，没有中间的代理信息，相当于是 “X-Forwarded-For” 的简化版。</p>
+<hr>
+<p>如果客户端和源服务器之间只有一个代理服务器，那么代理服务器会在接收到客户端请求后，在请求头中添加 “X-Forwarded-For” 和 “X-Real-IP” 这两个字段，并把客户端的 IP 地址填入这两个字段中。然后代理服务器再将请求转发给源服务器。</p>
+<p>在这种情况下，客户端的 IP 地址只被代理服务器修改一次，因此 “X-Forwarded-For” 和 “X-Real-IP” 的值是相同的，都是客户端的真实 IP 地址。</p>
+<p>具体来说，“X-Forwarded-For” 字段记录了客户端的 IP 地址和代理服务器的 IP 地址，多个 IP 地址之间使用逗号分隔。如果只有一个代理服务器，那么 “X-Forwarded-For” 字段中只会有客户端的 IP 地址，没有代理服务器的 IP 地址。</p>
+<p>而 “X-Real-IP” 字段只记录客户端的真实 IP 地址，不记录中间的代理服务器 IP 地址。在这种情况下，“X-Real-IP” 字段的值也会和“X-Forwarded-For” 字段相同，都是客户端的真实 IP 地址。</p>
+<p>因此，如果只有一个代理服务器，这两个字段的值是相同的，都可以用来记录客户端的真实 IP 地址。</p>
 </article>
  
       
@@ -418,7 +503,7 @@ https://github.com/alex-shpak/hugo-book
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/486b1ff9f0bdd9934fe3bee680c8a834ed0051c5" title='最后修改者 weibin | May 5, 2023' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/08bef8bf74a51dba24ecb420e0905324be06115f" title='最后修改者 weibin | May 5, 2023' target="_blank" rel="noopener">
       <img src="/http/svg/calendar.svg" class="book-icon" alt="Calendar" />
       <span>May 5, 2023</span>
     </a>
@@ -469,6 +554,13 @@ https://github.com/alex-shpak/hugo-book
         <li><a href="#212-透明代理">2.1.2 透明代理</a></li>
         <li><a href="#213-正向代理">2.1.3 正向代理</a></li>
         <li><a href="#214-反向代理">2.1.4 反向代理</a></li>
+        <li><a href="#215-头字段">2.1.5 头字段</a>
+          <ul>
+            <li><a href="#via">Via</a></li>
+            <li><a href="#x-forwarded-for">X-Forwarded-For</a></li>
+            <li><a href="#x-real-ip">X-Real-IP</a></li>
+          </ul>
+        </li>
       </ul>
     </li>
   </ul>
