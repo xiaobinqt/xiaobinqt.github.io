@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="1.7 应用层 # 1.7.1 域名系统 # DNS 是一个分布式数据库，提供了主机名和 IP 地址之间相互转换的服务。这里的分布式数据库是指，每个站点只保留它自己的那部分数据。
+域名具有层次结构，从上到下依次为：根域名、顶级域名、二级域名。
+DNS 可以使用 UDP 或者 TCP 进行传输，使用的端口号都为 53。大多数情况下 DNS 使用 UDP 进行传输，这就要求域名解析器和域名服务器都必须自己处理超时和重传从而保证可靠性。在两种情况下会使用 TCP 进行传输：
+如果返回的响应超过的 512 字节（UDP 最大只支持 512 字节的数据）。 区域传送（区域传送是主域名服务器向辅助域名服务器传送变化的那部分数据）。 1.7.2 文件传送协议 # FTP 使用 TCP 进行连接，它需要两个连接来传送一个文件：
+控制连接：服务器打开端口号 21 等待客户端的连接，客户端主动建立连接后，使用这个连接将客户端的命令传送给服务器，并传回服务器的应答。 数据连接：用来传送一个文件数据。 根据数据连接是否是服务器端主动建立，FTP 有主动和被动两种模式：
+主动模式：服务器端主动建立数据连接，其中服务器端的端口号为 20，客户端的端口号随机，但是必须大于 1024，因为 0~1023 是熟知端口号。 被动模式：客户端主动建立数据连接，其中客户端的端口号由客户端自己指定，服务器端的端口号随机。 主动模式要求客户端开放端口号给服务器端，需要去配置客户端的防火墙。被动模式只需要服务器端开放端口号即可，无需客户端配置防火墙。但是被动模式会导致服务器端的安全性减弱，因为开放了过多的端口号。
+1.7.3 动态主机配置协议 # DHCP (Dynamic Host Configuration Protocol) 提供了即插即用的连网方式，用户不再需要手动配置 IP 地址等信息。
+DHCP 配置的内容不仅是 IP 地址，还包括子网掩码、网关 IP 地址。
+DHCP 工作过程如下：">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="1.7 应用层" />
+<meta property="og:description" content="1.7 应用层 # 1.7.1 域名系统 # DNS 是一个分布式数据库，提供了主机名和 IP 地址之间相互转换的服务。这里的分布式数据库是指，每个站点只保留它自己的那部分数据。
+域名具有层次结构，从上到下依次为：根域名、顶级域名、二级域名。
+DNS 可以使用 UDP 或者 TCP 进行传输，使用的端口号都为 53。大多数情况下 DNS 使用 UDP 进行传输，这就要求域名解析器和域名服务器都必须自己处理超时和重传从而保证可靠性。在两种情况下会使用 TCP 进行传输：
+如果返回的响应超过的 512 字节（UDP 最大只支持 512 字节的数据）。 区域传送（区域传送是主域名服务器向辅助域名服务器传送变化的那部分数据）。 1.7.2 文件传送协议 # FTP 使用 TCP 进行连接，它需要两个连接来传送一个文件：
+控制连接：服务器打开端口号 21 等待客户端的连接，客户端主动建立连接后，使用这个连接将客户端的命令传送给服务器，并传回服务器的应答。 数据连接：用来传送一个文件数据。 根据数据连接是否是服务器端主动建立，FTP 有主动和被动两种模式：
+主动模式：服务器端主动建立数据连接，其中服务器端的端口号为 20，客户端的端口号随机，但是必须大于 1024，因为 0~1023 是熟知端口号。 被动模式：客户端主动建立数据连接，其中客户端的端口号由客户端自己指定，服务器端的端口号随机。 主动模式要求客户端开放端口号给服务器端，需要去配置客户端的防火墙。被动模式只需要服务器端开放端口号即可，无需客户端配置防火墙。但是被动模式会导致服务器端的安全性减弱，因为开放了过多的端口号。
+1.7.3 动态主机配置协议 # DHCP (Dynamic Host Configuration Protocol) 提供了即插即用的连网方式，用户不再需要手动配置 IP 地址等信息。
+DHCP 配置的内容不仅是 IP 地址，还包括子网掩码、网关 IP 地址。
+DHCP 工作过程如下：" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://example.com/http/docs/part1-overview/1.7-application-layer/" /><meta property="article:section" content="docs" />
+
+<meta property="article:modified_time" content="2023-03-13T22:44:10+08:00" />
+<title>1.7 应用层 | HTTP 协议学习笔记</title>
+<link rel="manifest" href="/http/manifest.json">
+<link rel="icon" href="/http/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/http/book.min.cad59a3be22b32d901c8b99a5bf0c00f01535383d8d0e86742e5449f598d17af.css" integrity="sha256-ytWaO&#43;IrMtkByLmaW/DADwFTU4PY0OhnQuVEn1mNF68=" crossorigin="anonymous">
+  <script defer src="/http/flexsearch.min.js"></script>
+  <script defer src="/http/zh.search.min.dcb9174bf2cc884d676276e8a217afa6f7059c66aa46c13a8af10371509029ca.js" integrity="sha256-3LkXS/LMiE1nYnboohevpvcFnGaqRsE6ivEDcVCQKco=" crossorigin="anonymous"></script>
+
+  <script defer src="/http/sw.min.ec0a06eafc9cbe0e763898565619289d1cc6675fd3e61b207a2fb42ee592dca0.js" integrity="sha256-7AoG6vycvg52OJhWVhkonRzGZ1/T5hsgei&#43;0LuWS3KA=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/http/"><span>HTTP 协议学习笔记</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+<ul>
+    <li>
+        <a href="javascript:void(0)" onclick="hrefIndex()" rel="noopener">主页</a>
+    </li>
+    <li>
+        <a href="https://github.com/xiaobinqt" target="_blank" rel="noopener">GitHub</a>
+    </li>
+</ul>
+
+<hr>
+
+<script>
+    function hrefIndex() {
+        window.location = window.location.origin;
+    }
+</script>
+
+
+  
+<ul>
+  
+  <li>
+    <a href=""  target="_blank" rel="noopener">
+        
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第一部分 总览</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part1-overview/1.1-basic-concept/" class="">1.1 基础概念</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part1-overview/1.2-net-overview/" class="">1.2 概述</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part1-overview/1.3-physical-layer/" class="">1.3 物理层</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part1-overview/1.4-link-layer/" class="">1.4 链路层</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part1-overview/1.5-network-layer/" class="">1.5 网络层</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part1-overview/1.6-transport-layer/" class="">1.6 传输层</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part1-overview/1.7-application-layer/" class="active">1.7 应用层</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part1-overview/1.8-socket/" class="">1.8 Socket</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第二部分 破冰</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part2-break-the-ice/2.1-proxy/" class="">2.1 代理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part2-break-the-ice/2.2-network-layer-model/" class="">2.2 网络分层模型</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part2-break-the-ice/2.3-entity-data/" class="">2.3 实体数据</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part2-break-the-ice/2.4-connection-management/" class="">2.4 连接管理</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/http/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>1.7 应用层</strong>
+
+  <label for="toc-control">
+    
+    <img src="/http/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#17-应用层">1.7 应用层</a>
+      <ul>
+        <li><a href="#171-域名系统">1.7.1 域名系统</a></li>
+        <li><a href="#172-文件传送协议">1.7.2 文件传送协议</a></li>
+        <li><a href="#173-动态主机配置协议">1.7.3 动态主机配置协议</a></li>
+        <li><a href="#174-远程登录协议">1.7.4 远程登录协议</a></li>
+        <li><a href="#175-电子邮件协议">1.7.5 电子邮件协议</a>
+          <ul>
+            <li><a href="#1-smtp">1. SMTP</a></li>
+            <li><a href="#2-pop3">2. POP3</a></li>
+            <li><a href="#3-imap">3. IMAP</a></li>
+          </ul>
+        </li>
+        <li><a href="#175-常用端口">1.7.5 常用端口</a></li>
+        <li><a href="#176-web-页面请求过程">1.7.6 Web 页面请求过程</a>
+          <ul>
+            <li><a href="#1-dhcp-配置主机信息">1. DHCP 配置主机信息</a></li>
+            <li><a href="#2-arp-解析-mac-地址">2. ARP 解析 MAC 地址</a></li>
+            <li><a href="#3-dns-解析域名">3. DNS 解析域名</a></li>
+            <li><a href="#4-http-请求页面">4. HTTP 请求页面</a></li>
+          </ul>
+        </li>
+        <li><a href="#参考链接">参考链接</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown"><h1 id="17-应用层">
+  1.7 应用层
+  <a class="anchor" href="#17-%e5%ba%94%e7%94%a8%e5%b1%82">#</a>
+</h1>
+<h2 id="171-域名系统">
+  1.7.1 域名系统
+  <a class="anchor" href="#171-%e5%9f%9f%e5%90%8d%e7%b3%bb%e7%bb%9f">#</a>
+</h2>
+<p>DNS 是一个分布式数据库，提供了主机名和 IP 地址之间相互转换的服务。这里的分布式数据库是指，每个站点只保留它自己的那部分数据。</p>
+<p>域名具有层次结构，从上到下依次为：根域名、顶级域名、二级域名。</p>
+<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221224/854a213eef904d29aff6dffc8d26b869.png"/> </div><br>
+<p>DNS 可以使用 UDP 或者 TCP 进行传输，使用的端口号都为 53。大多数情况下 DNS 使用 UDP 进行传输，这就要求域名解析器和域名服务器都必须自己处理超时和重传从而保证可靠性。在两种情况下会使用 TCP 进行传输：</p>
+<ul>
+<li>如果返回的响应超过的 512 字节（UDP 最大只支持 512 字节的数据）。</li>
+<li>区域传送（区域传送是主域名服务器向辅助域名服务器传送变化的那部分数据）。</li>
+</ul>
+<h2 id="172-文件传送协议">
+  1.7.2 文件传送协议
+  <a class="anchor" href="#172-%e6%96%87%e4%bb%b6%e4%bc%a0%e9%80%81%e5%8d%8f%e8%ae%ae">#</a>
+</h2>
+<p>FTP 使用 TCP 进行连接，它需要两个连接来传送一个文件：</p>
+<ul>
+<li>控制连接：服务器打开端口号 21 等待客户端的连接，客户端主动建立连接后，使用这个连接将客户端的命令传送给服务器，并传回服务器的应答。</li>
+<li>数据连接：用来传送一个文件数据。</li>
+</ul>
+<p>根据数据连接是否是服务器端主动建立，FTP 有主动和被动两种模式：</p>
+<ul>
+<li>主动模式：服务器端主动建立数据连接，其中服务器端的端口号为 20，客户端的端口号随机，但是必须大于 1024，因为 0~1023 是熟知端口号。</li>
+</ul>
+<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221224/61fc107098454077b47eab5dc8d90f5c.png"/> </div><br>
+<ul>
+<li>被动模式：客户端主动建立数据连接，其中客户端的端口号由客户端自己指定，服务器端的端口号随机。</li>
+</ul>
+<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221224/ca515f480fdf4ce391170bc9a2fa25c8.png"/> </div><br>
+<p>主动模式要求客户端开放端口号给服务器端，需要去配置客户端的防火墙。被动模式只需要服务器端开放端口号即可，无需客户端配置防火墙。但是被动模式会导致服务器端的安全性减弱，因为开放了过多的端口号。</p>
+<h2 id="173-动态主机配置协议">
+  1.7.3 动态主机配置协议
+  <a class="anchor" href="#173-%e5%8a%a8%e6%80%81%e4%b8%bb%e6%9c%ba%e9%85%8d%e7%bd%ae%e5%8d%8f%e8%ae%ae">#</a>
+</h2>
+<p>DHCP (Dynamic Host Configuration Protocol) 提供了即插即用的连网方式，用户不再需要手动配置 IP 地址等信息。</p>
+<p>DHCP 配置的内容不仅是 IP 地址，还包括子网掩码、网关 IP 地址。</p>
+<p>DHCP 工作过程如下：</p>
+<ol>
+<li>客户端发送 Discover 报文，该报文的目的地址为 255.255.255.255:67，源地址为 0.0.0.0:68，被放入 UDP 中，该报文被广播到同一个子网的所有主机上。如果客户端和 DHCP 服务器不在同一个子网，就需要使用中继代理。</li>
+<li>DHCP 服务器收到 Discover 报文之后，发送 Offer 报文给客户端，该报文包含了客户端所需要的信息。因为客户端可能收到多个 DHCP 服务器提供的信息，因此客户端需要进行选择。</li>
+<li>如果客户端选择了某个 DHCP 服务器提供的信息，那么就发送 Request 报文给该 DHCP 服务器。</li>
+<li>DHCP 服务器发送 Ack 报文，表示客户端此时可以使用提供给它的信息。</li>
+</ol>
+<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221224/1e0b3eed342b4580b274c23c2f9e0402.png"/> </div><br>
+<h2 id="174-远程登录协议">
+  1.7.4 远程登录协议
+  <a class="anchor" href="#174-%e8%bf%9c%e7%a8%8b%e7%99%bb%e5%bd%95%e5%8d%8f%e8%ae%ae">#</a>
+</h2>
+<p>TELNET 用于登录到远程主机上，并且远程主机上的输出也会返回。</p>
+<p>TELNET 可以适应许多计算机和操作系统的差异，例如不同操作系统系统的换行符定义。</p>
+<h2 id="175-电子邮件协议">
+  1.7.5 电子邮件协议
+  <a class="anchor" href="#175-%e7%94%b5%e5%ad%90%e9%82%ae%e4%bb%b6%e5%8d%8f%e8%ae%ae">#</a>
+</h2>
+<p>一个电子邮件系统由三部分组成：用户代理、邮件服务器以及邮件协议。</p>
+<p>邮件协议包含发送协议和读取协议，发送协议常用 SMTP，读取协议常用 POP3 和 IMAP。</p>
+<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221224/a0222f46d7ea4870b05d3832d14d90a9.png" width="700"/> </div><br>
+<h3 id="1-smtp">
+  1. SMTP
+  <a class="anchor" href="#1-smtp">#</a>
+</h3>
+<p>SMTP 只能发送 ASCII 码，而互联网邮件扩充 MIME 可以发送二进制文件。MIME 并没有改动或者取代 SMTP，而是增加邮件主体的结构，定义了非 ASCII 码的编码规则。</p>
+<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221224/98083b9737844bdf9e4cc60ebb93da87.png" width=""/> </div><br>
+<h3 id="2-pop3">
+  2. POP3
+  <a class="anchor" href="#2-pop3">#</a>
+</h3>
+<p>POP3 的特点是只要用户从服务器上读取了邮件，就把该邮件删除。但最新版本的 POP3 可以不删除邮件。</p>
+<h3 id="3-imap">
+  3. IMAP
+  <a class="anchor" href="#3-imap">#</a>
+</h3>
+<p>IMAP 协议中客户端和服务器上的邮件保持同步，如果不手动删除邮件，那么服务器上的邮件也不会被删除。IMAP 这种做法可以让用户随时随地去访问服务器上的邮件。</p>
+<h2 id="175-常用端口">
+  1.7.5 常用端口
+  <a class="anchor" href="#175-%e5%b8%b8%e7%94%a8%e7%ab%af%e5%8f%a3">#</a>
+</h2>
+<table>
+<thead>
+<tr>
+<th>应用</th>
+<th>应用层协议</th>
+<th>端口号</th>
+<th>传输层协议</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>域名解析</td>
+<td>DNS</td>
+<td>53</td>
+<td>UDP/TCP</td>
+<td>长度超过 512 字节时使用 TCP</td>
+</tr>
+<tr>
+<td>动态主机配置协议</td>
+<td>DHCP</td>
+<td>67/68</td>
+<td>UDP</td>
+<td></td>
+</tr>
+<tr>
+<td>简单网络管理协议</td>
+<td>SNMP</td>
+<td>161/162</td>
+<td>UDP</td>
+<td></td>
+</tr>
+<tr>
+<td>文件传送协议</td>
+<td>FTP</td>
+<td>20/21</td>
+<td>TCP</td>
+<td>控制连接 21，数据连接 20</td>
+</tr>
+<tr>
+<td>远程终端协议</td>
+<td>TELNET</td>
+<td>23</td>
+<td>TCP</td>
+<td></td>
+</tr>
+<tr>
+<td>超文本传送协议</td>
+<td>HTTP</td>
+<td>80</td>
+<td>TCP</td>
+<td></td>
+</tr>
+<tr>
+<td>简单邮件传送协议</td>
+<td>SMTP</td>
+<td>25</td>
+<td>TCP</td>
+<td></td>
+</tr>
+<tr>
+<td>邮件读取协议</td>
+<td>POP3</td>
+<td>110</td>
+<td>TCP</td>
+<td></td>
+</tr>
+<tr>
+<td>网际报文存取协议</td>
+<td>IMAP</td>
+<td>143</td>
+<td>TCP</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="176-web-页面请求过程">
+  1.7.6 Web 页面请求过程
+  <a class="anchor" href="#176-web-%e9%a1%b5%e9%9d%a2%e8%af%b7%e6%b1%82%e8%bf%87%e7%a8%8b">#</a>
+</h2>
+<h3 id="1-dhcp-配置主机信息">
+  1. DHCP 配置主机信息
+  <a class="anchor" href="#1-dhcp-%e9%85%8d%e7%bd%ae%e4%b8%bb%e6%9c%ba%e4%bf%a1%e6%81%af">#</a>
+</h3>
+<ul>
+<li>
+<p>假设主机最开始没有 IP 地址以及其它信息，那么就需要先使用 DHCP 来获取。</p>
+</li>
+<li>
+<p>主机生成一个 DHCP 请求报文，并将这个报文放入具有目的端口 67 和源端口 68 的 UDP 报文段中。</p>
+</li>
+<li>
+<p>该报文段则被放入在一个具有广播 IP 目的地址(255.255.255.255) 和源 IP 地址（0.0.0.0）的 IP 数据报中。</p>
+</li>
+<li>
+<p>该数据报则被放置在 MAC 帧中，该帧具有目的地址 FF:&lt;zero-width space&gt;FF:&lt;zero-width space&gt;FF:&lt;zero-width space&gt;FF:&lt;zero-width space&gt;FF:FF，将广播到与交换机连接的所有设备。</p>
+</li>
+<li>
+<p>连接在交换机的 DHCP 服务器收到广播帧之后，不断地向上分解得到 IP 数据报、UDP 报文段、DHCP 请求报文，之后生成 DHCP ACK 报文，该报文包含以下信息：IP 地址、DNS 服务器的 IP 地址、默认网关路由器的 IP 地址和子网掩码。该报文被放入 UDP 报文段中，UDP 报文段有被放入 IP 数据报中，最后放入 MAC 帧中。</p>
+</li>
+<li>
+<p>该帧的目的地址是请求主机的 MAC 地址，因为交换机具有自学习能力，之前主机发送了广播帧之后就记录了 MAC 地址到其转发接口的交换表项，因此现在交换机就可以直接知道应该向哪个接口发送该帧。</p>
+</li>
+<li>
+<p>主机收到该帧后，不断分解得到 DHCP 报文。之后就配置它的 IP 地址、子网掩码和 DNS 服务器的 IP 地址，并在其 IP 转发表中安装默认网关。</p>
+</li>
+</ul>
+<h3 id="2-arp-解析-mac-地址">
+  2. ARP 解析 MAC 地址
+  <a class="anchor" href="#2-arp-%e8%a7%a3%e6%9e%90-mac-%e5%9c%b0%e5%9d%80">#</a>
+</h3>
+<ul>
+<li>
+<p>主机通过浏览器生成一个 TCP 套接字，套接字向 HTTP 服务器发送 HTTP 请求。为了生成该套接字，主机需要知道网站的域名对应的 IP 地址。</p>
+</li>
+<li>
+<p>主机生成一个 DNS 查询报文，该报文具有 53 号端口，因为 DNS 服务器的端口号是 53。</p>
+</li>
+<li>
+<p>该 DNS 查询报文被放入目的地址为 DNS 服务器 IP 地址的 IP 数据报中。</p>
+</li>
+<li>
+<p>该 IP 数据报被放入一个以太网帧中，该帧将发送到网关路由器。</p>
+</li>
+<li>
+<p>DHCP 过程只知道网关路由器的 IP 地址，为了获取网关路由器的 MAC 地址，需要使用 ARP 协议。</p>
+</li>
+<li>
+<p>主机生成一个包含目的地址为网关路由器 IP 地址的 ARP 查询报文，将该 ARP 查询报文放入一个具有广播目的地址（FF:&lt;zero-width space&gt;FF:&lt;zero-width space&gt;FF:&lt;zero-width space&gt;FF:&lt;zero-width space&gt;FF:FF）的以太网帧中，并向交换机发送该以太网帧，交换机将该帧转发给所有的连接设备，包括网关路由器。</p>
+</li>
+<li>
+<p>网关路由器接收到该帧后，不断向上分解得到 ARP 报文，发现其中的 IP 地址与其接口的 IP 地址匹配，因此就发送一个 ARP 回答报文，包含了它的 MAC 地址，发回给主机。</p>
+</li>
+</ul>
+<h3 id="3-dns-解析域名">
+  3. DNS 解析域名
+  <a class="anchor" href="#3-dns-%e8%a7%a3%e6%9e%90%e5%9f%9f%e5%90%8d">#</a>
+</h3>
+<ul>
+<li>
+<p>知道了网关路由器的 MAC 地址之后，就可以继续 DNS 的解析过程了。</p>
+</li>
+<li>
+<p>网关路由器接收到包含 DNS 查询报文的以太网帧后，抽取出 IP 数据报，并根据转发表决定该 IP 数据报应该转发的路由器。</p>
+</li>
+<li>
+<p>因为路由器具有内部网关协议（RIP、OSPF）和外部网关协议（BGP）这两种路由选择协议，因此路由表中已经配置了网关路由器到达 DNS 服务器的路由表项。</p>
+</li>
+<li>
+<p>到达 DNS 服务器之后，DNS 服务器抽取出 DNS 查询报文，并在 DNS 数据库中查找待解析的域名。</p>
+</li>
+<li>
+<p>找到 DNS 记录之后，发送 DNS 回答报文，将该回答报文放入 UDP 报文段中，然后放入 IP 数据报中，通过路由器反向转发回网关路由器，并经过以太网交换机到达主机。</p>
+</li>
+</ul>
+<h3 id="4-http-请求页面">
+  4. HTTP 请求页面
+  <a class="anchor" href="#4-http-%e8%af%b7%e6%b1%82%e9%a1%b5%e9%9d%a2">#</a>
+</h3>
+<ul>
+<li>
+<p>有了 HTTP 服务器的 IP 地址之后，主机就能够生成 TCP 套接字，该套接字将用于向 Web 服务器发送 HTTP GET 报文。</p>
+</li>
+<li>
+<p>在生成 TCP 套接字之前，必须先与 HTTP 服务器进行三次握手来建立连接。生成一个具有目的端口 80 的 TCP SYN 报文段，并向 HTTP 服务器发送该报文段。</p>
+</li>
+<li>
+<p>HTTP 服务器收到该报文段之后，生成 TCP SYN ACK 报文段，发回给主机。</p>
+</li>
+<li>
+<p>连接建立之后，浏览器生成 HTTP GET 报文，并交付给 HTTP 服务器。</p>
+</li>
+<li>
+<p>HTTP 服务器从 TCP 套接字读取 HTTP GET 报文，生成一个 HTTP 响应报文，将 Web 页面内容放入报文主体中，发回给主机。</p>
+</li>
+<li>
+<p>浏览器收到 HTTP 响应报文后，抽取出 Web 页面内容，之后进行渲染，显示 Web 页面。</p>
+</li>
+</ul>
+<h2 id="参考链接">
+  参考链接
+  <a class="anchor" href="#%e5%8f%82%e8%80%83%e9%93%be%e6%8e%a5">#</a>
+</h2>
+<ul>
+<li>计算机网络, 谢希仁</li>
+<li>JamesF.Kurose, KeithW.Ross, 库罗斯, 等. 计算机网络: 自顶向下方法 [M]. 机械工业出版社, 2014.</li>
+<li>W.RichardStevens. TCP/IP 详解. 卷 1, 协议 [M]. 机械工业出版社, 2006.</li>
+<li>
+  <a href="https://securitywing.com/active-vs-passive-ftp-mode/">Active vs Passive FTP Mode: Which One is More Secure?</a></li>
+<li>
+  <a href="http://www.serv-u.com/kb/1138/active-and-passive-ftp-transfers-defined">Active and Passive FTP Transfers Defined - KB Article #1138</a></li>
+<li>
+  <a href="https://zh.wikipedia.org/wiki/Traceroute">Traceroute</a></li>
+<li>
+  <a href="https://zh.wikipedia.org/wiki/Ping">ping</a></li>
+<li>
+  <a href="http://webcache.googleusercontent.com/search?q=cache:http://anandgiria.blogspot.com/2013/09/windows-dhcp-interview-questions-and.html">How DHCP works and DHCP Interview Questions and Answers</a></li>
+<li>
+  <a href="https://www.quora.com/What-is-process-of-DORA-in-DHCP">What is process of DORA in DHCP?</a></li>
+<li>
+  <a href="https://tecadmin.net/what-is-dhcp-server/">What is DHCP Server ?</a></li>
+<li>
+  <a href="http://www.climatechangenews.com/2011/html/university-tokyo.html">Tackling emissions targets in Tokyo</a></li>
+<li>
+  <a href="http://www.climatechangenews.com/2011/html/university-tokyo.html">What does my ISP know when I use Tor?</a></li>
+<li>
+  <a href="http://www.linyibin.cn/2017/02/12/technology-ComputerNetworking-Internet/">Technology-Computer Networking[1]-Computer Networks and the Internet</a></li>
+<li>
+  <a href="http://slidesplayer.com/slide/11616167/">P2P 网络概述.</a></li>
+<li>
+  <a href="http://slideplayer.com/slide/5115386/">Circuit Switching (a) Circuit switching. (b) Packet switching.</a></li>
+</ul>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/19912f48e7c848c8075817d7232e9e1436eb2d54" title='最后修改者 weibin | March 13, 2023' target="_blank" rel="noopener">
+      <img src="/http/svg/calendar.svg" class="book-icon" alt="Calendar" />
+      <span>March 13, 2023</span>
+    </a>
+  </div>
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/book.http/docs/part1-overview/1.7-application-layer.md" target="_blank" rel="noopener">
+      <img src="/http/svg/edit.svg" class="book-icon" alt="Edit" />
+      <span>编辑本页</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#17-应用层">1.7 应用层</a>
+      <ul>
+        <li><a href="#171-域名系统">1.7.1 域名系统</a></li>
+        <li><a href="#172-文件传送协议">1.7.2 文件传送协议</a></li>
+        <li><a href="#173-动态主机配置协议">1.7.3 动态主机配置协议</a></li>
+        <li><a href="#174-远程登录协议">1.7.4 远程登录协议</a></li>
+        <li><a href="#175-电子邮件协议">1.7.5 电子邮件协议</a>
+          <ul>
+            <li><a href="#1-smtp">1. SMTP</a></li>
+            <li><a href="#2-pop3">2. POP3</a></li>
+            <li><a href="#3-imap">3. IMAP</a></li>
+          </ul>
+        </li>
+        <li><a href="#175-常用端口">1.7.5 常用端口</a></li>
+        <li><a href="#176-web-页面请求过程">1.7.6 Web 页面请求过程</a>
+          <ul>
+            <li><a href="#1-dhcp-配置主机信息">1. DHCP 配置主机信息</a></li>
+            <li><a href="#2-arp-解析-mac-地址">2. ARP 解析 MAC 地址</a></li>
+            <li><a href="#3-dns-解析域名">3. DNS 解析域名</a></li>
+            <li><a href="#4-http-请求页面">4. HTTP 请求页面</a></li>
+          </ul>
+        </li>
+        <li><a href="#参考链接">参考链接</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

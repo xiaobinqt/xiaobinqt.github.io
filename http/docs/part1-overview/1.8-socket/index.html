@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="1.8 Socket # 1.8.1 I/O 模型 # 一个输入操作通常包括两个阶段：
+等待数据准备好 从内核向进程复制数据 对于一个套接字上的输入操作，第一步通常涉及等待数据从网络中到达。当所等待数据到达时，它被复制到内核中的某个缓冲区。第二步就是把数据从内核缓冲区复制到应用进程缓冲区。
+Unix 有五种 I/O 模型：
+阻塞式 I/O 非阻塞式 I/O I/O 复用（select 和 poll） 信号驱动式 I/O（SIGIO） 异步 I/O（AIO） 阻塞式 I/O # 请求数据时，若没有数据准备好，应用进程被阻塞，直到数据从内核缓冲区复制到应用进程缓冲区中才返回。
+应该注意到，在阻塞的过程中，其它应用进程还可以执行，因此阻塞不意味着整个操作系统都被阻塞。因为其它应用进程还可以执行，所以不消耗 CPU 时间，这种模型的 CPU 利用率会比较高。
+下图中，recvfrom() 用于接收 Socket 传来的数据，并复制到应用进程的缓冲区 buf 中。这里把 recvfrom() 当成系统调用。
+ssize_t recvfrom(int sockfd, void *buf, size_t len, int flags, struct sockaddr *src_addr, socklen_t *addrlen); 非阻塞式 I/O # 应用进程执行系统调用之后，内核返回一个错误码。应用进程可以继续执行，但是需要不断的执行系统调用来获知 I/O 是否完成，这种方式称为轮询（polling）。
+由于 CPU 要处理更多的系统调用，因此这种模型的 CPU 利用率比较低。">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="1.8 Socket" />
+<meta property="og:description" content="1.8 Socket # 1.8.1 I/O 模型 # 一个输入操作通常包括两个阶段：
+等待数据准备好 从内核向进程复制数据 对于一个套接字上的输入操作，第一步通常涉及等待数据从网络中到达。当所等待数据到达时，它被复制到内核中的某个缓冲区。第二步就是把数据从内核缓冲区复制到应用进程缓冲区。
+Unix 有五种 I/O 模型：
+阻塞式 I/O 非阻塞式 I/O I/O 复用（select 和 poll） 信号驱动式 I/O（SIGIO） 异步 I/O（AIO） 阻塞式 I/O # 请求数据时，若没有数据准备好，应用进程被阻塞，直到数据从内核缓冲区复制到应用进程缓冲区中才返回。
+应该注意到，在阻塞的过程中，其它应用进程还可以执行，因此阻塞不意味着整个操作系统都被阻塞。因为其它应用进程还可以执行，所以不消耗 CPU 时间，这种模型的 CPU 利用率会比较高。
+下图中，recvfrom() 用于接收 Socket 传来的数据，并复制到应用进程的缓冲区 buf 中。这里把 recvfrom() 当成系统调用。
+ssize_t recvfrom(int sockfd, void *buf, size_t len, int flags, struct sockaddr *src_addr, socklen_t *addrlen); 非阻塞式 I/O # 应用进程执行系统调用之后，内核返回一个错误码。应用进程可以继续执行，但是需要不断的执行系统调用来获知 I/O 是否完成，这种方式称为轮询（polling）。
+由于 CPU 要处理更多的系统调用，因此这种模型的 CPU 利用率比较低。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://example.com/http/docs/part1-overview/1.8-socket/" /><meta property="article:section" content="docs" />
+
+<meta property="article:modified_time" content="2023-03-13T22:44:10+08:00" />
+<title>1.8 Socket | HTTP 协议学习笔记</title>
+<link rel="manifest" href="/http/manifest.json">
+<link rel="icon" href="/http/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/http/book.min.cad59a3be22b32d901c8b99a5bf0c00f01535383d8d0e86742e5449f598d17af.css" integrity="sha256-ytWaO&#43;IrMtkByLmaW/DADwFTU4PY0OhnQuVEn1mNF68=" crossorigin="anonymous">
+  <script defer src="/http/flexsearch.min.js"></script>
+  <script defer src="/http/zh.search.min.dcb9174bf2cc884d676276e8a217afa6f7059c66aa46c13a8af10371509029ca.js" integrity="sha256-3LkXS/LMiE1nYnboohevpvcFnGaqRsE6ivEDcVCQKco=" crossorigin="anonymous"></script>
+
+  <script defer src="/http/sw.min.ec0a06eafc9cbe0e763898565619289d1cc6675fd3e61b207a2fb42ee592dca0.js" integrity="sha256-7AoG6vycvg52OJhWVhkonRzGZ1/T5hsgei&#43;0LuWS3KA=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/http/"><span>HTTP 协议学习笔记</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+<ul>
+    <li>
+        <a href="javascript:void(0)" onclick="hrefIndex()" rel="noopener">主页</a>
+    </li>
+    <li>
+        <a href="https://github.com/xiaobinqt" target="_blank" rel="noopener">GitHub</a>
+    </li>
+</ul>
+
+<hr>
+
+<script>
+    function hrefIndex() {
+        window.location = window.location.origin;
+    }
+</script>
+
+
+  
+<ul>
+  
+  <li>
+    <a href=""  target="_blank" rel="noopener">
+        
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第一部分 总览</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part1-overview/1.1-basic-concept/" class="">1.1 基础概念</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part1-overview/1.2-net-overview/" class="">1.2 概述</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part1-overview/1.3-physical-layer/" class="">1.3 物理层</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part1-overview/1.4-link-layer/" class="">1.4 链路层</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part1-overview/1.5-network-layer/" class="">1.5 网络层</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part1-overview/1.6-transport-layer/" class="">1.6 传输层</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part1-overview/1.7-application-layer/" class="">1.7 应用层</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part1-overview/1.8-socket/" class="active">1.8 Socket</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第二部分 破冰</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part2-break-the-ice/2.1-proxy/" class="">2.1 代理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part2-break-the-ice/2.2-network-layer-model/" class="">2.2 网络分层模型</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part2-break-the-ice/2.3-entity-data/" class="">2.3 实体数据</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part2-break-the-ice/2.4-connection-management/" class="">2.4 连接管理</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/http/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>1.8 Socket</strong>
+
+  <label for="toc-control">
+    
+    <img src="/http/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#18-socket">1.8 Socket</a>
+      <ul>
+        <li><a href="#181-io-模型">1.8.1 I/O 模型</a>
+          <ul>
+            <li><a href="#阻塞式-io">阻塞式 I/O</a></li>
+            <li><a href="#非阻塞式-io">非阻塞式 I/O</a></li>
+            <li><a href="#io-复用">I/O 复用</a></li>
+            <li><a href="#信号驱动-io">信号驱动 I/O</a></li>
+            <li><a href="#异步-io">异步 I/O</a></li>
+            <li><a href="#五大-io-模型比较">五大 I/O 模型比较</a></li>
+          </ul>
+        </li>
+        <li><a href="#182-io-复用">1.8.2 I/O 复用</a>
+          <ul>
+            <li><a href="#select">select</a></li>
+            <li><a href="#poll">poll</a></li>
+            <li><a href="#比较">比较</a></li>
+            <li><a href="#epoll">epoll</a></li>
+            <li><a href="#工作模式">工作模式</a></li>
+            <li><a href="#应用场景">应用场景</a></li>
+          </ul>
+        </li>
+        <li><a href="#参考资料">参考资料</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown"><h1 id="18-socket">
+  1.8 Socket
+  <a class="anchor" href="#18-socket">#</a>
+</h1>
+<h2 id="181-io-模型">
+  1.8.1 I/O 模型
+  <a class="anchor" href="#181-io-%e6%a8%a1%e5%9e%8b">#</a>
+</h2>
+<p>一个输入操作通常包括两个阶段：</p>
+<ul>
+<li>等待数据准备好</li>
+<li>从内核向进程复制数据</li>
+</ul>
+<p>对于一个套接字上的输入操作，第一步通常涉及等待数据从网络中到达。当所等待数据到达时，它被复制到内核中的某个缓冲区。第二步就是把数据从内核缓冲区复制到应用进程缓冲区。</p>
+<p>Unix 有五种 I/O 模型：</p>
+<ul>
+<li>阻塞式 I/O</li>
+<li>非阻塞式 I/O</li>
+<li>I/O 复用（select 和 poll）</li>
+<li>信号驱动式 I/O（SIGIO）</li>
+<li>异步 I/O（AIO）</li>
+</ul>
+<h3 id="阻塞式-io">
+  阻塞式 I/O
+  <a class="anchor" href="#%e9%98%bb%e5%a1%9e%e5%bc%8f-io">#</a>
+</h3>
+<p>请求数据时，若没有数据准备好，应用进程被阻塞，直到数据从内核缓冲区复制到应用进程缓冲区中才返回。</p>
+<p>应该注意到，在阻塞的过程中，其它应用进程还可以执行，因此阻塞不意味着整个操作系统都被阻塞。因为其它应用进程还可以执行，所以不消耗 CPU 时间，这种模型的 CPU 利用率会比较高。</p>
+<p>下图中，recvfrom() 用于接收 Socket 传来的数据，并复制到应用进程的缓冲区 buf 中。这里把 recvfrom() 当成系统调用。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span><span style="color:#66d9ef">ssize_t</span> <span style="color:#a6e22e">recvfrom</span>(<span style="color:#66d9ef">int</span> sockfd, <span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>buf, <span style="color:#66d9ef">size_t</span> len, <span style="color:#66d9ef">int</span> flags, <span style="color:#66d9ef">struct</span> sockaddr <span style="color:#f92672">*</span>src_addr, <span style="color:#66d9ef">socklen_t</span> <span style="color:#f92672">*</span>addrlen);
+</span></span></code></pre></div><p>
+  <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/ff94438f086543b4a38be1a93964e8a4.png" alt="" /></p>
+<h3 id="非阻塞式-io">
+  非阻塞式 I/O
+  <a class="anchor" href="#%e9%9d%9e%e9%98%bb%e5%a1%9e%e5%bc%8f-io">#</a>
+</h3>
+<p>应用进程执行系统调用之后，内核返回一个错误码。应用进程可以继续执行，但是需要不断的执行系统调用来获知 I/O 是否完成，这种方式称为轮询（polling）。</p>
+<p>由于 CPU 要处理更多的系统调用，因此这种模型的 CPU 利用率比较低。</p>
+<p>
+  <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/2b99cd2f1b2d4b7298b04da504b8afce.png" alt="" /></p>
+<h3 id="io-复用">
+  I/O 复用
+  <a class="anchor" href="#io-%e5%a4%8d%e7%94%a8">#</a>
+</h3>
+<p>使用 select 或者 poll 等待数据，并且可以等待多个套接字中的任何一个变为可读。这一过程会被阻塞，当某一个套接字可读时返回，之后再使用 recvfrom 把数据从内核复制到进程中。</p>
+<p>它可以让单个进程具有处理多个 I/O 事件的能力。又被称为 Event Driven I/O，即事件驱动 I/O。</p>
+<p>如果一个 Web 服务器没有 I/O 复用，那么每一个 Socket 连接都需要创建一个线程去处理。如果同时有几万个连接，那么就需要创建相同数量的线程。相比于多进程和多线程技术，I/O 复用不需要进程线程创建和切换的开销，系统开销更小。</p>
+<p>
+  <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/5a730251ea1e43f7ad4577a9e79f25cd.png" alt="" /></p>
+<h3 id="信号驱动-io">
+  信号驱动 I/O
+  <a class="anchor" href="#%e4%bf%a1%e5%8f%b7%e9%a9%b1%e5%8a%a8-io">#</a>
+</h3>
+<p>应用进程使用 sigaction 系统调用，内核立即返回，应用进程可以继续执行，也就是说等待数据阶段应用进程是非阻塞的。内核在数据到达时向应用进程发送 SIGIO 信号，应用进程收到之后在信号处理程序中调用 recvfrom 将数据从内核复制到应用进程中。</p>
+<p>相比于非阻塞式 I/O 的轮询方式，信号驱动 I/O 的 CPU 利用率更高。</p>
+<p>
+  <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/f2d2652588d442f3b119f19c9ff87517.png" alt="" /></p>
+<h3 id="异步-io">
+  异步 I/O
+  <a class="anchor" href="#%e5%bc%82%e6%ad%a5-io">#</a>
+</h3>
+<p>应用进程执行 aio_read 系统调用会立即返回，应用进程可以继续执行，不会被阻塞，内核会在所有操作完成之后向应用进程发送信号。</p>
+<p>异步 I/O 与信号驱动 I/O 的区别在于，异步 I/O 的信号是通知应用进程 I/O 完成，而信号驱动 I/O 的信号是通知应用进程可以开始 I/O。</p>
+<p>
+  <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/ad1af3420dd34462a24a36b98605ad2c.png" alt="" /></p>
+<h3 id="五大-io-模型比较">
+  五大 I/O 模型比较
+  <a class="anchor" href="#%e4%ba%94%e5%a4%a7-io-%e6%a8%a1%e5%9e%8b%e6%af%94%e8%be%83">#</a>
+</h3>
+<ul>
+<li>同步 I/O：将数据从内核缓冲区复制到应用进程缓冲区的阶段（第二阶段），应用进程会阻塞。</li>
+<li>异步 I/O：第二阶段应用进程不会阻塞。</li>
+</ul>
+<p>同步 I/O 包括阻塞式 I/O、非阻塞式 I/O、I/O 复用和信号驱动 I/O ，它们的主要区别在第一个阶段。</p>
+<p>非阻塞式 I/O 、信号驱动 I/O 和异步 I/O 在第一阶段不会阻塞。</p>
+<p>
+  <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/a6c28f1e35374cd19340c25b77c21bcb.png" alt="" /></p>
+<h2 id="182-io-复用">
+  1.8.2 I/O 复用
+  <a class="anchor" href="#182-io-%e5%a4%8d%e7%94%a8">#</a>
+</h2>
+<p>select/poll/epoll 都是 I/O 多路复用的具体实现，select 出现的最早，之后是 poll，再是 epoll。</p>
+<h3 id="select">
+  select
+  <a class="anchor" href="#select">#</a>
+</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">select</span>(<span style="color:#66d9ef">int</span> n, fd_set <span style="color:#f92672">*</span>readfds, fd_set <span style="color:#f92672">*</span>writefds, fd_set <span style="color:#f92672">*</span>exceptfds, <span style="color:#66d9ef">struct</span> timeval <span style="color:#f92672">*</span>timeout);
+</span></span></code></pre></div><p>select 允许应用程序监视一组文件描述符，等待一个或者多个描述符成为就绪状态，从而完成 I/O 操作。</p>
+<ul>
+<li>
+<p>fd_set 使用数组实现，数组大小使用 FD_SETSIZE 定义，所以只能监听少于 FD_SETSIZE 数量的描述符。有三种类型的描述符类型：readset、writeset、exceptset，分别对应读、写、异常条件的描述符集合。</p>
+</li>
+<li>
+<p>timeout 为超时参数，调用 select 会一直阻塞直到有描述符的事件到达或者等待的时间超过 timeout。</p>
+</li>
+<li>
+<p>成功调用返回结果大于 0，出错返回结果为 -1，超时返回结果为 0。</p>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span>fd_set fd_in, fd_out;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> timeval tv;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Reset the sets
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">FD_ZERO</span>( <span style="color:#f92672">&amp;</span>fd_in );
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">FD_ZERO</span>( <span style="color:#f92672">&amp;</span>fd_out );
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Monitor sock1 for input events
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">FD_SET</span>( sock1, <span style="color:#f92672">&amp;</span>fd_in );
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Monitor sock2 for output events
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">FD_SET</span>( sock2, <span style="color:#f92672">&amp;</span>fd_out );
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Find out which socket has the largest numeric value as select requires it
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span> largest_sock <span style="color:#f92672">=</span> sock1 <span style="color:#f92672">&gt;</span> sock2 <span style="color:#f92672">?</span> sock1 : sock2;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Wait up to 10 seconds
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>tv.tv_sec <span style="color:#f92672">=</span> <span style="color:#ae81ff">10</span>;
+</span></span><span style="display:flex;"><span>tv.tv_usec <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Call the select
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span> ret <span style="color:#f92672">=</span> <span style="color:#a6e22e">select</span>( largest_sock <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>, <span style="color:#f92672">&amp;</span>fd_in, <span style="color:#f92672">&amp;</span>fd_out, NULL, <span style="color:#f92672">&amp;</span>tv );
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Check if select actually succeed
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">if</span> ( ret <span style="color:#f92672">==</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span> )
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// report error and abort
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> ( ret <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span> )
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// timeout; no event detected
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> ( <span style="color:#a6e22e">FD_ISSET</span>( sock1, <span style="color:#f92672">&amp;</span>fd_in ) )
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// input event on sock1
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> ( <span style="color:#a6e22e">FD_ISSET</span>( sock2, <span style="color:#f92672">&amp;</span>fd_out ) )
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// output event on sock2
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><h3 id="poll">
+  poll
+  <a class="anchor" href="#poll">#</a>
+</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">poll</span>(<span style="color:#66d9ef">struct</span> pollfd <span style="color:#f92672">*</span>fds, <span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">int</span> nfds, <span style="color:#66d9ef">int</span> timeout);
+</span></span></code></pre></div><p>poll 的功能与 select 类似，也是等待一组描述符中的一个成为就绪状态。</p>
+<p>poll 中的描述符是 pollfd 类型的数组，pollfd 的定义如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> pollfd {
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">int</span>   fd;         <span style="color:#75715e">/* file descriptor */</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">short</span> events;     <span style="color:#75715e">/* requested events */</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">short</span> revents;    <span style="color:#75715e">/* returned events */</span>
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span><span style="color:#75715e">// The structure for two events
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">struct</span> pollfd fds[<span style="color:#ae81ff">2</span>];
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Monitor sock1 for input
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>fds[<span style="color:#ae81ff">0</span>].fd <span style="color:#f92672">=</span> sock1;
+</span></span><span style="display:flex;"><span>fds[<span style="color:#ae81ff">0</span>].events <span style="color:#f92672">=</span> POLLIN;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Monitor sock2 for output
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>fds[<span style="color:#ae81ff">1</span>].fd <span style="color:#f92672">=</span> sock2;
+</span></span><span style="display:flex;"><span>fds[<span style="color:#ae81ff">1</span>].events <span style="color:#f92672">=</span> POLLOUT;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Wait 10 seconds
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span> ret <span style="color:#f92672">=</span> <span style="color:#a6e22e">poll</span>( <span style="color:#f92672">&amp;</span>fds, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">10000</span> );
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Check if poll actually succeed
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">if</span> ( ret <span style="color:#f92672">==</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span> )
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// report error and abort
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> ( ret <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span> )
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// timeout; no event detected
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// If we detect the event, zero it out so we can reuse the structure
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> ( fds[<span style="color:#ae81ff">0</span>].revents <span style="color:#f92672">&amp;</span> POLLIN )
+</span></span><span style="display:flex;"><span>        fds[<span style="color:#ae81ff">0</span>].revents <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// input event on sock1
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> ( fds[<span style="color:#ae81ff">1</span>].revents <span style="color:#f92672">&amp;</span> POLLOUT )
+</span></span><span style="display:flex;"><span>        fds[<span style="color:#ae81ff">1</span>].revents <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// output event on sock2
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><h3 id="比较">
+  比较
+  <a class="anchor" href="#%e6%af%94%e8%be%83">#</a>
+</h3>
+<h4 id="1-功能">
+  1. 功能
+  <a class="anchor" href="#1-%e5%8a%9f%e8%83%bd">#</a>
+</h4>
+<p>select 和 poll 的功能基本相同，不过在一些实现细节上有所不同。</p>
+<ul>
+<li>select 会修改描述符，而 poll 不会；</li>
+<li>select 的描述符类型使用数组实现，FD_SETSIZE 大小默认为 1024，因此默认只能监听少于 1024 个描述符。如果要监听更多描述符的话，需要修改 FD_SETSIZE 之后重新编译；而 poll 没有描述符数量的限制；</li>
+<li>poll 提供了更多的事件类型，并且对描述符的重复利用上比 select 高。</li>
+<li>如果一个线程对某个描述符调用了 select 或者 poll，另一个线程关闭了该描述符，会导致调用结果不确定。</li>
+</ul>
+<h4 id="2-速度">
+  2. 速度
+  <a class="anchor" href="#2-%e9%80%9f%e5%ba%a6">#</a>
+</h4>
+<p>select 和 poll 速度都比较慢，每次调用都需要将全部描述符从应用进程缓冲区复制到内核缓冲区。</p>
+<h4 id="3-可移植性">
+  3. 可移植性
+  <a class="anchor" href="#3-%e5%8f%af%e7%a7%bb%e6%a4%8d%e6%80%a7">#</a>
+</h4>
+<p>几乎所有的系统都支持 select，但是只有比较新的系统支持 poll。</p>
+<h3 id="epoll">
+  epoll
+  <a class="anchor" href="#epoll">#</a>
+</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">epoll_create</span>(<span style="color:#66d9ef">int</span> size);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">epoll_ctl</span>(<span style="color:#66d9ef">int</span> epfd, <span style="color:#66d9ef">int</span> op, <span style="color:#66d9ef">int</span> fd, <span style="color:#66d9ef">struct</span> epoll_event <span style="color:#f92672">*</span>event)<span style="color:#960050;background-color:#1e0010">；</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">epoll_wait</span>(<span style="color:#66d9ef">int</span> epfd, <span style="color:#66d9ef">struct</span> epoll_event <span style="color:#f92672">*</span> events, <span style="color:#66d9ef">int</span> maxevents, <span style="color:#66d9ef">int</span> timeout);
+</span></span></code></pre></div><p>epoll_ctl() 用于向内核注册新的描述符或者是改变某个文件描述符的状态。已注册的描述符在内核中会被维护在一棵红黑树上，通过回调函数内核会将 I/O 准备好的描述符加入到一个链表中管理，进程调用 epoll_wait() 便可以得到事件完成的描述符。</p>
+<p>从上面的描述可以看出，epoll 只需要将描述符从进程缓冲区向内核缓冲区拷贝一次，并且进程不需要通过轮询来获得事件完成的描述符。</p>
+<p>epoll 仅适用于 Linux OS。</p>
+<p>epoll 比 select 和 poll 更加灵活而且没有描述符数量限制。</p>
+<p>epoll 对多线程编程更有友好，一个线程调用了 epoll_wait() 另一个线程关闭了同一个描述符也不会产生像 select 和 poll 的不确定情况。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span><span style="color:#75715e">// Create the epoll descriptor. Only one is needed per app, and is used to monitor all sockets.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// The function argument is ignored (it was not before, but now it is), so put your favorite number here
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span> pollingfd <span style="color:#f92672">=</span> <span style="color:#a6e22e">epoll_create</span>( <span style="color:#ae81ff">0xCAFE</span> );
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> ( pollingfd <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0</span> )
+</span></span><span style="display:flex;"><span> <span style="color:#75715e">// report error
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Initialize the epoll structure in case more members are added in future
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">struct</span> epoll_event ev <span style="color:#f92672">=</span> { <span style="color:#ae81ff">0</span> };
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Associate the connection class instance with the event. You can associate anything
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// you want, epoll does not use this information. We store a connection class pointer, pConnection1
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>ev.data.ptr <span style="color:#f92672">=</span> pConnection1;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Monitor for input, and do not automatically rearm the descriptor after the event
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>ev.events <span style="color:#f92672">=</span> EPOLLIN <span style="color:#f92672">|</span> EPOLLONESHOT;
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Add the descriptor into the monitoring list. We can do it even if another thread is
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// waiting in epoll_wait - the descriptor will be properly added
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">if</span> ( <span style="color:#a6e22e">epoll_ctl</span>( epollfd, EPOLL_CTL_ADD, pConnection1<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">getSocket</span>(), <span style="color:#f92672">&amp;</span>ev ) <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span> )
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// report error
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Wait for up to 20 events (assuming we have added maybe 200 sockets before that it may happen)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">struct</span> epoll_event pevents[ <span style="color:#ae81ff">20</span> ];
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Wait for 10 seconds, and retrieve less than 20 epoll_event and store them into epoll_event array
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span> ready <span style="color:#f92672">=</span> <span style="color:#a6e22e">epoll_wait</span>( pollingfd, pevents, <span style="color:#ae81ff">20</span>, <span style="color:#ae81ff">10000</span> );
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Check if epoll actually succeed
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">if</span> ( ret <span style="color:#f92672">==</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span> )
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// report error and abort
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> ( ret <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span> )
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// timeout; no event detected
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Check if any events detected
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">for</span> ( <span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> ready; i<span style="color:#f92672">++</span> )
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> ( pevents[i].events <span style="color:#f92672">&amp;</span> EPOLLIN )
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// Get back our connection pointer
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            Connection <span style="color:#f92672">*</span> c <span style="color:#f92672">=</span> (Connection<span style="color:#f92672">*</span>) pevents[i].data.ptr;
+</span></span><span style="display:flex;"><span>            c<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">handleReadEvent</span>();
+</span></span><span style="display:flex;"><span>         }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="工作模式">
+  工作模式
+  <a class="anchor" href="#%e5%b7%a5%e4%bd%9c%e6%a8%a1%e5%bc%8f">#</a>
+</h3>
+<p>epoll 的描述符事件有两种触发模式：LT（level trigger）和 ET（edge trigger）。</p>
+<h4 id="1-lt-模式">
+  1. LT 模式
+  <a class="anchor" href="#1-lt-%e6%a8%a1%e5%bc%8f">#</a>
+</h4>
+<p>当 epoll_wait() 检测到描述符事件到达时，将此事件通知进程，进程可以不立即处理该事件，下次调用 epoll_wait() 会再次通知进程。是默认的一种模式，并且同时支持 Blocking 和 No-Blocking。</p>
+<h4 id="2-et-模式">
+  2. ET 模式
+  <a class="anchor" href="#2-et-%e6%a8%a1%e5%bc%8f">#</a>
+</h4>
+<p>和 LT 模式不同的是，通知之后进程必须立即处理事件，下次再调用 epoll_wait() 时不会再得到事件到达的通知。</p>
+<p>很大程度上减少了 epoll 事件被重复触发的次数，因此效率要比 LT 模式高。只支持 No-Blocking，以避免由于一个文件句柄的阻塞读/阻塞写操作把处理多个文件描述符的任务饿死。</p>
+<h3 id="应用场景">
+  应用场景
+  <a class="anchor" href="#%e5%ba%94%e7%94%a8%e5%9c%ba%e6%99%af">#</a>
+</h3>
+<p>很容易产生一种错觉认为只要用 epoll 就可以了，select 和 poll 都已经过时了，其实它们都有各自的使用场景。</p>
+<h4 id="1-select-应用场景">
+  1. select 应用场景
+  <a class="anchor" href="#1-select-%e5%ba%94%e7%94%a8%e5%9c%ba%e6%99%af">#</a>
+</h4>
+<p>select 的 timeout 参数精度为微秒，而 poll 和 epoll 为毫秒，因此 select 更加适用于实时性要求比较高的场景，比如核反应堆的控制。</p>
+<p>select 可移植性更好，几乎被所有主流平台所支持。</p>
+<h4 id="2-poll-应用场景">
+  2. poll 应用场景
+  <a class="anchor" href="#2-poll-%e5%ba%94%e7%94%a8%e5%9c%ba%e6%99%af">#</a>
+</h4>
+<p>poll 没有最大描述符数量的限制，如果平台支持并且对实时性要求不高，应该使用 poll 而不是 select。</p>
+<h4 id="3-epoll-应用场景">
+  3. epoll 应用场景
+  <a class="anchor" href="#3-epoll-%e5%ba%94%e7%94%a8%e5%9c%ba%e6%99%af">#</a>
+</h4>
+<p>只需要运行在 Linux 平台上，有大量的描述符需要同时轮询，并且这些连接最好是长连接。</p>
+<p>需要同时监控小于 1000 个描述符，就没有必要使用 epoll，因为这个应用场景下并不能体现 epoll 的优势。</p>
+<p>需要监控的描述符状态变化多，而且都是非常短暂的，也没有必要使用 epoll。因为 epoll 中的所有描述符都存储在内核中，造成每次需要对描述符的状态改变都需要通过 epoll_ctl() 进行系统调用，频繁系统调用降低效率。并且 epoll 的描述符存储在内核，不容易调试。</p>
+<h2 id="参考资料">
+  参考资料
+  <a class="anchor" href="#%e5%8f%82%e8%80%83%e8%b5%84%e6%96%99">#</a>
+</h2>
+<ul>
+<li>Stevens W R, Fenner B, Rudoff A M. UNIX network programming[M]. Addison-Wesley Professional, 2004.</li>
+<li>
+  <a href="http://man7.org/linux/man-pages/man2/select.2.html">http://man7.org/linux/man-pages/man2/select.2.html</a></li>
+<li>
+  <a href="http://man7.org/linux/man-pages/man2/poll.2.html">http://man7.org/linux/man-pages/man2/poll.2.html</a></li>
+<li>
+  <a href="https://www.ibm.com/developerworks/linux/library/l-async/">Boost application performance using asynchronous I/O</a></li>
+<li>
+  <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365683%28v=vs.85%29.aspx">Synchronous and Asynchronous I/O</a></li>
+<li>
+  <a href="https://segmentfault.com/a/1190000003063859">Linux IO 模式及 select、poll、epoll 详解</a></li>
+<li>
+  <a href="https://daniel.haxx.se/docs/poll-vs-select.html">poll vs select vs event-based</a></li>
+<li>
+  <a href="http://www.ulduzsoft.com/2014/01/select-poll-epoll-practical-difference-for-system-architects/">select / poll / epoll: practical difference for system architects</a></li>
+<li>
+  <a href="https://code.woboq.org/userspace/glibc/sysdeps/unix/sysv/linux/">Browse the source code of userspace/glibc/sysdeps/unix/sysv/linux/ online</a></li>
+</ul>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/19912f48e7c848c8075817d7232e9e1436eb2d54" title='最后修改者 weibin | March 13, 2023' target="_blank" rel="noopener">
+      <img src="/http/svg/calendar.svg" class="book-icon" alt="Calendar" />
+      <span>March 13, 2023</span>
+    </a>
+  </div>
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/book.http/docs/part1-overview/1.8-socket.md" target="_blank" rel="noopener">
+      <img src="/http/svg/edit.svg" class="book-icon" alt="Edit" />
+      <span>编辑本页</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#18-socket">1.8 Socket</a>
+      <ul>
+        <li><a href="#181-io-模型">1.8.1 I/O 模型</a>
+          <ul>
+            <li><a href="#阻塞式-io">阻塞式 I/O</a></li>
+            <li><a href="#非阻塞式-io">非阻塞式 I/O</a></li>
+            <li><a href="#io-复用">I/O 复用</a></li>
+            <li><a href="#信号驱动-io">信号驱动 I/O</a></li>
+            <li><a href="#异步-io">异步 I/O</a></li>
+            <li><a href="#五大-io-模型比较">五大 I/O 模型比较</a></li>
+          </ul>
+        </li>
+        <li><a href="#182-io-复用">1.8.2 I/O 复用</a>
+          <ul>
+            <li><a href="#select">select</a></li>
+            <li><a href="#poll">poll</a></li>
+            <li><a href="#比较">比较</a></li>
+            <li><a href="#epoll">epoll</a></li>
+            <li><a href="#工作模式">工作模式</a></li>
+            <li><a href="#应用场景">应用场景</a></li>
+          </ul>
+        </li>
+        <li><a href="#参考资料">参考资料</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
