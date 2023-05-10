@@ -63,7 +63,7 @@ title: "收藏夹"
 + [麦晓杰-专栏分享](https://doc.vercel.app/ds/)
 + [技术文章摘抄](https://lianglianglee.com/)
 + [鳥哥的首頁](https://linux.vbird.org/)
-+ [www.topgoer.com](www.topgoer.com)
++ [www.topgoer.com](https://www.topgoer.com/)
 
 ## 博主
 
