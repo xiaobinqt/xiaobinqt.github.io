@@ -175,8 +175,8 @@ SSLCertificateChainFile cert/xiaobinqt.cn/chain.pem
 </VirtualHost>
 ```
 
-以上配置全部基于 apache ,如果你用的不是 apache ,以上配置可能不适合你. 关于 apache
-服务的一些其他知识可以参考这篇[文章](https://www.linode.com/docs/web-servers/lamp/install-lamp-stack-on-ubuntu-16-04/),该文章可能需要翻~墙访问.
+以上配置全部基于 apache，如果你用的不是 apache，以上配置可能不适合你。关于 apache
+服务的一些其他知识可以参考这篇 [文章 https://www.linode.com/docs/web-servers/lamp/install-lamp-stack-on-ubuntu-16-04/](https://www.linode.com/docs/web-servers/lamp/install-lamp-stack-on-ubuntu-16-04/),该文章可能需要翻~墙访问.
 配置完成后重启服务,可以利用 curl 命令查看是否配置成功.
 
 ```bash
@@ -185,10 +185,10 @@ curl -I localhost:xxx
 
 ![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230411/aa9763dace4e44cd9f1b416b2c845d24.png " ")
 
-对于 ssl 是否配置成功可以通过浏览器查看.
+对于 ssl 是否配置成功可以通过浏览器查看：
 
 ![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230411/8cdde707a4884ffeaa70f5980dbe777c.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 " ")
 
-可以看到这是我们最新申请的一年的 ssl 证书.
+可以看到这是我们最新申请的一年的 ssl 证书：
 
 ![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230325/f4d3193e954d461f8c769af582eef01e.png " ")
