@@ -13,18 +13,18 @@
         var hours=Math.floor((distance%(1000*60*60*24))/(1000*60*60));
         var minutes=Math.floor((distance%(1000*60*60))/(1000*60));
         var seconds=Math.floor((distance%(1000*60))/1000);
-        document.getElementById("since").innerHTML=days+' 天 '+hours+' 时 '+minutes+' 分 '+seconds+' 秒';},1000);
+        document.getElementById("since").innerHTML=days+' 天 '+hours+' 小时 '+minutes+' 分 '+seconds+' 秒';},1000);
 </script>
 
 {{< typeit tag=h3 >}}
-上邪，   
-我欲与君相知，   
-长命无绝衰。    
-山无陵，  
-江水为竭。  
-冬雷震震，   
-夏雨雪。   
-天地合，  
+上邪，
+我欲与君相知，
+长命无绝衰。
+山无陵，
+江水为竭。
+冬雷震震，
+夏雨雪。
+天地合，
 乃敢与君绝。
 {{< /typeit >}}
 
