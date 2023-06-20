@@ -87,6 +87,7 @@ title: "收藏夹"
 + [CS-Notes](http://www.cyc2018.xyz/)
 + [Hello 算法](https://www.hello-algo.com/)
 + [小惡魔 - AppleBOY](https://blog.wu-boy.com/)
++ [PassJava 博客连载中](http://www.passjava.cn/)
 
 ## 工具
 
