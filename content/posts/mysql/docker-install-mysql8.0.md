@@ -205,6 +205,7 @@ MySQL 用户数据和权限有修改后，希望在**不重启MySQL服务**的�
 
 ## 参考
 
++ [Docker Hub 镜像加速器](https://gist.github.com/y0ngb1n/7e8f16af3242c7815e7ca2f0833d3ea6)
 + [MySQL 8 docker-compose :Failed to access directory for --secure-file-priv](https://github.com/docker-library/mysql/issues/541)
 + [docker安装mysql 8](https://www.jianshu.com/p/000fee62e786)
 + [How to reset the root password in MySQL 8.0.11?](https://stackoverflow.com/questions/50691977/how-to-reset-the-root-password-in-mysql-8-0-11)
