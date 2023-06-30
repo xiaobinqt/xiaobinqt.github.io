@@ -17,8 +17,8 @@ featuredImage: "https://cdn.xiaobinqt.cn/xiaobinqt.io/20220428/21100b3b2f8b4afb9
 
 reproduce: false
 
-tags: ["docker"]
-categories: ["开发者手册"]
+tags: [ "docker" ]
+categories: [ "开发者手册" ]
 lightgallery: true
 
 toc: true
@@ -274,7 +274,7 @@ database:3306
 要映射端口，可以在创建容器时使用 -p 或者是 --publish 选项。
 
 ```shell
-docker run -d --name nginx -p 80:80 -p 443:443 nginx:1.12 
+docker run -d --name nginx -p 80:80 -p 443:443 nginx:1.12
 ```
 
 使用端口映射选项的格式是 `-p <ip>:<host-port>:<container-port>`，其中 ip 是宿主操作系统的监听 ip，可以用来控制监听的网卡，默认为 `0.0.0.0`，即是监听所有网卡。`host-port` 和
@@ -480,7 +480,7 @@ VOLUME ["/data"]
 `LABEL`指令可以为生成的镜像添加元数据标签信息。这些信息可以用来辅助过滤出特定镜像。格式为：
 
 ```shell
-LABEL <key>=<value> 
+LABEL <key>=<value>
 
 LABEL version=1.2
 ```
@@ -581,8 +581,8 @@ CMD指令用来指定启动容器时默认执行的命令。支持三种格式�
 |----------------------------------|-----------------------------|-----------------------------------------------------|
 | `ENTRYPOINT ["/bin/ep", "arge"]` | 	                           | `/bin/ep arge`                                      |
 | `ENTRYPOINT /bin/ep arge`        | 	                           | `/bin/sh -c /bin/ep arge`                           |
-| `CMD ["/bin/exec", "args"]`      | `/bin/exec args`            |                                                     |
-| `CMD /bin/exec args`             | `/bin/sh -c /bin/exec args` |                                                     |
+|                                  | `CMD ["/bin/exec", "args"]` | `/bin/exec args`                                    |
+|                                  | `CMD /bin/exec args`        | `/bin/sh -c /bin/exec args`                         |
 | `ENTRYPOINT ["/bin/ep", "arge"]` | `CMD ["/bin/exec", "argc"]` | `/bin/ep arge /bin/exec argc`                       |
 | `ENTRYPOINT ["/bin/ep", "arge"]` | `CMD /bin/exec args`        | `/bin/ep arge /bin/sh -c /bin/exec args`            |
 | `ENTRYPOINT /bin/ep arge`        | `CMD ["/bin/exec", "argc"]` | `/bin/sh -c /bin/ep arge /bin/exec argc`            |
