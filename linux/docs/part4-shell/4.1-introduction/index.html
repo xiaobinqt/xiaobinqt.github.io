@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="4.1 Shell 简介 # Shell 是命令解释器，用于解释用户对操作系统的操作。CentOS7 默认使用的 Shell 是 bash。
+Shell 有很多可以再 /etc/shells 文件中查看：
+4.1.1 脚本格式 # UNIX 的哲学：一条命令只做一件事。为了组合命令和多次执行，使用脚本文件来保存需要执行的命令，并赋予该文件执行权限（chmod u&#43;rx filename）。如果是二进制文件只需要一个可执性权限，如果是脚本文件需要可读和可执行权限。
+Sha-Bang # 在 shell 脚本中，Sha-Bang（也称为 Shebang 或 Hashbang）是指位于脚本文件的第一行的特殊注释。它的形式是以井号 # 开头，紧随其后是一个叹号 !，再加上一个可执行程序的路径。
+下面是一个典型的 Sha-Bang 行示例：
+#!/bin/bash 在上述示例中，#!/bin/bash 是一个 Sha-Bang 行。其中 #!/bin/ 是固定的前缀，用于告诉系统该文件是一个可执行文件，接下来的 bash 是解释器的路径，表示使用 Bash 解释器来执行该脚本。
+Sha-Bang 行的作用是指定脚本所需的解释器。当在命令行中运行脚本文件时，操作系统会读取脚本文件的第一行，根据其中的 Sha-Bang 行来确定要使用的解释器，并将该解释器用于执行该脚本。
+除了 #!/bin/bash，还可以使用其他解释器路径，如 /bin/sh、/usr/bin/env python 等，根据脚本的需求选择适当的解释器。
+需要注意的是，Sha-Bang 行必须位于脚本文件的第一行，否则它将不会被正确解析。同时，脚本文件需要具有执行权限才能被执行。
+4.1.2 不同执行方式 # 脚本的执行方式大致有以下几种：
+# bash 执行不需要赋予执行权限 bash ./filename.sh # 需要有执行权限 ./filename.sh source .">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="4.1 Shell 简介" />
+<meta property="og:description" content="4.1 Shell 简介 # Shell 是命令解释器，用于解释用户对操作系统的操作。CentOS7 默认使用的 Shell 是 bash。
+Shell 有很多可以再 /etc/shells 文件中查看：
+4.1.1 脚本格式 # UNIX 的哲学：一条命令只做一件事。为了组合命令和多次执行，使用脚本文件来保存需要执行的命令，并赋予该文件执行权限（chmod u&#43;rx filename）。如果是二进制文件只需要一个可执性权限，如果是脚本文件需要可读和可执行权限。
+Sha-Bang # 在 shell 脚本中，Sha-Bang（也称为 Shebang 或 Hashbang）是指位于脚本文件的第一行的特殊注释。它的形式是以井号 # 开头，紧随其后是一个叹号 !，再加上一个可执行程序的路径。
+下面是一个典型的 Sha-Bang 行示例：
+#!/bin/bash 在上述示例中，#!/bin/bash 是一个 Sha-Bang 行。其中 #!/bin/ 是固定的前缀，用于告诉系统该文件是一个可执行文件，接下来的 bash 是解释器的路径，表示使用 Bash 解释器来执行该脚本。
+Sha-Bang 行的作用是指定脚本所需的解释器。当在命令行中运行脚本文件时，操作系统会读取脚本文件的第一行，根据其中的 Sha-Bang 行来确定要使用的解释器，并将该解释器用于执行该脚本。
+除了 #!/bin/bash，还可以使用其他解释器路径，如 /bin/sh、/usr/bin/env python 等，根据脚本的需求选择适当的解释器。
+需要注意的是，Sha-Bang 行必须位于脚本文件的第一行，否则它将不会被正确解析。同时，脚本文件需要具有执行权限才能被执行。
+4.1.2 不同执行方式 # 脚本的执行方式大致有以下几种：
+# bash 执行不需要赋予执行权限 bash ./filename.sh # 需要有执行权限 ./filename.sh source ." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://example.com/linux/docs/part4-shell/4.1-introduction/" /><meta property="article:section" content="docs" />
+
+<meta property="article:modified_time" content="2023-07-03T16:44:20+08:00" />
+<title>4.1 Shell 简介 | Linux 学习笔记</title>
+<link rel="manifest" href="/linux/manifest.json">
+<link rel="icon" href="/linux/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/linux/book.min.cad59a3be22b32d901c8b99a5bf0c00f01535383d8d0e86742e5449f598d17af.css" integrity="sha256-ytWaO&#43;IrMtkByLmaW/DADwFTU4PY0OhnQuVEn1mNF68=" crossorigin="anonymous">
+  <script defer src="/linux/flexsearch.min.js"></script>
+  <script defer src="/linux/zh.search.min.9ae888b9f57c138805e07245db0f4f78524a8e6e9cbc5c0aae1f661598766419.js" integrity="sha256-muiIufV8E4gF4HJF2w9PeFJKjm6cvFwKrh9mFZh2ZBk=" crossorigin="anonymous"></script>
+
+  <script defer src="/linux/sw.min.e3338ad661715b83bfd6397040a613605d8bb26c10798773e2176216e2123560.js" integrity="sha256-4zOK1mFxW4O/1jlwQKYTYF2LsmwQeYdz4hdiFuISNWA=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/linux/"><span>Linux 学习笔记</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+<ul>
+    <li>
+        <a href="javascript:void(0)" onclick="hrefIndex()" rel="noopener">主页</a>
+    </li>
+    <li>
+        <a href="https://github.com/xiaobinqt" target="_blank" rel="noopener">GitHub</a>
+    </li>
+</ul>
+
+<hr>
+
+<script>
+    function hrefIndex() {
+        window.location = window.location.origin;
+    }
+</script>
+
+
+  
+<ul>
+  
+  <li>
+    <a href=""  target="_blank" rel="noopener">
+        
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第一部分 基础知识</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.1-operating-system/" class="">1.1 操作系统</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.2-overview/" class="">1.2 总览</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.3-common-dir/" class="">1.3 常见目录</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.4-process-manage/" class="">1.4 进程管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.5-deadlock/" class="">1.5 死锁</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.6-memory-manage/" class="">1.6 内存管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.7-link/" class="">1.7 链接</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.7-device-manage/" class="">1.7 设备管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.8-instruction-arch/" class="">1.8 指令集</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第二部分 系统操作</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.1-help/" class="">2.1 帮助命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.2-ls/" class="">2.2 ls 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.3-shutdown/" class="">2.3 关机</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.4-cp/" class="">2.4 cp 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.5-file-view/" class="">2.5 文件查看命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.6-backup-compression/" class="">2.6 压缩和打包</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.7-vim/" class="">2.7 vim</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.8-user-manage/" class="">2.8 用户管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.9-switch-user/" class="">2.9 切换用户</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.10-file-dir/" class="">2.10 文件和文件夹</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.11-awk/" class="">2.11 awk 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.12-sed/" class="">2.12 sed 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.13-cut-sort-uniq-tr/" class="">2.13 cut、sort、uniq、tr 命令</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第三部分 系统管理</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.1-network/" class="">3.1 网络</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.2-net-trouble-removal/" class="">3.2 网络故障排除</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.3-net-manage/" class="">3.3 网络服务管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.4-soft-install/" class="">3.4 软件安装</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.5-process/" class="">3.5 进程管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.6-memory-disk/" class="">3.6 内存和磁盘管理</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第四部分 Shell</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.1-introduction/" class="active">4.1 Shell 简介</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.2-env-config-file/" class="">4.2 环境变量</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第五部分 文本操作</span>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第六部分 服务管理</span>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第七部分 常见问题</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part7-faq/7.1-cmd/" class="">7.1 命令相关</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/linux/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>4.1 Shell 简介</strong>
+
+  <label for="toc-control">
+    
+    <img src="/linux/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#41-shell-简介">4.1 Shell 简介</a>
+      <ul>
+        <li><a href="#411-脚本格式">4.1.1 脚本格式</a>
+          <ul>
+            <li><a href="#sha-bang">Sha-Bang</a></li>
+          </ul>
+        </li>
+        <li><a href="#412-不同执行方式">4.1.2 不同执行方式</a></li>
+        <li><a href="#413-重定向符号">4.1.3 重定向符号</a></li>
+        <li><a href="#414-变量">4.1.4 变量</a>
+          <ul>
+            <li><a href="#定义">定义</a></li>
+            <li><a href="#赋值">赋值</a></li>
+            <li><a href="#引用">引用</a></li>
+            <li><a href="#作用范围">作用范围</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown"><h1 id="41-shell-简介">
+  4.1 Shell 简介
+  <a class="anchor" href="#41-shell-%e7%ae%80%e4%bb%8b">#</a>
+</h1>
+<p>Shell 是命令解释器，用于解释用户对操作系统的操作。CentOS7 默认使用的 Shell 是 bash。</p>
+<p>Shell 有很多可以再 /etc/shells 文件中查看：</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230628/1ff1ac3c90164b56b212d53fea91ca85.png" width=  /></div>
+<h2 id="411-脚本格式">
+  4.1.1 脚本格式
+  <a class="anchor" href="#411-%e8%84%9a%e6%9c%ac%e6%a0%bc%e5%bc%8f">#</a>
+</h2>
+<p>UNIX 的哲学：一条命令只做一件事。为了组合命令和多次执行，使用脚本文件来保存需要执行的命令，并赋予该文件执行权限（chmod u+rx filename）。如果是二进制文件只需要一个可执性权限，如果是脚本文件需要可读和可执行权限。</p>
+<h3 id="sha-bang">
+  Sha-Bang
+  <a class="anchor" href="#sha-bang">#</a>
+</h3>
+<p>在 shell 脚本中，Sha-Bang（也称为 Shebang 或 Hashbang）是指位于脚本文件的第一行的特殊注释。它的形式是以井号 <code>#</code> 开头，紧随其后是一个叹号 <code>!</code>，再加上一个可执行程序的路径。</p>
+<p>下面是一个典型的 Sha-Bang 行示例：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e">#!/bin/bash
+</span></span></span></code></pre></div><p>在上述示例中，<code>#!/bin/bash</code> 是一个 Sha-Bang 行。其中 <code>#!/bin/</code> 是固定的前缀，用于告诉系统该文件是一个可执行文件，接下来的 bash 是解释器的路径，表示使用 Bash 解释器来执行该脚本。</p>
+<p>Sha-Bang 行的作用是指定脚本所需的解释器。当在命令行中运行脚本文件时，操作系统会读取脚本文件的第一行，根据其中的 Sha-Bang 行来确定要使用的解释器，并将该解释器用于执行该脚本。</p>
+<p>除了 <code>#!/bin/bash</code>，还可以使用其他解释器路径，如 <code>/bin/sh</code>、<code>/usr/bin/env python</code> 等，根据脚本的需求选择适当的解释器。</p>
+<p>需要注意的是，Sha-Bang 行必须位于脚本文件的第一行，否则它将不会被正确解析。同时，脚本文件需要具有执行权限才能被执行。</p>
+<h2 id="412-不同执行方式">
+  4.1.2 不同执行方式
+  <a class="anchor" href="#412-%e4%b8%8d%e5%90%8c%e6%89%a7%e8%a1%8c%e6%96%b9%e5%bc%8f">#</a>
+</h2>
+<p>脚本的执行方式大致有以下几种：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># bash 执行不需要赋予执行权限</span>
+</span></span><span style="display:flex;"><span>bash ./filename.sh
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 需要有执行权限</span>
+</span></span><span style="display:flex;"><span>./filename.sh
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>source ./filename.sh
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>. filename.sh
+</span></span></code></pre></div><p>bash 和 ./ 在执行时会产生一个新的子进程，对当前的环境不会产生影响。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230628/253e457a7ac6486789b35e935d097753.png" width=  /></div>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230628/a8be1177c7634f1ba7f8ffca9664aeb6.png" width=  /></div>
+<h2 id="413-重定向符号">
+  4.1.3 重定向符号
+  <a class="anchor" href="#413-%e9%87%8d%e5%ae%9a%e5%90%91%e7%ac%a6%e5%8f%b7">#</a>
+</h2>
+<p>一个进程默认会打开标准输入、标准输出、错误输出三个文件描述符。</p>
+<p>输入重定向符号 <code>&lt;</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>read var &lt;/path/to/a/file
+</span></span></code></pre></div><p><code>2&gt;</code> 表示将标准错误输出（stderr）重定向到指定的文件或设备。例如，<code>command 2&gt; error.log</code> 将命令的错误输出重定向到名为 error.log 的文件。</p>
+<p><code>&amp;&gt;</code> 表示将标准输出（stdout）和标准错误输出（stderr）均重定向到指定的文件或设备。例如，<code>command &amp;&gt; output.log</code> 将命令的输出（包括标准输出和错误输出）都重定向到名为 output.log 的文件。</p>
+<p><code>2&gt;</code> <strong>只会</strong>重定向标准错误输出（stderr），而标准输出（stdout）仍然会输出到终端。</p>
+<p><code>&amp;&gt;</code> <strong>会同时</strong>重定向标准输出和标准错误输出，将它们都输出到指定的文件或设备。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>echo <span style="color:#ae81ff">123</span> &gt; /path/to/a/file
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230628/6a0e461be1704383ad5c4dc55afd2945.png" width=  /></div>
+<p>输入和输出重定向组合使用：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>cat &gt; /path/to/a/file &lt;&lt;EOF
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230628/790cd3aa281a4e0184395c95ff6b34cb.png" width=  /></div>
+<h2 id="414-变量">
+  4.1.4 变量
+  <a class="anchor" href="#414-%e5%8f%98%e9%87%8f">#</a>
+</h2>
+<h3 id="定义">
+  定义
+  <a class="anchor" href="#%e5%ae%9a%e4%b9%89">#</a>
+</h3>
+<ul>
+<li>字母、数字、下划线</li>
+<li>不以数字开头</li>
+</ul>
+<h3 id="赋值">
+  赋值
+  <a class="anchor" href="#%e8%b5%8b%e5%80%bc">#</a>
+</h3>
+<ol>
+<li>变量名=变量值</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>a<span style="color:#f92672">=</span><span style="color:#ae81ff">123</span>
+</span></span></code></pre></div><p>等号 <code>=</code> 左右两边<strong>不能</strong>有空格。</p>
+<ol start="2">
+<li>使用 let 为变量赋值</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>let a<span style="color:#f92672">=</span>10+20
+</span></span></code></pre></div><ol start="3">
+<li>将命令赋值给变量</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>l<span style="color:#f92672">=</span>ls
+</span></span></code></pre></div><ol start="4">
+<li>将命令结果赋值给变量，使用 $() 或者使用反引号 ``</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>c<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>ls -l /etc<span style="color:#66d9ef">)</span>
+</span></span></code></pre></div><ol start="5">
+<li>变量值有空格等特殊字符可以包含在双引号 &quot;&quot; 或单引号 &rsquo;&rsquo; 中</li>
+</ol>
+<hr>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230629/932d2b81c0504f4296c962aa995a25bf.png" width=  /></div>
+<h3 id="引用">
+  引用
+  <a class="anchor" href="#%e5%bc%95%e7%94%a8">#</a>
+</h3>
+<ul>
+<li>
+<p><code>${变量名}</code> 称作对变量的引用。</p>
+</li>
+<li>
+<p><code>echo ${变量名}</code> 查看变量的值。</p>
+</li>
+<li>
+<p><code>${变量名}</code> 在部分情况下可以省略为 <code>$变量名</code></p>
+</li>
+</ul>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230629/106afd9a622a4fab8715cd03e94e2ff5.png" width=  /></div>
+<h3 id="作用范围">
+  作用范围
+  <a class="anchor" href="#%e4%bd%9c%e7%94%a8%e8%8c%83%e5%9b%b4">#</a>
+</h3>
+<p>变量的作用范围只在自己的 shell 中，子进程或平行 shell 都是不能使用的。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230629/331516b9b2484eaaa4dc5098799f4b8a.png" width=  /></div>
+<p>如果想让变量的作用范围 “全局” 生效，可以用 source 或 <code>.</code> 的方式执行：</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230629/526b61fd41fd430fa0a715bc339a1899.png" width=  /></div>
+<p>export 导出也可以让变量 “全局” 生效：</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230629/9015d18f480041f9a81c89f055b8bc4d.png" width=  /></div>
+<p>unset 可以删除变量：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>a<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>unset a
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230629/7fe649fef1994079a3309b44dd97ca31.png" width=  /></div>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/a8f1357665578e3a0248eff9ec4e541f2d1df955" title='最后修改者 weibin | July 3, 2023' target="_blank" rel="noopener">
+      <img src="/linux/svg/calendar.svg" class="book-icon" alt="Calendar" />
+      <span>July 3, 2023</span>
+    </a>
+  </div>
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/content/docs/part4-shell/4.1-introduction.md" target="_blank" rel="noopener">
+      <img src="/linux/svg/edit.svg" class="book-icon" alt="Edit" />
+      <span>编辑本页</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#41-shell-简介">4.1 Shell 简介</a>
+      <ul>
+        <li><a href="#411-脚本格式">4.1.1 脚本格式</a>
+          <ul>
+            <li><a href="#sha-bang">Sha-Bang</a></li>
+          </ul>
+        </li>
+        <li><a href="#412-不同执行方式">4.1.2 不同执行方式</a></li>
+        <li><a href="#413-重定向符号">4.1.3 重定向符号</a></li>
+        <li><a href="#414-变量">4.1.4 变量</a>
+          <ul>
+            <li><a href="#定义">定义</a></li>
+            <li><a href="#赋值">赋值</a></li>
+            <li><a href="#引用">引用</a></li>
+            <li><a href="#作用范围">作用范围</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
