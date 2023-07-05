@@ -40,6 +40,16 @@ wsl --set-version 名称 2
 
 ![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230222/38eff9e474cc40b0a43068cec25fe08a.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '切换 wsl2')
 
+## no_proxy 设置
+
+win10 的 no_proxy 可以直接添加系统环境变量：
+
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230705/64a916b5dc924109aef92251094661d3.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'win10 no_proxy')
+
+WSL no_proxy 也可以通过添加环境变量方式：
+
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230705/f562263377664765a1d56204777d5168.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'wsl no_proxy')
+
 ## 参考
 
 + [WSL 的基本命令](https://learn.microsoft.com/zh-cn/windows/wsl/basic-commands)
@@ -48,3 +58,4 @@ wsl --set-version 名称 2
 + [windows 的cmd设置代理方法](https://blog.csdn.net/SHERLOCKSALVATORE/article/details/123599042)
 + [Windows 10/11 安装 WSL2 的简单方法](https://www.jianshu.com/p/6e7488440db2)
 + [Win11卸载WSL，卸载Windows子系统](https://blog.csdn.net/admans/article/details/125071913)
+
