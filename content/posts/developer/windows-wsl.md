@@ -21,11 +21,11 @@ reproduce: false
 
 translate: false
 
-tags: ["wsl","windows"]
-categories: ["开发者手册"]
+tags: [ "wsl","windows" ]
+categories: [ "开发者手册" ]
 lightgallery: true
 
-series: []
+series: [ ]
 
 series_weight:
 
@@ -72,6 +72,16 @@ wsl --set-version 名称 2
 ```
 
 ![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230222/38eff9e474cc40b0a43068cec25fe08a.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '切换 wsl2')
+
+## no_proxy 设置
+
+win10 的 no_proxy 可以直接添加系统环境变量：
+
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230705/64a916b5dc924109aef92251094661d3.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'win10 no_proxy')
+
+WSL no_proxy 也可以通过添加环境变量方式：
+
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230705/f562263377664765a1d56204777d5168.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'wsl no_proxy')
 
 ## 参考
 
