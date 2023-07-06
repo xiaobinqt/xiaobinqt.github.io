@@ -3,27 +3,23 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="4.6 测试和判断 # 4.6.1 退出状态 # 退出程序命令
-exit exit 10 表示自定义返回 10 给 Shell，返回值非 0 位不正常退出。
-$? 判断当前 Shell 前一个进程是否正常退出。
-4.6.2 测试命令 test # test 命令用于检查文件或者比较值
-test 可以做以下测试：
-文件测试 整数比较测试 字符串测试 test 测试语句可以简化为 [] 符号
-[] 符号还有扩展写法 [[]] 支持 &amp;&amp;、‖、&lt;、&gt;">
+<meta name="description" content="4.8 函数 # 函数用于 “包含” 重复使用的命令集合。
+4.8.1 自定义函数 # function fname( # 命令 } # 函数的执行 `fname` function 关键字可以省略。
+变量和参数 # 函数作用范围的变量可以使用 local 申明，只在函数内部生效：
+local 变量名 函数的参数：$1 $2 $3 ${10} .. $n
+4.8.2 系统脚本 # 系统自建了函数库，可以在脚本中引用，目录是 /etc/init.d/functions，如果想导入系统函数库，可以使用 source 函数脚本文件 “导入” 函数。">
 <meta name="theme-color" content="#FFFFFF">
-<meta name="color-scheme" content="light dark"><meta property="og:title" content="4.6 测试和判断" />
-<meta property="og:description" content="4.6 测试和判断 # 4.6.1 退出状态 # 退出程序命令
-exit exit 10 表示自定义返回 10 给 Shell，返回值非 0 位不正常退出。
-$? 判断当前 Shell 前一个进程是否正常退出。
-4.6.2 测试命令 test # test 命令用于检查文件或者比较值
-test 可以做以下测试：
-文件测试 整数比较测试 字符串测试 test 测试语句可以简化为 [] 符号
-[] 符号还有扩展写法 [[]] 支持 &amp;&amp;、‖、&lt;、&gt;" />
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="4.8 函数" />
+<meta property="og:description" content="4.8 函数 # 函数用于 “包含” 重复使用的命令集合。
+4.8.1 自定义函数 # function fname( # 命令 } # 函数的执行 `fname` function 关键字可以省略。
+变量和参数 # 函数作用范围的变量可以使用 local 申明，只在函数内部生效：
+local 变量名 函数的参数：$1 $2 $3 ${10} .. $n
+4.8.2 系统脚本 # 系统自建了函数库，可以在脚本中引用，目录是 /etc/init.d/functions，如果想导入系统函数库，可以使用 source 函数脚本文件 “导入” 函数。" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://example.com/linux/docs/part4-shell/4.6-test-and-judge/" /><meta property="article:section" content="docs" />
+<meta property="og:url" content="https://example.com/linux/docs/part4-shell/4.8-function/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2023-07-05T11:09:19+08:00" />
-<title>4.6 测试和判断 | Linux 学习笔记</title>
+<meta property="article:modified_time" content="2023-07-06T10:17:17+08:00" />
+<title>4.8 函数 | Linux 学习笔记</title>
 <link rel="manifest" href="/linux/manifest.json">
 <link rel="icon" href="/linux/favicon.png" type="image/x-icon">
 <link rel="stylesheet" href="/linux/book.min.cad59a3be22b32d901c8b99a5bf0c00f01535383d8d0e86742e5449f598d17af.css" integrity="sha256-ytWaO&#43;IrMtkByLmaW/DADwFTU4PY0OhnQuVEn1mNF68=" crossorigin="anonymous">
@@ -605,7 +601,7 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/linux/docs/part4-shell/4.6-test-and-judge/" class="active">4.6 测试和判断</a>
+    <a href="/linux/docs/part4-shell/4.6-test-and-judge/" class="">4.6 测试和判断</a>
   
 
         </li>
@@ -631,7 +627,7 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/linux/docs/part4-shell/4.8-function/" class="">4.8 函数</a>
+    <a href="/linux/docs/part4-shell/4.8-function/" class="active">4.8 函数</a>
   
 
         </li>
@@ -771,7 +767,7 @@ https://github.com/alex-shpak/hugo-book
     <img src="/linux/svg/menu.svg" class="book-icon" alt="Menu" />
   </label>
 
-  <strong>4.6 测试和判断</strong>
+  <strong>4.8 函数</strong>
 
   <label for="toc-control">
     
@@ -787,10 +783,14 @@ https://github.com/alex-shpak/hugo-book
   
 <nav id="TableOfContents">
   <ul>
-    <li><a href="#46-测试和判断">4.6 测试和判断</a>
+    <li><a href="#48-函数">4.8 函数</a>
       <ul>
-        <li><a href="#461-退出状态">4.6.1 退出状态</a></li>
-        <li><a href="#462-测试命令-test">4.6.2 测试命令 test</a></li>
+        <li><a href="#481-自定义函数">4.8.1 自定义函数</a>
+          <ul>
+            <li><a href="#变量和参数">变量和参数</a></li>
+          </ul>
+        </li>
+        <li><a href="#482-系统脚本">4.8.2 系统脚本</a></li>
       </ul>
     </li>
   </ul>
@@ -805,42 +805,37 @@ https://github.com/alex-shpak/hugo-book
 
       
       
-  <article class="markdown"><h1 id="46-测试和判断">
-  4.6 测试和判断
-  <a class="anchor" href="#46-%e6%b5%8b%e8%af%95%e5%92%8c%e5%88%a4%e6%96%ad">#</a>
+  <article class="markdown"><h1 id="48-函数">
+  4.8 函数
+  <a class="anchor" href="#48-%e5%87%bd%e6%95%b0">#</a>
 </h1>
-<h2 id="461-退出状态">
-  4.6.1 退出状态
-  <a class="anchor" href="#461-%e9%80%80%e5%87%ba%e7%8a%b6%e6%80%81">#</a>
+<p>函数用于 “包含” 重复使用的命令集合。</p>
+<h2 id="481-自定义函数">
+  4.8.1 自定义函数
+  <a class="anchor" href="#481-%e8%87%aa%e5%ae%9a%e4%b9%89%e5%87%bd%e6%95%b0">#</a>
 </h2>
-<p>退出程序命令</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>exit
-</span></span></code></pre></div><p><code>exit 10</code> 表示自定义返回 10 给 Shell，返回值非 0 位不正常退出。</p>
-<p>$? 判断当前 Shell 前一个进程是否正常退出。</p>
-<h2 id="462-测试命令-test">
-  4.6.2 测试命令 test
-  <a class="anchor" href="#462-%e6%b5%8b%e8%af%95%e5%91%bd%e4%bb%a4-test">#</a>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> fname<span style="color:#f92672">(</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># 命令</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 函数的执行 `fname`</span>
+</span></span></code></pre></div><p><code>function</code> 关键字可以省略。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230705/a511981f8b144c149bb77f44fac1b3ab.png" width=  /></div>
+<h3 id="变量和参数">
+  变量和参数
+  <a class="anchor" href="#%e5%8f%98%e9%87%8f%e5%92%8c%e5%8f%82%e6%95%b0">#</a>
+</h3>
+<p>函数作用范围的变量可以使用 local 申明，只在函数内部生效：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>local 变量名
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230705/4935ca38672e4e2992e58491aae03bfc.png" width=  /></div>
+<p>函数的参数：$1 $2 $3 ${10} .. $n</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230705/7e281a0af3d147f4ad4e8c0e2e7096d7.png" width=  /></div>
+<h2 id="482-系统脚本">
+  4.8.2 系统脚本
+  <a class="anchor" href="#482-%e7%b3%bb%e7%bb%9f%e8%84%9a%e6%9c%ac">#</a>
 </h2>
-<ul>
-<li>
-<p>test 命令用于检查文件或者比较值</p>
-</li>
-<li>
-<p>test 可以做以下测试：</p>
-<ol>
-<li>文件测试</li>
-<li>整数比较测试</li>
-<li>字符串测试</li>
-</ol>
-</li>
-<li>
-<p>test 测试语句可以简化为 [] 符号</p>
-</li>
-<li>
-<p>[] 符号还有扩展写法 [[]] 支持 &amp;&amp;、‖、&lt;、&gt;</p>
-</li>
-</ul>
-<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230704/e3c619bda2fc4eb4954f46f761054594.png" width=  /></div>
+<p>系统自建了函数库，可以在脚本中引用，目录是 <code>/etc/init.d/functions</code>，如果想导入系统函数库，可以使用 source 函数脚本文件 “导入” 函数。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230705/4c6ebdb34f694d169486e41eef9e80d5.png" width=  /></div>
 </article>
  
       
@@ -850,16 +845,16 @@ https://github.com/alex-shpak/hugo-book
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/1587fac2451d8323c784299499cd220cc2213dd3" title='最后修改者 weibin | July 5, 2023' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/5cc20d6f21f947ab61b90166fabaa756fde632bb" title='最后修改者 weibin | July 6, 2023' target="_blank" rel="noopener">
       <img src="/linux/svg/calendar.svg" class="book-icon" alt="Calendar" />
-      <span>July 5, 2023</span>
+      <span>July 6, 2023</span>
     </a>
   </div>
 
 
 
   <div>
-    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/content/docs/part4-shell/4.6-test-and-judge.md" target="_blank" rel="noopener">
+    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/content/docs/part4-shell/4.8-function.md" target="_blank" rel="noopener">
       <img src="/linux/svg/edit.svg" class="book-icon" alt="Edit" />
       <span>编辑本页</span>
     </a>
@@ -895,10 +890,14 @@ https://github.com/alex-shpak/hugo-book
   
 <nav id="TableOfContents">
   <ul>
-    <li><a href="#46-测试和判断">4.6 测试和判断</a>
+    <li><a href="#48-函数">4.8 函数</a>
       <ul>
-        <li><a href="#461-退出状态">4.6.1 退出状态</a></li>
-        <li><a href="#462-测试命令-test">4.6.2 测试命令 test</a></li>
+        <li><a href="#481-自定义函数">4.8.1 自定义函数</a>
+          <ul>
+            <li><a href="#变量和参数">变量和参数</a></li>
+          </ul>
+        </li>
+        <li><a href="#482-系统脚本">4.8.2 系统脚本</a></li>
       </ul>
     </li>
   </ul>
