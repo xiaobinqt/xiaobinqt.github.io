@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="4.9 脚本和计划任务 # 4.9.1 脚本优先级控制 # 可以使用 nice 和 renice 调整脚本优先级。
+nice 命令用于启动一个新进程，并设置其优先级。通过指定一个优先级值（范围从 -20（最高优先级）到 &#43;19（最低优先级）），可以告诉操作系统如何在调度进程时优先考虑它们。较低的优先级值意味着更高的优先级。
+例如，要在启动一个进程时设置较低的优先级，可以使用以下命令：
+nice -n 10 command 上述命令将启动一个新的进程 command，并将其优先级设置为 &#43;10。需要注意的是，使用 nice 启动的进程的优先级相对于默认值进行了调整。
+renice 命令用于修改已经运行的进程的优先级。可以使用 renice 命令将已经运行的进程的优先级增加或降低。
+例如，要将进程的优先级提高到较高值，可以使用以下命令：
+renice -n -5 &lt;PID&gt; 上述命令将进程 的优先级降低了 5。
+更改进程的优先级需要适当的权限。通常，只有具有足够权限（如 root 用户或具有 CAP_SYS_NICE 权限的用户）才能增加或降低进程的优先级。
+脚本避免出现 “不可控的” 死循环，死循环导致 cpu 占用过高，死循环导致死机。
+4.9.2 捕获信号 # kill 默认会发送 15 号信号给应用程序 ctrl &#43; C 发送 2 号信号给应用程序 9 号信号不可阻塞，kill -9 不能进行捕获 trap 命令可以用来捕获信号。
+4.9.3 计划任务 # 一次性计划任务 # 一次性计划任务使用的是 at 命令，如果没有 at 命令可以先通过 yum 或 apt 安装。">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="4.9 脚本和计划任务" />
+<meta property="og:description" content="4.9 脚本和计划任务 # 4.9.1 脚本优先级控制 # 可以使用 nice 和 renice 调整脚本优先级。
+nice 命令用于启动一个新进程，并设置其优先级。通过指定一个优先级值（范围从 -20（最高优先级）到 &#43;19（最低优先级）），可以告诉操作系统如何在调度进程时优先考虑它们。较低的优先级值意味着更高的优先级。
+例如，要在启动一个进程时设置较低的优先级，可以使用以下命令：
+nice -n 10 command 上述命令将启动一个新的进程 command，并将其优先级设置为 &#43;10。需要注意的是，使用 nice 启动的进程的优先级相对于默认值进行了调整。
+renice 命令用于修改已经运行的进程的优先级。可以使用 renice 命令将已经运行的进程的优先级增加或降低。
+例如，要将进程的优先级提高到较高值，可以使用以下命令：
+renice -n -5 &lt;PID&gt; 上述命令将进程 的优先级降低了 5。
+更改进程的优先级需要适当的权限。通常，只有具有足够权限（如 root 用户或具有 CAP_SYS_NICE 权限的用户）才能增加或降低进程的优先级。
+脚本避免出现 “不可控的” 死循环，死循环导致 cpu 占用过高，死循环导致死机。
+4.9.2 捕获信号 # kill 默认会发送 15 号信号给应用程序 ctrl &#43; C 发送 2 号信号给应用程序 9 号信号不可阻塞，kill -9 不能进行捕获 trap 命令可以用来捕获信号。
+4.9.3 计划任务 # 一次性计划任务 # 一次性计划任务使用的是 at 命令，如果没有 at 命令可以先通过 yum 或 apt 安装。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://example.com/linux/docs/part4-shell/4.9-script-cron/" /><meta property="article:section" content="docs" />
+
+<meta property="article:modified_time" content="2023-07-06T10:17:17+08:00" />
+<title>4.9 脚本和计划任务 | Linux 学习笔记</title>
+<link rel="manifest" href="/linux/manifest.json">
+<link rel="icon" href="/linux/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/linux/book.min.cad59a3be22b32d901c8b99a5bf0c00f01535383d8d0e86742e5449f598d17af.css" integrity="sha256-ytWaO&#43;IrMtkByLmaW/DADwFTU4PY0OhnQuVEn1mNF68=" crossorigin="anonymous">
+  <script defer src="/linux/flexsearch.min.js"></script>
+  <script defer src="/linux/zh.search.min.99b789b7b38dada7ced5db5ef3896ac72c518f1f5608886b56500a1fd38a7330.js" integrity="sha256-mbeJt7ONrafO1dte84lqxyxRjx9WCIhrVlAKH9OKczA=" crossorigin="anonymous"></script>
+
+  <script defer src="/linux/sw.min.e3338ad661715b83bfd6397040a613605d8bb26c10798773e2176216e2123560.js" integrity="sha256-4zOK1mFxW4O/1jlwQKYTYF2LsmwQeYdz4hdiFuISNWA=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/linux/"><span>Linux 学习笔记</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+<ul>
+    <li>
+        <a href="javascript:void(0)" onclick="hrefIndex()" rel="noopener">主页</a>
+    </li>
+    <li>
+        <a href="https://github.com/xiaobinqt" target="_blank" rel="noopener">GitHub</a>
+    </li>
+</ul>
+
+<hr>
+
+<script>
+    function hrefIndex() {
+        window.location = window.location.origin;
+    }
+</script>
+
+
+  
+<ul>
+  
+  <li>
+    <a href=""  target="_blank" rel="noopener">
+        
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第一部分 基础知识</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.1-operating-system/" class="">1.1 操作系统</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.2-overview/" class="">1.2 总览</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.3-common-dir/" class="">1.3 常见目录</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.4-process-manage/" class="">1.4 进程管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.5-deadlock/" class="">1.5 死锁</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.6-memory-manage/" class="">1.6 内存管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.7-link/" class="">1.7 链接</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.7-device-manage/" class="">1.7 设备管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.8-instruction-arch/" class="">1.8 指令集</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第二部分 系统操作</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.1-help/" class="">2.1 帮助命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.2-ls/" class="">2.2 ls 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.3-shutdown/" class="">2.3 关机</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.4-cp/" class="">2.4 cp 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.5-file-view/" class="">2.5 文件查看命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.6-backup-compression/" class="">2.6 压缩和打包</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.7-vim/" class="">2.7 vim</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.8-user-manage/" class="">2.8 用户管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.9-switch-user/" class="">2.9 切换用户</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.10-file-dir/" class="">2.10 文件和文件夹</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.11-awk/" class="">2.11 awk 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.12-sed/" class="">2.12 sed 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.13-cut-sort-uniq-tr/" class="">2.13 cut、sort、uniq、tr 命令</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第三部分 系统管理</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.1-network/" class="">3.1 网络</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.2-net-trouble-removal/" class="">3.2 网络故障排除</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.3-net-manage/" class="">3.3 网络服务管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.4-soft-install/" class="">3.4 软件安装</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.5-process/" class="">3.5 进程管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.6-memory-disk/" class="">3.6 内存和磁盘管理</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第四部分 Shell</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.1-introduction/" class="">4.1 Shell 简介</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.2-env-config-file/" class="">4.2 环境变量</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.3-array/" class="">4.3 数组</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.4-escape-quot/" class="">4.4 转义和引用</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.5-operator/" class="">4.5 运算符</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.6-test-and-judge/" class="">4.6 测试和判断</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.7-process-control/" class="">4.7 流程控制</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.8-function/" class="">4.8 函数</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.9-script-cron/" class="active">4.9 脚本和计划任务</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第五部分 文本操作</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part5-text-operate/5.1-regular/" class="">5.1 正则表达式</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第六部分 服务管理</span>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第七部分 常见问题</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part7-faq/7.1-cmd/" class="">7.1 命令相关</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/linux/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>4.9 脚本和计划任务</strong>
+
+  <label for="toc-control">
+    
+    <img src="/linux/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#49-脚本和计划任务">4.9 脚本和计划任务</a>
+      <ul>
+        <li><a href="#491-脚本优先级控制">4.9.1 脚本优先级控制</a></li>
+        <li><a href="#492-捕获信号">4.9.2 捕获信号</a></li>
+        <li><a href="#493-计划任务">4.9.3 计划任务</a>
+          <ul>
+            <li><a href="#一次性计划任务">一次性计划任务</a></li>
+            <li><a href="#周期性计划任务">周期性计划任务</a></li>
+            <li><a href="#anacrontab">anacrontab</a></li>
+            <li><a href="#flock">flock</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown"><h1 id="49-脚本和计划任务">
+  4.9 脚本和计划任务
+  <a class="anchor" href="#49-%e8%84%9a%e6%9c%ac%e5%92%8c%e8%ae%a1%e5%88%92%e4%bb%bb%e5%8a%a1">#</a>
+</h1>
+<h2 id="491-脚本优先级控制">
+  4.9.1 脚本优先级控制
+  <a class="anchor" href="#491-%e8%84%9a%e6%9c%ac%e4%bc%98%e5%85%88%e7%ba%a7%e6%8e%a7%e5%88%b6">#</a>
+</h2>
+<p>可以使用 nice 和 renice 调整脚本优先级。</p>
+<p>nice 命令用于启动一个新进程，并设置其优先级。通过指定一个优先级值（范围从 -20（最高优先级）到 +19（最低优先级）），可以告诉操作系统如何在调度进程时优先考虑它们。较低的优先级值意味着更高的优先级。</p>
+<p>例如，要在启动一个进程时设置较低的优先级，可以使用以下命令：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>nice -n <span style="color:#ae81ff">10</span> command
+</span></span></code></pre></div><p>上述命令将启动一个新的进程 command，并将其优先级设置为 +10。需要注意的是，使用 nice 启动的进程的优先级相对于默认值进行了调整。</p>
+<p>renice 命令用于修改已经运行的进程的优先级。可以使用 renice 命令将已经运行的进程的优先级增加或降低。</p>
+<p>例如，要将进程的优先级提高到较高值，可以使用以下命令：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>renice -n -5 &lt;PID&gt;
+</span></span></code></pre></div><p>上述命令将进程 <PID> 的优先级降低了 5。</p>
+<p>更改进程的优先级需要适当的权限。通常，只有具有足够权限（如 root 用户或具有 CAP_SYS_NICE 权限的用户）才能增加或降低进程的优先级。</p>
+<p>脚本避免出现 “不可控的” 死循环，死循环导致 cpu 占用过高，死循环导致死机。</p>
+<h2 id="492-捕获信号">
+  4.9.2 捕获信号
+  <a class="anchor" href="#492-%e6%8d%95%e8%8e%b7%e4%bf%a1%e5%8f%b7">#</a>
+</h2>
+<ul>
+<li>kill 默认会发送 15 号信号给应用程序</li>
+<li>ctrl + C 发送 2 号信号给应用程序</li>
+<li>9 号信号不可阻塞，kill -9 不能进行捕获</li>
+</ul>
+<p>trap 命令可以用来捕获信号。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230705/5acea3faef0048efb6cd2ccd8c948d5a.png" width=  /></div>
+<h2 id="493-计划任务">
+  4.9.3 计划任务
+  <a class="anchor" href="#493-%e8%ae%a1%e5%88%92%e4%bb%bb%e5%8a%a1">#</a>
+</h2>
+<h3 id="一次性计划任务">
+  一次性计划任务
+  <a class="anchor" href="#%e4%b8%80%e6%ac%a1%e6%80%a7%e8%ae%a1%e5%88%92%e4%bb%bb%e5%8a%a1">#</a>
+</h3>
+<p>一次性计划任务使用的是 at 命令，如果没有 at 命令可以先通过 yum 或 apt 安装。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230705/109387af0ba34663b68b3d75638a375d.png" width=  /></div>
+<p>安装 at 成功后可以使用 systemctl start atd 命令启动：</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230705/3c8ad9949864407bb0bea819af247616.png" width=  /></div>
+<p>利用 at 编写完任务后，可以使用 Ctrl+d 进行提交：</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230705/46e1eaf082bd4bdd8259b1b33e97f786.png" width=  /></div>
+<p>atq 命令可以查看等待执行的 at 任务：</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230705/1a574bc6760a40e1a06454f2b02c0d9a.png" width=  /></div>
+<h3 id="周期性计划任务">
+  周期性计划任务
+  <a class="anchor" href="#%e5%91%a8%e6%9c%9f%e6%80%a7%e8%ae%a1%e5%88%92%e4%bb%bb%e5%8a%a1">#</a>
+</h3>
+<p>周期性计划任务可以使用 cron。<strong>最小一分钟</strong>执行一次，如果需要支持秒级，需要一些其他的扩展包支持。</p>
+<p>配置方式：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>crontab -e
+</span></span></code></pre></div><p>查看现有的计划任务</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>crontab -l
+</span></span></code></pre></div><p>配置格式：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>分钟 小时 日期 月份 星期 执行的命令
+</span></span></code></pre></div><p>需要注意<strong>命令的路径</strong>，比如如下的任务：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>* * * * * /bin/date &gt;&gt; /tmp/date.txt
+</span></span></code></pre></div><p>可以先通过 which 查看 date 命令的路径，这里最好写绝对路径。</p>
+<p>cron 的日志文件在 /var/log/cron：</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230705/476efde9d62041a0ab3714b58beca351.png" width=  /></div>
+<blockquote>
+<p>如果是凌晨 3 点整，第一位是 0 不是 *</p>
+</blockquote>
+<h3 id="anacrontab">
+  anacrontab
+  <a class="anchor" href="#anacrontab">#</a>
+</h3>
+<p>anacrontab 是用于设置和管理 Anacron 定时任务的命令。Anacron 是一个用于在 Linux 系统上运行延迟启动任务的工具，它可以确保即使在系统关机期间也能执行任务。</p>
+<p>下面是使用 anacrontab 的基本步骤：</p>
+<p>使用文本编辑器打开 anacrontab 文件。该文件位于 /etc/anacrontab。需要以 root 或具有适当权限的用户身份执行此操作。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>vim /etc/anacrontab
+</span></span></code></pre></div><p>在 anacrontab 文件中，每行定义了一个定时任务。每行的格式如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># &lt;周期&gt; &lt;延迟&gt; &lt;作业标识&gt; &lt;命令&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">1</span> <span style="color:#ae81ff">5</span> mycron /path/to/myscript
+</span></span></code></pre></div><ul>
+<li>&lt;周期&gt; 是指任务执行的间隔（以天为单位）。</li>
+<li>&lt;延迟&gt; 是任务启动的延迟时间（以分钟为单位）。</li>
+<li>&lt;作业标识&gt; 是任务的唯一标识符，用于识别任务。</li>
+<li>&lt;命令&gt; 是要运行的命令或脚本。</li>
+</ul>
+<p>可以根据需要添加、修改或删除任务行。保存并关闭 anacrontab 文件。重新加载 Anacron 服务，以便应用新的配置：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sudo service anacron reload
+</span></span></code></pre></div><p>之后，定时任务将根据 anacrontab 文件中的定义在系统上执行。</p>
+<p>对于非特权用户，只有管理员或具有适当权限的用户才能编辑 anacrontab 文件。在编辑或修改 anacrontab 文件之前，请务必备份原始文件，并确保理解每个字段的含义和配置的影响。</p>
+<h3 id="flock">
+  flock
+  <a class="anchor" href="#flock">#</a>
+</h3>
+<p>如果发生多次运行的情况，可以使用 flock 锁文件的方式避免。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230705/451a98248428437683f24a056139e1df.png" width=  /></div>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/5cc20d6f21f947ab61b90166fabaa756fde632bb" title='最后修改者 weibin | July 6, 2023' target="_blank" rel="noopener">
+      <img src="/linux/svg/calendar.svg" class="book-icon" alt="Calendar" />
+      <span>July 6, 2023</span>
+    </a>
+  </div>
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/content/docs/part4-shell/4.9-script-cron.md" target="_blank" rel="noopener">
+      <img src="/linux/svg/edit.svg" class="book-icon" alt="Edit" />
+      <span>编辑本页</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#49-脚本和计划任务">4.9 脚本和计划任务</a>
+      <ul>
+        <li><a href="#491-脚本优先级控制">4.9.1 脚本优先级控制</a></li>
+        <li><a href="#492-捕获信号">4.9.2 捕获信号</a></li>
+        <li><a href="#493-计划任务">4.9.3 计划任务</a>
+          <ul>
+            <li><a href="#一次性计划任务">一次性计划任务</a></li>
+            <li><a href="#周期性计划任务">周期性计划任务</a></li>
+            <li><a href="#anacrontab">anacrontab</a></li>
+            <li><a href="#flock">flock</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
