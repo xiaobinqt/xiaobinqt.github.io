@@ -88,6 +88,7 @@ title: "收藏夹"
 + [Hello 算法](https://www.hello-algo.com/)
 + [小惡魔 - AppleBOY](https://blog.wu-boy.com/)
 + [PassJava 博客连载中](http://www.passjava.cn/)
++ [tsing's Blog](https://blog.jianqing.org/)
 
 ## 工具
 
