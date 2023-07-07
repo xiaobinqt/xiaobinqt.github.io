@@ -1,5 +1,10 @@
 # xiaobinqt's blog
 
+## 小册
+
++ [Linux 学习笔记](https://xiaobinqt.github.io/linux/)
++ [网络学习笔记](https://xiaobinqt.github.io/http/)
+
 ## 关于我
 
 目前主要从事 Golang / PHP 相关的开发。了解 python 和 web 前端。
