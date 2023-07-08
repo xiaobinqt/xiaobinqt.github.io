@@ -147,7 +147,7 @@ grub2-mkconfig -o /boot/grub2/grub.cfg
 
 NAT 模式是 VMware 虚拟机默认使用的模式，其最大的优势就是虚拟机接入网络非常简单，只要物理机可以访问网络，虚拟机就可以访问网络。网络结构如下图：
 
-![NAT模式](https://img-blog.csdnimg.cn/20200303215932129.png 'NAT模式')
+![NAT模式](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230708/c8ee635f5e554f8c8e717360a51f763b.png 'NAT模式')
 
 所谓的静态 ip ，就是设置后固定不变的，因为在真实环境中，需要为所有的服务器配置静态 ip，从而确保通过一个 ip 地址只能找到一台服务器。
 
