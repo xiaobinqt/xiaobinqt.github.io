@@ -44,6 +44,8 @@
 
 ![移除后的硬件](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220415/15df2863d25b49d7a76ec9bdc6b617b9.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '移除后的硬件')
 
+可以**不用**勾选「创建后开启此虚拟机选项」：
+
 ![完成](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220415/d5663f41d9ee4c25a9d842ee42d92d17.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '完成')
 
 ![开启虚拟机](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220415/476f763d3cbc41d4839429bca8b3175e.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '开启虚拟机')
@@ -56,7 +58,7 @@
 
 点击 INSTALLATION DESTINATION
 
-![INSTALLATION DESTINATION](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220417/f78e0f23022749eb88895182d245375f.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15)
+![INSTALLATION DESTINATION](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220417/f78e0f23022749eb88895182d245375f.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'INSTALLATION DESTINATION')
 
 INSTALLATION DESTINATION 默认值不用改，直接点 Done
 
