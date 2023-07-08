@@ -194,6 +194,10 @@ cp /etc/sysconfig/network-scripts/ifcfg-eth0 /etc/sysconfig/network-scripts/ifcf
 
 ![图 5](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220418/655158e74b14445cb92005f842ed225e.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '图 5')
 
+如果发现物理机的 VMnet8 跟虚拟的不在一个网段，可以在「虚拟网络适配器」中「还原默认设置」：
+
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230708/c8e5f4dc518e4bb9b076e890ed1d37be.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '还原默认设置')
+
 
 [//]: # (![图 5]&#40;https://img-blog.csdnimg.cn/20200303221513492.png '图 5'&#41;)
 
