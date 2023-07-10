@@ -91,6 +91,10 @@ INSTALLATION DESTINATION 默认值不用改，直接点 Done
 
 ![Begin Installation](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220417/a9563032d90c46f0aaf001b848b486b7.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'Begin Installation')
 
+如果想要创建带桌面的虚拟机，可以在 SOFTWARE SELECTION 中选择 GNOME Desktop：
+
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230710/fad64195e6e64249a5a26bad0fb928c7.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'GNOME Desktop')
+
 设置 ROOT 密码和创建用户
 
 ![设置 ROOT 密码和创建用户](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220417/3352639ce0dd4648b3dcebf1b2bc69dd.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '设置 ROOT 密码和创建用户')
@@ -299,5 +303,5 @@ cp /etc/sysconfig/network-scripts/ifcfg-eth0 /etc/sysconfig/network-scripts/ifcf
 ## 参考
 
 + [How To Configure Static IP Address in CentOS 7 / RHEL 7](https://www.itzgeek.com/how-tos/linux/centos-how-tos/how-to-configure-static-ip-address-in-centos-7-rhel-7-fedora-26.html)
-
++ [虚拟机安装CentOS 7（带界面）](https://blog.csdn.net/qi341500/article/details/128974230)
 
