@@ -363,6 +363,21 @@ yum install epel-release -y 常用选项 # install 安装软件包 remove 卸载
     </item>
     
     <item>
+      <title>6.4 samba</title>
+      <link>https://example.com/linux/docs/part6-service-manage/6.4-samba/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://example.com/linux/docs/part6-service-manage/6.4-samba/</guid>
+      <description>6.4 samba # 6.4.1 简介 # Samba 是一个开源软件套件，用于在 Linux 和 UNIX 系统上实现文件和打印机共享。它允许 Linux/UNIX 系统与 Windows 操作系统之间进行文件和资源共享，使得 Linux/UNIX 系统可以像 Windows 一样访问和使用网络共享资源。
+Samba 提供了 SMB/CIFS（Server Message Block/Common Internet File System）协议的实现，这是 Windows 操作系统中用于文件和打印机共享的标准协议。通过 Samba，Linux/UNIX 系统可以作为 SMB/CIFS 服务器或客户端，与 Windows 系统进行通信。
+以下是 Samba 的一些主要特点和用途：
+文件共享：Samba 允许在 Linux/UNIX 系统上共享文件和目录，并通过 SMB/CIFS 协议使其对 Windows 用户可见。这意味着 Windows 用户可以通过网络访问和操作 Linux/UNIX 系统上的共享文件。
+打印机共享：Samba 还支持共享打印机，使得 Windows 用户可以通过网络连接和使用 Linux/UNIX 系统上的打印机。
+用户认证和权限控制：Samba 提供了用户认证和权限控制功能，可以限制对共享资源的访问权限，确保只有经过授权的用户可以访问和修改共享文件。
+集成到 Windows 域：Samba 可以作为 Windows 域控制器的替代品，提供类似于 Windows Active Directory 的用户管理和身份验证功能。</description>
+    </item>
+    
+    <item>
       <title>1.5 死锁</title>
       <link>https://example.com/linux/docs/part1-primary/1.5-deadlock/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -428,6 +443,28 @@ top - 14:39:05 up 36 days, 21:26, 3 users, load average: 56.</description>
 变量值使用 0x 开头为十六进制
 双圆括号是 let 命令的简化，所以在实际使用中较少会使用到 let。
 ((a=10)) ((a++)) echo $((10+20)) </description>
+    </item>
+    
+    <item>
+      <title>6.5 NFS</title>
+      <link>https://example.com/linux/docs/part6-service-manage/6.5-nfs/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://example.com/linux/docs/part6-service-manage/6.5-nfs/</guid>
+      <description>6.5 NFS # 6.5.1 简介 # NFS（Network File System）是一种用于在网络上共享文件系统的协议。它允许一个计算机系统（称为NFS服务器）与其他计算机系统（称为NFS客户端）共享其本地文件系统，并允许客户端通过网络透明地访问和操作服务器上的文件。
+以下是NFS服务的一些主要特点和用途：
+文件共享：NFS允许将NFS服务器上的文件和目录共享给NFS客户端。这意味着客户端可以像访问本地文件一样访问和操作服务器上的共享文件。
+分布式访问：NFS允许多个NFS客户端同时访问和修改共享文件。这使得多个用户可以在不同的计算机上协同工作，并共享相同的文件和数据。
+透明访问：NFS为客户端提供了透明的访问体验，使得共享文件的访问方式类似于本地文件。客户端可以像访问本地文件一样使用标准的文件操作（如打开、读取、写入和关闭文件）来访问NFS服务器上的文件。
+安全性：NFS提供了一些安全机制来保护共享文件的访问。例如，可以使用访问控制列表（ACL）来限制对文件的访问权限，并使用身份验证和加密来保护数据的安全性。
+性能优化：NFS在设计时考虑了性能优化，并使用一些技术来提高文件访问的效率。例如，NFS使用缓存机制来减少网络传输，提高文件的访问速度。
+使用NFS时，通常会有一个或多个NFS服务器，它们共享其本地文件系统，并提供对这些共享文件的访问。然后，NFS客户端可以通过挂载（mount）NFS服务器上的共享目录，使其在本地文件系统中可用。
+NFS服务器和客户端之间的通信是基于RPC（Remote Procedure Call）机制的，通过NFS协议进行文件访问和操作。
+需要注意的是，NFS是一种开放标准的协议，并且有多个实现可用。常用的NFS实现包括NFSv3和NFSv4。不同的实现可能会有一些细微的差异和特性，因此在使用特定的NFS实现时，应该参考相应的文档和资源以获取更详细的信息和指导。
+6.5.2 配置和启动 # 启动 NFS服务 # 安装 yum install -y nfs-utils systemctl start stop nfs.service NFS 的配置文件在 /etc/exports，文件不存在可以手动创建。文件格式如下：
+# 共享目录 访问控制 # 括号和主机不能有空格 # /data/share 192.168.11.2(ro) 192.168.11.3(rw) # 所有人访问呢 # /data/share *(rw,sync,all_squash) /data/share *(rw,sync,all_squash) 在另一台机器（客户端）上可以使用 showmount 查看 nfs 机器的共享了哪些目录：
+如果没有 showmount 命令，可以使用 yum install showmount -y 安装。
+all_squash 选项 # 在NFS配置中，all_squash 选项用于指定对于所有远程访问的用户，将其映射为指定的匿名用户。这个选项通常用于安全性和权限管理。</description>
     </item>
     
     <item>
