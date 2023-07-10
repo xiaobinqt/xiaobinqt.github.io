@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="6.6 nginx # 6.6.1 nginx 和 OpenResty # Nginx和OpenResty是两个不同但有关联的项目。
+Nginx 是一个开源的高性能 Web 服务器和反向代理服务器。它具有轻量级、高并发处理能力和低内存消耗等特点，常被用于搭建静态网站、负载均衡和反向代理等场景。Nginx 通常使用 C 语言编写，并以模块化设计的方式提供丰富的功能扩展。
+OpenResty 是一个基于 Nginx 的 Web 应用服务器软件集成包，它将 Nginx 与一组扩展模块和第三方库进行了集成，以提供更强大的功能。 OpenResty 允许开发人员使用 Lua 编程语言来编写 Nginx 的配置文件和扩展模块，从而实现高度可定制的 Web 应用程序。通过 OpenResty，开发人员可以在 Nginx 中使用 Lua 编写的脚本，以实现动态内容生成、API 网关、缓存加速和高级负载均衡等功能。
+可以说 OpenResty 是一个基于 Nginx 的增强版本，它通过添加 Lua 编程语言的支持和一系列扩展模块，使得 Nginx 可以处理更复杂的任务和场景。OpenResty 在一些需要高度定制化和可扩展性的 Web 应用程序中非常有用，特别是对于需要动态脚本处理和扩展功能的情况。
+Nginx 是一个独立的高性能 Web 服务器和反向代理服务器，而 OpenResty 是基于 Nginx 的 Web 应用服务器软件集成包，通过添加 Lua 编程语言的支持和扩展模块，扩展了 Nginx 的功能。
+6.6.2 OpenResty 安装 # 安装可以使用如下 2 条命令：">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="6.6 nginx" />
+<meta property="og:description" content="6.6 nginx # 6.6.1 nginx 和 OpenResty # Nginx和OpenResty是两个不同但有关联的项目。
+Nginx 是一个开源的高性能 Web 服务器和反向代理服务器。它具有轻量级、高并发处理能力和低内存消耗等特点，常被用于搭建静态网站、负载均衡和反向代理等场景。Nginx 通常使用 C 语言编写，并以模块化设计的方式提供丰富的功能扩展。
+OpenResty 是一个基于 Nginx 的 Web 应用服务器软件集成包，它将 Nginx 与一组扩展模块和第三方库进行了集成，以提供更强大的功能。 OpenResty 允许开发人员使用 Lua 编程语言来编写 Nginx 的配置文件和扩展模块，从而实现高度可定制的 Web 应用程序。通过 OpenResty，开发人员可以在 Nginx 中使用 Lua 编写的脚本，以实现动态内容生成、API 网关、缓存加速和高级负载均衡等功能。
+可以说 OpenResty 是一个基于 Nginx 的增强版本，它通过添加 Lua 编程语言的支持和一系列扩展模块，使得 Nginx 可以处理更复杂的任务和场景。OpenResty 在一些需要高度定制化和可扩展性的 Web 应用程序中非常有用，特别是对于需要动态脚本处理和扩展功能的情况。
+Nginx 是一个独立的高性能 Web 服务器和反向代理服务器，而 OpenResty 是基于 Nginx 的 Web 应用服务器软件集成包，通过添加 Lua 编程语言的支持和扩展模块，扩展了 Nginx 的功能。
+6.6.2 OpenResty 安装 # 安装可以使用如下 2 条命令：" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://example.com/linux/docs/part6-service-manage/6.6-nginx/" /><meta property="article:section" content="docs" />
+
+<meta property="article:modified_time" content="2023-07-10T17:31:16+08:00" />
+<title>6.6 nginx | Linux 学习笔记</title>
+<link rel="manifest" href="/linux/manifest.json">
+<link rel="icon" href="/linux/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/linux/book.min.cad59a3be22b32d901c8b99a5bf0c00f01535383d8d0e86742e5449f598d17af.css" integrity="sha256-ytWaO&#43;IrMtkByLmaW/DADwFTU4PY0OhnQuVEn1mNF68=" crossorigin="anonymous">
+  <script defer src="/linux/flexsearch.min.js"></script>
+  <script defer src="/linux/zh.search.min.1ee6f5f0e5f52723f6a96c1dc2e9875aa2f0ada9a175537730f3b85f4ee72c23.js" integrity="sha256-Hub18OX1JyP2qWwdwumHWqLwramhdVN3MPO4X07nLCM=" crossorigin="anonymous"></script>
+
+  <script defer src="/linux/sw.min.e3338ad661715b83bfd6397040a613605d8bb26c10798773e2176216e2123560.js" integrity="sha256-4zOK1mFxW4O/1jlwQKYTYF2LsmwQeYdz4hdiFuISNWA=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/linux/"><span>Linux 学习笔记</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+<ul>
+    <li>
+        <a href="javascript:void(0)" onclick="hrefIndex()" rel="noopener">主页</a>
+    </li>
+    <li>
+        <a href="https://github.com/xiaobinqt" target="_blank" rel="noopener">GitHub</a>
+    </li>
+</ul>
+
+<hr>
+
+<script>
+    function hrefIndex() {
+        window.location = window.location.origin;
+    }
+</script>
+
+
+  
+<ul>
+  
+  <li>
+    <a href=""  target="_blank" rel="noopener">
+        
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第一部分 基础知识</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.1-operating-system/" class="">1.1 操作系统</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.2-overview/" class="">1.2 总览</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.3-common-dir/" class="">1.3 常见目录</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.4-process-manage/" class="">1.4 进程管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.5-deadlock/" class="">1.5 死锁</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.6-memory-manage/" class="">1.6 内存管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.7-link/" class="">1.7 链接</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.7-device-manage/" class="">1.7 设备管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.8-instruction-arch/" class="">1.8 指令集</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第二部分 系统操作</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.1-help/" class="">2.1 帮助命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.2-ls/" class="">2.2 ls 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.3-shutdown/" class="">2.3 关机</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.4-cp/" class="">2.4 cp 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.5-file-view/" class="">2.5 文件查看命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.6-backup-compression/" class="">2.6 压缩和打包</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.7-vim/" class="">2.7 vim</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.8-user-manage/" class="">2.8 用户管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.9-switch-user/" class="">2.9 切换用户</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.10-file-dir/" class="">2.10 文件和文件夹</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第三部分 系统管理</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.1-network/" class="">3.1 网络</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.2-net-trouble-removal/" class="">3.2 网络故障排除</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.3-net-manage/" class="">3.3 网络服务管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.4-soft-install/" class="">3.4 软件安装</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.5-process/" class="">3.5 进程管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.6-memory-disk/" class="">3.6 内存和磁盘管理</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第四部分 Shell</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.1-introduction/" class="">4.1 Shell 简介</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.2-env-config-file/" class="">4.2 环境变量</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.3-array/" class="">4.3 数组</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.4-escape-quot/" class="">4.4 转义和引用</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.5-operator/" class="">4.5 运算符</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.6-test-and-judge/" class="">4.6 测试和判断</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.7-process-control/" class="">4.7 流程控制</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.8-function/" class="">4.8 函数</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.9-script-cron/" class="">4.9 脚本和计划任务</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第五部分 文本操作</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part5-text-operate/5.1-regular/" class="">5.1 正则表达式</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part5-text-operate/5.2-sed/" class="">5.2 sed 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part5-text-operate/5.3-awk/" class="">5.3 awk 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part5-text-operate/5.4-cut-sort-uniq-tr/" class="">5.4 cut、sort、uniq、tr 命令</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第六部分 服务管理</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.1-firewall/" class="">6.1 防火墙</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.2-ssh/" class="">6.2 ssh</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.3-ftp/" class="">6.3 ftp</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.4-samba/" class="">6.4 samba</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.5-nfs/" class="">6.5 NFS</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.6-nginx/" class="active">6.6 nginx</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第七部分 常见问题</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part7-faq/7.1-cmd/" class="">7.1 命令相关</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/linux/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>6.6 nginx</strong>
+
+  <label for="toc-control">
+    
+    <img src="/linux/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#66-nginx">6.6 nginx</a>
+      <ul>
+        <li><a href="#661-nginx-和-openresty">6.6.1 nginx 和 OpenResty</a></li>
+        <li><a href="#662-openresty-安装">6.6.2 OpenResty 安装</a></li>
+        <li><a href="#663-域名虚拟主机">6.6.3 域名虚拟主机</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown"><h1 id="66-nginx">
+  6.6 nginx
+  <a class="anchor" href="#66-nginx">#</a>
+</h1>
+<h2 id="661-nginx-和-openresty">
+  6.6.1 nginx 和 OpenResty
+  <a class="anchor" href="#661-nginx-%e5%92%8c-openresty">#</a>
+</h2>
+<p>Nginx和OpenResty是两个不同但有关联的项目。</p>
+<p>Nginx 是一个开源的高性能 Web 服务器和反向代理服务器。它具有轻量级、高并发处理能力和低内存消耗等特点，常被用于搭建静态网站、负载均衡和反向代理等场景。Nginx 通常使用 C 语言编写，并以模块化设计的方式提供丰富的功能扩展。</p>
+<p>OpenResty 是一个基于 Nginx 的 Web 应用服务器软件集成包，它将 Nginx 与一组扩展模块和第三方库进行了集成，以提供更强大的功能。 OpenResty 允许开发人员使用 Lua 编程语言来编写 Nginx 的配置文件和扩展模块，从而实现高度可定制的 Web 应用程序。通过 OpenResty，开发人员可以在 Nginx 中使用 Lua 编写的脚本，以实现动态内容生成、API 网关、缓存加速和高级负载均衡等功能。</p>
+<p>可以说 OpenResty 是一个基于 Nginx 的增强版本，它通过添加 Lua 编程语言的支持和一系列扩展模块，使得 Nginx 可以处理更复杂的任务和场景。OpenResty 在一些需要高度定制化和可扩展性的 Web 应用程序中非常有用，特别是对于需要动态脚本处理和扩展功能的情况。</p>
+<p>Nginx 是一个独立的高性能 Web 服务器和反向代理服务器，而 OpenResty 是基于 Nginx 的 Web 应用服务器软件集成包，通过添加 Lua 编程语言的支持和扩展模块，扩展了 Nginx 的功能。</p>
+<h2 id="662-openresty-安装">
+  6.6.2 OpenResty 安装
+  <a class="anchor" href="#662-openresty-%e5%ae%89%e8%a3%85">#</a>
+</h2>
+<p>安装可以使用如下 2 条命令：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>yum install openresty -y
+</span></span></code></pre></div><p>如果在安装时提示如下错误：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>-bash: yum-config-manager: command not found
+</span></span></code></pre></div><p>可以通过安装 yum-utils 解决：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>yum -y install yum-utils
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230710/fcc84636e0f04907881947cc971aa2a8.png" width=  /></div>
+<p>配置文件和启动方式如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># 配置文件位置</span>
+</span></span><span style="display:flex;"><span>/usr/local/openresty/nginx/conf/nginx.conf
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 常用命令</span>
+</span></span><span style="display:flex;"><span>service openresty start | stop | restart | reload
+</span></span></code></pre></div><h2 id="663-域名虚拟主机">
+  6.6.3 域名虚拟主机
+  <a class="anchor" href="#663-%e5%9f%9f%e5%90%8d%e8%99%9a%e6%8b%9f%e4%b8%bb%e6%9c%ba">#</a>
+</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>server <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  listen 80;
+</span></span><span style="display:flex;"><span>  server_name www.servera.com;
+</span></span><span style="display:flex;"><span>  location / <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  root html/servera;
+</span></span><span style="display:flex;"><span>  index index.html index.htm;
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>这里在 /usr/local/openresty/nginx/conf/nginx.conf 文件中新建了 2 个 server：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span> server <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>   listen 8000;
+</span></span><span style="display:flex;"><span>   server_name www.servera.com;
+</span></span><span style="display:flex;"><span>   location / <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>     root html/servera;
+</span></span><span style="display:flex;"><span>     index index.html index.htm;
+</span></span><span style="display:flex;"><span>   <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  server <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>   listen 8000;
+</span></span><span style="display:flex;"><span>   server_name www.serverb.com;
+</span></span><span style="display:flex;"><span>   location / <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>     root html/serverb;
+</span></span><span style="display:flex;"><span>     index index.html index.htm;
+</span></span><span style="display:flex;"><span>   <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>在 /usr/local/openresty/nginx/sbin 目录中执行</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>./nginx -t
+</span></span></code></pre></div><p>可以检查主配置文件是否有语法错误：</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230710/0940edece3364d1dbde94a01dcc8eac5.png" width=  /></div>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>./nginx -s reload <span style="color:#75715e"># 重新加载</span>
+</span></span><span style="display:flex;"><span>./nginx -s stop   <span style="color:#75715e"># 停止</span>
+</span></span><span style="display:flex;"><span>./nginx           <span style="color:#75715e"># 启动</span>
+</span></span></code></pre></div><p>可以看到 nginx 已经监听了 8000 和 80 端口：</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230710/ad7d14e6f6e14839b0571e1bc33a552e.png" width=  /></div>
+<p>修改 /etc/hosts 文件，添加一行解析：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>127.0.0.1 www.servera.com www.serverb.com
+</span></span></code></pre></div><p>在 /usr/local/openresty/nginx/html 目录中添加静态文件：</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230710/36f46a9be9f84c69a1faca399cdc2549.png" width=  /></div>
+<p>访问测试：</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230710/9f4a38c107b4494a816cae6876cd834a.png?" width=  /></div>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/8f6de24d970842feaa86bc00778cafa270d8cbe9" title='最后修改者 weibin | July 10, 2023' target="_blank" rel="noopener">
+      <img src="/linux/svg/calendar.svg" class="book-icon" alt="Calendar" />
+      <span>July 10, 2023</span>
+    </a>
+  </div>
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/content/docs/part6-service-manage/6.6-nginx.md" target="_blank" rel="noopener">
+      <img src="/linux/svg/edit.svg" class="book-icon" alt="Edit" />
+      <span>编辑本页</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#66-nginx">6.6 nginx</a>
+      <ul>
+        <li><a href="#661-nginx-和-openresty">6.6.1 nginx 和 OpenResty</a></li>
+        <li><a href="#662-openresty-安装">6.6.2 OpenResty 安装</a></li>
+        <li><a href="#663-域名虚拟主机">6.6.3 域名虚拟主机</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
