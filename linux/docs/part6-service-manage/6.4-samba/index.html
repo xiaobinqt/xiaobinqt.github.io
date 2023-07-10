@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="6.4 samba # 6.4.1 简介 # Samba 是一个开源软件套件，用于在 Linux 和 UNIX 系统上实现文件和打印机共享。它允许 Linux/UNIX 系统与 Windows 操作系统之间进行文件和资源共享，使得 Linux/UNIX 系统可以像 Windows 一样访问和使用网络共享资源。
+Samba 提供了 SMB/CIFS（Server Message Block/Common Internet File System）协议的实现，这是 Windows 操作系统中用于文件和打印机共享的标准协议。通过 Samba，Linux/UNIX 系统可以作为 SMB/CIFS 服务器或客户端，与 Windows 系统进行通信。
+以下是 Samba 的一些主要特点和用途：
+文件共享：Samba 允许在 Linux/UNIX 系统上共享文件和目录，并通过 SMB/CIFS 协议使其对 Windows 用户可见。这意味着 Windows 用户可以通过网络访问和操作 Linux/UNIX 系统上的共享文件。
+打印机共享：Samba 还支持共享打印机，使得 Windows 用户可以通过网络连接和使用 Linux/UNIX 系统上的打印机。
+用户认证和权限控制：Samba 提供了用户认证和权限控制功能，可以限制对共享资源的访问权限，确保只有经过授权的用户可以访问和修改共享文件。
+集成到 Windows 域：Samba 可以作为 Windows 域控制器的替代品，提供类似于 Windows Active Directory 的用户管理和身份验证功能。">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="6.4 samba" />
+<meta property="og:description" content="6.4 samba # 6.4.1 简介 # Samba 是一个开源软件套件，用于在 Linux 和 UNIX 系统上实现文件和打印机共享。它允许 Linux/UNIX 系统与 Windows 操作系统之间进行文件和资源共享，使得 Linux/UNIX 系统可以像 Windows 一样访问和使用网络共享资源。
+Samba 提供了 SMB/CIFS（Server Message Block/Common Internet File System）协议的实现，这是 Windows 操作系统中用于文件和打印机共享的标准协议。通过 Samba，Linux/UNIX 系统可以作为 SMB/CIFS 服务器或客户端，与 Windows 系统进行通信。
+以下是 Samba 的一些主要特点和用途：
+文件共享：Samba 允许在 Linux/UNIX 系统上共享文件和目录，并通过 SMB/CIFS 协议使其对 Windows 用户可见。这意味着 Windows 用户可以通过网络访问和操作 Linux/UNIX 系统上的共享文件。
+打印机共享：Samba 还支持共享打印机，使得 Windows 用户可以通过网络连接和使用 Linux/UNIX 系统上的打印机。
+用户认证和权限控制：Samba 提供了用户认证和权限控制功能，可以限制对共享资源的访问权限，确保只有经过授权的用户可以访问和修改共享文件。
+集成到 Windows 域：Samba 可以作为 Windows 域控制器的替代品，提供类似于 Windows Active Directory 的用户管理和身份验证功能。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://example.com/linux/docs/part6-service-manage/6.4-samba/" /><meta property="article:section" content="docs" />
+
+<meta property="article:modified_time" content="2023-07-10T14:06:46+08:00" />
+<title>6.4 samba | Linux 学习笔记</title>
+<link rel="manifest" href="/linux/manifest.json">
+<link rel="icon" href="/linux/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/linux/book.min.cad59a3be22b32d901c8b99a5bf0c00f01535383d8d0e86742e5449f598d17af.css" integrity="sha256-ytWaO&#43;IrMtkByLmaW/DADwFTU4PY0OhnQuVEn1mNF68=" crossorigin="anonymous">
+  <script defer src="/linux/flexsearch.min.js"></script>
+  <script defer src="/linux/zh.search.min.a0ab0f602cd0bd36e0bae6d04115751371cd633d74ba8680a87144fe0bee8cb5.js" integrity="sha256-oKsPYCzQvTbguubQQRV1E3HNYz10uoaAqHFE/gvujLU=" crossorigin="anonymous"></script>
+
+  <script defer src="/linux/sw.min.e3338ad661715b83bfd6397040a613605d8bb26c10798773e2176216e2123560.js" integrity="sha256-4zOK1mFxW4O/1jlwQKYTYF2LsmwQeYdz4hdiFuISNWA=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/linux/"><span>Linux 学习笔记</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+<ul>
+    <li>
+        <a href="javascript:void(0)" onclick="hrefIndex()" rel="noopener">主页</a>
+    </li>
+    <li>
+        <a href="https://github.com/xiaobinqt" target="_blank" rel="noopener">GitHub</a>
+    </li>
+</ul>
+
+<hr>
+
+<script>
+    function hrefIndex() {
+        window.location = window.location.origin;
+    }
+</script>
+
+
+  
+<ul>
+  
+  <li>
+    <a href=""  target="_blank" rel="noopener">
+        
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第一部分 基础知识</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.1-operating-system/" class="">1.1 操作系统</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.2-overview/" class="">1.2 总览</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.3-common-dir/" class="">1.3 常见目录</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.4-process-manage/" class="">1.4 进程管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.5-deadlock/" class="">1.5 死锁</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.6-memory-manage/" class="">1.6 内存管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.7-link/" class="">1.7 链接</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.7-device-manage/" class="">1.7 设备管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.8-instruction-arch/" class="">1.8 指令集</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第二部分 系统操作</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.1-help/" class="">2.1 帮助命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.2-ls/" class="">2.2 ls 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.3-shutdown/" class="">2.3 关机</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.4-cp/" class="">2.4 cp 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.5-file-view/" class="">2.5 文件查看命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.6-backup-compression/" class="">2.6 压缩和打包</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.7-vim/" class="">2.7 vim</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.8-user-manage/" class="">2.8 用户管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.9-switch-user/" class="">2.9 切换用户</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.10-file-dir/" class="">2.10 文件和文件夹</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第三部分 系统管理</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.1-network/" class="">3.1 网络</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.2-net-trouble-removal/" class="">3.2 网络故障排除</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.3-net-manage/" class="">3.3 网络服务管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.4-soft-install/" class="">3.4 软件安装</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.5-process/" class="">3.5 进程管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.6-memory-disk/" class="">3.6 内存和磁盘管理</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第四部分 Shell</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.1-introduction/" class="">4.1 Shell 简介</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.2-env-config-file/" class="">4.2 环境变量</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.3-array/" class="">4.3 数组</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.4-escape-quot/" class="">4.4 转义和引用</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.5-operator/" class="">4.5 运算符</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.6-test-and-judge/" class="">4.6 测试和判断</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.7-process-control/" class="">4.7 流程控制</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.8-function/" class="">4.8 函数</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.9-script-cron/" class="">4.9 脚本和计划任务</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第五部分 文本操作</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part5-text-operate/5.1-regular/" class="">5.1 正则表达式</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part5-text-operate/5.2-sed/" class="">5.2 sed 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part5-text-operate/5.3-awk/" class="">5.3 awk 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part5-text-operate/5.4-cut-sort-uniq-tr/" class="">5.4 cut、sort、uniq、tr 命令</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第六部分 服务管理</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.1-firewall/" class="">6.1 防火墙</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.2-ssh/" class="">6.2 ssh</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.4-samba/" class="active">6.4 samba</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.5-nfs/" class="">6.5 NFS</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第七部分 常见问题</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part7-faq/7.1-cmd/" class="">7.1 命令相关</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/linux/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>6.4 samba</strong>
+
+  <label for="toc-control">
+    
+    <img src="/linux/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#64-samba">6.4 samba</a>
+      <ul>
+        <li><a href="#641-简介">6.4.1 简介</a></li>
+        <li><a href="#642-使用">6.4.2 使用</a>
+          <ul>
+            <li><a href="#用户设置">用户设置</a></li>
+          </ul>
+        </li>
+        <li><a href="#643-演示">6.4.3 演示</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown"><h1 id="64-samba">
+  6.4 samba
+  <a class="anchor" href="#64-samba">#</a>
+</h1>
+<h2 id="641-简介">
+  6.4.1 简介
+  <a class="anchor" href="#641-%e7%ae%80%e4%bb%8b">#</a>
+</h2>
+<p>Samba 是一个开源软件套件，用于在 Linux 和 UNIX 系统上实现文件和打印机共享。它允许 Linux/UNIX 系统与 Windows 操作系统之间进行文件和资源共享，使得 Linux/UNIX 系统可以像 Windows 一样访问和使用网络共享资源。</p>
+<p>Samba 提供了 SMB/CIFS（Server Message Block/Common Internet File System）协议的实现，这是 Windows 操作系统中用于文件和打印机共享的标准协议。通过 Samba，Linux/UNIX 系统可以作为 SMB/CIFS 服务器或客户端，与 Windows 系统进行通信。</p>
+<p>以下是 Samba 的一些主要特点和用途：</p>
+<ol>
+<li>
+<p>文件共享：Samba 允许在 Linux/UNIX 系统上共享文件和目录，并通过 SMB/CIFS 协议使其对 Windows 用户可见。这意味着 Windows 用户可以通过网络访问和操作 Linux/UNIX 系统上的共享文件。</p>
+</li>
+<li>
+<p>打印机共享：Samba 还支持共享打印机，使得 Windows 用户可以通过网络连接和使用 Linux/UNIX 系统上的打印机。</p>
+</li>
+<li>
+<p>用户认证和权限控制：Samba 提供了用户认证和权限控制功能，可以限制对共享资源的访问权限，确保只有经过授权的用户可以访问和修改共享文件。</p>
+</li>
+<li>
+<p>集成到 Windows 域：Samba 可以作为 Windows 域控制器的替代品，提供类似于 Windows Active Directory 的用户管理和身份验证功能。</p>
+</li>
+<li>
+<p>文件和打印机名称解析：Samba 支持 NetBIOS 名称解析，使得 Linux/UNIX 系统上的共享资源可以使用易记的名称进行访问，而不仅仅是 IP 地址。</p>
+</li>
+</ol>
+<h2 id="642-使用">
+  6.4.2 使用
+  <a class="anchor" href="#642-%e4%bd%bf%e7%94%a8">#</a>
+</h2>
+<ol>
+<li>安装 Samba：首先，需要在 Linux/UNIX 系统上安装 Samba 软件包。具体安装方法取决于使用的发行版，可以使用包管理器进行安装，如 apt、yum 或 zypper。</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>yum install samba -y
+</span></span></code></pre></div><ol start="2">
+<li>配置 Samba：Samba 的主要配置文件是 smb.conf，它位于 /etc/samba/ 目录下。可以使用文本编辑器打开该文件，并根据的需求进行配置。在配置文件中，可以定义共享目录、访问权限、用户认证方式等。比如新建一个 share 共享目录，可以在 smb.conf 中新增如下配置：</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>[ <span style="color:#ae81ff">share ]</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ae81ff">comment=my share</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ae81ff">path=/data/share</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ae81ff">read only=NO</span>
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230710/29e2d5e8fd48476eb8ea72099b068ba4.png" width=  /></div>
+<ol start="3">
+<li>
+<p>创建共享目录：在配置文件中定义共享目录后，需要确保这些目录在系统上存在并具有适当的权限。可以使用命令行或文件管理器创建和设置共享目录。</p>
+</li>
+<li>
+<p>启动 Samba 服务：配置完成后，需要启动 Samba 服务。在大多数 Linux 发行版中，可以使用以下命令启动 Samba 服务：</p>
+</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sudo systemctl start|stop smb
+</span></span></code></pre></div><p>这将启动 SMB 服务器和 NetBIOS 名称解析服务。</p>
+<ol start="5">
+<li>访问共享资源：现在可以从 Windows 系统或其他支持 SMB/CIFS 协议的设备上访问 Linux/UNIX 系统上的共享资源。在 Windows 资源管理器中，可以使用 &lt;Samba服务器IP地址&gt; 或 &lt;Samba服务器主机名&gt; 来访问共享文件夹。如果设置了用户认证，需要提供有效的用户名和密码进行登录。</li>
+</ol>
+<ul>
+<li>Linux 客户端</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>mount -t cifs -o username<span style="color:#f92672">=</span>user1 //127.0.0.1/user1 /mnt
+</span></span></code></pre></div><ul>
+<li>Windows 客户端
+<ul>
+<li>资源管理器访问共享</li>
+<li>映射网络驱动器</li>
+</ul>
+</li>
+</ul>
+<h3 id="用户设置">
+  用户设置
+  <a class="anchor" href="#%e7%94%a8%e6%88%b7%e8%ae%be%e7%bd%ae">#</a>
+</h3>
+<ul>
+<li>
+<p>smbpasswd 命令</p>
+<ul>
+<li>-a 添加用户，需要有一个系统的同名用户</li>
+<li>-x 删除用户</li>
+</ul>
+</li>
+<li>
+<p>pdbedit</p>
+<ul>
+<li>-L 查看用户</li>
+</ul>
+</li>
+</ul>
+<h2 id="643-演示">
+  6.4.3 演示
+  <a class="anchor" href="#643-%e6%bc%94%e7%a4%ba">#</a>
+</h2>
+<p>在 smb.conf 中新增 share 共享目录：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>[ <span style="color:#ae81ff">share ]</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ae81ff">comment=my share</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ae81ff">path=/data/share</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ae81ff">read only=NO</span>
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230710/29e2d5e8fd48476eb8ea72099b068ba4.png" width=  /></div>
+<p>新增系统用户和 samba 同名用户：</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230710/7a16c1ace8d94dcf8c5dcbd32d887540.png" width=  /></div>
+<p>在 share 的 path 目录里有个 sam.txt 文件：</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230710/aa0b66621dfe4adba0e752bb19bbfcca.png" width=  /></div>
+<p>启动 samba 服务：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>systemctl start smb
+</span></span></code></pre></div><p>尝试用另一台机器连接 samba 服务，如果在 mount cifs 时遇到了类似这样的错误：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>mount: //192.168.16.54/user1 写保护，将以只读方式挂载
+</span></span><span style="display:flex;"><span>mount: 无法以只读方式挂载 //192.168.16.54/user1
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230710/cbb2e70b6bc44da5b8c20eb5a3102237.png" width=  /></div>
+<p>可以在这台机器上执行以下命令再次尝试：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>yum install -y cifs-utils
+</span></span></code></pre></div><p>现在去挂载 samba 服务：</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230710/1cd6acf572504521a5bafc0741043a84.png" width=  /></div>
+<p>可以看到 192.168.16.54 上的 samba 服务上的 share 已经被成功挂载了，目录也实现了映射。</p>
+<p>当使用完成后可以使用 umount 卸载：</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230710/dec9ea50192446ed82f5f92653998112.png" width=  /></div>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/e29c7c64e06cd89b23e60285de09dd91e049dd2c" title='最后修改者 weibin | July 10, 2023' target="_blank" rel="noopener">
+      <img src="/linux/svg/calendar.svg" class="book-icon" alt="Calendar" />
+      <span>July 10, 2023</span>
+    </a>
+  </div>
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/content/docs/part6-service-manage/6.4-samba.md" target="_blank" rel="noopener">
+      <img src="/linux/svg/edit.svg" class="book-icon" alt="Edit" />
+      <span>编辑本页</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#64-samba">6.4 samba</a>
+      <ul>
+        <li><a href="#641-简介">6.4.1 简介</a></li>
+        <li><a href="#642-使用">6.4.2 使用</a>
+          <ul>
+            <li><a href="#用户设置">用户设置</a></li>
+          </ul>
+        </li>
+        <li><a href="#643-演示">6.4.3 演示</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
