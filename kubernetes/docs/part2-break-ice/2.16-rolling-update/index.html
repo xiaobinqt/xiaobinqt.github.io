@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="2.16 滚动更新 # 在实际生产环境中，只是把应用发布到集群里是远远不够的，要让应用稳定可靠地运行，还需要有持续的运维工作。比如 Deployment 的 “应用伸缩” 功能就是一种常见的运维操作，在 Kubernetes 里，使用命令 kubectl scale，可以轻松调整 Deployment 下属的 Pod 数量。除了 “应用伸缩”，其他的运维操作比如应用更新、版本回退等工作也是日常运维中经常会遇到的问题。
+2.16.1 应用版本 # 版本更新实际做起来是一个相当棘手的事。因为系统已经上线运行，必须要保证不间断地对外提供服务。尤其在特殊时候可能需要开发、测试、运维、监控、网络等各个部门的一大堆人来协同工作，费时又费力。
+在 Kubernetes 里，版本更新使用的不是 API 对象，而是两个命令：kubectl apply 和 kubectl rollout，需要搭配部署应用所需要的 Deployment、DaemonSet 等 YAML 文件。
+在 Kubernetes 里应用都是以 Pod 的形式运行的，而 Pod 通常又会被 Deployment 等对象来管理，所以应用的 “版本更新” 实际上更新的是整个 Pod。Pod 是由 YAML 描述文件来确定的，是 Deployment 等对象里的字段 template。所以，在 Kubernetes 里应用的版本变化就是 template 里 Pod 的变化，哪怕 template 里只变动了一个字段，那也会形成一个新的版本，也算是版本变化。但在 template 里的内容太多了，拿这么长的字符串来当做 “版本号” 不太现实，所以 Kubernetes 就使用了 “摘要” 功能，用摘要算法计算 template 的 Hash 值作为 “版本号”。">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="2.16 滚动更新" />
+<meta property="og:description" content="2.16 滚动更新 # 在实际生产环境中，只是把应用发布到集群里是远远不够的，要让应用稳定可靠地运行，还需要有持续的运维工作。比如 Deployment 的 “应用伸缩” 功能就是一种常见的运维操作，在 Kubernetes 里，使用命令 kubectl scale，可以轻松调整 Deployment 下属的 Pod 数量。除了 “应用伸缩”，其他的运维操作比如应用更新、版本回退等工作也是日常运维中经常会遇到的问题。
+2.16.1 应用版本 # 版本更新实际做起来是一个相当棘手的事。因为系统已经上线运行，必须要保证不间断地对外提供服务。尤其在特殊时候可能需要开发、测试、运维、监控、网络等各个部门的一大堆人来协同工作，费时又费力。
+在 Kubernetes 里，版本更新使用的不是 API 对象，而是两个命令：kubectl apply 和 kubectl rollout，需要搭配部署应用所需要的 Deployment、DaemonSet 等 YAML 文件。
+在 Kubernetes 里应用都是以 Pod 的形式运行的，而 Pod 通常又会被 Deployment 等对象来管理，所以应用的 “版本更新” 实际上更新的是整个 Pod。Pod 是由 YAML 描述文件来确定的，是 Deployment 等对象里的字段 template。所以，在 Kubernetes 里应用的版本变化就是 template 里 Pod 的变化，哪怕 template 里只变动了一个字段，那也会形成一个新的版本，也算是版本变化。但在 template 里的内容太多了，拿这么长的字符串来当做 “版本号” 不太现实，所以 Kubernetes 就使用了 “摘要” 功能，用摘要算法计算 template 的 Hash 值作为 “版本号”。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://example.com/kubernetes/docs/part2-break-ice/2.16-rolling-update/" /><meta property="article:section" content="docs" />
+
+<meta property="article:modified_time" content="2023-06-21T17:16:18+08:00" />
+<title>2.16 滚动更新 | Kubernetes 学习笔记</title>
+<link rel="manifest" href="/kubernetes/manifest.json">
+<link rel="icon" href="/kubernetes/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/kubernetes/book.min.cad59a3be22b32d901c8b99a5bf0c00f01535383d8d0e86742e5449f598d17af.css" integrity="sha256-ytWaO&#43;IrMtkByLmaW/DADwFTU4PY0OhnQuVEn1mNF68=" crossorigin="anonymous">
+  <script defer src="/kubernetes/flexsearch.min.js"></script>
+  <script defer src="/kubernetes/zh.search.min.2be4ca3911427b53e8f03b36126b26d6abbf18a49a0bd0d00ee55a6b4d309eee.js" integrity="sha256-K&#43;TKORFCe1Po8Ds2Emsm1qu/GKSaC9DQDuVaa00wnu4=" crossorigin="anonymous"></script>
+
+  <script defer src="/kubernetes/sw.min.448c1a1f6d77a9e91ad10af73bc5bccfa94948c630159862e4b698042cdae427.js" integrity="sha256-RIwaH213qeka0Qr3O8W8z6lJSMYwFZhi5LaYBCza5Cc=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/kubernetes/"><span>Kubernetes 学习笔记</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+<ul>
+    <li>
+        <a href="javascript:void(0)" onclick="hrefIndex()" rel="noopener">主页</a>
+    </li>
+    <li>
+        <a href="https://github.com/xiaobinqt" target="_blank" rel="noopener">GitHub</a>
+    </li>
+</ul>
+
+<hr>
+
+<script>
+    function hrefIndex() {
+        window.location = window.location.origin;
+    }
+</script>
+
+
+  
+<ul>
+  
+  <li>
+    <a href=""  target="_blank" rel="noopener">
+        
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第一部分 Docker</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.1-docker-brief/" class="">1.1 Docker 简介</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.2-docker-cmd/" class="">1.2 Docker 常用命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.3-container/" class="">1.3 容器</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.4-image/" class="">1.4 镜像</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.5-network/" class="">1.5 网络互通</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.6-docker-compose/" class="">1.6 Docker Compose</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.7-private-registry/" class="">1.7 私有镜像仓库</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第二部分 入门</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.1-k8s-overview/" class="">2.1 简介</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.2-minikube/" class="">2.2 minikube</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.3-working-mechanism/" class="">2.3 工作机制</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.4-pod/" class="">2.4 Pod</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.5-job/" class="">2.5 Job</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.6-config-manage/" class="">2.6 配置管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.7-general-cmd/" class="">2.7 常用命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.8-kubeadm/" class="">2.8 kubeadm 搭建</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.9-deployment/" class="">2.9 Deployment</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.10-daemonset/" class="">2.10 DaemonSet</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.11-service/" class="">2.11 Service</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.12-ingress/" class="">2.12 Ingress</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.13-persistent-volume/" class="">2.13 PersistentVolume</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.14-persistentvolume-nfs/" class="">2.14 网络共享存储</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.15-statefulset/" class="">2.15 StatefulSet</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.16-rolling-update/" class="active">2.16 滚动更新</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.17-app-assurance/" class="">2.17 应用保障</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.18-cluster-management/" class="">2.18 集群管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.19-system-monitor/" class="">2.19 系统监控</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.20-network-communications/" class="">2.20 网络通信</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/kubernetes/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>2.16 滚动更新</strong>
+
+  <label for="toc-control">
+    
+    <img src="/kubernetes/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#216-滚动更新">2.16 滚动更新</a>
+      <ul>
+        <li><a href="#2161-应用版本">2.16.1 应用版本</a></li>
+        <li><a href="#2162-如何实现应用更新">2.16.2 如何实现应用更新</a></li>
+        <li><a href="#2163-管理应用更新">2.16.3 管理应用更新</a></li>
+        <li><a href="#1164-添加更新描述">1.16.4 添加更新描述</a></li>
+        <li><a href="#参考">参考</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown"><h1 id="216-滚动更新">
+  2.16 滚动更新
+  <a class="anchor" href="#216-%e6%bb%9a%e5%8a%a8%e6%9b%b4%e6%96%b0">#</a>
+</h1>
+<p>在实际生产环境中，只是把应用发布到集群里是远远不够的，要让应用稳定可靠地运行，还需要有持续的运维工作。比如 Deployment 的 “应用伸缩” 功能就是一种常见的运维操作，在 Kubernetes 里，使用命令 kubectl scale，可以轻松调整 Deployment 下属的 Pod 数量。除了 “应用伸缩”，其他的运维操作比如应用更新、版本回退等工作也是日常运维中经常会遇到的问题。</p>
+<h2 id="2161-应用版本">
+  2.16.1 应用版本
+  <a class="anchor" href="#2161-%e5%ba%94%e7%94%a8%e7%89%88%e6%9c%ac">#</a>
+</h2>
+<p>版本更新实际做起来是一个相当棘手的事。因为系统已经上线运行，必须要保证不间断地对外提供服务。尤其在特殊时候可能需要开发、测试、运维、监控、网络等各个部门的一大堆人来协同工作，费时又费力。</p>
+<p>在 Kubernetes 里，版本更新使用的不是 API 对象，而是两个命令：kubectl apply 和 kubectl rollout，需要搭配部署应用所需要的 Deployment、DaemonSet 等 YAML 文件。</p>
+<p>在 Kubernetes 里应用都是以 Pod 的形式运行的，而 Pod 通常又会被 Deployment 等对象来管理，所以应用的 “版本更新” 实际上更新的是整个 Pod。Pod 是由 YAML 描述文件来确定的，是 Deployment 等对象里的字段 template。所以，在 Kubernetes 里应用的版本变化就是 template 里 Pod 的变化，哪怕 template 里只变动了一个字段，那也会形成一个新的版本，也算是版本变化。但在 template 里的内容太多了，拿这么长的字符串来当做 “版本号” 不太现实，所以 Kubernetes 就使用了 “摘要” 功能，用摘要算法计算 template 的 Hash 值作为 “版本号”。</p>
+<p>比如通过以下的 YAML 描述文件生成的 Deployment：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">apps/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Deployment</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">app</span>: <span style="color:#ae81ff">ngx-dep</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ngx-dep</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">replicas</span>: <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">selector</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">matchLabels</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">app</span>: <span style="color:#ae81ff">ngx-dep</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">template</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">app</span>: <span style="color:#ae81ff">ngx-dep</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">containers</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">image</span>: <span style="color:#ae81ff">nginx:alpine</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">name</span>: <span style="color:#ae81ff">nginx</span>
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230621/e4babaf577db4e449f324ecffa97414f.png" width=  /></div>
+<p>Pod 名字里的那串随机数 “bfbb5f64b” 就是 Pod 模板的 Hash 值，也就是 Pod 的 “版本号”。</p>
+<p>如果变动了 Pod YAML 描述，比如把镜像改成 nginx:stable-alpine，或者把容器名字改成 nginx-test，都会生成一个新的应用版本，kubectl apply 后就会重新创建 Pod：</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230621/c5af201f76ed4cd5b68855a9139b759b.png" width=  /></div>
+<p>可以看到，Pod 名字里的 Hash 值变成了 “c98cdf864”，这就表示 Pod 的版本更新了。</p>
+<h2 id="2162-如何实现应用更新">
+  2.16.2 如何实现应用更新
+  <a class="anchor" href="#2162-%e5%a6%82%e4%bd%95%e5%ae%9e%e7%8e%b0%e5%ba%94%e7%94%a8%e6%9b%b4%e6%96%b0">#</a>
+</h2>
+<p>可以用一个 Nginx Deployment 对象，看看 Kubernetes 到底是怎么实现版本更新的。</p>
+<p>以下是一个 ConfigMap，让它输出 Nginx 的版本号，方便用 curl 查看版本：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ConfigMap</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ngx-conf</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">data</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">default.conf</span>: |<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    server {
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      listen 80;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      location / {
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        default_type text/plain;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        return 200
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          &#39;ver : $nginx_version\nsrv : $server_addr:$server_port\nhost: $hostname\n&#39;;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      }
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    }</span>    
+</span></span></code></pre></div><p>以下是一个 Deployment YAML 描述，指定 Nginx 版本号是 1.21-alpine，实例数设置为 4 个：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">apps/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Deployment</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ngx-dep</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">replicas</span>: <span style="color:#ae81ff">4</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">selector</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">matchLabels</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">app</span>: <span style="color:#ae81ff">ngx-dep</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">template</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">app</span>: <span style="color:#ae81ff">ngx-dep</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">volumes</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ngx-conf-vol</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">configMap</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ngx-conf</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">containers</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">image</span>: <span style="color:#ae81ff">nginx:1.21-alpine</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">name</span>: <span style="color:#ae81ff">nginx</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">ports</span>:
+</span></span><span style="display:flex;"><span>            - <span style="color:#f92672">containerPort</span>: <span style="color:#ae81ff">80</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">volumeMounts</span>:
+</span></span><span style="display:flex;"><span>            - <span style="color:#f92672">mountPath</span>: <span style="color:#ae81ff">/etc/nginx/conf.d</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ngx-conf-vol</span>
+</span></span></code></pre></div><p>把这个 YAML 命名为 ngx-v1.yml，然后执行命令 kubectl apply 部署这个应用：</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230621/0031c8a01e2343cbbb82ce46ef693b0c.png" width=  /></div>
+<p>为这个 Deployment 创建 Service 对象，用 kubectl port-forward 转发请求来查看状态，以下是 Service 的 YAML 描述：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Service</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ngx-svc</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">selector</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">app</span>: <span style="color:#ae81ff">ngx-dep</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">ports</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">port</span>: <span style="color:#ae81ff">80</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">targetPort</span>: <span style="color:#ae81ff">80</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">protocol</span>: <span style="color:#ae81ff">TCP</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>kubectl port-forward svc/ngx-svc 8080:80 &amp;
+</span></span><span style="display:flex;"><span>curl 127.1:8080
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230621/c35053d63f684538be955cf684a2d856.png" width=  /></div>
+<p>从 curl 命令的输出中可以看到，现在应用的版本是 1.21.x。</p>
+<p>现在，编写一个<strong>新版本</strong>对象 ngx-v2.yml，把镜像升级到 nginx:1.22-alpine，其他的都不变。</p>
+<p>因为 Kubernetes 的动作太快了，为了能够观察到应用更新的过程，还需要添加一个字段 minReadySeconds，让 Kubernetes 在更新过程中等待一点时间，确认 Pod 没问题才继续其余 Pod 的创建工作。以下是新版本的 YAML 描述：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">apps/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Deployment</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ngx-dep</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">minReadySeconds</span>: <span style="color:#ae81ff">15</span> <span style="color:#75715e"># 确认Pod就绪的等待时间</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">replicas</span>: <span style="color:#ae81ff">4</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">selector</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">matchLabels</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">app</span>: <span style="color:#ae81ff">ngx-dep</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">template</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">app</span>: <span style="color:#ae81ff">ngx-dep</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">volumes</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ngx-conf-vol</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">configMap</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ngx-conf</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">containers</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">image</span>: <span style="color:#ae81ff">nginx:1.22-alpine</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">name</span>: <span style="color:#ae81ff">nginx</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">ports</span>:
+</span></span><span style="display:flex;"><span>            - <span style="color:#f92672">containerPort</span>: <span style="color:#ae81ff">80</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">volumeMounts</span>:
+</span></span><span style="display:flex;"><span>            - <span style="color:#f92672">mountPath</span>: <span style="color:#ae81ff">/etc/nginx/conf.d</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ngx-conf-vol</span>
+</span></span></code></pre></div><p>现在执行命令 kubectl apply 来更新应用，因为改动了镜像名，Pod 模板变了，就会触发 “版本更新”，然后用一个新命令：kubectl rollout status，来查看应用更新的状态：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>kubectl apply -f ngx-v2.yml
+</span></span><span style="display:flex;"><span>kubectl rollout status deployment ngx-dep
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230621/3c8fa94251a545fca2f1f3f3c26f44d5.png" width=  /></div>
+<p>从 kubectl rollout status 的输出信息，可以发现，Kubernetes 不是把旧 Pod 全部销毁再一次性创建出新 Pod，而是在逐个地创建新 Pod，同时也在销毁旧 Pod，保证系统里始终有足够数量的 Pod 在运行。新 Pod 数量增加的过程有点像是 “滚雪球”，从零开始，越滚越大，也就是所谓的 “滚动更新”（rolling update）。</p>
+<p>其实 “滚动更新” 就是由 Deployment 控制的两个同步进行的 “应用伸缩” 操作，老版本缩容到 0，同时新版本扩容到指定值，是一个 “此消彼长” 的过程。</p>
+<p>更新完成后，再执行 kubectl get pod，就会看到 Pod 已经全部替换成了新版本 “d575d5776”，用 curl 访问 Nginx，输出的版本信息也变成了 1.22.x：</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230621/d6bea52a44b346c0a053660917c38db0.png" width=  /></div>
+<p>滚动更新的过程可以用下面的这张图体下：</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230621/9f430c8042824ba7b704d6897011404f.png" width=  /></div>
+<h2 id="2163-管理应用更新">
+  2.16.3 管理应用更新
+  <a class="anchor" href="#2163-%e7%ae%a1%e7%90%86%e5%ba%94%e7%94%a8%e6%9b%b4%e6%96%b0">#</a>
+</h2>
+<p>如果更新过程中发生了错误或者更新后发现有 Bug，可以使用 kubectl rollout 命令。</p>
+<p>在应用更新的过程中，可以随时使用 kubectl rollout pause 来暂停更新，检查、修改 Pod，或者测试验证，如果确认没问题，再用 kubectl rollout resume 来继续更新。</p>
+<p>对于更新后出现的问题，可以查看之前的每次更新记录，并且回退到任何位置，和 Git 等版本控制软件非常类似。查看更新历史使用的命令是 kubectl rollout history，如：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>kubectl rollout history deploy ngx-dep
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230621/0fa9e195a47c406c8db8123a8df19987.png" width=  /></div>
+<p>kubectl rollout history 的列表输出的有用信息太少，可以在命令后加上参数 <code>--revision</code> 来查看每个版本的详细信息，包括标签、镜像名、环境变量、存储卷等等，通过这些就可以大致了解每次都变动了哪些关键字段：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>kubectl rollout history deploy ngx-dep --revision<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230621/0ab8a1f25788428aa01709935daf4e47.png" width=  /></div>
+<p>假设认为刚刚更新的 nginx:1.22-alpine 不好，想要回退到上一个版本，可以使用命令 kubectl rollout undo，也可以加上参数 <code>--to-revision</code> 回退到任意一个历史版本：</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230621/cbc64e17e55a44a7b097de9739799265.png" width=  /></div>
+<p>kubectl rollout undo 的操作过程其实和 kubectl apply 是一样的，执行的仍然是 “滚动更新”，只不过使用的是旧版本 Pod 模板，把新版本 Pod 数量收缩到 0，同时把老版本 Pod 扩展到指定值。</p>
+<p>这个 V2 到 V1 的 “版本降级” 的变化过程如下图所示：</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230621/9d5779da169441f98ec08e3748127cbe.png" width=  /></div>
+<h2 id="1164-添加更新描述">
+  1.16.4 添加更新描述
+  <a class="anchor" href="#1164-%e6%b7%bb%e5%8a%a0%e6%9b%b4%e6%96%b0%e6%8f%8f%e8%bf%b0">#</a>
+</h2>
+<p>kubectl rollout history 的版本列表 CHANGE-CAUSE 列可以添加说明信息，当没有添加说明信息时显示 <none>。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230621/ac6753a46b7848d1a17482c90e9bdeaf.png" width=  /></div>
+<p>当需要添加说明信息时，需要在 Deployment 的 metadata 里加上一个新的字段 annotations。annotations 字段的含义是 “注解” “注释”，形式上和 labels 一样，都是 Key-Value，也都是给 API 对象附加一些额外的信息，但是用途上区别很大。</p>
+<ul>
+<li>
+<p>annotations 添加的信息一般是给 Kubernetes 内部的各种对象使用的，有点像是 “扩展属性”；</p>
+</li>
+<li>
+<p>labels 主要面对的是 Kubernetes 外部的用户，用来筛选、过滤对象的。</p>
+</li>
+</ul>
+<p>借助 annotations，Kubernetes 既不破坏对象的结构，也不用新增字段，就能够给 API 对象添加任意的附加信息，这就是面向对象设计中典型的 OCP “开闭原则”，让对象更具扩展性和灵活性。</p>
+<p>annotations 里的值可以任意写，Kubernetes 会自动忽略不理解的 Key-Value，但要编写更新说明就需要使用特定的字段 <code>kubernetes.io/change-cause</code>。</p>
+<p>这里有 3 个版本的 Nginx 应用，同时添加更新说明：</p>
+<p>ngx1.yaml</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">apps/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Deployment</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ngx-dep</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">annotations</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">kubernetes.io/change-cause</span>: <span style="color:#ae81ff">v1, ngx=1.21</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">minReadySeconds</span>: <span style="color:#ae81ff">15</span> <span style="color:#75715e"># 确认Pod就绪的等待时间</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">replicas</span>: <span style="color:#ae81ff">4</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">selector</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">matchLabels</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">app</span>: <span style="color:#ae81ff">ngx-dep</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">template</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">app</span>: <span style="color:#ae81ff">ngx-dep</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">volumes</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ngx-conf-vol</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">configMap</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ngx-conf</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">containers</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">image</span>: <span style="color:#ae81ff">nginx:1.21-alpine</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">name</span>: <span style="color:#ae81ff">nginx</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">ports</span>:
+</span></span><span style="display:flex;"><span>            - <span style="color:#f92672">containerPort</span>: <span style="color:#ae81ff">80</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">volumeMounts</span>:
+</span></span><span style="display:flex;"><span>            - <span style="color:#f92672">mountPath</span>: <span style="color:#ae81ff">/etc/nginx/conf.d</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ngx-conf-vol</span>
+</span></span></code></pre></div><p>ngx2.yaml</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">apps/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Deployment</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ngx-dep</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">annotations</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">kubernetes.io/change-cause</span>: <span style="color:#ae81ff">update to v2, ngx=1.22</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">minReadySeconds</span>: <span style="color:#ae81ff">15</span> <span style="color:#75715e"># 确认Pod就绪的等待时间</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">replicas</span>: <span style="color:#ae81ff">4</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">selector</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">matchLabels</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">app</span>: <span style="color:#ae81ff">ngx-dep</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">template</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">app</span>: <span style="color:#ae81ff">ngx-dep</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">volumes</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ngx-conf-vol</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">configMap</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ngx-conf</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">containers</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">image</span>: <span style="color:#ae81ff">nginx:1.22-alpine</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">name</span>: <span style="color:#ae81ff">nginx</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">ports</span>:
+</span></span><span style="display:flex;"><span>            - <span style="color:#f92672">containerPort</span>: <span style="color:#ae81ff">80</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">volumeMounts</span>:
+</span></span><span style="display:flex;"><span>            - <span style="color:#f92672">mountPath</span>: <span style="color:#ae81ff">/etc/nginx/conf.d</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ngx-conf-vol</span>
+</span></span></code></pre></div><p>ngx3.yaml</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">apps/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Deployment</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ngx-dep</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">annotations</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">kubernetes.io/change-cause</span>: <span style="color:#ae81ff">update to v3, change name</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">minReadySeconds</span>: <span style="color:#ae81ff">15</span> <span style="color:#75715e"># 确认Pod就绪的等待时间</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">replicas</span>: <span style="color:#ae81ff">4</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">selector</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">matchLabels</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">app</span>: <span style="color:#ae81ff">ngx-dep</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">template</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">app</span>: <span style="color:#ae81ff">ngx-dep</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">volumes</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ngx-conf-vol</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">configMap</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ngx-conf</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">containers</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">image</span>: <span style="color:#ae81ff">nginx:1.22-alpine</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">name</span>: <span style="color:#ae81ff">nginx</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">ports</span>:
+</span></span><span style="display:flex;"><span>            - <span style="color:#f92672">containerPort</span>: <span style="color:#ae81ff">80</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">volumeMounts</span>:
+</span></span><span style="display:flex;"><span>            - <span style="color:#f92672">mountPath</span>: <span style="color:#ae81ff">/etc/nginx/conf.d</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ngx-conf-vol</span>
+</span></span></code></pre></div><p>依次使用 kubectl apply 创建并更新对象之后，再用 kubectl rollout history 来看一下更新历史：</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230621/6140cb22e04e44f5b160364119ebe825.png" width=  /></div>
+<p>这次显示的列表信息，每个版本的主要变动情况列得非常清楚，和 Git 版本管理的感觉很像。</p>
+<blockquote>
+<p>Kubernetes 不会记录所有的更新历史，那样太浪费资源，默认它只会保留最近的 10 次操作，但这个值可以用字段 “revisionHistoryLimit” 调整。</p>
+</blockquote>
+<h2 id="参考">
+  参考
+  <a class="anchor" href="#%e5%8f%82%e8%80%83">#</a>
+</h2>
+<ul>
+<li>
+  <a href="https://kubernetes.io/zh-cn/docs/concepts/workloads/controllers/deployment/#max-unavailable">滚动更新 Deploymen</a></li>
+</ul>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/7d82a6ff8da843fb1f0f4230fb2479a42c650a09" title='最后修改者 weibin | June 21, 2023' target="_blank" rel="noopener">
+      <img src="/kubernetes/svg/calendar.svg" class="book-icon" alt="Calendar" />
+      <span>June 21, 2023</span>
+    </a>
+  </div>
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/content/docs/part2-break-ice/2.16-rolling-update.md" target="_blank" rel="noopener">
+      <img src="/kubernetes/svg/edit.svg" class="book-icon" alt="Edit" />
+      <span>编辑本页</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#216-滚动更新">2.16 滚动更新</a>
+      <ul>
+        <li><a href="#2161-应用版本">2.16.1 应用版本</a></li>
+        <li><a href="#2162-如何实现应用更新">2.16.2 如何实现应用更新</a></li>
+        <li><a href="#2163-管理应用更新">2.16.3 管理应用更新</a></li>
+        <li><a href="#1164-添加更新描述">1.16.4 添加更新描述</a></li>
+        <li><a href="#参考">参考</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

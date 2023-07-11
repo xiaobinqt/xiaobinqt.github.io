@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="1.7 私有镜像仓库 # 在离线环境里，可以自己搭建私有仓库。私有镜像仓库有很多现成的解决方案，最简单的是 Docker Registry，也有功能更完善的 CNCF Harbor。
+1.7.1 registry # 可以在 Docker Hub 网站上搜索 “registry”，找到官方页面 https://registry.hub.docker.com/_/registry/：
+首先，需要使用 docker pull 命令拉取镜像：
+docker pull registry 然后，需要做一个端口映射，对外暴露端口，这样 Docker Registry 才能提供服务。它的容器内端口是 5000，可以再容器外也使用同样的 5000 端口，运行命令是
+docker run -d -p 5000:5000 registry ：docker run -d -p 5000:5000 registry 启动 Docker Registry 之后，可以使用 docker ps 查看运行状态，可以看到它确实把本机的 5000 端口映射到了容器内的 5000 端口。
+可以使用 docker tag 命令给镜像打标签再上传了。因为上传的目标不是默认的 Docker Hub，而是本地的私有仓库，所以镜像的名字前面还必须再加上仓库的地址（域名或者 IP 地址都行），形式上和 HTTP 的 URL 相似。
+下面示例中，把 “nginx:alpine” 改成了 “127.">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="1.7 私有镜像仓库" />
+<meta property="og:description" content="1.7 私有镜像仓库 # 在离线环境里，可以自己搭建私有仓库。私有镜像仓库有很多现成的解决方案，最简单的是 Docker Registry，也有功能更完善的 CNCF Harbor。
+1.7.1 registry # 可以在 Docker Hub 网站上搜索 “registry”，找到官方页面 https://registry.hub.docker.com/_/registry/：
+首先，需要使用 docker pull 命令拉取镜像：
+docker pull registry 然后，需要做一个端口映射，对外暴露端口，这样 Docker Registry 才能提供服务。它的容器内端口是 5000，可以再容器外也使用同样的 5000 端口，运行命令是
+docker run -d -p 5000:5000 registry ：docker run -d -p 5000:5000 registry 启动 Docker Registry 之后，可以使用 docker ps 查看运行状态，可以看到它确实把本机的 5000 端口映射到了容器内的 5000 端口。
+可以使用 docker tag 命令给镜像打标签再上传了。因为上传的目标不是默认的 Docker Hub，而是本地的私有仓库，所以镜像的名字前面还必须再加上仓库的地址（域名或者 IP 地址都行），形式上和 HTTP 的 URL 相似。
+下面示例中，把 “nginx:alpine” 改成了 “127." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://example.com/kubernetes/docs/part1-primary/1.7-private-registry/" /><meta property="article:section" content="docs" />
+
+<meta property="article:modified_time" content="2023-06-30T11:59:48+08:00" />
+<title>1.7 私有镜像仓库 | Kubernetes 学习笔记</title>
+<link rel="manifest" href="/kubernetes/manifest.json">
+<link rel="icon" href="/kubernetes/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/kubernetes/book.min.cad59a3be22b32d901c8b99a5bf0c00f01535383d8d0e86742e5449f598d17af.css" integrity="sha256-ytWaO&#43;IrMtkByLmaW/DADwFTU4PY0OhnQuVEn1mNF68=" crossorigin="anonymous">
+  <script defer src="/kubernetes/flexsearch.min.js"></script>
+  <script defer src="/kubernetes/zh.search.min.2be4ca3911427b53e8f03b36126b26d6abbf18a49a0bd0d00ee55a6b4d309eee.js" integrity="sha256-K&#43;TKORFCe1Po8Ds2Emsm1qu/GKSaC9DQDuVaa00wnu4=" crossorigin="anonymous"></script>
+
+  <script defer src="/kubernetes/sw.min.448c1a1f6d77a9e91ad10af73bc5bccfa94948c630159862e4b698042cdae427.js" integrity="sha256-RIwaH213qeka0Qr3O8W8z6lJSMYwFZhi5LaYBCza5Cc=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/kubernetes/"><span>Kubernetes 学习笔记</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+<ul>
+    <li>
+        <a href="javascript:void(0)" onclick="hrefIndex()" rel="noopener">主页</a>
+    </li>
+    <li>
+        <a href="https://github.com/xiaobinqt" target="_blank" rel="noopener">GitHub</a>
+    </li>
+</ul>
+
+<hr>
+
+<script>
+    function hrefIndex() {
+        window.location = window.location.origin;
+    }
+</script>
+
+
+  
+<ul>
+  
+  <li>
+    <a href=""  target="_blank" rel="noopener">
+        
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第一部分 Docker</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.1-docker-brief/" class="">1.1 Docker 简介</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.2-docker-cmd/" class="">1.2 Docker 常用命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.3-container/" class="">1.3 容器</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.4-image/" class="">1.4 镜像</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.5-network/" class="">1.5 网络互通</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.6-docker-compose/" class="">1.6 Docker Compose</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.7-private-registry/" class="active">1.7 私有镜像仓库</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第二部分 入门</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.1-k8s-overview/" class="">2.1 简介</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.2-minikube/" class="">2.2 minikube</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.3-working-mechanism/" class="">2.3 工作机制</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.4-pod/" class="">2.4 Pod</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.5-job/" class="">2.5 Job</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.6-config-manage/" class="">2.6 配置管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.7-general-cmd/" class="">2.7 常用命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.8-kubeadm/" class="">2.8 kubeadm 搭建</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.9-deployment/" class="">2.9 Deployment</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.10-daemonset/" class="">2.10 DaemonSet</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.11-service/" class="">2.11 Service</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.12-ingress/" class="">2.12 Ingress</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.13-persistent-volume/" class="">2.13 PersistentVolume</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.14-persistentvolume-nfs/" class="">2.14 网络共享存储</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.15-statefulset/" class="">2.15 StatefulSet</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.16-rolling-update/" class="">2.16 滚动更新</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.17-app-assurance/" class="">2.17 应用保障</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.18-cluster-management/" class="">2.18 集群管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.19-system-monitor/" class="">2.19 系统监控</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.20-network-communications/" class="">2.20 网络通信</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/kubernetes/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>1.7 私有镜像仓库</strong>
+
+  <label for="toc-control">
+    
+    <img src="/kubernetes/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#17-私有镜像仓库">1.7 私有镜像仓库</a>
+      <ul>
+        <li><a href="#171-registry">1.7.1 registry</a>
+          <ul>
+            <li><a href="#api">API</a></li>
+            <li><a href="#https-服务">https 服务</a></li>
+            <li><a href="#权限">权限</a></li>
+          </ul>
+        </li>
+        <li><a href="#参考">参考</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown"><h1 id="17-私有镜像仓库">
+  1.7 私有镜像仓库
+  <a class="anchor" href="#17-%e7%a7%81%e6%9c%89%e9%95%9c%e5%83%8f%e4%bb%93%e5%ba%93">#</a>
+</h1>
+<p>在离线环境里，可以自己搭建私有仓库。私有镜像仓库有很多现成的解决方案，最简单的是 Docker Registry，也有功能更完善的 CNCF Harbor。</p>
+<h2 id="171-registry">
+  1.7.1 registry
+  <a class="anchor" href="#171-registry">#</a>
+</h2>
+<p>可以在 Docker Hub 网站上搜索 “registry”，找到官方页面 
+  <a href="https://registry.hub.docker.com/_/registry/">https://registry.hub.docker.com/_/registry/</a>：</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230630/cbee553a65024712a173b4d5a9eb26e9.png" width=  /></div>
+<p>首先，需要使用 docker pull 命令拉取镜像：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>docker pull registry
+</span></span></code></pre></div><p>然后，需要做一个端口映射，对外暴露端口，这样 Docker Registry 才能提供服务。它的容器内端口是 5000，可以再容器外也使用同样的 5000 端口，运行命令是</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>docker run -d -p 5000:5000 registry ：docker run -d -p 5000:5000 registry
+</span></span></code></pre></div><p>启动 Docker Registry 之后，可以使用 docker ps 查看运行状态，可以看到它确实把本机的 5000 端口映射到了容器内的 5000 端口。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230630/a0eb002c8e0c4920987f784404f647ee.png" width=  /></div>
+<p>可以使用 docker tag 命令给镜像打标签再上传了。因为上传的目标不是默认的 Docker Hub，而是本地的私有仓库，所以镜像的名字前面还<strong>必须</strong>再加上仓库的地址（域名或者 IP 地址都行），形式上和 HTTP 的 URL 相似。</p>
+<p>下面示例中，把 “nginx:alpine” 改成了 “127.0.0.1:5000/nginx:alpine”：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>docker tag nginx:alpine 127.0.0.1:5000/nginx:alpine
+</span></span></code></pre></div><p>现在，这个镜像有了一个附加仓库地址的完整名字，就可以用 docker push 推上去了：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>docker push 127.0.0.1:5000/nginx:alpine
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230630/e31385c1a2814dd0b78658548c873246.png" width=  /></div>
+<p>为了验证是否已经成功推送，可以把刚才打标签的镜像删掉，再重新下载：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>docker rmi  127.0.0.1:5000/nginx:alpine
+</span></span><span style="display:flex;"><span>docker pull 127.0.0.1:5000/nginx:alpine
+</span></span></code></pre></div><h3 id="api">
+  API
+  <a class="anchor" href="#api">#</a>
+</h3>
+<p>Docker Registry 没有图形界面，但提供了 RESTful API，可以发送 HTTP 请求来查看仓库里的镜像，具体的信息可以参考官方文档 
+  <a href="https://docs.docker.com/registry/spec/api/">https://docs.docker.com/registry/spec/api/</a>，下面的这两条 curl 命令就分别获取了镜像列表和 Nginx 镜像的标签列表：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>curl 127.0.0.1:5000/v2/_catalog
+</span></span><span style="display:flex;"><span>curl 127.0.0.1:5000/v2/nginx/tags/list
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230630/eb80996872a04b0da2bd304844bd7790.png" width=  /></div>
+<h3 id="https-服务">
+  https 服务
+  <a class="anchor" href="#https-%e6%9c%8d%e5%8a%a1">#</a>
+</h3>
+<p>要搭建 https 协议的 docker registry 首先需要证书。</p>
+<p>要生成免费的 SSL/TLS 证书，可以使用 OpenSSL 工具。下面是使用 OpenSSL 生成自签名证书的基本步骤：</p>
+<ol>
+<li>安装 OpenSSL：</li>
+</ol>
+<p>根据你的操作系统，安装适用于 OpenSSL 的软件包或使用系统自带的 OpenSSL。</p>
+<p>在终端或命令提示符中，运行 <code>openssl version</code> 命令，确认 OpenSSL 是否成功安装。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230630/e3c908497ecb49c38805e3794b207121.png" width=  /></div>
+<ol start="2">
+<li>生成自签名证书：</li>
+</ol>
+<p>使用以下命令生成自签名证书：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>openssl req -x509 -days <span style="color:#ae81ff">365</span> -out registry.test.crt -keyout registry.test.key <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  -newkey rsa:2048 -nodes -sha256 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    -subj <span style="color:#e6db74">&#39;/CN=registry.test&#39;</span> -extensions EXT -config &lt;<span style="color:#f92672">(</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>       printf <span style="color:#e6db74">&#34;[dn]\nCN=registry.test\n[req]\ndistinguished_name = dn\n[EXT]\nsubjectAltName=DNS:registry.test\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth&#34;</span><span style="color:#f92672">)</span>
+</span></span></code></pre></div><ul>
+<li><code>openssl req</code>: 使用 OpenSSL 工具中的 req 子命令，用于生成证书请求或自签名证书。</li>
+<li><code>-x509</code>: 指定生成自签名证书而不是证书请求。</li>
+<li><code>-days 365</code>: 指定证书的有效期为 365 天。</li>
+<li><code>-out registry.test.crt</code>: 指定生成的证书文件名为 <code>registry.test.crt</code>，并将其保存在当前目录下。</li>
+<li><code>-keyout registry.test.key</code>: 指定生成的私钥文件名为 <code>registry.test.key</code>，并将其保存在当前目录下。</li>
+<li><code>-newkey rsa:2048</code>: 创建一个新的 RSA 密钥对，密钥长度为 2048 位。</li>
+<li><code>-nodes</code>: 在生成私钥时不加密密钥文件，这样私钥文件不会有密码保护。</li>
+<li><code>-sha256</code>: 使用 SHA-256 哈希算法签名证书。</li>
+<li><code>-subj '/CN=registry.test'</code>: 设置证书的主题字段，这里指定 Common Name (CN) 为 <code>registry.test</code>，即证书的通用名称。</li>
+<li><code>-extensions EXT -config &lt;(printf &quot;[dn]\nCN=k8s.test\n[req]\ndistinguished_name = dn\n[EXT]\nsubjectAltName=DNS:k8s.test\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth&quot;)</code>: 配置扩展字段，用于指定主题备用名称 (Subject Alternative Name, SAN)、密钥用途和扩展密钥用途。这里将 SAN 设置为 <code>DNS:registry.test</code>，表示证书可以用于 <code>registry.test</code> 主机名的验证。</li>
+</ul>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230630/e8b6def7da2a46fab63d467883b29319.png" width=  /></div>
+<blockquote>
+<p>对于开发、测试或个人用途，自签名证书是一个方便且免费的选项。自签名证书不会被信任的证书颁发机构（CA）认可，因此在生产环境中可能会被浏览器或其他客户端视为不受信任。在生产环境中，可能需要使用受信任的 CA 颁发的证书。</p>
+</blockquote>
+<p>当有了证书，就可以使用 docker run 命令启动 registry 容器，并将配置文件和证书、私钥挂载到容器中：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>docker run -d <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>--name registry <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>-p 5000:5000 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>--restart always <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>-v /home/weibin/cert.d:/etc/cert.d <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>-e REGISTRY_HTTP_TLS_CERTIFICATE<span style="color:#f92672">=</span>/etc/cert.d/registry.test.crt <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>-e REGISTRY_HTTP_TLS_KEY<span style="color:#f92672">=</span>/etc/cert.d/registry.test.key <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>registry
+</span></span></code></pre></div><p>/home/weibin/cert.d 目录是宿主机的目录，里面有证书文件：</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230630/e61f0705dae44d9bb53cc74d8f544003.png" width=  /></div>
+<p>可以看到，容器可以正常启动：</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230630/38e6009d51094794ba437a9255a3c7cb.png" width=  /></div>
+<p>测试请求正常：</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230630/3399e0fa283d4ecab93a09b9c2cdabe7.png" width=  /></div>
+<h3 id="权限">
+  权限
+  <a class="anchor" href="#%e6%9d%83%e9%99%90">#</a>
+</h3>
+<h2>TODO ... <h2>
+<h2 id="参考">
+  参考
+  <a class="anchor" href="#%e5%8f%82%e8%80%83">#</a>
+</h2>
+<ul>
+<li>
+  <a href="https://yeasy.gitbook.io/docker_practice/repository/registry">私有仓库</a></li>
+<li>
+  <a href="https://tongfu.net/home/35/blog/513695.html">Docker私有仓库Registry服务器配置SSL证书以支持HTTPS协议</a></li>
+</ul>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/2d17742fd7dc0fc65fa88a55eb43bd85c5004b82" title='最后修改者 weibin | June 30, 2023' target="_blank" rel="noopener">
+      <img src="/kubernetes/svg/calendar.svg" class="book-icon" alt="Calendar" />
+      <span>June 30, 2023</span>
+    </a>
+  </div>
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/content/docs/part1-primary/1.7-private-registry.md" target="_blank" rel="noopener">
+      <img src="/kubernetes/svg/edit.svg" class="book-icon" alt="Edit" />
+      <span>编辑本页</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#17-私有镜像仓库">1.7 私有镜像仓库</a>
+      <ul>
+        <li><a href="#171-registry">1.7.1 registry</a>
+          <ul>
+            <li><a href="#api">API</a></li>
+            <li><a href="#https-服务">https 服务</a></li>
+            <li><a href="#权限">权限</a></li>
+          </ul>
+        </li>
+        <li><a href="#参考">参考</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

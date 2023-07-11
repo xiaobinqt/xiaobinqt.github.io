@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="2.11 Service # 2.11.1 什么是 Service # Service 是集群内部的负载均衡机制，用来解决服务发现的关键问题。在 Kubernetes 集群里 Pod 的生命周期是比较 “短暂” 的，虽然 Deployment 和 DaemonSet 可以维持 Pod 总体数量的稳定，但在运行过程中，难免会有 Pod 销毁又重建，这就会导致 Pod 集合处于动态的变化之中。这种 “动态稳定” 对于现在流行的微服务架构来说是非常致命的，如果后台 Pod 的 IP 地址老是变来变去，客户端该怎么访问呢？
+对于这种 “不稳定” 的后端服务问题，业内的解决方案是 “负载均衡”，典型的应用有 LVS、Nginx 等，它们在前端与后端之间加入了一个 “中间层”，屏蔽后端的变化，为前端提供一个稳定的服务。Service 的工作原理和 LVS、Nginx 差不多，Kubernetes 会给它分配一个静态 IP 地址，然后它再去自动管理、维护后面动态变化的 Pod 集合，当客户端访问 Service，它就根据某种策略，把流量转发给后面的某个 Pod。
+LVS 即 Linux Virtual Server，是由章文嵩发起的一个开源项目，后来被集成进 Linux 内核。
+Service 使用了 iptables 技术，每个节点上的 kube-proxy 组件自动维护 iptables 规则，客户不再关心 Pod 的具体地址，只要访问 Service 的固定 IP 地址，Service 就会根据 iptables 规则转发请求给它管理的多个 Pod，是典型的负载均衡架构。">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="2.11 Service" />
+<meta property="og:description" content="2.11 Service # 2.11.1 什么是 Service # Service 是集群内部的负载均衡机制，用来解决服务发现的关键问题。在 Kubernetes 集群里 Pod 的生命周期是比较 “短暂” 的，虽然 Deployment 和 DaemonSet 可以维持 Pod 总体数量的稳定，但在运行过程中，难免会有 Pod 销毁又重建，这就会导致 Pod 集合处于动态的变化之中。这种 “动态稳定” 对于现在流行的微服务架构来说是非常致命的，如果后台 Pod 的 IP 地址老是变来变去，客户端该怎么访问呢？
+对于这种 “不稳定” 的后端服务问题，业内的解决方案是 “负载均衡”，典型的应用有 LVS、Nginx 等，它们在前端与后端之间加入了一个 “中间层”，屏蔽后端的变化，为前端提供一个稳定的服务。Service 的工作原理和 LVS、Nginx 差不多，Kubernetes 会给它分配一个静态 IP 地址，然后它再去自动管理、维护后面动态变化的 Pod 集合，当客户端访问 Service，它就根据某种策略，把流量转发给后面的某个 Pod。
+LVS 即 Linux Virtual Server，是由章文嵩发起的一个开源项目，后来被集成进 Linux 内核。
+Service 使用了 iptables 技术，每个节点上的 kube-proxy 组件自动维护 iptables 规则，客户不再关心 Pod 的具体地址，只要访问 Service 的固定 IP 地址，Service 就会根据 iptables 规则转发请求给它管理的多个 Pod，是典型的负载均衡架构。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://example.com/kubernetes/docs/part2-break-ice/2.11-service/" /><meta property="article:section" content="docs" />
+
+<meta property="article:modified_time" content="2023-06-08T20:58:17+08:00" />
+<title>2.11 Service | Kubernetes 学习笔记</title>
+<link rel="manifest" href="/kubernetes/manifest.json">
+<link rel="icon" href="/kubernetes/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/kubernetes/book.min.cad59a3be22b32d901c8b99a5bf0c00f01535383d8d0e86742e5449f598d17af.css" integrity="sha256-ytWaO&#43;IrMtkByLmaW/DADwFTU4PY0OhnQuVEn1mNF68=" crossorigin="anonymous">
+  <script defer src="/kubernetes/flexsearch.min.js"></script>
+  <script defer src="/kubernetes/zh.search.min.2be4ca3911427b53e8f03b36126b26d6abbf18a49a0bd0d00ee55a6b4d309eee.js" integrity="sha256-K&#43;TKORFCe1Po8Ds2Emsm1qu/GKSaC9DQDuVaa00wnu4=" crossorigin="anonymous"></script>
+
+  <script defer src="/kubernetes/sw.min.448c1a1f6d77a9e91ad10af73bc5bccfa94948c630159862e4b698042cdae427.js" integrity="sha256-RIwaH213qeka0Qr3O8W8z6lJSMYwFZhi5LaYBCza5Cc=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/kubernetes/"><span>Kubernetes 学习笔记</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+<ul>
+    <li>
+        <a href="javascript:void(0)" onclick="hrefIndex()" rel="noopener">主页</a>
+    </li>
+    <li>
+        <a href="https://github.com/xiaobinqt" target="_blank" rel="noopener">GitHub</a>
+    </li>
+</ul>
+
+<hr>
+
+<script>
+    function hrefIndex() {
+        window.location = window.location.origin;
+    }
+</script>
+
+
+  
+<ul>
+  
+  <li>
+    <a href=""  target="_blank" rel="noopener">
+        
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第一部分 Docker</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.1-docker-brief/" class="">1.1 Docker 简介</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.2-docker-cmd/" class="">1.2 Docker 常用命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.3-container/" class="">1.3 容器</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.4-image/" class="">1.4 镜像</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.5-network/" class="">1.5 网络互通</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.6-docker-compose/" class="">1.6 Docker Compose</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.7-private-registry/" class="">1.7 私有镜像仓库</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第二部分 入门</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.1-k8s-overview/" class="">2.1 简介</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.2-minikube/" class="">2.2 minikube</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.3-working-mechanism/" class="">2.3 工作机制</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.4-pod/" class="">2.4 Pod</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.5-job/" class="">2.5 Job</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.6-config-manage/" class="">2.6 配置管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.7-general-cmd/" class="">2.7 常用命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.8-kubeadm/" class="">2.8 kubeadm 搭建</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.9-deployment/" class="">2.9 Deployment</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.10-daemonset/" class="">2.10 DaemonSet</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.11-service/" class="active">2.11 Service</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.12-ingress/" class="">2.12 Ingress</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.13-persistent-volume/" class="">2.13 PersistentVolume</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.14-persistentvolume-nfs/" class="">2.14 网络共享存储</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.15-statefulset/" class="">2.15 StatefulSet</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.16-rolling-update/" class="">2.16 滚动更新</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.17-app-assurance/" class="">2.17 应用保障</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.18-cluster-management/" class="">2.18 集群管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.19-system-monitor/" class="">2.19 系统监控</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.20-network-communications/" class="">2.20 网络通信</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/kubernetes/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>2.11 Service</strong>
+
+  <label for="toc-control">
+    
+    <img src="/kubernetes/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#211-service">2.11 Service</a>
+      <ul>
+        <li><a href="#2111-什么是-service">2.11.1 什么是 Service</a></li>
+        <li><a href="#2112-yaml-描述-service">2.11.2 YAML 描述 Service</a></li>
+        <li><a href="#2113-使用-service">2.11.3 使用 Service</a>
+          <ul>
+            <li><a href="#service-负载均衡效果">Service 负载均衡效果</a></li>
+          </ul>
+        </li>
+        <li><a href="#2114-域名的方式使用-service">2.11.4 域名的方式使用 Service</a>
+          <ul>
+            <li><a href="#名字空间">名字空间</a></li>
+          </ul>
+        </li>
+        <li><a href="#2115-对外暴露服务">2.11.5 对外暴露服务</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown"><h1 id="211-service">
+  2.11 Service
+  <a class="anchor" href="#211-service">#</a>
+</h1>
+<h2 id="2111-什么是-service">
+  2.11.1 什么是 Service
+  <a class="anchor" href="#2111-%e4%bb%80%e4%b9%88%e6%98%af-service">#</a>
+</h2>
+<p>Service 是集群内部的负载均衡机制，用来解决服务发现的关键问题。在 Kubernetes 集群里 Pod 的生命周期是比较 “短暂” 的，虽然 Deployment 和 DaemonSet 可以维持 Pod 总体数量的稳定，但在运行过程中，难免会有 Pod 销毁又重建，这就会导致 Pod 集合处于动态的变化之中。这种 “动态稳定” 对于现在流行的微服务架构来说是非常致命的，如果后台 Pod 的 IP 地址老是变来变去，客户端该怎么访问呢？</p>
+<p>对于这种 “不稳定” 的后端服务问题，业内的解决方案是 “负载均衡”，典型的应用有 LVS、Nginx 等，它们在前端与后端之间加入了一个 “中间层”，屏蔽后端的变化，为前端提供一个稳定的服务。Service 的工作原理和 LVS、Nginx 差不多，Kubernetes 会给它分配一个静态 IP 地址，然后它再去自动管理、维护后面动态变化的 Pod 集合，当客户端访问 Service，它就根据某种策略，把流量转发给后面的某个 Pod。</p>
+<blockquote>
+<p>LVS 即 Linux Virtual Server，是由章文嵩发起的一个开源项目，后来被集成进 Linux 内核。</p>
+</blockquote>
+<p>Service 使用了 iptables 技术，每个节点上的 kube-proxy 组件自动维护 iptables 规则，客户不再关心 Pod 的具体地址，只要访问 Service 的固定 IP 地址，Service 就会根据 iptables 规则转发请求给它管理的多个 Pod，是典型的负载均衡架构。</p>
+<p>iptables 基于 Linux 内核里的 netfilter 模块，用来处理网络数据包，实现修改、过滤、地址转换等功能。</p>
+<p>Service 并不是只能使用 iptables 来实现负载均衡，它还有另外两种实现技术：性能更差的 userspace 和性能更好的 ipvs。</p>
+<h2 id="2112-yaml-描述-service">
+  2.11.2 YAML 描述 Service
+  <a class="anchor" href="#2112-yaml-%e6%8f%8f%e8%bf%b0-service">#</a>
+</h2>
+<p>Service YAML 描述样本可以使用命令 kubectl expose 进行创建。因为在 Kubernetes 里提供服务的是 Pod，而 Pod 又可以用 Deployment/DaemonSet 对象来部署，所以 kubectl expose 支持<strong>从多种对象创建服务</strong>，得先有对象，才有服务。Pod、Deployment、DaemonSet 都可以。</p>
+<p>使用 kubectl expose 指令时还需要用参数 <code>--port</code> 和 <code>--target-port</code> 分别指定映射端口和容器端口，而 Service 自己的 IP 地址和后端 Pod 的 IP 地址可以自动生成，用法上和 Docker 的命令行参数 -p 很类似。</p>
+<p>比如，用以下的 YAML 描述生产 Deployment 对象：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">apps/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Deployment</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">app</span>: <span style="color:#ae81ff">ngx-dep</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ngx-dep</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">replicas</span>: <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">selector</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">matchLabels</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">app</span>: <span style="color:#ae81ff">ngx-dep</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">template</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">app</span>: <span style="color:#ae81ff">ngx-dep</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">containers</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">image</span>: <span style="color:#ae81ff">nginx:alpine</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">name</span>: <span style="color:#ae81ff">nginx</span>
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230605/b53c6c4ee384442b8e90dc100934dcc0.png" width=  /></div>
+<p>用 ngx-dep 对象生成 Service，命令可以这么写：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>export out<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;--dry-run=client -o yaml&#34;</span>
+</span></span><span style="display:flex;"><span>kubectl expose deploy ngx-dep --port<span style="color:#f92672">=</span><span style="color:#ae81ff">80</span> --target-port<span style="color:#f92672">=</span><span style="color:#ae81ff">80</span> $out
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230605/3f68de6ba31d4a60b2c307d702560ccf.png" width=  /></div>
+<p>生成的 Service YAML 大致如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Service</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ngx-svc</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">selector</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">app</span>: <span style="color:#ae81ff">ngx-dep</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">ports</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">port</span>: <span style="color:#ae81ff">80</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">targetPort</span>: <span style="color:#ae81ff">80</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">protocol</span>: <span style="color:#ae81ff">TCP</span>
+</span></span></code></pre></div><p>selector 用来过滤出要代理的那些 Pod，因为已经指定了要代理 Deployment，所以 Kubernetes 就自动填上了 ngx-dep 的标签，会选择这个 Deployment 对象部署的所有 Pod。</p>
+<p>ports 里面的三个字段分别表示外部端口、内部端口和使用的协议，在这里就是内外部都使用 80 端口，协议是 TCP。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230605/0e3ae9c34a4f49e6a620ef0a8c336f26.png" width=  /></div>
+<h2 id="2113-使用-service">
+  2.11.3 使用 Service
+  <a class="anchor" href="#2113-%e4%bd%bf%e7%94%a8-service">#</a>
+</h2>
+<p>在使用 YAML 创建 Service 对象之前，可以先对 Deployment 做一点改造，方便观察 Service 的效果。</p>
+<p>首先，创建一个 ConfigMap，定义一个 Nginx 的配置片段，它会输出服务器的地址、主机名、请求的 URI 等基本信息：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ConfigMap</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ngx-conf</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">data</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">default.conf</span>: |<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    server {
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      listen 80;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      location / {
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        default_type text/plain;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        return 200
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          &#39;srv : $server_addr:$server_port\nhost: $hostname\nuri : $request_method $host $request_uri\ndate: $time_iso8601\n&#39;;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      }
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    }</span>    
+</span></span></code></pre></div><p>然后在 Deployment 的 template.volumes 里定义存储卷，再用 volumeMounts 把配置文件加载进 Nginx 容器里：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">apps/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Deployment</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ngx-dep</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">replicas</span>: <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">selector</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">matchLabels</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">app</span>: <span style="color:#ae81ff">ngx-dep</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">template</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">app</span>: <span style="color:#ae81ff">ngx-dep</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">volumes</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ngx-conf-vol</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">configMap</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ngx-conf</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">containers</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">image</span>: <span style="color:#ae81ff">nginx:alpine</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">name</span>: <span style="color:#ae81ff">nginx</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">ports</span>:
+</span></span><span style="display:flex;"><span>            - <span style="color:#f92672">containerPort</span>: <span style="color:#ae81ff">80</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">volumeMounts</span>:
+</span></span><span style="display:flex;"><span>            - <span style="color:#f92672">mountPath</span>: <span style="color:#ae81ff">/etc/nginx/conf.d</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ngx-conf-vol</span>
+</span></span></code></pre></div><p>先 apply 部署 ConfigMap 和 改造过的 Deployment，然后通过以下的 Service YAML 部署 Service：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Service</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ngx-svc</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">selector</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">app</span>: <span style="color:#ae81ff">ngx-dep</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">ports</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">port</span>: <span style="color:#ae81ff">80</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">targetPort</span>: <span style="color:#ae81ff">80</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">protocol</span>: <span style="color:#ae81ff">TCP</span>
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230607/64e97243b8674df1b4a9c3876ea1ea99.png" width=  /></div>
+<p>可以看到，Kubernetes 为 Service 对象自动分配了一个 IP 地址 10.102.179.255。Service 对象的 IP 地址还有一个特点，它是一个 “虚地址”，不存在实体，只能用来转发流量。</p>
+<p>如果想要看 Service 代理了哪些后端的 Pod，你可以用 kubectl describe 命令：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>kubectl describe svc ngx-svc
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230607/53d440596c5c48e3b7ee1c047b18209c.png" width=  /></div>
+<p>可以看到 Service 对象管理了两个 endpoint，分别是 <code>10.10.1.145:80</code>和<code>10.10.1.146:80</code>，如何知道这两个 IP 地址是不是 Nginx Pod 的实际地址呢？可以使用 kubectl get pod 来看一下，加上参数 -o wide：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>kubectl get pod -o wide
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230607/5d053b63f998492fbafd809d3d90ccb3.png" width=  /></div>
+<p>把 Pod 的地址与 Service 的信息做个对比，就能够验证 Service 确实用一个静态 IP 地址代理了两个 Pod 的动态 IP 地址。</p>
+<h3 id="service-负载均衡效果">
+  Service 负载均衡效果
+  <a class="anchor" href="#service-%e8%b4%9f%e8%bd%bd%e5%9d%87%e8%a1%a1%e6%95%88%e6%9e%9c">#</a>
+</h3>
+<p>因为 Service、 Pod 的 IP 地址都是 Kubernetes 集群的内部网段，所以需要用 kubectl exec 进入到 Pod 内部（或者 ssh 登录集群节点），再用 curl 等工具来访问 Service：</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230607/8cc201f1507d448a9ebff4568af9fc89.png" width=  /></div>
+<p>在 Pod 里，用 curl 访问 Service 的 IP 地址，就会看到它把数据转发给后端的 Pod，输出信息会显示具体是哪个 Pod 响应了请求，就表明 Service 确实完成了对 Pod 的负载均衡任务。</p>
+<h2 id="2114-域名的方式使用-service">
+  2.11.4 域名的方式使用 Service
+  <a class="anchor" href="#2114-%e5%9f%9f%e5%90%8d%e7%9a%84%e6%96%b9%e5%bc%8f%e4%bd%bf%e7%94%a8-service">#</a>
+</h2>
+<p>Service 对象的 IP 地址是静态的，保持稳定，这在微服务里确实很重要，不过数字形式的 IP 地址用起来不太方便。Kubernetes 的 DNS 插件可以为 Service 创建易写易记的域名，让 Service 更容易使用。</p>
+<h3 id="名字空间">
+  名字空间
+  <a class="anchor" href="#%e5%90%8d%e5%ad%97%e7%a9%ba%e9%97%b4">#</a>
+</h3>
+<p>namespace 名字空间用来在集群里实现对 API 对象的隔离和分组。namespace 的简写是 ns，可以使用命令 kubectl get ns 来查看当前集群里都有哪些名字空间，也就是说 API 对象有哪些分组：</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230607/cf55e391b9954c24b54334d0676d46c7.png" width=  /></div>
+<p>Kubernetes 有一个默认的名字空间，叫 default，如果不显式指定，API 对象都会在这个 default 名字空间里。而其他的名字空间都有各自的用途，比如 kube-system 就包含了 apiserver、etcd 等核心组件的 Pod。</p>
+<p>DNS 是一种层次结构，为了避免太多的域名导致冲突，Kubernetes 就把名字空间作为域名的一部分，减少了重名的可能性。Service 对象的域名完全形式是 “对象.名字空间.svc.cluster.local”，但很多时候也可以省略后面的部分，直接写 “对象.名字空间” 甚至 “对象名” 就足够了，默认会使用对象所在的名字空间。</p>
+<p>可以试验一下 DNS 域名的用法，以 kubectl exec 命令进入 Pod，然后用 curl 访问 ngx-svc、ngx-svc.default 等域名：</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230607/9b67e4f75661402e8b305e82c43d5f87.png" width=  /></div>
+<p>可以看到，不再关心 Service 对象的 IP 地址，只需要知道它的名字，就可以用 DNS 的方式去访问后端服务。</p>
+<blockquote>
+<p>其实 Kubernetes 也为每个 Pod 分配了域名，形式是 “IP 地址.名字空间.pod.cluster.local”，但需要把 IP 地址里的<code>.</code>改成<code>-</code>。比如地址 10.10.1.87，它对应的域名就是 10-10-1-87.default.pod。</p>
+</blockquote>
+<h2 id="2115-对外暴露服务">
+  2.11.5 对外暴露服务
+  <a class="anchor" href="#2115-%e5%af%b9%e5%a4%96%e6%9a%b4%e9%9c%b2%e6%9c%8d%e5%8a%a1">#</a>
+</h2>
+<p>Service 是一种负载均衡技术，它不仅能够管理 Kubernetes 集群内部的服务，还能够担任向集群外部暴露服务的重任。</p>
+<p>Service 对象有一个关键字段 type，表示 Service 是哪种类型的负载均衡。前面我们看到的用法都是对集群内部 Pod 的负载均衡，默认为 ClusterIP，Service 的静态 IP 地址只能在集群内访问。除了 ClusterIP，Service 还支持其他三种类型，分别是 ExternalName，LoadBalancer，NodePort。前两种类型一般由云服务商提供。</p>
+<p>在使用命令 kubectl expose 的时候如果加上参数 <code>--type=NodePort</code>，或者在 YAML 里添加字段 type:NodePort，那么 Service 除了会对后端的 Pod 做负载均衡之外，还会在集群里的每个节点上创建一个独立的端口，用这个端口对外提供服务，这也正是 NodePort 这个名字的由来。</p>
+<p>加上 type 的 Service YAML 描述文件如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Service</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ngx-svc</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">type</span>: <span style="color:#ae81ff">NodePort</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">selector</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">app</span>: <span style="color:#ae81ff">ngx-dep</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">ports</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">port</span>: <span style="color:#ae81ff">80</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">targetPort</span>: <span style="color:#ae81ff">80</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">protocol</span>: <span style="color:#ae81ff">TCP</span>
+</span></span></code></pre></div><p>apply 部署后查看 Service 的状态：</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230607/b56c78b593284947897acb1836504ae3.png" width=  /></div>
+<p>可以看到 TYPE 变成了 NodePort，而在 PORT 列里的端口信息也不一样，除了集群内部使用的 80 端口，还多出了一个 32096 端口，这就是 Kubernetes 在节点上为 Service 创建的专用映射端口。</p>
+<p>因为这个端口号属于节点，外部能够直接访问，所以现在就可以不用登录集群节点或者进入 Pod 内部的情况下，直接在<strong>集群外</strong>使用任意一个节点的 IP 地址，就能够访问 Service 和它代理的后端服务了。</p>
+<p>比如我现在所在的服务器是 192.168.14.70，在这台主机上用 curl 访问 Kubernetes 集群的两个节点 192.168.14.142，192.168.14.143，就可以得到 Nginx Pod 的响应数据：</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230607/abcd6433093b4791b22380a3589ec751.png" width=  /></div>
+<p>NodePort 与 Service、Deployment 的工作原理大致如下：</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230608/23c3b15cfad8486bba1076719b083eef.png" width=  /></div>
+<p>其实 NodePort 类型的 Service 虽然方便，但是也有一些缺点。</p>
+<ol>
+<li>
+<p>端口数量有限，Kubernetes 为了避免端口冲突，默认只在 30000~32767 这个范围内随机分配，只有 2000 多个，而且都不是标准端口号，这对于具有大量业务应用的系统来说可能会不够用。</p>
+</li>
+<li>
+<p>会在每个节点上都开端口，然后使用 kube-proxy 路由到真正的后端 Service，这对于有很多计算节点的大集群来说就带来了一些网络通信成本，不是特别经济。</p>
+</li>
+<li>
+<p>要求向外界暴露节点的 IP 地址，这在很多时候是不可行的，为了安全还需要在集群外再搭一个反向代理，增加了方案的复杂度。</p>
+</li>
+</ol>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/8c49de71ca3feb6b7c26a2c5957a21bda3821946" title='最后修改者 weibin | June 8, 2023' target="_blank" rel="noopener">
+      <img src="/kubernetes/svg/calendar.svg" class="book-icon" alt="Calendar" />
+      <span>June 8, 2023</span>
+    </a>
+  </div>
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/content/docs/part2-break-ice/2.11-service.md" target="_blank" rel="noopener">
+      <img src="/kubernetes/svg/edit.svg" class="book-icon" alt="Edit" />
+      <span>编辑本页</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#211-service">2.11 Service</a>
+      <ul>
+        <li><a href="#2111-什么是-service">2.11.1 什么是 Service</a></li>
+        <li><a href="#2112-yaml-描述-service">2.11.2 YAML 描述 Service</a></li>
+        <li><a href="#2113-使用-service">2.11.3 使用 Service</a>
+          <ul>
+            <li><a href="#service-负载均衡效果">Service 负载均衡效果</a></li>
+          </ul>
+        </li>
+        <li><a href="#2114-域名的方式使用-service">2.11.4 域名的方式使用 Service</a>
+          <ul>
+            <li><a href="#名字空间">名字空间</a></li>
+          </ul>
+        </li>
+        <li><a href="#2115-对外暴露服务">2.11.5 对外暴露服务</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
