@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="2.3 工作机制 # 2.3.1 基本架构 # Kubernetes 采用了 “控制面 / 数据面”（Control Plane / Data Plane）架构，集群里的计算机被称为 “节点”（Node），可以是物理机也可以是虚拟机，少量的节点用作控制面来执行集群的管理维护工作，其他的大部分节点都被划归数据面，用来跑业务应用。
+控制面的节点在 Kubernetes 里叫做 Master Node，一般简称为 Master，它是整个集群里最重要的部分，可以说是 Kubernetes 的大脑和心脏。数据面的节点叫做 Worker Node，一般就简称为 Worker 或者 Node，相当于 Kubernetes 的手和脚，在 Master 的指挥下干活。Node 的数量非常多，构成了一个资源池，Kubernetes 就在这个池里分配资源，调度应用。因为资源被 “池化”了，所以管理也就变得比较简单，可以在集群中任意添加或者删除节点。
+Master 和 Node 的划分不是绝对的。当集群的规模较小，工作负载较少的时候，Master 也可以承担 Node 的工作，就像 minikube 环境，它就只有一个节点，这个节点既是 Master 又是 Node。
+在下面这张架构图中，可以看到有一个 kubectl，它是 Kubernetes 的客户端工具，用来操作 Kubernetes，但它位于集群之外，理论上不属于集群。
+2.3.2 节点内部结构 # Kubernetes 的节点内部具有非常复杂的结构，由很多的模块构成的，这些模块又可以分成组件（Component）和插件（Addon）两类。
+组件实现了 Kubernetes 的核心功能特性，没有这些组件 Kubernetes 就无法启动，而插件则是 Kubernetes 的一些附加功能，属于 “锦上添花”，不安装也不会影响 Kubernetes 的正常运行。
+组件 # Master 有 4 个组件，分别是 apiserver、etcd、scheduler、controller-manager。">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="2.3 工作机制" />
+<meta property="og:description" content="2.3 工作机制 # 2.3.1 基本架构 # Kubernetes 采用了 “控制面 / 数据面”（Control Plane / Data Plane）架构，集群里的计算机被称为 “节点”（Node），可以是物理机也可以是虚拟机，少量的节点用作控制面来执行集群的管理维护工作，其他的大部分节点都被划归数据面，用来跑业务应用。
+控制面的节点在 Kubernetes 里叫做 Master Node，一般简称为 Master，它是整个集群里最重要的部分，可以说是 Kubernetes 的大脑和心脏。数据面的节点叫做 Worker Node，一般就简称为 Worker 或者 Node，相当于 Kubernetes 的手和脚，在 Master 的指挥下干活。Node 的数量非常多，构成了一个资源池，Kubernetes 就在这个池里分配资源，调度应用。因为资源被 “池化”了，所以管理也就变得比较简单，可以在集群中任意添加或者删除节点。
+Master 和 Node 的划分不是绝对的。当集群的规模较小，工作负载较少的时候，Master 也可以承担 Node 的工作，就像 minikube 环境，它就只有一个节点，这个节点既是 Master 又是 Node。
+在下面这张架构图中，可以看到有一个 kubectl，它是 Kubernetes 的客户端工具，用来操作 Kubernetes，但它位于集群之外，理论上不属于集群。
+2.3.2 节点内部结构 # Kubernetes 的节点内部具有非常复杂的结构，由很多的模块构成的，这些模块又可以分成组件（Component）和插件（Addon）两类。
+组件实现了 Kubernetes 的核心功能特性，没有这些组件 Kubernetes 就无法启动，而插件则是 Kubernetes 的一些附加功能，属于 “锦上添花”，不安装也不会影响 Kubernetes 的正常运行。
+组件 # Master 有 4 个组件，分别是 apiserver、etcd、scheduler、controller-manager。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://example.com/kubernetes/docs/part2-break-ice/2.3-working-mechanism/" /><meta property="article:section" content="docs" />
+
+<meta property="article:modified_time" content="2023-05-12T10:31:01+08:00" />
+<title>2.3 工作机制 | Kubernetes 学习笔记</title>
+<link rel="manifest" href="/kubernetes/manifest.json">
+<link rel="icon" href="/kubernetes/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/kubernetes/book.min.cad59a3be22b32d901c8b99a5bf0c00f01535383d8d0e86742e5449f598d17af.css" integrity="sha256-ytWaO&#43;IrMtkByLmaW/DADwFTU4PY0OhnQuVEn1mNF68=" crossorigin="anonymous">
+  <script defer src="/kubernetes/flexsearch.min.js"></script>
+  <script defer src="/kubernetes/zh.search.min.2be4ca3911427b53e8f03b36126b26d6abbf18a49a0bd0d00ee55a6b4d309eee.js" integrity="sha256-K&#43;TKORFCe1Po8Ds2Emsm1qu/GKSaC9DQDuVaa00wnu4=" crossorigin="anonymous"></script>
+
+  <script defer src="/kubernetes/sw.min.448c1a1f6d77a9e91ad10af73bc5bccfa94948c630159862e4b698042cdae427.js" integrity="sha256-RIwaH213qeka0Qr3O8W8z6lJSMYwFZhi5LaYBCza5Cc=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/kubernetes/"><span>Kubernetes 学习笔记</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+<ul>
+    <li>
+        <a href="javascript:void(0)" onclick="hrefIndex()" rel="noopener">主页</a>
+    </li>
+    <li>
+        <a href="https://github.com/xiaobinqt" target="_blank" rel="noopener">GitHub</a>
+    </li>
+</ul>
+
+<hr>
+
+<script>
+    function hrefIndex() {
+        window.location = window.location.origin;
+    }
+</script>
+
+
+  
+<ul>
+  
+  <li>
+    <a href=""  target="_blank" rel="noopener">
+        
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第一部分 Docker</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.1-docker-brief/" class="">1.1 Docker 简介</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.2-docker-cmd/" class="">1.2 Docker 常用命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.3-container/" class="">1.3 容器</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.4-image/" class="">1.4 镜像</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.5-network/" class="">1.5 网络互通</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.6-docker-compose/" class="">1.6 Docker Compose</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.7-private-registry/" class="">1.7 私有镜像仓库</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第二部分 入门</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.1-k8s-overview/" class="">2.1 简介</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.2-minikube/" class="">2.2 minikube</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.3-working-mechanism/" class="active">2.3 工作机制</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.4-pod/" class="">2.4 Pod</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.5-job/" class="">2.5 Job</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.6-config-manage/" class="">2.6 配置管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.7-general-cmd/" class="">2.7 常用命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.8-kubeadm/" class="">2.8 kubeadm 搭建</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.9-deployment/" class="">2.9 Deployment</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.10-daemonset/" class="">2.10 DaemonSet</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.11-service/" class="">2.11 Service</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.12-ingress/" class="">2.12 Ingress</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.13-persistent-volume/" class="">2.13 PersistentVolume</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.14-persistentvolume-nfs/" class="">2.14 网络共享存储</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.15-statefulset/" class="">2.15 StatefulSet</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.16-rolling-update/" class="">2.16 滚动更新</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.17-app-assurance/" class="">2.17 应用保障</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.18-cluster-management/" class="">2.18 集群管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.19-system-monitor/" class="">2.19 系统监控</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.20-network-communications/" class="">2.20 网络通信</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/kubernetes/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>2.3 工作机制</strong>
+
+  <label for="toc-control">
+    
+    <img src="/kubernetes/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#23-工作机制">2.3 工作机制</a>
+      <ul>
+        <li><a href="#231-基本架构">2.3.1 基本架构</a></li>
+        <li><a href="#232-节点内部结构">2.3.2 节点内部结构</a>
+          <ul>
+            <li><a href="#组件">组件</a></li>
+            <li><a href="#工作流程">工作流程</a></li>
+          </ul>
+        </li>
+        <li><a href="#233-api-对象">2.3.3 API 对象</a>
+          <ul>
+            <li><a href="#如何描述">如何描述</a></li>
+            <li><a href="#如何使用">如何使用</a></li>
+            <li><a href="#编写-yaml-描述">编写 YAML 描述</a></li>
+          </ul>
+        </li>
+        <li><a href="#参考">参考</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown"><h1 id="23-工作机制">
+  2.3 工作机制
+  <a class="anchor" href="#23-%e5%b7%a5%e4%bd%9c%e6%9c%ba%e5%88%b6">#</a>
+</h1>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230511/e52b16e268214edf93c5b4a45f6376d7.png" width=  /></div>
+<h2 id="231-基本架构">
+  2.3.1 基本架构
+  <a class="anchor" href="#231-%e5%9f%ba%e6%9c%ac%e6%9e%b6%e6%9e%84">#</a>
+</h2>
+<p>Kubernetes 采用了 “控制面 / 数据面”（Control Plane / Data Plane）架构，集群里的计算机被称为 “节点”（Node），可以是物理机也可以是虚拟机，少量的节点用作控制面来执行集群的管理维护工作，其他的大部分节点都被划归数据面，用来跑业务应用。</p>
+<p>控制面的节点在 Kubernetes 里叫做 Master Node，一般简称为 Master，它是整个集群里最重要的部分，可以说是 Kubernetes 的大脑和心脏。数据面的节点叫做 Worker Node，一般就简称为 Worker 或者 Node，相当于 Kubernetes 的手和脚，在 Master 的指挥下干活。Node 的数量非常多，构成了一个资源池，Kubernetes 就在这个池里分配资源，调度应用。因为资源被 “池化”了，所以管理也就变得比较简单，可以在集群中任意添加或者删除节点。</p>
+<p>Master 和 Node 的划分不是绝对的。当集群的规模较小，工作负载较少的时候，Master 也可以承担 Node 的工作，就像 minikube 环境，它就只有一个节点，这个节点既是 Master 又是 Node。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230511/edb47a394f4c46178f4d28ffd2cc64b2.png" width=  /></div>
+<p>在下面这张架构图中，可以看到有一个 kubectl，它是 Kubernetes 的客户端工具，用来操作 Kubernetes，但它位于集群之外，理论上不属于集群。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230511/92f2587b5a87439ca96c2c2d7b7dd50d.png" width=  /></div>
+<h2 id="232-节点内部结构">
+  2.3.2 节点内部结构
+  <a class="anchor" href="#232-%e8%8a%82%e7%82%b9%e5%86%85%e9%83%a8%e7%bb%93%e6%9e%84">#</a>
+</h2>
+<p>Kubernetes 的节点内部具有非常复杂的结构，由很多的模块构成的，这些模块又可以分成组件（Component）和插件（Addon）两类。</p>
+<p>组件实现了 Kubernetes 的核心功能特性，没有这些组件 Kubernetes 就无法启动，而插件则是 Kubernetes 的一些附加功能，属于 “锦上添花”，不安装也不会影响 Kubernetes 的正常运行。</p>
+<h3 id="组件">
+  组件
+  <a class="anchor" href="#%e7%bb%84%e4%bb%b6">#</a>
+</h3>
+<p>Master 有 4 个组件，分别是 apiserver、etcd、scheduler、controller-manager。</p>
+<p>apiserver 是 Master 节点，同时也是整个 Kubernetes 系统的唯一入口，它对外公开了一系列的 RESTful API，并且加上了验证、授权等功能，所有其他组件都只能和它直接通信，可以说是 Kubernetes 里的联络员。</p>
+<p>etcd 是一个高可用的分布式 Key-Value 数据库，用来持久化存储系统里的各种资源对象和状态，相当于 Kubernetes 里的配置管理员。它只与 apiserver 有直接联系，也就是说任何其他组件想要读写 etcd 里的数据都必须经过 apiserver。</p>
+<p>scheduler 负责容器的编排工作，检查节点的资源状态，把 Pod 调度到最适合的节点上运行，相当于部署人员。因为节点状态和 Pod 信息都存储在 etcd 里，所以 scheduler 必须通过 apiserver 才能获得。</p>
+<p>controller-manager 负责维护容器和节点等资源的状态，实现故障检测、服务迁移、应用伸缩等功能，相当于监控运维人员。同样地，它也必须通过 apiserver 获得存储在 etcd 里的信息，才能够实现对资源的各种操作。</p>
+<p>这 4 个组件也都被容器化运行在集群的 Pod 里，可以用 kubectl 来查看它们的状态：</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230511/5ce1f299dbc9468d959c6a2df735d01e.png" width=  /></div>
+<blockquote>
+<p>-n kube-system 参数，表示检查 “kube-system” 名字空间里的 Pod。</p>
+</blockquote>
+<hr>
+<p>Node 里有 3 个组件，分别是 kubelet、kube-proxy、container-runtime。</p>
+<p>kubelet 是 Node 的代理，负责管理 Node 相关的绝大部分操作，Node 上只有它能够与 apiserver 通信，实现状态报告、命令下发、启停容器等功能。</p>
+<p>kube-proxy 的作用有点特别，它是 Node 的网络代理，只负责管理容器的网络通信，简单来说就是为 Pod 转发 TCP/UDP 数据包。</p>
+<p>container-runtime 是容器和镜像的实际使用者，在 kubelet 的指挥下创建容器，管理 Pod 的生命周期。</p>
+<p>Kubernetes 的定位是容器编排平台，所以它没有限定 container-runtime 必须是 Docker，完全可以替换成任何符合标准的其他容器运行时，例如 containerd、CRI-O 等。</p>
+<h3 id="工作流程">
+  工作流程
+  <a class="anchor" href="#%e5%b7%a5%e4%bd%9c%e6%b5%81%e7%a8%8b">#</a>
+</h3>
+<ul>
+<li>
+<p>每个 Node 上的 kubelet 会定期向 apiserver 上报节点状态，apiserver 再存到 etcd 里。</p>
+</li>
+<li>
+<p>每个 Node 上的 kube-proxy 实现了 TCP/UDP 反向代理，让容器对外提供稳定的服务。</p>
+</li>
+<li>
+<p>scheduler 通过 apiserver 得到当前的节点状态，调度 Pod，然后 apiserver 下发命令给某个 Node 的 kubelet，kubelet 调用 container-runtime 启动容器。</p>
+</li>
+<li>
+<p>controller-manager 也通过 apiserver 得到实时的节点状态，监控可能的异常情况，再使用相应的手段去调节恢复。</p>
+</li>
+</ul>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230511/92f2587b5a87439ca96c2c2d7b7dd50d.png" width=  /></div>
+<h2 id="233-api-对象">
+  2.3.3 API 对象
+  <a class="anchor" href="#233-api-%e5%af%b9%e8%b1%a1">#</a>
+</h2>
+<p>作为一个集群操作系统，Kubernetes 归纳总结了 Google 多年的经验，在理论层面抽象出了很多个概念，用来描述系统的管理运维工作，这些概念就叫做 “API 对象”。</p>
+<p>因为 apiserver 是 Kubernetes 系统的唯一入口，外部用户和内部组件都必须和它通信，而它采用了 HTTP 协议的 URL 资源理念，API 风格也用 RESTful 的 GET/POST/DELETE 等等，所以，这些概念很自然地就被称为是 “API 对象”。</p>
+<p>可以使用 kubectl api-resources 来查看当前 Kubernetes 版本支持的所有对象：</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230511/a22327ff6332407497f5723ba7d9bc37.png" width=  /></div>
+<p>“NAME” 一栏，就是对象的名字，比如 ConfigMap、Pod、Service 等等，第二栏 “SHORTNAMES” 则是这种资源的简写。</p>
+<p>在使用 kubectl 命令的时候，你还可以加上一个参数 &ndash;v=9，可以显示出详细的命令执行过程，清楚地看到发出的 HTTP 请求，比如：</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230511/fe86800b43b44ed38b164732b7e8f12c.png" width=  /></div>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>root@debian-wb3:~# minikube kubectl -- get pod --v<span style="color:#f92672">=</span><span style="color:#ae81ff">9</span>
+</span></span><span style="display:flex;"><span>I0511 16:16:12.470389   <span style="color:#ae81ff">52352</span> loader.go:372<span style="color:#f92672">]</span> Config loaded from file:  /root/.kube/config
+</span></span><span style="display:flex;"><span>I0511 16:16:12.471093   <span style="color:#ae81ff">52352</span> cert_rotation.go:137<span style="color:#f92672">]</span> Starting client certificate rotation controller
+</span></span><span style="display:flex;"><span>I0511 16:16:12.474656   <span style="color:#ae81ff">52352</span> round_trippers.go:466<span style="color:#f92672">]</span> curl -v -XGET  -H <span style="color:#e6db74">&#34;Accept: application/json;as=Table;v=v1;g=meta.k8s.io,application/json;as=Table;v=v1beta1;g=meta.k8s.io,application/json&#34;</span> -H <span style="color:#e6db74">&#34;User-Agent: kubectl/v1.23.3 (linux/amd64) kubernetes/816c97a&#34;</span> <span style="color:#e6db74">&#39;https://192.168.49.2:8443/api/v1/namespaces/default/pods?limit=500&#39;</span>
+</span></span><span style="display:flex;"><span>I0511 16:16:12.475040   <span style="color:#ae81ff">52352</span> round_trippers.go:510<span style="color:#f92672">]</span> HTTP Trace: Dial to tcp:192.168.49.2:8443 succeed
+</span></span><span style="display:flex;"><span>I0511 16:16:12.481955   <span style="color:#ae81ff">52352</span> round_trippers.go:570<span style="color:#f92672">]</span> HTTP Statistics: DNSLookup <span style="color:#ae81ff">0</span> ms Dial <span style="color:#ae81ff">0</span> ms TLSHandshake <span style="color:#ae81ff">4</span> ms ServerProcessing <span style="color:#ae81ff">2</span> ms Duration <span style="color:#ae81ff">7</span> ms
+</span></span><span style="display:flex;"><span>I0511 16:16:12.482003   <span style="color:#ae81ff">52352</span> round_trippers.go:577<span style="color:#f92672">]</span> Response Headers:
+</span></span><span style="display:flex;"><span>I0511 16:16:12.482030   <span style="color:#ae81ff">52352</span> round_trippers.go:580<span style="color:#f92672">]</span>     Cache-Control: no-cache, private
+</span></span><span style="display:flex;"><span>I0511 16:16:12.482074   <span style="color:#ae81ff">52352</span> round_trippers.go:580<span style="color:#f92672">]</span>     Content-Type: application/json
+</span></span><span style="display:flex;"><span>I0511 16:16:12.482102   <span style="color:#ae81ff">52352</span> round_trippers.go:580<span style="color:#f92672">]</span>     X-Kubernetes-Pf-Flowschema-Uid: 0bc68592-ae0d-443e-bdc8-020149821437
+</span></span><span style="display:flex;"><span>I0511 16:16:12.482155   <span style="color:#ae81ff">52352</span> round_trippers.go:580<span style="color:#f92672">]</span>     X-Kubernetes-Pf-Prioritylevel-Uid: baa7014e-a109-46a4-bf9b-1d2bc2998aac
+</span></span><span style="display:flex;"><span>I0511 16:16:12.482199   <span style="color:#ae81ff">52352</span> round_trippers.go:580<span style="color:#f92672">]</span>     Date: Thu, <span style="color:#ae81ff">11</span> May <span style="color:#ae81ff">2023</span> 08:16:12 GMT
+</span></span><span style="display:flex;"><span>I0511 16:16:12.482236   <span style="color:#ae81ff">52352</span> round_trippers.go:580<span style="color:#f92672">]</span>     Audit-Id: 07a6c7e2-86fb-4d6b-b30c-ae132e098e9d
+</span></span><span style="display:flex;"><span>I0511 16:16:12.482346   <span style="color:#ae81ff">52352</span> request.go:1181<span style="color:#f92672">]</span> Response Body: <span style="color:#f92672">{</span><span style="color:#e6db74">&#34;kind&#34;</span>:<span style="color:#e6db74">&#34;Table&#34;</span>,<span style="color:#e6db74">&#34;apiVersion&#34;</span>:<span style="color:#e6db74">&#34;meta.k8s.io/v1&#34;</span>,<span style="color:#e6db74">&#34;metadata&#34;</span>:<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;resourceVersion&#34;</span>:<span style="color:#e6db74">&#34;760475&#34;</span><span style="color:#f92672">}</span>,<span style="color:#e6db74">&#34;columnDefinitions&#34;</span>:<span style="color:#f92672">[{</span><span style="color:#e6db74">&#34;name&#34;</span>:<span style="color:#e6db74">&#34;Name&#34;</span>,<span style="color:#e6db74">&#34;type&#34;</span>:<span style="color:#e6db74">&#34;string&#34;</span>,<span style="color:#e6db74">&#34;format&#34;</span>:<span style="color:#e6db74">&#34;name&#34;</span>,<span style="color:#e6db74">&#34;description&#34;</span>:<span style="color:#e6db74">&#34;Name must be unique within a namespace. Is required when creating resources, although some resources may allow a client to request the generation of an appropriate name automatically. Name is primarily intended for creation idempotence and configuration definition. Cannot be updated. More info: http://kubernetes.io/docs/user-guide/identifiers#names&#34;</span>,<span style="color:#e6db74">&#34;priority&#34;</span>:0<span style="color:#f92672">}</span>,<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;name&#34;</span>:<span style="color:#e6db74">&#34;Ready&#34;</span>,<span style="color:#e6db74">&#34;type&#34;</span>:<span style="color:#e6db74">&#34;string&#34;</span>,<span style="color:#e6db74">&#34;format&#34;</span>:<span style="color:#e6db74">&#34;&#34;</span>,<span style="color:#e6db74">&#34;description&#34;</span>:<span style="color:#e6db74">&#34;The aggregate readiness state of this pod for accepting traffic.&#34;</span>,<span style="color:#e6db74">&#34;priority&#34;</span>:0<span style="color:#f92672">}</span>,<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;name&#34;</span>:<span style="color:#e6db74">&#34;Status&#34;</span>,<span style="color:#e6db74">&#34;type&#34;</span>:<span style="color:#e6db74">&#34;string&#34;</span>,<span style="color:#e6db74">&#34;format&#34;</span>:<span style="color:#e6db74">&#34;&#34;</span>,<span style="color:#e6db74">&#34;description&#34;</span>:<span style="color:#e6db74">&#34;The aggregate status of the containers in this pod.&#34;</span>,<span style="color:#e6db74">&#34;priority&#34;</span>:0<span style="color:#f92672">}</span>,<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;name&#34;</span>:<span style="color:#e6db74">&#34;Restarts&#34;</span>,<span style="color:#e6db74">&#34;type&#34;</span>:<span style="color:#e6db74">&#34;string&#34;</span>,<span style="color:#e6db74">&#34;format&#34;</span>:<span style="color:#e6db74">&#34;&#34;</span>,<span style="color:#e6db74">&#34;description&#34;</span>:<span style="color:#e6db74">&#34;The number of times the containers in this pod have been restarted and when the last container in this pod has restarted.&#34;</span>,<span style="color:#e6db74">&#34;priority&#34;</span>:0<span style="color:#f92672">}</span>,<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;name&#34;</span>:<span style="color:#e6db74">&#34;Age&#34;</span>,<span style="color:#e6db74">&#34;type&#34;</span>:<span style="color:#e6db74">&#34;string&#34;</span>,<span style="color:#e6db74">&#34;format&#34;</span>:<span style="color:#e6db74">&#34;&#34;</span>,<span style="color:#e6db74">&#34;description&#34;</span>:<span style="color:#e6db74">&#34;CreationTimestamp is a timestamp representing the server time when this object was created. It is not guaranteed to be set in happens-before order across separate operations. Clients may not set this value. It is represented in RFC3339 form and is in UTC.\n\nPopulated by the system. Read-only. Null for lists. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata&#34;</span>,<span style="color:#e6db74">&#34;priority&#34;</span>:0<span style="color:#f92672">}</span>,<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;name&#34;</span>:<span style="color:#e6db74">&#34;IP&#34;</span>,<span style="color:#e6db74">&#34;type&#34;</span>:<span style="color:#e6db74">&#34;string&#34;</span>,<span style="color:#e6db74">&#34;format&#34;</span>:<span style="color:#e6db74">&#34;&#34;</span>,<span style="color:#e6db74">&#34;description&#34;</span>:<span style="color:#e6db74">&#34;IP address allocated to the pod. Routable at least within the cluster. Empty if not yet allocated.&#34;</span>,<span style="color:#e6db74">&#34;priority&#34;</span>:1<span style="color:#f92672">}</span>,<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;name&#34;</span>:<span style="color:#e6db74">&#34;Node&#34;</span>,<span style="color:#e6db74">&#34;type&#34;</span>:<span style="color:#e6db74">&#34;string&#34;</span>,<span style="color:#e6db74">&#34;format&#34;</span>:<span style="color:#e6db74">&#34;&#34;</span>,<span style="color:#e6db74">&#34;description&#34;</span>:<span style="color:#e6db74">&#34;NodeName is a request to schedule this pod onto a specific node. If it is non-empty, the scheduler simply schedules this pod onto that node, assuming that it fits resource requirements.&#34;</span>,<span style="color:#e6db74">&#34;priority&#34;</span>:1<span style="color:#f92672">}</span>,<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;name&#34;</span>:<span style="color:#e6db74">&#34;Nominated Node&#34;</span>,<span style="color:#e6db74">&#34;type&#34;</span>:<span style="color:#e6db74">&#34;string&#34;</span>,<span style="color:#e6db74">&#34;format&#34;</span>:<span style="color:#e6db74">&#34;&#34;</span>,<span style="color:#e6db74">&#34;description&#34;</span>:<span style="color:#e6db74">&#34;nominatedNodeName is set only when this pod preempts other pods on the node, but it cannot be scheduled right away as preemption victims receive their graceful termination periods. This field does not guarantee that the pod will be scheduled on this node. Scheduler may decide to place the pod elsewhere if other nodes become available sooner. Scheduler may also decide to give the resources on this node to a higher priority pod that is created after preemption. As a result, this field may be different than PodSpec.nodeName when the pod is scheduled.&#34;</span>,<span style="color:#e6db74">&#34;priority&#34;</span>:1<span style="color:#f92672">}</span>,<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;name&#34;</span>:<span style="color:#e6db74">&#34;Readiness Gates&#34;</span>,<span style="color:#e6db74">&#34;type&#34;</span>:<span style="color:#e6db74">&#34;string&#34;</span>,<span style="color:#e6db74">&#34;format&#34;</span>:<span style="color:#e6db74">&#34;&#34;</span>,<span style="color:#e6db74">&#34;description&#34;</span>:<span style="color:#e6db74">&#34;If specified, all readiness gates will be evaluated for pod readiness. A pod is ready when all its containers are ready AND all conditions specified in the readiness gates have status equal to \&#34;True\&#34; More info: https://git.k8s.io/enhancements/keps/sig-network/580-pod-readiness-gates&#34;</span>,<span style="color:#e6db74">&#34;priority&#34;</span>:1<span style="color:#f92672">}]</span>,<span style="color:#e6db74">&#34;rows&#34;</span>:<span style="color:#f92672">[{</span><span style="color:#e6db74">&#34;cells&#34;</span>:<span style="color:#f92672">[</span><span style="color:#e6db74">&#34;ngx&#34;</span>,<span style="color:#e6db74">&#34;1/1&#34;</span>,<span style="color:#e6db74">&#34;Running&#34;</span>,<span style="color:#e6db74">&#34;1 (4h30m ago)&#34;</span>,<span style="color:#e6db74">&#34;113d&#34;</span>,<span style="color:#e6db74">&#34;172.17.0.2&#34;</span>,<span style="color:#e6db74">&#34;minikube&#34;</span>,<span style="color:#e6db74">&#34;\u003cnone\u003e&#34;</span>,<span style="color:#e6db74">&#34;\u003cnone\u003e&#34;</span><span style="color:#f92672">]</span>,<span style="color:#e6db74">&#34;object&#34;</span>:<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;kind&#34;</span>:<span style="color:#e6db74">&#34;PartialObjectMetadata&#34;</span>,<span style="color:#e6db74">&#34;apiVersion&#34;</span>:<span style="color:#e6db74">&#34;meta.k8s.io/v1&#34;</span>,<span style="color:#e6db74">&#34;metadata&#34;</span>:<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;name&#34;</span>:<span style="color:#e6db74">&#34;ngx&#34;</span>,<span style="color:#e6db74">&#34;namespace&#34;</span>:<span style="color:#e6db74">&#34;default&#34;</span>,<span style="color:#e6db74">&#34;uid&#34;</span>:<span style="color:#e6db74">&#34;9141b021-f735-4d4f-97d7-a16ba477312b&#34;</span>,<span style="color:#e6db74">&#34;resourceVersion&#34;</span>:<span style="color:#e6db74">&#34;749131&#34;</span>,<span style="color:#e6db74">&#34;creationTimestamp&#34;</span>:<span style="color:#e6db74">&#34;2023-01-17T14:20:09Z&#34;</span>,<span style="color:#e6db74">&#34;labels&#34;</span>:<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;run&#34;</span>:<span style="color:#e6db74">&#34;ngx&#34;</span><span style="color:#f92672">}</span>,<span style="color:#e6db74">&#34;managedFields&#34;</span>:<span style="color:#f92672">[{</span><span style="color:#e6db74">&#34;manager&#34;</span>:<span style="color:#e6db74">&#34;kubectl-run&#34;</span>,<span style="color:#e6db74">&#34;operation&#34;</span>:<span style="color:#e6db74">&#34;Update&#34;</span>,<span style="color:#e6db74">&#34;apiVersion&#34;</span>:<span style="color:#e6db74">&#34;v1&#34;</span>,<span style="color:#e6db74">&#34;time&#34;</span>:<span style="color:#e6db74">&#34;2023-01-17T14:20:09Z&#34;</span>,<span style="color:#e6db74">&#34;fieldsType&#34;</span>:<span style="color:#e6db74">&#34;FieldsV1&#34;</span>,<span style="color:#e6db74">&#34;fieldsV1&#34;</span>:<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;f:metadata&#34;</span>:<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;f:labels&#34;</span>:<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;.&#34;</span>:<span style="color:#f92672">{}</span>,<span style="color:#e6db74">&#34;f:run&#34;</span>:<span style="color:#f92672">{}}}</span>,<span style="color:#e6db74">&#34;f:spec&#34;</span>:<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;f:containers&#34;</span>:<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;k:{\&#34;name\&#34;:\&#34;ngx\&#34;}&#34;</span>:<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;.&#34;</span>:<span style="color:#f92672">{}</span>,<span style="color:#e6db74">&#34;f:image&#34;</span>:<span style="color:#f92672">{}</span>,<span style="color:#e6db74">&#34;f:imagePullPolicy&#34;</span>:<span style="color:#f92672">{}</span>,<span style="color:#e6db74">&#34;f:name&#34;</span>:<span style="color:#f92672">{}</span>,<span style="color:#e6db74">&#34;f:resources&#34;</span>:<span style="color:#f92672">{}</span>,<span style="color:#e6db74">&#34;f:terminationMessagePath&#34;</span>:<span style="color:#f92672">{}</span>,<span style="color:#e6db74">&#34;f:terminationMessagePolicy&#34;</span>:<span style="color:#f92672">{}}}</span>,<span style="color:#e6db74">&#34;f:dnsPolicy&#34;</span>:<span style="color:#f92672">{}</span>,<span style="color:#e6db74">&#34;f:enableServiceLinks&#34;</span>:<span style="color:#f92672">{}</span>,<span style="color:#e6db74">&#34;f:restartPolicy&#34;</span>:<span style="color:#f92672">{}</span>,<span style="color:#e6db74">&#34;f:schedulerName&#34;</span>:<span style="color:#f92672">{}</span>,<span style="color:#e6db74">&#34;f:securityContext&#34;</span>:<span style="color:#f92672">{}</span>,<span style="color:#e6db74">&#34;f:terminationGracePeriodSeconds&#34;</span>:<span style="color:#f92672">{}}}}</span>,<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;manager&#34;</span>:<span style="color:#e6db74">&#34;Go-http-client&#34;</span>,<span style="color:#e6db74">&#34;operation&#34;</span>:<span style="color:#e6db74">&#34;Update&#34;</span>,<span style="color:#e6db74">&#34;apiVersion&#34;</span>:<span style="color:#e6db74">&#34;v1&#34;</span>,<span style="color:#e6db74">&#34;time&#34;</span>:<span style="color:#e6db74">&#34;2023-05-11T03:46:17Z&#34;</span>,<span style="color:#e6db74">&#34;fieldsType&#34;</span>:<span style="color:#e6db74">&#34;FieldsV1&#34;</span>,<span style="color:#e6db74">&#34;fieldsV1&#34;</span>:<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;f:status&#34;</span>:<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;f:conditions&#34;</span>:<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;k:{\&#34;type\&#34;:\&#34;ContainersReady\&#34;}&#34;</span>:<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;.&#34;</span>:<span style="color:#f92672">{}</span>,<span style="color:#e6db74">&#34;f:lastProbeTime&#34;</span>:<span style="color:#f92672">{}</span>,<span style="color:#e6db74">&#34;f:lastTransitionTime&#34;</span>:<span style="color:#f92672">{}</span>,<span style="color:#e6db74">&#34;f:status&#34;</span>:<span style="color:#f92672">{}</span>,<span style="color:#e6db74">&#34;f:type&#34;</span>:<span style="color:#f92672">{}}</span>,<span style="color:#e6db74">&#34;k:{\&#34;type\&#34;:\&#34;Initialized\&#34;}&#34;</span>:<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;.&#34;</span>:<span style="color:#f92672">{}</span>,<span style="color:#e6db74">&#34;f:lastProbeTime&#34;</span>:<span style="color:#f92672">{}</span>,<span style="color:#e6db74">&#34;f:lastTransitionTime&#34;</span>:<span style="color:#f92672">{}</span>,<span style="color:#e6db74">&#34;f:status&#34;</span>:<span style="color:#f92672">{}</span>,<span style="color:#e6db74">&#34;f:type&#34;</span>:<span style="color:#f92672">{}}</span>,<span style="color:#e6db74">&#34;k:{\&#34;type\&#34;:\&#34;Ready\&#34;}&#34;</span>:<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;.&#34;</span>:<span style="color:#f92672">{}</span>,<span style="color:#e6db74">&#34;f:lastProbeTime&#34;</span>:<span style="color:#f92672">{}</span>,<span style="color:#e6db74">&#34;f:lastTransitionTime&#34;</span>:<span style="color:#f92672">{}</span>,<span style="color:#e6db74">&#34;f:status&#34;</span>:<span style="color:#f92672">{}</span>,<span style="color:#e6db74">&#34;f:type&#34;</span>:<span style="color:#f92672">{}}}</span>,<span style="color:#e6db74">&#34;f:containerStatuses&#34;</span>:<span style="color:#f92672">{}</span>,<span style="color:#e6db74">&#34;f:hostIP&#34;</span>:<span style="color:#f92672">{}</span>,<span style="color:#e6db74">&#34;f:phase&#34;</span>:<span style="color:#f92672">{}</span>,<span style="color:#e6db74">&#34;f:podIP&#34;</span>:<span style="color:#f92672">{}</span>,<span style="color:#e6db74">&#34;f:podIPs&#34;</span>:<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;.&#34;</span>:<span style="color:#f92672">{}</span>,<span style="color:#e6db74">&#34;k:{\&#34;ip\&#34;:\&#34;172.17.0.2\&#34;}&#34;</span>:<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;.&#34;</span>:<span style="color:#f92672">{}</span>,<span style="color:#e6db74">&#34;f:ip&#34;</span>:<span style="color:#f92672">{}}}</span>,<span style="color:#e6db74">&#34;f:startTime&#34;</span>:<span style="color:#f92672">{}}}</span>,<span style="color:#e6db74">&#34;subresource&#34;</span>:<span style="color:#e6db74">&#34;status&#34;</span><span style="color:#f92672">}]}}}]}</span>
+</span></span><span style="display:flex;"><span>NAME   READY   STATUS    RESTARTS        AGE
+</span></span><span style="display:flex;"><span>ngx    1/1     Running   <span style="color:#ae81ff">1</span> <span style="color:#f92672">(</span>4h30m ago<span style="color:#f92672">)</span>   113d
+</span></span></code></pre></div><p>可以看到，kubectl 客户端等价于调用了 curl，向 8443 端口发送了 HTTP GET 请求，URL 是 <code>/api/v1/namespaces/default/pods</code>。</p>
+<h3 id="如何描述">
+  如何描述
+  <a class="anchor" href="#%e5%a6%82%e4%bd%95%e6%8f%8f%e8%bf%b0">#</a>
+</h3>
+<p>可以使用 YAML 描述并创建 API 对象。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Pod</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ngx-pod</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">env</span>: <span style="color:#ae81ff">demo</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">owner</span>: <span style="color:#ae81ff">xiaobinqt</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">containers</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">image</span>: <span style="color:#ae81ff">nginx:alpine</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ngx</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">ports</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">containerPort</span>: <span style="color:#ae81ff">80</span>
+</span></span></code></pre></div><ul>
+<li>
+<p>apiVersion 表示操作这种资源的 API 版本号，由于 Kubernetes 的迭代速度很快，不同的版本创建的对象会有差异，为了区分这些版本就需要使用 apiVersion 这个字段，比如 v1、v1alpha1、v1beta1 等等。</p>
+</li>
+<li>
+<p>kind 表示资源对象的类型，这个应该很好理解，比如 Pod、Node、Job、Service 等等。</p>
+</li>
+<li>
+<p>metadata 表示的是资源的一些 “元信息”，也就是用来标记对象，方便 Kubernetes 管理的一些信息。一般来说，“metadata” 里应该有 name 和 labels 这两个字段。</p>
+</li>
+</ul>
+<p>apiVersion、kind、metadata 这三个字段是任何对象都<strong>必须</strong>有的，由于每种对象会有不同的规格定义，在 YAML 里就表现为 spec 字段（即 specification），表示我们对对象的 “期望状态”（desired status）。</p>
+<p>以下的这个 spec 里是一个 containers 数组，里面的每个元素又是一个对象，指定了名字、镜像、端口等信息：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">containers</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">image</span>: <span style="color:#ae81ff">nginx:alpine</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ngx</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">ports</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">containerPort</span>: <span style="color:#ae81ff">80</span>
+</span></span></code></pre></div><h3 id="如何使用">
+  如何使用
+  <a class="anchor" href="#%e5%a6%82%e4%bd%95%e4%bd%bf%e7%94%a8">#</a>
+</h3>
+<p>使用 kubectl apply、kubectl delete，加上参数 -f 指定描述的 YAML 文件，就可以创建或者删除对象了：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#ae81ff">kubectl apply -f ngx-pod.yml</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">kubectl delete -f ngx-pod.yml</span>
+</span></span></code></pre></div><p>Kubernetes 收到 YAML 声明的数据，再根据 HTTP 请求里的 POST/DELETE 等方法，就会自动操作这个资源对象，至于对象在哪个节点上、怎么创建、怎么删除完全不用使用者操心。</p>
+<h3 id="编写-yaml-描述">
+  编写 YAML 描述
+  <a class="anchor" href="#%e7%bc%96%e5%86%99-yaml-%e6%8f%8f%e8%bf%b0">#</a>
+</h3>
+<p>kubectl explain，相当于是 Kubernetes 自带的 API 文档，会给出对象字段的详细说明。比如想要看 Pod 里的字段该怎么写，就可以这样：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>kubectl explain pod
+</span></span><span style="display:flex;"><span>kubectl explain pod.metadata
+</span></span><span style="display:flex;"><span>kubectl explain pod.spec
+</span></span><span style="display:flex;"><span>kubectl explain pod.spec.containers
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230511/53311111092841ac8fa627c76a551a8b.png" width=  /></div>
+<p>kubectl 的两个特殊参数 --dry-run=client 和 -o yaml，前者是空运行，后者是生成 YAML 格式，结合起来使用就会让 kubectl 不会有实际的创建动作，而只生成 YAML 文件。</p>
+<p>例如，想要生成一个 Pod 的 YAML 样板示例，可以在 kubectl run 后面加上这两个参数：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>kubectl run ngx --image<span style="color:#f92672">=</span>nginx:alpine --dry-run<span style="color:#f92672">=</span>client -o yaml
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230511/160a1adf246d4ac3b090372d37c66304.png" width=  /></div>
+<h2 id="参考">
+  参考
+  <a class="anchor" href="#%e5%8f%82%e8%80%83">#</a>
+</h2>
+<ul>
+<li>
+  <a href="https://medium.com/@keshiha/k8s-architecture-bb6964767c12">K8S Architecture</a></li>
+<li>
+  <a href="https://kubernetes.io/docs/reference/kubernetes-api/">Kubernetes API</a></li>
+</ul>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/4d25d4f5fa3e81c5348796217b86b70885d219dd" title='最后修改者 weibin | May 12, 2023' target="_blank" rel="noopener">
+      <img src="/kubernetes/svg/calendar.svg" class="book-icon" alt="Calendar" />
+      <span>May 12, 2023</span>
+    </a>
+  </div>
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/content/docs/part2-break-ice/2.3-working-mechanism.md" target="_blank" rel="noopener">
+      <img src="/kubernetes/svg/edit.svg" class="book-icon" alt="Edit" />
+      <span>编辑本页</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#23-工作机制">2.3 工作机制</a>
+      <ul>
+        <li><a href="#231-基本架构">2.3.1 基本架构</a></li>
+        <li><a href="#232-节点内部结构">2.3.2 节点内部结构</a>
+          <ul>
+            <li><a href="#组件">组件</a></li>
+            <li><a href="#工作流程">工作流程</a></li>
+          </ul>
+        </li>
+        <li><a href="#233-api-对象">2.3.3 API 对象</a>
+          <ul>
+            <li><a href="#如何描述">如何描述</a></li>
+            <li><a href="#如何使用">如何使用</a></li>
+            <li><a href="#编写-yaml-描述">编写 YAML 描述</a></li>
+          </ul>
+        </li>
+        <li><a href="#参考">参考</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

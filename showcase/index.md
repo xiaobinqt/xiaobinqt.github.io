@@ -7,7 +7,8 @@
 
 [//]: # ({{< showcase "雅思学习小册" "古之立大事者，不惟有超世之才，亦必有坚忍不拔之志" "https://cdn.xiaobinqt.cn/xiaobinqt.io/20230305/3191eab332c04b3ba4db9ddcaaeb29fe.png" "/ielts" >}})
 
-{{< showcase "HTTP 学习小册" "志在山顶的人，不会贪念山腰的风景" "https://cdn.xiaobinqt.cn/xiaobinqt.io/20230505/0c35d2d18a9b4fdc89f5d01abaf52701.png" "/http" >}}
+{{< showcase "HTTP 学习小册" "学而不思则罔，思而不学则殆" "https://cdn.xiaobinqt.cn/xiaobinqt.io/20230505/0c35d2d18a9b4fdc89f5d01abaf52701.png" "/http" >}}
 
+{{< showcase "Kubernetes 学习小册" "吾生也有涯，而知也无涯" "https://cdn.xiaobinqt.cn/xiaobinqt.io/20230711/e1f7153cad584012b4ead35c3e32046c.png" "/kubernetes" >}}
 
 
