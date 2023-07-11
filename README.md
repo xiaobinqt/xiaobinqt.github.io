@@ -5,6 +5,7 @@
 + [Linux 学习笔记](https://xiaobinqt.github.io/linux/)
 + [网络学习笔记](https://xiaobinqt.github.io/http/)
 + [LeetCode](https://xiaobinqt.github.io/leetcode/)
++ [Kubernetes 学习笔记](https://xiaobinqt.github.io/kubernetes/)
 
 ## 关于我
 
