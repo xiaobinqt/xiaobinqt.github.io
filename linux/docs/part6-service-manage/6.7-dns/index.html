@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="6.7 DNS # 6.7.1 简介 # DNS（Domain Name System）是一个用于将域名转换为与之关联的IP地址的分布式命名系统。它充当了互联网上域名与IP地址之间的映射服务。
+正向查询（Forward Lookup）：正向查询是根据给定的域名获取相应的IP地址。当你在浏览器中输入一个网址（例如 www.example.com），DNS 系统会执行正向查询以查找与该域名关联的 IP 地址，从而将你的请求转发到正确的服务器。
+反向查询（Reverse Lookup）：反向查询是根据给定的 IP 地址获取相应的域名。它是正向查询的逆过程。通过反向查询，你可以查找给定 IP 地址所对应的域名。这对于网络管理员来说是有用的，可以通过 IP 地址确定主机的域名。
+根域名（Root Domain）：根域名是 DNS 层次结构中的顶级域名，表示为一个点（.）。它是 DNS 命名空间的最高级别，所有其他域名都是从根域名派生出来的。根域名由一组 13 个根服务器（Root Servers）来管理，这些服务器分布在全球各个地点。
+www：www 是一个常见的域名前缀，表示 “World Wide Web”。通常，网站会使用类似 www.example.com 的域名来表示其 Web 服务。这是出于历史原因，当互联网刚刚兴起时，许多网站选择以 www 作为其主要 Web 服务器的标识。
+FQDN（Fully Qualified Domain Name）：FQDN 是一个完全限定域名，包括所有级别的域名，从根域名一直到最低级别的域名。例如，www.example.com 是一个 FQDN，它包含三个级别的域名：com（顶级域名）、example（二级域名）和www（三级域名）。
+6.7.2 BIND # BIND（Berkeley Internet Name Domain）是一个开源的 DNS 软件实现，它是最常用和广泛部署的 DNS 服务器软件之一。BIND 软件提供了 DNS 协议的实现，允许将域名解析请求映射到相应的 IP 地址。
+DNS（Domain Name System）是一个分布式的命名系统，用于将域名转换为与之关联的 IP 地址。它充当了互联网上域名与 IP 地址之间的映射服务。BIND 作为 DNS 服务器软件，实现了 DNS 协议的功能，用于接收来自客户端的域名解析请求，并将其转发到相应的域名服务器以获取相应的 IP 地址。">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="6.7 DNS" />
+<meta property="og:description" content="6.7 DNS # 6.7.1 简介 # DNS（Domain Name System）是一个用于将域名转换为与之关联的IP地址的分布式命名系统。它充当了互联网上域名与IP地址之间的映射服务。
+正向查询（Forward Lookup）：正向查询是根据给定的域名获取相应的IP地址。当你在浏览器中输入一个网址（例如 www.example.com），DNS 系统会执行正向查询以查找与该域名关联的 IP 地址，从而将你的请求转发到正确的服务器。
+反向查询（Reverse Lookup）：反向查询是根据给定的 IP 地址获取相应的域名。它是正向查询的逆过程。通过反向查询，你可以查找给定 IP 地址所对应的域名。这对于网络管理员来说是有用的，可以通过 IP 地址确定主机的域名。
+根域名（Root Domain）：根域名是 DNS 层次结构中的顶级域名，表示为一个点（.）。它是 DNS 命名空间的最高级别，所有其他域名都是从根域名派生出来的。根域名由一组 13 个根服务器（Root Servers）来管理，这些服务器分布在全球各个地点。
+www：www 是一个常见的域名前缀，表示 “World Wide Web”。通常，网站会使用类似 www.example.com 的域名来表示其 Web 服务。这是出于历史原因，当互联网刚刚兴起时，许多网站选择以 www 作为其主要 Web 服务器的标识。
+FQDN（Fully Qualified Domain Name）：FQDN 是一个完全限定域名，包括所有级别的域名，从根域名一直到最低级别的域名。例如，www.example.com 是一个 FQDN，它包含三个级别的域名：com（顶级域名）、example（二级域名）和www（三级域名）。
+6.7.2 BIND # BIND（Berkeley Internet Name Domain）是一个开源的 DNS 软件实现，它是最常用和广泛部署的 DNS 服务器软件之一。BIND 软件提供了 DNS 协议的实现，允许将域名解析请求映射到相应的 IP 地址。
+DNS（Domain Name System）是一个分布式的命名系统，用于将域名转换为与之关联的 IP 地址。它充当了互联网上域名与 IP 地址之间的映射服务。BIND 作为 DNS 服务器软件，实现了 DNS 协议的功能，用于接收来自客户端的域名解析请求，并将其转发到相应的域名服务器以获取相应的 IP 地址。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://example.com/linux/docs/part6-service-manage/6.7-dns/" /><meta property="article:section" content="docs" />
+
+<meta property="article:modified_time" content="2023-07-11T16:46:50+08:00" />
+<title>6.7 DNS | Linux 学习笔记</title>
+<link rel="manifest" href="/linux/manifest.json">
+<link rel="icon" href="/linux/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/linux/book.min.cad59a3be22b32d901c8b99a5bf0c00f01535383d8d0e86742e5449f598d17af.css" integrity="sha256-ytWaO&#43;IrMtkByLmaW/DADwFTU4PY0OhnQuVEn1mNF68=" crossorigin="anonymous">
+  <script defer src="/linux/flexsearch.min.js"></script>
+  <script defer src="/linux/zh.search.min.d5112f8edc1b73517a378f7827d89b8df1ea3b1b67560cea9860c4412e967560.js" integrity="sha256-1REvjtwbc1F6N494J9ibjfHqOxtnVgzqmGDEQS6WdWA=" crossorigin="anonymous"></script>
+
+  <script defer src="/linux/sw.min.e3338ad661715b83bfd6397040a613605d8bb26c10798773e2176216e2123560.js" integrity="sha256-4zOK1mFxW4O/1jlwQKYTYF2LsmwQeYdz4hdiFuISNWA=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/linux/"><span>Linux 学习笔记</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+<ul>
+    <li>
+        <a href="javascript:void(0)" onclick="hrefIndex()" rel="noopener">主页</a>
+    </li>
+    <li>
+        <a href="https://github.com/xiaobinqt" target="_blank" rel="noopener">GitHub</a>
+    </li>
+</ul>
+
+<hr>
+
+<script>
+    function hrefIndex() {
+        window.location = window.location.origin;
+    }
+</script>
+
+
+  
+<ul>
+  
+  <li>
+    <a href=""  target="_blank" rel="noopener">
+        
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第一部分 基础知识</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.1-operating-system/" class="">1.1 操作系统</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.2-overview/" class="">1.2 总览</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.3-common-dir/" class="">1.3 常见目录</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.4-process-manage/" class="">1.4 进程管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.5-deadlock/" class="">1.5 死锁</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.6-memory-manage/" class="">1.6 内存管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.7-link/" class="">1.7 链接</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.7-device-manage/" class="">1.7 设备管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.8-instruction-arch/" class="">1.8 指令集</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第二部分 系统操作</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.1-help/" class="">2.1 帮助命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.2-ls/" class="">2.2 ls 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.3-shutdown/" class="">2.3 关机</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.4-cp/" class="">2.4 cp 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.5-file-view/" class="">2.5 文件查看命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.6-backup-compression/" class="">2.6 压缩和打包</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.7-vim/" class="">2.7 vim</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.8-user-manage/" class="">2.8 用户管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.9-switch-user/" class="">2.9 切换用户</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.10-file-dir/" class="">2.10 文件和文件夹</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第三部分 系统管理</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.1-network/" class="">3.1 网络</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.2-net-trouble-removal/" class="">3.2 网络故障排除</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.3-net-manage/" class="">3.3 网络服务管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.4-soft-install/" class="">3.4 软件安装</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.5-process/" class="">3.5 进程管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.6-memory-disk/" class="">3.6 内存和磁盘管理</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第四部分 Shell</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.1-introduction/" class="">4.1 Shell 简介</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.2-env-config-file/" class="">4.2 环境变量</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.3-array/" class="">4.3 数组</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.4-escape-quot/" class="">4.4 转义和引用</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.5-operator/" class="">4.5 运算符</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.6-test-and-judge/" class="">4.6 测试和判断</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.7-process-control/" class="">4.7 流程控制</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.8-function/" class="">4.8 函数</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.9-script-cron/" class="">4.9 脚本和计划任务</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第五部分 文本操作</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part5-text-operate/5.1-regular/" class="">5.1 正则表达式</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part5-text-operate/5.2-sed/" class="">5.2 sed 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part5-text-operate/5.3-awk/" class="">5.3 awk 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part5-text-operate/5.4-cut-sort-uniq-tr/" class="">5.4 cut、sort、uniq、tr 命令</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第六部分 服务管理</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.1-firewall/" class="">6.1 防火墙</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.2-ssh/" class="">6.2 ssh</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.3-ftp/" class="">6.3 ftp</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.4-samba/" class="">6.4 samba</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.5-nfs/" class="">6.5 NFS</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.6-nginx/" class="">6.6 nginx</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.7-dns/" class="active">6.7 DNS</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.8-nas/" class="">6.8 NAS</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第七部分 常见问题</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part7-faq/7.1-cmd/" class="">7.1 命令相关</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/linux/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>6.7 DNS</strong>
+
+  <label for="toc-control">
+    
+    <img src="/linux/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#67-dns">6.7 DNS</a>
+      <ul>
+        <li><a href="#671-简介">6.7.1 简介</a></li>
+        <li><a href="#672-bind">6.7.2 BIND</a></li>
+        <li><a href="#673-根域">6.7.3 根域</a>
+          <ul>
+            <li><a href="#主域名服务">主域名服务</a></li>
+            <li><a href="#从域名服务器">从域名服务器</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown"><h1 id="67-dns">
+  6.7 DNS
+  <a class="anchor" href="#67-dns">#</a>
+</h1>
+<h2 id="671-简介">
+  6.7.1 简介
+  <a class="anchor" href="#671-%e7%ae%80%e4%bb%8b">#</a>
+</h2>
+<p>DNS（Domain Name System）是一个用于将域名转换为与之关联的IP地址的分布式命名系统。它充当了互联网上域名与IP地址之间的映射服务。</p>
+<ul>
+<li>
+<p>正向查询（Forward Lookup）：正向查询是根据给定的域名获取相应的IP地址。当你在浏览器中输入一个网址（例如 <code>www.example.com</code>），DNS 系统会执行正向查询以查找与该域名关联的 IP 地址，从而将你的请求转发到正确的服务器。</p>
+</li>
+<li>
+<p>反向查询（Reverse Lookup）：反向查询是根据给定的 IP 地址获取相应的域名。它是正向查询的逆过程。通过反向查询，你可以查找给定 IP 地址所对应的域名。这对于网络管理员来说是有用的，可以通过 IP 地址确定主机的域名。</p>
+</li>
+<li>
+<p>根域名（Root Domain）：根域名是 DNS 层次结构中的顶级域名，表示为一个点（.）。它是 DNS 命名空间的最高级别，所有其他域名都是从根域名派生出来的。根域名由一组 13 个根服务器（Root Servers）来管理，这些服务器分布在全球各个地点。</p>
+</li>
+<li>
+<p>www：www 是一个常见的域名前缀，表示 “World Wide Web”。通常，网站会使用类似 <code>www.example.com</code> 的域名来表示其 Web 服务。这是出于历史原因，当互联网刚刚兴起时，许多网站选择以 www 作为其主要 Web 服务器的标识。</p>
+</li>
+<li>
+<p>FQDN（Fully Qualified Domain Name）：FQDN 是一个完全限定域名，包括所有级别的域名，从根域名一直到最低级别的域名。例如，<code>www.example.com</code> 是一个 FQDN，它包含三个级别的域名：com（顶级域名）、example（二级域名）和www（三级域名）。</p>
+</li>
+</ul>
+<h2 id="672-bind">
+  6.7.2 BIND
+  <a class="anchor" href="#672-bind">#</a>
+</h2>
+<p>BIND（Berkeley Internet Name Domain）是一个开源的 DNS 软件实现，它是最常用和广泛部署的 DNS 服务器软件之一。BIND 软件提供了 DNS 协议的实现，允许将域名解析请求映射到相应的 IP 地址。</p>
+<p>DNS（Domain Name System）是一个分布式的命名系统，用于将域名转换为与之关联的 IP 地址。它充当了互联网上域名与 IP 地址之间的映射服务。BIND 作为 DNS 服务器软件，实现了 DNS 协议的功能，用于接收来自客户端的域名解析请求，并将其转发到相应的域名服务器以获取相应的 IP 地址。</p>
+<p>BIND 提供了多种功能，包括但不限于：</p>
+<ol>
+<li>
+<p>域名解析：BIND 作为 DNS 服务器软件，负责接收客户端的域名解析请求，并将其转发到适当的域名服务器，最终返回相应的 IP 地址给客户端。</p>
+</li>
+<li>
+<p>域名授权和转发：BIND 可以配置为授权特定的域名，即负责该域名的解析请求。它还可以配置为转发请求到其他域名服务器，以获取非本地域名的解析结果。</p>
+</li>
+<li>
+<p>域名记录管理：BIND 允许管理员管理和配置域名服务器上的各种资源记录，包括 A 记录（将域名映射到 IPv4 地址）、AAAA 记录（将域名映射到 IPv6 地址）、CNAME 记录（指定域名的别名）等。</p>
+</li>
+<li>
+<p>安全性和身份验证：BIND 支持设置安全策略和防止 DNS 缓存投毒等安全攻击。它还支持身份验证和加密通信，以确保 DNS 通信的机密性和完整性。</p>
+</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># 安装 bind</span>
+</span></span><span style="display:flex;"><span>yum install bind bind-utils -y
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 启动</span>
+</span></span><span style="display:flex;"><span>systemctl start|stop|restart|status named.service
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 修改了配置文件检查错误命令</span>
+</span></span><span style="display:flex;"><span>named-checkconf
+</span></span></code></pre></div><p>主配置文件在 /etc/named.conf。可以修改配置文件中的 listen-on port 53 为 any，表示监听的 ip 为 any，任何人都可以对 DNS 服务器进行查询。把 allow-query 也改为 any。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230711/54811b8120be488e841866e3048eef42.png" width=  /></div>
+<h2 id="673-根域">
+  6.7.3 根域
+  <a class="anchor" href="#673-%e6%a0%b9%e5%9f%9f">#</a>
+</h2>
+<p>/etc/named.conf 中有配置：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>zone <span style="color:#e6db74">&#34;.&#34;</span> IN <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        type hint;
+</span></span><span style="display:flex;"><span>        file <span style="color:#e6db74">&#34;named.ca&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>;
+</span></span></code></pre></div><p>可以用来实现根域，named.ca 文件在 /var/named 文件夹中。</p>
+<h3 id="主域名服务">
+  主域名服务
+  <a class="anchor" href="#%e4%b8%bb%e5%9f%9f%e5%90%8d%e6%9c%8d%e5%8a%a1">#</a>
+</h3>
+<p>比如新增一个 test.com 的主域名，修改 /etc/named.conf 文件，新增 test.com zone：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>zone <span style="color:#e6db74">&#34;test.com&#34;</span> IN <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        type master;
+</span></span><span style="display:flex;"><span>        file <span style="color:#e6db74">&#34;test.com.zone&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>;
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230711/e11acc503f1c4786b9dd8835b5cbbfa5.png" width=  /></div>
+<p>新建一个 /var/named/test.com.zone 文件，可以通过 cp -p 实现，这样可以保证文件权限：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>cp -p named.ca test.com.zone
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230711/14d61dd7614f4e9da36f9c715e45f282.png" width=  /></div>
+<p>编辑 test.com.zone 文件，写入如下内容：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>$TTL 1D
+</span></span><span style="display:flex;"><span>@ IN SOA @ ns1.test.com. (
+</span></span><span style="display:flex;"><span>2023071100 ; serial
+</span></span><span style="display:flex;"><span>1D ; refresh
+</span></span><span style="display:flex;"><span>1H ; retry
+</span></span><span style="display:flex;"><span>1W ; expire
+</span></span><span style="display:flex;"><span>3H ; minimum
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>@ IN NS ns1
+</span></span><span style="display:flex;"><span>ns1 IN A 192.168.116.54
+</span></span><span style="display:flex;"><span>www IN A 192.168.162.54
+</span></span><span style="display:flex;"><span>mail IN CNAME mailexchange
+</span></span><span style="display:flex;"><span>mailexchange IN A 192.168.106.54
+</span></span></code></pre></div><p>重启 named 服务：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>systemctl restart|reload named.service
+</span></span></code></pre></div><p>可以使用 nslookup 测试 DNS 是否正常：</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230711/aa39e404cc6f4e17bfe0d668706bc86d.png" width=  /></div>
+<p>server 指定 DNS 服务器为 192.168.16.54。</p>
+<h3 id="从域名服务器">
+  从域名服务器
+  <a class="anchor" href="#%e4%bb%8e%e5%9f%9f%e5%90%8d%e6%9c%8d%e5%8a%a1%e5%99%a8">#</a>
+</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>zone <span style="color:#e6db74">&#34;test.com&#34;</span> IN<span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    type slave;
+</span></span><span style="display:flex;"><span>    file <span style="color:#e6db74">&#34;slaves/test.com.zone&#34;</span>;
+</span></span><span style="display:flex;"><span>    masters<span style="color:#f92672">{</span>10.211.55.3;<span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>;
+</span></span></code></pre></div><p>从服务器的区域文件在启动后会从主服务器上自动同步过来。</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/1f6d290a0dbf04ab48d1b9f95d0ec62eb29f10f7" title='最后修改者 weibin | July 11, 2023' target="_blank" rel="noopener">
+      <img src="/linux/svg/calendar.svg" class="book-icon" alt="Calendar" />
+      <span>July 11, 2023</span>
+    </a>
+  </div>
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/content/docs/part6-service-manage/6.7-dns.md" target="_blank" rel="noopener">
+      <img src="/linux/svg/edit.svg" class="book-icon" alt="Edit" />
+      <span>编辑本页</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#67-dns">6.7 DNS</a>
+      <ul>
+        <li><a href="#671-简介">6.7.1 简介</a></li>
+        <li><a href="#672-bind">6.7.2 BIND</a></li>
+        <li><a href="#673-根域">6.7.3 根域</a>
+          <ul>
+            <li><a href="#主域名服务">主域名服务</a></li>
+            <li><a href="#从域名服务器">从域名服务器</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

@@ -3,37 +3,31 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="1.7 设备管理 # 1.7.1 磁盘结构 # 盘面（Platter）：一个磁盘有多个盘面； 磁道（Track）：盘面上的圆形带状区域，一个盘面可以有多个磁道； 扇区（Track Sector）：磁道上的一个弧段，一个磁道可以有多个扇区，它是最小的物理储存单位，目前主要有 512 bytes 与 4 K 两种大小； 磁头（Head）：与盘面非常接近，能够将盘面上的磁场转换为电信号（读），或者将电信号转换为盘面的磁场（写）； 制动手臂（Actuator arm）：用于在磁道之间移动磁头； 主轴（Spindle）：使整个盘面转动。 1.7.2 磁盘调度算法 # 读写一个磁盘块的时间的影响因素有：
-旋转时间（主轴转动盘面，使得磁头移动到适当的扇区上） 寻道时间（制动手臂移动，使得磁头移动到适当的磁道上） 实际的数据传输时间 其中，寻道时间最长，因此磁盘调度的主要目标是使磁盘的平均寻道时间最短。
-1. 先来先服务 # FCFS, First Come First Served
-按照磁盘请求的顺序进行调度。
-优点是公平和简单。缺点也很明显，因为未对寻道做任何优化，使平均寻道时间可能较长。
-2. 最短寻道时间优先 # SSTF, Shortest Seek Time First
-优先调度与当前磁头所在磁道距离最近的磁道。
-虽然平均寻道时间比较低，但是不够公平。如果新到达的磁道请求总是比一个在等待的磁道请求近，那么在等待的磁道请求会一直等待下去，也就是出现饥饿现象。具体来说，两端的磁道请求更容易出现饥饿现象。
-3. 电梯算法 # SCAN
-电梯总是保持一个方向运行，直到该方向没有请求为止，然后改变运行方向。
-电梯算法（扫描算法）和电梯的运行过程类似，总是按一个方向来进行磁盘调度，直到该方向上没有未完成的磁盘请求，然后改变方向。
-因为考虑了移动方向，因此所有的磁盘请求都会被满足，解决了 SSTF 的饥饿问题。">
+<meta name="description" content="6.8 NAS # 6.8.1 简介 # NAS（Network Attached Storage）是一种网络附加存储设备，它提供了一种简单和方便的方法来集中存储和共享文件、数据和媒体内容。NAS 设备通常连接到局域网（LAN）上，可以通过网络协议（如 NFS、SMB/CIFS、AFP 等）提供文件共享服务，使多台计算机或其他设备可以同时访问和使用存储在 NAS 上的文件。
+NAS 设备通常是一个独立的硬件设备，它包含一个或多个硬盘驱动器组成的存储系统，并配备了一个嵌入式操作系统和网络接口。它可以通过以太网连接到局域网，并通过网络协议提供文件服务。一些高级的NAS设备还提供其他功能，如备份、远程访问、多用户访问控制、多媒体流媒体等。
+NAS 的优点包括：
+简单易用：NAS 设备通常具有友好的用户界面和配置工具，使其易于安装、设置和管理。
+文件共享和协作：通过 NAS 设备，多个用户可以方便地共享和访问存储在同一个位置的文件，促进文件的协作和共享。
+数据备份：NAS 设备通常提供内置的备份功能，可以自动备份计算机或其他设备上的数据，保护数据免受意外丢失或损坏。
+远程访问：一些 NAS 设备支持远程访问，使用户可以通过互联网从任何地方安全地访问和管理存储的文件。
+扩展性：NAS 设备通常具有可扩展的存储容量，可以根据需求添加更多的硬盘驱动器来扩展存储空间。
+NAS 设备适用于个人用户、家庭用户和小型办公环境，以满足数据存储、共享和备份的需求。它提供了一个中心化的存储解决方案，使用户能够轻松管理和访问存储的文件和数据。">
 <meta name="theme-color" content="#FFFFFF">
-<meta name="color-scheme" content="light dark"><meta property="og:title" content="1.7 设备管理" />
-<meta property="og:description" content="1.7 设备管理 # 1.7.1 磁盘结构 # 盘面（Platter）：一个磁盘有多个盘面； 磁道（Track）：盘面上的圆形带状区域，一个盘面可以有多个磁道； 扇区（Track Sector）：磁道上的一个弧段，一个磁道可以有多个扇区，它是最小的物理储存单位，目前主要有 512 bytes 与 4 K 两种大小； 磁头（Head）：与盘面非常接近，能够将盘面上的磁场转换为电信号（读），或者将电信号转换为盘面的磁场（写）； 制动手臂（Actuator arm）：用于在磁道之间移动磁头； 主轴（Spindle）：使整个盘面转动。 1.7.2 磁盘调度算法 # 读写一个磁盘块的时间的影响因素有：
-旋转时间（主轴转动盘面，使得磁头移动到适当的扇区上） 寻道时间（制动手臂移动，使得磁头移动到适当的磁道上） 实际的数据传输时间 其中，寻道时间最长，因此磁盘调度的主要目标是使磁盘的平均寻道时间最短。
-1. 先来先服务 # FCFS, First Come First Served
-按照磁盘请求的顺序进行调度。
-优点是公平和简单。缺点也很明显，因为未对寻道做任何优化，使平均寻道时间可能较长。
-2. 最短寻道时间优先 # SSTF, Shortest Seek Time First
-优先调度与当前磁头所在磁道距离最近的磁道。
-虽然平均寻道时间比较低，但是不够公平。如果新到达的磁道请求总是比一个在等待的磁道请求近，那么在等待的磁道请求会一直等待下去，也就是出现饥饿现象。具体来说，两端的磁道请求更容易出现饥饿现象。
-3. 电梯算法 # SCAN
-电梯总是保持一个方向运行，直到该方向没有请求为止，然后改变运行方向。
-电梯算法（扫描算法）和电梯的运行过程类似，总是按一个方向来进行磁盘调度，直到该方向上没有未完成的磁盘请求，然后改变方向。
-因为考虑了移动方向，因此所有的磁盘请求都会被满足，解决了 SSTF 的饥饿问题。" />
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="6.8 NAS" />
+<meta property="og:description" content="6.8 NAS # 6.8.1 简介 # NAS（Network Attached Storage）是一种网络附加存储设备，它提供了一种简单和方便的方法来集中存储和共享文件、数据和媒体内容。NAS 设备通常连接到局域网（LAN）上，可以通过网络协议（如 NFS、SMB/CIFS、AFP 等）提供文件共享服务，使多台计算机或其他设备可以同时访问和使用存储在 NAS 上的文件。
+NAS 设备通常是一个独立的硬件设备，它包含一个或多个硬盘驱动器组成的存储系统，并配备了一个嵌入式操作系统和网络接口。它可以通过以太网连接到局域网，并通过网络协议提供文件服务。一些高级的NAS设备还提供其他功能，如备份、远程访问、多用户访问控制、多媒体流媒体等。
+NAS 的优点包括：
+简单易用：NAS 设备通常具有友好的用户界面和配置工具，使其易于安装、设置和管理。
+文件共享和协作：通过 NAS 设备，多个用户可以方便地共享和访问存储在同一个位置的文件，促进文件的协作和共享。
+数据备份：NAS 设备通常提供内置的备份功能，可以自动备份计算机或其他设备上的数据，保护数据免受意外丢失或损坏。
+远程访问：一些 NAS 设备支持远程访问，使用户可以通过互联网从任何地方安全地访问和管理存储的文件。
+扩展性：NAS 设备通常具有可扩展的存储容量，可以根据需求添加更多的硬盘驱动器来扩展存储空间。
+NAS 设备适用于个人用户、家庭用户和小型办公环境，以满足数据存储、共享和备份的需求。它提供了一个中心化的存储解决方案，使用户能够轻松管理和访问存储的文件和数据。" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://example.com/linux/docs/part1-primary/1.7-device-manage/" /><meta property="article:section" content="docs" />
+<meta property="og:url" content="https://example.com/linux/docs/part6-service-manage/6.8-nas/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2023-03-14T10:05:56+08:00" />
-<title>1.7 设备管理 | Linux 学习笔记</title>
+<meta property="article:modified_time" content="2023-07-11T16:46:50+08:00" />
+<title>6.8 NAS | Linux 学习笔记</title>
 <link rel="manifest" href="/linux/manifest.json">
 <link rel="icon" href="/linux/favicon.png" type="image/x-icon">
 <link rel="stylesheet" href="/linux/book.min.cad59a3be22b32d901c8b99a5bf0c00f01535383d8d0e86742e5449f598d17af.css" integrity="sha256-ytWaO&#43;IrMtkByLmaW/DADwFTU4PY0OhnQuVEn1mNF68=" crossorigin="anonymous">
@@ -223,7 +217,7 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/linux/docs/part1-primary/1.7-device-manage/" class="active">1.7 设备管理</a>
+    <a href="/linux/docs/part1-primary/1.7-device-manage/" class="">1.7 设备管理</a>
   
 
         </li>
@@ -807,7 +801,7 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/linux/docs/part6-service-manage/6.8-nas/" class="">6.8 NAS</a>
+    <a href="/linux/docs/part6-service-manage/6.8-nas/" class="active">6.8 NAS</a>
   
 
         </li>
@@ -885,7 +879,7 @@ https://github.com/alex-shpak/hugo-book
     <img src="/linux/svg/menu.svg" class="book-icon" alt="Menu" />
   </label>
 
-  <strong>1.7 设备管理</strong>
+  <strong>6.8 NAS</strong>
 
   <label for="toc-control">
     
@@ -901,16 +895,9 @@ https://github.com/alex-shpak/hugo-book
   
 <nav id="TableOfContents">
   <ul>
-    <li><a href="#17-设备管理">1.7 设备管理</a>
+    <li><a href="#68-nas">6.8 NAS</a>
       <ul>
-        <li><a href="#171-磁盘结构">1.7.1 磁盘结构</a></li>
-        <li><a href="#172-磁盘调度算法">1.7.2 磁盘调度算法</a>
-          <ul>
-            <li><a href="#1-先来先服务">1. 先来先服务</a></li>
-            <li><a href="#2-最短寻道时间优先">2. 最短寻道时间优先</a></li>
-            <li><a href="#3-电梯算法">3. 电梯算法</a></li>
-          </ul>
-        </li>
+        <li><a href="#681-简介">6.8.1 简介</a></li>
       </ul>
     </li>
   </ul>
@@ -925,64 +912,35 @@ https://github.com/alex-shpak/hugo-book
 
       
       
-  <article class="markdown"><h1 id="17-设备管理">
-  1.7 设备管理
-  <a class="anchor" href="#17-%e8%ae%be%e5%a4%87%e7%ae%a1%e7%90%86">#</a>
+  <article class="markdown"><h1 id="68-nas">
+  6.8 NAS
+  <a class="anchor" href="#68-nas">#</a>
 </h1>
-<h2 id="171-磁盘结构">
-  1.7.1 磁盘结构
-  <a class="anchor" href="#171-%e7%a3%81%e7%9b%98%e7%bb%93%e6%9e%84">#</a>
+<h2 id="681-简介">
+  6.8.1 简介
+  <a class="anchor" href="#681-%e7%ae%80%e4%bb%8b">#</a>
 </h2>
-<ul>
-<li>盘面（Platter）：一个磁盘有多个盘面；</li>
-<li>磁道（Track）：盘面上的圆形带状区域，一个盘面可以有多个磁道；</li>
-<li>扇区（Track Sector）：磁道上的一个弧段，一个磁道可以有多个扇区，它是最小的物理储存单位，目前主要有 512 bytes 与 4 K 两种大小；</li>
-<li>磁头（Head）：与盘面非常接近，能够将盘面上的磁场转换为电信号（读），或者将电信号转换为盘面的磁场（写）；</li>
-<li>制动手臂（Actuator arm）：用于在磁道之间移动磁头；</li>
-<li>主轴（Spindle）：使整个盘面转动。</li>
-</ul>
-<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221225/e1f881074cd242c49717eada7d91e549.png"/> </div><br>
-<h2 id="172-磁盘调度算法">
-  1.7.2 磁盘调度算法
-  <a class="anchor" href="#172-%e7%a3%81%e7%9b%98%e8%b0%83%e5%ba%a6%e7%ae%97%e6%b3%95">#</a>
-</h2>
-<p>读写一个磁盘块的时间的影响因素有：</p>
-<ul>
-<li>旋转时间（主轴转动盘面，使得磁头移动到适当的扇区上）</li>
-<li>寻道时间（制动手臂移动，使得磁头移动到适当的磁道上）</li>
-<li>实际的数据传输时间</li>
-</ul>
-<p>其中，寻道时间最长，因此磁盘调度的主要目标是使磁盘的平均寻道时间最短。</p>
-<h3 id="1-先来先服务">
-  1. 先来先服务
-  <a class="anchor" href="#1-%e5%85%88%e6%9d%a5%e5%85%88%e6%9c%8d%e5%8a%a1">#</a>
-</h3>
-<blockquote>
-<p>FCFS, First Come First Served</p>
-</blockquote>
-<p>按照磁盘请求的顺序进行调度。</p>
-<p>优点是公平和简单。缺点也很明显，因为未对寻道做任何优化，使平均寻道时间可能较长。</p>
-<h3 id="2-最短寻道时间优先">
-  2. 最短寻道时间优先
-  <a class="anchor" href="#2-%e6%9c%80%e7%9f%ad%e5%af%bb%e9%81%93%e6%97%b6%e9%97%b4%e4%bc%98%e5%85%88">#</a>
-</h3>
-<blockquote>
-<p>SSTF, Shortest Seek Time First</p>
-</blockquote>
-<p>优先调度与当前磁头所在磁道距离最近的磁道。</p>
-<p>虽然平均寻道时间比较低，但是不够公平。如果新到达的磁道请求总是比一个在等待的磁道请求近，那么在等待的磁道请求会一直等待下去，也就是出现饥饿现象。具体来说，两端的磁道请求更容易出现饥饿现象。</p>
-<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221225/243843c6184346368aee7a6677908910.png"/> </div><br>
-<h3 id="3-电梯算法">
-  3. 电梯算法
-  <a class="anchor" href="#3-%e7%94%b5%e6%a2%af%e7%ae%97%e6%b3%95">#</a>
-</h3>
-<blockquote>
-<p>SCAN</p>
-</blockquote>
-<p>电梯总是保持一个方向运行，直到该方向没有请求为止，然后改变运行方向。</p>
-<p>电梯算法（扫描算法）和电梯的运行过程类似，总是按一个方向来进行磁盘调度，直到该方向上没有未完成的磁盘请求，然后改变方向。</p>
-<p>因为考虑了移动方向，因此所有的磁盘请求都会被满足，解决了 SSTF 的饥饿问题。</p>
-<div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221225/d6844e82beee46a488623f2f69cf1e3a.png"/> </div><br>
+<p>NAS（Network Attached Storage）是一种网络附加存储设备，它提供了一种简单和方便的方法来集中存储和共享文件、数据和媒体内容。NAS 设备通常连接到局域网（LAN）上，可以通过网络协议（如 NFS、SMB/CIFS、AFP 等）提供文件共享服务，使多台计算机或其他设备可以同时访问和使用存储在 NAS 上的文件。</p>
+<p>NAS 设备通常是一个独立的硬件设备，它包含一个或多个硬盘驱动器组成的存储系统，并配备了一个嵌入式操作系统和网络接口。它可以通过以太网连接到局域网，并通过网络协议提供文件服务。一些高级的NAS设备还提供其他功能，如备份、远程访问、多用户访问控制、多媒体流媒体等。</p>
+<p>NAS 的优点包括：</p>
+<ol>
+<li>
+<p>简单易用：NAS 设备通常具有友好的用户界面和配置工具，使其易于安装、设置和管理。</p>
+</li>
+<li>
+<p>文件共享和协作：通过 NAS 设备，多个用户可以方便地共享和访问存储在同一个位置的文件，促进文件的协作和共享。</p>
+</li>
+<li>
+<p>数据备份：NAS 设备通常提供内置的备份功能，可以自动备份计算机或其他设备上的数据，保护数据免受意外丢失或损坏。</p>
+</li>
+<li>
+<p>远程访问：一些 NAS 设备支持远程访问，使用户可以通过互联网从任何地方安全地访问和管理存储的文件。</p>
+</li>
+<li>
+<p>扩展性：NAS 设备通常具有可扩展的存储容量，可以根据需求添加更多的硬盘驱动器来扩展存储空间。</p>
+</li>
+</ol>
+<p>NAS 设备适用于个人用户、家庭用户和小型办公环境，以满足数据存储、共享和备份的需求。它提供了一个中心化的存储解决方案，使用户能够轻松管理和访问存储的文件和数据。</p>
 </article>
  
       
@@ -992,16 +950,16 @@ https://github.com/alex-shpak/hugo-book
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/b0cc6c190723e17328db57a4e1d41d8d2dec5880" title='最后修改者 weibin | March 14, 2023' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/1f6d290a0dbf04ab48d1b9f95d0ec62eb29f10f7" title='最后修改者 weibin | July 11, 2023' target="_blank" rel="noopener">
       <img src="/linux/svg/calendar.svg" class="book-icon" alt="Calendar" />
-      <span>March 14, 2023</span>
+      <span>July 11, 2023</span>
     </a>
   </div>
 
 
 
   <div>
-    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/content/docs/part1-primary/1.7-device-manage.md" target="_blank" rel="noopener">
+    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/content/docs/part6-service-manage/6.8-nas.md" target="_blank" rel="noopener">
       <img src="/linux/svg/edit.svg" class="book-icon" alt="Edit" />
       <span>编辑本页</span>
     </a>
@@ -1037,16 +995,9 @@ https://github.com/alex-shpak/hugo-book
   
 <nav id="TableOfContents">
   <ul>
-    <li><a href="#17-设备管理">1.7 设备管理</a>
+    <li><a href="#68-nas">6.8 NAS</a>
       <ul>
-        <li><a href="#171-磁盘结构">1.7.1 磁盘结构</a></li>
-        <li><a href="#172-磁盘调度算法">1.7.2 磁盘调度算法</a>
-          <ul>
-            <li><a href="#1-先来先服务">1. 先来先服务</a></li>
-            <li><a href="#2-最短寻道时间优先">2. 最短寻道时间优先</a></li>
-            <li><a href="#3-电梯算法">3. 电梯算法</a></li>
-          </ul>
-        </li>
+        <li><a href="#681-简介">6.8.1 简介</a></li>
       </ul>
     </li>
   </ul>
