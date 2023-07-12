@@ -14,11 +14,11 @@ featuredImage: "https://cdn.xiaobinqt.cn/xiaobinqt.io/20221117/6d5a8e4d284a409ea
 featuredImagePreview: ""
 reproduce: false
 
-tags: ["mysql"]
-categories: ["mysql"]
+tags: [ "mysql" ]
+categories: [ "mysql" ]
 lightgallery: true
 
-series: ["interview"]
+series: [ "interview" ]
 
 toc: true
 
@@ -97,8 +97,7 @@ INT后边的`(5)`，这个 5 就是显示宽度，默认是10，也就是 `INT` 
 + 该列的实际值的位数必须小于显示宽度
 + 在创建表的时候，如果声明了`ZEROFILL`属性的列没有声明`UNSIGNED`属性，MySQL 会为该列自动生成`UNSIGNED`属性
 + **显示宽度并不会影响实际类型的实际存储空间**
-+ 对于没有声明`ZEROFILL`属性的列，显示宽度没有任何作用，只有在查询声明了`ZEROFILL`属性的列时，显示宽度才会起作用，否则
-  **可以忽略**显示宽度这个东西的存在。
++ 对于没有声明`ZEROFILL`属性的列，显示宽度没有任何作用，只有在查询声明了`ZEROFILL`属性的列时，显示宽度才会起作用，否则**可以忽略**显示宽度这个东西的存在。
 
 ## limit、offset 区别
 
@@ -109,7 +108,8 @@ limit 和 offset 都可以用来限制查询条数，一般用做分页。
 + 当 limit 后面跟一个参数的时候，该参数表示要取的数据的数量
 
 ```sql
-select * from user limit 3 
+select *
+from user limit 3
 ```
 
 表示直接取前三条数据。
@@ -117,7 +117,8 @@ select * from user limit 3
 + 当 limit 后面跟两个参数的时候，第一个数表示**开始行**，后一位表示要取的数量，例如
 
 ```sql
-select * from user limit 1,3;
+select *
+from user limit 1,3;
 ```
 
 从 0 行开始计算，取第 1 - 3 条数据，也就是取 1,2,3 三条数据。
@@ -125,7 +126,9 @@ select * from user limit 1,3;
 + 当 limit 和 offset 组合使用的时候，limit 后面只能有一个参数，表示要取的的数量，offset 表示开始行。
 
 ```sql
-select * from user limit 3 offset 1;
+select *
+from user limit 3
+offset 1;
 ```
 
 从 0 行开始计算，取第 1 - 3 条数据，也就是取 1,2,3 三条数据。
@@ -161,17 +164,17 @@ select * from user limit 3 offset 1;
 
 常见时间单位
 
-| 时间单位          | 描述  |
-|---------------|-----|
-| `MICROSECOND` | 毫秒  |
-| `SECOND`      | 秒   |
-| `MINUTE`      | 分钟  |
-| `HOUR`        | 小时  |
-| `DAY`         | 天   |
-| `WEEK`        | 星期  |
-| `MONTH`       | 月   |
-| `QUARTER`     | 季度  |
-| `YEAR`        | 年   |
+| 时间单位          | 描述 |
+|---------------|----|
+| `MICROSECOND` | 毫秒 |
+| `SECOND`      | 秒  |
+| `MINUTE`      | 分钟 |
+| `HOUR`        | 小时 |
+| `DAY`         | 天  |
+| `WEEK`        | 星期 |
+| `MONTH`       | 月  |
+| `QUARTER`     | 季度 |
+| `YEAR`        | 年  |
 
 ### 数值处理函数
 
@@ -233,9 +236,9 @@ END IF;
 
 ```shell
 CASE WHEN 表达式 THEN 处理语句
-    else 表达式 end 
-  
-## 或者  
+    else 表达式 end
+
+## 或者
 CASE when 表达式 then 处理语句
     when 表达式 then 处理语句
     ... 可以与多个 when 表达式 then 处理语句
@@ -245,8 +248,8 @@ CASE when 表达式 then 处理语句
 示例：
 
 ```shell
-select *, 
-	CASE WHEN name='大彬' THEN '角色1' 
+select *,
+	CASE WHEN name='大彬' THEN '角色1'
     else '角色2' end as processed_name ,
     case when status = 1 then '已处理'
     when status = 0 then '未处理'
@@ -308,9 +311,7 @@ END
 
 ## DUPLICATE KEY UPDATE
 
-对于**主键**或者有**唯一性约束**
-的列或列组合来说，新插入的记录如果和表中已存在的记录重复的话，我们可以选择的策略不仅仅是忽略（`INSERT IGNORE`
-）该条记录的插入，也可以选择更新这条重复的旧记录。
+对于**主键**或者有**唯一性约束**的列或列组合来说，新插入的记录如果和表中已存在的记录重复的话，我们可以选择的策略不仅仅是忽略（`INSERT IGNORE`）该条记录的插入，也可以选择更新这条重复的旧记录。
 
 ```sql
 CREATE TABLE `t`
