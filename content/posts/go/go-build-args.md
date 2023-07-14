@@ -11,8 +11,9 @@ author: "xiaobinqt"
 description: "go build 常用命令,golang,编译,go 编译"
 resources:
 
-  - name: ""
-    src: ""
+featuredImage: "https://cdn.xiaobinqt.cn/xiaobinqt.io/20230714/766aed50dd3947ca9b2b2f9c0562a31a.png"
+
+featuredImagePreview: ""
 
 tags: [ "golang" ]
 categories: [ "golang" ]
