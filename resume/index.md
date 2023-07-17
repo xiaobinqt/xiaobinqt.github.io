@@ -137,5 +137,5 @@
 
 + 熟悉 [Laravel5.5](https://learnku.com/docs/laravel/5.5) 框架和 [composer](https://getcomposer.org/) 在项目中的使用。
 + 获得企业微信开发经验，微信支付和 Redis 相关使用经验。
-+ 参与 [Laravel 社区](https://learnku.com/laravel) 文档翻译并[贡献](https://learnku.com/docs/laravel/5.8?mode=translators)。
++ 参与 [Laravel 社区](https://learnku.com/laravel) 文档翻译并[贡献](https://learnku.com/docs/laravel/5.8?mode=translators#:~:text=Narcissus%20%E4%B8%BA%E6%9C%AC%E6%96%87%E6%A1%A3%E8%B4%A1%E7%8C%AE%E4%BA%86%202%20%E4%B8%AA%E7%BF%BB%E8%AF%91)。
 
