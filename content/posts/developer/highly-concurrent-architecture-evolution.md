@@ -21,9 +21,9 @@ reproduce: true
 
 translate: false
 
-series: ["reproduce"]
-tags: [高并发"]
-categories: ["开发者手册"]
+series: [ "reproduce" ]
+tags: [ "高并发" ]
+categories: [ "开发者手册" ]
 lightgallery: true
 
 toc: true
