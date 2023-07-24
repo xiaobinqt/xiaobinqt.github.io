@@ -7,6 +7,7 @@
 + 本科/通信工程
 + 手机/微信：15209272743
 + Github：[https://github.com/xiaobinqt](https://github.com/xiaobinqt)
++ DockerHub：[https://hub.docker.com/u/xiaobinqt](https://hub.docker.com/u/xiaobinqt)
 + 个人网站：[https://xiaobinqt.github.io](https://xiaobinqt.github.io/) / [https://www.xiaobinqt.cn](https://www.xiaobinqt.cn/)
 + Email：[xiaobinqt@163.com](mailto:xiaobinqt@163.com)
 + 开源项目：[Go微信机器人](https://github.com/xiaobinqt/go-wxbot)
@@ -28,8 +29,9 @@
 + 熟练使用 MySQL 数据库，了解 MySQL 索引，事务，锁机制等。
 + 熟悉 Docker 的使用，工作中可熟练编写 Dockerfile。了解 Linux 常用命令和 Shell 脚本的编写。
 + 熟悉 Git 版本控制软件，具有良好的编码风格和习惯，热爱开源。
++ 熟悉 Python 的使用，可使用 Python 进行常用脚本的编写。
 + 熟悉 Redis 的数据结构和高并发使用场景，比如缓存雪崩，缓存穿透，缓存击穿等。
-+ 了解 Python 的使用，可使用 Python 进行常用脚本的编写。
++ 了解 [Kubernetes](https://www.xiaobinqt.cn/kubernetes/) 的基本使用。
 + 了解 JS、Node、npm、jQuery、CSS+DIV 盒模型等 web 前端技术（[个人前端学习网站示例](https://html.dev.xiaobinqt.cn)）。
 + 了解 [wordpress](https://wordpress.com/) 的基本使用。了解常用的设计模式。
 
@@ -37,7 +39,7 @@
 
 ### [希云科技（北京）有限公司](https://xiicloud.mysxl.cn/) （ 2021年4月 ~  ）
 
-在公司担任 Go 开发，参与研发了 [柔性开发仿真一体化项目](http://g.xii.cloud:42225/) 和 xae 项目。目前柔性开发仿真一体化项目已上线，服务于国家电网，该项目是组态化微应用开发仿真发布一体化云平台，可以帮助客户快速开发应用并部署。xae 项目是信创项目，目的是赋能企业数字化转型，快速搭建迁徙适配测试平台。
+在公司担任 Go 开发，参与研发了 [柔性开发仿真一体化项目](http://g.xii.cloud:42225/) 和 xae 项目。目前柔性开发仿真一体化项目已上线，服务于国家电网，该项目是组态化微应用开发仿真发布一体化云平台，可以帮助客户快速开发应用并部署。xae 是信创项目，目的是赋能企业数字化转型，快速搭建迁徙适配测试平台。
 
 ### 法本信息技术股份有限公司外派腾讯 （ 2019年4月 ~ 2021年4月 ）
 
@@ -71,7 +73,7 @@
 
 **项目描述**
 
-使用 Go 开发的信创项目，以数字化引领信创技术，以信创筑牢数字化建设。可以通过 xae 平台给公司赋能，快速搭建迁徙适配测试平台。xae 平台包括厂商管理，产品管理，适配测试，数据迁徙，知识库，证书管理，自动化部署等功能。
+使用 Go 开发的信创项目，以数字化引领信创技术，以信创筑牢数字化建设。可以通过 xae 平台给公司赋能，快速搭建迁徙适配测试平台。xae 平台包括厂商管理，产品管理，适配测试，数据迁徙，CI/CD，知识库，证书管理，自动化部署等功能。
 
 **项目职责**
 
