@@ -10,7 +10,7 @@
 + DockerHub：[https://hub.docker.com/u/xiaobinqt](https://hub.docker.com/u/xiaobinqt)
 + 个人网站：[https://xiaobinqt.github.io](https://xiaobinqt.github.io/) / [https://www.xiaobinqt.cn](https://www.xiaobinqt.cn/)
 + Email：[xiaobinqt@163.com](mailto:xiaobinqt@163.com)
-+ 开源项目：[Go微信机器人](https://github.com/xiaobinqt/go-wxbot)
++ 开源项目：[Go微信机器人](https://github.com/xiaobinqt/go-wxbot) / [豆奶签到](https://github.com/xiaobinqt/dounai-checkin)
 
 ## 自我评价
 
