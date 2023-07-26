@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="3.2 网络故障排除 # 3.2.1 ping # 测试主机之间网络的连通性。
 -c 参数 # 设置完成要求回应的次数。
-3.2.2 traceroute # 3.2.3 mtr # 3.2.4 nslookup # 3.2.4 telnet # 端口是否畅通 # telnet www.baidu.com 80 # 我当前主机到对方主机的 80 端口是否畅通 3.2.5 tcpdump # tcpdump -i any -n port 80 -i 选线 # 指定网卡，可以用 -i any 表示所有网卡或是-i eth0指定网络接口/网卡的数据包。
+3.2.2 traceroute # 3.2.3 mtr # 3.2.4 nslookup # 3.2.4 telnet # 端口是否畅通 # telnet www.baidu.com 80 # 我当前主机到对方主机的 80 端口是否畅通 3.2.5 tcpdump # tcpdump -i any -n port 80 -i 选线 # 指定网卡，可以用 -i any 表示所有网卡或是-i eth0指定网络接口/网卡的数据包。如果不指定网卡，默认 tcpdump 只会监视第一个网络接口，一般是 eth0。
 -n 选项 # 不要使用域名的形式进行显示。
 port # 指定端口。
 指定主机和端口 # tcpdump -i any -n host 10.0.0.1 and port 80 tcpdump -i any -n host 10.">
@@ -13,20 +13,20 @@ port # 指定端口。
 <meta name="color-scheme" content="light dark"><meta property="og:title" content="3.2 网络故障排除" />
 <meta property="og:description" content="3.2 网络故障排除 # 3.2.1 ping # 测试主机之间网络的连通性。
 -c 参数 # 设置完成要求回应的次数。
-3.2.2 traceroute # 3.2.3 mtr # 3.2.4 nslookup # 3.2.4 telnet # 端口是否畅通 # telnet www.baidu.com 80 # 我当前主机到对方主机的 80 端口是否畅通 3.2.5 tcpdump # tcpdump -i any -n port 80 -i 选线 # 指定网卡，可以用 -i any 表示所有网卡或是-i eth0指定网络接口/网卡的数据包。
+3.2.2 traceroute # 3.2.3 mtr # 3.2.4 nslookup # 3.2.4 telnet # 端口是否畅通 # telnet www.baidu.com 80 # 我当前主机到对方主机的 80 端口是否畅通 3.2.5 tcpdump # tcpdump -i any -n port 80 -i 选线 # 指定网卡，可以用 -i any 表示所有网卡或是-i eth0指定网络接口/网卡的数据包。如果不指定网卡，默认 tcpdump 只会监视第一个网络接口，一般是 eth0。
 -n 选项 # 不要使用域名的形式进行显示。
 port # 指定端口。
 指定主机和端口 # tcpdump -i any -n host 10.0.0.1 and port 80 tcpdump -i any -n host 10." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://example.com/linux/docs/part3-sys-manage/3.2-net-trouble-removal/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2023-02-12T20:34:19+08:00" />
+<meta property="article:modified_time" content="2023-07-26T15:56:43+08:00" />
 <title>3.2 网络故障排除 | Linux 学习笔记</title>
 <link rel="manifest" href="/linux/manifest.json">
 <link rel="icon" href="/linux/favicon.png" type="image/x-icon">
 <link rel="stylesheet" href="/linux/book.min.cad59a3be22b32d901c8b99a5bf0c00f01535383d8d0e86742e5449f598d17af.css" integrity="sha256-ytWaO&#43;IrMtkByLmaW/DADwFTU4PY0OhnQuVEn1mNF68=" crossorigin="anonymous">
   <script defer src="/linux/flexsearch.min.js"></script>
-  <script defer src="/linux/zh.search.min.d0a50bdf1d08f0fcbff11ec329b0875d1f3c76289fc8b957bdeac2e521cd0b27.js" integrity="sha256-0KUL3x0I8Py/8R7DKbCHXR88diifyLlXverC5SHNCyc=" crossorigin="anonymous"></script>
+  <script defer src="/linux/zh.search.min.789b356292aa6604a7b753161de709b9fad92dea60f1270f190c71fb56ba9e71.js" integrity="sha256-eJs1YpKqZgSnt1MWHecJufrZLepg8ScPGQxx&#43;1a6nnE=" crossorigin="anonymous"></script>
 
   <script defer src="/linux/sw.min.e3338ad661715b83bfd6397040a613605d8bb26c10798773e2176216e2123560.js" integrity="sha256-4zOK1mFxW4O/1jlwQKYTYF2LsmwQeYdz4hdiFuISNWA=" crossorigin="anonymous"></script>
 <!--
@@ -910,6 +910,7 @@ https://github.com/alex-shpak/hugo-book
             <li><a href="#-n-选项">-n 选项</a></li>
             <li><a href="#port">port</a></li>
             <li><a href="#指定主机和端口">指定主机和端口</a></li>
+            <li><a href="#-vv">-vv</a></li>
             <li><a href="#保存抓取信息">保存抓取信息</a></li>
           </ul>
         </li>
@@ -982,7 +983,7 @@ https://github.com/alex-shpak/hugo-book
   -i 选线
   <a class="anchor" href="#-i-%e9%80%89%e7%ba%bf">#</a>
 </h3>
-<p>指定网卡，可以用 <code>-i any</code> 表示所有网卡或是<code>-i eth0</code>指定网络接口/网卡的数据包。</p>
+<p>指定网卡，可以用 <code>-i any</code> 表示所有网卡或是<code>-i eth0</code>指定网络接口/网卡的数据包。如果不指定网卡，默认 tcpdump 只会监视第一个网络接口，一般是 eth0。</p>
 <h3 id="-n-选项">
   -n 选项
   <a class="anchor" href="#-n-%e9%80%89%e9%a1%b9">#</a>
@@ -1000,7 +1001,12 @@ https://github.com/alex-shpak/hugo-book
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>tcpdump -i any -n host 10.0.0.1 and port <span style="color:#ae81ff">80</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>tcpdump -i any -n host 10.0.0.1
-</span></span></code></pre></div><h3 id="保存抓取信息">
+</span></span></code></pre></div><h3 id="-vv">
+  -vv
+  <a class="anchor" href="#-vv">#</a>
+</h3>
+<p>更详细显示指令执行过程。</p>
+<h3 id="保存抓取信息">
   保存抓取信息
   <a class="anchor" href="#%e4%bf%9d%e5%ad%98%e6%8a%93%e5%8f%96%e4%bf%a1%e6%81%af">#</a>
 </h3>
@@ -1011,7 +1017,7 @@ https://github.com/alex-shpak/hugo-book
   <a class="anchor" href="#326-netstat">#</a>
 </h2>
 <p>查看服务的监听地址和端口。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>netstat -ntpl 
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>netstat -ntpl
 </span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230204/277b009f91034f4080029d90c93ce618.png" width=  /></div>
 <h3 id="-n-选线">
   -n 选线
@@ -1048,9 +1054,9 @@ https://github.com/alex-shpak/hugo-book
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/bdacdb767ad27120ea38f1a251da7b10c7e0cd71" title='最后修改者 weibin | February 12, 2023' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/9a687998c9861ee148f7f6c9ec5fdfe6b9ef5fbe" title='最后修改者 weibin | July 26, 2023' target="_blank" rel="noopener">
       <img src="/linux/svg/calendar.svg" class="book-icon" alt="Calendar" />
-      <span>February 12, 2023</span>
+      <span>July 26, 2023</span>
     </a>
   </div>
 
@@ -1114,6 +1120,7 @@ https://github.com/alex-shpak/hugo-book
             <li><a href="#-n-选项">-n 选项</a></li>
             <li><a href="#port">port</a></li>
             <li><a href="#指定主机和端口">指定主机和端口</a></li>
+            <li><a href="#-vv">-vv</a></li>
             <li><a href="#保存抓取信息">保存抓取信息</a></li>
           </ul>
         </li>
