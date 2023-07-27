@@ -10,7 +10,7 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://www.xiaobinqt.cn/redis-single-thread-why-so-fast/" /><meta property="og:image" content="https://www.xiaobinqt.cn/logo.png"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2021-04-03T00:00:00+00:00" />
-<meta property="article:modified_time" content="2022-11-25T18:51:14+08:00" />
+<meta property="article:modified_time" content="2023-07-27T14:00:55+08:00" />
 <meta property="og:see_also" content="https://www.xiaobinqt.cn/go-sync-map/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/highly-concurrent-architecture-evolution/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/session-cookie-token-difference/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/mysql-faq-2/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/why-mysql-index-use-btree/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/redis-break-pierce-avalanche/" />
 
 <meta name="twitter:card" content="summary_large_image"/>
@@ -35,8 +35,8 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/www.xiaobinqt.cn\/redis-single-thread-why-so-fast\/"
-        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "redis, IO多路复用","wordcount":  4892 ,
-        "url": "https:\/\/www.xiaobinqt.cn\/redis-single-thread-why-so-fast\/","datePublished": "2021-04-03T00:00:00+00:00","dateModified": "2022-11-25T18:51:14+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "redis, IO多路复用","wordcount":  4851 ,
+        "url": "https:\/\/www.xiaobinqt.cn\/redis-single-thread-why-so-fast\/","datePublished": "2021-04-03T00:00:00+00:00","dateModified": "2023-07-27T14:00:55+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "xxxx","logo": {
                     "@type": "ImageObject",
@@ -148,7 +148,7 @@
             <div class="post-meta-line"><span class="post-author">
                     <i class="custom-icon iconfont icon-weibiaoti-"></i>
                 </span>&nbsp;&nbsp;<span class="post-category">收录于 </span>&nbsp;<span class="post-category">类别 <a href="/categories/%E5%BC%80%E5%8F%91%E8%80%85%E6%89%8B%E5%86%8C/"><i class="far fa-folder fa-fw"></i>开发者手册</a></span>&nbsp;<span class="post-category">和</span>&nbsp;<span class="post-series">系列 <a href="/series/reproduce/"><i class="far fa-list-alt fa-fw"></i>转载</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-04-03">2021-04-03</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2022-11-25">2022-11-25</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 4892 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-04-03">2021-04-03</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2023-07-27">2023-07-27</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 4851 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 10 分钟&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
@@ -486,9 +486,15 @@
     </figure></p>
 <p>可以看出几个细节：</p>
 <ol>
-<li>select 调用需要传入 fd 数组，需要拷贝一份到内核，高并发场景下这样的拷贝消耗的资源是惊人的。（可优化为不复制）</li>
-<li>select 在内核层仍然是通过遍历的方式检查文件描述符的就绪状态，是个同步过程，只不过无系统调用切换上下文的开销。（内核层可优化为异步事件通知）</li>
-<li>select 仅仅返回可读文件描述符的个数，具体哪个可读还是要用户自己遍历。（可优化为只返回给用户就绪的文件描述符，无需用户做无效的遍历）</li>
+<li>
+<p>select 调用需要传入 fd 数组，需要<strong>拷贝一份到内核</strong>，高并发场景下这样的拷贝消耗的资源是惊人的。（可优化为不复制）</p>
+</li>
+<li>
+<p>select 在内核层仍然是通过遍历的方式检查文件描述符的就绪状态，是个同步过程，只不过无系统调用切换上下文的开销。（内核层可优化为异步事件通知）</p>
+</li>
+<li>
+<p>select 仅仅返回可读文件描述符的个数，具体哪个可读还是要用户自己遍历。（可优化为只返回给用户就绪的文件描述符，无需用户做无效的遍历）</p>
+</li>
 </ol>
 <p>整个 select 的流程图如下👇</p>
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221124/d4914bc01ce140c790589ec87cf3b181.png" title="select流程图" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221124/d4914bc01ce140c790589ec87cf3b181.png" data-sub-html="<h2>select流程图</h2><p>select流程图</p>">
@@ -528,15 +534,27 @@
     <a href="#epoll" class="header-mark"></a>epoll</h3><p>epoll 是最终的大 boss，它解决了 select 和 poll 的一些问题。</p>
 <p>还记得上面说的 select 的三个细节么❓</p>
 <ol>
-<li>select 调用需要传入 fd 数组，需要拷贝一份到内核，高并发场景下这样的拷贝消耗的资源是惊人的。（可优化为不复制）</li>
-<li>select 在内核层仍然是通过遍历的方式检查文件描述符的就绪状态，是个同步过程，只不过无系统调用切换上下文的开销。（内核层可优化为异步事件通知）</li>
-<li>select 仅仅返回可读文件描述符的个数，具体哪个可读还是要用户自己遍历。（可优化为只返回给用户就绪的文件描述符，无需用户做无效的遍历） 所以 epoll 主要就是针对这三点进行了改进。</li>
+<li>
+<p>select 调用需要传入 fd 数组，需要拷贝一份到内核，高并发场景下这样的拷贝消耗的资源是惊人的。（可优化为不复制）</p>
+</li>
+<li>
+<p>select 在内核层仍然是通过遍历的方式检查文件描述符的就绪状态，是个同步过程，只不过无系统调用切换上下文的开销。（内核层可优化为异步事件通知）</p>
+</li>
+<li>
+<p>select 仅仅返回可读文件描述符的个数，具体哪个可读还是要用户自己遍历。（可优化为只返回给用户就绪的文件描述符，无需用户做无效的遍历）。</p>
+</li>
 </ol>
 <p>所以 epoll 主要就是针对这三点进行了<strong>改进</strong>。</p>
 <ol>
-<li>内核中保存一份文件描述符集合，无需用户每次都重新传入，只需告诉内核修改的部分即可。</li>
-<li>内核不再通过轮询的方式找到就绪的文件描述符，而是通过异步 IO 事件唤醒。</li>
-<li>内核仅会将有 IO 事件的文件描述符返回给用户，用户也无需遍历整个文件描述符集合。</li>
+<li>
+<p>内核中保存一份文件描述符集合，无需用户每次都重新传入，只需告诉内核修改的部分即可。</p>
+</li>
+<li>
+<p>内核不再通过轮询的方式找到就绪的文件描述符，而是通过异步 IO 事件唤醒。</p>
+</li>
+<li>
+<p>内核仅会将有 IO 事件的文件描述符返回给用户，用户也无需遍历整个文件描述符集合。</p>
+</li>
 </ol>
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/epoll.gif" title="epoll" data-thumbnail="https://cdn.xiaobinqt.cn/epoll.gif" data-sub-html="<h2>epoll</h2><p>epoll</p>">
         <img
@@ -555,7 +573,7 @@
 <p>多路复用有三个函数，最开始是 select，然后又发明了 poll 解决了 select 文件描述符的限制，然后又发明了 epoll 解决 select 的三个不足。</p>
 <p>所以，IO 模型的演进，其实就是时代的变化，倒逼着操作系统将更多的功能加到自己的内核而已。</p>
 <p>如果你建立了这样的思维，很容易发现网上的一些错误。比如好多文章说，多路复用之所以效率高，是因为用一个线程就可以监控多个文件描述符。</p>
-<p>这显然是知其然而不知其所以然，多路复用产生的效果，完全可以由用户态去遍历文件描述符并调用其非阻塞的<code>read</code>函数实现。而多路复用快的原因在于，操作系统提供了这样的系统调用，使得原来的<code>while</code>循环里多次系统调用，变成了一次系统调用 + 内核层遍历这些文件描述符。就好比我们平时写业务代码，把原来<code>while</code>循环里调 http 接口进行批量，改成了让对方提供一个批量添加的 http 接口，然后我们一次 rpc 请求就完成了批量添加。</p>
+<p>这显然是知其然而不知其所以然，多路复用产生的效果，完全可以由用户态去遍历文件描述符并调用其非阻塞的 <code>read</code> 函数实现。而多路复用快的原因在于，操作系统提供了这样的系统调用，使得原来的 <code>while</code> 循环里多次系统调用，变成了一次系统调用 + 内核层遍历这些文件描述符。就好比平时写业务代码，把原来 <code>while</code> 循环里调 http 接口进行批量，改成了让对方提供一个批量添加的 http 接口，然后一次 rpc 请求就完成了批量添加。</p>
 <h2 id="单线程的redis为什么快" class="headerLink">
     <a href="#%e5%8d%95%e7%ba%bf%e7%a8%8b%e7%9a%84redis%e4%b8%ba%e4%bb%80%e4%b9%88%e5%bf%ab" class="header-mark"></a>单线程的Redis为什么快</h2><ul>
 <li>纯内存操作</li>
@@ -574,16 +592,16 @@
 <p>上述三个原因中的最后一个是最终使用单线程模型的决定性因素，其他的两个原因都是使用单线程模型额外带来的好处。</p>
 <h3 id="可维护性" class="headerLink">
     <a href="#%e5%8f%af%e7%bb%b4%e6%8a%a4%e6%80%a7" class="header-mark"></a>可维护性</h3><p>可维护性对于一个项目来说非常重要，如果代码难以调试和测试，问题也经常难以复现，这对于任何一个项目来说都会严重地影响项目的可维护性。多线程模型虽然在某些方面表现优异，但是它却引入了程序执行顺序的不确定性，代码的执行过程不再是串行的，多个线程同时访问的变量如果没有谨慎处理就会带来诡异的问题。</p>
-<p>引入了多线程，就必须要同时引入并发控制来保证在多个线程同时访问数据时程序行为的正确性，这就需要工程师额外维护并发控制的相关代码，例如，我们需要在可能被并发读写的变量上增加互斥锁。在访问这些变量或者内存之前也需要先对获取互斥锁，一旦忘记获取锁或者忘记释放锁就可能会导致各种诡异的问题，管理相关的并发控制机制也需要付出额外的研发成本和负担。</p>
+<p>引入了多线程，就必须要同时引入并发控制来保证在多个线程同时访问数据时程序行为的正确性，这就需要工程师额外维护并发控制的相关代码，例如，需要在可能被并发读写的变量上增加互斥锁。在访问这些变量或者内存之前也需要先对获取互斥锁，一旦忘记获取锁或者忘记释放锁就可能会导致各种诡异的问题，管理相关的并发控制机制也需要付出额外的研发成本和负担。</p>
 <h3 id="性能瓶颈" class="headerLink">
-    <a href="#%e6%80%a7%e8%83%bd%e7%93%b6%e9%a2%88" class="header-mark"></a>性能瓶颈</h3><p>多线程技术能够帮助我们充分利用 CPU 的计算资源来并发的执行不同的任务，但是 CPU 资源往往都不是 Redis 服务器的性能瓶颈。哪怕我们在一个普通的 Linux 服务器上启动 Redis 服务，它也能在 1s 的时间内处理 1,000,000 个用户请求。</p>
+    <a href="#%e6%80%a7%e8%83%bd%e7%93%b6%e9%a2%88" class="header-mark"></a>性能瓶颈</h3><p>多线程技术能够帮助我们充分利用 CPU 的计算资源来并发的执行不同的任务，但是 CPU 资源往往都不是 Redis 服务器的性能瓶颈。哪怕在一个普通的 Linux 服务器上启动 Redis 服务，它也能在 1s 的时间内处理 1,000,000 个用户请求。</p>
 <p>Redis 并不是 CPU 密集型的服务，如果不开启 AOF 备份，所有 Redis 的操作都会在内存中完成不会涉及任何的 I/O 操作，这些数据的读写由于只发生在内存中，所以处理速度是非常快的；整个服务的瓶颈在于网络传输带来的延迟和等待客户端的数据传输，也就是网络 I/O，所以使用多线程模型处理全部的外部请求可能不是一个好的方案。</p>
 <blockquote>
 <p>AOF 是 Redis 的一种持久化机制，它会在每次收到来自客户端的写请求时，将其记录到日志中，每次 Redis 服务器启动时都会重放 AOF 日志构建原始的数据集，保证数据的持久性。</p>
 </blockquote>
 <p>多线程虽然会帮助我们更充分地利用 CPU 资源，但是操作系统上线程的切换也不是免费的，线程切换其实会带来额外的开销。频繁的对线程的上下文进行切换可能还会导致性能地急剧下降，这可能会导致我们不仅没有提升请求处理的平均速度，反而进行了负优化，所以这也是为什么 Redis 对于使用多线程技术非常谨慎。</p>
 <h2 id="引入多线程" class="headerLink">
-    <a href="#%e5%bc%95%e5%85%a5%e5%a4%9a%e7%ba%bf%e7%a8%8b" class="header-mark"></a>引入多线程</h2><p>对于 Redis 中的一些超大键值对，几十 MB 或者几百 MB 的数据并不能在几毫秒的时间内处理完，Redis 可能会需要在释放内存空间上消耗较多的时间，这些操作就会阻塞待处理的任务，然而释放内存空间的工作其实可以由后台线程异步进行处理，这也就是<code>UNLINK</code>命令的实现原理，它只会将键从元数据中删除，真正的删除操作会在后台异步执行。</p>
+    <a href="#%e5%bc%95%e5%85%a5%e5%a4%9a%e7%ba%bf%e7%a8%8b" class="header-mark"></a>引入多线程</h2><p>对于 Redis 中的一些超大键值对，几十 MB 或者几百 MB 的数据并不能在几毫秒的时间内处理完，Redis 可能会需要在释放内存空间上消耗较多的时间，这些操作就会阻塞待处理的任务，然而释放内存空间的工作其实可以由后台线程异步进行处理，这也就是 <code>UNLINK</code> 命令的实现原理，它只会将键从元数据中删除，真正的删除操作会在后台异步执行。</p>
 <h2 id="参考" class="headerLink">
     <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
 <li><a href="https://try.redis.io/" target="_blank" rel="noopener noreferrer">在线redis工具</a></li>
@@ -597,8 +615,8 @@
     <div class="post-info">
         <div class="post-info-line">
             <div class="post-info-mod">
-                <span>更新于 2022-11-25&nbsp;<a class="git-hash" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/cf1b831e40ec63eb544710d78b4a56933c79d60a" target="_blank" title="commit by weibin(xiaobinqt@163.com) cf1b831e40ec63eb544710d78b4a56933c79d60a: add redis-single-thread-why-so-fast.md" rel="noopener noreferrer">
-                                    <i class="fas fa-hashtag fa-fw"></i>cf1b831e</a></span>
+                <span>更新于 2023-07-27&nbsp;<a class="git-hash" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/e7986fd6790b436960afad1b275dd6c4152549b6" target="_blank" title="commit by weibin(xiaobinqt@163.com) e7986fd6790b436960afad1b275dd6c4152549b6: update redis-single-thread-why-so-fast.md" rel="noopener noreferrer">
+                                    <i class="fas fa-hashtag fa-fw"></i>e7986fd6</a></span>
             </div>
             <div class="post-info-license"></div>
         </div>
