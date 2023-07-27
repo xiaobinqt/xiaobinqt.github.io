@@ -55,7 +55,7 @@ from edge
 having edge_id = '0104932b-8edc-4f2d-9d51-c0450867e373'; -- sql2 正确
 ```
 
-这 2 句 sql 的效果是一样的，sql1 用 where 过滤相当于在返回结果**前**过滤，sql2 用 having 过滤相当于在返回结果**后**过滤。
+这两句 sql 的效果是一样的，sql1 用 where 过滤相当于在返回结果**前**过滤，sql2 用 having 过滤相当于在返回结果**后**过滤。
 
 ### 示例 2
 
