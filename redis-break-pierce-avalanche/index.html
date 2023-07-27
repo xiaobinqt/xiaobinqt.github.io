@@ -10,7 +10,7 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://www.xiaobinqt.cn/redis-break-pierce-avalanche/" /><meta property="og:image" content="https://www.xiaobinqt.cn/logo.png"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2022-04-13T00:00:00+00:00" />
-<meta property="article:modified_time" content="2022-12-05T13:55:12+08:00" />
+<meta property="article:modified_time" content="2023-07-27T10:32:06+08:00" />
 <meta property="og:see_also" content="https://www.xiaobinqt.cn/go-sync-map/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/highly-concurrent-architecture-evolution/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/session-cookie-token-difference/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/mysql-faq-2/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/why-mysql-index-use-btree/" />
 
 <meta name="twitter:card" content="summary_large_image"/>
@@ -36,7 +36,7 @@
             "@type": "WebPage",
             "@id": "https:\/\/www.xiaobinqt.cn\/redis-break-pierce-avalanche\/"
         },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "redis","wordcount":  2278 ,
-        "url": "https:\/\/www.xiaobinqt.cn\/redis-break-pierce-avalanche\/","datePublished": "2022-04-13T00:00:00+00:00","dateModified": "2022-12-05T13:55:12+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+        "url": "https:\/\/www.xiaobinqt.cn\/redis-break-pierce-avalanche\/","datePublished": "2022-04-13T00:00:00+00:00","dateModified": "2023-07-27T10:32:06+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "xxxx","logo": {
                     "@type": "ImageObject",
@@ -168,7 +168,7 @@
             <div class="post-meta-line"><span class="post-author">
                     <i class="custom-icon iconfont icon-weibiaoti-"></i>
                 </span>&nbsp;&nbsp;<span class="post-category">收录于 </span>&nbsp;<span class="post-category">类别 <a href="/categories/%E5%BC%80%E5%8F%91%E8%80%85%E6%89%8B%E5%86%8C/"><i class="far fa-folder fa-fw"></i>开发者手册</a></span>&nbsp;<span class="post-category">和</span>&nbsp;<span class="post-series">系列 <a href="/series/reproduce/"><i class="far fa-list-alt fa-fw"></i>转载</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-04-13">2022-04-13</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2022-12-05">2022-12-05</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2278 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-04-13">2022-04-13</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2023-07-27">2023-07-27</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2278 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 5 分钟&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
@@ -258,8 +258,7 @@
     <a href="#%e7%bc%93%e5%ad%98%e6%97%a0%e6%95%88%e7%9a%84-key" class="header-mark"></a>缓存无效的 key</h4><p>如果<strong>缓存和数据库都查不到</strong>
 某个 key 的数据就写一个到 Redis 中去并设置过期时间。这种方式可以解决请求的 key 变化不频繁的情况，如果黑客恶意攻击，每次构建不同的请求 key，会导致 Redis 中缓存大量无效的 key 。这种方案并不能从根本上解决此问题。如果非要用这种方式来解决穿透问题的话，应该尽量将无效的 key 的过期时间设置短一点比如 1 分钟。</p>
 <h4 id="布隆过滤器" class="headerLink">
-    <a href="#%e5%b8%83%e9%9a%86%e8%bf%87%e6%bb%a4%e5%99%a8" class="header-mark"></a>布隆过滤器</h4><p>布隆过滤器是一个非常神奇的数据结构，通过它我们可以非常方便地
-<strong>判断一个给定数据是否存在于海量数据中</strong>。我们需要的仅仅就是判断 key 是否合法。</p>
+    <a href="#%e5%b8%83%e9%9a%86%e8%bf%87%e6%bb%a4%e5%99%a8" class="header-mark"></a>布隆过滤器</h4><p>布隆过滤器是一个非常神奇的数据结构，通过它我们可以非常方便地<strong>判断一个给定数据是否存在于海量数据中</strong>。我们需要的仅仅就是判断 key 是否合法。</p>
 <p>具体是这样做的：把所有可能存在的请求的值都存放在布隆过滤器中，当用户请求过来，先判断用户发来的请求的值是否存在于布隆过滤器中。不存在的话，直接返回请求参数错误信息给客户端，存在的话再走其他的判断流程。</p>
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220407/c81922434bf5420c94e349e07980054b.png" title="布隆过滤器" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220407/c81922434bf5420c94e349e07980054b.png" data-sub-html="<h2>布隆过滤器</h2><p>布隆过滤器</p>">
         <img
@@ -342,8 +341,8 @@
     <div class="post-info">
         <div class="post-info-line">
             <div class="post-info-mod">
-                <span>更新于 2022-12-05&nbsp;<a class="git-hash" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/b52ad988533c4ef42c9cf67368e50fc14d0a3e8e" target="_blank" title="commit by weibin(xiaobinqt@163.com) b52ad988533c4ef42c9cf67368e50fc14d0a3e8e: update redis-break-pierce-avalanche.md" rel="noopener noreferrer">
-                                    <i class="fas fa-hashtag fa-fw"></i>b52ad988</a></span>
+                <span>更新于 2023-07-27&nbsp;<a class="git-hash" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/d8a07fa4ed04175d300ac3b9dd9e1ac6c2b86929" target="_blank" title="commit by weibin(xiaobinqt@163.com) d8a07fa4ed04175d300ac3b9dd9e1ac6c2b86929: update redis-break-pierce-avalanche.md" rel="noopener noreferrer">
+                                    <i class="fas fa-hashtag fa-fw"></i>d8a07fa4</a></span>
             </div>
             <div class="post-info-license"></div>
         </div>
