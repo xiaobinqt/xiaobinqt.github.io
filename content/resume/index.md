@@ -36,16 +36,6 @@ math: true
 
 通信工程 &emsp; &emsp; 本科 &emsp; &emsp; 2012 - 2016
 
-## 自我评价
-
-+ 热爱代码，对开源抱有极大的热情，曾给多个开源项目贡献代码。有坚持做一件事的毅力和决心。
-+ 良好的沟通能力，学习能力，适应能力强及团队协作意识，具有主人翁意识。
-
-## 期望职位
-
-+ 期望职位：Golang 开发 / PHP 开发
-+ 期望城市：北京
-
 ## 个人技能
 
 + 熟悉 Go 语法，并发编程，协程，管道的使用，熟悉 Go GC，GMP 模型。可熟练使用 gin 框架开发。
@@ -58,6 +48,16 @@ math: true
 + 了解 [Kubernetes](https://www.xiaobinqt.cn/kubernetes/) 的基本使用。
 + 了解 JS、Node、npm、jQuery、CSS+DIV 盒模型等 web 前端技术（[个人前端学习网站示例](https://html.dev.xiaobinqt.cn)）。
 + 了解 [wordpress](https://wordpress.com/) 的基本使用。了解常用的设计模式。
+
+## 自我评价
+
++ 热爱代码，对开源抱有极大的热情，曾给多个开源项目贡献代码。有坚持做一件事的毅力和决心。
++ 良好的沟通能力，学习能力，适应能力强及团队协作意识，具有主人翁意识。
+
+## 期望职位
+
++ 期望职位：Golang 开发 / PHP 开发
++ 期望城市：北京
 
 ## 工作经历
 
@@ -163,4 +163,4 @@ math: true
 
 + 熟悉 [Laravel5.5](https://learnku.com/docs/laravel/5.5) 框架和 [composer](https://getcomposer.org/) 在项目中的使用。
 + 获得企业微信开发经验，微信支付和 Redis 相关使用经验。
-+ 参与 [Laravel 社区](https://learnku.com/laravel) 文档翻译并[贡献](https://learnku.com/docs/laravel/5.8?mode=translators#:~:text=Narcissus%20%E4%B8%BA%E6%9C%AC%E6%96%87%E6%A1%A3%E8%B4%A1%E7%8C%AE%E4%BA%86%202%20%E4%B8%AA%E7%BF%BB%E8%AF%91)。
++ 参与 [Laravel 社区](https://learnku.com/laravel) 的 [Laravel 5.8 中文文档](https://learnku.com/docs/laravel/5.8?mode=translators#:~:text=Narcissus%20%E4%B8%BA%E6%9C%AC%E6%96%87%E6%A1%A3%E8%B4%A1%E7%8C%AE%E4%BA%86%202%20%E4%B8%AA%E7%BF%BB%E8%AF%91) 翻译。
