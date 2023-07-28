@@ -15,7 +15,7 @@
 
 ## 联系我
 
-+ 邮箱: xiaobinqt@163.com / 2801202003@qq.com
++ 邮箱: xiaobinqt@163.com / binnarcissus@gmail.com
 
 + 微信:
 
