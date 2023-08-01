@@ -10,7 +10,7 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://www.xiaobinqt.cn/go-gc/" /><meta property="og:image" content="https://www.xiaobinqt.cn/logo.png"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2022-04-06T00:00:00+00:00" />
-<meta property="article:modified_time" content="2023-01-17T15:16:28+08:00" />
+<meta property="article:modified_time" content="2023-08-01T14:16:25+08:00" />
 <meta property="og:see_also" content="https://www.xiaobinqt.cn/go-sync-map/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/highly-concurrent-architecture-evolution/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/session-cookie-token-difference/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/mysql-faq-2/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/why-mysql-index-use-btree/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/redis-break-pierce-avalanche/" />
 
 <meta name="twitter:card" content="summary_large_image"/>
@@ -36,7 +36,7 @@
             "@type": "WebPage",
             "@id": "https:\/\/www.xiaobinqt.cn\/go-gc\/"
         },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "golang, GC","wordcount":  5628 ,
-        "url": "https:\/\/www.xiaobinqt.cn\/go-gc\/","datePublished": "2022-04-06T00:00:00+00:00","dateModified": "2023-01-17T15:16:28+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+        "url": "https:\/\/www.xiaobinqt.cn\/go-gc\/","datePublished": "2022-04-06T00:00:00+00:00","dateModified": "2023-08-01T14:16:25+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "xxxx","logo": {
                     "@type": "ImageObject",
@@ -173,7 +173,7 @@
             <div class="post-meta-line"><span class="post-author">
                     <i class="custom-icon iconfont icon-weibiaoti-"></i>
                 </span>&nbsp;&nbsp;<span class="post-category">收录于 </span>&nbsp;<span class="post-category">类别 <a href="/categories/golang/"><i class="far fa-folder fa-fw"></i>golang</a></span>&nbsp;<span class="post-category">和</span>&nbsp;<span class="post-series">系列 <a href="/series/reproduce/"><i class="far fa-list-alt fa-fw"></i>转载</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-04-06">2022-04-06</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2023-01-17">2023-01-17</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 5628 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-04-06">2022-04-06</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2023-08-01">2023-08-01</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 5628 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 12 分钟&nbsp;</div>
         </div><div class="featured-image"><img
         class="lazyload"
@@ -323,7 +323,7 @@
     <a href="#%e6%9c%89stw%e7%9a%84%e4%b8%89%e8%89%b2%e6%a0%87%e8%ae%b0%e6%b3%95" class="header-mark"></a>有STW的三色标记法</h2><p>Go 中的垃圾回收主要应用三色标记法，GC 过程和其他用户 goroutine 可并发运行，但需要一定时间的 STW。</p>
 <p>所谓三色标记法实际上就是通过<strong>三个阶段的标记</strong>来确定需要清除的对象有哪些。</p>
 <h3 id="第一步-1" class="headerLink">
-    <a href="#%e7%ac%ac%e4%b8%80%e6%ad%a5-1" class="header-mark"></a>第一步</h3><p>每次新创建的对象，默认的颜色都是标记为“白色”👇</p>
+    <a href="#%e7%ac%ac%e4%b8%80%e6%ad%a5-1" class="header-mark"></a>第一步</h3><p>每次新创建的对象，默认的颜色都是标记为 “白色”👇</p>
 <figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220407/3b601d5fc23247b4b05de52b7fb2ed52.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220407/3b601d5fc23247b4b05de52b7fb2ed52.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220407/3b601d5fc23247b4b05de52b7fb2ed52.png" data-sub-html="<h2>白色对象</h2>">
         <img
             class="lazyload"
@@ -333,7 +333,7 @@
             alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220407/3b601d5fc23247b4b05de52b7fb2ed52.png"width="800">
     </a><figcaption class="image-caption">白色对象</figcaption>
     </figure>
-<p>上图所示，我们的程序可抵达的内存对象关系如左图所示，右边的标记表是用来记录目前每个对象的标记颜色分类。这里所谓“程序”，是一些<strong>对象的根节点集合</strong>。如果我们将“程序”展开，会得到类似如下的表现形式：</p>
+<p>上图所示，我们的程序可抵达的内存对象关系如左图所示，右边的标记表是用来记录目前每个对象的标记颜色分类。这里所谓 “程序”，是一些<strong>对象的根节点集合</strong>。如果我们将 “程序” 展开，会得到类似如下的表现形式：</p>
 <figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220406/25f6f7613a894569a426c70c6c8c2c10.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220406/25f6f7613a894569a426c70c6c8c2c10.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220406/25f6f7613a894569a426c70c6c8c2c10.png" data-sub-html="<h2>程序的根节点集合展开</h2>">
         <img
             class="lazyload"
@@ -344,7 +344,7 @@
     </a><figcaption class="image-caption">程序的根节点集合展开</figcaption>
     </figure>
 <h3 id="第二步-1" class="headerLink">
-    <a href="#%e7%ac%ac%e4%ba%8c%e6%ad%a5-1" class="header-mark"></a>第二步</h3><p>每次 GC 回收开始， 会从根节点开始遍历所有对象，把遍历到的对象从白色集合放入“灰色”集合：</p>
+    <a href="#%e7%ac%ac%e4%ba%8c%e6%ad%a5-1" class="header-mark"></a>第二步</h3><p>每次 GC 回收开始， 会从根节点开始遍历所有对象，把遍历到的对象从白色集合放入 “灰色” 集合：</p>
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220406/c982dc0455cf437bace1b65454597995.png" title="遍历根对象" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220406/c982dc0455cf437bace1b65454597995.png" data-sub-html="<h2>遍历根对象</h2><p>遍历根对象</p>">
         <img
             class="lazyload"
@@ -528,12 +528,12 @@
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">添加下游对象(当前下游对象slot, 新下游对象ptr) {   
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">添加下游对象(当前下游对象slot, 新下游对象ptr) {
 </span></span><span class="line"><span class="cl">  //1
-</span></span><span class="line"><span class="cl">  标记灰色(新下游对象ptr)   
-</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  标记灰色(新下游对象ptr)
+</span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">  //2
-</span></span><span class="line"><span class="cl">  当前下游对象slot = 新下游对象ptr  				  
+</span></span><span class="line"><span class="cl">  当前下游对象slot = 新下游对象ptr
 </span></span><span class="line"><span class="cl">}
 </span></span></code></pre></td></tr></table>
 </div>
@@ -665,7 +665,7 @@
 </span></span><span class="line"><span class="cl">  if (当前下游对象slot是灰色 || 当前下游对象slot是白色) {
 </span></span><span class="line"><span class="cl">  		标记灰色(当前下游对象slot)     //slot为被删除对象， 标记为灰色
 </span></span><span class="line"><span class="cl">  }
-</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">  //2
 </span></span><span class="line"><span class="cl">  当前下游对象slot = 新下游对象ptr
 </span></span><span class="line"><span class="cl">}
@@ -779,12 +779,12 @@
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">添加下游对象(当前下游对象slot, 新下游对象ptr) {
-</span></span><span class="line"><span class="cl">  	//1 
+</span></span><span class="line"><span class="cl">  	//1
 </span></span><span class="line"><span class="cl">	标记灰色(当前下游对象slot)    //只要当前下游对象被移走，就标记灰色
-</span></span><span class="line"><span class="cl">  	
-</span></span><span class="line"><span class="cl">  	//2 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  	//2
 </span></span><span class="line"><span class="cl">  	标记灰色(新下游对象ptr)
-</span></span><span class="line"><span class="cl">  		
+</span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">  	//3
 </span></span><span class="line"><span class="cl">  	当前下游对象slot = 新下游对象ptr
 </span></span><span class="line"><span class="cl">}
@@ -986,8 +986,8 @@
     <div class="post-info">
         <div class="post-info-line">
             <div class="post-info-mod">
-                <span>更新于 2023-01-17&nbsp;<a class="git-hash" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/8f5669a8feb508489eac2e3ef6c115b9ae74824e" target="_blank" title="commit by weibin(xiaobinqt@163.com) 8f5669a8feb508489eac2e3ef6c115b9ae74824e: update go-gc.md" rel="noopener noreferrer">
-                                    <i class="fas fa-hashtag fa-fw"></i>8f5669a8</a></span>
+                <span>更新于 2023-08-01&nbsp;<a class="git-hash" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/a91d25c810e409db9496c2255b3bbf1ee171ec53" target="_blank" title="commit by weibin(xiaobinqt@163.com) a91d25c810e409db9496c2255b3bbf1ee171ec53: update posts" rel="noopener noreferrer">
+                                    <i class="fas fa-hashtag fa-fw"></i>a91d25c8</a></span>
             </div>
             <div class="post-info-license"></div>
         </div>
