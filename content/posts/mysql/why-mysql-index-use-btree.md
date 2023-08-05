@@ -21,9 +21,9 @@ reproduce: true
 
 translate: false
 
-series: ["reproduce"]
-tags: ["mysql"]
-categories: ["mysql"]
+series: [ "reproduce" ]
+tags: [ "mysql" ]
+categories: [ "mysql" ]
 lightgallery: true
 
 toc: true
@@ -72,21 +72,19 @@ math: true
 
 你可能对时间单位没什么概念，可以看 1 毫秒能慢上纳秒几万倍。
 
-![图片](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0b40c6bf0b974b23a27a64e5599d1cdb~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.png '图片')
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/f12d0ec3934f47c49269efd3c57283a0.png '图片')
 
-索引虽然存储在磁盘上，但使用索引查找数据时，可以从磁盘先读取索引放到内存中，再通过索引从磁盘找到数据；再然后将磁盘读取到的数据也放到内存里。
+索引虽然存储在磁盘上，但使用索引查找数据时，可以从磁盘先读取索引放到内存中，再通过索引从磁盘找到数据；再然后将磁盘读取到的数据也放到内存里。索引就让磁盘和内存强强联手，趁机搭上了内存的车，感受了一把纳秒级别速度的推背感。
 
-索引就让磁盘和内存强强联手，趁机搭上了内存的车，感受了一把纳秒级别速度的推背感。
-
-![.图片](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/802eefd7aa384d618e7bbb4437a44c39~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.png '图片')
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/134c7c03e62d4c8bbc867daa00cbc789.png '图片')
 
 但是不管查询的过程中怎么优化，只要根还在磁盘，就避免不了会发生多次磁盘 I/O ，而磁盘 I/O 次数越多，消耗的时间也越多。聪明的你这会儿可以看出这其实就是个需要考虑解决的痛点了。
 
-+ **要尽少在磁盘做 I/O 操作。**
++ **要尽少在磁盘做 I/O 操作**
 
 但还有那么多的数据结构可选呢。其实索引需要发挥的目的已经决定了有哪些数据结构可选，那么就可以缩小选择其他数据结构的范围。从为什么要建索引本身的首要目的出发。
 
-+ **要能尽快的按照区间高效地范围查找。**
++ **要能尽快的按照区间高效地范围查找**
 
 当然索引首要目的**能支持高效范围查询，还要有插入更新等操作的动态数据结构**。
 
@@ -104,7 +102,7 @@ math: true
 
 最简单的计算的方式是 **余数法**，通过先计算`key`的 `HashCode`，再通过**哈希表的数组长度**对 `HashCode` 求余，求余得出的余数就是数组下标，最后由下标访问到哈希表中存的`Key、Value`。
 
-![图片](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ff2f69d8dc8b4a00af3a15e1594b669e~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.png '图片')
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/c9364955db264236a436b221756a1a1a.png '图片')
 
 但是 `Key` 计算出的下标**可能会有相同**的情况，例如 `HashCode 1010` 对 `6` 取余是 `2`，但是 `HashCode 1112` 对 `6` 取余也是 `2`。
 
@@ -112,7 +110,7 @@ math: true
 
 而 `哈希冲突` 常用 `链表` 的方法解决。当发生 `哈希冲突`，相同下标的数据元素会替换成存储指针，而不同`Key` 的数据元素添加到链表中。查找时通过指针遍历这个链表，再匹配出正确的 `Key` 就可以。
 
-![图片](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2ad0c1a1eee7443884e693b291e21b37~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.png '图片')
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/7cdd6369532c417a9843dcf83fcfa584.png '图片')
 
 如上图所示，`Key` 是 "一颗剽悍的种子" 的字符串 ，`Value` 是 "不要忘了关注、点赞、评论"。我们通过计算`key`为 `HashCode（1010）` 的整数型值`int`。然后用 `HashCode（1010）`
 对长度为 `6` 的哈希表数组长度做取余得出 `2`，这 `2` 的值元素就是 ( Key = "一颗剽悍的种子",Value = "不要忘了关注、点赞、评论") 。
@@ -121,7 +119,6 @@ math: true
 
 ```
 select * from weixin where username = "一颗剽悍的种子"
-
 ```
 
 但是不支持区间查询。例如SQL：
@@ -138,11 +135,11 @@ select * from weixin where age < 18
 
 要理解跳表，先来看链表，假设链表存储是有序的数据，我们要想查询某一个数据，在最差的情况下要从头全遍历整个链表，时间复杂度是 `O(n)`。
 
-![图片](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/49525ac8b3e646ddb512eb6cef79a3b9~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.png '图片')
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/8b760ec0cec045aea1302676ec385eaf.png '图片')
 
 如下图所示，跳表是在链表基础上加了索引层。可以起到支持区间查询的作用。
 
-![图片](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c477f2475cdf431a97d8e3c200a6396f~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.png '图片')
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/de330e29044d428c93fcaa5b6f1669d8.png '图片')
 
 从上图所示，我们如果要查询一个 `26` 的节点，跳表就可以先从索引层遍历，当遍历到在索引层的 `21` 节点，会发现下一个索引层的节点是 `36` 节点时，很明显要找的 `26`
 的节点就在这区间。此时我们只要再通过索引层指向原始链表的指针往下移到原始链这一层遍历，只要遍历 `2` 个节点即可找到 `26` 了。~~如果用原来的链表需要遍历 `10` 个节点，现在只要遍历 `8` 个节点~~。如果用原来的链表需要遍历 `8` 个节点，现在也只要遍历 `8` 个节点（`5->10->16->21->36->21->21->26`），但是对于大量数据来说，是可以节省查询时间的。（原文应该是有误，这是按照我的理解写的，具体可以参看[原文](https://juejin.cn/post/7081065180301361183#heading-3)）。
@@ -151,7 +148,7 @@ select * from weixin where age < 18
 
 从用户的角度就是，跳表这家伙其实就是在告诉链表从什么地方开始找比较快。
 
-![图片](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/76f846f4a1234411a2abdd4a42e89adb~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.png '图片')
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/03cc278b5ef545138f52074efec2999b.png '图片')
 
 看到这，跳表似乎也很适合用来作为索引的数据结构。但是不要忘了还有首个条件没满足，就是 **"要尽少在磁盘做 I/O 操作。"**
 而跳表显然没能满足这一条件，**跳表在随数据量增多的情况，索引层也会随着增高，相应的就会增加读取I/O的次数，从而影响性能**。
@@ -162,13 +159,13 @@ select * from weixin where age < 18
 
 我们先来看现实中一颗树都有哪些部分组成，首先要有根、树枝、还有树叶。那抽象成树结构也是一样的，树结构的顶端是 `根节点（root）`，左侧的节点称为 `左子树`，右子树对应的在右侧的节点，树的末端没有节点的称为 `叶子节点`。
 
-![图片](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/efb617383c324da48a6f9686a0369add~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.png '图片')
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/06fe0d461c284c218f616c98b0d14dff.png '图片')
 
 从树的层级关系可以分为上下级和同级节点，如下图，`D、E`是`B`节点的子节点，那么`B` 节点就是它们的父节点，跟`B`节点在同一层级的`C`节点是`B`节点的兄弟节点。
 
 同时树的最大层级数，称为树的高度（深度），图下的树高度是**3**。
 
-![图片](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e78b2f8dc14348de833a4e2546e3d07c~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.png '图片')
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/316bcf4e06bd4b15a480b56eb5665b99.png '图片')
 
 从树结构的层级角度看，其实树结构是不是跟前面的跳表还有点相似。而跳表之所以这么快是因为有能按区间高效查询的索引层。
 
@@ -192,13 +189,13 @@ select * from weixin where age < 18
 
 满二叉树的定义是一棵二叉树的所有非叶子节点都存在左右子节点，并且所有子节点在同一层级。
 
-![图片](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/cda4edef2a3946e3a24b2a3a5d427431~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.png '图片')
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/a5ecaccfda4246f086a976cdd3988a54.png '图片')
 
 **完全二叉树**
 
 完全二叉树的定义是如果这颗树的所有节点和同深度的满二叉树的的节点位置相同则这二叉树是完全二叉树。如下图。
 
-![图片](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/03965bcb98534cde8d055fcf43256b91~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.png '图片')
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/90538ecd70fc4c439054eed2e33b93c6.png '图片')
 
 ### 二叉查找树
 
@@ -207,19 +204,19 @@ select * from weixin where age < 18
 先简单的看看二分查找，二分查找可以避免有序的数组从头依次的遍历查询，因为我们知道这种情况如果要查找一个数最差的情况时间复杂就是`O(n)`
 ，整体查询效率不高。而如果数组是**有序**的，就可以通过二分查找将每次的查询范围减半，时间复杂度自然就是`O(logn)`。如下图所示。
 
-![图片](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f0a4acd1ef074e328a9c3a1eb6d14371~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.png '图片')
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/1689be2bb3d24f7da12fbf2d4ec37736.png '图片')
 
 所以说，二叉查找树不同于普通二叉查找树，是将小于根节点的元素放在左子树，而右子树正好相反是放大于根节点的元素。
 
 说白了就是根节点是左子树和右子树的中位数，左边放小于中位数的，右边放大于中位数，这不就是二分查找算法的奥义。
 
-![640.gif](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/cbb74bc84a5c4c88abde473347b77dd6~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.gif '图片')
+![640.gif](https://cdn.xiaobinqt.cn/cbb74bc84a5c4c88abde473347b77dd6~tplv-k3u1fbpfcp-zoom-in-crop-mark_3024_0_0_0.gif '图片')
 
 如上动图所示，二分查找树在查找数据时，只需要将需要查找的元素与树节点元素进行比较，当元素大于根节点则往右子树中查找，元素小于根节点则往左子树中查找，元素如果正好是中位数那么就是正好是根节点，所以二叉查找树具备高效查询。
 
 但是二叉树也有明显**弊端**，在极端情况下，如果每次插入的数据都是最小或者都是最大的元素，那么树结构会退化成一条链表。查询数据是的时间复杂度就会是`O(n)`，如下图所示。
 
-![图片](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/70bfc6eb1b6546068776bfe4e0c5f5e9~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.png '图片')
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/2fa9c648547f4c15a87959a2b3459dfa.png '图片')
 
 当二分查找树退化成链表时，我们都知道链表不仅不能高效查询而且也增加了磁盘 IO 操作，所以我们得划向下一个树型数据结构。
 
@@ -233,11 +230,11 @@ select * from weixin where age < 18
 
 如下图所示，平衡二叉查找树将每次插入的元素数据都会维持自平衡。
 
-![640.gif](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3871d3e8b2e34eaa8253be7643052ae1~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.gif '图片')
+![640.gif](https://cdn.xiaobinqt.cn/202308053871d3e8b2e34eaa8253be7643052ae1~tplv-k3u1fbpfcp-zoom-in-crop-mark_3024_0_0_0.gif '图片')
 
 如下图所示，普通非平衡二叉树和平衡二叉树的对比。
 
-![图片](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/31e4980e30104174b148e9b17fb4f26a~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.png '图片')
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/87466af324fb41dbae9f8bd27e91ecfc.png '图片')
 
 当然还有在 Java 中集合类常见的红黑树，也是自平衡二叉树中的一种。
 
@@ -255,7 +252,7 @@ select * from weixin where age < 18
 
 B 树的节点可以包含有多个子节点，所以**B树是一棵多叉树**，它的每一个节点包含的最多子节点数量的称为B树的**阶**。如下图是一颗 3 阶的 B 树。
 
-![图片](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/25b73d56a3a64db4bfcdeca4f18c0a7e~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.png '图片')
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/e0c9903e46ab49558dd38d7e803da058.png '图片')
 
 > 上图中每一个节点称为页，在 mysql 中数据读取的基本单位是页，而页就是我们上面所说的磁盘块。磁盘块中的 p 节点是指向子节点的指针。
 >
@@ -287,7 +284,7 @@ B+ 树相比于 B 树，做了这样的升级：**B+ 树中的非叶子节点都
 
 由叶子节点存放整棵树的所有数据。而叶子节点之间构成一个从小到大有序的链表互相指向相邻的叶子节点，也就是叶子节点之间形成了有序的双向链表。如下图 B+ 树的结构。
 
-![图片](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9b4ee846dc324e01859fca5fedfed38d~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.png '图片')
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/f8eec821424f49598a2d62e82f63e711.png '图片')
 
 B+ 树是不是有点像前面的跳表，数据底层是数据，上层都是按底层区间构成的索引层，只不过它不像跳表是纵向扩展，而是横向扩展的“跳表”。这么做的好处即减少磁盘的 IO 操作又提高了范围查找的效率。
 
