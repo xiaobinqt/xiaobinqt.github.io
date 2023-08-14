@@ -14,13 +14,13 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://example.com/leetcode/docs/medium/19/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2023-08-14T14:07:31+08:00" />
+<meta property="article:modified_time" content="2023-08-14T14:23:55+08:00" />
 <title>19. 删除链表的倒数第 N 个结点 | LeetCode</title>
 <link rel="manifest" href="/leetcode/manifest.json">
 <link rel="icon" href="/leetcode/favicon.png" type="image/x-icon">
 <link rel="stylesheet" href="/leetcode/book.min.cad59a3be22b32d901c8b99a5bf0c00f01535383d8d0e86742e5449f598d17af.css" integrity="sha256-ytWaO&#43;IrMtkByLmaW/DADwFTU4PY0OhnQuVEn1mNF68=" crossorigin="anonymous">
   <script defer src="/leetcode/flexsearch.min.js"></script>
-  <script defer src="/leetcode/zh.search.min.33a6111a7005662f031c766cfae02ebe8a53f213b1b6e9136e7114cd160ff7f5.js" integrity="sha256-M6YRGnAFZi8DHHZs&#43;uAuvopT8hOxtukTbnEUzRYP9/U=" crossorigin="anonymous"></script>
+  <script defer src="/leetcode/zh.search.min.c50f398a0161270aeeffcc7a246e297b4341659cb6a5755f3a08773836e729d5.js" integrity="sha256-xQ85igFhJwru/8x6JG4pe0NBZZy2pXVfOgh3ODbnKdU=" crossorigin="anonymous"></script>
 
   <script defer src="/leetcode/sw.min.8d698a22bbf5eabddb125225de29674ea0338c58e103f5a48ccdc8118d0f922a.js" integrity="sha256-jWmKIrv16r3bElIl3ilnTqAzjFjhA/WkjM3IEY0Pkio=" crossorigin="anonymous"></script>
 <!--
@@ -784,6 +784,7 @@ https://github.com/alex-shpak/hugo-book
           </ul>
         </li>
         <li><a href="#具体实现">具体实现</a></li>
+        <li><a href="#参考">参考</a></li>
       </ul>
     </li>
   </ul>
@@ -913,19 +914,18 @@ https://github.com/alex-shpak/hugo-book
 </span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">Next</span>: <span style="color:#a6e22e">head</span>,
 </span></span><span style="display:flex;"><span>	}
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">fast</span>,<span style="color:#a6e22e">low</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">dummy</span>,<span style="color:#a6e22e">dummy</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span><span style="color:#f92672">:=</span><span style="color:#ae81ff">1</span>;<span style="color:#a6e22e">i</span><span style="color:#f92672">&lt;=</span><span style="color:#a6e22e">n</span>;<span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
-</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">fast</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">fast</span> = <span style="color:#a6e22e">fast</span>.<span style="color:#a6e22e">Next</span>
-</span></span><span style="display:flex;"><span>		}
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">fast</span>, <span style="color:#a6e22e">low</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">dummy</span>, <span style="color:#a6e22e">dummy</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// fast 先移动 n 步
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">n</span> <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#a6e22e">fast</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">fast</span> = <span style="color:#a6e22e">fast</span>.<span style="color:#a6e22e">Next</span>
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">n</span><span style="color:#f92672">--</span>
 </span></span><span style="display:flex;"><span>	}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">fast</span> = <span style="color:#a6e22e">fast</span>.<span style="color:#a6e22e">Next</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// fast 再移动一步，这样当 fast 为 nil 时，low 在 n 的上一位
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#a6e22e">fast</span> = <span style="color:#a6e22e">fast</span>.<span style="color:#a6e22e">Next</span>
 </span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">fast</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
 </span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">fast</span> = <span style="color:#a6e22e">fast</span>.<span style="color:#a6e22e">Next</span>
 </span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">low</span> = <span style="color:#a6e22e">low</span>.<span style="color:#a6e22e">Next</span>
 </span></span><span style="display:flex;"><span>	}
-</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">low</span>.<span style="color:#a6e22e">Next</span> = <span style="color:#a6e22e">low</span>.<span style="color:#a6e22e">Next</span>.<span style="color:#a6e22e">Next</span>
 </span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">dummy</span>.<span style="color:#a6e22e">Next</span>
 </span></span><span style="display:flex;"><span>}
@@ -951,6 +951,14 @@ https://github.com/alex-shpak/hugo-book
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div></div></div>
 
+<h2 id="参考">
+  参考
+  <a class="anchor" href="#%e5%8f%82%e8%80%83">#</a>
+</h2>
+<ul>
+<li>
+  <a href="https://programmercarl.com/0019.%E5%88%A0%E9%99%A4%E9%93%BE%E8%A1%A8%E7%9A%84%E5%80%92%E6%95%B0%E7%AC%ACN%E4%B8%AA%E8%8A%82%E7%82%B9.html">19.删除链表的倒数第N个节点</a></li>
+</ul>
 </article>
  
       
@@ -960,7 +968,7 @@ https://github.com/alex-shpak/hugo-book
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/9d51548d457abd96dd2e38f6e53a7cfd93554b80" title='最后修改者 weibin | August 14, 2023' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/fd64ade59b7acdb24f28948f9ca4157f2b8e3507" title='最后修改者 weibin | August 14, 2023' target="_blank" rel="noopener">
       <img src="/leetcode/svg/calendar.svg" class="book-icon" alt="Calendar" />
       <span>August 14, 2023</span>
     </a>
@@ -1015,6 +1023,7 @@ https://github.com/alex-shpak/hugo-book
           </ul>
         </li>
         <li><a href="#具体实现">具体实现</a></li>
+        <li><a href="#参考">参考</a></li>
       </ul>
     </li>
   </ul>
