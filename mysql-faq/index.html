@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noodp" />
+    <title class="pjax-title">MySQL 常见问题总结 - xiaobinqt 博客 - 技术改变生活</title><meta name="Description" content="xiaobinqt,mysql 面试常见问题"><meta property="og:title" content="MySQL 常见问题总结" />
+<meta property="og:description" content="xiaobinqt,mysql 面试常见问题" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.xiaobinqt.cn/mysql-faq/" /><meta property="og:image" content="https://www.xiaobinqt.cn/logo.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-08-01T00:00:00+00:00" />
+<meta property="article:modified_time" content="2023-08-14T16:46:47+08:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://www.xiaobinqt.cn/logo.png"/>
+
+<meta name="twitter:title" content="MySQL 常见问题总结"/>
+<meta name="twitter:description" content="xiaobinqt,mysql 面试常见问题"/>
+<meta name="application-name" content="xiaobinqt">
+<meta name="apple-mobile-web-app-title" content="xiaobinqt">
+
+<meta name="theme-color" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c">
+<link rel="stylesheet" href="//at.alicdn.com/t/font_3267767_dz25dtwdgdc.css"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://www.xiaobinqt.cn/mysql-faq/" /><link rel="prev" href="https://www.xiaobinqt.cn/bretton-woods-system/" /><link rel="next" href="https://www.xiaobinqt.cn/go-faq/" /><link rel="stylesheet" href="/lib/md5/md5.min.js"><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/fontawesome-free/all.min.css">
+        <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/animate/animate.min.css">
+        <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><meta name="google-site-verification" content="hFkClWMTOtPBuE0lQaXNiNb707E7P6O2CwexZoSm3VQ" /><meta name="msvalidate.01" content="A961D393878F86E04112E1198500FDBD" /><meta name="baidu-site-verification" content="code-cMh5ORsrP2" /><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "MySQL 常见问题总结",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/www.xiaobinqt.cn\/mysql-faq\/"
+        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "mysql","wordcount":  2400 ,
+        "url": "https:\/\/www.xiaobinqt.cn\/mysql-faq\/","datePublished": "2023-08-01T00:00:00+00:00","dateModified": "2023-08-14T16:46:47+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+            "@type": "Organization",
+            "name": "xxxx","logo": {
+                    "@type": "ImageObject",
+                    "url": "https:\/\/www.xiaobinqt.cn\/images\/avatar.png",
+                    "width":  528 ,
+                    "height":  560 
+                }},"author": {
+                "@type": "Person",
+                "name": "xiaobinqt"
+            },"description": "xiaobinqt,mysql 面试常见问题"
+    }
+    </script></head>
+
+<body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">
+        function setTheme(theme) {document.body.setAttribute('theme', theme); document.documentElement.style.setProperty('color-scheme', theme === 'light' ? 'light' : 'dark');}
+        function saveTheme(theme) {window.localStorage && localStorage.setItem('theme', theme);}
+        function getMeta(metaName) {const metas = document.getElementsByTagName('meta'); for (let i = 0; i < metas.length; i++) if (metas[i].getAttribute('name') === metaName) return metas[i]; return '';}
+        if (window.localStorage && localStorage.getItem('theme')) {let theme = localStorage.getItem('theme');theme === 'light' || theme === 'dark' || theme === 'black' ? setTheme(theme) : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? setTheme('dark') : setTheme('light')); } else { if ('auto' === 'light' || 'auto' === 'dark' || 'auto' === 'black') setTheme('auto'), saveTheme('auto'); else saveTheme('auto'), window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? setTheme('dark') : setTheme('light');}
+        let metaColors = {'light': '#f8f8f8','dark': '#252627','black': '#000000'}
+        getMeta('theme-color').content = metaColors[document.body.getAttribute('theme')];
+    </script>
+    <div id="back-to-top"></div>
+    <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="xiaobinqt 博客 - 技术改变生活"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>萧十一郎</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/" > 所有文章 </a><a class="menu-item" href="/tags/" > 标签 </a><a class="menu-item" href="/categories/" > 分类 </a><a class="menu-item" href="/series/" > 系列 </a><a class="menu-item" href="/showcase/" > 小册 </a><a class="menu-item" href="/keeplearning/"  rel="noopener noreferrer" target="_blank"> KeepLearning </a><a class="menu-item" href="/leetcode/"  rel="noopener noreferrer" target="_blank"> LeetCode </a><a class="menu-item" href="/links/" > 友链 </a><a class="menu-item" href="/about/" > 关于 </a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" rel="noopener noreferrer" target="_blank" ><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
+                        <a href="#" onclick="return false;" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="#" onclick="return false;" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="#" onclick="return false;" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a></div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="xiaobinqt 博客 - 技术改变生活"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>萧十一郎</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
+                        <a href="#" onclick="return false;" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="#" onclick="return false;" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="#" onclick="return false;" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="" >所有文章</a><a class="menu-item" href="/tags/" title="" >标签</a><a class="menu-item" href="/categories/" title="" >分类</a><a class="menu-item" href="/series/" title="" >系列</a><a class="menu-item" href="/showcase/" title="" >小册</a><a class="menu-item" href="/keeplearning/" title=""  rel="noopener noreferrer" target="_blank">KeepLearning</a><a class="menu-item" href="/leetcode/" title=""  rel="noopener noreferrer" target="_blank">LeetCode</a><a class="menu-item" href="/links/" title="" >友链</a><a class="menu-item" href="/about/" title="" >关于</a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" rel="noopener noreferrer" target="_blank" ><i class='fab fa-github fa-fw'></i></a><a href="#" onclick="return false;" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+            <div class="container"><script>document.getElementsByTagName("main")[0].setAttribute("pageStyle", "normal")</script><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "false")</script><article class="page single"><h1 class="single-title animate__animated animate__flipInX">MySQL 常见问题总结</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><i class="author fas fa-user-circle fa-fw"></i><a href="/" title="Author" rel=" author" class="author">xiaobinqt</a>
+                </span>&nbsp;<span class="post-category">收录于 </span>&nbsp;<span class="post-category">类别 <a href="/categories/mysql/"><i class="far fa-folder fa-fw"></i>mysql</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2023-08-01">2023-08-01</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2023-08-14">2023-08-14</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2400 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 5 分钟&nbsp;</div>
+        </div><div class="content" id="content"><!-- author： xiaobinqt -->
+<!-- email： xiaobinqt@163.com -->
+<!-- https://xiaobinqt.github.io -->
+<!-- https://www.xiaobinqt.cn -->
+<ol>
+<li><strong>请简要解释什么是 MySQL 数据库？</strong></li>
+</ol>
+<p>MySQL数据库是一种开源的关系型数据库管理系统（RDBMS），它允许用户存储、管理和检索大量结构化数据。MySQL是最受欢迎的数据库管理系统之一，广泛应用于Web应用程序和服务器端，因其高性能、可靠性和易用性而受到青睐。</p>
+<ol start="2">
+<li><strong>MySQL 中的存储引擎是什么？你能说说常见的存储引擎及其特点吗？</strong></li>
+</ol>
+<p>MySQL 中的存储引擎是用于处理数据存储和检索的底层引擎。常见的存储引擎有：</p>
+<ul>
+<li>InnoDB：是MySQL默认的存储引擎，支持事务处理和行级锁定，适合于大多数应用场景。</li>
+<li>MyISAM：不支持事务处理，但对于读密集型应用性能较好，适用于一些只读或极少写入的应用。</li>
+<li>MEMORY（或 HEAP）：将数据存储在内存中，适合于临时表和高速缓存。</li>
+<li>NDB Cluster：提供了分布式数据库的功能，适用于高可用性和高容量的应用。</li>
+</ul>
+<ol start="3">
+<li><strong>在 MySQL 中，索引的作用是什么？何时应该使用索引？</strong></li>
+</ol>
+<p>索引在 MySQL 中用于加快数据的检索速度，它可以类比于书籍的目录。当查询数据库时，使用索引可以帮助数据库直接定位到所需数据，而不是遍历整个数据库。应该在以下情况下使用索引：</p>
+<ul>
+<li>当某列频繁用于搜索、筛选和排序。</li>
+<li>当连接（JOIN）操作频繁进行。</li>
+<li>当某列包含大量不同的值（高基数列）。</li>
+</ul>
+<ol start="4">
+<li><strong>什么是事务？如何在 MySQL 中处理事务？</strong></li>
+</ol>
+<p>事务是指一组数据库操作，这些操作要么全部成功执行，要么全部失败回滚。MySQL 中使用事务可以确保数据的一致性和完整性。处理事务的步骤如下：</p>
+<ul>
+<li>使用BEGIN或START TRANSACTION语句开始事务。</li>
+<li>执行一系列的数据库操作。</li>
+<li>如果所有操作都成功，使用 COMMIT 提交事务，否则使用 ROLLBACK 回滚事务。</li>
+</ul>
+<ol start="5">
+<li><strong>请解释什么是 ACID 原则，并举例说明在 MySQL 中如何满足这些原则？</strong></li>
+</ol>
+<p>ACID是数据库管理系统需要满足的四个特性：</p>
+<ul>
+<li>原子性（Atomicity）：事务中的所有操作要么全部成功，要么全部失败回滚。</li>
+<li>一致性（Consistency）：事务将数据库从一个一致状态转换到另一个一致状态。</li>
+<li>隔离性（Isolation）：每个事务的操作与其他事务相互隔离，保证数据的独立性。</li>
+<li>持久性（Durability）：一旦事务提交，其对数据库的改变是永久性的。</li>
+</ul>
+<p>例如，在MySQL中，如果一笔转账操作是一个事务，要确保转账金额从一个账户扣除后，一定要成功加入另一个账户，以保持一致性。</p>
+<ol start="6">
+<li><strong>如何优化 MySQL 数据库性能？你能分享一些优化技巧吗？</strong></li>
+</ol>
+<p>优化MySQL数据库性能的技巧包括：</p>
+<ul>
+<li>使用合适的索引以加快数据检索。</li>
+<li>避免SELECT *，只选择需要的字段。</li>
+<li>分析慢查询并进行优化。</li>
+<li>配置适当的缓存机制，如查询缓存、查询结果缓存和表缓存。</li>
+<li>使用连接池来减少连接开销。</li>
+<li>配置合理的内存大小和磁盘I/O性能。</li>
+</ul>
+<ol start="7">
+<li><strong>什么是数据库范式化和反范式化？它们有什么优缺点？</strong></li>
+</ol>
+<p>数据库范式化是一种设计原则，旨在消除冗余数据并确保数据的一致性。反范式化是违反范式化规则，允许在数据库中存储冗余数据以提高查询性能。优缺点如下：</p>
+<p>范式化优点：</p>
+<ul>
+<li>数据库设计更加规范化，避免了数据冗余。</li>
+<li>更新操作更容易，不会导致数据不一致。</li>
+</ul>
+<p>范式化缺点：</p>
+<ul>
+<li>查询需要多个表之间的JOIN操作，可能导致性能下降。</li>
+<li>较复杂的查询可能变得更加复杂。</li>
+</ul>
+<p>反范式化优点：</p>
+<ul>
+<li>查询性能可能得到提升，因为数据存储更接近于应用的需求。</li>
+<li>减少了多表连接的需要。</li>
+</ul>
+<p>反范式化缺点：</p>
+<ul>
+<li>数据冗余可能导致数据不一致。</li>
+<li>更新操作更复杂，可能需要同时更新多处冗余数据。</li>
+</ul>
+<ol start="8">
+<li><strong>如何备份和恢复 MySQL 数据库？你推荐使用哪种备份策略？</strong></li>
+</ol>
+<p>备份MySQL数据库可以使用物理备份和逻辑备份两种策略。</p>
+<ul>
+<li>物理备份：直接复制数据库的物理文件，包括数据文件、日志文件等。常用的物理备份工具有<code>mysqldump</code>和<code>mysqlpump</code>。物理备份恢复速度较快，但不适用于大型数据库。</li>
+<li>逻辑备份：以SQL语句形式导出数据库中的数据和结构，常用工具有<code>mysqldump</code>。逻辑备份占用较多磁盘空间，恢复速度较慢，但适用于大型数据库。</li>
+</ul>
+<p>推荐的备份策略是定期进行完整备份，并配合增量备份以减少备份时间和占用空间。</p>
+<ol start="9">
+<li><strong>在复制（Replication）中，主从复制（Master-Slave Replication）和主主复制（Master-Master Replication）有什么区别？你会选择哪种复制方式？</strong></li>
+</ol>
+<p>主从复制和主主复制是MySQL复制的两种形式。</p>
+<ul>
+<li>主从复制：一个数据库服务器作为主服务器（Master），其余服务器作为从服务器（Slave）。主服务器接收写操作并将数据变更传播给从服务器，从服务器只能读取数据。这种复制适用于读写分离和数据冗余备份。</li>
+<li>主主复制：所有服务器都可以接收写操作，数据的变更会自动同步到其他服务器。主主复制适用于高可用性和负载均衡的情况。</li>
+</ul>
+<p>我们应根据需求选择合适的复制方式。如果需要只读从服务器并实现读写分离，使用主从复制。如果需要高可用性和负载均衡，可以选择主主复制。</p>
+<ol start="10">
+<li><strong>什么是慢查询？如何定位和优化慢查询？</strong></li>
+</ol>
+<p>慢查询是执行时间较长的 SQL 查询语句。在 MySQL 中，可以通过启用慢查询日志来记录慢查询，并使用工具如<code>mysqldumpslow</code>或<code>pt-query-digest</code>进行分析。定位慢查询的方法包括：</p>
+<ul>
+<li>分析查询计划，确保索引被充分利用。</li>
+<li>优化查询语句，避免不必要的 JOIN 操作和子查询。</li>
+<li>避免在循环中执行查询。</li>
+<li>调整数据库配置，如增大缓冲池大小。</li>
+</ul>
+<ol start="11">
+<li><strong>如何处理数据库死锁？有什么避免死锁的方法吗？</strong></li>
+</ol>
+<p>数据库死锁是指两个或多个事务互相持有对方所需的资源，导致它们无法继续执行并且相互等待。处理数据库死锁的方法包括：</p>
+<ul>
+<li>设置合理的事务隔离级别，减少死锁的概率。</li>
+<li>在应用中，按照相同的顺序获取资源，避免交叉死锁。</li>
+<li>使用超时机制，当事务等待超过设定的时间时自动回滚。</li>
+</ul>
+<ol start="12">
+<li><strong>你如何保护 MySQL 数据库的安全性？涉及哪些安全措施？</strong></li>
+</ol>
+<p>保护MySQL数据库的安全性包括以下措施：</p>
+<ul>
+<li>使用强密码策略，定期更换密码。</li>
+<li>给予最小必要权限，限制用户的访问范围。</li>
+<li>使用 SSL 加密连接，确保数据传输安全。</li>
+<li>定期备份数据，以防止数据丢失。</li>
+<li>升级 MySQL 版本和补丁，及时修补已知的漏洞。</li>
+<li>控制对服务器的物理访问，确保服务器的物理安全。</li>
+</ul>
+</div>
+
+        <div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2023-08-14&nbsp;<a class="git-hash" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/39326b247bab105c68d05e6ec458baa94e39f1d4" target="_blank" title="commit by weibin(xiaobinqt@163.com) 39326b247bab105c68d05e6ec458baa94e39f1d4: update php" rel="noopener noreferrer">
+                                    <i class="fas fa-hashtag fa-fw"></i>39326b24</a></span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span><a class="link-to-mardown" href=/mysql-faq/index.md target="_blank" rel="noopener noreferrer">阅读原始文档</a>
+                    </span></div>
+            <div class="post-info-share">
+                <span><a href="#" onclick="return false;" title="分享到 Twitter" data-sharer="twitter" data-url="https://www.xiaobinqt.cn/mysql-faq/" data-title="MySQL 常见问题总结" data-hashtags="mysql"><i class="fab fa-twitter fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Facebook" data-sharer="facebook" data-url="https://www.xiaobinqt.cn/mysql-faq/" data-hashtag="mysql"><i class="fab fa-facebook-square fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Hacker News" data-sharer="hackernews" data-url="https://www.xiaobinqt.cn/mysql-faq/" data-title="MySQL 常见问题总结"><i class="fab fa-hacker-news fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Line" data-sharer="line" data-url="https://www.xiaobinqt.cn/mysql-faq/" data-title="MySQL 常见问题总结"><i data-svg-src="/lib/simple-icons/icons/line.min.svg"></i></a><a href="#" onclick="return false;" title="分享到 微博" data-sharer="weibo" data-url="https://www.xiaobinqt.cn/mysql-faq/" data-title="MySQL 常见问题总结"><i class="fab fa-weibo fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 百度" data-sharer="baidu" data-url="https://www.xiaobinqt.cn/mysql-faq/" data-title="MySQL 常见问题总结"><i data-svg-src="/lib/simple-icons/icons/baidu.min.svg"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/mysql/">mysql</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/bretton-woods-system/" class="prev" rel="prev" title="布雷顿森林体系"><i class="fas fa-angle-left fa-fw"></i>布雷顿森林体系</a>
+            <a href="/go-faq/" class="next" rel="next" title="Golang 常见问题">Golang 常见问题<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+<div id="comments"><div id="gitalk" class="comment"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://github.com/gitalk/gitalk"></a>Gitalk</a>.
+            </noscript></div></article></div>
+        </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2018 - 2023</span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+            <div class="footer-line"></div>
+            <div class="footer-line">
+            </div>
+        </div></footer></div>
+
+    <div id="fixed-buttons"><a href="#back-to-top" id="back-to-top-button" class="fixed-button" title="回到顶部">
+            <i class="fas fa-arrow-up fa-fw"></i>
+        </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+            <i class="fas fa-comment fa-fw"></i>
+        </a>
+    </div><div class="assets"><script type="text/javascript" src="/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="/lib/algoliasearch/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/topbar/topbar.min.js"></script><script type="text/javascript" src="/lib/pjax/pjax.min.js"></script><script type="text/javascript" src="/js/theme.min.js" defer></script></div>
+
+<div class="pjax-assets"><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":35},"comment":{"gitalk":{"admin":["xiaobinqt"],"clientID":"47b15de6c2d8a0f8d707","clientSecret":"c70556c8b3a3b38ea7c72e539ff3b37d5bc1b4f3","id":"4a828b21ff9c811729e14520c1a60a64","owner":"xiaobinqt","repo":"xiaobinqt.github.io","title":"MySQL 常见问题总结"}},"lightGallery":{"actualSize":false,"exThumbImage":"data-thumbnail","hideBarsDelay":2000,"selector":".lightgallery","speed":400,"thumbContHeight":80,"thumbWidth":80,"thumbnail":true},"search":{"algoliaAppID":"CPNWIDNX0Y","algoliaIndex":"xiaobinqt.io","algoliaSearchKey":"80b84de0ebc766371dd27cd3e651c41e","highlightTag":"em","maxResultLength":20,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"},"sharerjs":true};</script><script type="text/javascript" src="/lib/gitalk/gitalk.min.js"></script><script type="text/javascript" src="/js/gitalk.min.js" defer></script><script type="text/javascript" src="/lib/lightgallery/lightgallery.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-thumbnail.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-zoom.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><link rel="stylesheet" href="/lib/gitalk/gitalk.min.css"><link rel="stylesheet" href="/lib/lightgallery/lightgallery.min.css"></div>
+</body>
+
+</html>
