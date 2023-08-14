@@ -429,7 +429,7 @@ package main import ( &amp;#34;fmt&amp;#34; ) func main() { arr := []int{0, 1, 2
 有序数组的平方 B 站-有序数组的平方 数组其实是有序的，只不过负数平方之后可能成为最大数了。那么数组平方的最大值就在数组的两端，不是最左边就是最右边，不可能是中间。此时可以考虑双指针法了，i指向起始位置，j指向终止位置。定义一个新数组 result，和 A 数组一样的大小，让k指向 result 数组终止位置，也就是说让 k 从大（右）到小（左）填充。
 如果A[i] * A[i] &amp;lt; A[j] * A[j] 那么result[k--] = A[j] * A[j] 。
 如果A[i] * A[i] &amp;gt;= A[j] * A[j]那么result[k--] = A[i] * A[i]。
-具体实现 # Go双指针 package main import &amp;#34;fmt&amp;#34; func sortedSquares(nums []int) []int { if len(nums) == 0 { return []int{} } var ( result = make([]int, len(nums)) i, j = 0, len(nums) - 1 k = len(nums) - 1 // 能访问到最后一个值 ) for i &amp;lt;= j { if nums[i]*nums[i] &amp;gt; nums[j]*nums[j] { result[k] = nums[i] * nums[i] k-- i++ } else { result[k] = nums[j] * nums[j] k-- j-- } } return result } func main() { fmt.</description>
+具体实现 # Go双指针 package main import &amp;#34;fmt&amp;#34; func sortedSquares(nums []int) []int { if len(nums) == 0 { return []int{} } var ( result = make([]int, len(nums)) i, j = 0, len(nums) - 1 k = len(nums) - 1 // 能访问到最后一个值 ) // 这里之所以要 &amp;lt;= 是因为，如果仅仅是 &amp;lt; 那么当 = 时会退出， // 这样就会漏掉了一个元素 for i &amp;lt;= j { if nums[i]*nums[i] &amp;gt; nums[j]*nums[j] { result[k] = nums[i] * nums[i] k-- i++ } else { result[k] = nums[j] * nums[j] k-- j-- } } return result } func main() { fmt.</description>
     </item>
     
   </channel>
