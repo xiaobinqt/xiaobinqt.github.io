@@ -8,7 +8,7 @@ date: 2023-08-01
 
 lastmod: 2023-08-01
 
-draft: false
+draft: true
 
 author: "xiaobinqt"
 description: "xiaobinqt,mysql 面试常见问题"
