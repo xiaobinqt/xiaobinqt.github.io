@@ -10,7 +10,7 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://www.xiaobinqt.cn/why-mysql-index-use-btree/" /><meta property="og:image" content="https://www.xiaobinqt.cn/logo.png"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2022-05-20T00:00:00+00:00" />
-<meta property="article:modified_time" content="2023-08-07T09:52:18+08:00" />
+<meta property="article:modified_time" content="2023-08-18T15:34:38+08:00" />
 <meta property="og:see_also" content="https://www.xiaobinqt.cn/go-sync-map/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/highly-concurrent-architecture-evolution/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/session-cookie-token-difference/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/mysql-faq-2/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/redis-break-pierce-avalanche/" />
 
 <meta name="twitter:card" content="summary_large_image"/>
@@ -35,8 +35,8 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/www.xiaobinqt.cn\/why-mysql-index-use-btree\/"
-        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "mysql","wordcount":  6863 ,
-        "url": "https:\/\/www.xiaobinqt.cn\/why-mysql-index-use-btree\/","datePublished": "2022-05-20T00:00:00+00:00","dateModified": "2023-08-07T09:52:18+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "mysql","wordcount":  6864 ,
+        "url": "https:\/\/www.xiaobinqt.cn\/why-mysql-index-use-btree\/","datePublished": "2022-05-20T00:00:00+00:00","dateModified": "2023-08-18T15:34:38+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "xxxx","logo": {
                     "@type": "ImageObject",
@@ -148,7 +148,7 @@
             <div class="post-meta-line"><span class="post-author">
                     <i class="custom-icon iconfont icon-weibiaoti-"></i>
                 </span>&nbsp;&nbsp;<span class="post-category">收录于 </span>&nbsp;<span class="post-category">类别 <a href="/categories/mysql/"><i class="far fa-folder fa-fw"></i>mysql</a></span>&nbsp;<span class="post-category">和</span>&nbsp;<span class="post-series">系列 <a href="/series/reproduce/"><i class="far fa-list-alt fa-fw"></i>转载</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-05-20">2022-05-20</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2023-08-07">2023-08-07</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 6863 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-05-20">2022-05-20</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2023-08-18">2023-08-18</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 6864 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 14 分钟&nbsp;</div>
         </div><div class="featured-image"><img
         class="lazyload"
@@ -192,8 +192,7 @@
     <a href="#%e5%89%8d%e8%a8%80" class="header-mark"></a>前言</h2><p>为什么 MySQL 采用 B+ 树作为索引？</p>
 <p>如果纯粹的猜测 MySQL 数据库索引为什么使用 B+ 树？那么围绕这个问题的回答通常一定是围绕 B+ 树本身是什么，有什么优势这两点去解释这个问题。</p>
 <p>这不是我开始这么去想的，看了很多文章都是从这一维度问答，这些回答让我失望。直到那天问了坐在我旁边那个整天摸鱼的 5 年程序员；他慵懒的回答：你想为什么是使用的是树结构呢？咦，听到这回答，一下打开了我的思绪，有点意思！</p>
-<p>先抛开 B+ 树是什么，有什么优势，这些先入为主的答案。我并不想要往我脑袋硬塞硬邦邦的答案。</p>
-<p>我想要的是为什么❓</p>
+<p>先抛开 B+ 树是什么，有什么优势，这些先入为主的答案。我想要的是为什么❓</p>
 <p>为什么 MySQL 的索引有那么多的数据结构可选，偏偏选树结构？为什么那么多的树结构？为什么又偏偏采用 B+ 树作为索引?</p>
 <p>这才是我要想明白的！我想要的是不只是答案，还要答案背后的脉络！我想要的不仅是要知其然，更想要知其所以然。</p>
 <h2 id="那么多数据结构为什么选树结构" class="headerLink">
@@ -362,7 +361,7 @@
     </a><figcaption class="image-caption">图片</figcaption>
     </figure></p>
 <p><strong>完全二叉树</strong></p>
-<p>完全二叉树的定义是如果这颗树的所有节点和同深度的满二叉树的的节点位置相同则这二叉树是完全二叉树。如下图。</p>
+<p>完全二叉树是指从左至右填充节点，直到最后一层，且最后一层的节点都靠左对齐。因此，满二叉树的所有层都可能被填充满，而完全二叉树虽然最后一层不一定满，但是尽可能填充到最左侧。如下图。</p>
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/90538ecd70fc4c439054eed2e33b93c6.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/90538ecd70fc4c439054eed2e33b93c6.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/90538ecd70fc4c439054eed2e33b93c6.png" data-sub-html="<h2>图片</h2>">
         <img
             class="lazyload"
@@ -373,7 +372,7 @@
     </a><figcaption class="image-caption">图片</figcaption>
     </figure></p>
 <h3 id="二叉查找树" class="headerLink">
-    <a href="#%e4%ba%8c%e5%8f%89%e6%9f%a5%e6%89%be%e6%a0%91" class="header-mark"></a>二叉查找树</h3><p>接下来我们来简单看一下二叉查找树，此二叉查找树的 “二” 非彼二，因为此 “二” 既可以说是表示二叉的树，也可以表示二分查找，因为二叉查找树既是二叉也融合了二分查找。</p>
+    <a href="#%e4%ba%8c%e5%8f%89%e6%9f%a5%e6%89%be%e6%a0%91" class="header-mark"></a>二叉查找树</h3><p>此二叉查找树的 “二” 非彼二，因为此 “二” 既可以说是表示二叉的树，也可以表示二分查找，因为二叉查找树既是二叉也融合了二分查找。</p>
 <p>先简单的看看二分查找，二分查找可以避免有序的数组从头依次的遍历查询，因为我们知道这种情况如果要查找一个数最差的情况时间复杂就是<code>O(n)</code>
 ，整体查询效率不高。而如果数组是<strong>有序</strong>的，就可以通过二分查找将每次的查询范围减半，时间复杂度自然就是<code>O(logn)</code>。如下图所示。</p>
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/1689be2bb3d24f7da12fbf2d4ec37736.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/1689be2bb3d24f7da12fbf2d4ec37736.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/1689be2bb3d24f7da12fbf2d4ec37736.png" data-sub-html="<h2>图片</h2>">
@@ -406,7 +405,7 @@
             alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/2fa9c648547f4c15a87959a2b3459dfa.png">
     </a><figcaption class="image-caption">图片</figcaption>
     </figure></p>
-<p>当二分查找树退化成链表时，我们都知道链表不仅不能高效查询而且也增加了磁盘 IO 操作，所以我们得划向下一个树型数据结构。</p>
+<p>当二分查找树退化成链表时，我们知道链表不仅不能高效查询而且也增加了磁盘 IO 操作，所以我们得划向下一个树型数据结构。</p>
 <h3 id="自平衡二叉树avl树" class="headerLink">
     <a href="#%e8%87%aa%e5%b9%b3%e8%a1%a1%e4%ba%8c%e5%8f%89%e6%a0%91avl%e6%a0%91" class="header-mark"></a>自平衡二叉树/AVL树</h3><p>自平衡二叉树就是来解决二叉查找树极端下退化成链表的问题，自平衡二叉树也称<strong>平衡二叉查找树</strong>（AVL树）。</p>
 <blockquote>
@@ -500,8 +499,8 @@
     <div class="post-info">
         <div class="post-info-line">
             <div class="post-info-mod">
-                <span>更新于 2023-08-07&nbsp;<a class="git-hash" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/9083f55eb000d9339376db615f2601daf5c6837e" target="_blank" title="commit by weibin(xiaobinqt@163.com) 9083f55eb000d9339376db615f2601daf5c6837e: update why-mysql-index-use-btree.md" rel="noopener noreferrer">
-                                    <i class="fas fa-hashtag fa-fw"></i>9083f55e</a></span>
+                <span>更新于 2023-08-18&nbsp;<a class="git-hash" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/0a8fd642fc0509ef79255b10ad7c0e91cacdacd2" target="_blank" title="commit by weibin(xiaobinqt@163.com) 0a8fd642fc0509ef79255b10ad7c0e91cacdacd2: update posts" rel="noopener noreferrer">
+                                    <i class="fas fa-hashtag fa-fw"></i>0a8fd642</a></span>
             </div>
             <div class="post-info-license"></div>
         </div>
