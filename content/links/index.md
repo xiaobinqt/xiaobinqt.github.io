@@ -85,3 +85,15 @@ math: true
         </div>
     </div>
 </a>
+
+<a target="_blank" href="https://amos-li.github.io" title="xiaowuneng" class="friendurl">
+    <div class="frienddiv">
+        <div class="frienddivleft">
+            <img class="myfriend" src="https://amos-li.github.io/profile.png">
+        </div>
+        <div class="frienddivright">
+            <div class="friendname">amos’s blog</div>
+            <div class="friendinfo">一个低级趣味的老年程序员</div>
+        </div>
+    </div>
+</a>
