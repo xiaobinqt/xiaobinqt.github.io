@@ -3,20 +3,20 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content=" 142. 环形链表 II # 题目地址 # 力扣 LeetCode ">
+<meta name="description" content="142. 环形链表 II # 题目地址 # 力扣 LeetCode 解题思路 # 具体实现 # Go package main import &#34;fmt&#34; type ListNode struct { Val int Next *ListNode } func detectCycle(head *ListNode) *ListNode { if head == nil { return head } low, fast := head, head // 因为快指针走 2 步，不要判断 next 是否为 nil for fast != nil &amp;&amp; fast.Next != nil { low = low.Next fast = fast.Next.Next if fast == low { for low !">
 <meta name="theme-color" content="#FFFFFF">
 <meta name="color-scheme" content="light dark"><meta property="og:title" content="142. 环形链表 II" />
-<meta property="og:description" content=" 142. 环形链表 II # 题目地址 # 力扣 LeetCode " />
+<meta property="og:description" content="142. 环形链表 II # 题目地址 # 力扣 LeetCode 解题思路 # 具体实现 # Go package main import &#34;fmt&#34; type ListNode struct { Val int Next *ListNode } func detectCycle(head *ListNode) *ListNode { if head == nil { return head } low, fast := head, head // 因为快指针走 2 步，不要判断 next 是否为 nil for fast != nil &amp;&amp; fast.Next != nil { low = low.Next fast = fast.Next.Next if fast == low { for low !" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://example.com/leetcode/docs/medium/142/" /><meta property="article:section" content="docs" />
 
-<meta property="article:modified_time" content="2023-05-29T16:38:33+08:00" />
+<meta property="article:modified_time" content="2023-09-05T13:59:23+08:00" />
 <title>142. 环形链表 II | LeetCode</title>
 <link rel="manifest" href="/leetcode/manifest.json">
 <link rel="icon" href="/leetcode/favicon.png" type="image/x-icon">
 <link rel="stylesheet" href="/leetcode/book.min.cad59a3be22b32d901c8b99a5bf0c00f01535383d8d0e86742e5449f598d17af.css" integrity="sha256-ytWaO&#43;IrMtkByLmaW/DADwFTU4PY0OhnQuVEn1mNF68=" crossorigin="anonymous">
   <script defer src="/leetcode/flexsearch.min.js"></script>
-  <script defer src="/leetcode/zh.search.min.7bb7ffde2d61a7b3bc60b27496d1207ee5398caddf914769c7401542ac4fe2e8.js" integrity="sha256-e7f/3i1hp7O8YLJ0ltEgfuU5jK3fkUdpx0AVQqxP4ug=" crossorigin="anonymous"></script>
+  <script defer src="/leetcode/zh.search.min.38a5777a651ec325745e59ca6fbae5b6f5eed5e8bef37174434b7e193f920233.js" integrity="sha256-OKV3emUewyV0XlnKb7rltvXu1ei&#43;83F0Q0t&#43;GT&#43;SAjM=" crossorigin="anonymous"></script>
 
   <script defer src="/leetcode/sw.min.8d698a22bbf5eabddb125225de29674ea0338c58e103f5a48ccdc8118d0f922a.js" integrity="sha256-jWmKIrv16r3bElIl3ilnTqAzjFjhA/WkjM3IEY0Pkio=" crossorigin="anonymous"></script>
 <!--
@@ -786,6 +786,9 @@ https://github.com/alex-shpak/hugo-book
     <li><a href="#142-环形链表-ii">142. 环形链表 II</a>
       <ul>
         <li><a href="#题目地址">题目地址</a></li>
+        <li><a href="#解题思路">解题思路</a></li>
+        <li><a href="#具体实现">具体实现</a></li>
+        <li><a href="#参考">参考</a></li>
       </ul>
     </li>
   </ul>
@@ -814,6 +817,86 @@ https://github.com/alex-shpak/hugo-book
 <li>
   <a href="https://leetcode.com/problems/linked-list-cycle-ii/">LeetCode</a></li>
 </ul>
+<h2 id="解题思路">
+  解题思路
+  <a class="anchor" href="#%e8%a7%a3%e9%a2%98%e6%80%9d%e8%b7%af">#</a>
+</h2>
+<h2 id="具体实现">
+  具体实现
+  <a class="anchor" href="#%e5%85%b7%e4%bd%93%e5%ae%9e%e7%8e%b0">#</a>
+</h2>
+
+
+
+
+<div class="book-tabs"><input type="radio" class="toggle" name="tabs-uniqueid" id="tabs-uniqueid-0" checked="checked" />
+  <label for="tabs-uniqueid-0">Go</label>
+  <div class="book-tabs-content markdown-inner"><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> <span style="color:#e6db74">&#34;fmt&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">ListNode</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">Val</span>  <span style="color:#66d9ef">int</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">Next</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">ListNode</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">detectCycle</span>(<span style="color:#a6e22e">head</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">ListNode</span>) <span style="color:#f92672">*</span><span style="color:#a6e22e">ListNode</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">head</span> <span style="color:#f92672">==</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">head</span>
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">low</span>, <span style="color:#a6e22e">fast</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">head</span>, <span style="color:#a6e22e">head</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// 因为快指针走 2 步，不要判断 next 是否为 nil
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">fast</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#a6e22e">fast</span>.<span style="color:#a6e22e">Next</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">low</span> = <span style="color:#a6e22e">low</span>.<span style="color:#a6e22e">Next</span>
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">fast</span> = <span style="color:#a6e22e">fast</span>.<span style="color:#a6e22e">Next</span>.<span style="color:#a6e22e">Next</span>
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">fast</span> <span style="color:#f92672">==</span> <span style="color:#a6e22e">low</span> {
+</span></span><span style="display:flex;"><span>			<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">low</span> <span style="color:#f92672">!=</span> <span style="color:#a6e22e">head</span> {
+</span></span><span style="display:flex;"><span>				<span style="color:#a6e22e">low</span> = <span style="color:#a6e22e">low</span>.<span style="color:#a6e22e">Next</span>
+</span></span><span style="display:flex;"><span>				<span style="color:#a6e22e">head</span> = <span style="color:#a6e22e">head</span>.<span style="color:#a6e22e">Next</span>
+</span></span><span style="display:flex;"><span>			}
+</span></span><span style="display:flex;"><span>			<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">head</span>
+</span></span><span style="display:flex;"><span>		}
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">index2</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">ListNode</span>{
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">Val</span>:  <span style="color:#ae81ff">101</span>,
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">Next</span>: <span style="color:#66d9ef">nil</span>,
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">index</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">ListNode</span>{
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">Val</span>:  <span style="color:#ae81ff">100</span>,
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">Next</span>: <span style="color:#a6e22e">index2</span>,
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">index</span>.<span style="color:#a6e22e">Next</span>.<span style="color:#a6e22e">Next</span> = <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">ListNode</span>{
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">Val</span>:  <span style="color:#ae81ff">4</span>,
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">Next</span>: <span style="color:#a6e22e">index</span>,
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">detectCycle</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">ListNode</span>{
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">Val</span>: <span style="color:#ae81ff">1</span>,
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">Next</span>: <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">ListNode</span>{
+</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">Val</span>: <span style="color:#ae81ff">2</span>,
+</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">Next</span>: <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">ListNode</span>{
+</span></span><span style="display:flex;"><span>				<span style="color:#a6e22e">Val</span>:  <span style="color:#ae81ff">3</span>,
+</span></span><span style="display:flex;"><span>				<span style="color:#a6e22e">Next</span>: <span style="color:#a6e22e">index</span>,
+</span></span><span style="display:flex;"><span>			},
+</span></span><span style="display:flex;"><span>		},
+</span></span><span style="display:flex;"><span>	}))
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div></div></div>
+
+<h2 id="参考">
+  参考
+  <a class="anchor" href="#%e5%8f%82%e8%80%83">#</a>
+</h2>
+<ul>
+<li>
+  <a href="https://www.bilibili.com/video/BV1if4y1d7ob">把环形链表讲清楚！ 如何判断环形链表？如何找到环形链表的入口？</a></li>
+</ul>
 </article>
  
       
@@ -823,9 +906,9 @@ https://github.com/alex-shpak/hugo-book
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/8d6bbd878e9a6b33aab20a6f6433f2a694634ed6" title='最后修改者 weibin | May 29, 2023' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/fb251afe8afe5de989252a17d4f8539e96a8e9d4" title='最后修改者 weibin | September 5, 2023' target="_blank" rel="noopener">
       <img src="/leetcode/svg/calendar.svg" class="book-icon" alt="Calendar" />
-      <span>May 29, 2023</span>
+      <span>September 5, 2023</span>
     </a>
   </div>
 
@@ -871,6 +954,9 @@ https://github.com/alex-shpak/hugo-book
     <li><a href="#142-环形链表-ii">142. 环形链表 II</a>
       <ul>
         <li><a href="#题目地址">题目地址</a></li>
+        <li><a href="#解题思路">解题思路</a></li>
+        <li><a href="#具体实现">具体实现</a></li>
+        <li><a href="#参考">参考</a></li>
       </ul>
     </li>
   </ul>
