@@ -64,6 +64,7 @@ title: "收藏夹"
 + [技术文章摘抄](https://lianglianglee.com/)
 + [鳥哥的首頁](https://linux.vbird.org/)
 + [www.topgoer.com](https://www.topgoer.com/)
++ [Go语言圣经](https://gopl-zh.github.io/index.html)
 
 ## 博主
 
