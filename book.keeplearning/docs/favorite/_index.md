@@ -65,6 +65,7 @@ title: "收藏夹"
 + [鳥哥的首頁](https://linux.vbird.org/)
 + [www.topgoer.com](https://www.topgoer.com/)
 + [Go语言圣经](https://gopl-zh.github.io/index.html)
++ [数据结构和算法（Golang实现）](https://hunterhug.gitlab.io/goa.c/#/)
 
 ## 博主
 
