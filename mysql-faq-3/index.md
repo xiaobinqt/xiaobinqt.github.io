@@ -95,11 +95,11 @@ MyISAM 引擎的表会生成三个磁盘文件：
 比如有个联合索引为`user_name、user_sex、password`，那么 SQL:
 
 ```
-EXPLAIN SELECT 
+EXPLAIN SELECT
     `user_name`,`user_sex`
-FROM 
+FROM
     `zz_users`
-WHERE 
+WHERE
     `password` = "1234" AND `user_sex` = "男";
 ```
 
