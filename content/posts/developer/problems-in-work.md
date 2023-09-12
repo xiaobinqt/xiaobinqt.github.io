@@ -21,11 +21,11 @@ reproduce: false
 
 translate: false
 
-tags: ["面试"]
-categories: ["开发者手册"]
+tags: [ "面试" ]
+categories: [ "开发者手册" ]
 lightgallery: true
 
-series: ["interview"]
+series: [ ]
 
 series_weight:
 
