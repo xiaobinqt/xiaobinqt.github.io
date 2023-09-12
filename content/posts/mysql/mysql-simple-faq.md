@@ -18,7 +18,7 @@ tags: [ "mysql" ]
 categories: [ "mysql" ]
 lightgallery: true
 
-series: [ "interview" ]
+series: [ ]
 
 toc: true
 
