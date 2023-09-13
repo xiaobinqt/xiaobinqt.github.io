@@ -10,7 +10,7 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://www.xiaobinqt.cn/docker-elastic-install/" /><meta property="og:image" content="https://www.xiaobinqt.cn/logo.png"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2023-09-12T00:00:00+00:00" />
-<meta property="article:modified_time" content="2023-09-13T14:50:36+08:00" />
+<meta property="article:modified_time" content="2023-09-13T21:33:43+08:00" />
 
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://www.xiaobinqt.cn/logo.png"/>
@@ -34,8 +34,8 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/www.xiaobinqt.cn\/docker-elastic-install\/"
-        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "elasticsearch","wordcount":  2245 ,
-        "url": "https:\/\/www.xiaobinqt.cn\/docker-elastic-install\/","datePublished": "2023-09-12T00:00:00+00:00","dateModified": "2023-09-13T14:50:36+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "elasticsearch","wordcount":  3120 ,
+        "url": "https:\/\/www.xiaobinqt.cn\/docker-elastic-install\/","datePublished": "2023-09-12T00:00:00+00:00","dateModified": "2023-09-13T21:33:43+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "xxxx","logo": {
                     "@type": "ImageObject",
@@ -142,13 +142,15 @@
         <li><a href="#自定义停用词汇">自定义停用词汇</a></li>
       </ul>
     </li>
+    <li><a href="#一个例子">一个例子</a></li>
+    <li><a href="#参考">参考</a></li>
   </ul>
 </nav></div>
     </div><script>document.getElementsByTagName("main")[0].setAttribute("pageStyle", "normal")</script><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Docker 单机安装使用 Elasticsearch</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><i class="author fas fa-user-circle fa-fw"></i><a href="/" title="Author" rel=" author" class="author">xiaobinqt</a>
                 </span>&nbsp;<span class="post-category">收录于 </span>&nbsp;<span class="post-category">类别 <a href="/categories/%E5%BC%80%E5%8F%91%E8%80%85%E6%89%8B%E5%86%8C/"><i class="far fa-folder fa-fw"></i>开发者手册</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2023-09-12">2023-09-12</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2023-09-13">2023-09-13</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2245 字&nbsp;
-                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 5 分钟&nbsp;</div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2023-09-12">2023-09-12</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2023-09-13">2023-09-13</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 3120 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 7 分钟&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
                     <span>目录</span>
@@ -176,6 +178,8 @@
         <li><a href="#自定义停用词汇">自定义停用词汇</a></li>
       </ul>
     </li>
+    <li><a href="#一个例子">一个例子</a></li>
+    <li><a href="#参考">参考</a></li>
   </ul>
 </nav></div>
             </div><div class="content" id="content"><!-- author： xiaobinqt -->
@@ -536,14 +540,316 @@
     </a><figcaption class="image-caption">停用分词效果</figcaption>
     </figure></p>
 <p>可以发现，不再有 <code>世界</code>，<code>的</code>，<code>是</code>，<code>上</code>，<code>语言</code> 的分词了，说明停用分词也生效了。</p>
+<h2 id="一个例子" class="headerLink">
+    <a href="#%e4%b8%80%e4%b8%aa%e4%be%8b%e5%ad%90" class="header-mark"></a>一个例子</h2><p>现在有个需求是向 mysql 中插入文章，但是同时需要向 es 中写入文章，通过 es 来分词，优化搜索，通过 es 搜索时，可以返回 mysql 中对应的 id。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="o">`</span><span class="n">article</span><span class="o">`</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">`</span><span class="n">id</span><span class="o">`</span><span class="w">          </span><span class="nb">int</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="w"> </span><span class="n">unsigned</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="n">AUTO_INCREMENT</span><span class="w"> </span><span class="k">primary</span><span class="w"> </span><span class="k">key</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">`</span><span class="n">title</span><span class="o">`</span><span class="w">       </span><span class="nb">varchar</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">comment</span><span class="w"> </span><span class="s1">&#39;文章标题&#39;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">`</span><span class="n">content</span><span class="o">`</span><span class="w">     </span><span class="nb">text</span><span class="w"> </span><span class="k">COMMENT</span><span class="w"> </span><span class="s1">&#39;文章内容&#39;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">`</span><span class="n">create_time</span><span class="o">`</span><span class="w"> </span><span class="k">timestamp</span><span class="w">    </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="k">CURRENT_TIMESTAMP</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">`</span><span class="n">update_time</span><span class="o">`</span><span class="w"> </span><span class="k">timestamp</span><span class="w">    </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="k">CURRENT_TIMESTAMP</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">UPDATE</span><span class="w"> </span><span class="k">CURRENT_TIMESTAMP</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">)</span><span class="w"> </span><span class="n">ENGINE</span><span class="o">=</span><span class="n">InnoDB</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="n">CHARSET</span><span class="o">=</span><span class="n">utf8mb4</span><span class="w"> </span><span class="k">COMMENT</span><span class="o">=</span><span class="s1">&#39;文章表&#39;</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>golang 代码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">  1
+</span><span class="lnt">  2
+</span><span class="lnt">  3
+</span><span class="lnt">  4
+</span><span class="lnt">  5
+</span><span class="lnt">  6
+</span><span class="lnt">  7
+</span><span class="lnt">  8
+</span><span class="lnt">  9
+</span><span class="lnt"> 10
+</span><span class="lnt"> 11
+</span><span class="lnt"> 12
+</span><span class="lnt"> 13
+</span><span class="lnt"> 14
+</span><span class="lnt"> 15
+</span><span class="lnt"> 16
+</span><span class="lnt"> 17
+</span><span class="lnt"> 18
+</span><span class="lnt"> 19
+</span><span class="lnt"> 20
+</span><span class="lnt"> 21
+</span><span class="lnt"> 22
+</span><span class="lnt"> 23
+</span><span class="lnt"> 24
+</span><span class="lnt"> 25
+</span><span class="lnt"> 26
+</span><span class="lnt"> 27
+</span><span class="lnt"> 28
+</span><span class="lnt"> 29
+</span><span class="lnt"> 30
+</span><span class="lnt"> 31
+</span><span class="lnt"> 32
+</span><span class="lnt"> 33
+</span><span class="lnt"> 34
+</span><span class="lnt"> 35
+</span><span class="lnt"> 36
+</span><span class="lnt"> 37
+</span><span class="lnt"> 38
+</span><span class="lnt"> 39
+</span><span class="lnt"> 40
+</span><span class="lnt"> 41
+</span><span class="lnt"> 42
+</span><span class="lnt"> 43
+</span><span class="lnt"> 44
+</span><span class="lnt"> 45
+</span><span class="lnt"> 46
+</span><span class="lnt"> 47
+</span><span class="lnt"> 48
+</span><span class="lnt"> 49
+</span><span class="lnt"> 50
+</span><span class="lnt"> 51
+</span><span class="lnt"> 52
+</span><span class="lnt"> 53
+</span><span class="lnt"> 54
+</span><span class="lnt"> 55
+</span><span class="lnt"> 56
+</span><span class="lnt"> 57
+</span><span class="lnt"> 58
+</span><span class="lnt"> 59
+</span><span class="lnt"> 60
+</span><span class="lnt"> 61
+</span><span class="lnt"> 62
+</span><span class="lnt"> 63
+</span><span class="lnt"> 64
+</span><span class="lnt"> 65
+</span><span class="lnt"> 66
+</span><span class="lnt"> 67
+</span><span class="lnt"> 68
+</span><span class="lnt"> 69
+</span><span class="lnt"> 70
+</span><span class="lnt"> 71
+</span><span class="lnt"> 72
+</span><span class="lnt"> 73
+</span><span class="lnt"> 74
+</span><span class="lnt"> 75
+</span><span class="lnt"> 76
+</span><span class="lnt"> 77
+</span><span class="lnt"> 78
+</span><span class="lnt"> 79
+</span><span class="lnt"> 80
+</span><span class="lnt"> 81
+</span><span class="lnt"> 82
+</span><span class="lnt"> 83
+</span><span class="lnt"> 84
+</span><span class="lnt"> 85
+</span><span class="lnt"> 86
+</span><span class="lnt"> 87
+</span><span class="lnt"> 88
+</span><span class="lnt"> 89
+</span><span class="lnt"> 90
+</span><span class="lnt"> 91
+</span><span class="lnt"> 92
+</span><span class="lnt"> 93
+</span><span class="lnt"> 94
+</span><span class="lnt"> 95
+</span><span class="lnt"> 96
+</span><span class="lnt"> 97
+</span><span class="lnt"> 98
+</span><span class="lnt"> 99
+</span><span class="lnt">100
+</span><span class="lnt">101
+</span><span class="lnt">102
+</span><span class="lnt">103
+</span><span class="lnt">104
+</span><span class="lnt">105
+</span><span class="lnt">106
+</span><span class="lnt">107
+</span><span class="lnt">108
+</span><span class="lnt">109
+</span><span class="lnt">110
+</span><span class="lnt">111
+</span><span class="lnt">112
+</span><span class="lnt">113
+</span><span class="lnt">114
+</span><span class="lnt">115
+</span><span class="lnt">116
+</span><span class="lnt">117
+</span><span class="lnt">118
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;context&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;database/sql&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;encoding/json&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;github.com/elastic/go-elasticsearch/v7/esapi&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">_</span> <span class="s">&#34;github.com/go-sql-driver/mysql&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;log&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;strings&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 初始化 MySQL 连接
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">db</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">sql</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="s">&#34;mysql&#34;</span><span class="p">,</span> <span class="s">&#34;root:123456@tcp(localhost:3306)/wb-test&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">defer</span> <span class="nx">db</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">// 初始化 Elasticsearch 连接
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">esConfig</span> <span class="o">:=</span> <span class="nx">elasticsearch</span><span class="p">.</span><span class="nx">Config</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">Addresses</span><span class="p">:</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;http://localhost:9200&#34;</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">esClient</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">elasticsearch</span><span class="p">.</span><span class="nf">NewClient</span><span class="p">(</span><span class="nx">esConfig</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">// 插入文章到 MySQL
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">articleTitle</span> <span class="o">:=</span> <span class="s">&#34;蝶恋花&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">articleContent</span> <span class="o">:=</span> <span class="s">&#34;花褪残红注青杏小。燕子飞时，绿水人家绕。枝上柳绵注吹又少。天涯何处无芳草。墙里秋千墙外道。墙外行人，墙里佳人笑。笑渐不闻声渐悄。多情却被无情恼。&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">db</span><span class="p">.</span><span class="nf">Exec</span><span class="p">(</span><span class="s">&#34;INSERT INTO article (title, content) VALUES (?, ?)&#34;</span><span class="p">,</span> <span class="nx">articleTitle</span><span class="p">,</span> <span class="nx">articleContent</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">// 获取插入文章的 MySQL ID
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="kd">var</span> <span class="nx">articleID</span> <span class="kt">int</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">err</span> <span class="p">=</span> <span class="nx">db</span><span class="p">.</span><span class="nf">QueryRow</span><span class="p">(</span><span class="s">&#34;SELECT LAST_INSERT_ID()&#34;</span><span class="p">).</span><span class="nf">Scan</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">articleID</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">// 在 Elasticsearch 中写入文章
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">esIndexName</span> <span class="o">:=</span> <span class="s">&#34;articles&#34;</span> <span class="c1">// Elasticsearch 索引名
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">docID</span> <span class="o">:=</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;%d&#34;</span><span class="p">,</span> <span class="nx">articleID</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">//esDoc := map[string]interface{}{
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">//	&#34;title&#34;:   articleTitle,
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">//	&#34;content&#34;: articleContent,
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">//	&#34;mysql_id&#34;: articleID, // 将 MySQL ID 存储在 Elasticsearch 中
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">//}
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 创建 Elasticsearch 文档
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">esRequest</span> <span class="o">:=</span> <span class="nx">esapi</span><span class="p">.</span><span class="nx">IndexRequest</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">Index</span><span class="p">:</span>      <span class="nx">esIndexName</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">DocumentID</span><span class="p">:</span> <span class="nx">docID</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">Body</span><span class="p">:</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">NewReader</span><span class="p">(</span><span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">`{
+</span></span></span><span class="line"><span class="cl"><span class="s">            &#34;title&#34;: &#34;%s&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s">            &#34;content&#34;: &#34;%s&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s">            &#34;mysql_id&#34;: %d
+</span></span></span><span class="line"><span class="cl"><span class="s">        }`</span><span class="p">,</span> <span class="nx">articleTitle</span><span class="p">,</span> <span class="nx">articleContent</span><span class="p">,</span> <span class="nx">articleID</span><span class="p">)),</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">Refresh</span><span class="p">:</span> <span class="s">&#34;true&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">res</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">esRequest</span><span class="p">.</span><span class="nf">Do</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">Background</span><span class="p">(),</span> <span class="nx">esClient</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">defer</span> <span class="nx">res</span><span class="p">.</span><span class="nx">Body</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">// 从 Elasticsearch 中查询文章，包括 MySQL ID
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">//esQuery := map[string]interface{}{
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">//	&#34;query&#34;: map[string]interface{}{
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">//		&#34;match&#34;: map[string]interface{}{
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">//			&#34;title&#34;: &#34;示例文章标题&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">//		},
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">//	},
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">//}
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">	<span class="nx">esSearchRequest</span> <span class="o">:=</span> <span class="nx">esapi</span><span class="p">.</span><span class="nx">SearchRequest</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">Index</span><span class="p">:</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="nx">esIndexName</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">Body</span><span class="p">:</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">NewReader</span><span class="p">(</span><span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">`{
+</span></span></span><span class="line"><span class="cl"><span class="s">            &#34;query&#34;: {
+</span></span></span><span class="line"><span class="cl"><span class="s">                &#34;match&#34;: {
+</span></span></span><span class="line"><span class="cl"><span class="s">                    &#34;title&#34;: &#34;示例文章标题&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">                }
+</span></span></span><span class="line"><span class="cl"><span class="s">            }
+</span></span></span><span class="line"><span class="cl"><span class="s">        }`</span><span class="p">)),</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">res</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">esSearchRequest</span><span class="p">.</span><span class="nf">Do</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">Background</span><span class="p">(),</span> <span class="nx">esClient</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">defer</span> <span class="nx">res</span><span class="p">.</span><span class="nx">Body</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">// 处理 Elasticsearch 查询结果
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">if</span> <span class="nx">res</span><span class="p">.</span><span class="nf">IsError</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatalf</span><span class="p">(</span><span class="s">&#34;Error: %s&#34;</span><span class="p">,</span> <span class="nx">res</span><span class="p">.</span><span class="nf">Status</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">// 解析查询结果
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="kd">var</span> <span class="nx">response</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kd">interface</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nf">NewDecoder</span><span class="p">(</span><span class="nx">res</span><span class="p">.</span><span class="nx">Body</span><span class="p">).</span><span class="nf">Decode</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">response</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatalf</span><span class="p">(</span><span class="s">&#34;Error parsing the response body: %s&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">hits</span> <span class="o">:=</span> <span class="nx">response</span><span class="p">[</span><span class="s">&#34;hits&#34;</span><span class="p">].(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kd">interface</span><span class="p">{})[</span><span class="s">&#34;hits&#34;</span><span class="p">].([]</span><span class="kd">interface</span><span class="p">{})</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">hit</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">hits</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">source</span> <span class="o">:=</span> <span class="nx">hit</span><span class="p">.(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kd">interface</span><span class="p">{})[</span><span class="s">&#34;_source&#34;</span><span class="p">].(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kd">interface</span><span class="p">{})</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">title</span> <span class="o">:=</span> <span class="nx">source</span><span class="p">[</span><span class="s">&#34;title&#34;</span><span class="p">].(</span><span class="kt">string</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">content</span> <span class="o">:=</span> <span class="nx">source</span><span class="p">[</span><span class="s">&#34;content&#34;</span><span class="p">].(</span><span class="kt">string</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">mysqlID</span> <span class="o">:=</span> <span class="nx">source</span><span class="p">[</span><span class="s">&#34;mysql_id&#34;</span><span class="p">].(</span><span class="kt">float64</span><span class="p">)</span> <span class="c1">// 从 Elasticsearch 中获取 MySQL ID
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;标题: %s内容: %sMySQL ID: %d&#34;</span><span class="p">,</span> <span class="nx">title</span><span class="p">,</span> <span class="nx">content</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nx">mysqlID</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>通过 kibana 查看到 es 现在有 2 条数据：</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230913/3212ca90f6c04a96884c59ca17524f8b.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230913/3212ca90f6c04a96884c59ca17524f8b.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230913/3212ca90f6c04a96884c59ca17524f8b.png" data-sub-html="<h2>结果数据</h2>">
+        <img
+            class="lazyload"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230913/3212ca90f6c04a96884c59ca17524f8b.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230913/3212ca90f6c04a96884c59ca17524f8b.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230913/3212ca90f6c04a96884c59ca17524f8b.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230913/3212ca90f6c04a96884c59ca17524f8b.png 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230913/3212ca90f6c04a96884c59ca17524f8b.png">
+    </a><figcaption class="image-caption">结果数据</figcaption>
+    </figure></p>
+<p>在 kibana 中通过查询接口搜索 content 内容包含 “绕” 的，展示效果如下：</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230913/cd4487b3e4fd4c2f8e6e5bd830561b3e.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230913/cd4487b3e4fd4c2f8e6e5bd830561b3e.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230913/cd4487b3e4fd4c2f8e6e5bd830561b3e.png" data-sub-html="<h2>搜索结构</h2>">
+        <img
+            class="lazyload"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230913/cd4487b3e4fd4c2f8e6e5bd830561b3e.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230913/cd4487b3e4fd4c2f8e6e5bd830561b3e.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230913/cd4487b3e4fd4c2f8e6e5bd830561b3e.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230913/cd4487b3e4fd4c2f8e6e5bd830561b3e.png 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230913/cd4487b3e4fd4c2f8e6e5bd830561b3e.png">
+    </a><figcaption class="image-caption">搜索结构</figcaption>
+    </figure></p>
+<p>查询 content 含有 “11111” <strong>或</strong> title 中含有 “悯” 的数据结果如下：</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230913/2ef161f48f494c5aa4d4b50d46860ad7.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230913/2ef161f48f494c5aa4d4b50d46860ad7.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230913/2ef161f48f494c5aa4d4b50d46860ad7.png" data-sub-html="<h2>查询结果</h2>">
+        <img
+            class="lazyload"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230913/2ef161f48f494c5aa4d4b50d46860ad7.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230913/2ef161f48f494c5aa4d4b50d46860ad7.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230913/2ef161f48f494c5aa4d4b50d46860ad7.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230913/2ef161f48f494c5aa4d4b50d46860ad7.png 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230913/2ef161f48f494c5aa4d4b50d46860ad7.png">
+    </a><figcaption class="image-caption">查询结果</figcaption>
+    </figure></p>
+<h2 id="参考" class="headerLink">
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
+<li><a href="https://zhuanlan.zhihu.com/p/458011982" target="_blank" rel="noopener noreferrer">Elastic Search 入门</a></li>
+<li><a href="https://juejin.cn/post/6936487066272432142" target="_blank" rel="noopener noreferrer">Elasticsearch 中 must, filter, should, must_not, constant_score 的区别</a></li>
+</ul>
 </div>
 
         <div class="post-footer" id="post-footer">
     <div class="post-info">
         <div class="post-info-line">
             <div class="post-info-mod">
-                <span>更新于 2023-09-13&nbsp;<a class="git-hash" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/c122fd32de24db6d9e202f34d89b52d9e48f1ff1" target="_blank" title="commit by weibin(xiaobinqt@163.com) c122fd32de24db6d9e202f34d89b52d9e48f1ff1: add docker-elastic-install.md" rel="noopener noreferrer">
-                                    <i class="fas fa-hashtag fa-fw"></i>c122fd32</a></span>
+                <span>更新于 2023-09-13&nbsp;<a class="git-hash" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/1da32325d2455cd078e6b59f81e4773b435d0352" target="_blank" title="commit by weibin(xiaobinqt@163.com) 1da32325d2455cd078e6b59f81e4773b435d0352: update docker-elastic-install.md" rel="noopener noreferrer">
+                                    <i class="fas fa-hashtag fa-fw"></i>1da32325</a></span>
             </div>
             <div class="post-info-license"></div>
         </div>
