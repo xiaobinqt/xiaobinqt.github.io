@@ -252,3 +252,158 @@ IK 分词器支持自定义词典，包括自定义分词，也包含自定义�
 
 可以发现，不再有 `世界`，`的`，`是`，`上`，`语言` 的分词了，说明停用分词也生效了。
 
+## 一个例子
+
+现在有个需求是向 mysql 中插入文章，但是同时需要向 es 中写入文章，通过 es 来分词，优化搜索，通过 es 搜索时，可以返回 mysql 中对应的 id。
+
+```sql
+CREATE TABLE `article`
+(
+    `id`          int(10) unsigned NOT NULL AUTO_INCREMENT primary key,
+    `title`       varchar(200) NOT NULL comment '文章标题',
+    `content`     text COMMENT '文章内容',
+    `create_time` timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `update_time` timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='文章表';
+```
+
+golang 代码：
+
+```go
+package main
+
+import (
+	"context"
+	"database/sql"
+	"encoding/json"
+	"fmt"
+	"github.com/elastic/go-elasticsearch/v7/esapi"
+	_ "github.com/go-sql-driver/mysql"
+	"log"
+	"strings"
+)
+
+func main() {
+	// 初始化 MySQL 连接
+	db, err := sql.Open("mysql", "root:123456@tcp(localhost:3306)/wb-test")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+
+	// 初始化 Elasticsearch 连接
+	esConfig := elasticsearch.Config{
+		Addresses: []string{"http://localhost:9200"},
+	}
+	esClient, err := elasticsearch.NewClient(esConfig)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// 插入文章到 MySQL
+	articleTitle := "蝶恋花"
+	articleContent := "花褪残红注青杏小。燕子飞时，绿水人家绕。枝上柳绵注吹又少。天涯何处无芳草。墙里秋千墙外道。墙外行人，墙里佳人笑。笑渐不闻声渐悄。多情却被无情恼。"
+	_, err = db.Exec("INSERT INTO article (title, content) VALUES (?, ?)", articleTitle, articleContent)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// 获取插入文章的 MySQL ID
+	var articleID int
+	err = db.QueryRow("SELECT LAST_INSERT_ID()").Scan(&articleID)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// 在 Elasticsearch 中写入文章
+	esIndexName := "articles" // Elasticsearch 索引名
+	docID := fmt.Sprintf("%d", articleID)
+	//esDoc := map[string]interface{}{
+	//	"title":   articleTitle,
+	//	"content": articleContent,
+	//	"mysql_id": articleID, // 将 MySQL ID 存储在 Elasticsearch 中
+	//}
+
+	// 创建 Elasticsearch 文档
+	esRequest := esapi.IndexRequest{
+		Index:      esIndexName,
+		DocumentID: docID,
+		Body: strings.NewReader(fmt.Sprintf(`{
+            "title": "%s",
+            "content": "%s",
+            "mysql_id": %d
+        }`, articleTitle, articleContent, articleID)),
+		Refresh: "true",
+	}
+
+	res, err := esRequest.Do(context.Background(), esClient)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer res.Body.Close()
+
+	// 从 Elasticsearch 中查询文章，包括 MySQL ID
+	//esQuery := map[string]interface{}{
+	//	"query": map[string]interface{}{
+	//		"match": map[string]interface{}{
+	//			"title": "示例文章标题",
+	//		},
+	//	},
+	//}
+
+	esSearchRequest := esapi.SearchRequest{
+		Index: []string{esIndexName},
+		Body: strings.NewReader(fmt.Sprintf(`{
+            "query": {
+                "match": {
+                    "title": "示例文章标题"
+                }
+            }
+        }`)),
+	}
+
+	res, err = esSearchRequest.Do(context.Background(), esClient)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer res.Body.Close()
+
+	// 处理 Elasticsearch 查询结果
+	if res.IsError() {
+		log.Fatalf("Error: %s", res.Status())
+	}
+
+	// 解析查询结果
+	var response map[string]interface{}
+	if err := json.NewDecoder(res.Body).Decode(&response); err != nil {
+		log.Fatalf("Error parsing the response body: %s", err)
+	}
+
+	hits := response["hits"].(map[string]interface{})["hits"].([]interface{})
+	for _, hit := range hits {
+		source := hit.(map[string]interface{})["_source"].(map[string]interface{})
+		title := source["title"].(string)
+		content := source["content"].(string)
+		mysqlID := source["mysql_id"].(float64) // 从 Elasticsearch 中获取 MySQL ID
+		fmt.Printf("标题: %s内容: %sMySQL ID: %d", title, content, int(mysqlID))
+	}
+}
+
+```
+
+通过 kibana 查看到 es 现在有 2 条数据：
+
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230913/3212ca90f6c04a96884c59ca17524f8b.png '结果数据')
+
+在 kibana 中通过查询接口搜索 content 内容包含 “绕” 的，展示效果如下：
+
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230913/cd4487b3e4fd4c2f8e6e5bd830561b3e.png '搜索结构')
+
+查询 content 含有 “11111” **或** title 中含有 “悯” 的数据结果如下：
+
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230913/2ef161f48f494c5aa4d4b50d46860ad7.png '查询结果')
+
+## 参考
+
++ [Elastic Search 入门](https://zhuanlan.zhihu.com/p/458011982)
++ [Elasticsearch 中 must, filter, should, must_not, constant_score 的区别](https://juejin.cn/post/6936487066272432142)
