@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noodp" />
+    <title class="pjax-title">Docker 单机安装使用 Elasticsearch - xiaobinqt 博客 - 技术改变生活</title><meta name="Description" content="xiaobinqt,Elasticsearch"><meta property="og:title" content="Docker 单机安装使用 Elasticsearch" />
+<meta property="og:description" content="xiaobinqt,Elasticsearch" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.xiaobinqt.cn/docker-elastic-install/" /><meta property="og:image" content="https://www.xiaobinqt.cn/logo.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-09-12T00:00:00+00:00" />
+<meta property="article:modified_time" content="2023-09-13T14:50:36+08:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://www.xiaobinqt.cn/logo.png"/>
+
+<meta name="twitter:title" content="Docker 单机安装使用 Elasticsearch"/>
+<meta name="twitter:description" content="xiaobinqt,Elasticsearch"/>
+<meta name="application-name" content="xiaobinqt">
+<meta name="apple-mobile-web-app-title" content="xiaobinqt">
+
+<meta name="theme-color" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c">
+<link rel="stylesheet" href="//at.alicdn.com/t/font_3267767_dz25dtwdgdc.css"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://www.xiaobinqt.cn/docker-elastic-install/" /><link rel="prev" href="https://www.xiaobinqt.cn/bretton-woods-system/" /><link rel="next" href="https://www.xiaobinqt.cn/old-pal/" /><link rel="stylesheet" href="/lib/md5/md5.min.js"><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/fontawesome-free/all.min.css">
+        <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/animate/animate.min.css">
+        <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><meta name="google-site-verification" content="hFkClWMTOtPBuE0lQaXNiNb707E7P6O2CwexZoSm3VQ" /><meta name="msvalidate.01" content="A961D393878F86E04112E1198500FDBD" /><meta name="baidu-site-verification" content="code-cMh5ORsrP2" /><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Docker 单机安装使用 Elasticsearch",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/www.xiaobinqt.cn\/docker-elastic-install\/"
+        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "elasticsearch","wordcount":  2245 ,
+        "url": "https:\/\/www.xiaobinqt.cn\/docker-elastic-install\/","datePublished": "2023-09-12T00:00:00+00:00","dateModified": "2023-09-13T14:50:36+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+            "@type": "Organization",
+            "name": "xxxx","logo": {
+                    "@type": "ImageObject",
+                    "url": "https:\/\/www.xiaobinqt.cn\/images\/avatar.png",
+                    "width":  528 ,
+                    "height":  560 
+                }},"author": {
+                "@type": "Person",
+                "name": "xiaobinqt"
+            },"description": "xiaobinqt,Elasticsearch"
+    }
+    </script></head>
+
+<body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">
+        function setTheme(theme) {document.body.setAttribute('theme', theme); document.documentElement.style.setProperty('color-scheme', theme === 'light' ? 'light' : 'dark');}
+        function saveTheme(theme) {window.localStorage && localStorage.setItem('theme', theme);}
+        function getMeta(metaName) {const metas = document.getElementsByTagName('meta'); for (let i = 0; i < metas.length; i++) if (metas[i].getAttribute('name') === metaName) return metas[i]; return '';}
+        if (window.localStorage && localStorage.getItem('theme')) {let theme = localStorage.getItem('theme');theme === 'light' || theme === 'dark' || theme === 'black' ? setTheme(theme) : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? setTheme('dark') : setTheme('light')); } else { if ('auto' === 'light' || 'auto' === 'dark' || 'auto' === 'black') setTheme('auto'), saveTheme('auto'); else saveTheme('auto'), window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? setTheme('dark') : setTheme('light');}
+        let metaColors = {'light': '#f8f8f8','dark': '#252627','black': '#000000'}
+        getMeta('theme-color').content = metaColors[document.body.getAttribute('theme')];
+    </script>
+    <div id="back-to-top"></div>
+    <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="xiaobinqt 博客 - 技术改变生活"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>萧十一郎</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/" > 所有文章 </a><a class="menu-item" href="/tags/" > 标签 </a><a class="menu-item" href="/categories/" > 分类 </a><a class="menu-item" href="/series/" > 系列 </a><a class="menu-item" href="/showcase/" > 小册 </a><a class="menu-item" href="/keeplearning/"  rel="noopener noreferrer" target="_blank"> KeepLearning </a><a class="menu-item" href="/leetcode/"  rel="noopener noreferrer" target="_blank"> LeetCode </a><a class="menu-item" href="/links/" > 友链 </a><a class="menu-item" href="/about/" > 关于 </a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" rel="noopener noreferrer" target="_blank" ><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
+                        <a href="#" onclick="return false;" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="#" onclick="return false;" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="#" onclick="return false;" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a></div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="xiaobinqt 博客 - 技术改变生活"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>萧十一郎</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
+                        <a href="#" onclick="return false;" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="#" onclick="return false;" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="#" onclick="return false;" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="" >所有文章</a><a class="menu-item" href="/tags/" title="" >标签</a><a class="menu-item" href="/categories/" title="" >分类</a><a class="menu-item" href="/series/" title="" >系列</a><a class="menu-item" href="/showcase/" title="" >小册</a><a class="menu-item" href="/keeplearning/" title=""  rel="noopener noreferrer" target="_blank">KeepLearning</a><a class="menu-item" href="/leetcode/" title=""  rel="noopener noreferrer" target="_blank">LeetCode</a><a class="menu-item" href="/links/" title="" >友链</a><a class="menu-item" href="/about/" title="" >关于</a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" rel="noopener noreferrer" target="_blank" ><i class='fab fa-github fa-fw'></i></a><a href="#" onclick="return false;" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+            <div class="container"><div class="toc" id="toc-auto">
+        <h2 class="toc-title">目录</h2>
+        <div class="toc-content" id="toc-content-auto"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#安装-es">安装 ES</a></li>
+    <li><a href="#kibana">Kibana</a>
+      <ul>
+        <li><a href="#kibana-安装">Kibana 安装</a></li>
+        <li><a href="#kibana-中文配置">Kibana 中文配置</a></li>
+      </ul>
+    </li>
+    <li><a href="#ik-分词器安装">IK 分词器安装</a>
+      <ul>
+        <li><a href="#ik-分词器">IK 分词器</a></li>
+        <li><a href="#ik-分词器配置">IK 分词器配置</a></li>
+        <li><a href="#分词测试">分词测试</a></li>
+      </ul>
+    </li>
+    <li><a href="#ik-自定义词典">IK 自定义词典</a>
+      <ul>
+        <li><a href="#自定义词典">自定义词典</a></li>
+        <li><a href="#自定义停用词汇">自定义停用词汇</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+    </div><script>document.getElementsByTagName("main")[0].setAttribute("pageStyle", "normal")</script><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Docker 单机安装使用 Elasticsearch</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><i class="author fas fa-user-circle fa-fw"></i><a href="/" title="Author" rel=" author" class="author">xiaobinqt</a>
+                </span>&nbsp;<span class="post-category">收录于 </span>&nbsp;<span class="post-category">类别 <a href="/categories/%E5%BC%80%E5%8F%91%E8%80%85%E6%89%8B%E5%86%8C/"><i class="far fa-folder fa-fw"></i>开发者手册</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2023-09-12">2023-09-12</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2023-09-13">2023-09-13</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2245 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 5 分钟&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#安装-es">安装 ES</a></li>
+    <li><a href="#kibana">Kibana</a>
+      <ul>
+        <li><a href="#kibana-安装">Kibana 安装</a></li>
+        <li><a href="#kibana-中文配置">Kibana 中文配置</a></li>
+      </ul>
+    </li>
+    <li><a href="#ik-分词器安装">IK 分词器安装</a>
+      <ul>
+        <li><a href="#ik-分词器">IK 分词器</a></li>
+        <li><a href="#ik-分词器配置">IK 分词器配置</a></li>
+        <li><a href="#分词测试">分词测试</a></li>
+      </ul>
+    </li>
+    <li><a href="#ik-自定义词典">IK 自定义词典</a>
+      <ul>
+        <li><a href="#自定义词典">自定义词典</a></li>
+        <li><a href="#自定义停用词汇">自定义停用词汇</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><!-- author： xiaobinqt -->
+<!-- email： xiaobinqt@163.com -->
+<!-- https://xiaobinqt.github.io -->
+<!-- https://www.xiaobinqt.cn -->
+<h2 id="安装-es" class="headerLink">
+    <a href="#%e5%ae%89%e8%a3%85-es" class="header-mark"></a>安装 ES</h2><p>当前 <code>ElasticSearch</code> 已经到了 <code>8.0+</code>，新版本都有很多新特性，性能和功能都有大幅提升，建议使用较高版本，这里采用 <code>7.12.1</code> 版本 👼</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/f7745775638b42829fd11821d4406420.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/f7745775638b42829fd11821d4406420.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/f7745775638b42829fd11821d4406420.png" data-sub-html="<h2>es 版本</h2>">
+        <img
+            class="lazyload"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/f7745775638b42829fd11821d4406420.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/f7745775638b42829fd11821d4406420.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/f7745775638b42829fd11821d4406420.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/f7745775638b42829fd11821d4406420.png 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/f7745775638b42829fd11821d4406420.png">
+    </a><figcaption class="image-caption">es 版本</figcaption>
+    </figure></p>
+<p>安装 <code>ElasticSearch</code> 脚本如下:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">docker run -d \
+</span></span><span class="line"><span class="cl">--name elasticsearch \
+</span></span><span class="line"><span class="cl">    -e &#34;discovery.type=single-node&#34; \
+</span></span><span class="line"><span class="cl">    --privileged \
+</span></span><span class="line"><span class="cl">    -p 9200:9200 \
+</span></span><span class="line"><span class="cl">    -p 9300:9300 \
+</span></span><span class="line"><span class="cl">elasticsearch:7.12.1
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>常用命令说明：</p>
+<ul>
+<li><code>-e &quot;cluster.name=es-docker-cluster&quot;</code>：设置集群名称</li>
+<li><code>-e &quot;http.host=0.0.0.0&quot;</code>：监听的地址，可以外网访问</li>
+<li><code>-e &quot;ES_JAVA_OPTS=-Xms512m -Xmx512m&quot;</code>：内存大小</li>
+<li><code>-e &quot;discovery.type=single-node&quot;</code>：非集群模式</li>
+<li><code>-v es-data:/usr/share/elasticsearch/data</code>：挂载逻辑卷，绑定<code>elasticsearch</code>的数据目录</li>
+<li><code>-v es-logs:/usr/share/elasticsearch/logs</code>：挂载逻辑卷，绑定<code>elasticsearch</code>的日志目录</li>
+<li><code>-v es-plugins:/usr/share/elasticsearch/plugins</code>：挂载逻辑卷，绑定<code>elasticsearch</code>的插件目录</li>
+<li><code>--privileged</code>：授予逻辑卷访问权</li>
+<li><code>-p 9200:9200</code>：端口映射配置</li>
+</ul>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ca407aeb5d044916b27673149b45ec26.png" title="安装 es" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ca407aeb5d044916b27673149b45ec26.png" data-sub-html="<h2>docker 安装 es</h2><p>安装 es</p>">
+        <img
+            class="lazyload"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ca407aeb5d044916b27673149b45ec26.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ca407aeb5d044916b27673149b45ec26.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ca407aeb5d044916b27673149b45ec26.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ca407aeb5d044916b27673149b45ec26.png 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ca407aeb5d044916b27673149b45ec26.png">
+    </a><figcaption class="image-caption">docker 安装 es</figcaption>
+    </figure></p>
+<p>安装完成后，在浏览器中输入：<code>http://172.27.46.132/:9200/</code> 即可看到 <code>elasticsearch</code> 的响应结果：</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/a8b3f2fe7d164cb7a02bf8491bbc05cf.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/a8b3f2fe7d164cb7a02bf8491bbc05cf.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/a8b3f2fe7d164cb7a02bf8491bbc05cf.png" data-sub-html="<h2>es 响应结果</h2>">
+        <img
+            class="lazyload"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/a8b3f2fe7d164cb7a02bf8491bbc05cf.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/a8b3f2fe7d164cb7a02bf8491bbc05cf.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/a8b3f2fe7d164cb7a02bf8491bbc05cf.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/a8b3f2fe7d164cb7a02bf8491bbc05cf.png 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/a8b3f2fe7d164cb7a02bf8491bbc05cf.png">
+    </a><figcaption class="image-caption">es 响应结果</figcaption>
+    </figure></p>
+<h2 id="kibana" class="headerLink">
+    <a href="#kibana" class="header-mark"></a>Kibana</h2><p>我们可以基于 <code>http</code> 请求操作 <code>ElasticSearch</code>，但基于 <code>http</code> 操作比较麻烦，可以采用 <code>Kibana</code> 实现可视化操作。</p>
+<p><code>Kibana</code> 是一个免费且开放的用户界面，能够对 <code>Elasticsearch</code> 数据进行可视化，并在 <code>Elastic Stack</code> 中进行导航，可以进行各种操作，从跟踪查询负载，到理解请求如何流经的整个应用，都能轻松完成。<code>Kibana</code> 让能够自由地选择如何呈现自己的数据。</p>
+<h3 id="kibana-安装" class="headerLink">
+    <a href="#kibana-%e5%ae%89%e8%a3%85" class="header-mark"></a>Kibana 安装</h3><p>使用 <code>Docker</code> 安装 <code>Kibana</code> 非常简单，但是执行命令需要注意 <code>Kibana</code> 操作的 <code>ElasticSearch</code> 地址，因为 <code>Kibana</code> 是需要连接 <code>ElasticSearch</code> 进行操作的，所以需要 es 和 <code>Kibana</code> 在同一网段，安装 <code>Kibana</code> 命令如下:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">docker run -d \
+</span></span><span class="line"><span class="cl">--name kibana \
+</span></span><span class="line"><span class="cl">-e ELASTICSEARCH_HOSTS=http://172.27.46.132:9200 \
+</span></span><span class="line"><span class="cl">-p 5601:5601  \
+</span></span><span class="line"><span class="cl">kibana:7.12.1
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>命令说明：</p>
+<ul>
+<li><code>-e ELASTICSEARCH_HOSTS=http://172.27.46.132:9200&quot;</code>：设置 <code>elasticsearch</code> 的地址，因为 <code>kibana</code> 已经与<code>elasticsearch</code>在一个网络，因此可以用容器名直接访问 <code>elasticsearch</code>，也可以写 IP 地址实现访问。</li>
+<li><code>-p 5601:5601</code>：端口映射配置</li>
+</ul>
+<p>安装的时候如果没有镜像，会下载镜像，效果如下：</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/8348436b33284bba88bb2efa43b298f1.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/8348436b33284bba88bb2efa43b298f1.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/8348436b33284bba88bb2efa43b298f1.png" data-sub-html="<h2>安装 Kibana</h2>">
+        <img
+            class="lazyload"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/8348436b33284bba88bb2efa43b298f1.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/8348436b33284bba88bb2efa43b298f1.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/8348436b33284bba88bb2efa43b298f1.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/8348436b33284bba88bb2efa43b298f1.png 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/8348436b33284bba88bb2efa43b298f1.png">
+    </a><figcaption class="image-caption">安装 Kibana</figcaption>
+    </figure></p>
+<p>安装成功后，可以访问 <code>http://172.27.46.132:5601/</code> 效果如下：</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/53c75f9beec0482ba216e08af2e4d035.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/53c75f9beec0482ba216e08af2e4d035.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/53c75f9beec0482ba216e08af2e4d035.png" data-sub-html="<h2>Kibana 效果</h2>">
+        <img
+            class="lazyload"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/53c75f9beec0482ba216e08af2e4d035.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/53c75f9beec0482ba216e08af2e4d035.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/53c75f9beec0482ba216e08af2e4d035.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/53c75f9beec0482ba216e08af2e4d035.png 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/53c75f9beec0482ba216e08af2e4d035.png">
+    </a><figcaption class="image-caption">Kibana 效果</figcaption>
+    </figure></p>
+<p>可以点击 <code>Add data</code>，添加示例数据，如下图，随意选一个即可，不选其实也是可以的。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/f74d72b57b544c6485d15de34417f89f.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/f74d72b57b544c6485d15de34417f89f.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/f74d72b57b544c6485d15de34417f89f.png" data-sub-html="<h2>添加数据</h2>">
+        <img
+            class="lazyload"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/f74d72b57b544c6485d15de34417f89f.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/f74d72b57b544c6485d15de34417f89f.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/f74d72b57b544c6485d15de34417f89f.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/f74d72b57b544c6485d15de34417f89f.png 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/f74d72b57b544c6485d15de34417f89f.png">
+    </a><figcaption class="image-caption">添加数据</figcaption>
+    </figure></p>
+<h3 id="kibana-中文配置" class="headerLink">
+    <a href="#kibana-%e4%b8%ad%e6%96%87%e9%85%8d%e7%bd%ae" class="header-mark"></a>Kibana 中文配置</h3><p><code>Kibana</code> 支持中文配置，可以把 <code>Kibana</code> 配置成中文版，切换中文操作如下:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">#进入容器
+</span></span><span class="line"><span class="cl">docker exec -it kibana /bin/bash
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">#进入配置文件目录
+</span></span><span class="line"><span class="cl">cd /usr/share/kibana/config
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">#编辑文件kibana.yml
+</span></span><span class="line"><span class="cl">vi kibana.yml
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">#在最后一行添加如下配置
+</span></span><span class="line"><span class="cl">i18n.locale: zh-CN
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">#保存退出
+</span></span><span class="line"><span class="cl">exit
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">#并重启容器
+</span></span><span class="line"><span class="cl">docker restart kibana
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>等待 <code>Kibana</code> 容器启动，再次访问 <code>http://172.27.46.132:5601/</code> 效果如下：</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/43ffacffaff84394a12e7e741bcc8f65.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/43ffacffaff84394a12e7e741bcc8f65.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/43ffacffaff84394a12e7e741bcc8f65.png" data-sub-html="<h2>中文效果</h2>">
+        <img
+            class="lazyload"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/43ffacffaff84394a12e7e741bcc8f65.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/43ffacffaff84394a12e7e741bcc8f65.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/43ffacffaff84394a12e7e741bcc8f65.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/43ffacffaff84394a12e7e741bcc8f65.png 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/43ffacffaff84394a12e7e741bcc8f65.png">
+    </a><figcaption class="image-caption">中文效果</figcaption>
+    </figure></p>
+<h2 id="ik-分词器安装" class="headerLink">
+    <a href="#ik-%e5%88%86%e8%af%8d%e5%99%a8%e5%ae%89%e8%a3%85" class="header-mark"></a>IK 分词器安装</h2><p>打开 <code>Kibana</code>，点击开发工具，操作如下：</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ef521d29bf764703adabe06108c6ef9f.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ef521d29bf764703adabe06108c6ef9f.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ef521d29bf764703adabe06108c6ef9f.png" data-sub-html="<h2>开发工具</h2>">
+        <img
+            class="lazyload"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ef521d29bf764703adabe06108c6ef9f.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ef521d29bf764703adabe06108c6ef9f.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ef521d29bf764703adabe06108c6ef9f.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ef521d29bf764703adabe06108c6ef9f.png 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ef521d29bf764703adabe06108c6ef9f.png">
+    </a><figcaption class="image-caption">开发工具</figcaption>
+    </figure></p>
+<p>在左边输入如下内容，用于查询分词：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">GET _analyze
+</span></span><span class="line"><span class="cl">{
+</span></span><span class="line"><span class="cl">  &#34;analyzer&#34;: &#34;standard&#34;,
+</span></span><span class="line"><span class="cl">  &#34;text&#34;: &#34;php 是世界上最好的语言&#34;
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>效果如下：</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/a8c86a3f5c8640108a32551ace6b8cad.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/a8c86a3f5c8640108a32551ace6b8cad.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/a8c86a3f5c8640108a32551ace6b8cad.png" data-sub-html="<h2>分词效果</h2>">
+        <img
+            class="lazyload"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/a8c86a3f5c8640108a32551ace6b8cad.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/a8c86a3f5c8640108a32551ace6b8cad.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/a8c86a3f5c8640108a32551ace6b8cad.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/a8c86a3f5c8640108a32551ace6b8cad.png 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/a8c86a3f5c8640108a32551ace6b8cad.png">
+    </a><figcaption class="image-caption">分词效果</figcaption>
+    </figure></p>
+<p>使用 <code>standard</code> 对 <code>php 是世界上最好的语言</code> 进行分词。</p>
+<p><code>分词</code>：提取一句话或者一篇文章中的词语。</p>
+<p>我们在使用 <code>ElasticSearch</code> 的时候，默认用 <code>standard</code> 分词器，但 <code>standard</code> 分词器使用的是按空格分词，这种分词操作方法不符合中文分词标准，我们需要额外安装中文分词器。</p>
+<h3 id="ik-分词器" class="headerLink">
+    <a href="#ik-%e5%88%86%e8%af%8d%e5%99%a8" class="header-mark"></a>IK 分词器</h3><p><code>IK Analyzer</code> 是一个开源的，基于 java 语言开发的轻量级的中文分词工具包。可以直接在 <code>ElasticSearch</code> 中集成 IK 分词器，<code>IK</code> 分词器集成<code>ElasticSearch</code>下载地址：<a href="https://github.com/medcl/elasticsearch-analysis-ik/releases" target="_blank" rel="noopener noreferrer">elasticsearch-analysis-ik/releases</a>。IK 可以跟 es 的版本一致，我们 es 的版本是 7.12.1，IK 的版本也是用 7.12.1。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/89e1dba4c7fd481ba7183f764a9cb18f.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/89e1dba4c7fd481ba7183f764a9cb18f.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/89e1dba4c7fd481ba7183f764a9cb18f.png" data-sub-html="<h2>IK 分词器</h2>">
+        <img
+            class="lazyload"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/89e1dba4c7fd481ba7183f764a9cb18f.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/89e1dba4c7fd481ba7183f764a9cb18f.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/89e1dba4c7fd481ba7183f764a9cb18f.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/89e1dba4c7fd481ba7183f764a9cb18f.png 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/89e1dba4c7fd481ba7183f764a9cb18f.png">
+    </a><figcaption class="image-caption">IK 分词器</figcaption>
+    </figure></p>
+<h3 id="ik-分词器配置" class="headerLink">
+    <a href="#ik-%e5%88%86%e8%af%8d%e5%99%a8%e9%85%8d%e7%bd%ae" class="header-mark"></a>IK 分词器配置</h3><p>下载安装包 <a href="https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v7.12.1/elasticsearch-analysis-ik-7.12.1.zip" target="_blank" rel="noopener noreferrer">elasticsearch-analysis-ik/releases/tag/v7.12.1</a> 后，，需要将 <code>elasticsearch-analysis-ik-7.12.1.zip</code> 拷贝到 <code>elasticSearch</code> 容器里的的 <code>/usr/share/elasticsearch/plugins</code> 目录中解压即可。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ee221bb0e9424881b5ea8a687fa5d7bf.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ee221bb0e9424881b5ea8a687fa5d7bf.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ee221bb0e9424881b5ea8a687fa5d7bf.png" data-sub-html="<h2>cp elasticsearch-analysis-ik-7.12.1.zip</h2>">
+        <img
+            class="lazyload"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ee221bb0e9424881b5ea8a687fa5d7bf.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ee221bb0e9424881b5ea8a687fa5d7bf.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ee221bb0e9424881b5ea8a687fa5d7bf.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ee221bb0e9424881b5ea8a687fa5d7bf.png 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ee221bb0e9424881b5ea8a687fa5d7bf.png">
+    </a><figcaption class="image-caption">cp elasticsearch-analysis-ik-7.12.1.zip</figcaption>
+    </figure></p>
+<p>解压文件成功后，然后<strong>重启</strong> es 容器。</p>
+<h3 id="分词测试" class="headerLink">
+    <a href="#%e5%88%86%e8%af%8d%e6%b5%8b%e8%af%95" class="header-mark"></a>分词测试</h3><p><code>IK</code>分词器包含两种模式：</p>
+<ul>
+<li>
+<p><code>ik_smart</code>：最少切分</p>
+</li>
+<li>
+<p><code>ik_max_word</code>：最细切分</p>
+</li>
+</ul>
+<p>前面使用默认的<code>standard</code>分词器，对中文分词非常难用，安装IK分词器后，我们可以使用IK分词器测试，测试代码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">GET _analyze
+</span></span><span class="line"><span class="cl">{
+</span></span><span class="line"><span class="cl">  &#34;analyzer&#34;: &#34;ik_max_word&#34;,
+</span></span><span class="line"><span class="cl">  &#34;text&#34;: &#34;php 是世界上最好的语言&#34;
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>测试效果如下：</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/689f9549af6440e999bf83865dedbe54.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/689f9549af6440e999bf83865dedbe54.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/689f9549af6440e999bf83865dedbe54.png" data-sub-html="<h2>效果</h2>">
+        <img
+            class="lazyload"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/689f9549af6440e999bf83865dedbe54.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/689f9549af6440e999bf83865dedbe54.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/689f9549af6440e999bf83865dedbe54.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/689f9549af6440e999bf83865dedbe54.png 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/689f9549af6440e999bf83865dedbe54.png">
+    </a><figcaption class="image-caption">效果</figcaption>
+    </figure></p>
+<p>可以发现对中文的分词效果是比较不错的，但也存在一些不足，比如 <code>最好的</code> 我们希望它是一个词，而 <code>上</code>我们希望它不被识别一个词，这种需求可以同过自定义词典解决。</p>
+<h2 id="ik-自定义词典" class="headerLink">
+    <a href="#ik-%e8%87%aa%e5%ae%9a%e4%b9%89%e8%af%8d%e5%85%b8" class="header-mark"></a>IK 自定义词典</h2><p>IK 分词器支持自定义词典，包括自定义分词，也包含自定义停用分词，操作起来非常简单。接下来实现一下自定义词典和停用词典。</p>
+<h3 id="自定义词典" class="headerLink">
+    <a href="#%e8%87%aa%e5%ae%9a%e4%b9%89%e8%af%8d%e5%85%b8" class="header-mark"></a>自定义词典</h3><p>自定义词典，需要先创建自己的词典，再引用自己的词典即可。</p>
+<ol>
+<li>创建词典</li>
+</ol>
+<p>在 es 容器目录 <code>/usr/share/elasticsearch/plugins/ik/config</code> 中创建自己的词典，例如叫 <code>custome.dic</code>，在文件中添加自定义的词语，操作如下：</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/432e98e286cb4c3587caa0c35f2d6446.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/432e98e286cb4c3587caa0c35f2d6446.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/432e98e286cb4c3587caa0c35f2d6446.png" data-sub-html="<h2>创建词典</h2>">
+        <img
+            class="lazyload"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/432e98e286cb4c3587caa0c35f2d6446.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/432e98e286cb4c3587caa0c35f2d6446.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/432e98e286cb4c3587caa0c35f2d6446.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/432e98e286cb4c3587caa0c35f2d6446.png 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/432e98e286cb4c3587caa0c35f2d6446.png">
+    </a><figcaption class="image-caption">创建词典</figcaption>
+    </figure></p>
+<p>我们把自定义的词典 <code>最好的</code> 添加到了 <code>custome.dic</code> 中了，这就是创建词典，如果有多个自定义词，需要换行加入，这里一定要注意中文分词设置编码格式为 <code>UTF-8</code>。</p>
+<ol start="2">
+<li>引用词典</li>
+</ol>
+<p>修改 <code>config/IKAnalyzer.cfg.xml</code> 引用自己创建的 <code>custome.dic</code> 词典，配置如下:</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ef379f05c79646f4b61bc964dfe17b07.pn" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ef379f05c79646f4b61bc964dfe17b07.pn" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ef379f05c79646f4b61bc964dfe17b07.pn" data-sub-html="<h2>引用自定义字典</h2>">
+        <img
+            class="lazyload"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ef379f05c79646f4b61bc964dfe17b07.pn"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ef379f05c79646f4b61bc964dfe17b07.pn, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ef379f05c79646f4b61bc964dfe17b07.pn 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ef379f05c79646f4b61bc964dfe17b07.pn 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ef379f05c79646f4b61bc964dfe17b07.pn">
+    </a><figcaption class="image-caption">引用自定义字典</figcaption>
+    </figure></p>
+<p>再使用 <code>Kibana</code> 效果如下：</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/71f95f67e34c4723b8923d3113b4951c.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/71f95f67e34c4723b8923d3113b4951c.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/71f95f67e34c4723b8923d3113b4951c.png" data-sub-html="<h2>效果</h2>">
+        <img
+            class="lazyload"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/71f95f67e34c4723b8923d3113b4951c.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/71f95f67e34c4723b8923d3113b4951c.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/71f95f67e34c4723b8923d3113b4951c.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/71f95f67e34c4723b8923d3113b4951c.png 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/71f95f67e34c4723b8923d3113b4951c.png">
+    </a><figcaption class="image-caption">效果</figcaption>
+    </figure></p>
+<h3 id="自定义停用词汇" class="headerLink">
+    <a href="#%e8%87%aa%e5%ae%9a%e4%b9%89%e5%81%9c%e7%94%a8%e8%af%8d%e6%b1%87" class="header-mark"></a>自定义停用词汇</h3><p>自定义停用词典和自定义词典一样，需要先创建自己的词典，再引用自己的词典即可。</p>
+<ol>
+<li>创建词典</li>
+</ol>
+<p>在 <code>config</code> 中创建自己的停用词典，例如叫 <code>stop.dic</code>，在文件中添加自定义的停用词语，操作如下：</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/a389717b1b254a4199b0a08b334afd16.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/a389717b1b254a4199b0a08b334afd16.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/a389717b1b254a4199b0a08b334afd16.png" data-sub-html="<h2>停用词汇</h2>">
+        <img
+            class="lazyload"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/a389717b1b254a4199b0a08b334afd16.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/a389717b1b254a4199b0a08b334afd16.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/a389717b1b254a4199b0a08b334afd16.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/a389717b1b254a4199b0a08b334afd16.png 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/a389717b1b254a4199b0a08b334afd16.png">
+    </a><figcaption class="image-caption">停用词汇</figcaption>
+    </figure></p>
+<ol start="2">
+<li>引用词典</li>
+</ol>
+<p>修改 <code>config/IKAnalyzer.cfg.xml</code> 引用自己创建的 <code>stop.dic</code> 停用词典，配置如下:</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/cc6cc42963ec4eed8da6f875c9220807.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/cc6cc42963ec4eed8da6f875c9220807.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/cc6cc42963ec4eed8da6f875c9220807.png" data-sub-html="<h2>停用词典配置</h2>">
+        <img
+            class="lazyload"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/cc6cc42963ec4eed8da6f875c9220807.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/cc6cc42963ec4eed8da6f875c9220807.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/cc6cc42963ec4eed8da6f875c9220807.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/cc6cc42963ec4eed8da6f875c9220807.png 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/cc6cc42963ec4eed8da6f875c9220807.png">
+    </a><figcaption class="image-caption">停用词典配置</figcaption>
+    </figure></p>
+<p>修改完成后，重启 <code>elasticsearch</code> 容器。</p>
+<p>再使用 <code>Kibana</code> 测试效果如下：</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/9bdadba012d049e4a9c34f2d3163b190.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/9bdadba012d049e4a9c34f2d3163b190.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/9bdadba012d049e4a9c34f2d3163b190.png" data-sub-html="<h2>停用分词效果</h2>">
+        <img
+            class="lazyload"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/9bdadba012d049e4a9c34f2d3163b190.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/9bdadba012d049e4a9c34f2d3163b190.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/9bdadba012d049e4a9c34f2d3163b190.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/9bdadba012d049e4a9c34f2d3163b190.png 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/9bdadba012d049e4a9c34f2d3163b190.png">
+    </a><figcaption class="image-caption">停用分词效果</figcaption>
+    </figure></p>
+<p>可以发现，不再有 <code>世界</code>，<code>的</code>，<code>是</code>，<code>上</code>，<code>语言</code> 的分词了，说明停用分词也生效了。</p>
+</div>
+
+        <div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2023-09-13&nbsp;<a class="git-hash" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/c122fd32de24db6d9e202f34d89b52d9e48f1ff1" target="_blank" title="commit by weibin(xiaobinqt@163.com) c122fd32de24db6d9e202f34d89b52d9e48f1ff1: add docker-elastic-install.md" rel="noopener noreferrer">
+                                    <i class="fas fa-hashtag fa-fw"></i>c122fd32</a></span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span><a class="link-to-mardown" href=/docker-elastic-install/index.md target="_blank" rel="noopener noreferrer">阅读原始文档</a>
+                    </span></div>
+            <div class="post-info-share">
+                <span><a href="#" onclick="return false;" title="分享到 Twitter" data-sharer="twitter" data-url="https://www.xiaobinqt.cn/docker-elastic-install/" data-title="Docker 单机安装使用 Elasticsearch" data-hashtags="elasticsearch"><i class="fab fa-twitter fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Facebook" data-sharer="facebook" data-url="https://www.xiaobinqt.cn/docker-elastic-install/" data-hashtag="elasticsearch"><i class="fab fa-facebook-square fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Hacker News" data-sharer="hackernews" data-url="https://www.xiaobinqt.cn/docker-elastic-install/" data-title="Docker 单机安装使用 Elasticsearch"><i class="fab fa-hacker-news fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Line" data-sharer="line" data-url="https://www.xiaobinqt.cn/docker-elastic-install/" data-title="Docker 单机安装使用 Elasticsearch"><i data-svg-src="/lib/simple-icons/icons/line.min.svg"></i></a><a href="#" onclick="return false;" title="分享到 微博" data-sharer="weibo" data-url="https://www.xiaobinqt.cn/docker-elastic-install/" data-title="Docker 单机安装使用 Elasticsearch"><i class="fab fa-weibo fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 百度" data-sharer="baidu" data-url="https://www.xiaobinqt.cn/docker-elastic-install/" data-title="Docker 单机安装使用 Elasticsearch"><i data-svg-src="/lib/simple-icons/icons/baidu.min.svg"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/elasticsearch/">elasticsearch</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/bretton-woods-system/" class="prev" rel="prev" title="布雷顿森林体系"><i class="fas fa-angle-left fa-fw"></i>布雷顿森林体系</a>
+            <a href="/old-pal/" class="next" rel="next" title="纪念一位老友">纪念一位老友<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+<div id="comments"><div id="gitalk" class="comment"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://github.com/gitalk/gitalk"></a>Gitalk</a>.
+            </noscript></div></article></div>
+        </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2018 - 2023</span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+            <div class="footer-line"></div>
+            <div class="footer-line">
+            </div>
+        </div></footer></div>
+
+    <div id="fixed-buttons"><a href="#back-to-top" id="back-to-top-button" class="fixed-button" title="回到顶部">
+            <i class="fas fa-arrow-up fa-fw"></i>
+        </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+            <i class="fas fa-comment fa-fw"></i>
+        </a>
+    </div><div class="assets"><script type="text/javascript" src="/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="/lib/algoliasearch/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/topbar/topbar.min.js"></script><script type="text/javascript" src="/lib/pjax/pjax.min.js"></script><script type="text/javascript" src="/js/theme.min.js" defer></script></div>
+
+<div class="pjax-assets"><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":35},"comment":{"gitalk":{"admin":["xiaobinqt"],"clientID":"47b15de6c2d8a0f8d707","clientSecret":"c70556c8b3a3b38ea7c72e539ff3b37d5bc1b4f3","id":"d7dc2563d244a9e7915b285e56780b64","owner":"xiaobinqt","repo":"xiaobinqt.github.io","title":"Docker 单机安装使用 Elasticsearch"}},"lightGallery":{"actualSize":false,"exThumbImage":"data-thumbnail","hideBarsDelay":2000,"selector":".lightgallery","speed":400,"thumbContHeight":80,"thumbWidth":80,"thumbnail":true},"search":{"algoliaAppID":"CPNWIDNX0Y","algoliaIndex":"xiaobinqt.io","algoliaSearchKey":"80b84de0ebc766371dd27cd3e651c41e","highlightTag":"em","maxResultLength":20,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"},"sharerjs":true};</script><script type="text/javascript" src="/lib/gitalk/gitalk.min.js"></script><script type="text/javascript" src="/js/gitalk.min.js" defer></script><script type="text/javascript" src="/lib/lightgallery/lightgallery.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-thumbnail.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-zoom.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><link rel="stylesheet" href="/lib/gitalk/gitalk.min.css"><link rel="stylesheet" href="/lib/lightgallery/lightgallery.min.css"></div>
+</body>
+
+</html>
