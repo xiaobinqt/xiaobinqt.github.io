@@ -12,6 +12,753 @@
     </author><guid>https://www.xiaobinqt.cn/go-web-martini-glance/</guid>
     <description><![CDATA[<div class="featured-image">
                 <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220602/0a0b0e59bfbb41139b818d376756a0ec.png" referrerpolicy="no-referrer">
-            </div>之前在CSDN写过一个关于 martini 的笔记golang martini 包的简单使用 ，最近读来感觉不是很清楚，而且也有一些错误，花了点时间重新整理了下那篇笔记。 中间件的使用根据文档中间件的使用有 2 种方法，我总结为通过 Handlers 函数方]]></description>
+            </div><!-- author： xiaobinqt -->
+<!-- email： xiaobinqt@163.com -->
+<!-- https://xiaobinqt.github.io -->
+<!-- https://www.xiaobinqt.cn -->
+<p>之前在<a href="https://blog.csdn.net/xiaobinqt" target="_blank" rel="noopener noreferrer">CSDN</a>写过一个关于 martini
+的笔记<a href="https://blog.csdn.net/xiaobinqt/article/details/115749581" target="_blank" rel="noopener noreferrer">golang martini 包的简单使用</a>
+，最近读来感觉不是很清楚，而且也有一些错误，花了点时间重新整理了下那篇笔记。</p>
+<h2 id="中间件的使用" class="headerLink">
+    <a href="#%e4%b8%ad%e9%97%b4%e4%bb%b6%e7%9a%84%e4%bd%bf%e7%94%a8" class="header-mark"></a>中间件的使用</h2><p>根据文档中间件的使用有 2 种方法，我总结为通过 <code>Handlers</code> 函数方法和非 <code>Handlers</code> 函数方法，其实主要区别就是 <strong><code>Handlers</code>
+函数方法优先级更高，它将会替换掉之前的任何设置过的中间件，但是<code>group</code>组中的中间件还是会执行。</strong>。</p>
+<h3 id="非-handlers-方式的中间件" class="headerLink">
+    <a href="#%e9%9d%9e-handlers-%e6%96%b9%e5%bc%8f%e7%9a%84%e4%b8%ad%e9%97%b4%e4%bb%b6" class="header-mark"></a>非 Handlers 方式的中间件</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;github.com/go-martini/martini&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">m</span> <span class="o">:=</span> <span class="nx">martini</span><span class="p">.</span><span class="nf">Classic</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">m</span><span class="p">.</span><span class="nf">Use</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="nx">martini</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;第 1 个中间件 before a request&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">m</span><span class="p">.</span><span class="nf">Use</span><span class="p">(</span><span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;第 2 个中间件 111111111111&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">m</span><span class="p">.</span><span class="nf">Use</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="nx">martini</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;第 3 个中间件 group middleware&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">m</span><span class="p">.</span><span class="nf">Group</span><span class="p">(</span><span class="s">&#34;/api&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">r</span> <span class="nx">martini</span><span class="p">.</span><span class="nx">Router</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">r</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;/test&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">return</span> <span class="s">&#34;...... return success .....&#34;</span>
+</span></span><span class="line"><span class="cl">		<span class="p">})</span>
+</span></span><span class="line"><span class="cl">	<span class="p">},</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;第 4 个中间件 group middleware&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">m</span><span class="p">.</span><span class="nf">RunOnAddr</span><span class="p">(</span><span class="s">&#34;:8081&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>☝️是一个例子，从请求后的打印结果可以看出是按着代码顺序执行的。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230411/e43dc5c102c34b9297d0985712ac6a19.png" title="执行结果" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230411/e43dc5c102c34b9297d0985712ac6a19.png" data-sub-html="<h2>执行结果</h2><p>执行结果</p>">
+        
+    </a><figcaption class="image-caption">执行结果</figcaption>
+    </figure></p>
+<h3 id="handlers-方式的中间件" class="headerLink">
+    <a href="#handlers-%e6%96%b9%e5%bc%8f%e7%9a%84%e4%b8%ad%e9%97%b4%e4%bb%b6" class="header-mark"></a>Handlers 方式的中间件</h3><p>可以把上面代码稍微改下，如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;github.com/go-martini/martini&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">m</span> <span class="o">:=</span> <span class="nx">martini</span><span class="p">.</span><span class="nf">Classic</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">m</span><span class="p">.</span><span class="nf">Use</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="nx">martini</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;第 1 个中间件 before a request&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">m</span><span class="p">.</span><span class="nf">Use</span><span class="p">(</span><span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;第 2 个中间件 111111111111&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">m</span><span class="p">.</span><span class="nf">Use</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="nx">martini</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;第 3 个中间件 group middleware&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">m</span><span class="p">.</span><span class="nf">Handlers</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">		<span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;其他中间件都失效，只有我执行了..&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="p">},</span>
+</span></span><span class="line"><span class="cl">	<span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">m</span><span class="p">.</span><span class="nf">Group</span><span class="p">(</span><span class="s">&#34;/api&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">r</span> <span class="nx">martini</span><span class="p">.</span><span class="nx">Router</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">r</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;/test&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">return</span> <span class="s">&#34;...... return success .....&#34;</span>
+</span></span><span class="line"><span class="cl">		<span class="p">})</span>
+</span></span><span class="line"><span class="cl">	<span class="p">},</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;第 4 个中间件 group middleware&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">m</span><span class="p">.</span><span class="nf">RunOnAddr</span><span class="p">(</span><span class="s">&#34;:8081&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>执行后打印结果如下👇，说明只执行了 <code>Handlers</code> 函数中的中间件和 <code>group</code> 组中的中间件。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230411/c017c320ee134446accf5db1b525f6a4.png" title="示例结果" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230411/c017c320ee134446accf5db1b525f6a4.png" data-sub-html="<h2>示例结果</h2><p>示例结果</p>">
+        
+    </a><figcaption class="image-caption">示例结果</figcaption>
+    </figure></p>
+<h2 id="next-函数的使用" class="headerLink">
+    <a href="#next-%e5%87%bd%e6%95%b0%e7%9a%84%e4%bd%bf%e7%94%a8" class="header-mark"></a>Next 函数的使用</h2><p><code>Context.Next()</code>是一个可选的函数用于中间件处理器暂时放弃执行直到其他的处理器都执行完毕. 这样就可以很好的处理在 http
+请求完成后需要做的操作。</p>
+<p>对于 Next 我觉得可以理解成遇到 <code>Next()</code> 后就<strong>入栈</strong>，先进后出。 以下我也是通过有没有 <code>Handlers</code> 函数中间件来举例。</p>
+<h3 id="next-在非-handlers-中间件中使用" class="headerLink">
+    <a href="#next-%e5%9c%a8%e9%9d%9e-handlers-%e4%b8%ad%e9%97%b4%e4%bb%b6%e4%b8%ad%e4%bd%bf%e7%94%a8" class="header-mark"></a>Next 在非 Handlers 中间件中使用</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;github.com/go-martini/martini&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">m</span> <span class="o">:=</span> <span class="nx">martini</span><span class="p">.</span><span class="nf">Classic</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">m</span><span class="p">.</span><span class="nf">Use</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="nx">martini</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;第 1 个中间件 before a request&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">c</span><span class="p">.</span><span class="nf">Next</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;第 6 个中间件 after a request&#34;</span><span class="p">)</span> <span class="c1">// 入栈等待处理
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">m</span><span class="p">.</span><span class="nf">Use</span><span class="p">(</span><span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;第 2 个中间件 111111111111&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">m</span><span class="p">.</span><span class="nf">Use</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="nx">martini</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;第 3 个中间件 group middleware&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">c</span><span class="p">.</span><span class="nf">Next</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;第 5 个中间件 group middleware&#34;</span><span class="p">)</span> <span class="c1">// 入栈等待处理
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">m</span><span class="p">.</span><span class="nf">Group</span><span class="p">(</span><span class="s">&#34;/api&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">r</span> <span class="nx">martini</span><span class="p">.</span><span class="nx">Router</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">r</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;/test&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;......last 最后执行........&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="k">return</span> <span class="s">&#34;...... return success .....&#34;</span>
+</span></span><span class="line"><span class="cl">		<span class="p">})</span>
+</span></span><span class="line"><span class="cl">	<span class="p">},</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;分组中的中间件 group middleware&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">m</span><span class="p">.</span><span class="nf">RunOnAddr</span><span class="p">(</span><span class="s">&#34;:8080&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>执行后的打印结果如下：</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230411/ccd2bd45636d498cbefbb6973c69d1f1.png" title="示例结果" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230411/ccd2bd45636d498cbefbb6973c69d1f1.png" data-sub-html="<h2>示例结果</h2><p>示例结果</p>">
+        
+    </a><figcaption class="image-caption">示例结果</figcaption>
+    </figure></p>
+<p>请注意第 5 和第 6 个中间件是最后执行的，是在 <strong>http请求完成后</strong> 执行的。</p>
+<h3 id="next-在-handlers-中间件中使用" class="headerLink">
+    <a href="#next-%e5%9c%a8-handlers-%e4%b8%ad%e9%97%b4%e4%bb%b6%e4%b8%ad%e4%bd%bf%e7%94%a8" class="header-mark"></a>Next 在 Handlers 中间件中使用</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;github.com/go-martini/martini&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">m</span> <span class="o">:=</span> <span class="nx">martini</span><span class="p">.</span><span class="nf">Classic</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">m</span><span class="p">.</span><span class="nf">Handlers</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">		<span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;第 1 次执行....&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="p">},</span>
+</span></span><span class="line"><span class="cl">		<span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="nx">martini</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">c</span><span class="p">.</span><span class="nf">Next</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;http 请求完成后执行....&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="p">},</span>
+</span></span><span class="line"><span class="cl">		<span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;第 2 次执行....&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="p">},</span>
+</span></span><span class="line"><span class="cl">	<span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">m</span><span class="p">.</span><span class="nf">Group</span><span class="p">(</span><span class="s">&#34;/api&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">r</span> <span class="nx">martini</span><span class="p">.</span><span class="nx">Router</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">r</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;/test&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;......last........&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="k">return</span> <span class="s">&#34;...... return success .....&#34;</span>
+</span></span><span class="line"><span class="cl">		<span class="p">})</span>
+</span></span><span class="line"><span class="cl">	<span class="p">},</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;组中的中间件 group middleware&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">m</span><span class="p">.</span><span class="nf">RunOnAddr</span><span class="p">(</span><span class="s">&#34;:8081&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>执行后的打印结果如下：</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230411/3827426abb174e22a7bf3890dca041d5.png" title="示例结果" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230411/3827426abb174e22a7bf3890dca041d5.png" data-sub-html="<h2>示例结果</h2><p>示例结果</p>">
+        
+    </a><figcaption class="image-caption">示例结果</figcaption>
+    </figure></p>
+<h2 id="依赖注入和控制反转" class="headerLink">
+    <a href="#%e4%be%9d%e8%b5%96%e6%b3%a8%e5%85%a5%e5%92%8c%e6%8e%a7%e5%88%b6%e5%8f%8d%e8%bd%ac" class="header-mark"></a>依赖注入和控制反转</h2><p>正常情况下，对函数或方法的调用是调用方的主动直接行为，调用方清楚地知道被调的函数名是什么，参数有哪些类型，直接主动地调用；包括对象的初始化也是显式地直接初始化。所谓的“控制反转”就是将这种主动行为变为间接的行为，主调方不是直接调用函数或对象，而是借助框架代码进行间接的调用和初始化，这种行为被称为“控制反转”，控制反转可以解耦调用方和被调方。</p>
+<p>一般情况下，使用库的程序是程序主动地调用库的功能，但使用框架的程序常常由框架驱动整个程序，在框架下写的业务代码是被框架驱动的，这种模式就是“控制反转”。</p>
+<p>“依赖注入”是实现“控制反转”的一种方法，是通过注入的参数或实例的方式实现控制反转。</p>
+<p>控制反转的价值在哪里？一句话就是“解耦”，可以让控制反转的框架代码读取配置，动态地构建对象。</p>
+<p>控制反转是解决复杂问题的一种方法，特别是在 web 框架中为路由和中间件的灵活注入提供了很好的方法。</p>
+<h2 id="服务" class="headerLink">
+    <a href="#%e6%9c%8d%e5%8a%a1" class="header-mark"></a>服务</h2><p>服务即是被注入到处理器中的<code>参数</code>，你可以映射一个服务到<code>全局</code>或者<code>请求</code>的级别。</p>
+<p>关于服务最强悍的地方之一就是它能够映射服务到接口。例如说，假设你想要覆盖<code>http.ResponseWriter</code>成为一个对象，那么你可以封装它并包含你自己的额外操作。</p>
+<h3 id="全局映射" class="headerLink">
+    <a href="#%e5%85%a8%e5%b1%80%e6%98%a0%e5%b0%84" class="header-mark"></a>全局映射</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;net/http&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;github.com/go-martini/martini&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">myHandle</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">ttt</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">s1</span><span class="p">,</span> <span class="nx">s2</span> <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">ret</span> <span class="o">:=</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;Hello, World! %d,%s , %s&#34;</span><span class="p">,</span> <span class="nx">ttt</span><span class="p">,</span> <span class="nx">s1</span><span class="p">,</span> <span class="nx">s2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">w</span><span class="p">.</span><span class="nf">Write</span><span class="p">([]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">ret</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">registerMyRouter</span><span class="p">(</span><span class="nx">r</span> <span class="nx">martini</span><span class="p">.</span><span class="nx">Router</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">r</span><span class="p">.</span><span class="nf">Group</span><span class="p">(</span><span class="s">&#34;/api&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">r</span> <span class="nx">martini</span><span class="p">.</span><span class="nx">Router</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">r</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;/test&#34;</span><span class="p">,</span> <span class="nx">myHandle</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">},</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;组中的中间件 group middleware&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">m</span> <span class="o">:=</span> <span class="nx">martini</span><span class="p">.</span><span class="nf">Classic</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">gv1</span> <span class="o">:=</span> <span class="s">&#34;1111111&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">gv2</span> <span class="o">:=</span> <span class="s">&#34;2222222&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">m</span><span class="p">.</span><span class="nf">Map</span><span class="p">(</span><span class="nx">gv1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">m</span><span class="p">.</span><span class="nf">Map</span><span class="p">(</span><span class="nx">gv2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">age</span> <span class="o">:=</span> <span class="mi">23</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">m</span><span class="p">.</span><span class="nf">Map</span><span class="p">(</span><span class="nx">age</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nf">registerMyRouter</span><span class="p">(</span><span class="nx">m</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">m</span><span class="p">.</span><span class="nf">RunOnAddr</span><span class="p">(</span><span class="s">&#34;:8083&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这是一个简单的全局映射的服务，<code>gv1</code>，<code>gv2</code>，<code>age</code> 这几个服务(参数) 将可以在所有的处理器中被使用到。我们的 <code>myHandle()</code>
+处理器(方法) 就直接用了，且没有报错。执行后打印的结果如下：</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220603/5f3712dec1824fa399279589a14f8bff.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="示例结果" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220603/5f3712dec1824fa399279589a14f8bff.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>示例结果</h2><p>示例结果</p>">
+        
+    </a><figcaption class="image-caption">示例结果</figcaption>
+    </figure></p>
+<p>⚠️这里有个点需要<strong>注意</strong>，同一个类型的服务，如果多次 map 映射，后面的值会把前面的<strong>覆盖</strong>，☝️上面的，<code>gv2</code>
+的值就把 <code>gv1</code>的值覆盖了。</p>
+<h3 id="请求级别的映射" class="headerLink">
+    <a href="#%e8%af%b7%e6%b1%82%e7%ba%a7%e5%88%ab%e7%9a%84%e6%98%a0%e5%b0%84" class="header-mark"></a>请求级别的映射</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;github.com/go-martini/martini&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;net/http&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;time&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">ReqContext</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">ExString</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">Req</span>      <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">do</span><span class="p">(</span><span class="nx">reqCtx</span> <span class="o">*</span><span class="nx">ReqContext</span><span class="p">)</span> <span class="kt">string</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">`handle return....%s, ex val= :%s `</span><span class="p">,</span> <span class="nx">reqCtx</span><span class="p">.</span><span class="nx">Req</span><span class="p">.</span><span class="nx">URL</span><span class="p">.</span><span class="nf">Query</span><span class="p">().</span><span class="nf">Encode</span><span class="p">(),</span> <span class="nx">reqCtx</span><span class="p">.</span><span class="nx">ExString</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">myHandle</span><span class="p">(</span><span class="nx">req</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">,</span> <span class="nx">c</span> <span class="nx">martini</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">reqC</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">ReqContext</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">ExString</span><span class="p">:</span> <span class="s">&#34;1112323 &#34;</span> <span class="o">+</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">().</span><span class="nf">Format</span><span class="p">(</span><span class="s">&#34;2006-01-02 15:04:05&#34;</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">Req</span><span class="p">:</span>      <span class="nx">req</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">c</span><span class="p">.</span><span class="nf">Map</span><span class="p">(</span><span class="nx">reqC</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">myHandle2</span><span class="p">(</span><span class="nx">reqCtx</span> <span class="o">*</span><span class="nx">ReqContext</span><span class="p">)</span> <span class="kt">string</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">`handle return....%s, ex val= :%s `</span><span class="p">,</span> <span class="nx">reqCtx</span><span class="p">.</span><span class="nx">Req</span><span class="p">.</span><span class="nx">URL</span><span class="p">.</span><span class="nf">Query</span><span class="p">().</span><span class="nf">Encode</span><span class="p">(),</span> <span class="nx">reqCtx</span><span class="p">.</span><span class="nx">ExString</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">myHandle3</span><span class="p">(</span><span class="nx">req</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="kt">string</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">`handle return....%s`</span><span class="p">,</span> <span class="nx">req</span><span class="p">.</span><span class="nx">URL</span><span class="p">.</span><span class="nf">Query</span><span class="p">().</span><span class="nf">Encode</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">registerMyRouter</span><span class="p">(</span><span class="nx">r</span> <span class="nx">martini</span><span class="p">.</span><span class="nx">Router</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">r</span><span class="p">.</span><span class="nf">Group</span><span class="p">(</span><span class="s">&#34;/api&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">r</span> <span class="nx">martini</span><span class="p">.</span><span class="nx">Router</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">r</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;/test&#34;</span><span class="p">,</span> <span class="nx">myHandle</span><span class="p">,</span> <span class="nx">do</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">r</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;/test2&#34;</span><span class="p">,</span> <span class="nx">myHandle2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">r</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;/test3&#34;</span><span class="p">,</span> <span class="nx">myHandle3</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">},</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;组中的中间件 group middleware&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">m</span> <span class="o">:=</span> <span class="nx">martini</span><span class="p">.</span><span class="nf">Classic</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">registerMyRouter</span><span class="p">(</span><span class="nx">m</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">m</span><span class="p">.</span><span class="nf">RunOnAddr</span><span class="p">(</span><span class="s">&#34;:8085&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>执行后打印结果如下：</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220603/806cccbc956b4b30802b11a34167da4e.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="执行结果" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220603/806cccbc956b4b30802b11a34167da4e.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>执行结果</h2><p>执行结果</p>">
+        
+    </a><figcaption class="image-caption">执行结果</figcaption>
+    </figure></p>
+<p>✔️这是一个简单的请求级别的映射，我们对 <code>/api/test</code> 做了映射，所以在 <code>/api/test</code> 请求中 <code>ReqContext</code>
+参数是全局可以用，这也就是 <code>do()</code>
+方法中的参数 <code>do(reqCtx *ReqContext)</code> 中的来历。</p>
+<p>✔️在 <code>/api/test3</code> 中我们没有用任何其他的参数，上下文用的是<code>*http.Request</code>，所以可以正确执行请求。</p>
+<p>❌在 <code>/api/test2</code> 中我们用到了 <code>ReqContext</code> 参数，这是 <code>/api/test</code> 请求映射的，只能在 <code>/api/test</code> 中使用，这就是报错是原因。</p>
+<h3 id="映射值到接口" class="headerLink">
+    <a href="#%e6%98%a0%e5%b0%84%e5%80%bc%e5%88%b0%e6%8e%a5%e5%8f%a3" class="header-mark"></a>映射值到接口</h3><p>假设你想要覆盖<code>http.ResponseWriter</code>成为一个对象, 那么你可以封装它并包含你自己的额外操作。</p>
+<p>我个人理解的就是一种<strong>类型覆盖</strong>。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span><span class="lnt">78
+</span><span class="lnt">79
+</span><span class="lnt">80
+</span><span class="lnt">81
+</span><span class="lnt">82
+</span><span class="lnt">83
+</span><span class="lnt">84
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;github.com/go-martini/martini&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;net/http&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;time&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">ReqContext</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">Svr</span>      <span class="kd">interface</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">ExString</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">Req</span>      <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">ServiceGetXIImpl</span> <span class="kd">interface</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">GetXI</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Tmp</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">Tmp</span><span class="p">)</span> <span class="nf">GetXI</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;tmp GetXI()&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Service</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">Name</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">Age</span>  <span class="kt">int</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">Service</span><span class="p">)</span> <span class="nf">printXX</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;我是 service printXX() 方法&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">Service</span><span class="p">)</span> <span class="nf">GetXI</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;我是 Service 实现了 ServiceGetXIImpl 接口中的 GetXI() 方法&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">myHandle</span><span class="p">(</span><span class="nx">reqCtx</span> <span class="o">*</span><span class="nx">ReqContext</span><span class="p">)</span> <span class="kt">string</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;最后 myHandle 中的 reqCtx.Svr 类型为 %T \n &#34;</span><span class="p">,</span> <span class="nx">reqCtx</span><span class="p">.</span><span class="nx">Svr</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">`handle return....%s, ex val= :%s `</span><span class="p">,</span> <span class="nx">reqCtx</span><span class="p">.</span><span class="nx">Req</span><span class="p">.</span><span class="nx">URL</span><span class="p">.</span><span class="nf">Query</span><span class="p">().</span><span class="nf">Encode</span><span class="p">(),</span> <span class="nx">reqCtx</span><span class="p">.</span><span class="nx">ExString</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">registerMyRouter</span><span class="p">(</span><span class="nx">r</span> <span class="nx">martini</span><span class="p">.</span><span class="nx">Router</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">r</span><span class="p">.</span><span class="nf">Group</span><span class="p">(</span><span class="s">&#34;/api&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">r</span> <span class="nx">martini</span><span class="p">.</span><span class="nx">Router</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">r</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;/test&#34;</span><span class="p">,</span> <span class="nx">myHandle</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">},</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;组中的中间件 group middleware&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">ExecMapTo</span><span class="p">(</span><span class="nx">ctx</span> <span class="o">*</span><span class="nx">ReqContext</span><span class="p">)</span> <span class="o">*</span><span class="nx">ReqContext</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">ctx</span><span class="p">.</span><span class="nx">Svr</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">Service</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">ctx</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">WrapMapTo</span><span class="p">(</span><span class="nx">reqCtx</span> <span class="o">*</span><span class="nx">ReqContext</span><span class="p">,</span> <span class="nx">c</span> <span class="nx">martini</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;MapTo 前 Svr 类型为: %T \n&#34;</span><span class="p">,</span> <span class="nx">reqCtx</span><span class="p">.</span><span class="nx">Svr</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">rw</span> <span class="o">:=</span> <span class="nf">ExecMapTo</span><span class="p">(</span><span class="nx">reqCtx</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">c</span><span class="p">.</span><span class="nf">MapTo</span><span class="p">(</span><span class="nx">rw</span><span class="p">,</span> <span class="p">(</span><span class="o">*</span><span class="nx">ServiceGetXIImpl</span><span class="p">)(</span><span class="kc">nil</span><span class="p">))</span> <span class="c1">// 覆盖 reqCtx.Svr 的 Tmp 类型为 Service
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;MapTo 后 Svr 类型为: %T \n&#34;</span><span class="p">,</span> <span class="nx">reqCtx</span><span class="p">.</span><span class="nx">Svr</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">m</span> <span class="o">:=</span> <span class="nx">martini</span><span class="p">.</span><span class="nf">Classic</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">m</span><span class="p">.</span><span class="nf">Use</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">req</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">,</span> <span class="nx">c</span> <span class="nx">martini</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">reqC</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">ReqContext</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">Svr</span><span class="p">:</span>      <span class="nx">Tmp</span><span class="p">{},</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">ExString</span><span class="p">:</span> <span class="s">&#34;1112323 &#34;</span> <span class="o">+</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">().</span><span class="nf">Format</span><span class="p">(</span><span class="s">&#34;2006-01-02 15:04:05&#34;</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">Req</span><span class="p">:</span>      <span class="nx">req</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">c</span><span class="p">.</span><span class="nf">Map</span><span class="p">(</span><span class="nx">reqC</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">m</span><span class="p">.</span><span class="nf">Use</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">reqCtx</span> <span class="o">*</span><span class="nx">ReqContext</span><span class="p">,</span> <span class="nx">c</span> <span class="nx">martini</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">WrapMapTo</span><span class="p">(</span><span class="nx">reqCtx</span><span class="p">,</span> <span class="nx">c</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nf">registerMyRouter</span><span class="p">(</span><span class="nx">m</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">m</span><span class="p">.</span><span class="nf">RunOnAddr</span><span class="p">(</span><span class="s">&#34;:8086&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这个例子主要是想把 ReqContext 中的 Svr 从 Tmp 类型替换为 Service 类型。
+执行后的打印结果如下：</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230411/6a3069dc42fd4eccb152a9c52cef2944.png" title="执行结果" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230411/6a3069dc42fd4eccb152a9c52cef2944.png" data-sub-html="<h2>执行结果</h2><p>执行结果</p>">
+        
+    </a><figcaption class="image-caption">执行结果</figcaption>
+    </figure></p>
+<h2 id="参考" class="headerLink">
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
+<li><a href="https://github.com/go-martini/martini/blob/master/translations/README_zh_cn.md" target="_blank" rel="noopener noreferrer">https://github.com/go-martini/martini/blob/master/translations/README_zh_cn.md</a></li>
+<li><a href="https://blog.csdn.net/ARPOSPF/article/details/118652145" target="_blank" rel="noopener noreferrer">inject库</a></li>
+</ul>
+]]></description>
 </item></channel>
 </rss>

@@ -12,13 +12,557 @@
     </author><guid>https://www.xiaobinqt.cn/tcp-handshark/</guid>
     <description><![CDATA[<div class="featured-image">
                 <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221118/54f90c85427d4f59b34831801d5770bb.png" referrerpolicy="no-referrer">
-            </div>TCP 协议和 UDP 协议都是工作在传输层，是为了在程序之间传递数据，数据可以是多种形式，比如视频，文本，图片等。对于 TCP 协议和 UDP 协议来说，都是一堆二进制数，只是 TCP 基于连接，而 UDP 基于非连接。 名词解释 名词 解释 SYN 同步序]]></description>
+            </div><p>TCP 协议和 UDP 协议都是工作在传输层，是为了在程序之间传递数据，数据可以是多种形式，比如视频，文本，图片等。对于 TCP 协议和 UDP 协议来说，都是一堆二进制数，只是 TCP 基于连接，而 UDP 基于非连接。</p>
+<h2 id="名词解释" class="headerLink">
+    <a href="#%e5%90%8d%e8%af%8d%e8%a7%a3%e9%87%8a" class="header-mark"></a>名词解释</h2><table>
+<thead>
+<tr>
+<th>名词</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SYN</td>
+<td>同步序号，用于建立连接过程，在连接请求中，SYN=1 和 ACK=0 表示该数据段没有使用捎带的确认域，而连接应答捎带一个确认，即 SYN=1 和 ACK=1</td>
+</tr>
+<tr>
+<td>FIN</td>
+<td>finish 标志，用于释放连接，为 1 时表示发送方已经没有数据发送了，即关闭本方数据流</td>
+</tr>
+<tr>
+<td>ACK</td>
+<td>确认序号标志，为 1 时表示确认号有效，为 0 表示报文中不含确认信息，忽略确认号字段</td>
+</tr>
+<tr>
+<td>PSH</td>
+<td>push 标志，为 1 表示是带有 push 标志的数据，指示接收方在接收到该报文段以后，应尽快将这个报文段交给应用程序，而不是在缓冲区排队</td>
+</tr>
+<tr>
+<td>RST</td>
+<td>重置连接标志，用于重置由于主机崩溃或其他原因而出现错误的连接。或者用于拒绝非法的报文段和拒绝连接请求</td>
+</tr>
+<tr>
+<td>序列号 seq</td>
+<td>占 4 个字节，用来标记数据段的顺序，TCP 把连接中发送的所有数据字节都编上一个序号，第一个字节的编号由本地随机产生；给字节编上序号后，就给每一个报文段指派一个序号；序列号 seq 就是这个报文段中的第一个字节的数据编号</td>
+</tr>
+<tr>
+<td>确认号 ack</td>
+<td>占 4 个字节，期待收到对方下一个报文段的第一个数据字节的序号；序列号表示报文段携带数据的第一个字节的编号；而确认号指的是期望接收到下一个字节的编号；因此当前报文段最后一个字节的编号 +1 （<code>ACK</code>会占一个序号）即为确认号</td>
+</tr>
+</tbody>
+</table>
+<div class="details admonition info open">
+        <div class="details-summary admonition-title">
+            <i class="icon fas fa-info-circle fa-fw"></i>Info<i class="details-icon fas fa-angle-right fa-fw"></i>
+        </div>
+        <div class="details-content">
+            <div class="admonition-content"><code>ACK</code>、<code>SYN</code> 和 <code>FIN</code> 这些大写的单词表示标志位，其值要么是 1，要么是 0；<code>ack</code>、<code>seq</code> 小写的单词表示序号。</div>
+        </div>
+    </div>
+<p><code>ACK</code> 是可能与 <code>SYN</code>，<code>FIN</code> 等同时使用的。比如 <code>SYN</code>和<code>ACK</code>可能同时为 1，它表示的就是建立连接之后的响应搜索 如果只是单个的一个<code>SYN</code>，它表示的只是建立连接。</p>
+<p><code>SYN</code>与<code>FIN</code>是不会同时为 1 的，因为前者表示的是建立连接，而后者表示的是断开连接。</p>
+<p><code>RST</code>一般是在<code>FIN</code>之后才会出现为 1 的情况，表示的是连接重置。</p>
+<p>一般，当出现<code>FIN</code>包或<code>RST</code>包时，便认为客户端与服务器端断开了连接；而当出现<code>SYN</code>和<code>SYN＋ACK</code>包时，我们认为客户端与服务器建立了一个连接。</p>
+<p><code>PSH</code>为 1 的情况，一般只出现在<code>DATA</code>内容不为 0 的包中，也就是说<code>PSH</code>为1表示的是有真正的 TCP 数据包内容被传递。</p>
+<h2 id="三次握手" class="headerLink">
+    <a href="#%e4%b8%89%e6%ac%a1%e6%8f%a1%e6%89%8b" class="header-mark"></a>三次握手</h2><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220326/43c6821afd6d4a9fadcceb9e98c228b9.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="三次握手" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220326/43c6821afd6d4a9fadcceb9e98c228b9.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>三次握手</h2><p>三次握手</p>">
+        
+    </a><figcaption class="image-caption">三次握手</figcaption>
+    </figure></p>
+<p>三次握手是建立请求的过程，当客户端向服务端发送请求时，会先发一包连接请求数据，这包数据称为<code>SYN</code>包，如果服务端同意连接，则会回复一包<code>SYN+ACK</code>包，客户端收到后回复一包<code>ACK</code>包，连接建立成功。在连接建立的过程中，客户端和服务端互相发送了 3 包数据，所以把这个过程称为 3 次握手。</p>
+<h3 id="第一次握手" class="headerLink">
+    <a href="#%e7%ac%ac%e4%b8%80%e6%ac%a1%e6%8f%a1%e6%89%8b" class="header-mark"></a>第一次握手</h3><h4 id="客户端" class="headerLink">
+    <a href="#%e5%ae%a2%e6%88%b7%e7%ab%af" class="header-mark"></a>客户端</h4><p>主动打开（active open），向服务端发送 <code>SYN</code> 报文段<code>SYN=1, SN=client_isn, OPT=client_mss</code>，请求建立连接。</p>
+<p><code>client_isn</code> 是客户端初始序号，动态生成，用于实现可靠传输，<code>client_sn-client_isn</code> 等于客户端已发送字节数。</p>
+<p><code>SYN</code> 报文段虽然不能携带数据，但是会消耗一个序号（相当于发送了1个字节的有效数据），下次客户端再向服务端发送的报文段中 <code>SN=client_isn+1</code>。 除了 <code>SYN</code> 报文段和 <code>ACK-SYN</code>
+报文段，其他所有后续报文段的序号 <code>SN</code> 值都等于上次接收的 <code>ACK</code> 报文段中的确认号 <code>AN</code> 值。</p>
+<p><code>client_mss</code> 是客户端最大报文段长度，在 <code>TCP</code> 首部的选项和填充部分，会在客户端与服务端的 <code>MSS</code> 中选择一个较小值使用。</p>
+<p>客户端变为 <code>SYN_SENT</code> 状态，然后等待服务端 <code>ACK</code> 报文段。</p>
+<h3 id="第二次握手" class="headerLink">
+    <a href="#%e7%ac%ac%e4%ba%8c%e6%ac%a1%e6%8f%a1%e6%89%8b" class="header-mark"></a>第二次握手</h3><h4 id="服务端" class="headerLink">
+    <a href="#%e6%9c%8d%e5%8a%a1%e7%ab%af" class="header-mark"></a>服务端</h4><p>接收来自客户端的 <code>SYN</code> 报文段，得知客户端发送能力正常。</p>
+<p>被动打开<code>passive open</code>，向客户端发送 <code>SYN-ACK </code>报文段<code>ACK=1, AN=client_isn+1, SYN=1, SN=server_isn, OPT=server_mss</code>
+，应答来自客户端的建立连接请求并向客户端发起建立连接请求。</p>
+<p><code>SN=server_isn</code> 是服务端初始序号，<code>ACK-SYN</code> 报文段虽然不能携带数据，但是会消耗一个序号（相当于发送了1个字节的有效数据），下次服务端再向客户端发送的报文中 <code>SN=server_isn+1</code> 。</p>
+<p><code>OPT=server_mss</code> 是服务端最大报文段长度。</p>
+<p><code>AN=client_isn+1</code> 是确认号，表明服务端接下来要开始接收来自客户端的第 <code>client_isn+1</code> 个字节的有效数据。</p>
+<p>服务端变为 <code>SYN_RCVD</code> 状态，并等待客户端 <code>ACK</code> 报文段。</p>
+<h3 id="第三次握手" class="headerLink">
+    <a href="#%e7%ac%ac%e4%b8%89%e6%ac%a1%e6%8f%a1%e6%89%8b" class="header-mark"></a>第三次握手</h3><h4 id="客户端-1" class="headerLink">
+    <a href="#%e5%ae%a2%e6%88%b7%e7%ab%af-1" class="header-mark"></a>客户端</h4><p>接收来自服务端的 <code>SYN-ACK</code> 报文段，得知服务端发送能力和接收能力都正常。</p>
+<p>向客户端发送 <code>ACK</code> 报文段<code>ACK=1, AN=server_isn+1, SN=client_isn+1, MESSAGE=message</code>，应答来自服务端的建立连接请求。</p>
+<p><code>SN=client_isn+1</code> 是序号，表明当前报文段发送的有效数据首字节是从请求建立连接到现在为止客户端向服务端发送的第 <code>(client_isn+1)-clien_isn+1=2</code> 个字节的有效数据。</p>
+<p>有效数据：一般有效数据指的是应用层的报文数据，不过 <code>SYN</code> 报文段、 <code>ACK-SYN</code> 报文段和 <code>FIN</code> 报文段虽然没有携带报文数据，但认为发送了1个字节的有效数据。</p>
+<p><code>AN=server_isn+1</code> 是确认号，表明客户端接下来要开始接收来自服务端的第 <code>server_isn+1</code> 个字节的有效数据。</p>
+<p><code>MESSAGE=message</code> 此时可以在报文段中携带客户端到服务端的报文数据；该 <code>ACK</code> 报文段消耗的序号个数等于 <code>message_length</code>（注意 <code>message_length</code>
+可以等于0，即不携带有效数据，此时 <code>ACK</code>报文段不消耗序号），下次客户端再向服务端发送的报文段中 <code>SN=client_isn+1+message_length</code> 。</p>
+<p>客户端变为 <code>ESTABLISHED</code> 状态，<code>client——&gt;server</code> 数据流建立。</p>
+<h4 id="服务端-1" class="headerLink">
+    <a href="#%e6%9c%8d%e5%8a%a1%e7%ab%af-1" class="header-mark"></a>服务端</h4><p>接收来自客户端的 <code>ACK</code> 报文段，得知客户端接收能力正常。</p>
+<p>变为 <code>ESTABLISHED</code> 状态，<code>server——&gt;client</code> 数据流也建立。</p>
+<h2 id="丢包问题" class="headerLink">
+    <a href="#%e4%b8%a2%e5%8c%85%e9%97%ae%e9%a2%98" class="header-mark"></a>丢包问题</h2><p>一包数据有可能被拆成多包发送，如何处理丢包问题❓这些数据包到达的先后顺序不同，如何处理乱序问题❓</p>
+<p>TCP 协议为每一个连接建立了一个发送缓冲区，从建立连接后的第一个字节的序列号为 0，后面每个字节的序列号就会增加 1，发送数据时，从发送缓冲区取一部分数据组成发送报文，在其 TCP 协议头中会附带序列号和长度，接收端在收到数据后，需要回复确认报文，确认报文中的<code>ACK</code>等于
+<strong>接收序列号加上长度</strong>
+，也就是下一包数据需要发送的起始序列号，这样的发送方式，能够使发送端确认发送的数据，已经被对方收到，发送端也可以一次发送，连续的多包数据，接收端只需要回复一次<code>ACK</code>就可以了，这样发送端可以把待发送的数据分隔成一系列的碎片，发送到对端，对端根据序列号和长度，在接收后重构出来完整的数据。</p>
+<p>假设其中丢失了某些数据，则接收端可以要求发送端重传，比如丢失了 100-199 这 100 个字节，接收端向发送端发送<code>ACK=100</code>的报文，发送端收到后重传这一包数据，接收端进行补齐。</p>
+<h2 id="四次挥手" class="headerLink">
+    <a href="#%e5%9b%9b%e6%ac%a1%e6%8c%a5%e6%89%8b" class="header-mark"></a>四次挥手</h2><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220326/dd8453fee5ce45579e5022be5763923d.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="TCP四次挥手" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220326/dd8453fee5ce45579e5022be5763923d.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>TCP四次挥手</h2><p>TCP四次挥手</p>">
+        
+    </a><figcaption class="image-caption">TCP四次挥手</figcaption>
+    </figure></p>
+<p>断开连接前，客户端和服务端都处于 <code>ESTABLISHED</code> 状态，两者谁都可以先发起断开连接请求。以下假设客户端先发起断开连接请求。</p>
+<p>客户端向服务端发送一包<code>FIN</code>包，表示要关闭连接，客户端自己进入<strong>终止等待1 状态</strong>，这是第一次挥手。</p>
+<p>服务端收到<code>FIN</code>包，发送一包<code>ACK</code>包，表示自己进入了<strong>关闭等待状态</strong>，客户端进入<strong>终止等待2 状态</strong>，这是第二次挥手。</p>
+<p>服务端此时还可以发送未发送的数据，而客户端还可以接收数据，待服务端发送完数据之后，发送一包<code>FIN</code>包，进入<strong>最后确认状态</strong>
+，这是第三次挥手。</p>
+<p>客户端收到之后回复<code>ACK</code>包，进入<strong>超时等待状态</strong>，经过超时时间后关闭连接，而服务端收到<code>ACK</code>包后立即关闭连接，这是第四次挥手。</p>
+<h3 id="第一次挥手" class="headerLink">
+    <a href="#%e7%ac%ac%e4%b8%80%e6%ac%a1%e6%8c%a5%e6%89%8b" class="header-mark"></a>第一次挥手</h3><h4 id="客户端-2" class="headerLink">
+    <a href="#%e5%ae%a2%e6%88%b7%e7%ab%af-2" class="header-mark"></a>客户端</h4><p>向服务端发送 <code>FIN</code> 报文段<code>FIN=1, SN=client_sn</code>，请求断开连接。</p>
+<p><code>SN=client_sn</code>是序号，表明当前报文段发送的有效数据首字节是从请求建立连接到现在为止客户端向服务端发送的第 <code>client_sn-clien_isn+1</code> 个字节的有效数据。</p>
+<p><code>FIN</code> 报文段虽然不能携带数据，但是会消耗一个序号（相当于发送了1个字节的有效数据），下次客户端再向服务端发送的报文中 <code>SN=client_isn+1</code> 。</p>
+<p>客户端变为 <code>FIN_WAIT1</code> 状态，等待服务端 <code>ACK</code> 报文段。</p>
+<h3 id="第二次挥手" class="headerLink">
+    <a href="#%e7%ac%ac%e4%ba%8c%e6%ac%a1%e6%8c%a5%e6%89%8b" class="header-mark"></a>第二次挥手</h3><h4 id="服务端-2" class="headerLink">
+    <a href="#%e6%9c%8d%e5%8a%a1%e7%ab%af-2" class="header-mark"></a>服务端</h4><p>接收来自客户端的 <code>FIN</code> 报文段。</p>
+<p>向客户端发送 <code>ACK</code> 报文段<code>ACK=1, AN=client_sn+1, SN=server_sn_wave2</code>，应答客户端的断开连接请求。</p>
+<p><code>SN=server_sn_wave2</code> 是序号，表明当前报文段发送的有效数据首字节是从请求建立连接到现在为止服务端向客户端发送的第 <code>server_sn_wave2-client_isn+1</code> 个字节的有效数据。</p>
+<p><code>AN=client_sn+1</code> 是确认号，表明服务端接下来要开始接收来自客户端的第 <code>client_sn+1</code> 个字节的有效数据。</p>
+<p>此时服务端变为 <code>CLOSE_WAIT</code> 状态。</p>
+<h4 id="客户端-3" class="headerLink">
+    <a href="#%e5%ae%a2%e6%88%b7%e7%ab%af-3" class="header-mark"></a>客户端</h4><p>接收来自服务端的 <code>ACK</code> 包。</p>
+<p>变为 <code>FIN_WAIT2</code> 状态，等待服务端关闭连接请求<code>FIN</code>报文段。</p>
+<h3 id="第三次挥手" class="headerLink">
+    <a href="#%e7%ac%ac%e4%b8%89%e6%ac%a1%e6%8c%a5%e6%89%8b" class="header-mark"></a>第三次挥手</h3><h4 id="服务端-3" class="headerLink">
+    <a href="#%e6%9c%8d%e5%8a%a1%e7%ab%af-3" class="header-mark"></a>服务端</h4><p>（服务端想断开连接时）向客户端发送 <code>FIN</code> 报文段<code>FIN=1, SN=server_sn</code>，请求断开连接。</p>
+<p><code>SN=server_sn</code> 是序号，表明当前报文段发送的有效数据首字节是从请求建立连接到现在为止服务端向客户端发送的第 <code>server_sn-clien_isn+1</code> 个字节的有效数据。</p>
+<p><code>FIN</code> 报文段虽然不能携带数据，但是会消耗一个序号（相当于发送了1个字节的有效数据），下次服务端再向客户端发送的报文中 <code>SN=client_isn+2</code> （若断开连接成功，则服务端不会再向客户端发送下一个报文段）。</p>
+<p>第二次挥手和第三次挥手之间，服务端又向客户端发送了 <code>server_sn - server_sn_wave2</code> 个字节的有效数据。</p>
+<p>服务端变为 <code>LAST_ACK</code> 状态，等待客户端的 <code>ACK</code> 报文段。</p>
+<h3 id="第四次挥手" class="headerLink">
+    <a href="#%e7%ac%ac%e5%9b%9b%e6%ac%a1%e6%8c%a5%e6%89%8b" class="header-mark"></a>第四次挥手</h3><h4 id="客户端-4" class="headerLink">
+    <a href="#%e5%ae%a2%e6%88%b7%e7%ab%af-4" class="header-mark"></a>客户端</h4><p>接收来自服务端的 <code>FIN</code> 报文段。</p>
+<p>向服务端发送 <code>ACK</code> 报文段<code>ACK=1, AN=server_sn+1, SN=client_sn+1</code>，应答服务端断开连接请求。
+<code>client_sn+1</code> 是序号，表明当前报文段发送的有效数据首字节是从请求建立连接到现在为止客户端向客户端发送的第 <code>client_isn+1)-clien_isn+1</code> 个字节的有效数据。<code>AN=server_sn+1</code>
+是确认号，表明服务端接下来要开始接收来自客户端的第 <code>client_sn+1</code> 个字节的有效数据。</p>
+<p>客户端变为 <code>TIME_WAIT</code> 状态，等待2MSL时间后进入 <code>CLOSED</code> 状态，至此 <code>client——&gt;server</code> 数据流被关闭。</p>
+<h4 id="服务端-4" class="headerLink">
+    <a href="#%e6%9c%8d%e5%8a%a1%e7%ab%af-4" class="header-mark"></a>服务端</h4><p>接收来自客户端的 <code>ACK</code> 报文段。</p>
+<p>变为 <code>CLOSED</code> 状态，至此 <code>server——&gt;client</code> 数据流被关闭。</p>
+<div class="details admonition info open">
+        <div class="details-summary admonition-title">
+            <i class="icon fas fa-info-circle fa-fw"></i>Tips<i class="details-icon fas fa-angle-right fa-fw"></i>
+        </div>
+        <div class="details-content">
+            <div class="admonition-content">当收到对方的<code>FIN</code>报文时，仅仅表示对方不再发送数据了但是还能接收数据。</div>
+        </div>
+    </div>
+<h2 id="udp协议" class="headerLink">
+    <a href="#udp%e5%8d%8f%e8%ae%ae" class="header-mark"></a>UDP协议</h2><p>UDP 协议是进行非连接的，发送数据就是简单的把数据包封装一下，然后从网卡发出去，数据包之间并没有状态上的联系。由于 UDP 这种简单的处理方式，所以它的性能损耗非常少，对于 CPU 内存资源的占用也远小于 TCP，但是对于网络传输过程中的丢包，UDP 协议并不能保证，所以 UDP 在传输稳定性上弱于 TCP。</p>
+<h2 id="常见问题" class="headerLink">
+    <a href="#%e5%b8%b8%e8%a7%81%e9%97%ae%e9%a2%98" class="header-mark"></a>常见问题</h2><ul>
+<li>❓ 为什么建立连接需要三次握手而不是二次</li>
+</ul>
+<p>客户端和服务端之间建立的 TCP 是全双工通信，双方都要确保对方发送能力和接收能力正常。</p>
+<p>一次握手后，服务端得知客户端发送能力正常。</p>
+<p>二次握手后，客户端得知服务端接收能力和发送能力正常。</p>
+<p>三次握手后，服务端得知客户端接收能力正常。</p>
+<p>如果在第二次也就是服务端回复<code>SYN+ACK</code>就建立连接的话，那么可能存在已经失效的请求报文，突然又传到服务器引起错误。</p>
+<p>假设采用两次握手建立连接，客户端向服务端发送了一个<code>SYN</code>包来请求建立连接，由于某些未知的原因，并没有到达服务器，在中间某个网络节点产生了滞留，为了建立连接，客户端会重新发送<code>SYN</code>包，这次的数据包正常送达，服务端回复<code>SYN+ACK</code>之后建立了连接，但是此时第一次数据阻塞的网络节点突然恢复，第一包<code>SYN</code>又送达到服务器，这时服务端会误认为客户端又发起了一个新的连接，又向客户端发送了<code>SYN+ACK</code>包，但事实是此时客户端并没有发出建立请求的连接，因此不会理睬服务端的确认，也不会向服务端发送数据，但服务端却以为新的连接已经建立了，并一直等待客户端发来的数据，从而在两次握手之后进入等待数据状态。此时服务端认为是两个连接，而客户端认为是一个连接，造成了状态不一致。如果在三次握手的情况下，服务端收不到最后的<code>ACK</code>包，便不会认为连接建立成功，所以三次握手是为了解决网络不可靠的问题。</p>
+<ul>
+<li>❓ 为什么第四次挥手时客户端需要等待超时时间再进入CLOSED状态</li>
+</ul>
+<p><strong><ruby>MSL<rt>Maximum Segment Lifetime</rt></ruby></strong>，报文段最大生存时间，是一个未被接受的报文段在网络中被丢弃前存活的最大时间。</p>
+<p>保证建立新连接时网络中不存在上次连接时发送的数据包，进入<code>CLOSED</code>状态意味着可以建立新连接，等待 &gt;MSL 的时间再进入<code>CLOSED</code>状态可以保证建立新连接后，网络中不会存在上次连接时发送出去的数据包。若网络中同时存在发送端在两次连接中发出的数据包，对接收端接收数据可能会有影响。</p>
+<p>客户端需要等待超时时间，这是为了保证对方已收到<code>ACK</code>包。</p>
+<p>假设客户端发送最后一包<code>ACK</code>包后就CLOSED释放了连接，一旦<code>ACK</code>包在网络中丢失，服务端将一直停留在最后确认状态，如果客户端发送最后一包<code>ACK</code>包后，等待一段时间，这时服务端因为没有收到<code>ACK</code>包，会重发<code>FIN</code>包，客户端会响应这个<code>FIN</code>包，重发<code>ACK</code>包并刷新超时时间。这是为了在不可靠的网络中，进行可靠的连接断开确认。</p>
+<ul>
+<li>❓ 已经建立了连接，客户端突然出现故障怎么办</li>
+</ul>
+<p>TCP 设有一个保活计时器，客户端如果出现故障，服务器不能一直等下去，白白浪费资源。服务器每收到一次客户端的请求后都会重新复位这个计时器，时间通常是设置为 2 小时，若两小时还没有收到客户端的任何数据，服务器就会发送一个探测报文段，以后每隔 75 秒钟发送一次。若一连发送 10 个探测报文仍然没反应， 服务器就认为客户端出了故障，接着就关闭连接。</p>
+<ul>
+<li>❓ TCP VS UDP</li>
+</ul>
+<p>TCP 传输数据稳定可靠，适用于对网络通讯质量要求较高的场景，需要准确无误的传输给对方，比如传输文件，发送邮件，浏览网页等。</p>
+<p>UDP 优点是速度快，但是可能产生丢包，所以适用于对实时性要求较高，但是对少量丢包并没有太大要求的场景，比如域名查询，语音通话，视频直播等。</p>
+<h2 id="参考" class="headerLink">
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
+<li><a href="http://www.javashuo.com/article/p-shnnqhql-so.html" target="_blank" rel="noopener noreferrer">计算机网络——TCP连接管理（三次握手和四次挥手）</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/53374516" target="_blank" rel="noopener noreferrer">“三次握手，四次挥手”你真的懂吗？</a></li>
+<li><a href="https://www.bilibili.com/video/BV1kV411j7hA/?vd_source=1230278c476e4b633e6d1d0aa5433749" target="_blank" rel="noopener noreferrer">一条视频讲清楚TCP协议与UDP协议-什么是三次握手与四次挥手</a></li>
+<li><a href="https://blog.csdn.net/qq_38950316/article/details/81087809" target="_blank" rel="noopener noreferrer">TCP的三次握手与四次挥手理解及面试题（很全面）</a></li>
+<li><a href="https://blog.csdn.net/paincupid/article/details/79726795" target="_blank" rel="noopener noreferrer">TCP报文格式详解</a></li>
+<li><a href="http://www.javashuo.com/article/p-onzxytxb-bv.html" target="_blank" rel="noopener noreferrer">面试官，不要再问我三次握手和四次挥手</a></li>
+</ul>
+]]></description>
 </item><item>
     <title>http入门笔记</title>
     <link>https://www.xiaobinqt.cn/http-glance/</link>
     <pubDate>Thu, 17 Mar 2022 00:00:00 &#43;0000</pubDate><author>
         <name>xiaobinqt</name>
     </author><guid>https://www.xiaobinqt.cn/http-glance/</guid>
-    <description><![CDATA[<p>该笔记是在学习《透视 HTTP 协议》时整理，还参考了网上的其他资料。鄙人只是网络世界的搬运整理工😂。</p>]]></description>
+    <description><![CDATA[<p>该笔记是在学习《透视 HTTP 协议》时整理，还参考了网上的其他资料。鄙人只是网络世界的搬运整理工😂。</p>
+<h2 id="总览" class="headerLink">
+    <a href="#%e6%80%bb%e8%a7%88" class="header-mark"></a>总览</h2><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220317/6935d109cbc64fa58c3177a90fd33098.png?imageView2/0/interlace/1/q/50%7cimageslim" title="http总览" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220317/6935d109cbc64fa58c3177a90fd33098.png?imageView2/0/interlace/1/q/50|imageslim" data-sub-html="<h2> </h2><p>http总览</p>">
+        
+    </a><figcaption class="image-caption"> </figcaption>
+    </figure></p>
+<h2 id="http-协议" class="headerLink">
+    <a href="#http-%e5%8d%8f%e8%ae%ae" class="header-mark"></a>http 协议</h2><p>http（超文本传输协议）是一个用在计算机世界里的协议。它使用计算机能够理解的语言确立了一种计算机之间交流通信的规范，以及相关的各种控制和错误处理方式。</p>
+<p>http 是一个在计算机世界里专门在两点之间传输文字、图片、音频、视频等超文本数据的约定和规范。</p>
+<p>http 不是编程语言，但是可以用编程语言去实现 HTTP，告诉计算机如何用 HTTP 来与外界通信。</p>
+<p>在互联网世界里，HTTP 通常跑在 TCP/IP 协议栈之上，依靠 IP 协议实现寻址和路由、TCP 协议实现可靠数据传输、DNS 协议实现域名查找、SSL/TLS 协议实现安全通信。此外，还有一些协议依赖于 HTTP，例如 WebSocket、HTTPDNS 等。这些协议相互交织，构成了一个协议网，而 HTTP 则处于中心地位。</p>
+<blockquote>
+<p>HTTP 传输的不是 TCP/UDP 这些底层协议里被切分的杂乱无章的二进制包（datagram），而是完整的、有意义的数据，可以被浏览器、服务器这样的上层应用程序处理。</p>
+</blockquote>
+<h3 id="互联网和万维网的区别" class="headerLink">
+    <a href="#%e4%ba%92%e8%81%94%e7%bd%91%e5%92%8c%e4%b8%87%e7%bb%b4%e7%bd%91%e7%9a%84%e5%8c%ba%e5%88%ab" class="header-mark"></a>互联网和万维网的区别</h3><p>我们通常所说的“上网”实际上访问的只是互联网的一个子集“万维网”（World Wide Web），它基于 HTTP 协议，传输 HTML 等超文本资源，能力被限制在 HTTP 协议之内。</p>
+<p>互联网上还有许多万维网之外的资源，例如常用的电子邮件、BT 和 Magnet 点对点下载、FTP 文件下载、SSH 安全登录、各种即时通信服务等等，它们需要用各自的专有协议来访问。</p>
+<p>不过由于 HTTP 协议非常灵活、易于扩展，而且“超文本”的表述能力很强，所以很多其他原本不属于 HTTP 的资源也可以“包装”成 HTTP 来访问，这就是我们为什么能够总看到各种“网页应用”——例如“微信网页版”“邮箱网页版”——的原因。</p>
+<h3 id="tcpip" class="headerLink">
+    <a href="#tcpip" class="header-mark"></a>TCP/IP</h3><p>TCP/IP 协议实际上是一系列网络通信协议的统称， 其中最核心的两个协议是TCP（Transmission Control Protocol/传输控制协议）和IP（Internet Protocol），其他的还有 UDP、ICMP、ARP 等等，共同构成了一个复杂但有层次的协议栈。</p>
+<blockquote>
+<p>HTTP 是超文本传输协议，TCP 是传输控制协议，都是传输，区别是，HTTP 传输的是完整的、有意义的数据，可以被浏览器、
+服务器这样的上层应用程序处理，HTTP 不关心寻址、路由、数据完整性等传输细节，而要求这些工作都由下层（基本都由 TCP）来处理。 TCP 传输的是可靠的、字节流和二进制包。</p>
+</blockquote>
+<p>TCP 是 HTTP 得以实现的基础，HTTP 协议运行在 TCP/IP 上，HTTP 可以更准确地称为 “HTTP over TCP/IP”。</p>
+<h3 id="uriurl" class="headerLink">
+    <a href="#uriurl" class="header-mark"></a>URI/URL</h3><p>URI（Uniform Resource Identifier），中文名称是 统一资源标识符，使用它就能够唯一地标记互联网上资源。</p>
+<p>URI 另一个更常用的表现形式是 URL（Uniform Resource Locator）， 统一资源定位符，也就是我们俗称的“网址”，它实际上是 URI 的一个子集，这两者几乎是相同的，差异不大，除非写论文，否则不用特意区分。</p>
+<h3 id="ssltsl" class="headerLink">
+    <a href="#ssltsl" class="header-mark"></a>SSL/TSL</h3><p>SSL 的全称是“Secure Socket Layer”，网景公司发明，当发展到 3.0 时被标准化，改名为 TLS，即“Transport Layer Security”。 所以 TLS 跟 SSL 是一个东西，相当于张君宝的 2.0 版本是张三丰。</p>
+<p>SSL 是一个负责加密通信的安全协议，建立在 TCP/IP 之上，在 HTTP 协议之下。</p>
+<h3 id="proxy-代理" class="headerLink">
+    <a href="#proxy-%e4%bb%a3%e7%90%86" class="header-mark"></a>proxy 代理</h3><ul>
+<li>匿名代理：完全“隐匿”了被代理的机器，外界看到的只是代理服务器；</li>
+<li>透明代理：顾名思义，它在传输过程中是“透明开放”的，外界既知道代理，也知道客户端；</li>
+<li>正向代理：靠近客户端，代理的对象是客户端，代表客户端向服务器发送请求；</li>
+</ul>
+<p>正向代理是一个位于客户端和原始服务器（origin server）之间的服务器，为了从原始服务器取得内容，客户端向代理发送一个请求并指定目标（原始服务器，比如 Google），然后代理向原始服务器转交请求并将获得的内容返回给客户端。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220317/22475408cd734b9c861b345040e356f4.png?imageView2/0/interlace/1/q/50%7cimageslim" title="正向代理" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220317/22475408cd734b9c861b345040e356f4.png?imageView2/0/interlace/1/q/50|imageslim" data-sub-html="<h2>正向代理</h2><p>正向代理</p>">
+        
+    </a><figcaption class="image-caption">正向代理</figcaption>
+    </figure></p>
+<ul>
+<li>反向代理：靠近服务器端，代理代理的对象是服务端，代表服务器响应客户端的请求</li>
+</ul>
+<p>反向代理指的是代理服务器根据客户端的请求，从其关系的一组或多组后端服务器（如 Web 服务器）上获取资源，然后再将这些资源返回给客户端的过程，客户端只会得知代理服务器的 IP 地址，而不知道在代理服务器后面的服务器集群的存在。</p>
+<p>当一个代理服务器能够代理外部网络上的主机，访问内部网络时，这种代理服务的方式称为反向代理服务。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220317/6a2b4d26c0bf43cd9494df793c48a814.png?imageView2/0/interlace/1/q/50%7cimageslim" title="反向代理" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220317/6a2b4d26c0bf43cd9494df793c48a814.png?imageView2/0/interlace/1/q/50|imageslim" data-sub-html="<h2>反向代理</h2><p>反向代理</p>">
+        
+    </a><figcaption class="image-caption">反向代理</figcaption>
+    </figure></p>
+<h2 id="http-版本" class="headerLink">
+    <a href="#http-%e7%89%88%e6%9c%ac" class="header-mark"></a>http 版本</h2><p>万维网关键技术</p>
+<ul>
+<li>URI：即统一资源标识符，作为互联网上资源的唯一身份；</li>
+<li>HTML：即超文本标记语言，描述超文本文档；</li>
+<li>HTTP：即超文本传输协议，用来传输超文本。</li>
+</ul>
+<p>基于这三项关键技术就可以把超文本系统完美地运行在互联网上，让各地的人们能够自由地共享信息，这个系统称为“万维网”（World Wide Web），也就是我们现在所熟知的 Web。</p>
+<h3 id="http09" class="headerLink">
+    <a href="#http09" class="header-mark"></a>http/0.9</h3><p>结构简单，设置之初设想系统里的文档都是只读的，所以只允许用 GET 动作从服务器上获取 HTML 纯文本格式的文档，并且在响应请求之后立即关闭连接，功能非常有限。</p>
+<h3 id="http10" class="headerLink">
+    <a href="#http10" class="header-mark"></a>http/1.0</h3><p>HTTP/1.0 并不是一个标准，只是记录已有实践和模式的一份参考文档，不具有实际的约束力，相当于一个备忘录。</p>
+<p>在多方面增强了 0.9 版，形式上已经和我们现在的 HTTP 差别不大了，例如：</p>
+<ul>
+<li>增加了 HEAD、POST 等新方法；</li>
+<li>增加了响应状态码，标记可能的错误原因；</li>
+<li>引入了协议版本号概念；</li>
+<li>引入了 HTTP Header（头部）的概念，让 HTTP 处理请求和响应更加灵活；</li>
+<li>传输的数据不再仅限于文本。</li>
+</ul>
+<h3 id="http11" class="headerLink">
+    <a href="#http11" class="header-mark"></a>http/1.1</h3><p>是一个正式的标准，而不是一份可有可无的参考文档，只要用到 HTTP 协议，就必须严格遵守这个标准。</p>
+<p>主要变更：</p>
+<ul>
+<li>增加了 PUT、DELETE 等新的方法；</li>
+<li>增加了缓存管理和控制；</li>
+<li>明确了连接管理，允许持久连接；</li>
+<li>允许响应数据分块（chunked），利于传输大文件；</li>
+<li>强制要求 Host 头，让互联网主机托管成为可能。</li>
+</ul>
+<h3 id="http2" class="headerLink">
+    <a href="#http2" class="header-mark"></a>http/2</h3><p>由 google 主导，基于 google 的 SPDY 协议为基础开始制定新版本的 HTTP 协议，最终在 2015 年发布了 HTTP/2。</p>
+<p>主要特点：</p>
+<ul>
+<li>二进制协议，不再是纯文本；</li>
+<li>可发起多个请求，废弃了 1.1 里的管道；</li>
+<li>使用专用算法压缩头部，减少数据传输量；</li>
+<li>允许服务器主动向客户端推送数据；</li>
+<li>增强了安全性，“事实上”要求加密通信。</li>
+</ul>
+<h3 id="http3" class="headerLink">
+    <a href="#http3" class="header-mark"></a>http/3</h3><p>由 google 主导，基于 google 的 QUIC 协议为基础开始制定新版本的 HTTP 协议。</p>
+<h2 id="网络分层模型" class="headerLink">
+    <a href="#%e7%bd%91%e7%bb%9c%e5%88%86%e5%b1%82%e6%a8%a1%e5%9e%8b" class="header-mark"></a>网络分层模型</h2><h3 id="tcpip-1" class="headerLink">
+    <a href="#tcpip-1" class="header-mark"></a>TCP/IP</h3><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220317/87869e9a3d0d4eaba7c9d6fe0798674f.png?imageView2/0/interlace/1/q/50%7cimageslim" title="tcp/ip分层模型" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220317/87869e9a3d0d4eaba7c9d6fe0798674f.png?imageView2/0/interlace/1/q/50|imageslim" data-sub-html="<h2>TCP/IP分层模型</h2><p>tcp/ip分层模型</p>">
+        
+    </a><figcaption class="image-caption">TCP/IP分层模型</figcaption>
+    </figure></p>
+<p>这里的层次顺序是“从下往上”数的，所以第一层就是最下面的一层。</p>
+<h4 id="链接层" class="headerLink">
+    <a href="#%e9%93%be%e6%8e%a5%e5%b1%82" class="header-mark"></a>链接层</h4><p>第一层叫“链接层”（link layer），负责在以太网、WiFi 这样的底层网络上发送原始数据包，工作在网卡这个层次，使用 MAC 地址来标记网络上的设备，所以有时候也叫 MAC 层。</p>
+<h4 id="网络互联层" class="headerLink">
+    <a href="#%e7%bd%91%e7%bb%9c%e4%ba%92%e8%81%94%e5%b1%82" class="header-mark"></a>网络互联层</h4><p>第二层叫“网际层”或者“网络互连层”（internet layer），IP 协议就处在这一层。因为 IP 协议定义了“IP 地址”的概念，所以就可以在“链接层”的基础上，用 IP 地址取代 MAC 地址，把许许多多的局域网、广域网连接成一个虚拟的巨大网络，在这个网络里找设备时只要把 IP 地址再“翻译”成 MAC 地址就可以了。</p>
+<h4 id="传输层" class="headerLink">
+    <a href="#%e4%bc%a0%e8%be%93%e5%b1%82" class="header-mark"></a>传输层</h4><p>第三层叫“传输层”（transport layer），这个层次协议的职责是保证数据在 IP 地址标记的两点之间“可靠”地传输，是 TCP 协议工作的层次，另外还有它的一个“小伙伴”UDP。</p>
+<p>TCP 是一个有状态的协议，需要先与对方建立连接然后才能发送数据，而且保证数据不丢失不重复。而 UDP 则比较简单，它无状态，不用事先建立连接就可以任意发送数据，但不保证数据一定会发到对方。两个协议的另一个重要区别在于数据的形式。TCP 的数据是连续的“字节流”，有先后顺序，而 UDP 则是分散的小数据包，是顺序发，乱序收。</p>
+<h4 id="应用层" class="headerLink">
+    <a href="#%e5%ba%94%e7%94%a8%e5%b1%82" class="header-mark"></a>应用层</h4><p>协议栈的第四层叫“应用层”（application layer），由于下面的三层把基础打得非常好，所以在这一层就“百花齐放”了，有各种面向具体应用的协议。例如 Telnet、SSH、FTP、SMTP，HTTP 等等。</p>
+<div class="details admonition tip open">
+        <div class="details-summary admonition-title">
+            <i class="icon fas fa-lightbulb fa-fw"></i>Tip<i class="details-icon fas fa-angle-right fa-fw"></i>
+        </div>
+        <div class="details-content">
+            <div class="admonition-content">MAC 层（链接层）的传输单位是帧（frame），IP 层（网络互联层）的传输单位是包（packet），TCP 层传输层的传输单位是段（segment）， HTTP （应用层）的传输单位则是消息或报文（message）。这些名词并没有什么本质的区分，可以统称为数据包。</div>
+        </div>
+    </div>
+<h3 id="osi-网络分层模型" class="headerLink">
+    <a href="#osi-%e7%bd%91%e7%bb%9c%e5%88%86%e5%b1%82%e6%a8%a1%e5%9e%8b" class="header-mark"></a>OSI 网络分层模型</h3><p>OSI 分层模型在发布的时候就明确地表明是一个“参考”，不是强制标准。这是因为 TCP/IP 等协议已经在许多网络上实际运行，不可能推翻重来。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220317/4ddd78194c284518a2ce2db4cfab2a3c.png?imageView2/0/interlace/1/q/50%7cimageslim" title="OSI模型" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220317/4ddd78194c284518a2ce2db4cfab2a3c.png?imageView2/0/interlace/1/q/50|imageslim" data-sub-html="<h2>OSI网络模型</h2><p>OSI模型</p>">
+        
+    </a><figcaption class="image-caption">OSI网络模型</figcaption>
+    </figure></p>
+<ul>
+<li>第一层：物理层，网络的物理形式，例如电缆、光纤、网卡、集线器等等；</li>
+<li>第二层：数据链路层，它基本相当于 TCP/IP 的链接层；</li>
+<li>第三层：网络层，相当于 TCP/IP 里的网际层；</li>
+<li>第四层：传输层，相当于 TCP/IP 里的传输层；</li>
+<li>第五层：会话层，维护网络中的连接状态，即保持会话和同步；</li>
+<li>第六层：表示层，把数据转换为合适、可理解的语法和语义；</li>
+<li>第七层：应用层，面向具体的应用传输数据。</li>
+</ul>
+<p>对比一下就可以发现，TCP/IP 是一个纯软件的栈，没有网络应有的最根基的电缆、网卡等物理设备的位置。而 OSI 则补足了这个缺失， 在理论层面上描述网络更加完整。</p>
+<p>OSI 还为每一层标记了明确了编号，最底层是一层，最上层是七层，而 TCP/IP 的层次从来只有名字而没有编号。</p>
+<h3 id="两个分层模型的对应关系" class="headerLink">
+    <a href="#%e4%b8%a4%e4%b8%aa%e5%88%86%e5%b1%82%e6%a8%a1%e5%9e%8b%e7%9a%84%e5%af%b9%e5%ba%94%e5%85%b3%e7%b3%bb" class="header-mark"></a>两个分层模型的对应关系</h3><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220317/539751215a0b45ada0a373f8289ca232.png?imageView2/0/interlace/1/q/50%7cimageslim" title="对应关系" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220317/539751215a0b45ada0a373f8289ca232.png?imageView2/0/interlace/1/q/50|imageslim" data-sub-html="<h2>两个分层模型的对应关系</h2><p>对应关系</p>">
+        
+    </a><figcaption class="image-caption">两个分层模型的对应关系</figcaption>
+    </figure></p>
+<p>所谓的“四层负载均衡”就是指工作在传输层上，基于 TCP/IP 协议的特性，例如 IP 地址、端口号等实现对后端服务器的负载均衡。</p>
+<p>所谓的“七层负载均衡”就是指工作在应用层上，看到的是 HTTP 协议，解析 HTTP 报文里的 URI、主机名、资源类型等数据，再用适当的策略转发给后端服务器。</p>
+<p>有一个辨别四层和七层比较好的（但不是绝对的）小窍门，“两个凡是”：<strong>凡是由操作系统负责处理的就是四层或四层以下</strong>，否则，<strong>凡是需要由应用程序（也就是你自己写代码）负责处理的就是七层</strong>。</p>
+<h2 id="http协议核心" class="headerLink">
+    <a href="#http%e5%8d%8f%e8%ae%ae%e6%a0%b8%e5%bf%83" class="header-mark"></a>http协议核心</h2><p>由于 HTTP 是在 TCP/IP 协议之上的，而 TCP/IP 协议负责底层的具体传输工作，所以 http 在传输方面不用太操心，TCP/IP 会去解决，所以 HTTP 关心的就只有他所传输的报文内容，又因为 HTTP 是“纯文本”的，包括头信息都是 ASCII 码的文本，不用借助程序解析可以直接阅读。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220321/619a6b063a5e4ced936d156d155f3fed.png?imageView2/0/interlace/1/q/50%7cimageslim" title="http报文" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220321/619a6b063a5e4ced936d156d155f3fed.png?imageView2/0/interlace/1/q/50|imageslim" data-sub-html="<h2> </h2><p>http报文</p>">
+        
+    </a><figcaption class="image-caption"> </figcaption>
+    </figure></p>
+<h3 id="常用头字段" class="headerLink">
+    <a href="#%e5%b8%b8%e7%94%a8%e5%a4%b4%e5%ad%97%e6%ae%b5" class="header-mark"></a>常用头字段</h3><h4 id="注意事项" class="headerLink">
+    <a href="#%e6%b3%a8%e6%84%8f%e4%ba%8b%e9%a1%b9" class="header-mark"></a>注意事项</h4><ul>
+<li>字段名不区分大小写，例如“Host”也可以写成“host”，但首字母大写的可读性更好；</li>
+<li>字段名里不允许出现空格，可以使用连字符“-”，但不能使用下划线“_”。例如，“test-name”是合法的字段名，而“test name”“test_name”是不正确的字段名；</li>
+<li>字段名后面必须紧接着“:”，不能有空格，而“:”后的字段值前可以有多个空格；</li>
+</ul>
+<h4 id="分类" class="headerLink">
+    <a href="#%e5%88%86%e7%b1%bb" class="header-mark"></a>分类</h4><ul>
+<li>通用字段：在请求头和响应头里都可以出现；</li>
+<li>请求字段：仅能出现在请求头里，进一步说明请求信息或者额外的附加条件；</li>
+<li>响应字段：仅能出现在响应头里，补充说明响应报文的信息；</li>
+<li>实体字段：它实际上属于通用字段，但专门描述 body 的额外信息。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Host</code></td>
+<td>请求字段</td>
+<td>唯一一个 HTTP/1.1 规范里要求<strong>必须出现</strong>的字段，如果请求头里没有 Host，那这就是一个错误的报文。Host 字段告诉服务器这个请求应该由哪个主机来处理</td>
+</tr>
+<tr>
+<td><code>User-Agent</code></td>
+<td>请求字段</td>
+<td>描述发起 HTTP 请求的客户端，服务器可以依据它来返回最合适此浏览器显示的页面</td>
+</tr>
+<tr>
+<td><code>Date</code></td>
+<td>通用字段</td>
+<td>表示 HTTP 报文创建的时间，客户端可以使用这个时间再搭配其他字段决定缓存策略</td>
+</tr>
+<tr>
+<td><code>Server</code></td>
+<td>响应字段</td>
+<td>告诉客户端当前正在提供 Web 服务的软件名称和版本号</td>
+</tr>
+<tr>
+<td><code>Content-Length</code></td>
+<td>实体字段</td>
+<td>报文里 body 的长度，也就是请求头或响应头空行后面数据的长度。服务器看到这个字段，就知道了后续有多少数据，可以直接接收。如果没有这个字段，那么 body 就是不定长的，需要使用 chunked 方式分段传输</td>
+</tr>
+</tbody>
+</table>
+<h3 id="请求方式" class="headerLink">
+    <a href="#%e8%af%b7%e6%b1%82%e6%96%b9%e5%bc%8f" class="header-mark"></a>请求方式</h3><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220321/c113e062fccf4d18959dc52d90e59c1b.png?imageView2/0/interlace/1/q/50%7cimageslim" title="请求方式" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220321/c113e062fccf4d18959dc52d90e59c1b.png?imageView2/0/interlace/1/q/50|imageslim" data-sub-html="<h2> </h2><p>请求方式</p>">
+        
+    </a><figcaption class="image-caption"> </figcaption>
+    </figure></p>
+<table>
+<thead>
+<tr>
+<th>方式</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td>获取资源，可以理解为读取或者下载数据</td>
+</tr>
+<tr>
+<td>HEAD</td>
+<td>获取资源的元信息，不会返回请求的实体数据，只会传回响应头</td>
+</tr>
+<tr>
+<td>POST</td>
+<td>向资源提交数据，相当于写入或上传数据</td>
+</tr>
+<tr>
+<td>PUT</td>
+<td>类似 POST</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td>删除资源</td>
+</tr>
+<tr>
+<td>CONNECT</td>
+<td>建立特殊的连接隧道</td>
+</tr>
+<tr>
+<td>OPTIONS</td>
+<td>列出可对资源实行的方法</td>
+</tr>
+<tr>
+<td>TRACE</td>
+<td>追踪请求 - 响应的传输路径</td>
+</tr>
+</tbody>
+</table>
+<h3 id="状态码" class="headerLink">
+    <a href="#%e7%8a%b6%e6%80%81%e7%a0%81" class="header-mark"></a>状态码</h3><table>
+<thead>
+<tr>
+<th>状态码</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>1×x</code></td>
+<td>提示信息，表示目前是协议处理的中间状态，还需要后续的操作</td>
+</tr>
+<tr>
+<td><code>2××</code></td>
+<td>成功，报文已经收到并被正确处理</td>
+</tr>
+<tr>
+<td><code>3××</code></td>
+<td>重定向，资源位置发生变动，需要客户端重新发送请求</td>
+</tr>
+<tr>
+<td><code>4××</code></td>
+<td>客户端错误，请求报文有误，服务器无法处理</td>
+</tr>
+<tr>
+<td><code>5××</code></td>
+<td>服务器错误，服务器在处理请求时内部发生了错误</td>
+</tr>
+</tbody>
+</table>
+<p>一些常用状态码说明</p>
+<table>
+<thead>
+<tr>
+<th>status code</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>301</td>
+<td>永久重定向，含义是此次请求的资源已经不存在了，需要改用改用新的 URI 再次访问</td>
+</tr>
+<tr>
+<td>302</td>
+<td>临时重定向，意思是请求的资源还在，但需要暂时用另一个 URI 来访问。比如，你的网站升级到了 HTTPS，原来的 HTTP 不打算用了，这就是“永久”的，所以要配置 301 跳转，把所有的 HTTP 流量都切换到 HTTPS。 再比如，今天夜里网站后台要系统维护，服务暂时不可用，这就属于“临时”的，可以配置成 302 跳转，把流量临时切换到一个静态通知页面，浏览器看到这个 302 就知道这只是暂时的情况，不会做缓存优化，第二天还会访问原来的地址。</td>
+</tr>
+<tr>
+<td>304</td>
+<td>Not Modified，它用于 If-Modified-Since 等条件请求，表示资源未修改，用于缓存控制。它不具有通常的跳转含义，但可以理解成“重定向已到缓存的文件”（即“缓存重定向”）</td>
+</tr>
+<tr>
+<td>405</td>
+<td>不允许使用某些方法操作资源，例如不允许 POST 只能 GET</td>
+</tr>
+<tr>
+<td>406</td>
+<td>Not Acceptable 资源无法满足客户端请求的条件，例如请求中文但只有英文</td>
+</tr>
+<tr>
+<td>408</td>
+<td>Request Timeout：请求超时，服务器等待了过长的时间</td>
+</tr>
+<tr>
+<td>409</td>
+<td>Conflict：多个请求发生了冲突，可以理解为多线程并发时的竞态</td>
+</tr>
+<tr>
+<td>413</td>
+<td>Request Entity Too Large：请求报文里的 body 太大</td>
+</tr>
+<tr>
+<td>414</td>
+<td>Request-URI Too Long：请求行里的 URI 太大</td>
+</tr>
+<tr>
+<td>429</td>
+<td>Too Many Requests 客户端发送了太多的请求，通常是由于服务器的限连策略</td>
+</tr>
+<tr>
+<td>431</td>
+<td>Request Header Fields Too Large 请求头某个字段或总体太大</td>
+</tr>
+<tr>
+<td>500</td>
+<td>Internal Server Error 与 400 类似，也是一个通用的错误码，服务器究竟发生了什么错误我们是不知道的。不过对于服务器来说这应该算是好事，通常不应该把服务器内部的详细信息，例如出错的函数调用栈告诉外界。虽然不利于调试，但能够防止黑客的窥探或者分析</td>
+</tr>
+<tr>
+<td>501</td>
+<td>Not Implemented 表示客户端请求的功能还不支持，这个错误码比 500 要温和一些，和“即将开业，敬请期待”的意思差不多，不过具体什么时候“开业”就不好说了</td>
+</tr>
+<tr>
+<td>502</td>
+<td>Bad Gateway”通常是服务器作为网关或者代理时返回的错误码，表示服务器自身工作正常，访问后端服务器时发生了错误，但具体的错误原因也是不知道的</td>
+</tr>
+<tr>
+<td>503</td>
+<td>Service Unavailable 表示服务器当前很忙，暂时无法响应服务，我们上网时有时候遇到的“网络服务正忙，请稍后重试”的提示信息就是状态码 503</td>
+</tr>
+</tbody>
+</table>
+<h3 id="http-特点" class="headerLink">
+    <a href="#http-%e7%89%b9%e7%82%b9" class="header-mark"></a>http 特点</h3><ul>
+<li>HTTP 是灵活可扩展的，可以任意添加头字段实现任意功能。</li>
+<li>HTTP 是可靠传输协议，基于 TCP/IP 协议“尽量”保证数据的送达。</li>
+<li>HTTP 是应用层协议，比 FTP、SSH 等更通用功能更多，能够传输任意数据。</li>
+<li>HTTP 使用了请求 - 应答模式，客户端主动发起请求，服务器被动回复请求。</li>
+<li>HTTP 本质上是无状态的，每个请求都是互相独立、毫无关联的，协议不要求客户端或服务器记录请求相关的信息。</li>
+</ul>
+<h2 id="参考" class="headerLink">
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
+<li><a href="https://baijiahao.baidu.com/s?id=1738680012806649947" target="_blank" rel="noopener noreferrer">什么是反向代理，反向代理是如何工作的？</a></li>
+<li><a href="https://blog.csdn.net/weixin_45775963/article/details/104440190" target="_blank" rel="noopener noreferrer">什么是正向代理和反向代理</a></li>
+<li><a href="https://www.jianshu.com/p/23b6775fbb91" target="_blank" rel="noopener noreferrer">如何理解反向代理服务器</a></li>
+</ul>]]></description>
 </item></channel>
 </rss>
