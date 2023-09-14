@@ -10,7 +10,356 @@
     <pubDate>Sun, 27 Mar 2022 00:00:00 &#43;0000</pubDate><author>
         <name>作者</name>
     </author><guid>https://www.xiaobinqt.cn/net-protocol-glance/</guid>
-    <description><![CDATA[概述 五层模型互联网的实现，分成好几层。每一层都有自己的功能，就像建筑物一样，每一层都靠下一层支持。 用户接触到的，只是最上面的一层，根本没有感觉到下面的层。理解互联网，需要从最下层开始，自下而上理解每一]]></description>
+    <description><![CDATA[<h2 id="概述" class="headerLink">
+    <a href="#%e6%a6%82%e8%bf%b0" class="header-mark"></a>概述</h2><h3 id="五层模型" class="headerLink">
+    <a href="#%e4%ba%94%e5%b1%82%e6%a8%a1%e5%9e%8b" class="header-mark"></a>五层模型</h3><p>互联网的实现，分成好几层。每一层都有自己的功能，就像建筑物一样，每一层都靠下一层支持。</p>
+<p>用户接触到的，只是最上面的一层，根本没有感觉到下面的层。理解互联网，需要从最下层开始，自下而上理解每一层的功能。</p>
+<p>如何分层，有不同的模型，有的模型分七层，有的分四层。把互联网分成五层，比较容易解释。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220328/0b07f1e814384409a9a5f97a4bbc8196.png" title="五层模型" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220328/0b07f1e814384409a9a5f97a4bbc8196.png" data-sub-html="<h2>五层模型</h2><p>五层模型</p>">
+        
+    </a><figcaption class="image-caption">五层模型</figcaption>
+    </figure></p>
+<p>如上图所示，最底下的一层叫做<strong><ruby>实体层<rt>Physical Layer</rt></ruby></strong>，最上面的一层叫做<strong><ruby>应用层<rt>Application Layer</rt></ruby></strong>，中间的三层（自下而上）分别是<strong><ruby>链接层<rt>Link Layer</rt></ruby></strong>、<strong><ruby>网络层<rt>Network Layer</rt></ruby></strong>和<strong><ruby>传输层<rt>Transport Layer</rt></ruby></strong>。越下面的层，越靠近硬件；越上面的层，越靠近用户。</p>
+<p>名字只是一个代号，它们叫什么名字，其实并不重要。只需要知道，互联网分成若干层就可以了。</p>
+<h3 id="层与协议" class="headerLink">
+    <a href="#%e5%b1%82%e4%b8%8e%e5%8d%8f%e8%ae%ae" class="header-mark"></a>层与协议</h3><p>每一层都是为了完成一种功能。为了实现这些功能，就需要大家都遵守共同的规则。</p>
+<p>大家都遵守的规则，就叫做“协议”（protocol）。</p>
+<p>互联网的每一层，都定义了很多协议。这些协议的总称，就叫做“互联网协议”（Internet Protocol Suite），它们是互联网的核心。</p>
+<h2 id="实体层" class="headerLink">
+    <a href="#%e5%ae%9e%e4%bd%93%e5%b1%82" class="header-mark"></a>实体层</h2><p>电脑要组网，第一件事是先把电脑连起来，可以用光缆、电缆、双绞线、无线电波等方式。</p>
+<p>这就叫做“实体层”，它就是<strong>把电脑连接起来的物理手段。它主要规定了网络的一些电气特性，作用是负责传送 0 和 1 的电信号</strong>。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220328/008215cf196441ff891300b99ca05e41.png" title="实体层" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220328/008215cf196441ff891300b99ca05e41.png" data-sub-html="<h2>实体层</h2><p>实体层</p>">
+        
+    </a><figcaption class="image-caption">实体层</figcaption>
+    </figure></p>
+<h2 id="链接层" class="headerLink">
+    <a href="#%e9%93%be%e6%8e%a5%e5%b1%82" class="header-mark"></a>链接层</h2><p>单纯的 0 和 1 没有任何意义，必须规定解读方式：多少个电信号算一组❓每个信号位有何意义❓</p>
+<p>这就是“链接层”的功能，它在“实体层”的上方，<strong>确定了 0 和 1 的分组方式</strong>。</p>
+<h3 id="以太网协议" class="headerLink">
+    <a href="#%e4%bb%a5%e5%a4%aa%e7%bd%91%e5%8d%8f%e8%ae%ae" class="header-mark"></a>以太网协议</h3><p>早期的时候，每家公司都有自己的电信号分组方式。逐渐地，一种叫做“以太网”（Ethernet）的协议，占据了主导地位。</p>
+<p>以太网规定，<strong>一组电信号</strong>构成一个数据包，叫做“帧”（<code>Frame</code>）。每一帧分成两个部分：标头（<code>Head</code>）和数据（<code>Data</code>）。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220328/7faf60ba902f4f5dac74eae05aa46470.png" title="head-data" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220328/7faf60ba902f4f5dac74eae05aa46470.png" data-sub-html="<h2>head-data</h2><p>head-data</p>">
+        
+    </a><figcaption class="image-caption">head-data</figcaption>
+    </figure></p>
+<p>“标头”包含数据包的一些说明项，比如发送者、接受者、数据类型等等；“数据”则是数据包的具体内容。</p>
+<p><strong>“标头”的长度，固定为 18 字节。“数据”的长度，最短为 46 字节，最长为 1500 字节</strong>
+。因此，整个“帧”最短为 64 字节，最长为 1518 字节。如果数据很长，就必须分割成多个帧进行发送。</p>
+<h3 id="mac-地址" class="headerLink">
+    <a href="#mac-%e5%9c%b0%e5%9d%80" class="header-mark"></a>MAC 地址</h3><p><strong>以太网数据包的“标头”，包含了发送者和接受者的信息</strong>。那么，发送者和接受者是如何标识呢？</p>
+<p>以太网规定，连入网络的所有设备，都必须具有“网卡”接口。
+<strong>数据包必须是从一块网卡，传送到另一块网卡</strong>。网卡的地址，就是数据包的发送地址和接收地址，这叫做 MAC 地址。</p>
+<p>每块网卡出厂的时候，都有一个全世界独一无二的 MAC 地址，长度是 48 个二进制位，通常用 12 个十六进制数表示。</p>
+<p>前 6 个十六进制数是厂商编号，后 6 个是该厂商的网卡流水号。有了 MAC 地址，就可以定位网卡和数据包的路径了。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220328/210ac80feaab480c824906751e28b7cf.png" title="MAC address" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220328/210ac80feaab480c824906751e28b7cf.png" data-sub-html="<h2>MAC address</h2><p>MAC address</p>">
+        
+    </a><figcaption class="image-caption">MAC address</figcaption>
+    </figure></p>
+<p>上图的 MAC 地址的二进制位为 <code>00000000-10110000-11010000-10000110-10111011-11110111</code>。</p>
+<h3 id="广播" class="headerLink">
+    <a href="#%e5%b9%bf%e6%92%ad" class="header-mark"></a>广播</h3><p>以太网数据包必须知道接收方的 MAC 地址，然后才能发送，那么问题来了，</p>
+<ul>
+<li>一块网卡怎么会知道另一块网卡的MAC地址？</li>
+<li>就算有了 MAC 地址，系统怎样才能把数据包准确送到接收方？</li>
+</ul>
+<p>回答是，以太网采用了一种很“原始”的方式，它不是把数据包准确送到接收方，而是向<strong>本网络内所有计算机</strong>发送，让每台计算机自己判断，是否为接收方。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220328/259a2bda03624c2c9381cfb244af47dd.png" title="广播" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220328/259a2bda03624c2c9381cfb244af47dd.png" data-sub-html="<h2>广播</h2><p>广播</p>">
+        
+    </a><figcaption class="image-caption">广播</figcaption>
+    </figure></p>
+<p>上图中，1 号计算机向 2 号计算机发送一个数据包，同一个子网络的 3 号、4 号、5 号计算机都会收到这个包。它们读取这个包的“标头”，找到接收方的 MAC 地址，然后与自身的 MAC 地址相比较，如果两者相同，就接受这个包，做进一步处理，否则就丢弃这个包。这种发送方式就叫做<strong><ruby>广播<rt>broadcasting</rt></ruby></strong>。</p>
+<p>有了数据包的定义、网卡的 MAC 地址、广播的发送方式，“链接层”就可以在多台计算机之间传送数据了。</p>
+<h2 id="网络层" class="headerLink">
+    <a href="#%e7%bd%91%e7%bb%9c%e5%b1%82" class="header-mark"></a>网络层</h2><h3 id="网络层的由来" class="headerLink">
+    <a href="#%e7%bd%91%e7%bb%9c%e5%b1%82%e7%9a%84%e7%94%b1%e6%9d%a5" class="header-mark"></a>网络层的由来</h3><p>以太网协议，依靠 MAC 地址发送数据。理论上，单单依靠 MAC 地址，上海的网卡就可以找到洛杉矶的网卡了，技术上是可以实现的。</p>
+<p>但是，这样做有一个重大的缺点。<strong>以太网采用广播方式发送数据包</strong>，所有成员人手一“包”，不仅效率低，而且局限在发送者所在的子网络。也就是说，
+<strong>如果两台计算机不在同一个子网络，广播是传不过去的</strong>。这种设计是合理的，否则互联网上每一台计算机都会收到所有包，那会引起灾难。</p>
+<p><strong>互联网是无数子网络共同组成的一个巨型网络</strong>，很像想象上海和洛杉矶的电脑会在同一个子网络，这几乎是不可能的。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220328/cee93bcb3c2245d6a238a7074dd540ff.png" title="子网络" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220328/cee93bcb3c2245d6a238a7074dd540ff.png" data-sub-html="<h2>子网络</h2><p>子网络</p>">
+        
+    </a><figcaption class="image-caption">子网络</figcaption>
+    </figure></p>
+<p>因此，必须找到一种方法，能够区分哪些 MAC 地址属于同一个子网络，哪些不是。如果是同一个子网络，就采用广播方式发送，否则就采用“路由”方式发送。（“路由”的意思，就是指如何向不同的子网络分发数据包。），MAC 地址本身无法做到这一点，它只与厂商有关，与所处网络无关。</p>
+<p>这就导致了“网络层”的诞生。它的作用是 <strong>引进一套新的地址，使得我们能够区分不同的计算机是否属于同一个子网络</strong>
+。这套地址就叫做“网络地址”，简称“网址”。</p>
+<p>于是，“网络层”出现以后，每台计算机有了两种地址，一种是 MAC 地址，另一种是网络地址。
+<strong>两种地址之间没有任何联系</strong>，MAC 地址是绑定在网卡上的，网络地址则是管理员分配的，它们只是随机组合在一起。</p>
+<p><strong>网络地址帮助我们确定计算机所在的子网络，MAC 地址则将数据包送到该子网络中的目标网卡</strong>。因此，从逻辑上可以推断，必定是
+<strong>先处理网络地址，然后再处理 MAC 地址</strong>。</p>
+<h3 id="ip协议和子网掩码" class="headerLink">
+    <a href="#ip%e5%8d%8f%e8%ae%ae%e5%92%8c%e5%ad%90%e7%bd%91%e6%8e%a9%e7%a0%81" class="header-mark"></a>IP协议和子网掩码</h3><p>规定网络地址的协议，叫做 IP 协议。它所定义的地址，就被称为 IP 地址。</p>
+<p>目前，广泛采用的是 IP 协议第四版，简称 IPv4。这个版本规定，网络地址由 32 个二进制位组成。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220328/a4ba02cbb01341ddbb0b75e979b61625.png" title="IP协议" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220328/a4ba02cbb01341ddbb0b75e979b61625.png" data-sub-html="<h2>IP协议</h2><p>IP协议</p>">
+        
+    </a><figcaption class="image-caption">IP协议</figcaption>
+    </figure></p>
+<p>习惯上，我们用分成四段的十进制数表示 IP 地址，从 <code>0.0.0.0</code> 一直到 <code>255.255.255.255</code>。</p>
+<p>互联网上的每一台计算机，都会分配到一个 IP 地址。</p>
+<p><strong>IP 地址分成两个部分，前一部分代表网络，后一部分代表主机</strong>。</p>
+<p>比如，IP 地址 <code>172.16.254.1</code>，这是一个 32 位的地址，假定它的网络部分是前 24 位（<code>172.16.254</code>），那么主机部分就是后 8 位（最后的那个 1 ）。
+<strong>处于同一个子网络的电脑，它们 IP 地址的网络部分必定是相同的</strong>，也就是说 <code>172.16.254.2</code> 应该与 <code>172.16.254.1</code> 处在同一个子网络。</p>
+<p>单单从 IP 地址，我们无法判断网络部分。还是以 <code>172.16.254.1</code> 为例，它的网络部分，到底是前 24 位，还是前 16 位，甚至前 28 位，从 IP 地址上是看不出来的。</p>
+<p>那么，怎样才能从IP地址，判断两台计算机是否属于同一个子网络呢❓这就要用到另一个参数<strong><ruby>子网掩码<rt>subnet mask</rt></ruby></strong>。</p>
+<p>所谓 <strong>“子网掩码”，就是表示子网络特征的一个参数</strong>。它在形式上等同于 IP 地址，也是一个 32 位二进制数字，它的<strong>网络部分全部为
+1，主机部分全部为 0</strong> 。比如，IP 地址 <code>172.16.254.1</code>
+，如果已知网络部分是前 24 位，主机部分是后 8 位，那么子网络掩码就是 <code>11111111.11111111.11111111.00000000</code>，写成十进制就是 <code>255.255.255.0</code>。</p>
+<p>知道&quot;子网掩码&quot;，我们就能判断，任意两个 IP 地址是否处在同一个子网络。方法是将两个 IP 地址与子网掩码
+<strong>分别</strong>进行 AND 运算（两个数位都为 1 ，运算结果为 1，否则为 0），然后比较结果是否相同，如果是的话，就表明它们在同一个子网络中，否则就不是。</p>
+<p>比如，已知IP地址 <code>172.16.254.1</code> 和 <code>172.16.254.233</code> 的子网掩码都是 <code>255.255.255.0</code>，请问它们是否在同一个子网络？两者与子网掩码分别进行 AND 运算，结果都是
+<code>172.16.254.0</code>，因此它们在同一个子网络。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">10101100.00010000.11111110.00000001 <span class="c1"># 172.16.254.1</span>
+</span></span><span class="line"><span class="cl">11111111.11111111.11111111.00000000 <span class="c1"># 255.255.255.0</span>
+</span></span><span class="line"><span class="cl">10101100.00010000.11111110.00000000 <span class="c1"># AND 结果二进制位</span>
+</span></span><span class="line"><span class="cl">172.16.254.0                        <span class="c1"># AND 结果转成十进制</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>所以，<strong>IP 协议的作用主要有两个，一个是为每一台计算机分配 IP 地址，另一个是确定哪些地址在同一个子网络</strong>。</p>
+<h3 id="ip数据包" class="headerLink">
+    <a href="#ip%e6%95%b0%e6%8d%ae%e5%8c%85" class="header-mark"></a>IP数据包</h3><p>根据 IP 协议发送的数据，就叫做 IP 数据包。不难想象，其中必定包括 IP 地址信息。</p>
+<p>但是前面说过，以太网数据包只包含 MAC 地址，并没有 IP 地址的栏位。那么是否需要修改数据定义，再添加一个栏位呢？</p>
+<p>回答是不需要，我们可以把 IP 数据包直接放进以太网数据包的“数据”部分，因此完全不用修改以太网的规格。这就是互联网分层结构的好处：上层的变动完全不涉及下层的结构。</p>
+<p>具体来说，IP 数据包也分为“标头”和“数据”两个部分。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220328/a13ff01efe0e4053ae1e8d126404a619.png" title="IP数据包1" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220328/a13ff01efe0e4053ae1e8d126404a619.png" data-sub-html="<h2>IP数据包1</h2><p>IP数据包1</p>">
+        
+    </a><figcaption class="image-caption">IP数据包1</figcaption>
+    </figure></p>
+<p>“标头”部分主要包括版本、长度、IP 地址等信息，“数据”部分则是 IP 数据包的具体内容。它放进以太网数据包后，以太网数据包就变成了下面这样。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220328/14bf0cdc38654770bb9a6f0d58c0175f.png" title="IP数据包2" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220328/14bf0cdc38654770bb9a6f0d58c0175f.png" data-sub-html="<h2>IP数据包2</h2><p>IP数据包2</p>">
+        
+    </a><figcaption class="image-caption">IP数据包2</figcaption>
+    </figure></p>
+<p>IP 数据包的“标头”部分的长度为 20 到 60 字节，整个数据包的总长度最大为 65,535 字节。因此，理论上，一个 IP 数据包的“数据”部分，最长为 65,515 字节。前面说过，以太网数据包的“数据”部分，最长只有 1500 字节。因此，如果 IP 数据包超过了 1500 字节（上图红色部分），它就需要分割成几个以太网数据包，分开发送了。</p>
+<h3 id="arp协议" class="headerLink">
+    <a href="#arp%e5%8d%8f%e8%ae%ae" class="header-mark"></a>ARP协议</h3><p>由于 IP 数据包是放在以太网数据包里发送的，所以我们必须同时知道两个地址，一个是对方的 MAC 地址，另一个是对方的 IP 地址。通常情况下，对方的 IP 地址是已知的，但是我们不知道它的 MAC 地址。</p>
+<p>所以，我们需要一种机制，能够从 IP 地址得到 MAC 地址。</p>
+<p>这里又可以分成两种情况。</p>
+<p>第一种情况，如果两台主机不在同一个子网络，那么事实上没有办法得到对方的 MAC 地址，只能把数据包传送到两个子网络连接处的<strong><ruby>网关<rt>gateway</rt></ruby></strong>，让网关去处理。</p>
+<p>第二种情况，如果两台主机在同一个子网络，那么我们可以用 ARP 协议，得到对方的 MAC 地址。ARP 协议也是发出一个数据包（包含在以太网数据包中），其中包含它所要查询主机的 IP 地址，在对方的 MAC 地址这一栏，填的是<code>FF:FF:FF:FF:FF:FF</code>，表示这是一个&quot;广播&quot;
+地址。它所在子网络的每一台主机，都会收到这个数据包，从中取出 IP 地址，与自身的 IP 地址进行比较。如果两者相同，都做出回复，向对方报告自己的 MAC 地址，否则就丢弃这个包。</p>
+<p>有了 ARP 协议之后，我们就可以得到<strong>同一个子网络内的主机 MAC 地址，可以把数据包发送到任意一台主机之上</strong>。</p>
+<h2 id="传输层" class="headerLink">
+    <a href="#%e4%bc%a0%e8%be%93%e5%b1%82" class="header-mark"></a>传输层</h2><h3 id="传输层的由来" class="headerLink">
+    <a href="#%e4%bc%a0%e8%be%93%e5%b1%82%e7%9a%84%e7%94%b1%e6%9d%a5" class="header-mark"></a>传输层的由来</h3><p>有了 MAC 地址和 IP 地址，我们已经可以在互联网上任意两台主机上建立通信。</p>
+<p>接下来的问题是，同一台主机上有许多程序都需要用到网络，比如，你一边浏览网页，一边与朋友在线聊天。当一个数据包从互联网上发来的时候，你怎么知道，它是表示网页的内容，还是表示在线聊天的内容？</p>
+<p>也就是说，我们还需要一个参数，表示这个数据包到底供哪个程序（进程）使用。这个参数就叫做<strong><ruby>端口<rt>port</rt></ruby></strong>，它其实
+<strong>是每一个使用网卡的程序的编号</strong>。每个数据包都发到主机的特定端口，所以不同的程序就能取到自己所需要的数据。</p>
+<p>“端口”是 0 到 65535 之间的一个整数，正好 16 个二进制位。
+<strong>0 到 1023 的端口被系统占用</strong>，用户只能选用大于 1023 的端口。不管是浏览网页还是在线聊天，应用程序会随机选用一个端口，然后与服务器的相应端口联系。</p>
+<p><strong>“传输层”的功能，就是建立“端口到端口”的通信。相比之下，“网络层”的功能是建立“主机到主机”的通信。只要确定主机和端口，
+我们就能实现程序之间的交流</strong>。因此，Unix系统就把主机+端口，叫做<strong><ruby>套接字<rt>socket</rt></ruby></strong>。有了它，就可以进行网络应用程序开发了。</p>
+<h3 id="udp-协议" class="headerLink">
+    <a href="#udp-%e5%8d%8f%e8%ae%ae" class="header-mark"></a>UDP 协议</h3><p>我们必须在数据包中加入端口信息，这就需要新的协议。最简单的实现叫做 UDP 协议，它的格式几乎就是在数据前面，加上端口号。</p>
+<p>UDP 数据包，也是由“标头”和“数据”两部分组成。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220328/f22b3c1122804019a03f91c5a3efa31d.png" title="UDP数据格式_1" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220328/f22b3c1122804019a03f91c5a3efa31d.png" data-sub-html="<h2>UDP数据格式_1</h2><p>UDP数据格式_1</p>">
+        
+    </a><figcaption class="image-caption">UDP数据格式_1</figcaption>
+    </figure></p>
+<p>“标头”部分主要定义了发出端口和接收端口，“数据”部分就是具体的内容。然后，把整个 UDP 数据包放入 IP 数据包的“数据”部分，而前面说过，IP 数据包又是放在以太网数据包之中的，所以整个以太网数据包现在变成了下面这样：</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220328/4d0af7444c9b437297c362dbbbdb67ca.png" title="UDP数据格式_2" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220328/4d0af7444c9b437297c362dbbbdb67ca.png" data-sub-html="<h2>UDP数据格式_2</h2><p>UDP数据格式_2</p>">
+        
+    </a><figcaption class="image-caption">UDP数据格式_2</figcaption>
+    </figure></p>
+<p>UDP 数据包非常简单，“标头”部分一共只有 8 个字节，总长度不超过 65,535 字节，正好放进一个IP数据包。</p>
+<h3 id="tcp-协议" class="headerLink">
+    <a href="#tcp-%e5%8d%8f%e8%ae%ae" class="header-mark"></a>TCP 协议</h3><p>UDP 协议的优点是比较简单，容易实现，但是缺点是可靠性较差，一旦数据包发出，无法知道对方是否收到。</p>
+<p>为了解决这个问题，提高网络可靠性，TCP 协议就诞生了。这个协议非常复杂，但可以近似认为，它就是有确认机制的 UDP 协议，每发出一个数据包都要求确认。如果有一个数据包遗失，就收不到确认，发出方就知道有必要重发这个数据包了。</p>
+<p>因此，TCP 协议能够确保数据不会遗失。它的缺点是过程复杂、实现困难、消耗较多的资源。</p>
+<p>TCP 数据包和 UDP 数据包一样，都是内嵌在 IP 数据包的“数据”部分。TCP 数据包没有长度限制，理论上可以无限长，但是为了保证网络的效率，
+<strong>通常 TCP 数据包的长度不会超过 IP 数据包的长度，以确保单个 TCP 数据包不必再分割</strong>。</p>
+<h2 id="应用层" class="headerLink">
+    <a href="#%e5%ba%94%e7%94%a8%e5%b1%82" class="header-mark"></a>应用层</h2><p>应用程序收到&quot;传输层&quot;的数据，接下来就要进行解读。由于互联网是开放架构，数据来源五花八门，必须事先规定好格式，否则根本无法解读。</p>
+<p><strong>“应用层”的作用，就是规定应用程序的数据格式。</strong></p>
+<p>举例来说，TCP 协议可以为各种各样的程序传递数据，比如 Email、WWW、FTP 等等。那么，必须有不同协议（比如 http 协议）规定电子邮件、网页、FTP 数据的格式，这些应用程序协议就构成了&quot;应用层&quot;。</p>
+<p>这是最高的一层，直接面对用户。它的数据就放在 TCP 数据包的“数据”部分。因此，现在的以太网的数据包就变成下面这样。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220328/935efc2ef36e4928bab08c8609c67935.png" title="应用层数据包" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220328/935efc2ef36e4928bab08c8609c67935.png" data-sub-html="<h2>应用层数据包</h2><p>应用层数据包</p>">
+        
+    </a><figcaption class="image-caption">应用层数据包</figcaption>
+    </figure></p>
+<h2 id="小结" class="headerLink">
+    <a href="#%e5%b0%8f%e7%bb%93" class="header-mark"></a>小结</h2><p>网络通信就是交换数据包。电脑 A 向电脑 B 发送一个数据包，后者收到了，回复一个数据包，从而实现两台电脑之间的通信。数据包的结构，基本上是下面这样：</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220329/05cd964675504c5697dcca0b27fcbc4a.png" title="数据包" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220329/05cd964675504c5697dcca0b27fcbc4a.png" data-sub-html="<h2>数据包</h2><p>数据包</p>">
+        
+    </a><figcaption class="image-caption">数据包</figcaption>
+    </figure></p>
+<p>发送这个包，需要知道两个地址：</p>
+<ul>
+<li>对方的 MAC 地址</li>
+<li>对方的 IP 地址</li>
+</ul>
+<p>有了这两个地址，数据包才能准确送到接收者手中。但是，MAC 地址有局限性，<strong>如果两台电脑不在同一个子网络，就无法知道对方的 MAC
+地址，必须通过网关（gateway）转发</strong>。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220329/14a9089e17c94a1eb8a1215dd31a2b40.png" title="网关" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220329/14a9089e17c94a1eb8a1215dd31a2b40.png" data-sub-html="<h2>网关</h2><p>网关</p>">
+        
+    </a><figcaption class="image-caption">网关</figcaption>
+    </figure></p>
+<p>上图☝️中，1 号电脑要向 4 号电脑发送一个数据包。它先判断 4 号电脑是否在同一个子网络，结果发现不是，于是就把这个数据包发到网关 A。网关 A 通过路由协议，发现 4 号电脑位于子网络 B，又把数据包发给网关 B，网关 B 再转发到 4 号电脑。</p>
+<p>1 号电脑把数据包发到网关 A，必须知道网关 A 的 MAC 地址。所以，数据包的目标地址，实际上分成两种情况：</p>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>数据包地址</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>同一个子网络</td>
+<td>对方的 MAC 地址，对方的 IP 地址</td>
+</tr>
+<tr>
+<td>非同一个子网络</td>
+<td>网关的 MAC 地址，对方的 IP 地址</td>
+</tr>
+</tbody>
+</table>
+<p>发送数据包之前，电脑必须判断对方是否在同一个子网络，然后选择相应的 MAC 地址。</p>
+<h2 id="上网设置" class="headerLink">
+    <a href="#%e4%b8%8a%e7%bd%91%e8%ae%be%e7%bd%ae" class="header-mark"></a>上网设置</h2><h3 id="静态ip地址" class="headerLink">
+    <a href="#%e9%9d%99%e6%80%81ip%e5%9c%b0%e5%9d%80" class="header-mark"></a>静态IP地址</h3><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220329/d0cf31e76b2046d89c4053cf9e7bc541.png" title="computer" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220329/d0cf31e76b2046d89c4053cf9e7bc541.png" data-sub-html="<h2>new computer</h2><p>computer</p>">
+        
+    </a><figcaption class="image-caption">new computer</figcaption>
+    </figure></p>
+<p>通常你必须做一些设置。有时，管理员会告诉你下面四个参数，你把它们填入操作系统，计算机就能连上网了：</p>
+<ul>
+<li>本机的IP地址</li>
+<li>子网掩码</li>
+<li>网关的IP地址</li>
+<li>DNS的IP地址</li>
+</ul>
+<p>下图是Windows系统的设置窗口。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220329/feb7f5ebde2d4f63992aa9779ca55262.png" title="系统设置" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220329/feb7f5ebde2d4f63992aa9779ca55262.png" data-sub-html="<h2>系统设置</h2><p>系统设置</p>">
+        
+    </a><figcaption class="image-caption">系统设置</figcaption>
+    </figure></p>
+<p>这四个参数缺一不可。由于它们是给定的，计算机每次开机，都会分到同样的IP地址，所以这种情况被称作“静态IP地址上网”。</p>
+<p>但是，这样的设置很专业，普通用户望而生畏，而且如果一台电脑的IP地址保持不变，其他电脑就不能使用这个地址，不够灵活。出于这两个原因，大多数用户使用“动态IP地址上网”。</p>
+<h3 id="动态ip地址" class="headerLink">
+    <a href="#%e5%8a%a8%e6%80%81ip%e5%9c%b0%e5%9d%80" class="header-mark"></a>动态IP地址</h3><p>所谓“动态IP地址”，是指计算机开机后，会自动分配到一个 IP 地址，不用人为设定。它使用的协议叫做 DHCP 协议。</p>
+<p>这个协议规定，每一个子网络中，有一台计算机负责管理本网络的所有IP地址，它叫做“DHCP服务器”。新的计算机加入网络，必须向“DHCP服务器”发送一个“DHCP请求”数据包，申请IP地址和相关的网络参数。</p>
+<p>前面说过，如果两台计算机在同一个子网络，必须知道对方的 MAC 地址和 IP 地址，才能发送数据包。但是，新加入的计算机不知道这两个地址，怎么发送数据包呢？</p>
+<p>DHCP协议做了一些巧妙的规定。</p>
+<h3 id="dhcp协议" class="headerLink">
+    <a href="#dhcp%e5%8d%8f%e8%ae%ae" class="header-mark"></a>DHCP协议</h3><p>首先，它是一种应用层协议，建立在UDP协议之上，所以整个数据包是这样的：</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220329/93b546648e6640ea97c1e8709280708d.png" title="HDCP协议数据包" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220329/93b546648e6640ea97c1e8709280708d.png" data-sub-html="<h2>HDCP协议数据包</h2><p>HDCP协议数据包</p>">
+        
+    </a><figcaption class="image-caption">HDCP协议数据包</figcaption>
+    </figure></p>
+<ol>
+<li>
+<p>最前面的“以太网标头”，设置发出方（本机）的MAC地址和接收方（DHCP服务器）的MAC地址。前者就是本机网卡的MAC地址，后者这时不知道，就填入一个广播地址：<code>FF-FF-FF-FF-FF-FF</code>。</p>
+</li>
+<li>
+<p>后面的“IP标头”，设置发出方的IP地址和接收方的IP地址。这时，对于这两者，本机都不知道。于是，发出方的IP地址就设为<code>0.0.0.0</code>，接收方的IP地址设为<code>255.255.255.255</code>。</p>
+</li>
+<li>
+<p>最后的“UDP标头”，设置发出方的端口和接收方的端口。这一部分是 DHCP 协议规定好的，发出方是 68 端口，接收方是 67 端口。</p>
+</li>
+</ol>
+<p>这个数据包构造完成后，就可以发出了。以太网是广播发送，同一个子网络的每台计算机都收到了这个包。因为接收方的MAC地址是<code>FF-FF-FF-FF-FF-FF</code>
+，看不出是发给谁的，所以每台收到这个包的计算机，还必须分析这个包的 IP 地址，才能确定是不是发给自己的。当看到发出方 IP 地址是<code>0.0.0.0</code>，接收方是<code>255.255.255.255</code>，于是 DHCP 服务器知道“这个包是发给我的”，而其他计算机就可以丢弃这个包。</p>
+<p>接下来，DHCP 服务器读出这个包的数据内容，分配好 IP 地址，发送回去一个“DHCP响应”数据包。这个响应包的结构也是类似的，以太网标头的 MAC 地址是双方的网卡地址，IP 标头的 IP 地址是 DHCP 服务器的 IP 地址（发出方）和<code>255.255.255.255</code>（接收方），UDP 标头的端口是 67（发出方）和 68（接收方），分配给请求端的 IP 地址和本网络的具体参数则包含在 Data 部分。</p>
+<p>新加入的计算机收到这个响应包，于是就知道了自己的IP地址、子网掩码、网关地址、DNS 服务器等等参数。</p>
+<h3 id="小结-1" class="headerLink">
+    <a href="#%e5%b0%8f%e7%bb%93-1" class="header-mark"></a>小结</h3><p>不管是“静态IP地址”还是“动态IP地址”，电脑上网的首要步骤，是确定四个参数。这四个值很重要，值得重复一遍：</p>
+<ul>
+<li>本机的IP地址</li>
+<li>子网掩码</li>
+<li>网关的IP地址</li>
+<li>DNS的IP地址</li>
+</ul>
+<p>有了这几个数值，电脑就可以上网&quot;冲浪&quot;了。</p>
+<h2 id="一个实例" class="headerLink">
+    <a href="#%e4%b8%80%e4%b8%aa%e5%ae%9e%e4%be%8b" class="header-mark"></a>一个实例</h2><h3 id="本机参数" class="headerLink">
+    <a href="#%e6%9c%ac%e6%9c%ba%e5%8f%82%e6%95%b0" class="header-mark"></a>本机参数</h3><p>我们假定，用户设置好了自己的网络参数：</p>
+<ul>
+<li>本机的IP地址：<code>192.168.1.100</code></li>
+<li>子网掩码：<code>255.255.255.0</code></li>
+<li>网关的IP地址：<code>192.168.1.1</code></li>
+<li>DNS的IP地址：<code>8.8.8.8</code></li>
+</ul>
+<p>然后他打开浏览器，想要访问 Google，在地址栏输入了网址：<a href="https://www.google.com/" target="_blank" rel="noopener noreferrer">www.google.com</a>。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220329/4c713bfb8027455aa671d16c55a58d2f.png" title="访问google" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220329/4c713bfb8027455aa671d16c55a58d2f.png" data-sub-html="<h2>访问google</h2><p>访问google</p>">
+        
+    </a><figcaption class="image-caption">访问google</figcaption>
+    </figure></p>
+<p>这意味着，浏览器要向 Google 发送一个网页请求的数据包。</p>
+<h3 id="dns协议" class="headerLink">
+    <a href="#dns%e5%8d%8f%e8%ae%ae" class="header-mark"></a>DNS协议</h3><p>我们知道，发送数据包，必须要知道对方的 IP 地址。但是，现在，我们只知道网址 <a href="https://www.google.com/" target="_blank" rel="noopener noreferrer">www.google.com</a>，不知道它的 IP 地址。</p>
+<p>DNS 协议可以帮助我们，将这个网址转换成 IP 地址。已知DNS服务器为<code>8.8.8.8</code>，于是我们向这个地址发送一个 DNS 数据包（53端口）。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220329/2dc987c9aea7402591d054ea660235e9.png" title="DNS数据包" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220329/2dc987c9aea7402591d054ea660235e9.png" data-sub-html="<h2>DNS数据包</h2><p>DNS数据包</p>">
+        
+    </a><figcaption class="image-caption">DNS数据包</figcaption>
+    </figure></p>
+<p>然后，DNS 服务器做出响应，告诉我们 Google 的 I P地址是<code>172.194.72.105</code>。于是，我们知道了对方的 IP 地址。</p>
+<h3 id="子网掩码" class="headerLink">
+    <a href="#%e5%ad%90%e7%bd%91%e6%8e%a9%e7%a0%81" class="header-mark"></a>子网掩码</h3><p>接下来，我们要判断，这个 IP 地址是不是在同一个子网络，这就要用到子网掩码。</p>
+<p>已知子网掩码是<code>255.255.255.0</code>，本机用它对自己的 IP 地址<code>192.168.1.100</code>，做一个二进制的<code>AND</code>运算（两个数位都为1，结果为1，否则为0），计算结果为<code>192.168.1.0</code>；然后对 Google 的 IP 地址<code>172.194.72.105</code>也做一个<code>AND</code>运算，计算结果为<code>172.194.72.0</code>。这两个结果不相等，所以结论是，Google 与本机不在同一个子网络。</p>
+<p>因此，我们要向 Google 发送数据包，必须通过网关<code>192.168.1.1</code>转发，也就是说，接收方的 MAC 地址将是网关的 MAC 地址。</p>
+<h3 id="应用层协议" class="headerLink">
+    <a href="#%e5%ba%94%e7%94%a8%e5%b1%82%e5%8d%8f%e8%ae%ae" class="header-mark"></a>应用层协议</h3><p>浏览网页用的是 HTTP 协议，它的整个数据包构造是这样的：</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220329/d64d5794254341dc98a40bd6dd4b3893.png" title="HTTP协议数据包" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220329/d64d5794254341dc98a40bd6dd4b3893.png" data-sub-html="<h2>HTTP协议数据包</h2><p>HTTP协议数据包</p>">
+        
+    </a><figcaption class="image-caption">HTTP协议数据包</figcaption>
+    </figure></p>
+<p>HTTP部分的内容，类似于下面这样：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-http" data-lang="http"><span class="line"><span class="cl"><span class="err">　　</span><span class="nf">GET</span> <span class="nn">/</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+</span></span><span class="line"><span class="cl"><span class="err">　　</span><span class="n">Host</span><span class="o">:</span> <span class="l">www.google.com</span>
+</span></span><span class="line"><span class="cl"><span class="err">　　</span><span class="n">Connection</span><span class="o">:</span> <span class="l">keep-alive</span>
+</span></span><span class="line"><span class="cl"><span class="err">　　</span><span class="n">User-Agent</span><span class="o">:</span> <span class="l">Mozilla/5.0 (Windows NT 6.1) ......</span>
+</span></span><span class="line"><span class="cl"><span class="err">　　</span><span class="n">Accept</span><span class="o">:</span> <span class="l">text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8</span>
+</span></span><span class="line"><span class="cl"><span class="err">　　</span><span class="n">Accept-Encoding</span><span class="o">:</span> <span class="l">gzip,deflate,sdch</span>
+</span></span><span class="line"><span class="cl"><span class="err">　　</span><span class="n">Accept-Language</span><span class="o">:</span> <span class="l">zh-CN,zh;q=0.8</span>
+</span></span><span class="line"><span class="cl"><span class="err">　　</span><span class="n">Accept-Charset</span><span class="o">:</span> <span class="l">GBK,utf-8;q=0.7,*;q=0.3</span>
+</span></span><span class="line"><span class="cl"><span class="err">　　</span><span class="n">Cookie</span><span class="o">:</span> <span class="l">... ...</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>我们假定这个部分的长度为 4960 字节，它会被嵌在 TCP 数据包之中。</p>
+<h3 id="tcp协议" class="headerLink">
+    <a href="#tcp%e5%8d%8f%e8%ae%ae" class="header-mark"></a>TCP协议</h3><p>TCP 数据包需要设置端口，接收方（Google）的 HTTP 端口默认是 80，发送方（本机）的端口是一个随机生成的 1024-65535 之间的整数，假定为 51775。TCP 数据包的标头长度为 20 字节，加上嵌入 HTTP 的数据包，总长度变为 4980 字节。</p>
+<h3 id="ip协议" class="headerLink">
+    <a href="#ip%e5%8d%8f%e8%ae%ae" class="header-mark"></a>IP协议</h3><p>然后，TCP 数据包再嵌入 IP 数据包。IP 数据包需要设置双方的 IP 地址，这是已知的，发送方是<code>192.168.1.100</code>（本机），接收方是<code>172.194.72.105</code>（Google）。IP 数据包的标头长度为 20 字节，加上嵌入的 TCP 数据包，总长度变为 5000 字节。</p>
+<h3 id="以太网协议-1" class="headerLink">
+    <a href="#%e4%bb%a5%e5%a4%aa%e7%bd%91%e5%8d%8f%e8%ae%ae-1" class="header-mark"></a>以太网协议</h3><p>最后，IP 数据包嵌入以太网数据包。以太网数据包需要设置双方的 MAC 地址，发送方为本机的网卡 MAC 地址，接收方为网关<code>192.168.1.1</code>的 MAC 地址（通过 ARP 协议得到）。</p>
+<p>以太网数据包的数据部分，最大长度为 1500 字节，而现在的 IP 数据包长度为 5000 字节。因此，IP 数据包必须分割成四个包。因为每个包都有自己的 IP 标头（20字节），所以四个包的 IP 数据包的长度分别为 1500、1500、1500、560。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220329/fb5d47e23bf84f62bc189df69bfdd991.png" title="以太网协议" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220329/fb5d47e23bf84f62bc189df69bfdd991.png" data-sub-html="<h2>以太网协议</h2><p>以太网协议</p>">
+        
+    </a><figcaption class="image-caption">以太网协议</figcaption>
+    </figure></p>
+<h3 id="服务器端响应" class="headerLink">
+    <a href="#%e6%9c%8d%e5%8a%a1%e5%99%a8%e7%ab%af%e5%93%8d%e5%ba%94" class="header-mark"></a>服务器端响应</h3><p>经过多个网关的转发，Google 的服务器<code>172.194.72.105</code>，收到了这四个以太网数据包。</p>
+<p>根据IP标头的序号，Google 将四个包拼起来，取出完整的 TCP 数据包，然后读出里面的“HTTP请求”，接着做出“HTTP响应”，再用 TCP 协议发回来。</p>
+<p>本机收到 HTTP 响应以后，就可以将网页显示出来，完成一次网络通信。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220329/9935c287faa04dd1aa107864273e8a27.png" title="服务器相应" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220329/9935c287faa04dd1aa107864273e8a27.png" data-sub-html="<h2>服务器相应</h2><p>服务器相应</p>">
+        
+    </a><figcaption class="image-caption">服务器相应</figcaption>
+    </figure></p>
+<p>上面的例子，虽然经过了简化，但它大致上反映了互联网协议的整个通信过程。</p>
+<h2 id="参考" class="headerLink">
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
+<li><a href="https://www.ruanyifeng.com/blog/2012/05/internet_protocol_suite_part_i.html" target="_blank" rel="noopener noreferrer">互联网协议入门</a></li>
+</ul>
+]]></description>
 </item><item>
     <title>TCP和UDP连接管理</title>
     <link>https://www.xiaobinqt.cn/tcp-handshark/</link>
@@ -19,20 +368,723 @@
     </author><guid>https://www.xiaobinqt.cn/tcp-handshark/</guid>
     <description><![CDATA[<div class="featured-image">
                 <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221118/54f90c85427d4f59b34831801d5770bb.png" referrerpolicy="no-referrer">
-            </div>TCP 协议和 UDP 协议都是工作在传输层，是为了在程序之间传递数据，数据可以是多种形式，比如视频，文本，图片等。对于 TCP 协议和 UDP 协议来说，都是一堆二进制数，只是 TCP 基于连接，而 UDP 基于非连接。 名词解释 名词 解释 SYN 同步序]]></description>
+            </div><p>TCP 协议和 UDP 协议都是工作在传输层，是为了在程序之间传递数据，数据可以是多种形式，比如视频，文本，图片等。对于 TCP 协议和 UDP 协议来说，都是一堆二进制数，只是 TCP 基于连接，而 UDP 基于非连接。</p>
+<h2 id="名词解释" class="headerLink">
+    <a href="#%e5%90%8d%e8%af%8d%e8%a7%a3%e9%87%8a" class="header-mark"></a>名词解释</h2><table>
+<thead>
+<tr>
+<th>名词</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SYN</td>
+<td>同步序号，用于建立连接过程，在连接请求中，SYN=1 和 ACK=0 表示该数据段没有使用捎带的确认域，而连接应答捎带一个确认，即 SYN=1 和 ACK=1</td>
+</tr>
+<tr>
+<td>FIN</td>
+<td>finish 标志，用于释放连接，为 1 时表示发送方已经没有数据发送了，即关闭本方数据流</td>
+</tr>
+<tr>
+<td>ACK</td>
+<td>确认序号标志，为 1 时表示确认号有效，为 0 表示报文中不含确认信息，忽略确认号字段</td>
+</tr>
+<tr>
+<td>PSH</td>
+<td>push 标志，为 1 表示是带有 push 标志的数据，指示接收方在接收到该报文段以后，应尽快将这个报文段交给应用程序，而不是在缓冲区排队</td>
+</tr>
+<tr>
+<td>RST</td>
+<td>重置连接标志，用于重置由于主机崩溃或其他原因而出现错误的连接。或者用于拒绝非法的报文段和拒绝连接请求</td>
+</tr>
+<tr>
+<td>序列号 seq</td>
+<td>占 4 个字节，用来标记数据段的顺序，TCP 把连接中发送的所有数据字节都编上一个序号，第一个字节的编号由本地随机产生；给字节编上序号后，就给每一个报文段指派一个序号；序列号 seq 就是这个报文段中的第一个字节的数据编号</td>
+</tr>
+<tr>
+<td>确认号 ack</td>
+<td>占 4 个字节，期待收到对方下一个报文段的第一个数据字节的序号；序列号表示报文段携带数据的第一个字节的编号；而确认号指的是期望接收到下一个字节的编号；因此当前报文段最后一个字节的编号 +1 （<code>ACK</code>会占一个序号）即为确认号</td>
+</tr>
+</tbody>
+</table>
+<div class="details admonition info open">
+        <div class="details-summary admonition-title">
+            <i class="icon fas fa-info-circle fa-fw"></i>Info<i class="details-icon fas fa-angle-right fa-fw"></i>
+        </div>
+        <div class="details-content">
+            <div class="admonition-content"><code>ACK</code>、<code>SYN</code> 和 <code>FIN</code> 这些大写的单词表示标志位，其值要么是 1，要么是 0；<code>ack</code>、<code>seq</code> 小写的单词表示序号。</div>
+        </div>
+    </div>
+<p><code>ACK</code> 是可能与 <code>SYN</code>，<code>FIN</code> 等同时使用的。比如 <code>SYN</code>和<code>ACK</code>可能同时为 1，它表示的就是建立连接之后的响应搜索 如果只是单个的一个<code>SYN</code>，它表示的只是建立连接。</p>
+<p><code>SYN</code>与<code>FIN</code>是不会同时为 1 的，因为前者表示的是建立连接，而后者表示的是断开连接。</p>
+<p><code>RST</code>一般是在<code>FIN</code>之后才会出现为 1 的情况，表示的是连接重置。</p>
+<p>一般，当出现<code>FIN</code>包或<code>RST</code>包时，便认为客户端与服务器端断开了连接；而当出现<code>SYN</code>和<code>SYN＋ACK</code>包时，我们认为客户端与服务器建立了一个连接。</p>
+<p><code>PSH</code>为 1 的情况，一般只出现在<code>DATA</code>内容不为 0 的包中，也就是说<code>PSH</code>为1表示的是有真正的 TCP 数据包内容被传递。</p>
+<h2 id="三次握手" class="headerLink">
+    <a href="#%e4%b8%89%e6%ac%a1%e6%8f%a1%e6%89%8b" class="header-mark"></a>三次握手</h2><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220326/43c6821afd6d4a9fadcceb9e98c228b9.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="三次握手" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220326/43c6821afd6d4a9fadcceb9e98c228b9.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>三次握手</h2><p>三次握手</p>">
+        
+    </a><figcaption class="image-caption">三次握手</figcaption>
+    </figure></p>
+<p>三次握手是建立请求的过程，当客户端向服务端发送请求时，会先发一包连接请求数据，这包数据称为<code>SYN</code>包，如果服务端同意连接，则会回复一包<code>SYN+ACK</code>包，客户端收到后回复一包<code>ACK</code>包，连接建立成功。在连接建立的过程中，客户端和服务端互相发送了 3 包数据，所以把这个过程称为 3 次握手。</p>
+<h3 id="第一次握手" class="headerLink">
+    <a href="#%e7%ac%ac%e4%b8%80%e6%ac%a1%e6%8f%a1%e6%89%8b" class="header-mark"></a>第一次握手</h3><h4 id="客户端" class="headerLink">
+    <a href="#%e5%ae%a2%e6%88%b7%e7%ab%af" class="header-mark"></a>客户端</h4><p>主动打开（active open），向服务端发送 <code>SYN</code> 报文段<code>SYN=1, SN=client_isn, OPT=client_mss</code>，请求建立连接。</p>
+<p><code>client_isn</code> 是客户端初始序号，动态生成，用于实现可靠传输，<code>client_sn-client_isn</code> 等于客户端已发送字节数。</p>
+<p><code>SYN</code> 报文段虽然不能携带数据，但是会消耗一个序号（相当于发送了1个字节的有效数据），下次客户端再向服务端发送的报文段中 <code>SN=client_isn+1</code>。 除了 <code>SYN</code> 报文段和 <code>ACK-SYN</code>
+报文段，其他所有后续报文段的序号 <code>SN</code> 值都等于上次接收的 <code>ACK</code> 报文段中的确认号 <code>AN</code> 值。</p>
+<p><code>client_mss</code> 是客户端最大报文段长度，在 <code>TCP</code> 首部的选项和填充部分，会在客户端与服务端的 <code>MSS</code> 中选择一个较小值使用。</p>
+<p>客户端变为 <code>SYN_SENT</code> 状态，然后等待服务端 <code>ACK</code> 报文段。</p>
+<h3 id="第二次握手" class="headerLink">
+    <a href="#%e7%ac%ac%e4%ba%8c%e6%ac%a1%e6%8f%a1%e6%89%8b" class="header-mark"></a>第二次握手</h3><h4 id="服务端" class="headerLink">
+    <a href="#%e6%9c%8d%e5%8a%a1%e7%ab%af" class="header-mark"></a>服务端</h4><p>接收来自客户端的 <code>SYN</code> 报文段，得知客户端发送能力正常。</p>
+<p>被动打开<code>passive open</code>，向客户端发送 <code>SYN-ACK </code>报文段<code>ACK=1, AN=client_isn+1, SYN=1, SN=server_isn, OPT=server_mss</code>
+，应答来自客户端的建立连接请求并向客户端发起建立连接请求。</p>
+<p><code>SN=server_isn</code> 是服务端初始序号，<code>ACK-SYN</code> 报文段虽然不能携带数据，但是会消耗一个序号（相当于发送了1个字节的有效数据），下次服务端再向客户端发送的报文中 <code>SN=server_isn+1</code> 。</p>
+<p><code>OPT=server_mss</code> 是服务端最大报文段长度。</p>
+<p><code>AN=client_isn+1</code> 是确认号，表明服务端接下来要开始接收来自客户端的第 <code>client_isn+1</code> 个字节的有效数据。</p>
+<p>服务端变为 <code>SYN_RCVD</code> 状态，并等待客户端 <code>ACK</code> 报文段。</p>
+<h3 id="第三次握手" class="headerLink">
+    <a href="#%e7%ac%ac%e4%b8%89%e6%ac%a1%e6%8f%a1%e6%89%8b" class="header-mark"></a>第三次握手</h3><h4 id="客户端-1" class="headerLink">
+    <a href="#%e5%ae%a2%e6%88%b7%e7%ab%af-1" class="header-mark"></a>客户端</h4><p>接收来自服务端的 <code>SYN-ACK</code> 报文段，得知服务端发送能力和接收能力都正常。</p>
+<p>向客户端发送 <code>ACK</code> 报文段<code>ACK=1, AN=server_isn+1, SN=client_isn+1, MESSAGE=message</code>，应答来自服务端的建立连接请求。</p>
+<p><code>SN=client_isn+1</code> 是序号，表明当前报文段发送的有效数据首字节是从请求建立连接到现在为止客户端向服务端发送的第 <code>(client_isn+1)-clien_isn+1=2</code> 个字节的有效数据。</p>
+<p>有效数据：一般有效数据指的是应用层的报文数据，不过 <code>SYN</code> 报文段、 <code>ACK-SYN</code> 报文段和 <code>FIN</code> 报文段虽然没有携带报文数据，但认为发送了1个字节的有效数据。</p>
+<p><code>AN=server_isn+1</code> 是确认号，表明客户端接下来要开始接收来自服务端的第 <code>server_isn+1</code> 个字节的有效数据。</p>
+<p><code>MESSAGE=message</code> 此时可以在报文段中携带客户端到服务端的报文数据；该 <code>ACK</code> 报文段消耗的序号个数等于 <code>message_length</code>（注意 <code>message_length</code>
+可以等于0，即不携带有效数据，此时 <code>ACK</code>报文段不消耗序号），下次客户端再向服务端发送的报文段中 <code>SN=client_isn+1+message_length</code> 。</p>
+<p>客户端变为 <code>ESTABLISHED</code> 状态，<code>client——&gt;server</code> 数据流建立。</p>
+<h4 id="服务端-1" class="headerLink">
+    <a href="#%e6%9c%8d%e5%8a%a1%e7%ab%af-1" class="header-mark"></a>服务端</h4><p>接收来自客户端的 <code>ACK</code> 报文段，得知客户端接收能力正常。</p>
+<p>变为 <code>ESTABLISHED</code> 状态，<code>server——&gt;client</code> 数据流也建立。</p>
+<h2 id="丢包问题" class="headerLink">
+    <a href="#%e4%b8%a2%e5%8c%85%e9%97%ae%e9%a2%98" class="header-mark"></a>丢包问题</h2><p>一包数据有可能被拆成多包发送，如何处理丢包问题❓这些数据包到达的先后顺序不同，如何处理乱序问题❓</p>
+<p>TCP 协议为每一个连接建立了一个发送缓冲区，从建立连接后的第一个字节的序列号为 0，后面每个字节的序列号就会增加 1，发送数据时，从发送缓冲区取一部分数据组成发送报文，在其 TCP 协议头中会附带序列号和长度，接收端在收到数据后，需要回复确认报文，确认报文中的<code>ACK</code>等于
+<strong>接收序列号加上长度</strong>
+，也就是下一包数据需要发送的起始序列号，这样的发送方式，能够使发送端确认发送的数据，已经被对方收到，发送端也可以一次发送，连续的多包数据，接收端只需要回复一次<code>ACK</code>就可以了，这样发送端可以把待发送的数据分隔成一系列的碎片，发送到对端，对端根据序列号和长度，在接收后重构出来完整的数据。</p>
+<p>假设其中丢失了某些数据，则接收端可以要求发送端重传，比如丢失了 100-199 这 100 个字节，接收端向发送端发送<code>ACK=100</code>的报文，发送端收到后重传这一包数据，接收端进行补齐。</p>
+<h2 id="四次挥手" class="headerLink">
+    <a href="#%e5%9b%9b%e6%ac%a1%e6%8c%a5%e6%89%8b" class="header-mark"></a>四次挥手</h2><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220326/dd8453fee5ce45579e5022be5763923d.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="TCP四次挥手" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220326/dd8453fee5ce45579e5022be5763923d.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>TCP四次挥手</h2><p>TCP四次挥手</p>">
+        
+    </a><figcaption class="image-caption">TCP四次挥手</figcaption>
+    </figure></p>
+<p>断开连接前，客户端和服务端都处于 <code>ESTABLISHED</code> 状态，两者谁都可以先发起断开连接请求。以下假设客户端先发起断开连接请求。</p>
+<p>客户端向服务端发送一包<code>FIN</code>包，表示要关闭连接，客户端自己进入<strong>终止等待1 状态</strong>，这是第一次挥手。</p>
+<p>服务端收到<code>FIN</code>包，发送一包<code>ACK</code>包，表示自己进入了<strong>关闭等待状态</strong>，客户端进入<strong>终止等待2 状态</strong>，这是第二次挥手。</p>
+<p>服务端此时还可以发送未发送的数据，而客户端还可以接收数据，待服务端发送完数据之后，发送一包<code>FIN</code>包，进入<strong>最后确认状态</strong>
+，这是第三次挥手。</p>
+<p>客户端收到之后回复<code>ACK</code>包，进入<strong>超时等待状态</strong>，经过超时时间后关闭连接，而服务端收到<code>ACK</code>包后立即关闭连接，这是第四次挥手。</p>
+<h3 id="第一次挥手" class="headerLink">
+    <a href="#%e7%ac%ac%e4%b8%80%e6%ac%a1%e6%8c%a5%e6%89%8b" class="header-mark"></a>第一次挥手</h3><h4 id="客户端-2" class="headerLink">
+    <a href="#%e5%ae%a2%e6%88%b7%e7%ab%af-2" class="header-mark"></a>客户端</h4><p>向服务端发送 <code>FIN</code> 报文段<code>FIN=1, SN=client_sn</code>，请求断开连接。</p>
+<p><code>SN=client_sn</code>是序号，表明当前报文段发送的有效数据首字节是从请求建立连接到现在为止客户端向服务端发送的第 <code>client_sn-clien_isn+1</code> 个字节的有效数据。</p>
+<p><code>FIN</code> 报文段虽然不能携带数据，但是会消耗一个序号（相当于发送了1个字节的有效数据），下次客户端再向服务端发送的报文中 <code>SN=client_isn+1</code> 。</p>
+<p>客户端变为 <code>FIN_WAIT1</code> 状态，等待服务端 <code>ACK</code> 报文段。</p>
+<h3 id="第二次挥手" class="headerLink">
+    <a href="#%e7%ac%ac%e4%ba%8c%e6%ac%a1%e6%8c%a5%e6%89%8b" class="header-mark"></a>第二次挥手</h3><h4 id="服务端-2" class="headerLink">
+    <a href="#%e6%9c%8d%e5%8a%a1%e7%ab%af-2" class="header-mark"></a>服务端</h4><p>接收来自客户端的 <code>FIN</code> 报文段。</p>
+<p>向客户端发送 <code>ACK</code> 报文段<code>ACK=1, AN=client_sn+1, SN=server_sn_wave2</code>，应答客户端的断开连接请求。</p>
+<p><code>SN=server_sn_wave2</code> 是序号，表明当前报文段发送的有效数据首字节是从请求建立连接到现在为止服务端向客户端发送的第 <code>server_sn_wave2-client_isn+1</code> 个字节的有效数据。</p>
+<p><code>AN=client_sn+1</code> 是确认号，表明服务端接下来要开始接收来自客户端的第 <code>client_sn+1</code> 个字节的有效数据。</p>
+<p>此时服务端变为 <code>CLOSE_WAIT</code> 状态。</p>
+<h4 id="客户端-3" class="headerLink">
+    <a href="#%e5%ae%a2%e6%88%b7%e7%ab%af-3" class="header-mark"></a>客户端</h4><p>接收来自服务端的 <code>ACK</code> 包。</p>
+<p>变为 <code>FIN_WAIT2</code> 状态，等待服务端关闭连接请求<code>FIN</code>报文段。</p>
+<h3 id="第三次挥手" class="headerLink">
+    <a href="#%e7%ac%ac%e4%b8%89%e6%ac%a1%e6%8c%a5%e6%89%8b" class="header-mark"></a>第三次挥手</h3><h4 id="服务端-3" class="headerLink">
+    <a href="#%e6%9c%8d%e5%8a%a1%e7%ab%af-3" class="header-mark"></a>服务端</h4><p>（服务端想断开连接时）向客户端发送 <code>FIN</code> 报文段<code>FIN=1, SN=server_sn</code>，请求断开连接。</p>
+<p><code>SN=server_sn</code> 是序号，表明当前报文段发送的有效数据首字节是从请求建立连接到现在为止服务端向客户端发送的第 <code>server_sn-clien_isn+1</code> 个字节的有效数据。</p>
+<p><code>FIN</code> 报文段虽然不能携带数据，但是会消耗一个序号（相当于发送了1个字节的有效数据），下次服务端再向客户端发送的报文中 <code>SN=client_isn+2</code> （若断开连接成功，则服务端不会再向客户端发送下一个报文段）。</p>
+<p>第二次挥手和第三次挥手之间，服务端又向客户端发送了 <code>server_sn - server_sn_wave2</code> 个字节的有效数据。</p>
+<p>服务端变为 <code>LAST_ACK</code> 状态，等待客户端的 <code>ACK</code> 报文段。</p>
+<h3 id="第四次挥手" class="headerLink">
+    <a href="#%e7%ac%ac%e5%9b%9b%e6%ac%a1%e6%8c%a5%e6%89%8b" class="header-mark"></a>第四次挥手</h3><h4 id="客户端-4" class="headerLink">
+    <a href="#%e5%ae%a2%e6%88%b7%e7%ab%af-4" class="header-mark"></a>客户端</h4><p>接收来自服务端的 <code>FIN</code> 报文段。</p>
+<p>向服务端发送 <code>ACK</code> 报文段<code>ACK=1, AN=server_sn+1, SN=client_sn+1</code>，应答服务端断开连接请求。
+<code>client_sn+1</code> 是序号，表明当前报文段发送的有效数据首字节是从请求建立连接到现在为止客户端向客户端发送的第 <code>client_isn+1)-clien_isn+1</code> 个字节的有效数据。<code>AN=server_sn+1</code>
+是确认号，表明服务端接下来要开始接收来自客户端的第 <code>client_sn+1</code> 个字节的有效数据。</p>
+<p>客户端变为 <code>TIME_WAIT</code> 状态，等待2MSL时间后进入 <code>CLOSED</code> 状态，至此 <code>client——&gt;server</code> 数据流被关闭。</p>
+<h4 id="服务端-4" class="headerLink">
+    <a href="#%e6%9c%8d%e5%8a%a1%e7%ab%af-4" class="header-mark"></a>服务端</h4><p>接收来自客户端的 <code>ACK</code> 报文段。</p>
+<p>变为 <code>CLOSED</code> 状态，至此 <code>server——&gt;client</code> 数据流被关闭。</p>
+<div class="details admonition info open">
+        <div class="details-summary admonition-title">
+            <i class="icon fas fa-info-circle fa-fw"></i>Tips<i class="details-icon fas fa-angle-right fa-fw"></i>
+        </div>
+        <div class="details-content">
+            <div class="admonition-content">当收到对方的<code>FIN</code>报文时，仅仅表示对方不再发送数据了但是还能接收数据。</div>
+        </div>
+    </div>
+<h2 id="udp协议" class="headerLink">
+    <a href="#udp%e5%8d%8f%e8%ae%ae" class="header-mark"></a>UDP协议</h2><p>UDP 协议是进行非连接的，发送数据就是简单的把数据包封装一下，然后从网卡发出去，数据包之间并没有状态上的联系。由于 UDP 这种简单的处理方式，所以它的性能损耗非常少，对于 CPU 内存资源的占用也远小于 TCP，但是对于网络传输过程中的丢包，UDP 协议并不能保证，所以 UDP 在传输稳定性上弱于 TCP。</p>
+<h2 id="常见问题" class="headerLink">
+    <a href="#%e5%b8%b8%e8%a7%81%e9%97%ae%e9%a2%98" class="header-mark"></a>常见问题</h2><ul>
+<li>❓ 为什么建立连接需要三次握手而不是二次</li>
+</ul>
+<p>客户端和服务端之间建立的 TCP 是全双工通信，双方都要确保对方发送能力和接收能力正常。</p>
+<p>一次握手后，服务端得知客户端发送能力正常。</p>
+<p>二次握手后，客户端得知服务端接收能力和发送能力正常。</p>
+<p>三次握手后，服务端得知客户端接收能力正常。</p>
+<p>如果在第二次也就是服务端回复<code>SYN+ACK</code>就建立连接的话，那么可能存在已经失效的请求报文，突然又传到服务器引起错误。</p>
+<p>假设采用两次握手建立连接，客户端向服务端发送了一个<code>SYN</code>包来请求建立连接，由于某些未知的原因，并没有到达服务器，在中间某个网络节点产生了滞留，为了建立连接，客户端会重新发送<code>SYN</code>包，这次的数据包正常送达，服务端回复<code>SYN+ACK</code>之后建立了连接，但是此时第一次数据阻塞的网络节点突然恢复，第一包<code>SYN</code>又送达到服务器，这时服务端会误认为客户端又发起了一个新的连接，又向客户端发送了<code>SYN+ACK</code>包，但事实是此时客户端并没有发出建立请求的连接，因此不会理睬服务端的确认，也不会向服务端发送数据，但服务端却以为新的连接已经建立了，并一直等待客户端发来的数据，从而在两次握手之后进入等待数据状态。此时服务端认为是两个连接，而客户端认为是一个连接，造成了状态不一致。如果在三次握手的情况下，服务端收不到最后的<code>ACK</code>包，便不会认为连接建立成功，所以三次握手是为了解决网络不可靠的问题。</p>
+<ul>
+<li>❓ 为什么第四次挥手时客户端需要等待超时时间再进入CLOSED状态</li>
+</ul>
+<p><strong><ruby>MSL<rt>Maximum Segment Lifetime</rt></ruby></strong>，报文段最大生存时间，是一个未被接受的报文段在网络中被丢弃前存活的最大时间。</p>
+<p>保证建立新连接时网络中不存在上次连接时发送的数据包，进入<code>CLOSED</code>状态意味着可以建立新连接，等待 &gt;MSL 的时间再进入<code>CLOSED</code>状态可以保证建立新连接后，网络中不会存在上次连接时发送出去的数据包。若网络中同时存在发送端在两次连接中发出的数据包，对接收端接收数据可能会有影响。</p>
+<p>客户端需要等待超时时间，这是为了保证对方已收到<code>ACK</code>包。</p>
+<p>假设客户端发送最后一包<code>ACK</code>包后就CLOSED释放了连接，一旦<code>ACK</code>包在网络中丢失，服务端将一直停留在最后确认状态，如果客户端发送最后一包<code>ACK</code>包后，等待一段时间，这时服务端因为没有收到<code>ACK</code>包，会重发<code>FIN</code>包，客户端会响应这个<code>FIN</code>包，重发<code>ACK</code>包并刷新超时时间。这是为了在不可靠的网络中，进行可靠的连接断开确认。</p>
+<ul>
+<li>❓ 已经建立了连接，客户端突然出现故障怎么办</li>
+</ul>
+<p>TCP 设有一个保活计时器，客户端如果出现故障，服务器不能一直等下去，白白浪费资源。服务器每收到一次客户端的请求后都会重新复位这个计时器，时间通常是设置为 2 小时，若两小时还没有收到客户端的任何数据，服务器就会发送一个探测报文段，以后每隔 75 秒钟发送一次。若一连发送 10 个探测报文仍然没反应， 服务器就认为客户端出了故障，接着就关闭连接。</p>
+<ul>
+<li>❓ TCP VS UDP</li>
+</ul>
+<p>TCP 传输数据稳定可靠，适用于对网络通讯质量要求较高的场景，需要准确无误的传输给对方，比如传输文件，发送邮件，浏览网页等。</p>
+<p>UDP 优点是速度快，但是可能产生丢包，所以适用于对实时性要求较高，但是对少量丢包并没有太大要求的场景，比如域名查询，语音通话，视频直播等。</p>
+<h2 id="参考" class="headerLink">
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
+<li><a href="http://www.javashuo.com/article/p-shnnqhql-so.html" target="_blank" rel="noopener noreferrer">计算机网络——TCP连接管理（三次握手和四次挥手）</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/53374516" target="_blank" rel="noopener noreferrer">“三次握手，四次挥手”你真的懂吗？</a></li>
+<li><a href="https://www.bilibili.com/video/BV1kV411j7hA/?vd_source=1230278c476e4b633e6d1d0aa5433749" target="_blank" rel="noopener noreferrer">一条视频讲清楚TCP协议与UDP协议-什么是三次握手与四次挥手</a></li>
+<li><a href="https://blog.csdn.net/qq_38950316/article/details/81087809" target="_blank" rel="noopener noreferrer">TCP的三次握手与四次挥手理解及面试题（很全面）</a></li>
+<li><a href="https://blog.csdn.net/paincupid/article/details/79726795" target="_blank" rel="noopener noreferrer">TCP报文格式详解</a></li>
+<li><a href="http://www.javashuo.com/article/p-onzxytxb-bv.html" target="_blank" rel="noopener noreferrer">面试官，不要再问我三次握手和四次挥手</a></li>
+</ul>
+]]></description>
 </item><item>
     <title>http入门笔记</title>
     <link>https://www.xiaobinqt.cn/http-glance/</link>
     <pubDate>Thu, 17 Mar 2022 00:00:00 &#43;0000</pubDate><author>
         <name>xiaobinqt</name>
     </author><guid>https://www.xiaobinqt.cn/http-glance/</guid>
-    <description><![CDATA[<p>该笔记是在学习《透视 HTTP 协议》时整理，还参考了网上的其他资料。鄙人只是网络世界的搬运整理工😂。</p>]]></description>
+    <description><![CDATA[<p>该笔记是在学习《透视 HTTP 协议》时整理，还参考了网上的其他资料。鄙人只是网络世界的搬运整理工😂。</p>
+<h2 id="总览" class="headerLink">
+    <a href="#%e6%80%bb%e8%a7%88" class="header-mark"></a>总览</h2><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220317/6935d109cbc64fa58c3177a90fd33098.png?imageView2/0/interlace/1/q/50%7cimageslim" title="http总览" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220317/6935d109cbc64fa58c3177a90fd33098.png?imageView2/0/interlace/1/q/50|imageslim" data-sub-html="<h2> </h2><p>http总览</p>">
+        
+    </a><figcaption class="image-caption"> </figcaption>
+    </figure></p>
+<h2 id="http-协议" class="headerLink">
+    <a href="#http-%e5%8d%8f%e8%ae%ae" class="header-mark"></a>http 协议</h2><p>http（超文本传输协议）是一个用在计算机世界里的协议。它使用计算机能够理解的语言确立了一种计算机之间交流通信的规范，以及相关的各种控制和错误处理方式。</p>
+<p>http 是一个在计算机世界里专门在两点之间传输文字、图片、音频、视频等超文本数据的约定和规范。</p>
+<p>http 不是编程语言，但是可以用编程语言去实现 HTTP，告诉计算机如何用 HTTP 来与外界通信。</p>
+<p>在互联网世界里，HTTP 通常跑在 TCP/IP 协议栈之上，依靠 IP 协议实现寻址和路由、TCP 协议实现可靠数据传输、DNS 协议实现域名查找、SSL/TLS 协议实现安全通信。此外，还有一些协议依赖于 HTTP，例如 WebSocket、HTTPDNS 等。这些协议相互交织，构成了一个协议网，而 HTTP 则处于中心地位。</p>
+<blockquote>
+<p>HTTP 传输的不是 TCP/UDP 这些底层协议里被切分的杂乱无章的二进制包（datagram），而是完整的、有意义的数据，可以被浏览器、服务器这样的上层应用程序处理。</p>
+</blockquote>
+<h3 id="互联网和万维网的区别" class="headerLink">
+    <a href="#%e4%ba%92%e8%81%94%e7%bd%91%e5%92%8c%e4%b8%87%e7%bb%b4%e7%bd%91%e7%9a%84%e5%8c%ba%e5%88%ab" class="header-mark"></a>互联网和万维网的区别</h3><p>我们通常所说的“上网”实际上访问的只是互联网的一个子集“万维网”（World Wide Web），它基于 HTTP 协议，传输 HTML 等超文本资源，能力被限制在 HTTP 协议之内。</p>
+<p>互联网上还有许多万维网之外的资源，例如常用的电子邮件、BT 和 Magnet 点对点下载、FTP 文件下载、SSH 安全登录、各种即时通信服务等等，它们需要用各自的专有协议来访问。</p>
+<p>不过由于 HTTP 协议非常灵活、易于扩展，而且“超文本”的表述能力很强，所以很多其他原本不属于 HTTP 的资源也可以“包装”成 HTTP 来访问，这就是我们为什么能够总看到各种“网页应用”——例如“微信网页版”“邮箱网页版”——的原因。</p>
+<h3 id="tcpip" class="headerLink">
+    <a href="#tcpip" class="header-mark"></a>TCP/IP</h3><p>TCP/IP 协议实际上是一系列网络通信协议的统称， 其中最核心的两个协议是TCP（Transmission Control Protocol/传输控制协议）和IP（Internet Protocol），其他的还有 UDP、ICMP、ARP 等等，共同构成了一个复杂但有层次的协议栈。</p>
+<blockquote>
+<p>HTTP 是超文本传输协议，TCP 是传输控制协议，都是传输，区别是，HTTP 传输的是完整的、有意义的数据，可以被浏览器、
+服务器这样的上层应用程序处理，HTTP 不关心寻址、路由、数据完整性等传输细节，而要求这些工作都由下层（基本都由 TCP）来处理。 TCP 传输的是可靠的、字节流和二进制包。</p>
+</blockquote>
+<p>TCP 是 HTTP 得以实现的基础，HTTP 协议运行在 TCP/IP 上，HTTP 可以更准确地称为 “HTTP over TCP/IP”。</p>
+<h3 id="uriurl" class="headerLink">
+    <a href="#uriurl" class="header-mark"></a>URI/URL</h3><p>URI（Uniform Resource Identifier），中文名称是 统一资源标识符，使用它就能够唯一地标记互联网上资源。</p>
+<p>URI 另一个更常用的表现形式是 URL（Uniform Resource Locator）， 统一资源定位符，也就是我们俗称的“网址”，它实际上是 URI 的一个子集，这两者几乎是相同的，差异不大，除非写论文，否则不用特意区分。</p>
+<h3 id="ssltsl" class="headerLink">
+    <a href="#ssltsl" class="header-mark"></a>SSL/TSL</h3><p>SSL 的全称是“Secure Socket Layer”，网景公司发明，当发展到 3.0 时被标准化，改名为 TLS，即“Transport Layer Security”。 所以 TLS 跟 SSL 是一个东西，相当于张君宝的 2.0 版本是张三丰。</p>
+<p>SSL 是一个负责加密通信的安全协议，建立在 TCP/IP 之上，在 HTTP 协议之下。</p>
+<h3 id="proxy-代理" class="headerLink">
+    <a href="#proxy-%e4%bb%a3%e7%90%86" class="header-mark"></a>proxy 代理</h3><ul>
+<li>匿名代理：完全“隐匿”了被代理的机器，外界看到的只是代理服务器；</li>
+<li>透明代理：顾名思义，它在传输过程中是“透明开放”的，外界既知道代理，也知道客户端；</li>
+<li>正向代理：靠近客户端，代理的对象是客户端，代表客户端向服务器发送请求；</li>
+</ul>
+<p>正向代理是一个位于客户端和原始服务器（origin server）之间的服务器，为了从原始服务器取得内容，客户端向代理发送一个请求并指定目标（原始服务器，比如 Google），然后代理向原始服务器转交请求并将获得的内容返回给客户端。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220317/22475408cd734b9c861b345040e356f4.png?imageView2/0/interlace/1/q/50%7cimageslim" title="正向代理" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220317/22475408cd734b9c861b345040e356f4.png?imageView2/0/interlace/1/q/50|imageslim" data-sub-html="<h2>正向代理</h2><p>正向代理</p>">
+        
+    </a><figcaption class="image-caption">正向代理</figcaption>
+    </figure></p>
+<ul>
+<li>反向代理：靠近服务器端，代理代理的对象是服务端，代表服务器响应客户端的请求</li>
+</ul>
+<p>反向代理指的是代理服务器根据客户端的请求，从其关系的一组或多组后端服务器（如 Web 服务器）上获取资源，然后再将这些资源返回给客户端的过程，客户端只会得知代理服务器的 IP 地址，而不知道在代理服务器后面的服务器集群的存在。</p>
+<p>当一个代理服务器能够代理外部网络上的主机，访问内部网络时，这种代理服务的方式称为反向代理服务。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220317/6a2b4d26c0bf43cd9494df793c48a814.png?imageView2/0/interlace/1/q/50%7cimageslim" title="反向代理" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220317/6a2b4d26c0bf43cd9494df793c48a814.png?imageView2/0/interlace/1/q/50|imageslim" data-sub-html="<h2>反向代理</h2><p>反向代理</p>">
+        
+    </a><figcaption class="image-caption">反向代理</figcaption>
+    </figure></p>
+<h2 id="http-版本" class="headerLink">
+    <a href="#http-%e7%89%88%e6%9c%ac" class="header-mark"></a>http 版本</h2><p>万维网关键技术</p>
+<ul>
+<li>URI：即统一资源标识符，作为互联网上资源的唯一身份；</li>
+<li>HTML：即超文本标记语言，描述超文本文档；</li>
+<li>HTTP：即超文本传输协议，用来传输超文本。</li>
+</ul>
+<p>基于这三项关键技术就可以把超文本系统完美地运行在互联网上，让各地的人们能够自由地共享信息，这个系统称为“万维网”（World Wide Web），也就是我们现在所熟知的 Web。</p>
+<h3 id="http09" class="headerLink">
+    <a href="#http09" class="header-mark"></a>http/0.9</h3><p>结构简单，设置之初设想系统里的文档都是只读的，所以只允许用 GET 动作从服务器上获取 HTML 纯文本格式的文档，并且在响应请求之后立即关闭连接，功能非常有限。</p>
+<h3 id="http10" class="headerLink">
+    <a href="#http10" class="header-mark"></a>http/1.0</h3><p>HTTP/1.0 并不是一个标准，只是记录已有实践和模式的一份参考文档，不具有实际的约束力，相当于一个备忘录。</p>
+<p>在多方面增强了 0.9 版，形式上已经和我们现在的 HTTP 差别不大了，例如：</p>
+<ul>
+<li>增加了 HEAD、POST 等新方法；</li>
+<li>增加了响应状态码，标记可能的错误原因；</li>
+<li>引入了协议版本号概念；</li>
+<li>引入了 HTTP Header（头部）的概念，让 HTTP 处理请求和响应更加灵活；</li>
+<li>传输的数据不再仅限于文本。</li>
+</ul>
+<h3 id="http11" class="headerLink">
+    <a href="#http11" class="header-mark"></a>http/1.1</h3><p>是一个正式的标准，而不是一份可有可无的参考文档，只要用到 HTTP 协议，就必须严格遵守这个标准。</p>
+<p>主要变更：</p>
+<ul>
+<li>增加了 PUT、DELETE 等新的方法；</li>
+<li>增加了缓存管理和控制；</li>
+<li>明确了连接管理，允许持久连接；</li>
+<li>允许响应数据分块（chunked），利于传输大文件；</li>
+<li>强制要求 Host 头，让互联网主机托管成为可能。</li>
+</ul>
+<h3 id="http2" class="headerLink">
+    <a href="#http2" class="header-mark"></a>http/2</h3><p>由 google 主导，基于 google 的 SPDY 协议为基础开始制定新版本的 HTTP 协议，最终在 2015 年发布了 HTTP/2。</p>
+<p>主要特点：</p>
+<ul>
+<li>二进制协议，不再是纯文本；</li>
+<li>可发起多个请求，废弃了 1.1 里的管道；</li>
+<li>使用专用算法压缩头部，减少数据传输量；</li>
+<li>允许服务器主动向客户端推送数据；</li>
+<li>增强了安全性，“事实上”要求加密通信。</li>
+</ul>
+<h3 id="http3" class="headerLink">
+    <a href="#http3" class="header-mark"></a>http/3</h3><p>由 google 主导，基于 google 的 QUIC 协议为基础开始制定新版本的 HTTP 协议。</p>
+<h2 id="网络分层模型" class="headerLink">
+    <a href="#%e7%bd%91%e7%bb%9c%e5%88%86%e5%b1%82%e6%a8%a1%e5%9e%8b" class="header-mark"></a>网络分层模型</h2><h3 id="tcpip-1" class="headerLink">
+    <a href="#tcpip-1" class="header-mark"></a>TCP/IP</h3><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220317/87869e9a3d0d4eaba7c9d6fe0798674f.png?imageView2/0/interlace/1/q/50%7cimageslim" title="tcp/ip分层模型" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220317/87869e9a3d0d4eaba7c9d6fe0798674f.png?imageView2/0/interlace/1/q/50|imageslim" data-sub-html="<h2>TCP/IP分层模型</h2><p>tcp/ip分层模型</p>">
+        
+    </a><figcaption class="image-caption">TCP/IP分层模型</figcaption>
+    </figure></p>
+<p>这里的层次顺序是“从下往上”数的，所以第一层就是最下面的一层。</p>
+<h4 id="链接层" class="headerLink">
+    <a href="#%e9%93%be%e6%8e%a5%e5%b1%82" class="header-mark"></a>链接层</h4><p>第一层叫“链接层”（link layer），负责在以太网、WiFi 这样的底层网络上发送原始数据包，工作在网卡这个层次，使用 MAC 地址来标记网络上的设备，所以有时候也叫 MAC 层。</p>
+<h4 id="网络互联层" class="headerLink">
+    <a href="#%e7%bd%91%e7%bb%9c%e4%ba%92%e8%81%94%e5%b1%82" class="header-mark"></a>网络互联层</h4><p>第二层叫“网际层”或者“网络互连层”（internet layer），IP 协议就处在这一层。因为 IP 协议定义了“IP 地址”的概念，所以就可以在“链接层”的基础上，用 IP 地址取代 MAC 地址，把许许多多的局域网、广域网连接成一个虚拟的巨大网络，在这个网络里找设备时只要把 IP 地址再“翻译”成 MAC 地址就可以了。</p>
+<h4 id="传输层" class="headerLink">
+    <a href="#%e4%bc%a0%e8%be%93%e5%b1%82" class="header-mark"></a>传输层</h4><p>第三层叫“传输层”（transport layer），这个层次协议的职责是保证数据在 IP 地址标记的两点之间“可靠”地传输，是 TCP 协议工作的层次，另外还有它的一个“小伙伴”UDP。</p>
+<p>TCP 是一个有状态的协议，需要先与对方建立连接然后才能发送数据，而且保证数据不丢失不重复。而 UDP 则比较简单，它无状态，不用事先建立连接就可以任意发送数据，但不保证数据一定会发到对方。两个协议的另一个重要区别在于数据的形式。TCP 的数据是连续的“字节流”，有先后顺序，而 UDP 则是分散的小数据包，是顺序发，乱序收。</p>
+<h4 id="应用层" class="headerLink">
+    <a href="#%e5%ba%94%e7%94%a8%e5%b1%82" class="header-mark"></a>应用层</h4><p>协议栈的第四层叫“应用层”（application layer），由于下面的三层把基础打得非常好，所以在这一层就“百花齐放”了，有各种面向具体应用的协议。例如 Telnet、SSH、FTP、SMTP，HTTP 等等。</p>
+<div class="details admonition tip open">
+        <div class="details-summary admonition-title">
+            <i class="icon fas fa-lightbulb fa-fw"></i>Tip<i class="details-icon fas fa-angle-right fa-fw"></i>
+        </div>
+        <div class="details-content">
+            <div class="admonition-content">MAC 层（链接层）的传输单位是帧（frame），IP 层（网络互联层）的传输单位是包（packet），TCP 层传输层的传输单位是段（segment）， HTTP （应用层）的传输单位则是消息或报文（message）。这些名词并没有什么本质的区分，可以统称为数据包。</div>
+        </div>
+    </div>
+<h3 id="osi-网络分层模型" class="headerLink">
+    <a href="#osi-%e7%bd%91%e7%bb%9c%e5%88%86%e5%b1%82%e6%a8%a1%e5%9e%8b" class="header-mark"></a>OSI 网络分层模型</h3><p>OSI 分层模型在发布的时候就明确地表明是一个“参考”，不是强制标准。这是因为 TCP/IP 等协议已经在许多网络上实际运行，不可能推翻重来。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220317/4ddd78194c284518a2ce2db4cfab2a3c.png?imageView2/0/interlace/1/q/50%7cimageslim" title="OSI模型" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220317/4ddd78194c284518a2ce2db4cfab2a3c.png?imageView2/0/interlace/1/q/50|imageslim" data-sub-html="<h2>OSI网络模型</h2><p>OSI模型</p>">
+        
+    </a><figcaption class="image-caption">OSI网络模型</figcaption>
+    </figure></p>
+<ul>
+<li>第一层：物理层，网络的物理形式，例如电缆、光纤、网卡、集线器等等；</li>
+<li>第二层：数据链路层，它基本相当于 TCP/IP 的链接层；</li>
+<li>第三层：网络层，相当于 TCP/IP 里的网际层；</li>
+<li>第四层：传输层，相当于 TCP/IP 里的传输层；</li>
+<li>第五层：会话层，维护网络中的连接状态，即保持会话和同步；</li>
+<li>第六层：表示层，把数据转换为合适、可理解的语法和语义；</li>
+<li>第七层：应用层，面向具体的应用传输数据。</li>
+</ul>
+<p>对比一下就可以发现，TCP/IP 是一个纯软件的栈，没有网络应有的最根基的电缆、网卡等物理设备的位置。而 OSI 则补足了这个缺失， 在理论层面上描述网络更加完整。</p>
+<p>OSI 还为每一层标记了明确了编号，最底层是一层，最上层是七层，而 TCP/IP 的层次从来只有名字而没有编号。</p>
+<h3 id="两个分层模型的对应关系" class="headerLink">
+    <a href="#%e4%b8%a4%e4%b8%aa%e5%88%86%e5%b1%82%e6%a8%a1%e5%9e%8b%e7%9a%84%e5%af%b9%e5%ba%94%e5%85%b3%e7%b3%bb" class="header-mark"></a>两个分层模型的对应关系</h3><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220317/539751215a0b45ada0a373f8289ca232.png?imageView2/0/interlace/1/q/50%7cimageslim" title="对应关系" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220317/539751215a0b45ada0a373f8289ca232.png?imageView2/0/interlace/1/q/50|imageslim" data-sub-html="<h2>两个分层模型的对应关系</h2><p>对应关系</p>">
+        
+    </a><figcaption class="image-caption">两个分层模型的对应关系</figcaption>
+    </figure></p>
+<p>所谓的“四层负载均衡”就是指工作在传输层上，基于 TCP/IP 协议的特性，例如 IP 地址、端口号等实现对后端服务器的负载均衡。</p>
+<p>所谓的“七层负载均衡”就是指工作在应用层上，看到的是 HTTP 协议，解析 HTTP 报文里的 URI、主机名、资源类型等数据，再用适当的策略转发给后端服务器。</p>
+<p>有一个辨别四层和七层比较好的（但不是绝对的）小窍门，“两个凡是”：<strong>凡是由操作系统负责处理的就是四层或四层以下</strong>，否则，<strong>凡是需要由应用程序（也就是你自己写代码）负责处理的就是七层</strong>。</p>
+<h2 id="http协议核心" class="headerLink">
+    <a href="#http%e5%8d%8f%e8%ae%ae%e6%a0%b8%e5%bf%83" class="header-mark"></a>http协议核心</h2><p>由于 HTTP 是在 TCP/IP 协议之上的，而 TCP/IP 协议负责底层的具体传输工作，所以 http 在传输方面不用太操心，TCP/IP 会去解决，所以 HTTP 关心的就只有他所传输的报文内容，又因为 HTTP 是“纯文本”的，包括头信息都是 ASCII 码的文本，不用借助程序解析可以直接阅读。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220321/619a6b063a5e4ced936d156d155f3fed.png?imageView2/0/interlace/1/q/50%7cimageslim" title="http报文" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220321/619a6b063a5e4ced936d156d155f3fed.png?imageView2/0/interlace/1/q/50|imageslim" data-sub-html="<h2> </h2><p>http报文</p>">
+        
+    </a><figcaption class="image-caption"> </figcaption>
+    </figure></p>
+<h3 id="常用头字段" class="headerLink">
+    <a href="#%e5%b8%b8%e7%94%a8%e5%a4%b4%e5%ad%97%e6%ae%b5" class="header-mark"></a>常用头字段</h3><h4 id="注意事项" class="headerLink">
+    <a href="#%e6%b3%a8%e6%84%8f%e4%ba%8b%e9%a1%b9" class="header-mark"></a>注意事项</h4><ul>
+<li>字段名不区分大小写，例如“Host”也可以写成“host”，但首字母大写的可读性更好；</li>
+<li>字段名里不允许出现空格，可以使用连字符“-”，但不能使用下划线“_”。例如，“test-name”是合法的字段名，而“test name”“test_name”是不正确的字段名；</li>
+<li>字段名后面必须紧接着“:”，不能有空格，而“:”后的字段值前可以有多个空格；</li>
+</ul>
+<h4 id="分类" class="headerLink">
+    <a href="#%e5%88%86%e7%b1%bb" class="header-mark"></a>分类</h4><ul>
+<li>通用字段：在请求头和响应头里都可以出现；</li>
+<li>请求字段：仅能出现在请求头里，进一步说明请求信息或者额外的附加条件；</li>
+<li>响应字段：仅能出现在响应头里，补充说明响应报文的信息；</li>
+<li>实体字段：它实际上属于通用字段，但专门描述 body 的额外信息。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Host</code></td>
+<td>请求字段</td>
+<td>唯一一个 HTTP/1.1 规范里要求<strong>必须出现</strong>的字段，如果请求头里没有 Host，那这就是一个错误的报文。Host 字段告诉服务器这个请求应该由哪个主机来处理</td>
+</tr>
+<tr>
+<td><code>User-Agent</code></td>
+<td>请求字段</td>
+<td>描述发起 HTTP 请求的客户端，服务器可以依据它来返回最合适此浏览器显示的页面</td>
+</tr>
+<tr>
+<td><code>Date</code></td>
+<td>通用字段</td>
+<td>表示 HTTP 报文创建的时间，客户端可以使用这个时间再搭配其他字段决定缓存策略</td>
+</tr>
+<tr>
+<td><code>Server</code></td>
+<td>响应字段</td>
+<td>告诉客户端当前正在提供 Web 服务的软件名称和版本号</td>
+</tr>
+<tr>
+<td><code>Content-Length</code></td>
+<td>实体字段</td>
+<td>报文里 body 的长度，也就是请求头或响应头空行后面数据的长度。服务器看到这个字段，就知道了后续有多少数据，可以直接接收。如果没有这个字段，那么 body 就是不定长的，需要使用 chunked 方式分段传输</td>
+</tr>
+</tbody>
+</table>
+<h3 id="请求方式" class="headerLink">
+    <a href="#%e8%af%b7%e6%b1%82%e6%96%b9%e5%bc%8f" class="header-mark"></a>请求方式</h3><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220321/c113e062fccf4d18959dc52d90e59c1b.png?imageView2/0/interlace/1/q/50%7cimageslim" title="请求方式" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220321/c113e062fccf4d18959dc52d90e59c1b.png?imageView2/0/interlace/1/q/50|imageslim" data-sub-html="<h2> </h2><p>请求方式</p>">
+        
+    </a><figcaption class="image-caption"> </figcaption>
+    </figure></p>
+<table>
+<thead>
+<tr>
+<th>方式</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td>获取资源，可以理解为读取或者下载数据</td>
+</tr>
+<tr>
+<td>HEAD</td>
+<td>获取资源的元信息，不会返回请求的实体数据，只会传回响应头</td>
+</tr>
+<tr>
+<td>POST</td>
+<td>向资源提交数据，相当于写入或上传数据</td>
+</tr>
+<tr>
+<td>PUT</td>
+<td>类似 POST</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td>删除资源</td>
+</tr>
+<tr>
+<td>CONNECT</td>
+<td>建立特殊的连接隧道</td>
+</tr>
+<tr>
+<td>OPTIONS</td>
+<td>列出可对资源实行的方法</td>
+</tr>
+<tr>
+<td>TRACE</td>
+<td>追踪请求 - 响应的传输路径</td>
+</tr>
+</tbody>
+</table>
+<h3 id="状态码" class="headerLink">
+    <a href="#%e7%8a%b6%e6%80%81%e7%a0%81" class="header-mark"></a>状态码</h3><table>
+<thead>
+<tr>
+<th>状态码</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>1×x</code></td>
+<td>提示信息，表示目前是协议处理的中间状态，还需要后续的操作</td>
+</tr>
+<tr>
+<td><code>2××</code></td>
+<td>成功，报文已经收到并被正确处理</td>
+</tr>
+<tr>
+<td><code>3××</code></td>
+<td>重定向，资源位置发生变动，需要客户端重新发送请求</td>
+</tr>
+<tr>
+<td><code>4××</code></td>
+<td>客户端错误，请求报文有误，服务器无法处理</td>
+</tr>
+<tr>
+<td><code>5××</code></td>
+<td>服务器错误，服务器在处理请求时内部发生了错误</td>
+</tr>
+</tbody>
+</table>
+<p>一些常用状态码说明</p>
+<table>
+<thead>
+<tr>
+<th>status code</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>301</td>
+<td>永久重定向，含义是此次请求的资源已经不存在了，需要改用改用新的 URI 再次访问</td>
+</tr>
+<tr>
+<td>302</td>
+<td>临时重定向，意思是请求的资源还在，但需要暂时用另一个 URI 来访问。比如，你的网站升级到了 HTTPS，原来的 HTTP 不打算用了，这就是“永久”的，所以要配置 301 跳转，把所有的 HTTP 流量都切换到 HTTPS。 再比如，今天夜里网站后台要系统维护，服务暂时不可用，这就属于“临时”的，可以配置成 302 跳转，把流量临时切换到一个静态通知页面，浏览器看到这个 302 就知道这只是暂时的情况，不会做缓存优化，第二天还会访问原来的地址。</td>
+</tr>
+<tr>
+<td>304</td>
+<td>Not Modified，它用于 If-Modified-Since 等条件请求，表示资源未修改，用于缓存控制。它不具有通常的跳转含义，但可以理解成“重定向已到缓存的文件”（即“缓存重定向”）</td>
+</tr>
+<tr>
+<td>405</td>
+<td>不允许使用某些方法操作资源，例如不允许 POST 只能 GET</td>
+</tr>
+<tr>
+<td>406</td>
+<td>Not Acceptable 资源无法满足客户端请求的条件，例如请求中文但只有英文</td>
+</tr>
+<tr>
+<td>408</td>
+<td>Request Timeout：请求超时，服务器等待了过长的时间</td>
+</tr>
+<tr>
+<td>409</td>
+<td>Conflict：多个请求发生了冲突，可以理解为多线程并发时的竞态</td>
+</tr>
+<tr>
+<td>413</td>
+<td>Request Entity Too Large：请求报文里的 body 太大</td>
+</tr>
+<tr>
+<td>414</td>
+<td>Request-URI Too Long：请求行里的 URI 太大</td>
+</tr>
+<tr>
+<td>429</td>
+<td>Too Many Requests 客户端发送了太多的请求，通常是由于服务器的限连策略</td>
+</tr>
+<tr>
+<td>431</td>
+<td>Request Header Fields Too Large 请求头某个字段或总体太大</td>
+</tr>
+<tr>
+<td>500</td>
+<td>Internal Server Error 与 400 类似，也是一个通用的错误码，服务器究竟发生了什么错误我们是不知道的。不过对于服务器来说这应该算是好事，通常不应该把服务器内部的详细信息，例如出错的函数调用栈告诉外界。虽然不利于调试，但能够防止黑客的窥探或者分析</td>
+</tr>
+<tr>
+<td>501</td>
+<td>Not Implemented 表示客户端请求的功能还不支持，这个错误码比 500 要温和一些，和“即将开业，敬请期待”的意思差不多，不过具体什么时候“开业”就不好说了</td>
+</tr>
+<tr>
+<td>502</td>
+<td>Bad Gateway”通常是服务器作为网关或者代理时返回的错误码，表示服务器自身工作正常，访问后端服务器时发生了错误，但具体的错误原因也是不知道的</td>
+</tr>
+<tr>
+<td>503</td>
+<td>Service Unavailable 表示服务器当前很忙，暂时无法响应服务，我们上网时有时候遇到的“网络服务正忙，请稍后重试”的提示信息就是状态码 503</td>
+</tr>
+</tbody>
+</table>
+<h3 id="http-特点" class="headerLink">
+    <a href="#http-%e7%89%b9%e7%82%b9" class="header-mark"></a>http 特点</h3><ul>
+<li>HTTP 是灵活可扩展的，可以任意添加头字段实现任意功能。</li>
+<li>HTTP 是可靠传输协议，基于 TCP/IP 协议“尽量”保证数据的送达。</li>
+<li>HTTP 是应用层协议，比 FTP、SSH 等更通用功能更多，能够传输任意数据。</li>
+<li>HTTP 使用了请求 - 应答模式，客户端主动发起请求，服务器被动回复请求。</li>
+<li>HTTP 本质上是无状态的，每个请求都是互相独立、毫无关联的，协议不要求客户端或服务器记录请求相关的信息。</li>
+</ul>
+<h2 id="参考" class="headerLink">
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
+<li><a href="https://baijiahao.baidu.com/s?id=1738680012806649947" target="_blank" rel="noopener noreferrer">什么是反向代理，反向代理是如何工作的？</a></li>
+<li><a href="https://blog.csdn.net/weixin_45775963/article/details/104440190" target="_blank" rel="noopener noreferrer">什么是正向代理和反向代理</a></li>
+<li><a href="https://www.jianshu.com/p/23b6775fbb91" target="_blank" rel="noopener noreferrer">如何理解反向代理服务器</a></li>
+</ul>]]></description>
 </item><item>
     <title>透视 HTTPS</title>
     <link>https://www.xiaobinqt.cn/what-is-https/</link>
     <pubDate>Tue, 27 Oct 2020 00:00:00 &#43;0000</pubDate><author>
         <name>xiaobinqt</name>
     </author><guid>https://www.xiaobinqt.cn/what-is-https/</guid>
-    <description><![CDATA[为什么有 HTTPS？因为 HTTP 不安全！ 现在的互联网已经不再是 “田园时代”，“黑暗森林” 已经到来。上网的记录会被轻易截获，网站是否真实也无法验证，黑客可以伪装成银行网站，盗取真实姓名、密码、银行卡等敏感信息]]></description>
+    <description><![CDATA[<p>为什么有 HTTPS？<strong>因为 HTTP 不安全！</strong> 现在的互联网已经不再是 “田园时代”，“黑暗森林”
+已经到来。上网的记录会被轻易截获，网站是否真实也无法验证，黑客可以伪装成银行网站，盗取真实姓名、密码、银行卡等敏感信息，威胁人身安全和财产安全。</p>
+<p>上网的时候必须步步为营、处处小心，否则就会被不知道埋伏在哪里的黑客所“猎杀”。</p>
+<p>HTTPS 如何实现安全通信？如何构建出固若金汤的网络城堡？主要涉及的知识点如下：</p>
+<ul>
+<li>什么是 HTTPS</li>
+<li>什么样的才是安全的通信</li>
+<li>对称加密与非对称加密、摘要算法、数字签名、完整性校验是什么</li>
+<li>迁移 HTTPS 的必要性</li>
+</ul>
+<h2 id="什么是安全" class="headerLink">
+    <a href="#%e4%bb%80%e4%b9%88%e6%98%af%e5%ae%89%e5%85%a8" class="header-mark"></a>什么是安全</h2><p>在通信过程中，具备以下特性则认为安全：<strong>机密性</strong>、<strong>完整性</strong>、<strong>不可否认</strong>、<strong>身份认证</strong>。</p>
+<ul>
+<li>
+<p>机密性：数据必须保密，只能有信任的人读取，其他人是不可见的秘密。就是不能让不相关的人看到不该看的东西。</p>
+</li>
+<li>
+<p>完整性：也叫作一致性，也就是数据在传输过程中没有被非法篡改，内容不能多也不能少，一五一十的保持原状。</p>
+</li>
+<li>
+<p>不可否认：不可抵赖，不能否认已经发生过的事情。</p>
+</li>
+<li>
+<p>身份验证：确认对方的真实身份，“证明你是真的是你”，保证消息发送到可信的人，而不是非法之徒。</p>
+</li>
+</ul>
+<p>所以同时具备了机密性、完整性、身份认证、不可否认四个特性，通信双方的安全才有保证，才是真正的安全。</p>
+<h2 id="什么是-https" class="headerLink">
+    <a href="#%e4%bb%80%e4%b9%88%e6%98%af-https" class="header-mark"></a>什么是 HTTPS</h2><p>HTTPS 其实是一个“非常简单”的协议，规定了<strong>新的协议名“https”，默认端口号 443</strong>，至于其他的什么请求 - 应答模式、报文结构、请求方法、URI、头字段、连接管理等等都完全沿用
+HTTP，没有任何新的东西。唯一的差别就是端口号不同、去掉明文传输。</p>
+<p>那 HTTPS 凭啥就变得安全了呢？</p>
+<p>就是因为他在 TCP/IP 与 HTTP 之间加上了 SSL/TLS ，从原来的 <strong>HTTP over TCP/IP</strong> 变成了 <strong>HTTP over SSL/TLS</strong>，让 HTTP 运行在 安全的 SSL/TLS 协议上。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/c2bc9b02fbbf4829b5bdcdbb481cdb53.png" title="http 与 https" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/c2bc9b02fbbf4829b5bdcdbb481cdb53.png" data-sub-html="<h2>http 与 https</h2><p>http 与 https</p>">
+        
+    </a><figcaption class="image-caption">http 与 https</figcaption>
+    </figure></p>
+<h2 id="ssltls" class="headerLink">
+    <a href="#ssltls" class="header-mark"></a>SSL/TLS</h2><p>SSL 即安全套接层（Secure Sockets Layer），在 OSI 模型中处于第 5 层（会话层），由网景公司于 1994 年发明，有 v2 和 v3 两个版本，而 v1 因为有严重的缺陷从未公开过。</p>
+<p>SSL 发展到 v3 时已经证明了它自身是一个非常好的安全通信协议，于是互联网工程组 IETF 在 1999 年把它改名为 TLS（传输层安全，Transport Layer Security），正式标准化，版本号从 1.0 重新算起，所以
+<strong>TLS1.0 实际上就是 SSLv3.1</strong>。</p>
+<p>TLS 由记录协议、握手协议、警告协议、变更密码规范协议、扩展协议等几个子协议组成，综合使用了对称加密、非对称加密、身份认证等许多密码学前沿技术。</p>
+<p>浏览器与服务器在使用 TLS 建立连接的时候实际上就是选了一组加密算法实现安全通信，这些算法组合叫做 “密码套件（cipher suite）”。</p>
+<p>套件命名很有规律，比如“ECDHE-RSA-AES256-GCM-SHA384”。按照 密钥交换算法 + 签名算法 + 对称加密算法 + 摘要算法”组成的.</p>
+<p>所以这个套件的意思就是：使用 ECDHE 算法进行密钥交换，使用 RSA 签名和身份验证，握手后使用 AES 对称加密，密钥长度 256 位，分组模式 GCM，消息认证和随机数生成使用摘要算法 SHA384。</p>
+<h3 id="对称加密和非对称加密" class="headerLink">
+    <a href="#%e5%af%b9%e7%a7%b0%e5%8a%a0%e5%af%86%e5%92%8c%e9%9d%9e%e5%af%b9%e7%a7%b0%e5%8a%a0%e5%af%86" class="header-mark"></a>对称加密和非对称加密</h3><p>前面提到四个实现安全的必要条件，先说<strong>机密性</strong>，也就是消息只能给想给的人看到并且看得懂。</p>
+<p>实现机密性的手段就是<strong>加密（encrypt）</strong>，也就是将原本明文消息使用加密算法转换成别人看不懂的密文，只有掌握特有的<strong>密钥</strong>的人才能解密出原始内容。</p>
+<p>钥匙也就是<strong>密钥（key）</strong>，未加密的消息叫做<strong>明文 （plain text/clear text）</strong>，加密后的内容叫做<strong>密文（cipher text）</strong>，通过密钥解密出原文的过程叫做<strong>解密（decrypt）</strong>
+，而加解密的整个过程就是<strong>加密算法</strong>。</p>
+<p>由于 HTTPS、TLS 都运行在计算机上，所以“密钥”就是一长串的数字，但约定俗成的<strong>度量单位是“位”（bit），而不是“字节”（byte）</strong>。比如，说密钥长度是 128（位），就是 16 字节的二进制串，密钥长度
+1024（位），就是 128 字节的二进制串。</p>
+<p><strong>加密算法通常有两大类：对称加密和非对称加密。</strong></p>
+<h4 id="对称加密" class="headerLink">
+    <a href="#%e5%af%b9%e7%a7%b0%e5%8a%a0%e5%af%86" class="header-mark"></a>对称加密</h4><p>加密和解密使用的密钥都是同一个，是 “对称的”。双方只要保证不会有泄露其他人知道这个密钥，通信就具有机密性。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/6ed371961ce540e9846bde25bcf67622.png" title="对称加密" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/6ed371961ce540e9846bde25bcf67622.png" data-sub-html="<h2>对称加密</h2><p>对称加密</p>">
+        
+    </a><figcaption class="image-caption">对称加密</figcaption>
+    </figure></p>
+<p>对称加密算法常见的有 RC4、DES、3DES、AES、ChaCha20 等，但前三种算法都被认为是不安全的，通常都禁止使用，<strong>目前常用的只有 AES 和 ChaCha20</strong>。</p>
+<p>AES 的意思是“高级加密标准”（Advanced Encryption Standard），密钥长度可以是 128、192 或 256。它是 DES 算法的替代者，安全强度很高，性能也很好，而且有的硬件还会做特殊优化，所以非常流行，是**
+应用最广泛的对称加密算法**。</p>
+<h4 id="加密分组模式" class="headerLink">
+    <a href="#%e5%8a%a0%e5%af%86%e5%88%86%e7%bb%84%e6%a8%a1%e5%bc%8f" class="header-mark"></a>加密分组模式</h4><p>对称算法还有一个 “分组模式”的概念，目的是通过算法用固定长度的密钥加密任意长度的明文。</p>
+<p>最新的分组模式被称为 AEAD（Authenticated Encryption with Associated Data），在加密的同时增加了认证的功能，常用的是 GCM、CCM 和 Poly1305。</p>
+<h4 id="非对称加密" class="headerLink">
+    <a href="#%e9%9d%9e%e5%af%b9%e7%a7%b0%e5%8a%a0%e5%af%86" class="header-mark"></a>非对称加密</h4><p>有对称加密，为何还搞出一个非对称加密呢？</p>
+<p>对称加密确实解决了机密性，只有相关的人才能读取出信息。但是最大的问题是：如何安全的把密钥传递对方，专业术语 <strong>“密钥交换”</strong>。</p>
+<p>所以为了解决秘钥交换，非对称加密诞生了。</p>
+<p>非对称加密由两个密钥组成，分别是<strong>公钥（public key）<strong>和</strong>“私钥（private key）”</strong>，两个密钥是不一样的，这也就是不对称的由来，公钥可以任何人使用，私钥则自己保密。</p>
+<p>这里需要注意的是：<strong>公钥和私钥都可以用来加密解密，公钥加密的密文只能用私钥解密，反之亦然。</strong></p>
+<p>服务端保存私钥，在互联网上分发公钥，当访问服务器网站的时候使用授予的公钥加密明文即可，服务端则使用对应的私钥来解密。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/12536823ed034d3b888f85c30bda8651.png" title="非对称加密" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/12536823ed034d3b888f85c30bda8651.png" data-sub-html="<h2>非对称加密</h2><p>非对称加密</p>">
+        
+    </a><figcaption class="image-caption">非对称加密</figcaption>
+    </figure></p>
+<p>TLS 中常见的加密算法有 DH、RSA、ECC、DSA 等。其中的 RSA 最常用，它的安全性基于“<strong>整数分解</strong>”的数学难题，使用两个超大素数的乘积作为生成密钥的材料，想要从公钥推算出私钥是非常困难的。</p>
+<p>ECC（Elliptic Curve Cryptography）是非对称加密里的“后起之秀”，它基于“<strong>椭圆曲线离散对数</strong>”的数学难题，使用特定的曲线方程和基点生成公钥和私钥，子算法 ECDHE 用于密钥交换，ECDSA 用于数字签名。</p>
+<p>比起 RSA，ECC 在安全强度和性能上都有明显的优势。160 位的 ECC 相当于 1024 位的 RSA，而 224 位的 ECC 则相当于 2048 位的
+RSA。因为密钥短，所以相应的计算量、消耗的内存和带宽也就少，加密解密的性能就上去了，对于现在的移动互联网非常有吸引力。</p>
+<p>现在我们为了机密性从对称加密到非对称加密，而非对称加密还解决了密钥交换不安全的问题。那么是否可以直接使用非对称加密来实现机密性呢？</p>
+<p>答案是否定的！</p>
+<p>因为<strong>非对称加密运算速度比较慢</strong>。所以需要两者结合，混合模式实现机密性问题，同时又有很好的性能。</p>
+<h3 id="混合加密流程" class="headerLink">
+    <a href="#%e6%b7%b7%e5%90%88%e5%8a%a0%e5%af%86%e6%b5%81%e7%a8%8b" class="header-mark"></a>混合加密流程</h3><ol>
+<li>先创建一个随机数的对称加密密钥，<strong>会话密钥（session key）</strong>；</li>
+<li>使用会话密钥加密需要传输的明文消息，因为对称加密性能较好，接着再<strong>使用非对称加密的公钥对会话密钥加密</strong>，因为会话密钥很短，通常只有 16 字节或 32 字节，所以加密也不会太慢 。
+<strong>这里主要就是解决了非对称加密的性能问题，同时实现了会话密钥的机密交换。</strong></li>
+<li>另一方接收到密文后使用非对称加密的<strong>私钥</strong>解密出上一步加密的<strong>会话密钥</strong>，接着使用<strong>会话密钥</strong>解密出加密的消息明文。</li>
+</ol>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/4a88136750224ae6bd15174cd1c7e0ec.png" title="混合加密" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/4a88136750224ae6bd15174cd1c7e0ec.png" data-sub-html="<h2>混合加密</h2><p>混合加密</p>">
+        
+    </a><figcaption class="image-caption">混合加密</figcaption>
+    </figure></p>
+<p><strong>总结一下就是使用非对称加密算法来加密会话密钥，使用对称加密算法来加密消息明文，接收方则使用非对称加密算法的私钥解密出会话密钥，再利用会话密钥解密消息密文。</strong></p>
+<p>这样混合加密就解决了对称加密算法的密钥交换问题，而且安全和性能兼顾，完美地实现了机密性。</p>
+<p>后面还有完整性、身份认证、不可否认等特性没有实现，所以现在的通信还不是绝对安全。</p>
+<h3 id="摘要算法与完整性" class="headerLink">
+    <a href="#%e6%91%98%e8%a6%81%e7%ae%97%e6%b3%95%e4%b8%8e%e5%ae%8c%e6%95%b4%e6%80%a7" class="header-mark"></a>摘要算法与完整性</h3><p>摘要算法的主要目的就是实现完整性，通过常见的<strong>散列函数</strong>、<strong>哈希函数</strong>实现。</p>
+<p>我们可以简单理解成这是一种特殊的压缩算法，<strong>将任意长度的明文数据处理成固定长度</strong>、又是独一无二的“摘要”字符串，就是该数据的指纹。</p>
+<p><strong>同时摘要算法是单向加密算法，没有密钥，加密后的数据也无法解密，也就是不能从“摘要”推导出明文。</strong></p>
+<p>比如我们听过或者用过的 <code>MD5（Message-Digest 5）</code>、<code>SHA-1（Secure Hash Algorithm 1）</code>，它们就是最常用的两个摘要算法，能够生成 16 字节和 20 字节长度的数字摘要。</p>
+<h4 id="完整性实现" class="headerLink">
+    <a href="#%e5%ae%8c%e6%95%b4%e6%80%a7%e5%ae%9e%e7%8e%b0" class="header-mark"></a>完整性实现</h4><p>有了摘要算法生成的数字摘要，那么我们只需要在明文数据附上对应的摘要，就能保证数据的完整性。</p>
+<p>但是由于摘要算法不具有机密性，不能明文传输，否则黑客可以修改消息后把摘要也一起改了，网站还是鉴别不出完整性。</p>
+<p>所以完整性还是要建立在机密性上，我们结合之前提到的混合加密使用 ”会话密钥“ <strong>加密明文消息 + 摘要</strong>，这样的话黑客也就无法得到明文，无法做修改了。这里有个专业术语叫“哈希消息认证码（HMAC）”。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/95ad964986964ce68e58ef18a82afcbd.png" title="哈希消息认证码（HMAC）" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/95ad964986964ce68e58ef18a82afcbd.png" data-sub-html="<h2>哈希消息认证码（HMAC）</h2><p>哈希消息认证码（HMAC）</p>">
+        
+    </a><figcaption class="image-caption">哈希消息认证码（HMAC）</figcaption>
+    </figure></p>
+<blockquote>
+<p>比如诸葛亮使用上面提到的混合加密过程给关二爷发消息：“明天攻城” + “SHA-2
+摘要”，关二爷收到后使用密钥将解密出来的会话密钥解密出明文消息，同时对明文消息使用解密出来的摘要算法进行摘要计算，接着比对两份“摘要”字符串是否一致，如果一致就说明消息完整可信，没有被敌军修改过。</p>
+<p>消息被修改是很危险的，要以史为鉴，比如赵高与李斯伪造遗诏，直接把扶苏给送西天了，这太可怕了。</p>
+</blockquote>
+<p>总结下就是通过摘要比对防止篡改，同时利用混合加密实现密文与摘要的安全传输。</p>
+<h3 id="数字签名和-ca" class="headerLink">
+    <a href="#%e6%95%b0%e5%ad%97%e7%ad%be%e5%90%8d%e5%92%8c-ca" class="header-mark"></a>数字签名和 CA</h3><p>到这里已经很安全了，但是还是有漏洞，就是通信的两头。黑客可以伪装成网站来窃取信息。而反过来，他也可以伪装成你，向网站发送支付、转账等消息，网站没有办法确认你的身份，钱可能就这么被偷走了。</p>
+<p>现在如何实现身份认证呢？</p>
+<p>现实生活中，解决身份认证的手段是签名和印章，只要在纸上写下签名或者盖个章，就能够证明这份文件确实是由本人而不是其他人发出的。</p>
+<p>非对称加密依然可以解决此问题，只不过跟之前反过来用，使用私钥再加上摘要算法，就能够实现“<strong>数字签名</strong>”，同时实现“身份认证”和“不可否认”。</p>
+<p>就是把公钥私钥的用法反过来，之前是公钥加密、私钥解密，现在是私钥加密、公钥解密。但又因为非对称加密效率太低，所以私钥只加密原文的摘要，这样运算量就小的多，而且得到的数字签名也很小，方便保管和传输。</p>
+<p><strong>重点就是使用非对称加密的“私钥”加密原文的摘要，对方则使用非对称加密的公钥解密出摘要，再比对解密出的原文通过摘要算法计算摘要与解密出的摘要比对是否一致。</strong></p>
+<p>这样就能像签署文件一样证明消息确实是你发送的。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/128bcef85358414e822eb2838ae630c0.png" title="签名验签" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220414/128bcef85358414e822eb2838ae630c0.png" data-sub-html="<h2>签名验签</h2><p>签名验签</p>">
+        
+    </a><figcaption class="image-caption">签名验签</figcaption>
+    </figure></p>
+<p>只要你和网站互相交换公钥，就可以用“签名”和“验签”来确认消息的真实性，因为私钥保密，黑客不能伪造签名，就能够保证通信双方的身份。</p>
+<h4 id="ca" class="headerLink">
+    <a href="#ca" class="header-mark"></a>CA</h4><p>到这里似乎已经大功告成，可惜还不是。</p>
+<p>综合使用对称加密、非对称加密和摘要算法，我们已经实现了安全的四大特性，是不是已经完美了呢？</p>
+<p>不是的，这里还有一个“<strong>公钥的信任</strong>”问题。因为谁都可以发布公钥，我们还缺少防止黑客伪造公钥的手段，也就是说，怎么来判断这个公钥就是你的公钥呢？</p>
+<p>我们常说的<strong>CA</strong>（Certificate Authority，证书认证机构），它就像网络世界里的公安局、教育部、公证中心，具有极高的可信度，由它来给各个公钥签名，用自身的信誉来保证公钥无法伪造，是可信的。</p>
+<p>CA 对公钥的签名认证也是有格式的，不是简单地把公钥绑定在持有者身份上就完事了，还要包含序列号、用途、颁发者、有效时间等等，把这些打成一个包再签名，完整地证明公钥关联的各种信息，形成“<strong>数字证书</strong>”（Certificate）。</p>
+<h3 id="openssl" class="headerLink">
+    <a href="#openssl" class="header-mark"></a>OpenSSL</h3><p>它是一个著名的开源密码学程序库和工具包，几乎支持所有公开的加密算法和协议，已经成为了事实上的标准，许多应用软件都会使用它作为底层库来实现 TLS 功能，包括常用的 Web 服务器 Apache、Nginx 等。</p>
+<p>由于 OpenSSL 是开源的，所以它还有一些代码分支，比如 Google 的 BoringSSL、OpenBSD 的 LibreSSL，这些分支在 OpenSSL
+的基础上删除了一些老旧代码，也增加了一些新特性，虽然背后有“大金主”，但离取代 OpenSSL 还差得很远。</p>
+<p>总结下就是：<strong>OpenSSL 是著名的开源密码学工具包，是 SSL/TLS 的具体实现</strong>。</p>
+<h2 id="迁移-https-必要性" class="headerLink">
+    <a href="#%e8%bf%81%e7%a7%bb-https-%e5%bf%85%e8%a6%81%e6%80%a7" class="header-mark"></a>迁移 HTTPS 必要性</h2><p>如果你做移动应用开发的话，那么就一定知道，Apple、Android、某信等开发平台在 2017 年就相继发出通知，要求所有的应用必须使用 HTTPS 连接，禁止不安全的 HTTP。</p>
+<p>在台式机上，主流的浏览器 Chrome、Firefox 等也早就开始“强推”HTTPS，把 HTTP 站点打上“不安全”的标签，给用户以“心理压力”。</p>
+<p>Google 等搜索巨头还利用自身的“话语权”优势，降低 HTTP 站点的排名，而给 HTTPS 更大的权重，力图让网民只访问到 HTTPS 网站。</p>
+<p>这些手段都逐渐“挤压”了纯明文 HTTP 的生存空间，“迁移到 HTTPS”已经不是“要不要做”的问题，而是“要怎么做”的问题了。HTTPS 的大潮无法阻挡，如果还是死守着 HTTP，那么无疑会被冲刷到互联网的角落里。</p>
+<h2 id="顾虑" class="headerLink">
+    <a href="#%e9%a1%be%e8%99%91" class="header-mark"></a>顾虑</h2><p>阻碍 HTTPS 实施的因素还有一些这样、那样的顾虑，三个比较流行的观点：“慢、贵、难”。</p>
+<p>而“慢”则是惯性思维，拿以前的数据来评估 HTTPS 的性能，认为 HTTPS 会增加服务器的成本，增加客户端的时延，影响用户体验。</p>
+<p>其实现在服务器和客户端的运算能力都已经有了很大的提升，性能方面完全没有担心的必要，而且还可以应用很多的优化解决方案</p>
+<p>所谓“贵”，主要是指证书申请和维护的成本太高，网站难以承担。</p>
+<p>这也属于惯性思维，在早几年的确是个问题，向 CA 申请证书的过程不仅麻烦，而且价格昂贵，每年要交几千甚至几万元。</p>
+<p>但现在就不一样了，为了推广 HTTPS，很多云服务厂商都提供了一键申请、价格低廉的证书，而且还出现了专门颁发免费证书的 CA，其中最著名的就是“<strong>Let’s Encrypt</strong>”。</p>
+<p>所谓的“难”，是指 HTTPS 涉及的知识点太多、太复杂，有一定的技术门槛，不能很快上手。</p>
+<h2 id="总结" class="headerLink">
+    <a href="#%e6%80%bb%e7%bb%93" class="header-mark"></a>总结</h2><p>HTTPS 主要就是通过 SSL/TLS 实现安全，而安全又有对称加密与非对称加密，非对称加密性能较弱，所以我们使用非对称加密来加密对称加密的“会话密钥”，利用会话密钥加密明文解决了性能问题。</p>
+<p>通过混合加密实现了机密性，利用摘要算法实现了完整性，通过数字签名使用非对称加密的“私钥”加密原文的摘要，对方则使用非对称加密的公钥解密出摘要，再比对解密出的原文通过摘要算法计算摘要与解密出的摘要比对是否一致实现了身份认证与不可否认。</p>
+<h2 id="参考" class="headerLink">
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
+<li><a href="https://mp.weixin.qq.com/s?__biz=MzkzMDI1NjcyOQ==&amp;mid=2247487718&amp;idx=1&amp;sn=6806b36bb1454c3354b7cf5168973422" target="_blank" rel="noopener noreferrer">透视HTTPS建造固若金汤的城堡</a></li>
+</ul>
+]]></description>
 </item></channel>
 </rss>

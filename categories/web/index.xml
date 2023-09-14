@@ -12,35 +12,1120 @@
     </author><guid>https://www.xiaobinqt.cn/session-cookie-token-difference/</guid>
     <description><![CDATA[<div class="featured-image">
                 <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220824/ee39a9cb19524d918d984db89b1661a5.png" referrerpolicy="no-referrer">
-            </div>Cookie 和 SessionHTTP 协议是一种无状态协议，即每次服务端接收到客户端的请求时，都是一个全新的请求，服务器并不知道客户端的历史请求记录；Session 和 Cookie 的主要目的就是为了弥补 HTTP 的无状态特性。 Session 是什么客户端请求服务端，]]></description>
+            </div><!-- author： xiaobinqt -->
+<!-- email： xiaobinqt@163.com -->
+<!-- https://xiaobinqt.github.io -->
+<!-- https://www.xiaobinqt.cn -->
+<h2 id="cookie-和-session" class="headerLink">
+    <a href="#cookie-%e5%92%8c-session" class="header-mark"></a>Cookie 和 Session</h2><p>HTTP 协议是一种<code>无状态协议</code>，即每次服务端接收到客户端的请求时，都是一个全新的请求，服务器并不知道客户端的历史请求记录；Session 和 Cookie 的主要目的就是为了弥补 HTTP 的无状态特性。</p>
+<h3 id="session-是什么" class="headerLink">
+    <a href="#session-%e6%98%af%e4%bb%80%e4%b9%88" class="header-mark"></a>Session 是什么</h3><p>客户端请求服务端，服务端会为这次请求开辟一块<code>内存空间</code>，这个对象便是 Session 对象，存储结构为 <code>ConcurrentHashMap</code>。Session 弥补了 HTTP 无状态特性，服务器可以利用 Session 存储客户端在同一个会话期间的一些操作记录。</p>
+<h3 id="session-如何判断是否是同一会话" class="headerLink">
+    <a href="#session-%e5%a6%82%e4%bd%95%e5%88%a4%e6%96%ad%e6%98%af%e5%90%a6%e6%98%af%e5%90%8c%e4%b8%80%e4%bc%9a%e8%af%9d" class="header-mark"></a>Session 如何判断是否是同一会话</h3><p>服务器第一次接收到请求时，开辟了一块 Session 空间（创建了Session对象），同时生成一个 <code>sessionId</code> ，并通过响应头的 <strong>Set-Cookie：JSESSIONID=XXXXXXX</strong> 命令，向客户端发送要求设置 Cookie 的响应；客户端收到响应后，在本机客户端设置了一个 <strong>JSESSIONID=XXXXXXX</strong> 的 Cookie 信息，该 Cookie 的过期时间为浏览器会话结束。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220824/50c3ccd67e62465ab1beaa691995ed06.png" title="会话" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220824/50c3ccd67e62465ab1beaa691995ed06.png" data-sub-html="<h2>会话</h2><p>会话</p>">
+        
+    </a><figcaption class="image-caption">会话</figcaption>
+    </figure></p>
+<p>接下来客户端每次向同一个网站发送请求时，请求头都会带上该 Cookie信息（包含 sessionId ）， 然后，服务器通过读取请求头中的 Cookie 信息，获取名称为 JSESSIONID 的值，得到此次请求的 sessionId。</p>
+<h3 id="session-的缺点" class="headerLink">
+    <a href="#session-%e7%9a%84%e7%bc%ba%e7%82%b9" class="header-mark"></a>Session 的缺点</h3><p>Session 机制有个缺点，比如 A 服务器存储了 Session，就是做了负载均衡后，假如一段时间内 A 的访问量激增，会转发到 B 进行访问，但是 B 服务器并没有存储 A 的 Session，会导致 Session 的失效。</p>
+<h3 id="cookies-是什么" class="headerLink">
+    <a href="#cookies-%e6%98%af%e4%bb%80%e4%b9%88" class="header-mark"></a>Cookies 是什么</h3><p>HTTP 协议中的 Cookie 包括 <code>Web Cookie</code> 和<code>浏览器 Cookie</code>，它是服务器发送到 Web 浏览器的一小块数据。服务器发送到浏览器的 Cookie，浏览器会进行存储，并与下一个请求一起发送到服务器。通常，它用于判断两个请求是否来自于同一个浏览器，例如用户保持登录状态。</p>
+<blockquote>
+<p>HTTP Cookie 机制是 HTTP 协议无状态的一种补充和改良</p>
+</blockquote>
+<p>Cookie 主要用于下面三个目的</p>
+<ul>
+<li><code>会话管理</code></li>
+</ul>
+<p>登陆、购物车、游戏得分或者服务器应该记住的其他内容</p>
+<ul>
+<li><code>个性化</code></li>
+</ul>
+<p>用户偏好、主题或者其他设置</p>
+<ul>
+<li><code>追踪</code></li>
+</ul>
+<p>记录和分析用户行为</p>
+<p>Cookie 曾经用于一般的客户端存储。虽然这是合法的，因为它们是在客户端上存储数据的唯一方法，但如今建议使用现代存储 API。Cookie 随每个请求一起发送，因此它们<strong>可能会降低性能</strong>（尤其是对于移动数据连接而言）。</p>
+<h3 id="创建-cookie" class="headerLink">
+    <a href="#%e5%88%9b%e5%bb%ba-cookie" class="header-mark"></a>创建 Cookie</h3><p>当接收到客户端发出的 HTTP 请求时，服务器可以发送带有响应的 <code>Set-Cookie</code> 标头，Cookie 通常由浏览器存储，然后将 Cookie 与 HTTP 标头一同向服务器发出请求。</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Max-Age</code></td>
+<td>设置cookie的过期时间，单位为秒</td>
+</tr>
+<tr>
+<td><code>Domain</code></td>
+<td>指定了Cookie所属的域名</td>
+</tr>
+<tr>
+<td><code>Path</code></td>
+<td>指定了Cookie所属的路径</td>
+</tr>
+<tr>
+<td><code>HttpOnly</code></td>
+<td>告诉浏览器此Cookie只能靠浏览器Http协议传输,禁止其他方式访问</td>
+</tr>
+<tr>
+<td><code>Secure</code></td>
+<td>告诉浏览器此Cookie只能在Https安全协议中传输,如果是Http则禁止传输</td>
+</tr>
+</tbody>
+</table>
+<h4 id="set-cookie-和-cookie-标头" class="headerLink">
+    <a href="#set-cookie-%e5%92%8c-cookie-%e6%a0%87%e5%a4%b4" class="header-mark"></a>Set-Cookie 和 Cookie 标头</h4><p><code>Set-Cookie</code> HTTP 响应标头将 cookie 从服务器发送到用户代理。下面是一个发送 Cookie 的例子</p>
+<p><a class="lightgallery" href="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e399c20870a~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png" title="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e399c20870a~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png" data-thumbnail="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e399c20870a~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png">
+        
+    </a></p>
+<p>此标头告诉客户端存储 Cookie</p>
+<p>现在，随着对服务器的每个新请求，浏览器将使用 Cookie 头将所有以前存储的 Cookie 发送回服务器。</p>
+<p><a class="lightgallery" href="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e399aefd856~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png" title="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e399aefd856~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png" data-thumbnail="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e399aefd856~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png">
+        
+    </a></p>
+<p>有两种类型的 Cookies，一种是 <strong><ruby>Session Cookies<rt>会话 cookie</rt></ruby></strong>，一种是 <strong><ruby>Persistent Cookies<rt>永久 cookie</rt></ruby></strong>，如果 Cookie 不包含到期日期，则将其视为会话 Cookie。会话 Cookie 存储在内存中，永远不会写入磁盘，当浏览器关闭时，此后 Cookie 将永久丢失。如果 Cookie 包含<code>有效期</code> ，则将其视为持久性 Cookie。在到期指定的日期，Cookie 将从磁盘中删除。</p>
+<p>还有一种是 Cookie 的 <code>Secure</code> 和 <code>HttpOnly</code> 标记。</p>
+<h4 id="会话-cookies" class="headerLink">
+    <a href="#%e4%bc%9a%e8%af%9d-cookies" class="header-mark"></a>会话 Cookies</h4><p>上面的示例创建的是会话 Cookie ，会话 Cookie 有个特征，客户端关闭时 Cookie 会删除，因为它<strong>没有指定</strong><code>Expires</code>或 <code>Max-Age</code> 指令。</p>
+<p>但是，Web 浏览器可能会使用会话还原，这会使大多数会话 Cookie 保持永久状态，就像从未关闭过浏览器一样。</p>
+<h4 id="永久性-cookies" class="headerLink">
+    <a href="#%e6%b0%b8%e4%b9%85%e6%80%a7-cookies" class="header-mark"></a>永久性 Cookies</h4><p>永久性 Cookie 不会在客户端关闭时过期，而是在<code>特定日期（Expires）</code>或<code>特定时间长度（Max-Age）</code>外过期。例如</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">Set-Cookie: id=a3fWa; Expires=Wed, 21 Oct 2015 07:28:00 GMT;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="cookie-的-secure-和-httponly-标记" class="headerLink">
+    <a href="#cookie-%e7%9a%84-secure-%e5%92%8c-httponly-%e6%a0%87%e8%ae%b0" class="header-mark"></a>Cookie 的 Secure 和 HttpOnly 标记</h4><p>安全的 Cookie 需要经过 HTTPS 协议通过加密的方式发送到服务器。即使是安全的，也不应该将敏感信息存储在cookie 中，因为它们本质上是不安全的，并且此标志不能提供真正的保护。</p>
+<p><strong>HttpOnly 的作用</strong></p>
+<ul>
+<li>
+<p>会话 Cookie 中缺少 HttpOnly 属性会导致攻击者可以通过程序( JS 脚本、Applet 等)获取到用户的 Cookie 信息，造成用户 Cookie 信息泄露，增加攻击者的跨站脚本攻击威胁。</p>
+</li>
+<li>
+<p>HttpOnly 是微软对 Cookie 做的扩展，该值指定 Cookie 是否可通过客户端脚本访问。</p>
+</li>
+<li>
+<p>如果在 Cookie 中<strong>没有设置</strong> <code>HttpOnly</code> 属性为 true，可能导致 Cookie 被窃取。窃取的 Cookie 可以包含标识站点用户的敏感信息，如 ASP.NET 会话 ID 或 Forms 身份验证票证，攻击者可以重播窃取的 Cookie，以便伪装成用户或获取敏感信息，进行跨站脚本攻击等。</p>
+</li>
+</ul>
+<h3 id="cookie-的作用域" class="headerLink">
+    <a href="#cookie-%e7%9a%84%e4%bd%9c%e7%94%a8%e5%9f%9f" class="header-mark"></a>Cookie 的作用域</h3><p><code>Domain</code> 和 <code>Path</code> 标识定义了 Cookie 的作用域：即 Cookie 应该发送给哪些 URL。</p>
+<p><code>Domain</code> 标识指定了哪些主机可以接受 Cookie。如果不指定，默认为当前主机(<strong>不包含子域名</strong>）。如果指定了<code>Domain</code>，则一般包含子域名。</p>
+<p>例如，如果设置 <code>Domain=mozilla.org</code>，则 Cookie 也包含在子域名中（如<code>developer.mozilla.org</code>）。</p>
+<p>例如，设置 <code>Path=/docs</code>，则以下地址都会匹配：</p>
+<ul>
+<li><code>/docs</code></li>
+<li><code>/docs/Web/</code></li>
+<li><code>/docs/Web/HTTP</code></li>
+</ul>
+<h2 id="json-web-token-和-session-cookies-的对比" class="headerLink">
+    <a href="#json-web-token-%e5%92%8c-session-cookies-%e7%9a%84%e5%af%b9%e6%af%94" class="header-mark"></a>JSON Web Token 和 Session Cookies 的对比</h2><p><code>JSON Web Token</code>，简称 <code>JWT</code>，它和 <code>Session</code>都可以为网站提供用户的身份认证，但是它们不是一回事。</p>
+<h3 id="jwt-和-session-cookies-的相同之处" class="headerLink">
+    <a href="#jwt-%e5%92%8c-session-cookies-%e7%9a%84%e7%9b%b8%e5%90%8c%e4%b9%8b%e5%a4%84" class="header-mark"></a>JWT 和 Session Cookies 的相同之处</h3><p>在探讨 JWT 和 Session Cookies 之前，有必要需要先去理解一下它们的相同之处。</p>
+<p>它们既可以对用户进行身份验证，也可以用来在用户单击进入不同页面时以及登陆网站或应用程序后进行身份验证。</p>
+<p>如果没有这两者，那你可能需要在每个页面切换时都需要进行登录了。因为 HTTP 是一个无状态的协议。这也就意味着当你访问某个网页，然后单击同一站点上的另一个页面时，服务器的<code>内存中</code>将不会记住你之前的操作。</p>
+<p><a class="lightgallery" href="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e399ae02cc8~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png" title="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e399ae02cc8~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png" data-thumbnail="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e399ae02cc8~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png">
+        
+    </a></p>
+<p>因此，如果你登录并访问了你有权访问的另一个页面，由于 HTTP 不会记录你刚刚登录的信息，因此你将再次登录。</p>
+<p><strong>JWT 和 Session Cookies 就是用来处理在不同页面之间切换，保存用户登录信息的机制</strong>。</p>
+<p>也就是说，这两种技术都是<strong>用来保存你的登录状态</strong>，能够让你在浏览任意受密码保护的网站。通过在每次产生新的请求时对用户数据进行身份验证来解决此问题。</p>
+<p>所以 JWT 和 Session Cookies 的相同之处是什么？那就是它们能够支持你在发送不同请求之间，记录并验证你的登录状态的一种机制。</p>
+<h3 id="什么是-session-cookies" class="headerLink">
+    <a href="#%e4%bb%80%e4%b9%88%e6%98%af-session-cookies" class="header-mark"></a>什么是 Session Cookies</h3><p>Session Cookies 也称为<code>会话 Cookies</code>，在 Session Cookies 中，用户的登录状态会保存在<code>服务器</code>的<code>内存</code>中。当用户登录时，Session 就被服务端安全的创建。</p>
+<p>在每次请求时，服务器都会从会话 Cookie 中读取 SessionId，如果服务端的数据和读取的 SessionId 相同，那么服务器就会发送响应给浏览器，允许用户登录。</p>
+<p>⚠️ 下图有点问题，域名应该一致。</p>
+<p><a class="lightgallery" href="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e39cc16b100~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png" title="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e39cc16b100~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png" data-thumbnail="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e39cc16b100~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png">
+        
+    </a></p>
+<h3 id="什么是-json-web-tokens" class="headerLink">
+    <a href="#%e4%bb%80%e4%b9%88%e6%98%af-json-web-tokens" class="header-mark"></a>什么是 Json Web Tokens</h3><p>Json Web Token 的简称就是 JWT，通常可以称为 <code>Json 令牌</code>。它是<code>RFC 7519</code> 中定义的用于<code>安全的</code>将信息作为 <code>Json 对象</code>进行传输的一种形式。JWT 中存储的信息是经过<code>数字签名</code>
+的，因此可以被信任和理解。可以使用 HMAC 算法或使用 RSA/ECDSA 的公用/专用密钥对 JWT 进行签名。</p>
+<p>使用 JWT 主要用来下面两点</p>
+<ul>
+<li>
+<p><code>认证(Authorization)</code>：这是使用 JWT 最常见的一种情况，一旦用户登录，后面每个请求都会包含 JWT，从而允许用户访问该令牌所允许的路由、服务和资源。<code>单点登录</code>是当今广泛使用 JWT 的一项功能，因为它的开销很小。</p>
+</li>
+<li>
+<p><code>信息交换(Information Exchange)</code>：JWT 是能够安全传输信息的一种方式。通过使用公钥/私钥对 JWT 进行签名认证。此外，由于签名是使用 <code>head</code> 和 <code>payload</code>
+计算的，因此你还可以验证内容是否遭到篡改。</p>
+</li>
+</ul>
+<h4 id="jwt-的格式" class="headerLink">
+    <a href="#jwt-%e7%9a%84%e6%a0%bc%e5%bc%8f" class="header-mark"></a>JWT 的格式</h4><p>下面，我们会探讨一下 JWT 的组成和格式是什么</p>
+<p>JWT 主要由三部分组成，每个部分用 <code>.</code> 进行分割，各个部分分别是</p>
+<ul>
+<li><code>Header</code></li>
+<li><code>Payload</code></li>
+<li><code>Signature</code></li>
+</ul>
+<p>因此，一个非常简单的 JWT 组成会是下面这样</p>
+<p><a class="lightgallery" href="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e39ca50d82a~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png" title="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e39ca50d82a~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png" data-thumbnail="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e39ca50d82a~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png">
+        
+    </a></p>
+<p><strong>Header</strong></p>
+<p>Header 是 JWT 的标头，它通常由两部分组成：<code>令牌的类型(即 JWT)</code>和使用的 <code>签名算法</code>，例如 <code>HMAC SHA256</code>（写成 HS256） 或 <code>RSA</code>。</p>
+<p>例如</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">{
+</span></span><span class="line"><span class="cl">  &#34;alg&#34;: &#34;HS256&#34;,
+</span></span><span class="line"><span class="cl">  &#34;typ&#34;: &#34;JWT&#34;
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>指定类型和签名算法后，Json 块被 <code>Base64Url</code> 编码形成 JWT 的第一部分。</p>
+<p><strong>Payload</strong></p>
+<p>Token 的第二部分是 <code>Payload</code>，Payload 中包含一个声明。声明是有关实体（通常是用户）和其他数据的声明。共有三种类型的声明：<strong><code>registered</code>, <code>public</code> 和 <code>private</code></strong> 声明。</p>
+<ul>
+<li><code>registered 声明</code>： 包含一组建议使用的预定义声明，主要包括</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>ISS</th>
+<th>签发人</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>iss (issuer)</td>
+<td>签发人</td>
+</tr>
+<tr>
+<td>exp (expiration time)</td>
+<td>过期时间</td>
+</tr>
+<tr>
+<td>sub (subject)</td>
+<td>主题</td>
+</tr>
+<tr>
+<td>aud (audience)</td>
+<td>受众</td>
+</tr>
+<tr>
+<td>nbf (Not Before)</td>
+<td>生效时间</td>
+</tr>
+<tr>
+<td>iat (Issued At)</td>
+<td>签发时间</td>
+</tr>
+<tr>
+<td>jti (JWT ID)</td>
+<td>编号</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><code>public 声明</code>：公共的声明，可以添加任何的信息，一般添加用户的相关信息或其他业务需要的必要信息，但不建议添加敏感信息，因为该部分在客户端可解密。</li>
+<li><code>private 声明</code>：自定义声明，旨在在同意使用它们的各方之间共享信息，既不是注册声明也不是公共声明。</li>
+</ul>
+<p>例如</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">{
+</span></span><span class="line"><span class="cl">  &#34;sub&#34;: &#34;1234567890&#34;,
+</span></span><span class="line"><span class="cl">  &#34;name&#34;: &#34;John Doe&#34;,
+</span></span><span class="line"><span class="cl">  &#34;admin&#34;: true
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>然后 payload Json 块会被<code>Base64Url</code> 编码形成 JWT 的第二部分。</p>
+<p><strong>signature</strong></p>
+<p>JWT 的第三部分是一个签证信息，这个签证信息由三部分组成</p>
+<ul>
+<li>header (base64后的)</li>
+<li>payload (base64后的)</li>
+<li>secret</li>
+</ul>
+<p>比如我们需要 HMAC SHA256 算法进行签名</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">HMACSHA256(
+</span></span><span class="line"><span class="cl">  base64UrlEncode(header) + &#34;.&#34; +
+</span></span><span class="line"><span class="cl">  base64UrlEncode(payload),
+</span></span><span class="line"><span class="cl">  secret)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>签名用于验证消息在此过程中没有更改，并且对于使用私钥进行签名的令牌，它还可以验证 JWT 的发送者的真实身份</p>
+<h4 id="拼凑在一起" class="headerLink">
+    <a href="#%e6%8b%bc%e5%87%91%e5%9c%a8%e4%b8%80%e8%b5%b7" class="header-mark"></a>拼凑在一起</h4><p>现在我们把上面的三个由点分隔的 Base64-URL 字符串部分组成在一起，这个字符串可以在 HTML 和 HTTP 环境中轻松传递这些字符串。</p>
+<p>下面是一个完整的 JWT 示例，它对 header 和 payload 进行编码，然后使用 signature 进行签名</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><a class="lightgallery" href="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e39cc29f678~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png" title="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e39cc29f678~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png" data-thumbnail="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e39cc29f678~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png">
+        
+    </a></p>
+<p>如果想自己测试编写的话，可以访问 JWT 官网 <a href="https://jwt.io/#debugger-io" target="_blank" rel="noopener noreferrer">https://jwt.io/#debugger-io</a></p>
+<h3 id="jwt-和-session-cookies-的不同" class="headerLink">
+    <a href="#jwt-%e5%92%8c-session-cookies-%e7%9a%84%e4%b8%8d%e5%90%8c" class="header-mark"></a>JWT 和 Session Cookies 的不同</h3><p>JWT 和 Session Cookies 都提供安全的用户身份验证，但是它们有以下几点不同</p>
+<h4 id="密码签名" class="headerLink">
+    <a href="#%e5%af%86%e7%a0%81%e7%ad%be%e5%90%8d" class="header-mark"></a>密码签名</h4><p>JWT 具有加密签名，而 Session Cookies 则没有。</p>
+<h4 id="json-是无状态的" class="headerLink">
+    <a href="#json-%e6%98%af%e6%97%a0%e7%8a%b6%e6%80%81%e7%9a%84" class="header-mark"></a>JSON 是无状态的</h4><p>JWT 是<code>无状态</code>的，因为声明被存储在<code>客户端</code>，而不是服务端内存中。</p>
+<p>身份验证可以在<code>本地</code>进行，而不是在请求必须通过服务器数据库或类似位置中进行。 这意味着可以对用户进行多次身份验证，而无需与站点或应用程序的数据库进行通信，也无需在此过程中消耗大量资源。</p>
+<h4 id="可扩展性" class="headerLink">
+    <a href="#%e5%8f%af%e6%89%a9%e5%b1%95%e6%80%a7" class="header-mark"></a>可扩展性</h4><p>Session Cookies 是存储在服务器内存中，这就意味着如果网站或者应用很大的情况下会耗费大量的资源。由于 JWT 是无状态的，在许多情况下，它们可以节省服务器资源。因此 JWT 要比 Session Cookies 具有更强的<code>可扩展性</code>。</p>
+<h4 id="jwt-支持跨域认证" class="headerLink">
+    <a href="#jwt-%e6%94%af%e6%8c%81%e8%b7%a8%e5%9f%9f%e8%ae%a4%e8%af%81" class="header-mark"></a>JWT 支持跨域认证</h4><p>Session Cookies 只能用在<code>单个节点的域</code>或者它的<code>子域</code>中有效。如果它们尝试通过第三个节点访问，就会被禁止。如果你希望自己的网站和其他站点建立安全连接时，这是一个问题。</p>
+<p>使用 JWT 可以解决这个问题，使用 JWT 能够通过<code>多个节点</code>进行用户认证，也就是我们常说的<code>跨域认证</code>。</p>
+<h3 id="jwt-和-session-cookies-的选型" class="headerLink">
+    <a href="#jwt-%e5%92%8c-session-cookies-%e7%9a%84%e9%80%89%e5%9e%8b" class="header-mark"></a>JWT 和 Session Cookies 的选型</h3><p>我们上面探讨了 JWT 和 Cookies 的不同点，相信你也会对选型有了更深的认识，大致来说</p>
+<p>对于只需要登录用户并访问存储在站点数据库中的一些信息的中小型网站来说，Session Cookies 通常就能满足。</p>
+<p>如果你有企业级站点，应用程序或附近的站点，并且需要处理大量的请求，尤其是第三方或很多第三方（包括位于不同域的API），则 JWT 显然更适合。</p>
+<h2 id="faq" class="headerLink">
+    <a href="#faq" class="header-mark"></a>FAQ</h2><h4 id="如何禁用-cookies-后使用-session" class="headerLink">
+    <a href="#%e5%a6%82%e4%bd%95%e7%a6%81%e7%94%a8-cookies-%e5%90%8e%e4%bd%bf%e7%94%a8-session" class="header-mark"></a>如何禁用 Cookies 后，使用 Session</h4><ul>
+<li>如果禁用了 Cookies，服务器仍会将 sessionId 以 cookie 的方式发送给浏览器，但是，浏览器不再保存这个cookie (即sessionId) 了。</li>
+<li>如果想要继续使用 session，需要采用 <code>URL 重写</code>
+的方式来实现，可以参考 <a href="https://www.cnblogs.com/Renyi-Fan/p/11012086.html" target="_blank" rel="noopener noreferrer">https://www.cnblogs.com/Renyi-Fan/p/11012086.html</a></li>
+</ul>
+<h3 id="jwt-前端解码" class="headerLink">
+    <a href="#jwt-%e5%89%8d%e7%ab%af%e8%a7%a3%e7%a0%81" class="header-mark"></a>JWT 前端解码</h3><p>在线解密工具<a href="https://www.box3.cn/tools/jwt.html" target="_blank" rel="noopener noreferrer">https://www.box3.cn/tools/jwt.html</a></p>
+<p>npm 包<a href="https://www.npmjs.com/package/jwt-decode" target="_blank" rel="noopener noreferrer">https://www.npmjs.com/package/jwt-decode</a></p>
+<h2 id="参考" class="headerLink">
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
+<li><a href="https://juejin.cn/post/6844904115080790023" target="_blank" rel="noopener noreferrer">看完这篇 Session、Cookie、Token，和面试官扯皮就没问题了</a></li>
+<li><a href="http://www.ruanyifeng.com/blog/2018/07/json_web_token-tutorial.html" target="_blank" rel="noopener noreferrer">JSON Web Token 入门教程</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/193090304" target="_blank" rel="noopener noreferrer">认证方式的前世今生，以及 JWT 的使用</a></li>
+</ul>
+]]></description>
 </item><item>
     <title>JS运行机制</title>
     <link>https://www.xiaobinqt.cn/js-cb-asyn/</link>
     <pubDate>Fri, 18 Mar 2022 00:00:00 &#43;0000</pubDate><author>
         <name>xiaobinqt</name>
     </author><guid>https://www.xiaobinqt.cn/js-cb-asyn/</guid>
-    <description><![CDATA[执行模式JS的执行模式是单线程的，当有多个任务时必须排队执行，优点是执行环境简单，缺点是性能低下，当有多个任务时，需要等待上一个任务执行完成才能执行下一个任务， 如果某个任务出现了死循环，那么就会导致程]]></description>
+    <description><![CDATA[<h2 id="执行模式" class="headerLink">
+    <a href="#%e6%89%a7%e8%a1%8c%e6%a8%a1%e5%bc%8f" class="header-mark"></a>执行模式</h2><p>JS的执行模式是单线程的，当有多个任务时必须排队执行，优点是执行环境简单，缺点是性能低下，当有多个任务时，需要等待上一个任务执行完成才能执行下一个任务， 如果某个任务出现了死循环，那么就会导致程序崩溃。 所以JS出现了同步和异步的概念。</p>
+<h3 id="同步" class="headerLink">
+    <a href="#%e5%90%8c%e6%ad%a5" class="header-mark"></a>同步</h3><p>后一个任务等待前一个任务结束，然后再执行，程序的执行顺序与任务的排列顺序是一致的。</p>
+<h3 id="异步" class="headerLink">
+    <a href="#%e5%bc%82%e6%ad%a5" class="header-mark"></a>异步</h3><p>每一个任务有一个或多个回调函数（callback），前一个任务结束后，不是执行后一个任务，而是执行回调函数，后一个任务则是不等前一个任务结束就执行，所以程序的执行顺序与任务的排列顺序可能是不一致的。</p>
+<h2 id="event-loop" class="headerLink">
+    <a href="#event-loop" class="header-mark"></a>Event Loop</h2><p>// TODO</p>
+<h2 id="promise" class="headerLink">
+    <a href="#promise" class="header-mark"></a>Promise</h2><p>Promise 对象代表一个<strong>异步操作</strong>，<code>then()</code> 第一个参数是成功<code>resolve</code>的回调函数，第二个参数是失败<code>reject</code>的回调函数，当不写第二个
+<code>then()</code> 参数时，可以用 <code>catch()</code> 捕获 <code>reject</code> 异常。</p>
+<h3 id="使用" class="headerLink">
+    <a href="#%e4%bd%bf%e7%94%a8" class="header-mark"></a>使用</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">p1</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Promise</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// resolve(&#39;成功&#39;);
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">reject</span><span class="p">(</span><span class="s2">&#34;失败&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">});</span>
+</span></span><span class="line"><span class="cl"><span class="nx">p1</span><span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;第一个fn: &#34;</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;第二个 fn: &#34;</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">});</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>resolve和reject除了正常的值外，还可能是另一个promise实例。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="kr">const</span> <span class="nx">p1</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Promise</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">resolve</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">});</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kr">const</span> <span class="nx">p2</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Promise</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">resolve</span><span class="p">(</span><span class="nx">p1</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">p2</span><span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">res</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">},</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">})</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>用 catch 捕获 reject 异常</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">p1</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Promise</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// todo...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">reject</span><span class="p">(</span><span class="mi">111111</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">});</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">p1</span><span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;第一个fn: &#34;</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}).</span><span class="k">catch</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;err :&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}).</span><span class="k">finally</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;finally exec...&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">})</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="执行顺序" class="headerLink">
+    <a href="#%e6%89%a7%e8%a1%8c%e9%a1%ba%e5%ba%8f" class="header-mark"></a>执行顺序</h3><h2 id="asyncawait的用法和理解" class="headerLink">
+    <a href="#asyncawait%e7%9a%84%e7%94%a8%e6%b3%95%e5%92%8c%e7%90%86%e8%a7%a3" class="header-mark"></a>async/await的用法和理解</h2><p>async 函数是非常新的语法功能，在 ES7 中可用。</p>
+<p>async 函数返回一个 Promise 对象，可以使用 then 方法添加回调函数。await 作为修饰符，只能放在 async 内部使用。 当函数执行的时候，一旦遇到 await 就会先返回，等到触发的异步操作完成，再接着执行函数体内后面的语句。</p>
+<p>await 等待右侧表达式的结果。 如果等到的不是一个 promise 对象，那 await 表达式的运算结果就是它等到的东西。 如果它等到的是一个 promise 对象，它会阻塞后面的代码，等着 promise 对象 resolve，然后得到 resolve 的值，作为 await 表达式的运算结果。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="kr">async</span> <span class="kd">function</span> <span class="nx">test</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">let</span> <span class="nx">promise</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Promise</span><span class="p">(</span><span class="nx">resolve</span> <span class="p">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">setTimeout</span><span class="p">(()</span> <span class="p">=&gt;</span> <span class="nx">resolve</span><span class="p">(</span><span class="s2">&#34;test&#34;</span><span class="p">),</span> <span class="mi">2000</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">});</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">await</span> <span class="nx">promise</span><span class="p">.</span><span class="nx">then</span><span class="p">((</span><span class="nx">ret</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">ret</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">})</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">let</span> <span class="nx">test1Ret</span> <span class="o">=</span> <span class="kr">await</span> <span class="nx">test1</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">test1Ret</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;test end...&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">function</span> <span class="nx">test1</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="s2">&#34;test1_return&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">test</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl"><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;end&#39;</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220321/370858b72be740ddabd37996d1ada207.png?imageView2/0/interlace/1/q/50%7cimageslim" title="运行结果" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220321/370858b72be740ddabd37996d1ada207.png?imageView2/0/interlace/1/q/50|imageslim" data-sub-html="<h2> </h2><p>运行结果</p>">
+        
+    </a><figcaption class="image-caption"> </figcaption>
+    </figure></p>
+<h2 id="宏任务和微任务" class="headerLink">
+    <a href="#%e5%ae%8f%e4%bb%bb%e5%8a%a1%e5%92%8c%e5%be%ae%e4%bb%bb%e5%8a%a1" class="header-mark"></a>宏任务和微任务</h2><p>// TODO</p>
+<h2 id="参考" class="headerLink">
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
+<li><a href="http://www.ruanyifeng.com/blog/2012/12/asynchronous%EF%BC%BFjavascript.html" target="_blank" rel="noopener noreferrer">Javascript异步编程的4种方法</a></li>
+<li><a href="https://www.ruanyifeng.com/blog/2014/10/event-loop.html" target="_blank" rel="noopener noreferrer">JavaScript 运行机制详解：再谈Event Loop</a></li>
+<li><a href="http://www.ruanyifeng.com/blog/2015/05/async.html" target="_blank" rel="noopener noreferrer">async 函数的含义和用法</a></li>
+<li><a href="https://www.jianshu.com/p/b16e7c9e1f9f" target="_blank" rel="noopener noreferrer">JS执行——Promise</a></li>
+<li><a href="https://mp.weixin.qq.com/s?__biz=MzI4OTc3NDgzNQ==&amp;mid=2247484695&amp;idx=1&amp;sn=57b4e00a6929784ae9c5026cc71f46ef" target="_blank" rel="noopener noreferrer">你真的了解回调?</a></li>
+<li><a href="https://mp.weixin.qq.com/s?__biz=MzI4OTc3NDgzNQ==&amp;mid=2247484700&amp;idx=1&amp;sn=0a840596519263dd8baa1e4a0f265151" target="_blank" rel="noopener noreferrer">回调地狱</a></li>
+<li><a href="https://blog.csdn.net/namechenfl/article/details/99623700" target="_blank" rel="noopener noreferrer">js中微任务和宏任务的区别</a></li>
+<li><a href="https://www.jb51.net/article/250696.htm" target="_blank" rel="noopener noreferrer">Javascript单线程和事件循环</a></li>
+</ul>
+]]></description>
 </item><item>
     <title>JavaScript heap out of memory</title>
     <link>https://www.xiaobinqt.cn/node-oom/</link>
     <pubDate>Wed, 16 Mar 2022 00:00:00 &#43;0000</pubDate><author>
         <name>xiaobinqt</name>
     </author><guid>https://www.xiaobinqt.cn/node-oom/</guid>
-    <description><![CDATA[刚在打包项目时执行 yarn run build 时出现了 oom 的情况，具体报错信息如下： 我的环境是 win10 专业版 WSL。 解决办法，设置 export NODE_OPTIONS=--max_old_space_size=4096，设置完之后重新执行 yarn]]></description>
+    <description><![CDATA[<p>刚在打包项目时执行 <code>yarn run build </code> 时出现了 oom 的情况，具体报错信息如下：</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220314/90ed6000706b48e39d4da241245dd9f0.png?imageView2/0/interlace/1/q/50%7cimageslim" title="JavaScript heap out of memory" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220314/90ed6000706b48e39d4da241245dd9f0.png?imageView2/0/interlace/1/q/50|imageslim" data-sub-html="<h2> </h2><p>JavaScript heap out of memory</p>">
+        
+    </a><figcaption class="image-caption"> </figcaption>
+    </figure></p>
+<p>我的环境是 win10 专业版 WSL。</p>
+<p>解决办法，设置 <code>export NODE_OPTIONS=--max_old_space_size=4096</code>，设置完之后重新执行 <code>yarn run build </code> 即可。</p>
+<h2 id="参考" class="headerLink">
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
+<li><a href="https://stackoverflow.com/questions/38558989/node-js-heap-out-of-memory" target="_blank" rel="noopener noreferrer">Node.js heap out of memory</a></li>
+</ul>
+]]></description>
 </item><item>
     <title>ajax 在请求时携带 cookie 信息</title>
     <link>https://www.xiaobinqt.cn/ajax-req-add-cookie/</link>
     <pubDate>Tue, 01 Mar 2022 00:00:00 &#43;0000</pubDate><author>
         <name>xiaobinqt</name>
     </author><guid>https://www.xiaobinqt.cn/ajax-req-add-cookie/</guid>
-    <description><![CDATA[最近有个需求在使用 $.ajax 时需要把 cookie 信息也带着，google 下发现可以这么写： 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 $.ajax({ url: &#34;/nodered/nodes&#34;, headers: { Accept: &#34;text/html&#34;, }, xhrFields: { withCredentials: true // 携带 cookie 信息 }, success: function (data) { console.log(data) $(&#34;#red-ui-palette-container&#34;).html(data) }, error: function (jqXHR) { console.log(jqXHR) } });]]></description>
+    <description><![CDATA[<p>最近有个需求在使用 $.ajax 时需要把 cookie 信息也带着，google 下发现可以这么写：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">({</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">url</span><span class="o">:</span> <span class="s2">&#34;/nodered/nodes&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">headers</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">Accept</span><span class="o">:</span> <span class="s2">&#34;text/html&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">xhrFields</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">withCredentials</span><span class="o">:</span> <span class="kc">true</span> <span class="c1">// 携带 cookie 信息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">success</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">$</span><span class="p">(</span><span class="s2">&#34;#red-ui-palette-container&#34;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">error</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">jqXHR</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">jqXHR</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">});</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div>]]></description>
 </item><item>
     <title>nodeJS 调用 C 语言</title>
     <link>https://www.xiaobinqt.cn/js-call-c/</link>
     <pubDate>Thu, 18 Nov 2021 00:00:00 &#43;0000</pubDate><author>
         <name>xiaobinqt</name>
     </author><guid>https://www.xiaobinqt.cn/js-call-c/</guid>
-    <description><![CDATA[最近在 node 项目开发中，有个需求是 nodeJS 需要支持调用 C 语言的函数，node-addon-api 可以支持这个需求。 开发环境我用的开发环境 docker 起的 code-server 环境，code-server 版本为 code-server:version-v3.11.1 。可以把 code-server 理解成一个在线 vscode 环境]]></description>
+    <description><![CDATA[<p>最近在 node 项目开发中，有个需求是 nodeJS 需要支持调用 C 语言的函数，<a href="https://www.npmjs.com/package/node-addon-api" target="_blank" rel="noopener noreferrer">node-addon-api</a> 可以支持这个需求。</p>
+<h2 id="开发环境" class="headerLink">
+    <a href="#%e5%bc%80%e5%8f%91%e7%8e%af%e5%a2%83" class="header-mark"></a>开发环境</h2><p>我用的开发环境 docker 起的 code-server 环境，code-server
+版本为 <a href="https://hub.docker.com/r/linuxserver/code-server/tags?page=1&amp;name=3.11.1" target="_blank" rel="noopener noreferrer">code-server:version-v3.11.1</a> 。可以把
+code-server 理解成一个在线 vscode 环境，就像 github 的在线 web 编辑器一样。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-docker" data-lang="docker"><span class="line"><span class="cl">docker pull linuxserver/code-server:version-v3.11.1<span class="err">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220412/9a6234c147f34cfe86d67b72902aa1cf.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="code-server" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220412/9a6234c147f34cfe86d67b72902aa1cf.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>code-server</h2><p>code-server</p>">
+        
+    </a><figcaption class="image-caption">code-server</figcaption>
+    </figure></p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220412/1452c3a995af4dd480963de599766c73.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="github web 编辑器" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220412/1452c3a995af4dd480963de599766c73.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>github web 编辑器</h2><p>github web 编辑器</p>">
+        
+    </a><figcaption class="image-caption">github web 编辑器</figcaption>
+    </figure></p>
+<h2 id="加法器示例" class="headerLink">
+    <a href="#%e5%8a%a0%e6%b3%95%e5%99%a8%e7%a4%ba%e4%be%8b" class="header-mark"></a>加法器示例</h2><p>开发环境搭建成功后，可以实现一个小功能，以熟悉 node-addon-api 的使用。</p>
+<p>现在实现一个加法器，JS 调用 C 语言的 add 方法，传入 2 个参数，C 语言累加后返回结果。</p>
+<h3 id="项目初始化" class="headerLink">
+    <a href="#%e9%a1%b9%e7%9b%ae%e5%88%9d%e5%a7%8b%e5%8c%96" class="header-mark"></a>项目初始化</h3><p>创建项目并进行 <code>npm init</code> 初始化：</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220412/f3f108e8c5664b1390766008751decb0.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="创建项目并初始化" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220412/f3f108e8c5664b1390766008751decb0.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>创建项目并初始化</h2><p>创建项目并初始化</p>">
+        
+    </a><figcaption class="image-caption">创建项目并初始化</figcaption>
+    </figure></p>
+<p>安装 node-addon-api：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">npm i node-addon-api
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220412/eecca630b11b49bf840351bd5c6dfe06.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="安装 npm 依赖包" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220412/eecca630b11b49bf840351bd5c6dfe06.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>安装 npm 依赖包</h2><p>安装 npm 依赖包</p>">
+        
+    </a><figcaption class="image-caption">安装 npm 依赖包</figcaption>
+    </figure></p>
+<h3 id="c-代码" class="headerLink">
+    <a href="#c-%e4%bb%a3%e7%a0%81" class="header-mark"></a>c 代码</h3><p>新建一个 cal.cc 文件，内容如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;napi.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 定义一个 Add() 方法
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">Napi</span><span class="o">::</span><span class="n">Value</span> <span class="nf">Add</span><span class="p">(</span><span class="k">const</span> <span class="n">Napi</span><span class="o">::</span><span class="n">CallbackInfo</span><span class="o">&amp;</span> <span class="n">info</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Napi</span><span class="o">::</span><span class="n">Env</span> <span class="n">env</span> <span class="o">=</span> <span class="n">info</span><span class="p">.</span><span class="nf">Env</span><span class="p">();</span> <span class="c1">// 获取 js 上下文信息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="n">info</span><span class="p">.</span><span class="nf">Length</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">Napi</span><span class="o">::</span><span class="n">TypeError</span><span class="o">::</span><span class="nf">New</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="s">&#34;Wrong number of arguments&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="p">.</span><span class="nf">ThrowAsJavaScriptException</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">env</span><span class="p">.</span><span class="nf">Null</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">info</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nf">IsNumber</span><span class="p">()</span> <span class="o">||</span> <span class="o">!</span><span class="n">info</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="nf">IsNumber</span><span class="p">())</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">Napi</span><span class="o">::</span><span class="n">TypeError</span><span class="o">::</span><span class="nf">New</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="s">&#34;Wrong arguments&#34;</span><span class="p">).</span><span class="nf">ThrowAsJavaScriptException</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">env</span><span class="p">.</span><span class="nf">Null</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="kt">int</span> <span class="n">arg0</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">As</span><span class="o">&lt;</span><span class="n">Napi</span><span class="o">::</span><span class="n">Number</span><span class="o">&gt;</span><span class="p">().</span><span class="nf">Int32Value</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">int</span> <span class="n">arg1</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="n">As</span><span class="o">&lt;</span><span class="n">Napi</span><span class="o">::</span><span class="n">Number</span><span class="o">&gt;</span><span class="p">().</span><span class="nf">Int32Value</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="kt">int</span> <span class="n">arg2</span> <span class="o">=</span> <span class="n">arg0</span> <span class="o">+</span> <span class="n">arg1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="n">Napi</span><span class="o">::</span><span class="n">Number</span> <span class="n">num</span> <span class="o">=</span> <span class="n">Napi</span><span class="o">::</span><span class="n">Number</span><span class="o">::</span><span class="nf">New</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">arg2</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">num</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 导出函数，可使用 exports.Set() 导出多个函数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">Napi</span><span class="o">::</span><span class="n">Object</span> <span class="nf">Init</span><span class="p">(</span><span class="n">Napi</span><span class="o">::</span><span class="n">Env</span> <span class="n">env</span><span class="p">,</span> <span class="n">Napi</span><span class="o">::</span><span class="n">Object</span> <span class="n">exports</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">exports</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="n">Napi</span><span class="o">::</span><span class="n">String</span><span class="o">::</span><span class="nf">New</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="s">&#34;add&#34;</span><span class="p">),</span> <span class="n">Napi</span><span class="o">::</span><span class="n">Function</span><span class="o">::</span><span class="nf">New</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">Add</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">exports</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nf">NODE_API_MODULE</span><span class="p">(</span><span class="n">addon</span><span class="p">,</span> <span class="n">Init</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="bindinggyp" class="headerLink">
+    <a href="#bindinggyp" class="header-mark"></a>binding.gyp</h3><p>编译带第三方扩展库的 c/c++ 程序，通常需要在编译时指定额外的头文件包含路径和链接第三方库，这些都是在 binding.gyp 文件中指定的，这些指定在 nodeJS 自动编译的时候，会解析并应用在命令行的编译工具中。</p>
+<p>新建一个 binding.gyp 文件，内容如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;targets&#34;</span><span class="p">:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;target_name&#34;</span><span class="p">:</span> <span class="s2">&#34;test&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;sources&#34;</span><span class="p">:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;cal.cc&#34;</span>
+</span></span><span class="line"><span class="cl">      <span class="p">],</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;include_dirs&#34;</span><span class="p">:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;&lt;!@(node -p \&#34;require(&#39;node-addon-api&#39;).include\&#34;)&#34;</span>
+</span></span><span class="line"><span class="cl">      <span class="p">],</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;libraries&#34;</span><span class="p">:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">      <span class="p">],</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;dependencies&#34;</span><span class="p">:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;&lt;!(node -p \&#34;require(&#39;node-addon-api&#39;).gyp\&#34;)&#34;</span>
+</span></span><span class="line"><span class="cl">      <span class="p">],</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;cflags!&#34;</span><span class="p">:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;-fno-exceptions&#34;</span>
+</span></span><span class="line"><span class="cl">      <span class="p">],</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;cflags_cc!&#34;</span><span class="p">:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;-fno-exceptions&#34;</span>
+</span></span><span class="line"><span class="cl">      <span class="p">],</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;defines&#34;</span><span class="p">:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;NAPI_CPP_EXCEPTIONS&#34;</span>
+</span></span><span class="line"><span class="cl">      <span class="p">],</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;xcode_settings&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&#34;GCC_ENABLE_CPP_EXCEPTIONS&#34;</span><span class="p">:</span> <span class="s2">&#34;YES&#34;</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li><code>target_name</code> 指定了编译之后模块的名称。</li>
+<li><code>sources</code> 指明 c/c++ 的源文件，如果有多个文件，需要用逗号隔开，放到同一个数组中。</li>
+<li><code>include_dirs</code> 是编译时使用的头文件引入路径，这里使用 <code>node -p</code> 执行 node-addon-api 模块中的预置变量。</li>
+<li><code>dependencies</code> 是必须的，一般不要改变。</li>
+<li><code>cflags!</code>，<code>cflags_cc!</code>，<code>defines</code> 三行指定如果c++程序碰到意外错误的时候，由 NAPI 接口来处理，而不是通常的由 c/c++ 程序自己处理。这防止因为 c/c++
+部分程序碰到意外直接就退出了程序，而是由 nodeJS 程序来捕获处理，如果是在Linux中编译使用，有这三行就够了。</li>
+</ul>
+<h3 id="编译调用" class="headerLink">
+    <a href="#%e7%bc%96%e8%af%91%e8%b0%83%e7%94%a8" class="header-mark"></a>编译调用</h3><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220412/04a96bb9ac254b30a65ffa2939134d05.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="编译" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220412/04a96bb9ac254b30a65ffa2939134d05.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>编译</h2><p>编译</p>">
+        
+    </a><figcaption class="image-caption">编译</figcaption>
+    </figure></p>
+<blockquote>
+<p>每次修改代码后都需要执行 <code>npm i</code> 重新编译</p>
+</blockquote>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">npm i 
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>编译后，进入 nodeJS 中可以直接 require 调用。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220412/0eac8fccb7334cb5bbde15a5bd25c573.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="调用" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220412/0eac8fccb7334cb5bbde15a5bd25c573.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>调用</h2><p>调用</p>">
+        
+    </a><figcaption class="image-caption">调用</figcaption>
+    </figure></p>
+<p>这里 require 的 <code>test.node</code>，<code>.node</code> 后缀是固定的，<code>test</code> 就是 binding.gyp 文件里 <code>target_name</code> 的值。</p>
+<p><code>1+3=4</code> 从调用结果来看，符合预期。</p>
+<h3 id="bindings-包" class="headerLink">
+    <a href="#bindings-%e5%8c%85" class="header-mark"></a>bindings 包</h3><p>现在我们 require 编译后的 node 需要这样写：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./build/Release/nodecamera.node&#39;</span><span class="p">);</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>可以用 <code>bindings</code> 包简化 require 。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">npm i bindings --save
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>通估👆命令安装 <code>bindings</code> 包。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220412/518e631de25144c0a7558b36a50c4375.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="bindings 包使用" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220412/518e631de25144c0a7558b36a50c4375.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>bindings 包使用</h2><p>bindings 包使用</p>">
+        
+    </a><figcaption class="image-caption">bindings 包使用</figcaption>
+    </figure></p>
+<p>所以以上示例简化后的 require 为：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="kr">const</span> <span class="nx">addon</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;bindings&#39;</span><span class="p">)(</span><span class="s1">&#39;test.node&#39;</span><span class="p">);</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="常见数据类型转换" class="headerLink">
+    <a href="#%e5%b8%b8%e8%a7%81%e6%95%b0%e6%8d%ae%e7%b1%bb%e5%9e%8b%e8%bd%ac%e6%8d%a2" class="header-mark"></a>常见数据类型转换</h2><p>JS 与 C 的数据类型有较大差别，比如 C 中没有字符串的概念，只有字节数组等。node-addon-api 可以很好的支持 JS 与 C 数据类型的转换。</p>
+<h3 id="字符串" class="headerLink">
+    <a href="#%e5%ad%97%e7%ac%a6%e4%b8%b2" class="header-mark"></a>字符串</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">temp</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">As</span><span class="o">&lt;</span><span class="n">Napi</span><span class="o">::</span><span class="n">String</span><span class="o">&gt;</span><span class="p">().</span><span class="nf">ToString</span><span class="p">();</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220412/bd714b564556421b83480d47b7c00c9e.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="字符串转换示例" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220412/bd714b564556421b83480d47b7c00c9e.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>字符串转换示例</h2><p>字符串转换示例</p>">
+        
+    </a><figcaption class="image-caption">字符串转换示例</figcaption>
+    </figure></p>
+<h3 id="arraybuffer" class="headerLink">
+    <a href="#arraybuffer" class="header-mark"></a>ArrayBuffer</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="n">Napi</span><span class="o">::</span><span class="n">ArrayBuffer</span> <span class="nf">ABuffer</span><span class="p">(</span><span class="k">const</span> <span class="n">Napi</span><span class="o">::</span><span class="n">CallbackInfo</span><span class="o">&amp;</span> <span class="n">info</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Napi</span><span class="o">::</span><span class="n">Env</span> <span class="n">env</span> <span class="o">=</span> <span class="n">info</span><span class="p">.</span><span class="nf">Env</span><span class="p">();</span> 
+</span></span><span class="line"><span class="cl">  <span class="kt">int8_t</span> <span class="n">num</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="mi">14</span><span class="p">,</span><span class="mi">25</span><span class="p">,</span><span class="mi">45</span><span class="p">,</span><span class="mi">88</span><span class="p">};</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Napi</span><span class="o">::</span><span class="n">ArrayBuffer</span> <span class="n">x</span> <span class="o">=</span> <span class="n">Napi</span><span class="o">::</span><span class="n">ArrayBuffer</span><span class="o">::</span><span class="nf">New</span><span class="p">(</span><span class="n">env</span><span class="p">,</span><span class="n">num</span><span class="p">,</span><span class="mi">4</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">x</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220412/d6d3e0a559f14e7db556152c7e165a33.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="ArrayBuffer 示例" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220412/d6d3e0a559f14e7db556152c7e165a33.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>ArrayBuffer 示例</h2><p>ArrayBuffer 示例</p>">
+        
+    </a><figcaption class="image-caption">ArrayBuffer 示例</figcaption>
+    </figure></p>
+<h3 id="数组" class="headerLink">
+    <a href="#%e6%95%b0%e7%bb%84" class="header-mark"></a>数组</h3><p>JS 将数组作为 C 函数参数。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="n">Napi</span><span class="o">::</span><span class="n">Value</span> <span class="nf">ArrayArg</span><span class="p">(</span><span class="k">const</span> <span class="n">Napi</span><span class="o">::</span><span class="n">CallbackInfo</span><span class="o">&amp;</span> <span class="n">info</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Napi</span><span class="o">::</span><span class="n">Env</span> <span class="n">env</span> <span class="o">=</span> <span class="n">info</span><span class="p">.</span><span class="nf">Env</span><span class="p">();</span> 
+</span></span><span class="line"><span class="cl">  <span class="n">Napi</span><span class="o">::</span><span class="n">Array</span> <span class="n">b</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">As</span><span class="o">&lt;</span><span class="n">Napi</span><span class="o">::</span><span class="n">Array</span><span class="o">&gt;</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">b</span><span class="p">.</span><span class="nf">Length</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="n">Napi</span><span class="o">::</span><span class="n">Value</span> <span class="n">v</span> <span class="o">=</span> <span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="p">(</span><span class="n">v</span><span class="p">.</span><span class="nf">IsString</span><span class="p">()){</span>
+</span></span><span class="line"><span class="cl">          <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">value</span> <span class="o">=</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">)</span><span class="n">v</span><span class="p">.</span><span class="n">As</span><span class="o">&lt;</span><span class="n">Napi</span><span class="o">::</span><span class="n">String</span><span class="o">&gt;</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">          <span class="k">return</span> <span class="n">Napi</span><span class="o">::</span><span class="n">String</span><span class="o">::</span><span class="nf">New</span><span class="p">(</span><span class="n">env</span><span class="p">,</span><span class="n">value</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220412/a5e1c3db4491444394f51cbee383df45.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="编译可能有 warning" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220412/a5e1c3db4491444394f51cbee383df45.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>编译可能有 warning</h2><p>编译可能有 warning</p>">
+        
+    </a><figcaption class="image-caption">编译可能有 warning</figcaption>
+    </figure></p>
+<p>编译时可能有 warning，但是不影响。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220412/3a4b15094092464b8608c0d3f8bdda85.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="数组参数" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220412/3a4b15094092464b8608c0d3f8bdda85.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>数组参数</h2><p>数组参数</p>">
+        
+    </a><figcaption class="image-caption">数组参数</figcaption>
+    </figure></p>
+<h2 id="faq" class="headerLink">
+    <a href="#faq" class="header-mark"></a>FAQ</h2><h3 id="持久化函数" class="headerLink">
+    <a href="#%e6%8c%81%e4%b9%85%e5%8c%96%e5%87%bd%e6%95%b0" class="header-mark"></a>持久化函数</h3><p>这个功能可以理解成在 C 的内存空间中有一个 JS 的函数对象且在生命周期内不会被 C 垃圾回收，可以直接在 C 中调用这个 JS 函数。</p>
+<p>以下示例，C 提供了 debug 函数，但是参数是一个函数，这个函数会持久在 C 的内存中，在 C 的 Str 函数中用 Call 来调用这个函数并传入对应的参数。</p>
+<p>js-call-c-demo.js</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="kr">const</span> <span class="nx">addon</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;bindings&#39;</span><span class="p">)(</span><span class="s1">&#39;test.node&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 调用 c 中的 debug 函数，将函数注入到 c 中
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">addon</span><span class="p">.</span><span class="nx">debug</span><span class="p">(</span><span class="nx">msg</span> <span class="p">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;debug console, c 中传入的 msg 需要打印的参数值为：&#34;</span><span class="p">,</span> <span class="nx">msg</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 调用 c 的 str 函数，在 str 函数中会调用 debug 函数中的 console.log()
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;str 函数的返回值为: &#34;</span><span class="p">,</span> <span class="nx">addon</span><span class="p">.</span><span class="nx">str</span><span class="p">(</span><span class="s2">&#34;xiaobinqt&#34;</span><span class="p">))</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>cal.cc</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span><span class="lnt">78
+</span><span class="lnt">79
+</span><span class="lnt">80
+</span><span class="lnt">81
+</span><span class="lnt">82
+</span><span class="lnt">83
+</span><span class="lnt">84
+</span><span class="lnt">85
+</span><span class="lnt">86
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;napi.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">Napi</span><span class="o">::</span><span class="n">FunctionReference</span> <span class="n">Debug</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">napi_env</span> <span class="n">DebugEnv</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">Napi</span><span class="o">::</span><span class="n">Value</span> <span class="nf">DebugFun</span><span class="p">(</span><span class="k">const</span> <span class="n">Napi</span><span class="o">::</span><span class="n">CallbackInfo</span><span class="o">&amp;</span> <span class="n">info</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Napi</span><span class="o">::</span><span class="n">Env</span> <span class="n">env</span> <span class="o">=</span> <span class="n">info</span><span class="p">.</span><span class="nf">Env</span><span class="p">();</span> 
+</span></span><span class="line"><span class="cl">  <span class="n">Debug</span> <span class="o">=</span> <span class="n">Napi</span><span class="o">::</span><span class="nf">Persistent</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">As</span><span class="o">&lt;</span><span class="n">Napi</span><span class="o">::</span><span class="n">Function</span><span class="o">&gt;</span><span class="p">());</span>
+</span></span><span class="line"><span class="cl">  <span class="n">DebugEnv</span> <span class="o">=</span> <span class="n">env</span><span class="p">;</span> 
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">Napi</span><span class="o">::</span><span class="n">String</span><span class="o">::</span><span class="nf">New</span><span class="p">(</span><span class="n">env</span><span class="p">,</span><span class="s">&#34;OK&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">Napi</span><span class="o">::</span><span class="n">Value</span> <span class="nf">Str</span><span class="p">(</span><span class="k">const</span> <span class="n">Napi</span><span class="o">::</span><span class="n">CallbackInfo</span><span class="o">&amp;</span> <span class="n">info</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Napi</span><span class="o">::</span><span class="n">Env</span> <span class="n">env</span> <span class="o">=</span> <span class="n">info</span><span class="p">.</span><span class="nf">Env</span><span class="p">();</span> 
+</span></span><span class="line"><span class="cl">  <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">temp</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">As</span><span class="o">&lt;</span><span class="n">Napi</span><span class="o">::</span><span class="n">String</span><span class="o">&gt;</span><span class="p">().</span><span class="nf">ToString</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Napi</span><span class="o">::</span><span class="n">String</span> <span class="n">s</span> <span class="o">=</span> <span class="n">Napi</span><span class="o">::</span><span class="n">String</span><span class="o">::</span><span class="nf">New</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">temp</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 调用 Debug 函数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">Debug</span><span class="p">.</span><span class="nf">Call</span><span class="p">({</span><span class="n">Napi</span><span class="o">::</span><span class="n">String</span><span class="o">::</span><span class="nf">New</span><span class="p">(</span><span class="n">DebugEnv</span><span class="p">,</span><span class="s">&#34;我是一个测试 debug&#34;</span><span class="p">)});</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">s</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 定义一个 Add() 方法
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">Napi</span><span class="o">::</span><span class="n">Value</span> <span class="nf">Add</span><span class="p">(</span><span class="k">const</span> <span class="n">Napi</span><span class="o">::</span><span class="n">CallbackInfo</span><span class="o">&amp;</span> <span class="n">info</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Napi</span><span class="o">::</span><span class="n">Env</span> <span class="n">env</span> <span class="o">=</span> <span class="n">info</span><span class="p">.</span><span class="nf">Env</span><span class="p">();</span> <span class="c1">// 获取 js 上下文信息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="n">info</span><span class="p">.</span><span class="nf">Length</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">Napi</span><span class="o">::</span><span class="n">TypeError</span><span class="o">::</span><span class="nf">New</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="s">&#34;Wrong number of arguments&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="p">.</span><span class="nf">ThrowAsJavaScriptException</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">env</span><span class="p">.</span><span class="nf">Null</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">info</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nf">IsNumber</span><span class="p">()</span> <span class="o">||</span> <span class="o">!</span><span class="n">info</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="nf">IsNumber</span><span class="p">())</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">Napi</span><span class="o">::</span><span class="n">TypeError</span><span class="o">::</span><span class="nf">New</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="s">&#34;Wrong arguments&#34;</span><span class="p">).</span><span class="nf">ThrowAsJavaScriptException</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">env</span><span class="p">.</span><span class="nf">Null</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="kt">int</span> <span class="n">arg0</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">As</span><span class="o">&lt;</span><span class="n">Napi</span><span class="o">::</span><span class="n">Number</span><span class="o">&gt;</span><span class="p">().</span><span class="nf">Int32Value</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">int</span> <span class="n">arg1</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="n">As</span><span class="o">&lt;</span><span class="n">Napi</span><span class="o">::</span><span class="n">Number</span><span class="o">&gt;</span><span class="p">().</span><span class="nf">Int32Value</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="kt">int</span> <span class="n">arg2</span> <span class="o">=</span> <span class="n">arg0</span> <span class="o">+</span> <span class="n">arg1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="n">Napi</span><span class="o">::</span><span class="n">Number</span> <span class="n">num</span> <span class="o">=</span> <span class="n">Napi</span><span class="o">::</span><span class="n">Number</span><span class="o">::</span><span class="nf">New</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">arg2</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">num</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">Napi</span><span class="o">::</span><span class="n">ArrayBuffer</span> <span class="nf">ABuffer</span><span class="p">(</span><span class="k">const</span> <span class="n">Napi</span><span class="o">::</span><span class="n">CallbackInfo</span><span class="o">&amp;</span> <span class="n">info</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Napi</span><span class="o">::</span><span class="n">Env</span> <span class="n">env</span> <span class="o">=</span> <span class="n">info</span><span class="p">.</span><span class="nf">Env</span><span class="p">();</span> 
+</span></span><span class="line"><span class="cl">  <span class="kt">int8_t</span> <span class="n">num</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="mi">14</span><span class="p">,</span><span class="mi">25</span><span class="p">,</span><span class="mi">45</span><span class="p">,</span><span class="mi">88</span><span class="p">};</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Napi</span><span class="o">::</span><span class="n">ArrayBuffer</span> <span class="n">x</span> <span class="o">=</span> <span class="n">Napi</span><span class="o">::</span><span class="n">ArrayBuffer</span><span class="o">::</span><span class="nf">New</span><span class="p">(</span><span class="n">env</span><span class="p">,</span><span class="n">num</span><span class="p">,</span><span class="mi">4</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">x</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">Napi</span><span class="o">::</span><span class="n">Value</span> <span class="nf">ArrayArg</span><span class="p">(</span><span class="k">const</span> <span class="n">Napi</span><span class="o">::</span><span class="n">CallbackInfo</span><span class="o">&amp;</span> <span class="n">info</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Napi</span><span class="o">::</span><span class="n">Env</span> <span class="n">env</span> <span class="o">=</span> <span class="n">info</span><span class="p">.</span><span class="nf">Env</span><span class="p">();</span> 
+</span></span><span class="line"><span class="cl">  <span class="n">Napi</span><span class="o">::</span><span class="n">Array</span> <span class="n">b</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">As</span><span class="o">&lt;</span><span class="n">Napi</span><span class="o">::</span><span class="n">Array</span><span class="o">&gt;</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">b</span><span class="p">.</span><span class="nf">Length</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="n">Napi</span><span class="o">::</span><span class="n">Value</span> <span class="n">v</span> <span class="o">=</span> <span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="p">(</span><span class="n">v</span><span class="p">.</span><span class="nf">IsString</span><span class="p">()){</span>
+</span></span><span class="line"><span class="cl">          <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">value</span> <span class="o">=</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">)</span><span class="n">v</span><span class="p">.</span><span class="n">As</span><span class="o">&lt;</span><span class="n">Napi</span><span class="o">::</span><span class="n">String</span><span class="o">&gt;</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">          <span class="k">return</span> <span class="n">Napi</span><span class="o">::</span><span class="n">String</span><span class="o">::</span><span class="nf">New</span><span class="p">(</span><span class="n">env</span><span class="p">,</span><span class="n">value</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 导出函数，可使用 exports.Set() 导出多个函数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">Napi</span><span class="o">::</span><span class="n">Object</span> <span class="nf">Init</span><span class="p">(</span><span class="n">Napi</span><span class="o">::</span><span class="n">Env</span> <span class="n">env</span><span class="p">,</span> <span class="n">Napi</span><span class="o">::</span><span class="n">Object</span> <span class="n">exports</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">exports</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="n">Napi</span><span class="o">::</span><span class="n">String</span><span class="o">::</span><span class="nf">New</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="s">&#34;add&#34;</span><span class="p">),</span> <span class="n">Napi</span><span class="o">::</span><span class="n">Function</span><span class="o">::</span><span class="nf">New</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">Add</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">  <span class="n">exports</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="n">Napi</span><span class="o">::</span><span class="n">String</span><span class="o">::</span><span class="nf">New</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="s">&#34;str&#34;</span><span class="p">),</span> <span class="n">Napi</span><span class="o">::</span><span class="n">Function</span><span class="o">::</span><span class="nf">New</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">Str</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">  <span class="n">exports</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="n">Napi</span><span class="o">::</span><span class="n">String</span><span class="o">::</span><span class="nf">New</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="s">&#34;ab&#34;</span><span class="p">),</span> <span class="n">Napi</span><span class="o">::</span><span class="n">Function</span><span class="o">::</span><span class="nf">New</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">ABuffer</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">  <span class="n">exports</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="n">Napi</span><span class="o">::</span><span class="n">String</span><span class="o">::</span><span class="nf">New</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="s">&#34;arr&#34;</span><span class="p">),</span> <span class="n">Napi</span><span class="o">::</span><span class="n">Function</span><span class="o">::</span><span class="nf">New</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">ArrayArg</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">  <span class="n">exports</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="n">Napi</span><span class="o">::</span><span class="n">String</span><span class="o">::</span><span class="nf">New</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="s">&#34;debug&#34;</span><span class="p">),</span> <span class="n">Napi</span><span class="o">::</span><span class="n">Function</span><span class="o">::</span><span class="nf">New</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">DebugFun</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">exports</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nf">NODE_API_MODULE</span><span class="p">(</span><span class="n">addon</span><span class="p">,</span> <span class="n">Init</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220412/0329f648225d4aac9b0201a4fe8a1589.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="测试结果" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220412/0329f648225d4aac9b0201a4fe8a1589.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>测试结果</h2><p>测试结果</p>">
+        
+    </a><figcaption class="image-caption">测试结果</figcaption>
+    </figure></p>
+<h2 id="参考" class="headerLink">
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
+<li><a href="https://www.cnblogs.com/andrewwang/p/9409876.html" target="_blank" rel="noopener noreferrer">简单上手nodejs调用c++(c++和js的混合编程)</a></li>
+<li><a href="https://github.com/nodejs/node-addon-api/tree/9bea434326d5e6c6fa355a51b6f232a503521a21/doc" target="_blank" rel="noopener noreferrer">node-addon-api-doc</a></li>
+<li><a href="https://github.com/nodejs/node-addon-api" target="_blank" rel="noopener noreferrer">https://github.com/nodejs/node-addon-api</a></li>
+<li><a href="https://nodejs.github.io/node-addon-examples/special-topics/object-function-refs#persistent-reference" target="_blank" rel="noopener noreferrer">https://nodejs.github.io/node-addon-examples/special-topics/object-function-refs#persistent-reference</a></li>
+</ul>
+]]></description>
 </item><item>
     <title>Go 使用 sse</title>
     <link>https://www.xiaobinqt.cn/go-use-sse/</link>
@@ -49,13 +1134,622 @@
     </author><guid>https://www.xiaobinqt.cn/go-use-sse/</guid>
     <description><![CDATA[<div class="featured-image">
                 <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220826/8b29290860a04491bfdaa11a5b5e0f28.png" referrerpolicy="no-referrer">
-            </div>SSE 的本质严格地说，HTTP 协议无法做到服务器主动推送信息。但是，有一种变通方法，就是服务器向客户端声明，接下来要发送的是流信息（streaming）。 也就是说，发送的不是一次性的数据包，而是一个数据流]]></description>
+            </div><!-- author： xiaobinqt -->
+<!-- email： xiaobinqt@163.com -->
+<!-- https://xiaobinqt.github.io -->
+<!-- https://www.xiaobinqt.cn -->
+<h2 id="sse-的本质" class="headerLink">
+    <a href="#sse-%e7%9a%84%e6%9c%ac%e8%b4%a8" class="header-mark"></a>SSE 的本质</h2><p>严格地说，HTTP 协议无法做到服务器主动推送信息。但是，有一种变通方法，就是服务器向客户端声明，接下来要发送的是流信息（streaming）。</p>
+<p>也就是说，发送的不是一次性的数据包，而是一个数据流，会连续不断地发送过来。这时，客户端不会关闭连接，会一直等着服务器发过来的新的数据流，视频播放就是这样的例子。本质上，这种通信就是以流信息的方式，完成一次用时很长的下载。</p>
+<p>SSE 就是利用这种机制，使用流信息向浏览器推送信息。它基于 HTTP 协议，目前除了 IE/Edge，其他浏览器都支持。</p>
+<h2 id="sse-的特点" class="headerLink">
+    <a href="#sse-%e7%9a%84%e7%89%b9%e7%82%b9" class="header-mark"></a>SSE 的特点</h2><p>SSE 与 WebSocket 作用相似，都是建立浏览器与服务器之间的通信渠道，然后服务器向浏览器推送信息。</p>
+<p>总体来说，WebSocket 更强大和灵活。因为它是全双工通道，可以双向通信；SSE 是单向通道，只能服务器向浏览器发送，因为流信息本质上就是下载。如果浏览器向服务器发送信息，就变成了另一次 HTTP 请求。</p>
+<h3 id="优点" class="headerLink">
+    <a href="#%e4%bc%98%e7%82%b9" class="header-mark"></a>优点</h3><ul>
+<li>SSE 使用 HTTP 协议，现有的服务器软件都支持。WebSocket 是一个独立协议。</li>
+<li>SSE 属于轻量级，使用简单；WebSocket 协议相对复杂。</li>
+<li>SSE 默认支持断线重连，WebSocket 需要自己实现。</li>
+<li>SSE 一般只用来传送文本，二进制数据需要编码后传送，WebSocket 默认支持传送二进制数据。</li>
+<li>SSE 支持自定义发送的消息类型。</li>
+</ul>
+<h2 id="go-实现" class="headerLink">
+    <a href="#go-%e5%ae%9e%e7%8e%b0" class="header-mark"></a>go 实现</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;net/http&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;time&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">SSE</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">sse</span> <span class="o">*</span><span class="nx">SSE</span><span class="p">)</span> <span class="nf">ServeHTTP</span><span class="p">(</span><span class="nx">rw</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">req</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">flusher</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">rw</span><span class="p">.(</span><span class="nx">http</span><span class="p">.</span><span class="nx">Flusher</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="p">!</span><span class="nx">ok</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">http</span><span class="p">.</span><span class="nf">Error</span><span class="p">(</span><span class="nx">rw</span><span class="p">,</span> <span class="s">&#34;Streaming unsupported!&#34;</span><span class="p">,</span> <span class="nx">http</span><span class="p">.</span><span class="nx">StatusInternalServerError</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">rw</span><span class="p">.</span><span class="nf">Header</span><span class="p">().</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;Content-Type&#34;</span><span class="p">,</span> <span class="s">&#34;text/event-stream&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">rw</span><span class="p">.</span><span class="nf">Header</span><span class="p">().</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;Cache-Control&#34;</span><span class="p">,</span> <span class="s">&#34;no-cache&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">rw</span><span class="p">.</span><span class="nf">Header</span><span class="p">().</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;Connection&#34;</span><span class="p">,</span> <span class="s">&#34;keep-alive&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">rw</span><span class="p">.</span><span class="nf">Header</span><span class="p">().</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;Access-Control-Allow-Origin&#34;</span><span class="p">,</span> <span class="s">&#34;*&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">		<span class="k">select</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">case</span> <span class="o">&lt;-</span><span class="nx">req</span><span class="p">.</span><span class="nf">Context</span><span class="p">().</span><span class="nf">Done</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;req done...&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="k">return</span>
+</span></span><span class="line"><span class="cl">		<span class="k">case</span> <span class="o">&lt;-</span><span class="nx">time</span><span class="p">.</span><span class="nf">After</span><span class="p">(</span><span class="mi">500</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Millisecond</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprintf</span><span class="p">(</span><span class="nx">rw</span><span class="p">,</span> <span class="s">&#34;id: %d\nevent: ping \ndata: %d\n\n&#34;</span><span class="p">,</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">().</span><span class="nf">Unix</span><span class="p">(),</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">().</span><span class="nf">Unix</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">flusher</span><span class="p">.</span><span class="nf">Flush</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">//route := gin.New()
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">//route.GET(&#34;sse&#34;, gin.WrapH(&amp;SSE{}))
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">//route.Run(&#34;:8080&#34;)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">	<span class="nx">http</span><span class="p">.</span><span class="nf">Handle</span><span class="p">(</span><span class="s">&#34;/sse&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">SSE</span><span class="p">{})</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">http</span><span class="p">.</span><span class="nf">ListenAndServe</span><span class="p">(</span><span class="s">&#34;:8080&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>index.html</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-html" data-lang="html"><span class="line"><span class="cl"><span class="cp">&lt;!DOCTYPE html&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">html</span> <span class="na">lang</span><span class="o">=</span><span class="s">&#34;en&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">&#34;UTF-8&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>Title<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">h2</span><span class="p">&gt;</span>SSE<span class="p">&lt;/</span><span class="nt">h2</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">const</span> <span class="nx">source</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">EventSource</span><span class="p">(</span><span class="s1">&#39;http://127.0.0.1:8080/sse&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">source</span><span class="p">.</span><span class="nx">onopen</span> <span class="o">=</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;链接成功&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">source</span><span class="p">.</span><span class="nx">onmessage</span> <span class="o">=</span> <span class="p">(</span><span class="nx">res</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;获得的数据是:&#39;</span> <span class="o">+</span> <span class="nx">res</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">source</span><span class="p">.</span><span class="nx">onerror</span> <span class="o">=</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220826/7e44b78245ef4e1e99981e91184cc66c.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="直接访问" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220826/7e44b78245ef4e1e99981e91184cc66c.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>直接访问</h2><p>直接访问</p>">
+        
+    </a><figcaption class="image-caption">直接访问</figcaption>
+    </figure></p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220826/828118df01ca4d1882735dc1a96a3c93.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="前端访问" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220826/828118df01ca4d1882735dc1a96a3c93.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>前端访问</h2><p>前端访问</p>">
+        
+    </a><figcaption class="image-caption">前端访问</figcaption>
+    </figure></p>
+<h2 id="参考" class="headerLink">
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
+<li><a href="https://gist.github.com/ismasan/3fb75381cd2deb6bfa9c" target="_blank" rel="noopener noreferrer">Example SSE server in Golang</a></li>
+<li><a href="https://www.ruanyifeng.com/blog/2017/05/server-sent_events.html" target="_blank" rel="noopener noreferrer">Server-Sent Events 教程</a></li>
+</ul>
+]]></description>
 </item><item>
     <title>跨域问题</title>
     <link>https://www.xiaobinqt.cn/cross-domain/</link>
     <pubDate>Mon, 18 Mar 2019 00:00:00 &#43;0000</pubDate><author>
         <name>xiaobinqt</name>
     </author><guid>https://www.xiaobinqt.cn/cross-domain/</guid>
-    <description><![CDATA[同源策略同源策略是浏览器的一个安全行为，是指浏览器对不同源的脚本或文本的访问方式进行限制。比如，ajax 在进行请求时，浏览器要求当前网页和请求地址必须同源，也就是协议，域名和端口必须相同。 同源指的就是]]></description>
+    <description><![CDATA[<!-- author： xiaobinqt -->
+<!-- email： xiaobinqt@163.com -->
+<!-- https://xiaobinqt.github.io -->
+<!-- https://www.xiaobinqt.cn -->
+<h2 id="同源策略" class="headerLink">
+    <a href="#%e5%90%8c%e6%ba%90%e7%ad%96%e7%95%a5" class="header-mark"></a>同源策略</h2><p>同源策略是浏览器的一个安全行为，是指浏览器对不同源的脚本或文本的访问方式进行限制。比如，ajax 在进行请求时，浏览器要求当前网页和请求地址必须同源，也就是协议，域名和端口必须相同。</p>
+<p>同源指的就是相同的协议，域名，端口号。</p>
+<p>浏览器是公共资源，假如没有同源策略，A 网站的接口可以被任意来源的 ajax 请求访问，这样就会出现问题，这是浏览器出于对用户数据的保护。</p>
+<p>比如在使用淘宝的过程中，淘宝返回了一个
+cookie，下次请求你会带上cookie，这样子服务器就知道你登录过了。</p>
+<p>假设，你买东西过程中，又点来了一个链接，由于没有同源策略，他就在后台操作向淘宝发起请求，那么就相当于不法网站利用你的账号为所欲为了。</p>
+<p>同源策略限制的不同源之间的交互，主要是针对 JS 中的 XMLHttpRequest 请求。有一些情况是不受影响的如：html 的一些标签的请求，链接 a 标签，图片 img 标签等，这些标签的请求可以为不同源地址。</p>
+<p>同源策略限制了 Cookie、LocalStorage 和 IndexDB 无法读取，DOM 和 JS 对象无法获取，Ajax 请求无法发送。</p>
+<p>所以，<strong>协议，域名，端口号只要有一个不同就存在跨域</strong>。</p>
+<p>解决跨域问题常用的有 JSONP 和 CORS 这两种方案，以下对他们分别进行介绍。</p>
+<h2 id="jsonp" class="headerLink">
+    <a href="#jsonp" class="header-mark"></a>jsonp</h2><p>jsonp 虽然能解决跨域问题，它<strong>只支持<code>GET</code>请求</strong>😢。</p>
+<p>jsonp 是利用<code>&lt;script&gt;</code>标签没有跨域限制的“漏洞”来达到与第三方通讯的目的。当需要通讯时，本站脚本创建一个<code>&lt;script&gt;</code>元素，地址指向第三方的API网址，形如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="o">&lt;</span><span class="nx">script</span> <span class="nx">src</span><span class="o">=</span><span class="s2">&#34;http://www.example.net/api?param1=1&amp;param2=2&#34;</span><span class="o">&gt;&lt;</span><span class="err">/script&gt; </span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>并<strong>提供一个回调函数</strong>来接收数据（函数名可约定，或通过地址参数传递）。 第三方产生的响应为 json 数据的包装，所以称之为 <strong><ruby>jsonp<rt>json padding</rt></ruby></strong>，形如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="err">callback(</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;吴彦祖&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;age&#34;</span><span class="p">:</span> <span class="s2">&#34;28&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span><span class="err">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这样浏览器会调用 <code>callback</code> 函数，并传递解析后json对象作为参数。本站脚本可在<code>callback</code>函数里处理所传入的数据。</p>
+<blockquote>
+<p>接口返回的函数名一定要跟定义的函数一致</p>
+</blockquote>
+<p>有一个接口<code>http://127.0.0.1:8080/cb</code>返回 jsonp 数据👇</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220429/bf6cb2d030c34c05930e9a9b0d86948f.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="jsonp 接口" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220429/bf6cb2d030c34c05930e9a9b0d86948f.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>jsonp 接口</h2><p>jsonp 接口</p>">
+        
+    </a><figcaption class="image-caption">jsonp 接口</figcaption>
+    </figure></p>
+<p>html 文件：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-html" data-lang="html"><span class="line"><span class="cl"><span class="cp">&lt;!doctype html&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">html</span> <span class="na">lang</span><span class="o">=</span><span class="s">&#34;en&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">&#34;UTF-8&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">name</span><span class="o">=</span><span class="s">&#34;viewport&#34;</span>
+</span></span><span class="line"><span class="cl">          <span class="na">content</span><span class="o">=</span><span class="s">&#34;width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">http-equiv</span><span class="o">=</span><span class="s">&#34;X-UA-Compatible&#34;</span> <span class="na">content</span><span class="o">=</span><span class="s">&#34;ie=edge&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>Document<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">let</span> <span class="nx">script</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;script&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">script</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="s1">&#39;text/javascript&#39;</span><span class="p">;</span>  <span class="c1">//请求接口地址和参数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">script</span><span class="p">.</span><span class="nx">src</span> <span class="o">=</span> <span class="s1">&#39;http://127.0.0.1:8080/cb&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">script</span><span class="p">);</span> <span class="c1">//请求后的回调函数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">function</span> <span class="nx">callback</span><span class="p">(</span><span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">res</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>效果👇</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220429/bc4a3d24c10d4b06a24cd3d4005fa092.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="执行效果" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220429/bc4a3d24c10d4b06a24cd3d4005fa092.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>执行效果</h2><p>执行效果</p>">
+        
+    </a><figcaption class="image-caption">执行效果</figcaption>
+    </figure></p>
+<h2 id="cors" class="headerLink">
+    <a href="#cors" class="header-mark"></a>CORS</h2><p>整个<strong><ruby>CORS<rt>Cross-origin resource sharing</rt></ruby></strong>
+通信过程，都是浏览器自动完成，不需要用户参与。对于开发者来说，CORS通信与同源的AJAX通信没有差别，代码完全一样。</p>
+<p>因此，实现CORS通信的<strong>关键是服务器</strong>。只要服务器实现了CORS接口，就可以跨源通信。它允许浏览器向跨源服务器，发出<code>XMLHttpRequest</code>
+请求，浏览器一旦发现AJAX请求跨源，就会自动添加一些附加的头信息，有时还会多出一次附加的请求，从而克服了 AJAX
+只能同源使用的限制。</p>
+<h3 id="两种请求" class="headerLink">
+    <a href="#%e4%b8%a4%e7%a7%8d%e8%af%b7%e6%b1%82" class="header-mark"></a>两种请求</h3><p>浏览器将CORS请求分成两类：<strong><ruby>简单请求<rt>simple request</rt></ruby></strong>和<strong><ruby>非简单请求<rt>not-so-simple request</rt></ruby></strong>。只要<strong>同时满足</strong>👇两大条件，就属于简单请求。</p>
+<ol>
+<li>请求方法是以下三种方法之一：</li>
+</ol>
+<ul>
+<li><code>HEAD</code></li>
+<li><code>GET</code></li>
+<li><code>POST</code></li>
+</ul>
+<ol start="2">
+<li>HTTP 头信息不超出以下几种字段：</li>
+</ol>
+<ul>
+<li><code>Accept</code></li>
+<li><code>Accept-Language</code></li>
+<li><code>Content-Language</code></li>
+<li><code>Last-Event-ID</code></li>
+<li><code>Content-Type</code>：只限于三个值<code>application/x-www-form-urlencoded</code>、<code>multipart/form-data</code>、<code>text/plain</code></li>
+</ul>
+<blockquote>
+<p>除了由用户代理自动设置的头（如，<code>Connection</code>、 <code>User-Agent</code>）</p>
+</blockquote>
+<p>这是为了兼容<strong><ruby>表单<rt>form</rt></ruby></strong>，历史上表单一直可以发出跨域请求。<strong>AJAX 的跨域设计就是，只要表单可以发，AJAX 就可以直接发</strong>。</p>
+<p>凡是不同时满足上面两个条件，就属于非简单请求。</p>
+<p>浏览器对这两种请求的处理，是不一样的。</p>
+<h3 id="简单请求" class="headerLink">
+    <a href="#%e7%ae%80%e5%8d%95%e8%af%b7%e6%b1%82" class="header-mark"></a>简单请求</h3><p>对于简单请求，浏览器直接发出CORS请求。在头信息之中，增加一个<code>Origin</code>字段。</p>
+<p>下面的例子，浏览器发现这次跨源 AJAX 请求是简单请求，就自动在头信息之中，添加一个<code>Origin</code>字段。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">GET /cors HTTP/1.1
+</span></span><span class="line"><span class="cl">Origin: http://api.bob.com
+</span></span><span class="line"><span class="cl">Host: api.alice.com
+</span></span><span class="line"><span class="cl">Accept-Language: en-US
+</span></span><span class="line"><span class="cl">Connection: keep-alive
+</span></span><span class="line"><span class="cl">User-Agent: Mozilla/5.0...
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>上面的头信息中，<code>Origin</code>字段用来说明，本次请求来自哪个源（协议 + 域名 + 端口）。服务器根据这个值，决定是否同意这次请求。</p>
+<p>如果<code>Origin</code>
+指定的源，<strong>不在许可范围内</strong>，服务器会返回一个<strong>正常的</strong>
+HTTP回应。浏览器发现，这个回应的头信息没有包含A<code>ccess-Control-Allow-Origin</code>字段（详见下文），就知道出错了，从而抛出一个错误，被<code>XMLHttpRequest</code>的<code>onerror</code>
+回调函数捕获。这种错误无法通过状态码识别，因为HTTP回应的状态码有可能是200。</p>
+<p>如果<code>Origin</code>指定的域名在许可范围内，服务器返回的响应，会多出几个头信息字段。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">Access-Control-Allow-Origin: http://api.bob.com
+</span></span><span class="line"><span class="cl">Access-Control-Allow-Credentials: <span class="nb">true</span>
+</span></span><span class="line"><span class="cl">Access-Control-Expose-Headers: FooBar
+</span></span><span class="line"><span class="cl">Content-Type: text/html<span class="p">;</span> <span class="nv">charset</span><span class="o">=</span>utf-8
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>上面的头信息之中，有三个与CORS请求相关的字段，都以<code>Access-Control-</code>开头。</p>
+<ul>
+<li><strong>Access-Control-Allow-Origin</strong></li>
+</ul>
+<p>该字段是必须的。它的值要么是请求时<code>Origin</code>字段的值，要么是一个<code>*</code>，表示接受任意域名的请求。</p>
+<ul>
+<li><strong>Access-Control-Allow-Credentials</strong></li>
+</ul>
+<p>该字段可选。它的值是一个布尔值，表示是否允许发送Cookie。默认情况下，Cookie不包括在CORS请求之中。设为true，即表示服务器明确许可，Cookie可以包含在请求中，一起发给服务器。这个值也只能设为true，如果服务器不要浏览器发送Cookie，删除该字段即可。</p>
+<ul>
+<li><strong>Access-Control-Expose-Headers</strong></li>
+</ul>
+<p>该字段可选。CORS请求时，<code>XMLHttpRequest</code>对象的<code>getResponseHeader()</code>
+方法只能拿到6个基本字段：<code>Cache-Control</code>、<code>Content-Language</code>、<code>Content-Type</code>、<code>Expires</code>、<code>Last-Modified</code>、<code>Pragma</code>
+。如果想拿到其他字段，就必须在<code>Access-Control-Expose-Headers</code>里面指定。上面的例子指定，<code>getResponseHeader('FooBar')</code>可以返回<code>FooBar</code>字段的值。</p>
+<h4 id="withcredentials-属性" class="headerLink">
+    <a href="#withcredentials-%e5%b1%9e%e6%80%a7" class="header-mark"></a>withCredentials 属性</h4><p>CORS请求默认不发送Cookie和HTTP认证信息。如果要把Cookie发到服务器，一方面要服务器同意，指定<code>Access-Control-Allow-Credentials</code>字段。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">Access-Control-Allow-Credentials: <span class="nb">true</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>另一方面，开发者必须在AJAX请求中打开<code>withCredentials</code>属性。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">var <span class="nv">xhr</span> <span class="o">=</span> new XMLHttpRequest<span class="o">()</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">xhr.withCredentials <span class="o">=</span> true<span class="p">;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>否则，即使服务器同意发送Cookie，浏览器也不会发送。或者，服务器要求设置Cookie，浏览器也不会处理。</p>
+<p>但是，如果省略<code>withCredentials</code>设置，有的浏览器还是会一起发送Cookie。这时，可以显式关闭<code>withCredentials</code>。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">xhr.withCredentials <span class="o">=</span> false<span class="p">;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>需要注意的是，如果要发送Cookie，<code>Access-Control-Allow-Origin</code>就不能设为星号<code>*</code>
+，必须指定明确的、与请求网页一致的域名。同时，Cookie依然遵循同源政策，只有用服务器域名设置的Cookie才会上传，其他域名的Cookie并不会上传，且（跨源）原网页代码中的<code>document.cookie</code>
+也无法读取服务器域名下的Cookie。</p>
+<h3 id="非简单请求" class="headerLink">
+    <a href="#%e9%9d%9e%e7%ae%80%e5%8d%95%e8%af%b7%e6%b1%82" class="header-mark"></a>非简单请求</h3><h4 id="预检请求" class="headerLink">
+    <a href="#%e9%a2%84%e6%a3%80%e8%af%b7%e6%b1%82" class="header-mark"></a>预检请求</h4><p>非简单请求是那种对服务器有特殊要求的请求，比如请求方法是<code>PUT</code>或<code>DELETE</code>，或者<code>Content-Type</code>字段的类型是<code>application/json</code>。</p>
+<p>非简单请求的CORS请求，会在正式通信之前，增加一次HTTP查询请求，称为<strong><ruby>&ldquo;预检&quot;请求<rt>preflight request</rt></ruby></strong>。</p>
+<p>浏览器先询问服务器，当前网页所在的域名是否在服务器的许可名单之中，以及可以使用哪些HTTP动词和头信息字段。只有得到肯定答复，浏览器才会发出正式的<code>XMLHttpRequest</code>请求，否则就报错。</p>
+<p>下面是一段浏览器的JavaScript脚本。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">url</span> <span class="o">=</span> <span class="s1">&#39;http://api.alice.com/cors&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">xhr</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">XMLHttpRequest</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl"><span class="nx">xhr</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="s1">&#39;PUT&#39;</span><span class="p">,</span> <span class="nx">url</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="nx">xhr</span><span class="p">.</span><span class="nx">setRequestHeader</span><span class="p">(</span><span class="s1">&#39;X-Custom-Header&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="nx">xhr</span><span class="p">.</span><span class="nx">send</span><span class="p">();</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>上面代码中，HTTP请求的方法是<code>PUT</code>，并且发送一个自定义头信息<code>X-Custom-Header</code>。</p>
+<p>浏览器发现，这是一个非简单请求，就自动发出一个&quot;预检&quot;请求，要求服务器确认可以这样请求。下面是这个&quot;预检&quot;请求的HTTP头信息。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">OPTIONS /cors HTTP/1.1
+</span></span><span class="line"><span class="cl">Origin: http://api.bob.com
+</span></span><span class="line"><span class="cl">Access-Control-Request-Method: PUT
+</span></span><span class="line"><span class="cl">Access-Control-Request-Headers: X-Custom-Header
+</span></span><span class="line"><span class="cl">Host: api.alice.com
+</span></span><span class="line"><span class="cl">Accept-Language: en-US
+</span></span><span class="line"><span class="cl">Connection: keep-alive
+</span></span><span class="line"><span class="cl">User-Agent: Mozilla/5.0...
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>&ldquo;预检&quot;请求用的请求方法是<code>OPTIONS</code>，表示这个请求是用来询问的。头信息里面，关键字段是<code>Origin</code>，表示请求来自哪个源。</p>
+<p>除了<code>Origin</code>字段，&ldquo;预检&quot;请求的头信息包括两个特殊字段。</p>
+<ul>
+<li><strong>Access-Control-Request-Method</strong></li>
+</ul>
+<p>该字段是必须的，用来列出浏览器的CORS请求会用到哪些HTTP方法，上例是PUT。</p>
+<ul>
+<li><strong>Access-Control-Request-Headers</strong></li>
+</ul>
+<p>该字段是一个<strong>逗号分隔</strong>的字符串，指定浏览器CORS请求会额外发送的头信息字段，上例是<code>X-Custom-Header</code>。</p>
+<h4 id="预检请求的回应" class="headerLink">
+    <a href="#%e9%a2%84%e6%a3%80%e8%af%b7%e6%b1%82%e7%9a%84%e5%9b%9e%e5%ba%94" class="header-mark"></a>预检请求的回应</h4><p>服务器收到&quot;预检&quot;请求以后，检查了<code>Origin</code>、<code>Access-Control-Request-Method</code>和<code>Access-Control-Request-Headers</code>字段以后，确认允许跨源请求，就可以做出回应。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">HTTP/1.1 <span class="m">200</span> OK
+</span></span><span class="line"><span class="cl">Date: Mon, <span class="m">01</span> Dec <span class="m">2008</span> 01:15:39 GMT
+</span></span><span class="line"><span class="cl">Server: Apache/2.0.61 <span class="o">(</span>Unix<span class="o">)</span>
+</span></span><span class="line"><span class="cl">Access-Control-Allow-Origin: http://api.bob.com
+</span></span><span class="line"><span class="cl">Access-Control-Allow-Methods: GET, POST, PUT
+</span></span><span class="line"><span class="cl">Access-Control-Allow-Headers: X-Custom-Header
+</span></span><span class="line"><span class="cl">Content-Type: text/html<span class="p">;</span> <span class="nv">charset</span><span class="o">=</span>utf-8
+</span></span><span class="line"><span class="cl">Content-Encoding: gzip
+</span></span><span class="line"><span class="cl">Content-Length: <span class="m">0</span>
+</span></span><span class="line"><span class="cl">Keep-Alive: <span class="nv">timeout</span><span class="o">=</span>2, <span class="nv">max</span><span class="o">=</span><span class="m">100</span>
+</span></span><span class="line"><span class="cl">Connection: Keep-Alive
+</span></span><span class="line"><span class="cl">Content-Type: text/plain
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>上面的HTTP回应中，关键的是<code>Access-Control-Allow-Origin</code>字段，表示<code>http://api.bob.com</code>可以请求数据。该字段也可以设为星号，表示同意任意跨源请求。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">Access-Control-Allow-Origin: *
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>如果服务器否定了&quot;预检&quot;请求，会返回一个正常的HTTP回应，但是没有任何CORS相关的头信息字段。这时，浏览器就会认定，服务器不同意预检请求，因此触发一个错误，被<code>XMLHttpRequest</code>对象的<code>onerror</code>
+回调函数捕获。控制台会打印出如下的报错信息。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">XMLHttpRequest cannot load http://api.alice.com.
+</span></span><span class="line"><span class="cl">Origin http://api.bob.com is not allowed by Access-Control-Allow-Origin.
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>服务器回应的其他CORS相关字段如下。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">Access-Control-Allow-Methods: GET, POST, PUT
+</span></span><span class="line"><span class="cl">Access-Control-Allow-Headers: X-Custom-Header
+</span></span><span class="line"><span class="cl">Access-Control-Allow-Credentials: <span class="nb">true</span>
+</span></span><span class="line"><span class="cl">Access-Control-Max-Age: <span class="m">1728000</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li><strong>Access-Control-Allow-Methods</strong></li>
+</ul>
+<p>该字段必需，它的值是<strong>逗号分隔</strong>的一个字符串，表明服务器支持的所有跨域请求的方法。注意，返回的是所有支持的方法，而不单是浏览器请求的那个方法。这是为了避免多次&quot;预检&quot;请求。</p>
+<ul>
+<li><strong>Access-Control-Allow-Headers</strong></li>
+</ul>
+<p>如果浏览器请求包括<code>Access-Control-Request-Headers</code>字段，则<code>Access-Control-Allow-Headers</code>字段是必需的。它也是一个逗号分隔的字符串，表明服务器支持的所有头信息字段，不限于浏览器在&rdquo;
+预检&quot;中请求的字段。</p>
+<ul>
+<li><strong>Access-Control-Allow-Credentials</strong></li>
+</ul>
+<p>该字段与<a href="#withcredentials-%e5%b1%9e%e6%80%a7" rel="">简单请求</a>时的含义相同。</p>
+<ul>
+<li><strong>Access-Control-Max-Age</strong></li>
+</ul>
+<p>该字段可选，用来指定本次预检请求的有效期，单位为<strong>秒</strong>。上面结果中，有效期是20天（1728000秒），即允许缓存该条回应1728000秒（即20天），在此期间，不用发出另一条预检请求。</p>
+<h4 id="浏览器的正常请求和回应" class="headerLink">
+    <a href="#%e6%b5%8f%e8%a7%88%e5%99%a8%e7%9a%84%e6%ad%a3%e5%b8%b8%e8%af%b7%e6%b1%82%e5%92%8c%e5%9b%9e%e5%ba%94" class="header-mark"></a>浏览器的正常请求和回应</h4><p>一旦服务器通过了&quot;预检&quot;请求，以后每次浏览器正常的CORS请求，就都跟简单请求一样，会有一个<code>Origin</code>头信息字段。服务器的回应，也都会有一个<code>Access-Control-Allow-Origin</code>头信息字段。</p>
+<p>下面是&quot;预检&quot;请求之后，浏览器的正常CORS请求。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">PUT /cors HTTP/1.1
+</span></span><span class="line"><span class="cl">Origin: http://api.bob.com
+</span></span><span class="line"><span class="cl">Host: api.alice.com
+</span></span><span class="line"><span class="cl">X-Custom-Header: value
+</span></span><span class="line"><span class="cl">Accept-Language: en-US
+</span></span><span class="line"><span class="cl">Connection: keep-alive
+</span></span><span class="line"><span class="cl">User-Agent: Mozilla/5.0...
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>上面头信息的<code>Origin</code>字段是浏览器自动添加的。</p>
+<p>下面是服务器正常的回应。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">Access-Control-Allow-Origin: http://api.bob.com
+</span></span><span class="line"><span class="cl">Content-Type: text/html<span class="p">;</span> <span class="nv">charset</span><span class="o">=</span>utf-8
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>上面头信息中，<code>Access-Control-Allow-Origin</code>字段是每次回应都必定包含的。</p>
+<h2 id="参考" class="headerLink">
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
+<li><a href="https://blog.csdn.net/qq_42625428/article/details/108099755" target="_blank" rel="noopener noreferrer">跨域及其解决方案</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/web/http/cors#simple_requests" target="_blank" rel="noopener noreferrer">https://developer.mozilla.org/en-US/docs/web/http/cors#simple_requests</a></li>
+<li><a href="http://www.ruanyifeng.com/blog/2016/04/cors.html" target="_blank" rel="noopener noreferrer">跨域资源共享 CORS 详解</a></li>
+</ul>
+]]></description>
 </item></channel>
 </rss>

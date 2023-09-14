@@ -10,6 +10,355 @@
     <pubDate>Sun, 27 Mar 2022 00:00:00 &#43;0000</pubDate><author>
         <name>作者</name>
     </author><guid>https://www.xiaobinqt.cn/net-protocol-glance/</guid>
-    <description><![CDATA[概述 五层模型互联网的实现，分成好几层。每一层都有自己的功能，就像建筑物一样，每一层都靠下一层支持。 用户接触到的，只是最上面的一层，根本没有感觉到下面的层。理解互联网，需要从最下层开始，自下而上理解每一]]></description>
+    <description><![CDATA[<h2 id="概述" class="headerLink">
+    <a href="#%e6%a6%82%e8%bf%b0" class="header-mark"></a>概述</h2><h3 id="五层模型" class="headerLink">
+    <a href="#%e4%ba%94%e5%b1%82%e6%a8%a1%e5%9e%8b" class="header-mark"></a>五层模型</h3><p>互联网的实现，分成好几层。每一层都有自己的功能，就像建筑物一样，每一层都靠下一层支持。</p>
+<p>用户接触到的，只是最上面的一层，根本没有感觉到下面的层。理解互联网，需要从最下层开始，自下而上理解每一层的功能。</p>
+<p>如何分层，有不同的模型，有的模型分七层，有的分四层。把互联网分成五层，比较容易解释。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220328/0b07f1e814384409a9a5f97a4bbc8196.png" title="五层模型" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220328/0b07f1e814384409a9a5f97a4bbc8196.png" data-sub-html="<h2>五层模型</h2><p>五层模型</p>">
+        
+    </a><figcaption class="image-caption">五层模型</figcaption>
+    </figure></p>
+<p>如上图所示，最底下的一层叫做<strong><ruby>实体层<rt>Physical Layer</rt></ruby></strong>，最上面的一层叫做<strong><ruby>应用层<rt>Application Layer</rt></ruby></strong>，中间的三层（自下而上）分别是<strong><ruby>链接层<rt>Link Layer</rt></ruby></strong>、<strong><ruby>网络层<rt>Network Layer</rt></ruby></strong>和<strong><ruby>传输层<rt>Transport Layer</rt></ruby></strong>。越下面的层，越靠近硬件；越上面的层，越靠近用户。</p>
+<p>名字只是一个代号，它们叫什么名字，其实并不重要。只需要知道，互联网分成若干层就可以了。</p>
+<h3 id="层与协议" class="headerLink">
+    <a href="#%e5%b1%82%e4%b8%8e%e5%8d%8f%e8%ae%ae" class="header-mark"></a>层与协议</h3><p>每一层都是为了完成一种功能。为了实现这些功能，就需要大家都遵守共同的规则。</p>
+<p>大家都遵守的规则，就叫做“协议”（protocol）。</p>
+<p>互联网的每一层，都定义了很多协议。这些协议的总称，就叫做“互联网协议”（Internet Protocol Suite），它们是互联网的核心。</p>
+<h2 id="实体层" class="headerLink">
+    <a href="#%e5%ae%9e%e4%bd%93%e5%b1%82" class="header-mark"></a>实体层</h2><p>电脑要组网，第一件事是先把电脑连起来，可以用光缆、电缆、双绞线、无线电波等方式。</p>
+<p>这就叫做“实体层”，它就是<strong>把电脑连接起来的物理手段。它主要规定了网络的一些电气特性，作用是负责传送 0 和 1 的电信号</strong>。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220328/008215cf196441ff891300b99ca05e41.png" title="实体层" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220328/008215cf196441ff891300b99ca05e41.png" data-sub-html="<h2>实体层</h2><p>实体层</p>">
+        
+    </a><figcaption class="image-caption">实体层</figcaption>
+    </figure></p>
+<h2 id="链接层" class="headerLink">
+    <a href="#%e9%93%be%e6%8e%a5%e5%b1%82" class="header-mark"></a>链接层</h2><p>单纯的 0 和 1 没有任何意义，必须规定解读方式：多少个电信号算一组❓每个信号位有何意义❓</p>
+<p>这就是“链接层”的功能，它在“实体层”的上方，<strong>确定了 0 和 1 的分组方式</strong>。</p>
+<h3 id="以太网协议" class="headerLink">
+    <a href="#%e4%bb%a5%e5%a4%aa%e7%bd%91%e5%8d%8f%e8%ae%ae" class="header-mark"></a>以太网协议</h3><p>早期的时候，每家公司都有自己的电信号分组方式。逐渐地，一种叫做“以太网”（Ethernet）的协议，占据了主导地位。</p>
+<p>以太网规定，<strong>一组电信号</strong>构成一个数据包，叫做“帧”（<code>Frame</code>）。每一帧分成两个部分：标头（<code>Head</code>）和数据（<code>Data</code>）。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220328/7faf60ba902f4f5dac74eae05aa46470.png" title="head-data" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220328/7faf60ba902f4f5dac74eae05aa46470.png" data-sub-html="<h2>head-data</h2><p>head-data</p>">
+        
+    </a><figcaption class="image-caption">head-data</figcaption>
+    </figure></p>
+<p>“标头”包含数据包的一些说明项，比如发送者、接受者、数据类型等等；“数据”则是数据包的具体内容。</p>
+<p><strong>“标头”的长度，固定为 18 字节。“数据”的长度，最短为 46 字节，最长为 1500 字节</strong>
+。因此，整个“帧”最短为 64 字节，最长为 1518 字节。如果数据很长，就必须分割成多个帧进行发送。</p>
+<h3 id="mac-地址" class="headerLink">
+    <a href="#mac-%e5%9c%b0%e5%9d%80" class="header-mark"></a>MAC 地址</h3><p><strong>以太网数据包的“标头”，包含了发送者和接受者的信息</strong>。那么，发送者和接受者是如何标识呢？</p>
+<p>以太网规定，连入网络的所有设备，都必须具有“网卡”接口。
+<strong>数据包必须是从一块网卡，传送到另一块网卡</strong>。网卡的地址，就是数据包的发送地址和接收地址，这叫做 MAC 地址。</p>
+<p>每块网卡出厂的时候，都有一个全世界独一无二的 MAC 地址，长度是 48 个二进制位，通常用 12 个十六进制数表示。</p>
+<p>前 6 个十六进制数是厂商编号，后 6 个是该厂商的网卡流水号。有了 MAC 地址，就可以定位网卡和数据包的路径了。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220328/210ac80feaab480c824906751e28b7cf.png" title="MAC address" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220328/210ac80feaab480c824906751e28b7cf.png" data-sub-html="<h2>MAC address</h2><p>MAC address</p>">
+        
+    </a><figcaption class="image-caption">MAC address</figcaption>
+    </figure></p>
+<p>上图的 MAC 地址的二进制位为 <code>00000000-10110000-11010000-10000110-10111011-11110111</code>。</p>
+<h3 id="广播" class="headerLink">
+    <a href="#%e5%b9%bf%e6%92%ad" class="header-mark"></a>广播</h3><p>以太网数据包必须知道接收方的 MAC 地址，然后才能发送，那么问题来了，</p>
+<ul>
+<li>一块网卡怎么会知道另一块网卡的MAC地址？</li>
+<li>就算有了 MAC 地址，系统怎样才能把数据包准确送到接收方？</li>
+</ul>
+<p>回答是，以太网采用了一种很“原始”的方式，它不是把数据包准确送到接收方，而是向<strong>本网络内所有计算机</strong>发送，让每台计算机自己判断，是否为接收方。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220328/259a2bda03624c2c9381cfb244af47dd.png" title="广播" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220328/259a2bda03624c2c9381cfb244af47dd.png" data-sub-html="<h2>广播</h2><p>广播</p>">
+        
+    </a><figcaption class="image-caption">广播</figcaption>
+    </figure></p>
+<p>上图中，1 号计算机向 2 号计算机发送一个数据包，同一个子网络的 3 号、4 号、5 号计算机都会收到这个包。它们读取这个包的“标头”，找到接收方的 MAC 地址，然后与自身的 MAC 地址相比较，如果两者相同，就接受这个包，做进一步处理，否则就丢弃这个包。这种发送方式就叫做<strong><ruby>广播<rt>broadcasting</rt></ruby></strong>。</p>
+<p>有了数据包的定义、网卡的 MAC 地址、广播的发送方式，“链接层”就可以在多台计算机之间传送数据了。</p>
+<h2 id="网络层" class="headerLink">
+    <a href="#%e7%bd%91%e7%bb%9c%e5%b1%82" class="header-mark"></a>网络层</h2><h3 id="网络层的由来" class="headerLink">
+    <a href="#%e7%bd%91%e7%bb%9c%e5%b1%82%e7%9a%84%e7%94%b1%e6%9d%a5" class="header-mark"></a>网络层的由来</h3><p>以太网协议，依靠 MAC 地址发送数据。理论上，单单依靠 MAC 地址，上海的网卡就可以找到洛杉矶的网卡了，技术上是可以实现的。</p>
+<p>但是，这样做有一个重大的缺点。<strong>以太网采用广播方式发送数据包</strong>，所有成员人手一“包”，不仅效率低，而且局限在发送者所在的子网络。也就是说，
+<strong>如果两台计算机不在同一个子网络，广播是传不过去的</strong>。这种设计是合理的，否则互联网上每一台计算机都会收到所有包，那会引起灾难。</p>
+<p><strong>互联网是无数子网络共同组成的一个巨型网络</strong>，很像想象上海和洛杉矶的电脑会在同一个子网络，这几乎是不可能的。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220328/cee93bcb3c2245d6a238a7074dd540ff.png" title="子网络" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220328/cee93bcb3c2245d6a238a7074dd540ff.png" data-sub-html="<h2>子网络</h2><p>子网络</p>">
+        
+    </a><figcaption class="image-caption">子网络</figcaption>
+    </figure></p>
+<p>因此，必须找到一种方法，能够区分哪些 MAC 地址属于同一个子网络，哪些不是。如果是同一个子网络，就采用广播方式发送，否则就采用“路由”方式发送。（“路由”的意思，就是指如何向不同的子网络分发数据包。），MAC 地址本身无法做到这一点，它只与厂商有关，与所处网络无关。</p>
+<p>这就导致了“网络层”的诞生。它的作用是 <strong>引进一套新的地址，使得我们能够区分不同的计算机是否属于同一个子网络</strong>
+。这套地址就叫做“网络地址”，简称“网址”。</p>
+<p>于是，“网络层”出现以后，每台计算机有了两种地址，一种是 MAC 地址，另一种是网络地址。
+<strong>两种地址之间没有任何联系</strong>，MAC 地址是绑定在网卡上的，网络地址则是管理员分配的，它们只是随机组合在一起。</p>
+<p><strong>网络地址帮助我们确定计算机所在的子网络，MAC 地址则将数据包送到该子网络中的目标网卡</strong>。因此，从逻辑上可以推断，必定是
+<strong>先处理网络地址，然后再处理 MAC 地址</strong>。</p>
+<h3 id="ip协议和子网掩码" class="headerLink">
+    <a href="#ip%e5%8d%8f%e8%ae%ae%e5%92%8c%e5%ad%90%e7%bd%91%e6%8e%a9%e7%a0%81" class="header-mark"></a>IP协议和子网掩码</h3><p>规定网络地址的协议，叫做 IP 协议。它所定义的地址，就被称为 IP 地址。</p>
+<p>目前，广泛采用的是 IP 协议第四版，简称 IPv4。这个版本规定，网络地址由 32 个二进制位组成。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220328/a4ba02cbb01341ddbb0b75e979b61625.png" title="IP协议" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220328/a4ba02cbb01341ddbb0b75e979b61625.png" data-sub-html="<h2>IP协议</h2><p>IP协议</p>">
+        
+    </a><figcaption class="image-caption">IP协议</figcaption>
+    </figure></p>
+<p>习惯上，我们用分成四段的十进制数表示 IP 地址，从 <code>0.0.0.0</code> 一直到 <code>255.255.255.255</code>。</p>
+<p>互联网上的每一台计算机，都会分配到一个 IP 地址。</p>
+<p><strong>IP 地址分成两个部分，前一部分代表网络，后一部分代表主机</strong>。</p>
+<p>比如，IP 地址 <code>172.16.254.1</code>，这是一个 32 位的地址，假定它的网络部分是前 24 位（<code>172.16.254</code>），那么主机部分就是后 8 位（最后的那个 1 ）。
+<strong>处于同一个子网络的电脑，它们 IP 地址的网络部分必定是相同的</strong>，也就是说 <code>172.16.254.2</code> 应该与 <code>172.16.254.1</code> 处在同一个子网络。</p>
+<p>单单从 IP 地址，我们无法判断网络部分。还是以 <code>172.16.254.1</code> 为例，它的网络部分，到底是前 24 位，还是前 16 位，甚至前 28 位，从 IP 地址上是看不出来的。</p>
+<p>那么，怎样才能从IP地址，判断两台计算机是否属于同一个子网络呢❓这就要用到另一个参数<strong><ruby>子网掩码<rt>subnet mask</rt></ruby></strong>。</p>
+<p>所谓 <strong>“子网掩码”，就是表示子网络特征的一个参数</strong>。它在形式上等同于 IP 地址，也是一个 32 位二进制数字，它的<strong>网络部分全部为
+1，主机部分全部为 0</strong> 。比如，IP 地址 <code>172.16.254.1</code>
+，如果已知网络部分是前 24 位，主机部分是后 8 位，那么子网络掩码就是 <code>11111111.11111111.11111111.00000000</code>，写成十进制就是 <code>255.255.255.0</code>。</p>
+<p>知道&quot;子网掩码&quot;，我们就能判断，任意两个 IP 地址是否处在同一个子网络。方法是将两个 IP 地址与子网掩码
+<strong>分别</strong>进行 AND 运算（两个数位都为 1 ，运算结果为 1，否则为 0），然后比较结果是否相同，如果是的话，就表明它们在同一个子网络中，否则就不是。</p>
+<p>比如，已知IP地址 <code>172.16.254.1</code> 和 <code>172.16.254.233</code> 的子网掩码都是 <code>255.255.255.0</code>，请问它们是否在同一个子网络？两者与子网掩码分别进行 AND 运算，结果都是
+<code>172.16.254.0</code>，因此它们在同一个子网络。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">10101100.00010000.11111110.00000001 <span class="c1"># 172.16.254.1</span>
+</span></span><span class="line"><span class="cl">11111111.11111111.11111111.00000000 <span class="c1"># 255.255.255.0</span>
+</span></span><span class="line"><span class="cl">10101100.00010000.11111110.00000000 <span class="c1"># AND 结果二进制位</span>
+</span></span><span class="line"><span class="cl">172.16.254.0                        <span class="c1"># AND 结果转成十进制</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>所以，<strong>IP 协议的作用主要有两个，一个是为每一台计算机分配 IP 地址，另一个是确定哪些地址在同一个子网络</strong>。</p>
+<h3 id="ip数据包" class="headerLink">
+    <a href="#ip%e6%95%b0%e6%8d%ae%e5%8c%85" class="header-mark"></a>IP数据包</h3><p>根据 IP 协议发送的数据，就叫做 IP 数据包。不难想象，其中必定包括 IP 地址信息。</p>
+<p>但是前面说过，以太网数据包只包含 MAC 地址，并没有 IP 地址的栏位。那么是否需要修改数据定义，再添加一个栏位呢？</p>
+<p>回答是不需要，我们可以把 IP 数据包直接放进以太网数据包的“数据”部分，因此完全不用修改以太网的规格。这就是互联网分层结构的好处：上层的变动完全不涉及下层的结构。</p>
+<p>具体来说，IP 数据包也分为“标头”和“数据”两个部分。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220328/a13ff01efe0e4053ae1e8d126404a619.png" title="IP数据包1" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220328/a13ff01efe0e4053ae1e8d126404a619.png" data-sub-html="<h2>IP数据包1</h2><p>IP数据包1</p>">
+        
+    </a><figcaption class="image-caption">IP数据包1</figcaption>
+    </figure></p>
+<p>“标头”部分主要包括版本、长度、IP 地址等信息，“数据”部分则是 IP 数据包的具体内容。它放进以太网数据包后，以太网数据包就变成了下面这样。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220328/14bf0cdc38654770bb9a6f0d58c0175f.png" title="IP数据包2" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220328/14bf0cdc38654770bb9a6f0d58c0175f.png" data-sub-html="<h2>IP数据包2</h2><p>IP数据包2</p>">
+        
+    </a><figcaption class="image-caption">IP数据包2</figcaption>
+    </figure></p>
+<p>IP 数据包的“标头”部分的长度为 20 到 60 字节，整个数据包的总长度最大为 65,535 字节。因此，理论上，一个 IP 数据包的“数据”部分，最长为 65,515 字节。前面说过，以太网数据包的“数据”部分，最长只有 1500 字节。因此，如果 IP 数据包超过了 1500 字节（上图红色部分），它就需要分割成几个以太网数据包，分开发送了。</p>
+<h3 id="arp协议" class="headerLink">
+    <a href="#arp%e5%8d%8f%e8%ae%ae" class="header-mark"></a>ARP协议</h3><p>由于 IP 数据包是放在以太网数据包里发送的，所以我们必须同时知道两个地址，一个是对方的 MAC 地址，另一个是对方的 IP 地址。通常情况下，对方的 IP 地址是已知的，但是我们不知道它的 MAC 地址。</p>
+<p>所以，我们需要一种机制，能够从 IP 地址得到 MAC 地址。</p>
+<p>这里又可以分成两种情况。</p>
+<p>第一种情况，如果两台主机不在同一个子网络，那么事实上没有办法得到对方的 MAC 地址，只能把数据包传送到两个子网络连接处的<strong><ruby>网关<rt>gateway</rt></ruby></strong>，让网关去处理。</p>
+<p>第二种情况，如果两台主机在同一个子网络，那么我们可以用 ARP 协议，得到对方的 MAC 地址。ARP 协议也是发出一个数据包（包含在以太网数据包中），其中包含它所要查询主机的 IP 地址，在对方的 MAC 地址这一栏，填的是<code>FF:FF:FF:FF:FF:FF</code>，表示这是一个&quot;广播&quot;
+地址。它所在子网络的每一台主机，都会收到这个数据包，从中取出 IP 地址，与自身的 IP 地址进行比较。如果两者相同，都做出回复，向对方报告自己的 MAC 地址，否则就丢弃这个包。</p>
+<p>有了 ARP 协议之后，我们就可以得到<strong>同一个子网络内的主机 MAC 地址，可以把数据包发送到任意一台主机之上</strong>。</p>
+<h2 id="传输层" class="headerLink">
+    <a href="#%e4%bc%a0%e8%be%93%e5%b1%82" class="header-mark"></a>传输层</h2><h3 id="传输层的由来" class="headerLink">
+    <a href="#%e4%bc%a0%e8%be%93%e5%b1%82%e7%9a%84%e7%94%b1%e6%9d%a5" class="header-mark"></a>传输层的由来</h3><p>有了 MAC 地址和 IP 地址，我们已经可以在互联网上任意两台主机上建立通信。</p>
+<p>接下来的问题是，同一台主机上有许多程序都需要用到网络，比如，你一边浏览网页，一边与朋友在线聊天。当一个数据包从互联网上发来的时候，你怎么知道，它是表示网页的内容，还是表示在线聊天的内容？</p>
+<p>也就是说，我们还需要一个参数，表示这个数据包到底供哪个程序（进程）使用。这个参数就叫做<strong><ruby>端口<rt>port</rt></ruby></strong>，它其实
+<strong>是每一个使用网卡的程序的编号</strong>。每个数据包都发到主机的特定端口，所以不同的程序就能取到自己所需要的数据。</p>
+<p>“端口”是 0 到 65535 之间的一个整数，正好 16 个二进制位。
+<strong>0 到 1023 的端口被系统占用</strong>，用户只能选用大于 1023 的端口。不管是浏览网页还是在线聊天，应用程序会随机选用一个端口，然后与服务器的相应端口联系。</p>
+<p><strong>“传输层”的功能，就是建立“端口到端口”的通信。相比之下，“网络层”的功能是建立“主机到主机”的通信。只要确定主机和端口，
+我们就能实现程序之间的交流</strong>。因此，Unix系统就把主机+端口，叫做<strong><ruby>套接字<rt>socket</rt></ruby></strong>。有了它，就可以进行网络应用程序开发了。</p>
+<h3 id="udp-协议" class="headerLink">
+    <a href="#udp-%e5%8d%8f%e8%ae%ae" class="header-mark"></a>UDP 协议</h3><p>我们必须在数据包中加入端口信息，这就需要新的协议。最简单的实现叫做 UDP 协议，它的格式几乎就是在数据前面，加上端口号。</p>
+<p>UDP 数据包，也是由“标头”和“数据”两部分组成。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220328/f22b3c1122804019a03f91c5a3efa31d.png" title="UDP数据格式_1" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220328/f22b3c1122804019a03f91c5a3efa31d.png" data-sub-html="<h2>UDP数据格式_1</h2><p>UDP数据格式_1</p>">
+        
+    </a><figcaption class="image-caption">UDP数据格式_1</figcaption>
+    </figure></p>
+<p>“标头”部分主要定义了发出端口和接收端口，“数据”部分就是具体的内容。然后，把整个 UDP 数据包放入 IP 数据包的“数据”部分，而前面说过，IP 数据包又是放在以太网数据包之中的，所以整个以太网数据包现在变成了下面这样：</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220328/4d0af7444c9b437297c362dbbbdb67ca.png" title="UDP数据格式_2" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220328/4d0af7444c9b437297c362dbbbdb67ca.png" data-sub-html="<h2>UDP数据格式_2</h2><p>UDP数据格式_2</p>">
+        
+    </a><figcaption class="image-caption">UDP数据格式_2</figcaption>
+    </figure></p>
+<p>UDP 数据包非常简单，“标头”部分一共只有 8 个字节，总长度不超过 65,535 字节，正好放进一个IP数据包。</p>
+<h3 id="tcp-协议" class="headerLink">
+    <a href="#tcp-%e5%8d%8f%e8%ae%ae" class="header-mark"></a>TCP 协议</h3><p>UDP 协议的优点是比较简单，容易实现，但是缺点是可靠性较差，一旦数据包发出，无法知道对方是否收到。</p>
+<p>为了解决这个问题，提高网络可靠性，TCP 协议就诞生了。这个协议非常复杂，但可以近似认为，它就是有确认机制的 UDP 协议，每发出一个数据包都要求确认。如果有一个数据包遗失，就收不到确认，发出方就知道有必要重发这个数据包了。</p>
+<p>因此，TCP 协议能够确保数据不会遗失。它的缺点是过程复杂、实现困难、消耗较多的资源。</p>
+<p>TCP 数据包和 UDP 数据包一样，都是内嵌在 IP 数据包的“数据”部分。TCP 数据包没有长度限制，理论上可以无限长，但是为了保证网络的效率，
+<strong>通常 TCP 数据包的长度不会超过 IP 数据包的长度，以确保单个 TCP 数据包不必再分割</strong>。</p>
+<h2 id="应用层" class="headerLink">
+    <a href="#%e5%ba%94%e7%94%a8%e5%b1%82" class="header-mark"></a>应用层</h2><p>应用程序收到&quot;传输层&quot;的数据，接下来就要进行解读。由于互联网是开放架构，数据来源五花八门，必须事先规定好格式，否则根本无法解读。</p>
+<p><strong>“应用层”的作用，就是规定应用程序的数据格式。</strong></p>
+<p>举例来说，TCP 协议可以为各种各样的程序传递数据，比如 Email、WWW、FTP 等等。那么，必须有不同协议（比如 http 协议）规定电子邮件、网页、FTP 数据的格式，这些应用程序协议就构成了&quot;应用层&quot;。</p>
+<p>这是最高的一层，直接面对用户。它的数据就放在 TCP 数据包的“数据”部分。因此，现在的以太网的数据包就变成下面这样。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220328/935efc2ef36e4928bab08c8609c67935.png" title="应用层数据包" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220328/935efc2ef36e4928bab08c8609c67935.png" data-sub-html="<h2>应用层数据包</h2><p>应用层数据包</p>">
+        
+    </a><figcaption class="image-caption">应用层数据包</figcaption>
+    </figure></p>
+<h2 id="小结" class="headerLink">
+    <a href="#%e5%b0%8f%e7%bb%93" class="header-mark"></a>小结</h2><p>网络通信就是交换数据包。电脑 A 向电脑 B 发送一个数据包，后者收到了，回复一个数据包，从而实现两台电脑之间的通信。数据包的结构，基本上是下面这样：</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220329/05cd964675504c5697dcca0b27fcbc4a.png" title="数据包" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220329/05cd964675504c5697dcca0b27fcbc4a.png" data-sub-html="<h2>数据包</h2><p>数据包</p>">
+        
+    </a><figcaption class="image-caption">数据包</figcaption>
+    </figure></p>
+<p>发送这个包，需要知道两个地址：</p>
+<ul>
+<li>对方的 MAC 地址</li>
+<li>对方的 IP 地址</li>
+</ul>
+<p>有了这两个地址，数据包才能准确送到接收者手中。但是，MAC 地址有局限性，<strong>如果两台电脑不在同一个子网络，就无法知道对方的 MAC
+地址，必须通过网关（gateway）转发</strong>。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220329/14a9089e17c94a1eb8a1215dd31a2b40.png" title="网关" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220329/14a9089e17c94a1eb8a1215dd31a2b40.png" data-sub-html="<h2>网关</h2><p>网关</p>">
+        
+    </a><figcaption class="image-caption">网关</figcaption>
+    </figure></p>
+<p>上图☝️中，1 号电脑要向 4 号电脑发送一个数据包。它先判断 4 号电脑是否在同一个子网络，结果发现不是，于是就把这个数据包发到网关 A。网关 A 通过路由协议，发现 4 号电脑位于子网络 B，又把数据包发给网关 B，网关 B 再转发到 4 号电脑。</p>
+<p>1 号电脑把数据包发到网关 A，必须知道网关 A 的 MAC 地址。所以，数据包的目标地址，实际上分成两种情况：</p>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>数据包地址</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>同一个子网络</td>
+<td>对方的 MAC 地址，对方的 IP 地址</td>
+</tr>
+<tr>
+<td>非同一个子网络</td>
+<td>网关的 MAC 地址，对方的 IP 地址</td>
+</tr>
+</tbody>
+</table>
+<p>发送数据包之前，电脑必须判断对方是否在同一个子网络，然后选择相应的 MAC 地址。</p>
+<h2 id="上网设置" class="headerLink">
+    <a href="#%e4%b8%8a%e7%bd%91%e8%ae%be%e7%bd%ae" class="header-mark"></a>上网设置</h2><h3 id="静态ip地址" class="headerLink">
+    <a href="#%e9%9d%99%e6%80%81ip%e5%9c%b0%e5%9d%80" class="header-mark"></a>静态IP地址</h3><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220329/d0cf31e76b2046d89c4053cf9e7bc541.png" title="computer" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220329/d0cf31e76b2046d89c4053cf9e7bc541.png" data-sub-html="<h2>new computer</h2><p>computer</p>">
+        
+    </a><figcaption class="image-caption">new computer</figcaption>
+    </figure></p>
+<p>通常你必须做一些设置。有时，管理员会告诉你下面四个参数，你把它们填入操作系统，计算机就能连上网了：</p>
+<ul>
+<li>本机的IP地址</li>
+<li>子网掩码</li>
+<li>网关的IP地址</li>
+<li>DNS的IP地址</li>
+</ul>
+<p>下图是Windows系统的设置窗口。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220329/feb7f5ebde2d4f63992aa9779ca55262.png" title="系统设置" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220329/feb7f5ebde2d4f63992aa9779ca55262.png" data-sub-html="<h2>系统设置</h2><p>系统设置</p>">
+        
+    </a><figcaption class="image-caption">系统设置</figcaption>
+    </figure></p>
+<p>这四个参数缺一不可。由于它们是给定的，计算机每次开机，都会分到同样的IP地址，所以这种情况被称作“静态IP地址上网”。</p>
+<p>但是，这样的设置很专业，普通用户望而生畏，而且如果一台电脑的IP地址保持不变，其他电脑就不能使用这个地址，不够灵活。出于这两个原因，大多数用户使用“动态IP地址上网”。</p>
+<h3 id="动态ip地址" class="headerLink">
+    <a href="#%e5%8a%a8%e6%80%81ip%e5%9c%b0%e5%9d%80" class="header-mark"></a>动态IP地址</h3><p>所谓“动态IP地址”，是指计算机开机后，会自动分配到一个 IP 地址，不用人为设定。它使用的协议叫做 DHCP 协议。</p>
+<p>这个协议规定，每一个子网络中，有一台计算机负责管理本网络的所有IP地址，它叫做“DHCP服务器”。新的计算机加入网络，必须向“DHCP服务器”发送一个“DHCP请求”数据包，申请IP地址和相关的网络参数。</p>
+<p>前面说过，如果两台计算机在同一个子网络，必须知道对方的 MAC 地址和 IP 地址，才能发送数据包。但是，新加入的计算机不知道这两个地址，怎么发送数据包呢？</p>
+<p>DHCP协议做了一些巧妙的规定。</p>
+<h3 id="dhcp协议" class="headerLink">
+    <a href="#dhcp%e5%8d%8f%e8%ae%ae" class="header-mark"></a>DHCP协议</h3><p>首先，它是一种应用层协议，建立在UDP协议之上，所以整个数据包是这样的：</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220329/93b546648e6640ea97c1e8709280708d.png" title="HDCP协议数据包" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220329/93b546648e6640ea97c1e8709280708d.png" data-sub-html="<h2>HDCP协议数据包</h2><p>HDCP协议数据包</p>">
+        
+    </a><figcaption class="image-caption">HDCP协议数据包</figcaption>
+    </figure></p>
+<ol>
+<li>
+<p>最前面的“以太网标头”，设置发出方（本机）的MAC地址和接收方（DHCP服务器）的MAC地址。前者就是本机网卡的MAC地址，后者这时不知道，就填入一个广播地址：<code>FF-FF-FF-FF-FF-FF</code>。</p>
+</li>
+<li>
+<p>后面的“IP标头”，设置发出方的IP地址和接收方的IP地址。这时，对于这两者，本机都不知道。于是，发出方的IP地址就设为<code>0.0.0.0</code>，接收方的IP地址设为<code>255.255.255.255</code>。</p>
+</li>
+<li>
+<p>最后的“UDP标头”，设置发出方的端口和接收方的端口。这一部分是 DHCP 协议规定好的，发出方是 68 端口，接收方是 67 端口。</p>
+</li>
+</ol>
+<p>这个数据包构造完成后，就可以发出了。以太网是广播发送，同一个子网络的每台计算机都收到了这个包。因为接收方的MAC地址是<code>FF-FF-FF-FF-FF-FF</code>
+，看不出是发给谁的，所以每台收到这个包的计算机，还必须分析这个包的 IP 地址，才能确定是不是发给自己的。当看到发出方 IP 地址是<code>0.0.0.0</code>，接收方是<code>255.255.255.255</code>，于是 DHCP 服务器知道“这个包是发给我的”，而其他计算机就可以丢弃这个包。</p>
+<p>接下来，DHCP 服务器读出这个包的数据内容，分配好 IP 地址，发送回去一个“DHCP响应”数据包。这个响应包的结构也是类似的，以太网标头的 MAC 地址是双方的网卡地址，IP 标头的 IP 地址是 DHCP 服务器的 IP 地址（发出方）和<code>255.255.255.255</code>（接收方），UDP 标头的端口是 67（发出方）和 68（接收方），分配给请求端的 IP 地址和本网络的具体参数则包含在 Data 部分。</p>
+<p>新加入的计算机收到这个响应包，于是就知道了自己的IP地址、子网掩码、网关地址、DNS 服务器等等参数。</p>
+<h3 id="小结-1" class="headerLink">
+    <a href="#%e5%b0%8f%e7%bb%93-1" class="header-mark"></a>小结</h3><p>不管是“静态IP地址”还是“动态IP地址”，电脑上网的首要步骤，是确定四个参数。这四个值很重要，值得重复一遍：</p>
+<ul>
+<li>本机的IP地址</li>
+<li>子网掩码</li>
+<li>网关的IP地址</li>
+<li>DNS的IP地址</li>
+</ul>
+<p>有了这几个数值，电脑就可以上网&quot;冲浪&quot;了。</p>
+<h2 id="一个实例" class="headerLink">
+    <a href="#%e4%b8%80%e4%b8%aa%e5%ae%9e%e4%be%8b" class="header-mark"></a>一个实例</h2><h3 id="本机参数" class="headerLink">
+    <a href="#%e6%9c%ac%e6%9c%ba%e5%8f%82%e6%95%b0" class="header-mark"></a>本机参数</h3><p>我们假定，用户设置好了自己的网络参数：</p>
+<ul>
+<li>本机的IP地址：<code>192.168.1.100</code></li>
+<li>子网掩码：<code>255.255.255.0</code></li>
+<li>网关的IP地址：<code>192.168.1.1</code></li>
+<li>DNS的IP地址：<code>8.8.8.8</code></li>
+</ul>
+<p>然后他打开浏览器，想要访问 Google，在地址栏输入了网址：<a href="https://www.google.com/" target="_blank" rel="noopener noreferrer">www.google.com</a>。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220329/4c713bfb8027455aa671d16c55a58d2f.png" title="访问google" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220329/4c713bfb8027455aa671d16c55a58d2f.png" data-sub-html="<h2>访问google</h2><p>访问google</p>">
+        
+    </a><figcaption class="image-caption">访问google</figcaption>
+    </figure></p>
+<p>这意味着，浏览器要向 Google 发送一个网页请求的数据包。</p>
+<h3 id="dns协议" class="headerLink">
+    <a href="#dns%e5%8d%8f%e8%ae%ae" class="header-mark"></a>DNS协议</h3><p>我们知道，发送数据包，必须要知道对方的 IP 地址。但是，现在，我们只知道网址 <a href="https://www.google.com/" target="_blank" rel="noopener noreferrer">www.google.com</a>，不知道它的 IP 地址。</p>
+<p>DNS 协议可以帮助我们，将这个网址转换成 IP 地址。已知DNS服务器为<code>8.8.8.8</code>，于是我们向这个地址发送一个 DNS 数据包（53端口）。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220329/2dc987c9aea7402591d054ea660235e9.png" title="DNS数据包" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220329/2dc987c9aea7402591d054ea660235e9.png" data-sub-html="<h2>DNS数据包</h2><p>DNS数据包</p>">
+        
+    </a><figcaption class="image-caption">DNS数据包</figcaption>
+    </figure></p>
+<p>然后，DNS 服务器做出响应，告诉我们 Google 的 I P地址是<code>172.194.72.105</code>。于是，我们知道了对方的 IP 地址。</p>
+<h3 id="子网掩码" class="headerLink">
+    <a href="#%e5%ad%90%e7%bd%91%e6%8e%a9%e7%a0%81" class="header-mark"></a>子网掩码</h3><p>接下来，我们要判断，这个 IP 地址是不是在同一个子网络，这就要用到子网掩码。</p>
+<p>已知子网掩码是<code>255.255.255.0</code>，本机用它对自己的 IP 地址<code>192.168.1.100</code>，做一个二进制的<code>AND</code>运算（两个数位都为1，结果为1，否则为0），计算结果为<code>192.168.1.0</code>；然后对 Google 的 IP 地址<code>172.194.72.105</code>也做一个<code>AND</code>运算，计算结果为<code>172.194.72.0</code>。这两个结果不相等，所以结论是，Google 与本机不在同一个子网络。</p>
+<p>因此，我们要向 Google 发送数据包，必须通过网关<code>192.168.1.1</code>转发，也就是说，接收方的 MAC 地址将是网关的 MAC 地址。</p>
+<h3 id="应用层协议" class="headerLink">
+    <a href="#%e5%ba%94%e7%94%a8%e5%b1%82%e5%8d%8f%e8%ae%ae" class="header-mark"></a>应用层协议</h3><p>浏览网页用的是 HTTP 协议，它的整个数据包构造是这样的：</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220329/d64d5794254341dc98a40bd6dd4b3893.png" title="HTTP协议数据包" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220329/d64d5794254341dc98a40bd6dd4b3893.png" data-sub-html="<h2>HTTP协议数据包</h2><p>HTTP协议数据包</p>">
+        
+    </a><figcaption class="image-caption">HTTP协议数据包</figcaption>
+    </figure></p>
+<p>HTTP部分的内容，类似于下面这样：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-http" data-lang="http"><span class="line"><span class="cl"><span class="err">　　</span><span class="nf">GET</span> <span class="nn">/</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+</span></span><span class="line"><span class="cl"><span class="err">　　</span><span class="n">Host</span><span class="o">:</span> <span class="l">www.google.com</span>
+</span></span><span class="line"><span class="cl"><span class="err">　　</span><span class="n">Connection</span><span class="o">:</span> <span class="l">keep-alive</span>
+</span></span><span class="line"><span class="cl"><span class="err">　　</span><span class="n">User-Agent</span><span class="o">:</span> <span class="l">Mozilla/5.0 (Windows NT 6.1) ......</span>
+</span></span><span class="line"><span class="cl"><span class="err">　　</span><span class="n">Accept</span><span class="o">:</span> <span class="l">text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8</span>
+</span></span><span class="line"><span class="cl"><span class="err">　　</span><span class="n">Accept-Encoding</span><span class="o">:</span> <span class="l">gzip,deflate,sdch</span>
+</span></span><span class="line"><span class="cl"><span class="err">　　</span><span class="n">Accept-Language</span><span class="o">:</span> <span class="l">zh-CN,zh;q=0.8</span>
+</span></span><span class="line"><span class="cl"><span class="err">　　</span><span class="n">Accept-Charset</span><span class="o">:</span> <span class="l">GBK,utf-8;q=0.7,*;q=0.3</span>
+</span></span><span class="line"><span class="cl"><span class="err">　　</span><span class="n">Cookie</span><span class="o">:</span> <span class="l">... ...</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>我们假定这个部分的长度为 4960 字节，它会被嵌在 TCP 数据包之中。</p>
+<h3 id="tcp协议" class="headerLink">
+    <a href="#tcp%e5%8d%8f%e8%ae%ae" class="header-mark"></a>TCP协议</h3><p>TCP 数据包需要设置端口，接收方（Google）的 HTTP 端口默认是 80，发送方（本机）的端口是一个随机生成的 1024-65535 之间的整数，假定为 51775。TCP 数据包的标头长度为 20 字节，加上嵌入 HTTP 的数据包，总长度变为 4980 字节。</p>
+<h3 id="ip协议" class="headerLink">
+    <a href="#ip%e5%8d%8f%e8%ae%ae" class="header-mark"></a>IP协议</h3><p>然后，TCP 数据包再嵌入 IP 数据包。IP 数据包需要设置双方的 IP 地址，这是已知的，发送方是<code>192.168.1.100</code>（本机），接收方是<code>172.194.72.105</code>（Google）。IP 数据包的标头长度为 20 字节，加上嵌入的 TCP 数据包，总长度变为 5000 字节。</p>
+<h3 id="以太网协议-1" class="headerLink">
+    <a href="#%e4%bb%a5%e5%a4%aa%e7%bd%91%e5%8d%8f%e8%ae%ae-1" class="header-mark"></a>以太网协议</h3><p>最后，IP 数据包嵌入以太网数据包。以太网数据包需要设置双方的 MAC 地址，发送方为本机的网卡 MAC 地址，接收方为网关<code>192.168.1.1</code>的 MAC 地址（通过 ARP 协议得到）。</p>
+<p>以太网数据包的数据部分，最大长度为 1500 字节，而现在的 IP 数据包长度为 5000 字节。因此，IP 数据包必须分割成四个包。因为每个包都有自己的 IP 标头（20字节），所以四个包的 IP 数据包的长度分别为 1500、1500、1500、560。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220329/fb5d47e23bf84f62bc189df69bfdd991.png" title="以太网协议" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220329/fb5d47e23bf84f62bc189df69bfdd991.png" data-sub-html="<h2>以太网协议</h2><p>以太网协议</p>">
+        
+    </a><figcaption class="image-caption">以太网协议</figcaption>
+    </figure></p>
+<h3 id="服务器端响应" class="headerLink">
+    <a href="#%e6%9c%8d%e5%8a%a1%e5%99%a8%e7%ab%af%e5%93%8d%e5%ba%94" class="header-mark"></a>服务器端响应</h3><p>经过多个网关的转发，Google 的服务器<code>172.194.72.105</code>，收到了这四个以太网数据包。</p>
+<p>根据IP标头的序号，Google 将四个包拼起来，取出完整的 TCP 数据包，然后读出里面的“HTTP请求”，接着做出“HTTP响应”，再用 TCP 协议发回来。</p>
+<p>本机收到 HTTP 响应以后，就可以将网页显示出来，完成一次网络通信。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220329/9935c287faa04dd1aa107864273e8a27.png" title="服务器相应" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220329/9935c287faa04dd1aa107864273e8a27.png" data-sub-html="<h2>服务器相应</h2><p>服务器相应</p>">
+        
+    </a><figcaption class="image-caption">服务器相应</figcaption>
+    </figure></p>
+<p>上面的例子，虽然经过了简化，但它大致上反映了互联网协议的整个通信过程。</p>
+<h2 id="参考" class="headerLink">
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
+<li><a href="https://www.ruanyifeng.com/blog/2012/05/internet_protocol_suite_part_i.html" target="_blank" rel="noopener noreferrer">互联网协议入门</a></li>
+</ul>
+]]></description>
 </item></channel>
 </rss>
