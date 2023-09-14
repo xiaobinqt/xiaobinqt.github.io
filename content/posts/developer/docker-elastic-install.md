@@ -222,7 +222,7 @@ IK 分词器支持自定义词典，包括自定义分词，也包含自定义�
 
 修改 `config/IKAnalyzer.cfg.xml` 引用自己创建的 `custome.dic` 词典，配置如下:
 
-![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ef379f05c79646f4b61bc964dfe17b07.pn '引用自定义字典')
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ef379f05c79646f4b61bc964dfe17b07.png '引用自定义字典')
 
 再使用 `Kibana` 效果如下：
 
