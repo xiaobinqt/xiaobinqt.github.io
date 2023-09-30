@@ -135,6 +135,7 @@ title: "收藏夹"
 + [cheap-vps](https://renzhn.github.io/posts/cheap-vps/)
 + [全国图书馆参考咨询联盟](http://www.ucdrs.superlib.net/)
 + [technical_books](https://github.com/TIM168/technical_books)
++ [电子书查找](https://www.emex.top:8083/)
 
 ## 云盘
 
