@@ -47,6 +47,7 @@ type: docs
 + [代码随想录](https://programmercarl.com/)
 + [《 Hello，算法 》](https://www.hello-algo.com/)
 + [CodeTop](https://codetop.cc/home)
++ [labuladong 的算法笔记](https://labuladong.github.io/algo/home/)
 
 ## 一些感受
 
