@@ -5,681 +5,6 @@
         <description>转载 - 系列 - xiaobinqt 博客 - 技术改变生活</description>
         <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>xiaobinqt@163.com (xiaobinqt)</managingEditor>
             <webMaster>xiaobinqt@163.com (xiaobinqt)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><atom:link href="https://www.xiaobinqt.cn/series/reproduce/" rel="self" type="application/rss+xml" /><item>
-    <title>Go sync.Map 解读</title>
-    <link>https://www.xiaobinqt.cn/go-sync-map/</link>
-    <pubDate>Wed, 14 Sep 2022 00:00:00 &#43;0000</pubDate><author>
-        <name>xiaobinqt</name>
-    </author><guid>https://www.xiaobinqt.cn/go-sync-map/</guid>
-    <description><![CDATA[<!-- author： xiaobinqt -->
-<!-- email： xiaobinqt@163.com -->
-<!-- https://xiaobinqt.github.io -->
-<!-- https://www.xiaobinqt.cn -->
-<h2 id="背景" class="headerLink">
-    <a href="#%e8%83%8c%e6%99%af" class="header-mark"></a>背景</h2><p>项目中遇到了需要使用高并发的 map 的场景，众所周知 Go 官方的原生 map 是不支持并发读写的，直接并发的读写很容易触发 panic。</p>
-<p>解决的办法有两个：</p>
-<ul>
-<li>自己配一把锁 <code>sync.Mutex</code> 或者更加考究一点配一把读写锁 <code>sync.RWMutex</code>。这种方案简约直接，但是缺点也明显，就是性能不会太高。</li>
-<li>使用 Go 语言在 2017 年发布的 Go 1.9 中正式加入了并发安全的字典类型<code>sync.Map</code>。</li>
-</ul>
-<p>很显然，方案 2 是优雅且实用的。但是，为什么官方的 <code>sync.Map</code> 能够在 <strong><ruby>lock free<rt>无锁并发</rt></ruby></strong> 的前提下，保证足够高的性能❓本文结合 golang 1.14 源码进行简单的分析。</p>
-<h2 id="核心思想" class="headerLink">
-    <a href="#%e6%a0%b8%e5%bf%83%e6%80%9d%e6%83%b3" class="header-mark"></a>核心思想</h2><p>如果要保证并发的安全，最朴素的想法就是使用锁，但是这意味着要把一些并发的操作强制串行化，性能自然就会下降。</p>
-<p>事实上，除了使用锁，还有一个办法也可以达到类似并发安全的目的，就是原子操作 <code>atomic</code>。<code>sync.Map</code> 的设计非常巧妙，充分利用了 <code>atmoic</code> 和 <code>mutex</code> 的配合。</p>
-<ul>
-<li>read map 由于是原子包托管，主要负责高性能，但是无法保证拥有全量的 key，因为对于新增 key，会首先加到 dirty 中，所以 read 某种程度上，类似于一个 key 的快照，这个快照在某些情况下可能是全量快照。</li>
-<li>dirty map 拥有全量的 key，当 <code>Store</code> 操作要新增一个之前不存在的 key 的时候，预先是增加到 dirty 中的。</li>
-<li>在查找指定的 key 的时候，总会先去只读字典中寻找，并不需要锁定互斥锁。只有当 read 中没有，但 dirty 中可能会有这个 key 的时候，才会在锁的保护下去访问 dirty。</li>
-<li>在存储键值对的时候，只要 read 中已存有这个 key，并且该键值对未被标记为 <code>expunged</code>，就会把新值存到里面并直接返回，这种情况下也不需要用到锁。</li>
-<li>read 和 dirty 之间是会互相转换的，在 dirty 中查找 key 对次数足够多的时候，<code>sync.Map</code> 会把 dirty 直接作为 read，即触发  <code>dirty=&gt;read</code> 升级，同时在某些情况，也会出现 <code>read=&gt;dirty</code> 的重塑。</li>
-</ul>
-<h2 id="数据结构" class="headerLink">
-    <a href="#%e6%95%b0%e6%8d%ae%e7%bb%93%e6%9e%84" class="header-mark"></a>数据结构</h2><p>尽量使用原子操作，最大程度上减少了锁的使用，从而接近了 lock free 的效果。</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221205/3c105d85e5c24fecb51e45bc3a184cfe.png" title="数据结构" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221205/3c105d85e5c24fecb51e45bc3a184cfe.png" data-sub-html="<h2>数据结构</h2><p>数据结构</p>">
-        
-    </a><figcaption class="image-caption">数据结构</figcaption>
-    </figure></p>
-<p>sync.Map 类型的底层数据结构如下👇</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">type Map struct {
-</span></span><span class="line"><span class="cl"> mu Mutex
-</span></span><span class="line"><span class="cl"> read atomic.Value // readOnly
-</span></span><span class="line"><span class="cl"> dirty map[interface{}]*entry
-</span></span><span class="line"><span class="cl"> misses int
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">// Map.read 属性实际存储的是 readOnly。
-</span></span><span class="line"><span class="cl">type readOnly struct {
-</span></span><span class="line"><span class="cl"> m       map[interface{}]*entry
-</span></span><span class="line"><span class="cl"> amended bool
-</span></span><span class="line"><span class="cl">}
-</span></span></code></pre></td></tr></table>
-</div>
-</div><ul>
-<li>mu：互斥锁，用于保护 read 和 dirty。</li>
-<li>read：只读数据，支持并发读取（<code>atomic.Value</code> 类型）。如果涉及到更新操作，则只需要加锁来保证数据安全。</li>
-<li>read 实际存储的是 readOnly 结构体，内部也是一个原生 map，amended 属性用于标记 read 和 dirty 的数据是否一致。</li>
-<li>dirty：读写数据，是一个原生 map，也就是非线程安全。操作 dirty 需要加锁来保证数据安全。</li>
-<li>misses：统计有多少次读取 read 没有命中。每次 read 中读取失败后，misses 的计数值都会加 1。</li>
-</ul>
-<p>在 read 和 dirty 中，都有涉及到的结构体：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">type entry struct {
-</span></span><span class="line"><span class="cl"> p unsafe.Pointer // *interface{}
-</span></span><span class="line"><span class="cl">}
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>其包含一个指针 p, 用于指向用户存储的元素（key）所指向的 value 值。</p>
-<h2 id="store写入过程" class="headerLink">
-    <a href="#store%e5%86%99%e5%85%a5%e8%bf%87%e7%a8%8b" class="header-mark"></a>Store写入过程</h2><p>先来看 expunged</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">var expunged = unsafe.Pointer(new(interface{}))
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>expunged 是一个指向任意类型的指针，用来标记从 dirty map 中<strong>删除</strong>的 entry。</p>
-<p>sync.Map 类型的 Store 方法，该方法的作用是新增或更新一个元素。</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func (m *Map) Store(key, value interface{}) {
-</span></span><span class="line"><span class="cl"> read, _ := m.read.Load().(readOnly)
-</span></span><span class="line"><span class="cl"> if e, ok := read.m[key]; ok &amp;&amp; e.tryStore(&amp;value) {
-</span></span><span class="line"><span class="cl">  return
-</span></span><span class="line"><span class="cl"> }
-</span></span><span class="line"><span class="cl">  ...
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">// tryStore stores a value if the entry has not been expunged.
-</span></span><span class="line"><span class="cl">//
-</span></span><span class="line"><span class="cl">// If the entry is expunged, tryStore returns false and leaves the entry
-</span></span><span class="line"><span class="cl">// unchanged.
-</span></span><span class="line"><span class="cl">func (e *entry) tryStore(i *interface{}) bool {
-</span></span><span class="line"><span class="cl">	for {
-</span></span><span class="line"><span class="cl">		p := atomic.LoadPointer(&amp;e.p)
-</span></span><span class="line"><span class="cl">		if p == expunged {
-</span></span><span class="line"><span class="cl">			return false
-</span></span><span class="line"><span class="cl">		}
-</span></span><span class="line"><span class="cl">		if atomic.CompareAndSwapPointer(&amp;e.p, p, unsafe.Pointer(i)) {
-</span></span><span class="line"><span class="cl">			return true
-</span></span><span class="line"><span class="cl">		}
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">}
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>调用<code>Load</code>方法检查<code>m.read</code>中是否存在这个元素。若存在，且在 tryStore 时，判断没有被标记为 expunged 删除状态，则尝试存储。</p>
-<p>若该元素不存在或在 tryStore 时判断时，已经被标记为删除状态，则继续走到下面流程👇</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span><span class="lnt">29
-</span><span class="lnt">30
-</span><span class="lnt">31
-</span><span class="lnt">32
-</span><span class="lnt">33
-</span><span class="lnt">34
-</span><span class="lnt">35
-</span><span class="lnt">36
-</span><span class="lnt">37
-</span><span class="lnt">38
-</span><span class="lnt">39
-</span><span class="lnt">40
-</span><span class="lnt">41
-</span><span class="lnt">42
-</span><span class="lnt">43
-</span><span class="lnt">44
-</span><span class="lnt">45
-</span><span class="lnt">46
-</span><span class="lnt">47
-</span><span class="lnt">48
-</span><span class="lnt">49
-</span><span class="lnt">50
-</span><span class="lnt">51
-</span><span class="lnt">52
-</span><span class="lnt">53
-</span><span class="lnt">54
-</span><span class="lnt">55
-</span><span class="lnt">56
-</span><span class="lnt">57
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func (m *Map) Store(key, value interface{}) {
-</span></span><span class="line"><span class="cl">    ...
-</span></span><span class="line"><span class="cl">    m.mu.Lock()
-</span></span><span class="line"><span class="cl">	read, _ = m.read.Load().(readOnly)
-</span></span><span class="line"><span class="cl">	if e, ok := read.m[key]; ok {
-</span></span><span class="line"><span class="cl">		if e.unexpungeLocked() {
-</span></span><span class="line"><span class="cl">			// 如果 read map 中存在该 key，但 p == expunged，则说明在 read 中已经被删除了:
-</span></span><span class="line"><span class="cl">			//    a. 将 p 的状态由中间值 expunged 更改为 nil
-</span></span><span class="line"><span class="cl">			//    b. dirty map 插入 key
-</span></span><span class="line"><span class="cl">			m.dirty[key] = e
-</span></span><span class="line"><span class="cl">		}
-</span></span><span class="line"><span class="cl">		// 更新 entry.p = value (read map 和 dirty map 指向同一个 entry)
-</span></span><span class="line"><span class="cl">		e.storeLocked(&amp;value)
-</span></span><span class="line"><span class="cl">	} else if e, ok := m.dirty[key]; ok {
-</span></span><span class="line"><span class="cl">		// 如果 read map 中不存在该 key，但 dirty map 中存在该 key，直接写入更新 entry(read map 中仍然没有这个 key)
-</span></span><span class="line"><span class="cl">		e.storeLocked(&amp;value)
-</span></span><span class="line"><span class="cl">	} else {
-</span></span><span class="line"><span class="cl">		// 如果 read map 和 dirty map 中都不存在该 key，则：
-</span></span><span class="line"><span class="cl">		//	  a. 如果 dirty map 为空，则需要创建 dirty map，并从 read map 中拷贝未删除的元素到新创建的 dirty map
-</span></span><span class="line"><span class="cl">		//    b. 更新 amended 字段，标识 dirty map 中存在 read map 中没有的 key
-</span></span><span class="line"><span class="cl">		//    c. 将 kv 写入 dirty map 中，read 不变
-</span></span><span class="line"><span class="cl">		if !read.amended {
-</span></span><span class="line"><span class="cl">		    // 到这里就意味着，当前的 key 是第一次被加到 dirty map 中。
-</span></span><span class="line"><span class="cl">			// store 之前先判断一下 dirty map 是否为空，如果为空，就把 read map 浅拷贝一次。
-</span></span><span class="line"><span class="cl">			m.dirtyLocked()
-</span></span><span class="line"><span class="cl">			m.read.Store(readOnly{m: read.m, amended: true})
-</span></span><span class="line"><span class="cl">		}
-</span></span><span class="line"><span class="cl">		// 写入新 key，在 dirty 中存储 value
-</span></span><span class="line"><span class="cl">		m.dirty[key] = newEntry(value)
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">	m.mu.Unlock()
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func (m *Map) dirtyLocked() {
-</span></span><span class="line"><span class="cl">	if m.dirty != nil {
-</span></span><span class="line"><span class="cl">		return
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">	read, _ := m.read.Load().(readOnly)
-</span></span><span class="line"><span class="cl">	m.dirty = make(map[interface{}]*entry, len(read.m))
-</span></span><span class="line"><span class="cl">	for k, e := range read.m {
-</span></span><span class="line"><span class="cl">		if !e.tryExpungeLocked() {
-</span></span><span class="line"><span class="cl">			m.dirty[k] = e
-</span></span><span class="line"><span class="cl">		}
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">func (e *entry) tryExpungeLocked() (isExpunged bool) {
-</span></span><span class="line"><span class="cl">	p := atomic.LoadPointer(&amp;e.p)
-</span></span><span class="line"><span class="cl">	for p == nil {
-</span></span><span class="line"><span class="cl">		// 将已经删除标记为nil的数据标记为 expunged
-</span></span><span class="line"><span class="cl">		if atomic.CompareAndSwapPointer(&amp;e.p, nil, expunged) {
-</span></span><span class="line"><span class="cl">			return true
-</span></span><span class="line"><span class="cl">		}
-</span></span><span class="line"><span class="cl">		p = atomic.LoadPointer(&amp;e.p)
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">	return p == expunged
-</span></span><span class="line"><span class="cl">}
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>这里使用了<strong>双检查</strong>的处理，因为在下面的两个语句中，这两行语句并不是一个原子操作。</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">if !ok &amp;&amp; read.amended {
-</span></span><span class="line"><span class="cl">		m.mu.Lock()
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>虽然第一句执行的时候条件满足，但是在加锁之前，<code>m.dirty</code> 可能被提升为 <code>m.read</code>，所以加锁后还得再检查一次 <code>m.read</code>，后续的方法中都使用了这个方法。</p>
-<p>由于已经走到了 dirty 的流程，因此开头就直接调用了 <code>Lock</code> 方法上<strong>互斥锁</strong>，保证数据安全，也是凸显<strong>性能变差的第一幕</strong>。</p>
-<p>写入过程的整体流程是👇</p>
-<ol>
-<li>如果在 read 里能够找到待存储的 key，并且对应的 entry 的 p 值不为 expunged，也就是没被删除时，直接更新对应的 entry 即可。</li>
-<li>如果第一步没有成功，要么 read 中没有这个 key，要么 key 被标记为删除。则先加锁，再进行后续的操作。</li>
-<li>再次在 read 中查找是否存在这个 key，也就是 double check 双检查一下，这是 lock-free 编程的常见套路。如果 read 中存在该 key，但 <code>p == expunged</code>，说明 <code>m.dirty != nil</code>（<code>m.dirty</code> 是被初始化过的）并且 <code>m.dirty</code> 中不存在该 key 值（因为已经被删除了，dirty 中的删除直接就删除了；read 中的删除，会先标记为 nil，<code>read=&gt;dirty</code> 重塑时再标记为 <code>expunged</code>），此时👇
-<ol>
-<li>将 p 的状态由 <code>expunged</code> 更改为 <code>nil</code></li>
-<li>dirty map 插入 key。然后，直接更新对应的 value</li>
-</ol>
-</li>
-<li>如果 read 中没有此 key，那就查看 dirty 中是否有此 key，如果有，则直接更新对应的 value，这时 read 中还是没有此 key。</li>
-<li>最后一步，如果 read 和 dirty 中都不存在该 key，则👇
-<ol>
-<li>如果 <code>dirty</code> 为空，则需要创建 <code>dirty</code>，并从 <code>read</code> 中拷贝未被删除的元素</li>
-<li>更新 <code>amended</code> 字段为 true，标识 dirty map 中存在 read map 中没有的 <code>key</code></li>
-<li>将 <code>k-v</code> 写入 dirty map 中，<code>read.m</code> 不变。最后，更新此 key 对应的 <code>value</code>。</li>
-</ol>
-</li>
-</ol>
-<p><strong>为什么 read 中存在 key，但是 <code>p == expunged</code> 时需要把 p 的状态由 <code>expunged</code> 更改为 <code>nil</code></strong> ❓</p>
-<p>expunged 的意义是在删除操作后，键的对应值被标记为 expunged，而不是简单地设置为 nil。这样做的好处是，nil 值可能是键本身的有效值，因此无法区分键已被删除和键对应的值为 nil 两种情况。通过使用 expunged 标记，sync.Map 可以清楚地区分键被删除和键对应的值为 nil。</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">if e.unexpungeLocked() {
-</span></span><span class="line"><span class="cl">      // The entry was previously expunged, which implies that there is a
-</span></span><span class="line"><span class="cl">      // non-nil dirty map and this entry is not in it.
-</span></span><span class="line"><span class="cl">      m.dirty[key] = e
-</span></span><span class="line"><span class="cl">  }
-</span></span><span class="line"><span class="cl">  e.storeLocked(&amp;value)
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">// storeLocked unconditionally stores a value to the entry.
-</span></span><span class="line"><span class="cl">//
-</span></span><span class="line"><span class="cl">// The entry must be known not to be expunged.
-</span></span><span class="line"><span class="cl">func (e *entry) storeLocked(i *interface{}) {
-</span></span><span class="line"><span class="cl">	atomic.StorePointer(&amp;e.p, unsafe.Pointer(i))
-</span></span><span class="line"><span class="cl">}
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>Store 可能会在某种情况下（初始化或者 <code>m.dirty</code> 刚被提升后，此时 <code>m.read</code> 中的数据和 <code>m.dirty</code> 中的相等，readOnly 中的 <code>amended</code> 为 <code>false</code>，也就是说可能存在一个 key，read 中找不到 dirty 中也找不到）从 <code>m.read</code> 中复制数据，如果这个时候 <code>m.read</code> 中数据量非常大，可能会影响性能。</p>
-<p>综上，sync.Map 类型<strong>不适合写多的场景</strong>，读多写少是比较好的。若有大数据量的场景，则需要考虑 read 复制数据时的偶然性能抖动是否能够接受。</p>
-<h2 id="load查找过程" class="headerLink">
-    <a href="#load%e6%9f%a5%e6%89%be%e8%bf%87%e7%a8%8b" class="header-mark"></a>Load查找过程</h2><p>sync.Map 类型本质上是有两个 map。一个叫 read、一个叫 dirty，长的也差不多👇</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221204/301dd5df668c43c08845983b106b0fc4.png" title="sync.map" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221204/301dd5df668c43c08845983b106b0fc4.png" data-sub-html="<h2>sync.map</h2><p>sync.map</p>">
-        
-    </a><figcaption class="image-caption">sync.map</figcaption>
-    </figure></p>
-<p>当从 sync.Map 类型中读取数据时，其会先查看 read 中是否包含所需的元素：</p>
-<ul>
-<li>若有，则通过 atomic 原子操作读取数据并返回。</li>
-<li>若无，则会判断 read.readOnly 中的 amended 属性，他会告诉程序，dirty 是否包含 <code>read.readOnly.m</code> 中没有的数据；如果存在，也就是 amended 为 true，将会进 一步到 dirty 中查找数据。</li>
-</ul>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func (m *Map) Load(key interface{}) (value interface{}, ok bool) {
-</span></span><span class="line"><span class="cl">	// 1.首先从 m.read 中得到只读 readOnly,从它的 map 中查找，不需要加锁
-</span></span><span class="line"><span class="cl">	read, _ := m.read.Load().(readOnly)
-</span></span><span class="line"><span class="cl">	e, ok := read.m[key]
-</span></span><span class="line"><span class="cl">	// 2. 如果没找到，并且 m.dirty 中有新数据，需要从 m.dirty 查找，这个时候需要加锁
-</span></span><span class="line"><span class="cl">	if !ok &amp;&amp; read.amended {
-</span></span><span class="line"><span class="cl">		m.mu.Lock()
-</span></span><span class="line"><span class="cl">		// 双检查，避免加锁的时候 m.dirty 提升为 m.read,这个时候 m.read 可能被替换了。
-</span></span><span class="line"><span class="cl">		read, _ = m.read.Load().(readOnly)
-</span></span><span class="line"><span class="cl">		e, ok = read.m[key]
-</span></span><span class="line"><span class="cl">		// 如果m.read中还是不存在，并且m.dirty中有新数据
-</span></span><span class="line"><span class="cl">		if !ok &amp;&amp; read.amended {
-</span></span><span class="line"><span class="cl">			// 从m.dirty查找
-</span></span><span class="line"><span class="cl">			e, ok = m.dirty[key]
-</span></span><span class="line"><span class="cl">			// 不管 m.dirty 中存不存在，都将 misses 计数加一
-</span></span><span class="line"><span class="cl">			// missLocked()中满足条件后就会提升 m.dirty
-</span></span><span class="line"><span class="cl">			m.missLocked()
-</span></span><span class="line"><span class="cl">		}
-</span></span><span class="line"><span class="cl">		m.mu.Unlock()
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">	if !ok {
-</span></span><span class="line"><span class="cl">		return nil, false
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">	return e.load()
-</span></span><span class="line"><span class="cl">}
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>处理路径分为 fast path 和 slow path，整体流程如下：</p>
-<ol>
-<li>首先是 fast path，直接在 read 中找，如果找到了直接调用 entry 的 load 方法，取出其中的值。</li>
-<li>如果 read 中没有这个 key，且 amended 为 false，说明 dirty 为空，那直接返回空和 false。</li>
-<li>如果 read 中没有这个 key，且 amended 为 true，说明 dirty 中可能存在我们要找的 key。要先上锁，再尝试去 dirty 中查找。在这之前，仍然有一个 double check 的操作。若还是没有在 read 中找到，那么就从 dirty 中找。不管 dirty 中有没有找到，都要 “记一笔”，因为在 dirty 被提升为 read 之前，都会进入这条路径</li>
-</ol>
-<p>那么 <code>m.dirty</code> 是如何被提升的❓ <code>missLocked</code> 方法中可能会将 <code>m.dirty</code> 提升。</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span><span class="lnt">8
-</span><span class="lnt">9
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func (m *Map) missLocked() {
-</span></span><span class="line"><span class="cl">	m.misses++
-</span></span><span class="line"><span class="cl">	if m.misses &lt; len(m.dirty) {
-</span></span><span class="line"><span class="cl">		return
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">	m.read.Store(readOnly{m: m.dirty})
-</span></span><span class="line"><span class="cl">	m.dirty = nil
-</span></span><span class="line"><span class="cl">	m.misses = 0
-</span></span><span class="line"><span class="cl">}
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>直接将 misses 的值加 1，表示一次未命中，如果 misses 值小于 <code>m.dirty</code> 的长度，就直接返回。否则，将 <code>m.dirty</code> 晋升为 read，并清空 dirty，清空 misses 计数值，并且 <code>m.read.amended</code> 为 <code>false</code>。这样，之前一段时间新加入的 key 都会进入到 read 中，从而能够提升 read 的命中率。</p>
-<p>再来看下 entry 的 load 方法：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func (e *entry) load() (value interface{}, ok bool) {
-</span></span><span class="line"><span class="cl">	p := atomic.LoadPointer(&amp;e.p)
-</span></span><span class="line"><span class="cl">	if p == nil || p == expunged {
-</span></span><span class="line"><span class="cl">		return nil, false
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">	return *(*interface{})(p), true
-</span></span><span class="line"><span class="cl">}
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>对于 nil 和 expunged 状态的 entry，直接返回 <code>ok=false</code>；否则，将 p 转成 <code>interface{}</code> 返回。</p>
-<p>sync.Map 的读操作性能如此之高的原因，就在于存在 read 这一巧妙的设计，其作为一个缓存层，提供了<strong><ruby>快路径<rt>fast path</rt></ruby></strong>的查找。</p>
-<h2 id="delete删除过程" class="headerLink">
-    <a href="#delete%e5%88%a0%e9%99%a4%e8%bf%87%e7%a8%8b" class="header-mark"></a>Delete删除过程</h2><p>写入过程，理论上和删除不会差太远。怎么 sync.Map 类型的删除的性能似乎还行，那这里面到底是如何实现的呢❓</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func (m *Map) Delete(key interface{}) {
-</span></span><span class="line"><span class="cl">	read, _ := m.read.Load().(readOnly)
-</span></span><span class="line"><span class="cl">	e, ok := read.m[key]
-</span></span><span class="line"><span class="cl">	// 如果 read 中没有这个 key，且 dirty map 不为空
-</span></span><span class="line"><span class="cl">	if !ok &amp;&amp; read.amended {
-</span></span><span class="line"><span class="cl">		m.mu.Lock()
-</span></span><span class="line"><span class="cl">		read, _ = m.read.Load().(readOnly)
-</span></span><span class="line"><span class="cl">		e, ok = read.m[key]
-</span></span><span class="line"><span class="cl">		if !ok &amp;&amp; read.amended {
-</span></span><span class="line"><span class="cl">			delete(m.dirty, key) // 直接从 dirty 中删除这个 key
-</span></span><span class="line"><span class="cl">		}
-</span></span><span class="line"><span class="cl">		m.mu.Unlock()
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">	if ok {
-</span></span><span class="line"><span class="cl">		e.delete() // 如果在 read 中找到了这个 key，将 p 置为 nil
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">}
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>第一种情况：可以看到，先从 read 里查是否有这个 key，如果有则执行 <code>e.delete</code> 方法，将 p 置为 nil，这样 read 和 dirty 都能看到这个变化，因为它们指向的是同一块内存地址。</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221205/3c105d85e5c24fecb51e45bc3a184cfe.png" title="数据结构" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221205/3c105d85e5c24fecb51e45bc3a184cfe.png" data-sub-html="<h2>数据结构</h2><p>数据结构</p>">
-        
-    </a><figcaption class="image-caption">数据结构</figcaption>
-    </figure></p>
-<p>以下是<code>entry.delete</code>方法：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func (e *entry) delete() (hadValue bool) {
-</span></span><span class="line"><span class="cl">	for {
-</span></span><span class="line"><span class="cl">		p := atomic.LoadPointer(&amp;e.p)
-</span></span><span class="line"><span class="cl">		if p == nil || p == expunged {
-</span></span><span class="line"><span class="cl">			return false
-</span></span><span class="line"><span class="cl">		}
-</span></span><span class="line"><span class="cl">		if atomic.CompareAndSwapPointer(&amp;e.p, p, nil) {
-</span></span><span class="line"><span class="cl">			return true
-</span></span><span class="line"><span class="cl">		}
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">}
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>它真正做的事情是将正常状态（指向一个 interface{}）的 p 设置成 nil。没有设置成 expunged 的原因是，当 p 为 expunged 时，表示它已经不在 dirty 中了，这是 p 的状态决定的，在 <code>tryExpungeLocked</code> 函数中，会将 nil 原子地设置成 expunged。</p>
-<p><code>tryExpungeLocked</code> 是在新创建 dirty 时调用的，会将已被删除的 <code>entry.p</code> 从 nil 改成 expunged，这个 entry 就不会写入 dirty 了。</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func (e *entry) tryExpungeLocked() (isExpunged bool) {
-</span></span><span class="line"><span class="cl">	p := atomic.LoadPointer(&amp;e.p)
-</span></span><span class="line"><span class="cl">	for p == nil {
-</span></span><span class="line"><span class="cl">		// 如果原来是 nil，说明原 key 已被删除，则将其转为 expunged。
-</span></span><span class="line"><span class="cl">		if atomic.CompareAndSwapPointer(&amp;e.p, nil, expunged) {
-</span></span><span class="line"><span class="cl">			return true
-</span></span><span class="line"><span class="cl">		}
-</span></span><span class="line"><span class="cl">		p = atomic.LoadPointer(&amp;e.p)
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">	return p == expunged
-</span></span><span class="line"><span class="cl">}
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>第二种情况：如果没在 read 中找到这个 key，并且 dirty 不为空，那么就要操作 dirty 了，操作之前，还是要先上锁。然后进行 double check，如果仍然没有在 read 里找到此 key，则从 dirty 中删掉这个 key。</p>
-<p>注意到如果 key 同时存在于 read 和 dirty 中时，删除只是做了一个标记，将 p 置为 nil；而如果仅在 dirty 中含有这个 key 时，会直接删除这个 key。原因在于，若两者都存在这个 key，仅做标记删除，可以在下次查找这个 key 时，命中 read，提升效率。若只有在 dirty 中存在时，read 起不到 “缓存” 的作用，直接删除。</p>
-<h2 id="dirty和read互转分别在什么样的时机下进行" class="headerLink">
-    <a href="#dirty%e5%92%8cread%e4%ba%92%e8%bd%ac%e5%88%86%e5%88%ab%e5%9c%a8%e4%bb%80%e4%b9%88%e6%a0%b7%e7%9a%84%e6%97%b6%e6%9c%ba%e4%b8%8b%e8%bf%9b%e8%a1%8c" class="header-mark"></a>dirty和read互转，分别在什么样的时机下进行</h2><ul>
-<li><code>dirty=&gt;read</code>：随着 load 的 miss 不断自增，达到阈值（<code>m.misses &gt;= len(m.dirty)</code>）后触发升级转储。</li>
-<li><code>read=&gt;dirty</code>：当有 read 中不存在的新 key 需要增加，且 read 和 dirty 一致的时候，触发重塑，且 <code>read.amended</code> 设置为 true，然后再在 dirty 新增。重塑的过程，会将 nil 状态的 entry，全部挤压到 expunged 状态中，同时将非 expunged 的 entry 浅拷贝到 dirty 中，这样可以避免 read 的 key 无限的膨胀（存在大量逻辑删除的 key）。最终，在 dirty 再次升级为 read 的时候，这些逻辑删除的 key 就可以一次性丢弃释放（因为是直接覆盖上去）。</li>
-</ul>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">if !read.amended {
-</span></span><span class="line"><span class="cl">   // We&#39;re adding the first new key to the dirty map.
-</span></span><span class="line"><span class="cl">   // Make sure it is allocated and mark the read-only map as incomplete.
-</span></span><span class="line"><span class="cl">   m.dirtyLocked()
-</span></span><span class="line"><span class="cl">   m.read.Store(readOnly{m: read.m, amended: true})
-</span></span><span class="line"><span class="cl">}
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221025/e8837d7eda904db586f5e78b23a69ef2.png" title="read=&amp;gt;dirty" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221025/e8837d7eda904db586f5e78b23a69ef2.png" data-sub-html="<h2>read=&gt;dirty</h2><p>read=&amp;gt;dirty</p>">
-        
-    </a><figcaption class="image-caption">read=>dirty</figcaption>
-    </figure></p>
-<h2 id="read从何而来存在的意义是什么" class="headerLink">
-    <a href="#read%e4%bb%8e%e4%bd%95%e8%80%8c%e6%9d%a5%e5%ad%98%e5%9c%a8%e7%9a%84%e6%84%8f%e4%b9%89%e6%98%af%e4%bb%80%e4%b9%88" class="header-mark"></a>read从何而来，存在的意义是什么</h2><ul>
-<li>read 是由 dirty 升级而来，是利用了 <code>atomic.Store</code> 一次性覆盖，而不是一点点的 set 操作出来的。所以，read 更像是一个快照，read 中 key 的集合不能被改变（注意，这里说的 read 的 key 不可改变，不代表指定的 key 的 value 不可改变，value 是可以通过原子 <code>CAS</code> 来进行更改的），所以其中的键的集合有时候可能是不全的。</li>
-<li>脏字典中的键值对集合总是完全的，但是其中<strong>不会包含</strong> expunged 的键值对。</li>
-<li>read 的存在价值，在于加速读性能（通过原子操作避免了锁）。</li>
-</ul>
-<h2 id="dirty什么时候是nil" class="headerLink">
-    <a href="#dirty%e4%bb%80%e4%b9%88%e6%97%b6%e5%80%99%e6%98%afnil" class="header-mark"></a>dirty什么时候是nil</h2><p>dirty 数据提升为 read 时 <code>m.dirty</code> 会置为 nil。此时，<code>m.read</code> 和 <code>m.dirty</code> 相等，<code>m.amended</code> 为 false，也就是说，read 中找不到的数据，dirty 中同样找不到。</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">amended bool // true if the dirty map contains some key not in m.
-</span></span></code></pre></td></tr></table>
-</div>
-</div><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span><span class="lnt">8
-</span><span class="lnt">9
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func (m *Map) missLocked() {
-</span></span><span class="line"><span class="cl">	m.misses++
-</span></span><span class="line"><span class="cl">	if m.misses &lt; len(m.dirty) {
-</span></span><span class="line"><span class="cl">		return
-</span></span><span class="line"><span class="cl">	}
-</span></span><span class="line"><span class="cl">	m.read.Store(readOnly{m: m.dirty})
-</span></span><span class="line"><span class="cl">	m.dirty = nil
-</span></span><span class="line"><span class="cl">	m.misses = 0
-</span></span><span class="line"><span class="cl">}
-</span></span></code></pre></td></tr></table>
-</div>
-</div><h2 id="entry的p可能的状态有哪些" class="headerLink">
-    <a href="#entry%e7%9a%84p%e5%8f%af%e8%83%bd%e7%9a%84%e7%8a%b6%e6%80%81%e6%9c%89%e5%93%aa%e4%ba%9b" class="header-mark"></a>entry的p可能的状态有哪些</h2><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230714/9ab5f3ce270e4d39ac832e6bea79238b.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230714/9ab5f3ce270e4d39ac832e6bea79238b.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230714/9ab5f3ce270e4d39ac832e6bea79238b.png" data-sub-html="<h2>p 的状态</h2>">
-        
-    </a><figcaption class="image-caption">p 的状态</figcaption>
-    </figure></p>
-<ul>
-<li><code>e.p==nil</code>：entry 已经被标记删除，不过此时还未经过 <code>read=&gt;dirty</code> 重塑，此时可能仍然属于 dirty（如果 dirty 非 nil）。</li>
-<li><code>e.p==expunged</code>：entry 已经被标记删除，经过 <code>read=&gt;dirty</code> 重塑，不属于 dirty，仅仅属于 read，下一次 <code>dirty=&gt;read</code> 升级，会被彻底清理（因为升级的操作是直接覆盖，read 中的 expunged 会被自动释放回收）</li>
-<li><code>e.p==普通指针</code>：此时 entry 是一个普通的存在状态，属于 read，如果 dirty 非 nil，也属于 dirty。</li>
-</ul>
-<h2 id="删除时ep是设置成了nil还是expunged" class="headerLink">
-    <a href="#%e5%88%a0%e9%99%a4%e6%97%b6ep%e6%98%af%e8%ae%be%e7%bd%ae%e6%88%90%e4%ba%86nil%e8%bf%98%e6%98%afexpunged" class="header-mark"></a>删除时e.p是设置成了nil还是expunged</h2><ul>
-<li>如果 key 不在 read 中，但是在 dirty 中，则直接 delete。</li>
-<li>如果 key 在 read 中，则逻辑删除，<code>e.p</code> 赋值为 nil，后续在 <code>read=&gt;dirty</code> 重塑的时候，nil 会变成 expunged。</li>
-</ul>
-<h2 id="什么时候ep由nil变成expunged" class="headerLink">
-    <a href="#%e4%bb%80%e4%b9%88%e6%97%b6%e5%80%99ep%e7%94%b1nil%e5%8f%98%e6%88%90expunged" class="header-mark"></a>什么时候e.p由nil变成expunged</h2><ul>
-<li><code>read=&gt;dirty</code> 重塑的时候，此时 read 中仍然是 nil 的会变成 expunged，表示这部分 key 等待被最终丢弃（expunged 是最终态，等待被丢弃，除非又出现了重新 store 的情况）</li>
-<li>最终丢弃的时机就是 <code>dirty=&gt;read</code> 升级的时候，dirty 的直接粗暴覆盖，会使得 read 中的所有成员都被丢弃，包括 expunged。</li>
-</ul>
-<h2 id="既然nil也表示标记删除再设计出一个expunged的意义是什么" class="headerLink">
-    <a href="#%e6%97%a2%e7%84%b6nil%e4%b9%9f%e8%a1%a8%e7%a4%ba%e6%a0%87%e8%ae%b0%e5%88%a0%e9%99%a4%e5%86%8d%e8%ae%be%e8%ae%a1%e5%87%ba%e4%b8%80%e4%b8%aaexpunged%e7%9a%84%e6%84%8f%e4%b9%89%e6%98%af%e4%bb%80%e4%b9%88" class="header-mark"></a>既然nil也表示标记删除，再设计出一个expunged的意义是什么</h2><p>在 <code>sync.Map</code> 的实现中，<code>nil</code> 值用于表示键已被删除。但是，为了更有效地支持删除操作，并且避免 <code>nil</code> 值可能带来的歧义，<code>sync.Map</code> 引入了 <code>expunged</code>（删除标记）的概念。</p>
-<p><code>expunged</code> 的意义是在删除操作后，键的对应值被标记为 <code>expunged</code>，而不是简单地设置为 <code>nil</code>。这样做的好处是，<code>nil</code> 值可能是键本身的有效值，因此无法区分键已被删除和键对应的值为 <code>nil</code> 两种情况。通过使用 <code>expunged</code> 标记，<code>sync.Map</code> 可以清楚地区分键被删除和键对应的值为 <code>nil</code>。</p>
-<p>具体来说，当执行删除操作时，<code>sync.Map</code> 将键对应的值设置为一个特殊的占位符 <code>expunged</code>，表示该键已被删除。在后续的操作中，通过检查值是否等于 <code>expunged</code>，可以判断键是否存在。</p>
-<p>这种设计有以下好处：</p>
-<ol>
-<li>避免了 <code>nil</code> 值可能带来的歧义：<code>nil</code> 值可能是键的有效值，因此不能简单地依靠 <code>nil</code> 值来判断键是否存在或已被删除。</li>
-<li>提高了删除操作的效率：直接将值标记为 <code>expunged</code>，而不是删除键值对，可以避免重新分配内存或进行其他复杂的操作，从而提高了删除操作的效率。</li>
-<li>保持了并发安全性：通过将键的对应值设置为 <code>expunged</code>，<code>sync.Map</code> 在并发环境中仍然能够保持正确的状态和操作一致性。</li>
-</ol>
-<h2 id="参考" class="headerLink">
-    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
-<li><a href="https://cloud.tencent.com/developer/article/2022098" target="_blank" rel="noopener noreferrer">不得不知道的Golang之sync.Map解读！</a></li>
-<li><a href="https://mp.weixin.qq.com/s?__biz=MzUxMDI4MDc1NA==&amp;mid=2247489164&amp;idx=1&amp;sn=e56e5c9836cda40f3c95a39e2ba57dde" target="_blank" rel="noopener noreferrer">一口气搞懂 Go sync.map 所有知识点</a></li>
-<li><a href="https://colobu.com/2017/07/11/dive-into-sync-Map/" target="_blank" rel="noopener noreferrer">Go 1.9 sync.Map揭秘</a></li>
-<li><a href="https://qcrao.com/post/dive-into-go-sync-map/" target="_blank" rel="noopener noreferrer">深度解密 Go 语言之 sync.map</a></li>
-</ul>
-]]></description>
-</item><item>
     <title>高并发分布式架构演进</title>
     <link>https://www.xiaobinqt.cn/highly-concurrent-architecture-evolution/</link>
     <pubDate>Mon, 29 Aug 2022 00:00:00 &#43;0000</pubDate><author>
@@ -3693,5 +3018,319 @@
 <li><a href="https://blog.csdn.net/weixin_45775963/article/details/104440190" target="_blank" rel="noopener noreferrer">什么是正向代理和反向代理</a></li>
 <li><a href="https://www.jianshu.com/p/23b6775fbb91" target="_blank" rel="noopener noreferrer">如何理解反向代理服务器</a></li>
 </ul>]]></description>
+</item><item>
+    <title>Go GMP 调度模型</title>
+    <link>https://www.xiaobinqt.cn/gmp-model/</link>
+    <pubDate>Wed, 16 Mar 2022 00:00:00 &#43;0000</pubDate><author>
+        <name>xiaobinqt</name>
+    </author><guid>https://www.xiaobinqt.cn/gmp-model/</guid>
+    <description><![CDATA[<div class="featured-image">
+                <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221118/555f4905eb1c4615b9702ead116731d1.png" referrerpolicy="no-referrer">
+            </div><h2 id="进程线程协程的区别" class="headerLink">
+    <a href="#%e8%bf%9b%e7%a8%8b%e7%ba%bf%e7%a8%8b%e5%8d%8f%e7%a8%8b%e7%9a%84%e5%8c%ba%e5%88%ab" class="header-mark"></a>进程、线程、协程的区别</h2><p><strong>进程</strong>：进程是操作系统为应用程序分配资源的最小单元。每个进程有独立的内存空间和状态。</p>
+<p><strong>线程</strong>：线程是进程中的一个独立执行单元。在 Go 中，一个进程可以启动多个线程，以并行执行任务。</p>
+<p><strong>协程</strong>：协程是 Go 语言中的一种轻量级的并发技术。它是<strong>用户态的，不需要操作系统的支持</strong>，可以在单个线程中启动多个协程，并行执行任务。协程共享同一个线程的资源，但拥有自己的栈和寄存器。</p>
+<p>总的来说，进程和线程是操作系统级别的并发技术，用于在多核处理器上利用资源；而协程是 Go 语言提供的一种高效、轻量级的并发技术，用于实现程序内部的并发任务。</p>
+<h3 id="进程" class="headerLink">
+    <a href="#%e8%bf%9b%e7%a8%8b" class="header-mark"></a>进程</h3><p>进程是操作系统对一个正在运行的程序的一种抽象，<strong>进程是资源分配的最小单位</strong>，每一个进程都有一个自己的地址空间。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220405/c0032558db4249a0a8ce4d6473327d38.png" title="进程在操作系统中的抽象表现" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220405/c0032558db4249a0a8ce4d6473327d38.png" data-sub-html="<h2>进程在操作系统中的抽象表现</h2><p>进程在操作系统中的抽象表现</p>">
+        
+    </a><figcaption class="image-caption">进程在操作系统中的抽象表现</figcaption>
+    </figure></p>
+<p>通俗的说，<strong>进程就是一个正在执行的程序</strong>。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221118/19ae7497830b4301831fe13d24a30f5f.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="Windows任务管理器" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221118/19ae7497830b4301831fe13d24a30f5f.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>Windows任务管理器</h2><p>Windows任务管理器</p>">
+        
+    </a><figcaption class="image-caption">Windows任务管理器</figcaption>
+    </figure></p>
+<p>进程存在的意义是为了<strong>合理压榨 CPU 的性能和分配运行的时间片，让 CPU 不能 “闲着“</strong>。</p>
+<p>在计算机中，其计算核心是 CPU，负责所有计算相关的工作和资源。单个 CPU 一次只能运行一个任务。如果一个进程跑着，就把唯一一个 CPU 给完全占住，那是非常不合理的。</p>
+<p>如果总是在运行一个进程上的任务，就会出现一个现象，就是任务不一定总是在执行 “计算型” 的任务，会有很大可能是在执行网络调用阻塞了，那么 CPU 岂不就浪费了？</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220405/a406c795e40e4b7395a0228b299dd6bd.png" title="进程上下文切换" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220405/a406c795e40e4b7395a0228b299dd6bd.png" data-sub-html="<h2>进程上下文切换</h2><p>进程上下文切换</p>">
+        
+    </a><figcaption class="image-caption">进程上下文切换</figcaption>
+    </figure></p>
+<p>所以出现了多进程，多个 CPU，多个进程。多进程就是指计算机系统可以同时执行多个进程，从一个进程到另外一个进程的转换是由操作系统内核管理的，一般是同时运行多个软件。</p>
+<h3 id="线程" class="headerLink">
+    <a href="#%e7%ba%bf%e7%a8%8b" class="header-mark"></a>线程</h3><p>有了多进程，在操作系统上可以同时运行多个进程。那么为什么有了进程，还要线程呢？这是因为：</p>
+<ul>
+<li>进程间的信息难以共享数据，父子进程并未共享内存，需要通过进程间通信（IPC），在进程间进行信息交换，性能开销较大。</li>
+<li>创建进程（一般是调用 <code>fork</code> 方法）的性能开销较大。</li>
+</ul>
+<p>所以大家又把目光转向了进程内，能不能在进程里做点什么呢？</p>
+<figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220405/9462880ac1eb4cdeb5288716a15bac4d.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220405/9462880ac1eb4cdeb5288716a15bac4d.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220405/9462880ac1eb4cdeb5288716a15bac4d.png" data-sub-html="<h2>进程由多个线程组成</h2>">
+        
+    </a><figcaption class="image-caption">进程由多个线程组成</figcaption>
+    </figure>
+<p>一个进程可以由多个称为线程的执行单元组成。每个线程都运行在进程的上下文中，共享着同样的代码和全局数据。</p>
+<p>多个进程，就可以有更多的线程。<strong>多线程比多进程之间更容易共享数据，在上下文切换中线程一般比进程更高效</strong>。这是因为，</p>
+<ul>
+<li>线程之间能够非常方便、快速地共享数据。 只需将数据复制到进程中的共享区域就可以了，但需要注意避免多个线程修改同一份内存。</li>
+<li>创建线程比创建进程要快 10 倍甚至更多。 线程都是同一个进程下自家的孩子，像是内存页、页表等就不需要了。</li>
+</ul>
+<h3 id="协程" class="headerLink">
+    <a href="#%e5%8d%8f%e7%a8%8b" class="header-mark"></a>协程</h3><p>协程（Co-routine）是用户态的线程。通常创建协程时，会从进程的堆中分配一段内存作为协程的栈。</p>
+<p>线程的栈有 8MB，而协程栈的大小通常只有 KB 级别，而 Go 语言的协程更夸张，只有 2-4KB，非常的轻巧。</p>
+<p>协程有以下优势👋：</p>
+<ul>
+<li>
+<p>👉节省 CPU：避免系统内核级的线程频繁切换，造成的 CPU 资源浪费。而协程是用户态的线程，用户可以自行控制协程的创建于销毁，极大程度避免了系统级线程上下文切换造成的资源浪费。</p>
+</li>
+<li>
+<p>👉节约内存：在 64 位的 Linux 中，一个线程需要分配 8MB 栈内存和 64MB 堆内存，系统内存的制约导致我们无法开启更多线程实现高并发。而在协程编程模式下，可以轻松有十几万协程，这是线程无法比拟的。</p>
+</li>
+<li>
+<p>👉稳定性：线程之间通过内存来共享数据，这也导致了一个问题，任何一个线程出错时，进程中的所有线程都会跟着一起崩溃。</p>
+</li>
+<li>
+<p>👉开发效率：使用协程在开发程序之中，可以很方便的将一些耗时的 IO 操作异步化，例如写文件、耗时 IO 请求等。</p>
+</li>
+</ul>
+<h2 id="goroutine-是什么" class="headerLink">
+    <a href="#goroutine-%e6%98%af%e4%bb%80%e4%b9%88" class="header-mark"></a>goroutine 是什么</h2><p>Goroutine 是一个由 Go 运行时管理的轻量级线程，我们称为 “协程”。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">go f(x, y, z)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>操作系统本身是无法明确感知到 Goroutine 的存在的，Goroutine 的操作和切换归属于 “用户态” 中。</p>
+<p>Goroutine 由特定的调度模式来控制，以 “多路复用” 的形式运行在操作系统为 Go 程序分配的几个系统线程上。</p>
+<p>同时创建 Goroutine 的开销很小，初始只需要 2-4k 的栈空间。Goroutine 本身会根据实际使用情况进行自伸缩，非常轻量。</p>
+<div class="details admonition info open">
+        <div class="details-summary admonition-title">
+            <i class="icon fas fa-info-circle fa-fw"></i>Tips<i class="details-icon fas fa-angle-right fa-fw"></i>
+        </div>
+        <div class="details-content">
+            <div class="admonition-content"><p>Go 程序中没有语言级的关键字让你去创建一个内核线程，你只能创建 goroutine，内核线程只能由 runtime 根据实际情况去创建。</p>
+<p>Go 运行时系统并没有内核调度器的中断能力，内核调度器会发起抢占式调度将长期运行的线程中断并让出 CPU 资源，让其他线程获得执行机会。</p>
+</div>
+        </div>
+    </div>
+<h2 id="调度器的由来" class="headerLink">
+    <a href="#%e8%b0%83%e5%ba%a6%e5%99%a8%e7%9a%84%e7%94%b1%e6%9d%a5" class="header-mark"></a>调度器的由来</h2><p>在多进程/多线程的操作系统中，解决了早期的单进程操作系统进程阻塞的问题，因为一个进程阻塞 CPU 可以立刻切换到其他进程中去执行，而且调度 CPU 的算法可以保证在运行的进程都可以被分配到 CPU 的运行时间片，这样从宏观来看，似乎多个进程是在同时被运行。</p>
+<p>但新的问题就出现了，进程拥有太多的资源，进程的创建、切换、销毁，都会占用很长的时间。CPU 虽然利用起来了，但如果进程过多，CPU 有很大的一部分都被用来进行进程调度。为了能提高 CPU 的利用率，这里就需要用到调度。</p>
+<p>CPU 调度切换的是进程和线程，CPU 对进程和线程的态度是一样的，虽然线程看起来很好，但实际上多线程开发设计会变得很复杂，要考虑很多同步竞争的问题，比如锁、竞争冲突等。</p>
+<p>一个线程其实分为 “内核态“ 线程和 “用户态” 线程。一个 “用户态线程” 必须要绑定一个 “内核态线程”，但是 CPU 并不知道有 “用户态线程” 的存在，CPU 只知道它运行的是一个 “内核态线程”。这里我们可以把内核线程依然叫<strong>线程</strong>，用户线程叫<strong>协程</strong>。既然一个协程可以绑定一个线程，那么能不能多个协程绑定在一个或者多个线程上呢！</p>
+<h2 id="协程和线程的映射" class="headerLink">
+    <a href="#%e5%8d%8f%e7%a8%8b%e5%92%8c%e7%ba%bf%e7%a8%8b%e7%9a%84%e6%98%a0%e5%b0%84" class="header-mark"></a>协程和线程的映射</h2><h3 id="n1-关系" class="headerLink">
+    <a href="#n1-%e5%85%b3%e7%b3%bb" class="header-mark"></a>N:1 关系</h3><p>N 个协程绑定 1 个线程。</p>
+<figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/32ca2352460442e1b75aed52373558a0.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/32ca2352460442e1b75aed52373558a0.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/32ca2352460442e1b75aed52373558a0.png" data-sub-html="<h2>N:1</h2>">
+        
+    </a><figcaption class="image-caption">N:1</figcaption>
+    </figure>
+<p><strong>优点</strong>：</p>
+<p>协程在用户态线程即完成切换，不会陷入到内核态，这种切换非常的轻量快速。但也有很大的缺点，1 个进程的所有协程都绑定在 1 个线程上。</p>
+<p><strong>缺点</strong>：</p>
+<ul>
+<li>某个程序用不了硬件的多核加速能力</li>
+<li>一旦某协程阻塞，造成线程阻塞，本进程的其他协程都无法执行了，根本就没有并发的能力了。</li>
+</ul>
+<h3 id="11-关系" class="headerLink">
+    <a href="#11-%e5%85%b3%e7%b3%bb" class="header-mark"></a>1:1 关系</h3><p>1 个协程绑定 1 个线程，协程的调度都由 CPU 完成了，不存在<code>N:1</code>的缺点，但是协程的创建、删除和切换的代价都由 CPU 完成，略显昂贵。</p>
+<figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/48726c7c54854150a7088dba1bc78860.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/48726c7c54854150a7088dba1bc78860.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/48726c7c54854150a7088dba1bc78860.png" data-sub-html="<h2>1:1</h2>">
+        
+    </a><figcaption class="image-caption">1:1</figcaption>
+    </figure>
+<h3 id="mn-关系" class="headerLink">
+    <a href="#mn-%e5%85%b3%e7%b3%bb" class="header-mark"></a>M:N 关系</h3><p>M 个协程绑定 N 个线程，是<code>N:1</code>和<code>1:1</code>类型的结合，克服了以上 2 种模型的缺点，但实现复杂。</p>
+<figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/042a666564f44407a0efe47b5ffeaa7d.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/042a666564f44407a0efe47b5ffeaa7d.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/042a666564f44407a0efe47b5ffeaa7d.png" data-sub-html="<h2>M:N</h2>">
+        
+    </a><figcaption class="image-caption">M:N</figcaption>
+    </figure>
+<h2 id="go-的调度" class="headerLink">
+    <a href="#go-%e7%9a%84%e8%b0%83%e5%ba%a6" class="header-mark"></a>Go 的调度</h2><p><strong>用户态的 Goroutine，操作系统看不到它</strong>
+，必然需要有某个东西去管理他，才能更好的运作起来。这就是 Go 语言中的调度，也就是 GMP 模型。</p>
+<p>Go scheduler<code> /ˈskedʒuːlər/</code> 的主要功能是针对在处理器上运行的 OS 线程分发可运行的 Goroutine，而我们一提到调度器，就离不开三个经常被提到的缩写，他们分别是：</p>
+<ul>
+<li>
+<p>G：Goroutine，实际上我们每次调用<code>go func</code>就是生成了一个 G。</p>
+</li>
+<li>
+<p>P：Processor，处理器，一般 P 的数量就是处理器的核数，可以通过<code>runtime.GOMAXPROCS(n)</code>进行修改。P 包含了运行 goroutine 的资源，如果线程 M 想运行 goroutine，必须先获取 P ，一个 M 在与一个 P 关联之后形成了一个有效的 G 运行环境「内核线程 + 上下文环境」。P 中还包含了可运行的本地 G 队列，本地 G 队列不超过 256 个 G，优先会将新创建的 G 放到某个 P 的本地队列中，如果本地队列满了会放到全局队列中。</p>
+</li>
+<li>
+<p>M：Machine，系统/内核线程，是运行 goroutine 的实体，每个 M 都代表了 1 个内核线程。<strong>M 可以运行 2 种代码，当 M 运行 go 代码一定需要一个P，当 M 运行原生代码, 例如阻塞的<code>syscall</code>, 此时 M 不需要 P</strong>。</p>
+</li>
+</ul>
+<p>M 与 P 的数量没有绝对关系，一个 M 阻塞，P 就会去创建或者切换另一个 M，所以，<strong>即使 P 的默认数量是 1，也有可能会创建很多个 M 出来</strong>。</p>
+<p>这三者交互实际来源于 Go 的<code>M:N</code>调度模型，也就是 <strong>M 必须与 P 进行绑定</strong>，然后不断地在 M 上循环寻找可运行的 G 来执行相应的任务。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221119/849f150e61d6472ea2099f1097c581fa.png" title="GMP调度" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221119/849f150e61d6472ea2099f1097c581fa.png" data-sub-html="<h2>GMP调度</h2><p>GMP调度</p>">
+        
+    </a><figcaption class="image-caption">GMP调度</figcaption>
+    </figure></p>
+<h3 id="p和m何时被创建" class="headerLink">
+    <a href="#p%e5%92%8cm%e4%bd%95%e6%97%b6%e8%a2%ab%e5%88%9b%e5%bb%ba" class="header-mark"></a>P和M何时被创建</h3><p><strong>P 何时创建</strong>：在确定了 P 的最大数量 n 后，运行时系统会根据这个数量创建 n 个 P。</p>
+<p><strong>M 何时创建</strong>
+：没有足够的 M 来关联 P 并运行其中的可运行的 G。比如所有的 M 此时都阻塞住了，而 P 中还有很多就绪任务，就会去寻找空闲的 M，而没有空闲的，runtime 运行时就会去创建新的 M。当 M 有空闲就会被回收或是睡眠。</p>
+<h2 id="调度流程" class="headerLink">
+    <a href="#%e8%b0%83%e5%ba%a6%e6%b5%81%e7%a8%8b" class="header-mark"></a>调度流程</h2><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221119/945c94520e1b40c5adb516f58a0c2f30.png" title="调度流程" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221119/945c94520e1b40c5adb516f58a0c2f30.png" data-sub-html="<h2>调度流程</h2><p>调度流程</p>">
+        
+    </a><figcaption class="image-caption">调度流程</figcaption>
+    </figure></p>
+<ol>
+<li>
+<p>当我们执行 <code>go func()</code> 时，实际上就是创建一个全新的 Goroutine，我们称它为 G。</p>
+</li>
+<li>
+<p>新创建的 G 会被放入 P 的本地队列（Local Queue）或全局队列（Global Queue）中，准备下一步的动作。需要注意的一点，这里的 P 指的是创建 G 的 P，如果 P 的本地队列已经满了就会保存在全局的队列中。</p>
+</li>
+<li>
+<p>唤醒或创建 M 以便执行 G。G 只能运行在 M 中，一个 M 必须持有一个 P，M 与 P 是<code>1:1</code>的关系。M 会从 P 的本地队列弹出一个可执行状态的 G 来执行，如果 P 的本地队列为空，就会想其他的<code>MP</code>组合偷取一个可执行的 G 来执行。</p>
+</li>
+<li>
+<p>一个 M 调度 G 执行的过程是一个循环机制。</p>
+</li>
+<li>
+<p>当 M 执行某一个 G 的时候如果发生了<code>syscall</code>或者其余的阻塞操作，M 会阻塞，如果当前有一些 G 在执行，runtime 会把这个线程 M 从 P 中摘除（detach），然后再创建一个新的操作系统的线程（如果有空闲的线程可用就复用空闲线程）来服务于这个 P。</p>
+</li>
+<li>
+<p>当 M 系统调用结束时候，这个 G 会尝试获取一个空闲的 P 执行，并放入到这个 P 的本地队列。如果获取不到 P，那么这个线程 M 变成休眠状态，加入到空闲线程中，然后这个 G 会被放入全局队列中。</p>
+</li>
+</ol>
+<p>在描述中有提到全局和本地这两类队列，其实在功能上来讲都是用于存放正在等待运行的 G，但是不同点在于，<strong>本地队列有数量限制，不允许超过 256 个</strong>。</p>
+<p>并且在新建 G 时，会优先选择 P 的本地队列，如果本地队列满了，则将 P 的本地队列的一半的 G 移动到全局队列。 可以理解为调度资源的共享和再平衡。</p>
+<h2 id="m0和g0" class="headerLink">
+    <a href="#m0%e5%92%8cg0" class="header-mark"></a>M0和G0</h2><p><code>M0</code>是启动程序后编号为 0 的主线程，这个 M 对应的实例会在全局变量<code>runtime.m0</code>中，<code>M0</code>负责执行初始化操作和启动第一个 G， 在之后<code>M0</code>就和其他的 M 一样。</p>
+<p><code>G0</code>是每次启动一个 M 都会第一个创建的 gourtine，<code>G0</code>仅用于负责调度 G，<code>G0</code>不指向任何可执行的函数, 每个 M 都会有一个自己的<code>G0</code>。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Hello world&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>☝️上面代码会经历如下过程：</p>
+<ol>
+<li>runtime 创建最初的线程 m0 和 goroutine g0，并把 2 者关联。</li>
+<li>调度器初始化：初始化 m0、栈、垃圾回收，以及创建和初始化由<code>GOMAXPROCS</code>个 P 构成的 P 列表。</li>
+<li>示例代码中的 main 函数是<code>main.main</code>，runtime 中也有 1 个 main 函数<code>runtime.main</code>，代码经过编译后，<code>runtime.main</code>会调用<code>main.main</code>，程序启动时会为<code>runtime.main</code>创建 goroutine，可以称它为 main goroutine，然后把 main goroutine 加入到 P 的本地队列。</li>
+<li>启动 m0，m0 已经绑定了 P，会从 P 的本地队列获取 G，获取到 main goroutine。</li>
+<li>M 根据 G 中的栈信息和调度信息设置运行环境，M 运行 G。</li>
+<li>G 退出，再次回到 M 获取可运行的 G，这样重复下去，直到<code>main.main</code>退出，<code>runtime.main</code>执行 Defer 和 Panic 处理，或调用<code>runtime.exit</code>退出程序。</li>
+</ol>
+<p>调度器的生命周期几乎占满了一个 Go 程序的一生，<code>runtime.main</code>的 goroutine 执行之前都是为调度器做准备工作，<code>runtime.main</code>的 goroutine 运行，才是调度器的真正开始，直到<code>runtime.main</code>结束而结束。</p>
+<h2 id="窃取行为" class="headerLink">
+    <a href="#%e7%aa%83%e5%8f%96%e8%a1%8c%e4%b8%ba" class="header-mark"></a>窃取行为</h2><p>当创建新的 G 或者 G 变成可运行状态时，它会被推送加入到当前 P 的本地队列中。当 P 执行 G 完毕后，P 会将 G 从本地队列中弹出，同时会检查当前本地队列是否为空，如果为空不会立刻销毁线程，而是会随机的从其他 P 的本地队列中尝试
+<strong>窃取一半</strong>可运行的 G 到自己的名下。</p>
+<figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220405/a378474165e94b908f8fc7b44812cc4c.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220405/a378474165e94b908f8fc7b44812cc4c.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220405/a378474165e94b908f8fc7b44812cc4c.png" data-sub-html="<h2>窃取行为</h2>">
+        
+    </a><figcaption class="image-caption">窃取行为</figcaption>
+    </figure>
+<p>上图中👆，P2 在本地队列中找不到可以运行的 G，它会执行 <code>work-stealing</code> 调度算法，随机选择其它的处理器 P1，并从 P1 的本地队列中窃取了三个 G 到它自己的本地队列中去。至此，P1、P2 都拥有了可运行的 G，P1 多余的 G 也不会被浪费，调度资源将会更加平均的在多个处理器中流转。</p>
+<h2 id="限制条件" class="headerLink">
+    <a href="#%e9%99%90%e5%88%b6%e6%9d%a1%e4%bb%b6" class="header-mark"></a>限制条件</h2><h3 id="m-的限制" class="headerLink">
+    <a href="#m-%e7%9a%84%e9%99%90%e5%88%b6" class="header-mark"></a>M 的限制</h3><p>在协程的执行中，真正干活的是 GPM 中的 M（系统线程） ，因为 G 是用户态上的东西，最终执行都是得映射，对应到 M 这一个系统线程上去运行。</p>
+<p>那么 M 有没有限制呢？</p>
+<p>答案是：有的。在 Go 语言中，<strong>M 的默认数量限制是 10000</strong>，如果超出则会报错：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">GO: runtime: program exceeds 10000-thread limit
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>但是通常只有在 Goroutine 出现阻塞操作的情况下，才会遇到这种情况。这可能也预示着你的程序有问题。</p>
+<p>若确切是需要那么多，还可以通过 <code>debug.SetMaxThreads</code> 方法进行设置。</p>
+<h3 id="g-的限制" class="headerLink">
+    <a href="#g-%e7%9a%84%e9%99%90%e5%88%b6" class="header-mark"></a>G 的限制</h3><p>Goroutine 的创建数量是否有限制？</p>
+<p>答案是：没有。但理论上会受内存的影响，假设一个 Goroutine 创建需要 4k 的<strong>连续的内存块</strong>：</p>
+<p>4k * 80,000 = 320,000k ≈ 0.3G内存</p>
+<p>4k * 1,000,000 = 4,000,000k ≈ 4G内存</p>
+<p>以此就可以相对计算出来一台单机在通俗情况下，所能够创建 Goroutine 的大概数量级别。</p>
+<h3 id="p-的限制" class="headerLink">
+    <a href="#p-%e7%9a%84%e9%99%90%e5%88%b6" class="header-mark"></a>P 的限制</h3><p>P 的数量是否有限制，受什么影响？</p>
+<p>答案是：有限制。<strong>P 的数量受环境变量 <code>GOMAXPROCS</code> 的直接影响</strong>。</p>
+<p>环境变量 <code>GOMAXPROCS</code> 又是什么？在 Go 语言中，通过设置 <code>GOMAXPROCS</code>，用户可以调整调度中 P（Processor）的数量。</p>
+<p>另一个重点在于，与 P 相关联的的 M（系统线程），是需要绑定 P 才能进行具体的任务执行的，因此<strong>P 的多少会影响到 Go 程序的运行表现</strong>。</p>
+<p>P 的数量基本是受本机的核数影响，没必要太过度纠结他。</p>
+<p>那 P 的数量是否会影响 Goroutine 的数量创建呢？</p>
+<p>答案是：不影响。且 Goroutine 多了少了，P 也该干嘛干嘛，不会带来灾难性问题。</p>
+<h3 id="小结" class="headerLink">
+    <a href="#%e5%b0%8f%e7%bb%93" class="header-mark"></a>小结</h3><ul>
+<li>M：有限制，默认数量限制是 10000，可调整。</li>
+<li>G：没限制，但受内存影响。</li>
+<li>P：受本机的核数影响，可大可小，不影响 G 的数量创建。</li>
+</ul>
+<p>所以<strong>Goroutine 数量怎么预算，才叫合理？</strong></p>
+<p>在真实的应用场景中，如果你 Goroutine：</p>
+<ul>
+<li>在频繁请求 HTTP，MySQL，打开文件等，那假设短时间内有几十万个协程在跑，那肯定就不大合理了（可能会导致 too many files open）。</li>
+<li>常见的 Goroutine 泄露所导致的 CPU、Memory 上涨等，还是得看你的 Goroutine 里具体在跑什么东西。</li>
+</ul>
+<p>跑的如果是 “资源怪兽”，只运行几个 Goroutine 都可以跑死。</p>
+<h2 id="为什么要有-p" class="headerLink">
+    <a href="#%e4%b8%ba%e4%bb%80%e4%b9%88%e8%a6%81%e6%9c%89-p" class="header-mark"></a>为什么要有 P</h2><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/bdcbfb4a788d477b991c0179a7180c3c.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/bdcbfb4a788d477b991c0179a7180c3c.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/bdcbfb4a788d477b991c0179a7180c3c.png" data-sub-html="<h2>早期调度器</h2>">
+        
+    </a><figcaption class="image-caption">早期调度器</figcaption>
+    </figure>
+<p>Go 早期的调度器是没有 P 的，只有 M 和 G。M 想要执行和放回 G 都必须访问全局 G 队列，并且 M 有多个，多线程访问同一资源需要加锁进行保证互斥/同步，所以全局 G 队列是有互斥锁进行保护的。</p>
+<p>所以早期的调度器存在这样几个缺点：</p>
+<ul>
+<li>创建、销毁、调度 G 都需要每个 M 获取锁，这就形成了激烈的<strong>锁竞争</strong>。</li>
+<li>M 转移 G 会造成延迟和额外的系统负载。比如当 G 中包含创建新协程的时候，M 创建了<code>G'</code>，为了继续执行 G，需要把<code>G'</code>交给<code>M'</code>执行，也造成了很差的局部性，因为<code>G'</code>和 G 是相关的，最好放在 M 上执行，而不是其他<code>M'</code>。</li>
+<li>系统调用（CPU 在 M 之间的切换）导致频繁的线程阻塞和取消阻塞操作增加了系统开销。</li>
+</ul>
+<h2 id="faq" class="headerLink">
+    <a href="#faq" class="header-mark"></a>FAQ</h2><ol>
+<li><strong>hand off 机制</strong></li>
+</ol>
+<p>当本线程上执行的 G 阻塞时，线程会释放绑定的 P，把 P 和 M 分离，把 P 转移给其他空闲的线程执行。</p>
+<ol start="2">
+<li><strong>利用并行</strong></li>
+</ol>
+<p>可以通过<code>GOMAXPROCS</code>设置 P 的数量，最多有<code>GOMAXPROCS</code>个线程分布在多个 CPU 上同时运行，因为 P 是绑定在 M 上的，M 想要运行 G 必须先获取 P。<code>GOMAXPROCS</code>也限制了并发的程度，比如<code>GOMAXPROCS = 核数/2</code>，则最多利用了一半的 CPU 核进行并行。</p>
+<ol start="3">
+<li><strong>抢占</strong></li>
+</ol>
+<p>一个 goroutine 最多占用 CPU 10ms，防止其他 goroutine 被饿死。</p>
+<ol start="4">
+<li><strong>自旋线程</strong></li>
+</ol>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/f6015c66c0b946e5a775ee6928f4d9a7.png" title="自旋线程" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/f6015c66c0b946e5a775ee6928f4d9a7.png" data-sub-html="<h2>自旋线程</h2><p>自旋线程</p>">
+        
+    </a><figcaption class="image-caption">自旋线程</figcaption>
+    </figure></p>
+<p>假定 G2 唤醒了 M2，M2 绑定了 P2，M2 调用并运行<code>G0</code>，但 P2 本地队列没有 G，M2 此时的状态称为自旋线程（没有 G 但为运行状态的线程，不断寻找 G）。自旋线程<strong>优先</strong>会从全局队列里获取 G，当全局队列里没有了时，会去其他的<code>MP</code>组合中偷取 G。</p>
+<p>自旋线程的最大限制符合公式：<code>自旋线程 + 执行线程 &lt;= GOMAXPROCS</code></p>
+<ol start="5">
+<li><strong>如何从全局队列取 G 的数量</strong></li>
+</ol>
+<p>某个 M 尝试从全局队列（简称 “GQ”）取一批 G 放到自己 P 的本地队列，从全局队列取的 G 数量符合下面的公式：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">n =  min(len(GQ) / GOMAXPROCS +  1,  cap(LQ) / 2 )
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="参考" class="headerLink">
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
+<li><a href="https://www.yuque.com/aceld/golang/srxd6d" target="_blank" rel="noopener noreferrer">Golang的协程调度器原理及GMP设计思想</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/111346689" target="_blank" rel="noopener noreferrer">Go 为什么这么“快”</a></li>
+<li><a href="https://blog.csdn.net/weixin_38054045/article/details/104098072" target="_blank" rel="noopener noreferrer">让你很快就能理解-go的协程调度原理</a></li>
+<li><a href="https://mp.weixin.qq.com/s/uWP2X6iFu7BtwjIv5H55vw" target="_blank" rel="noopener noreferrer">Goroutine 数量控制在多少合适，会影响 GC 和调度？</a></li>
+<li><a href="https://studygolang.com/articles/9211" target="_blank" rel="noopener noreferrer">Golang goroutine与调度器</a></li>
+<li><a href="https://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html" target="_blank" rel="noopener noreferrer">进程与线程的一个简单解释</a></li>
+<li><a href="https://mp.weixin.qq.com/s?__biz=MzUxMDI4MDc1NA==&amp;mid=2247488604&amp;idx=1&amp;sn=83219ea874b1345debc65904cd7f025a" target="_blank" rel="noopener noreferrer">Go 面试官：什么是协程，协程和线程的区别和联系？</a></li>
+<li><a href="https://blog.csdn.net/genziisme/article/details/124324755" target="_blank" rel="noopener noreferrer">golang高级进阶（一）：进程、线程、并发、并行、goroutine协程</a></li>
+</ul>
+]]></description>
 </item></channel>
 </rss>
