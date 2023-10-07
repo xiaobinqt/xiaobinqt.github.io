@@ -31,10 +31,10 @@
 
 ![github注册oauth应用](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220322/0db45fb787184c9e8321202da1758937.png?imageView2/0/interlace/1/q/50|imageslim ' ')
 
-| 字段 | 描述                                |
-| ---- |-----------------------------------|
-| Application name | 应用名称                              |
-| Homepage URL | 首页URL，如`https://www.xiaobinqt.cn` |
+| 字段                         | 描述                                |
+|----------------------------|-----------------------------------|
+| Application name           | 应用名称                              |
+| Homepage URL               | 首页URL，如`https://www.xiaobinqt.cn` |
 | Authorization callback URL | 用户在 Github 登录成功后重定向回的 URL         |
 
 注册成功后会生成 `Client ID` 和 `Client Secret`，这两个是用来请求令牌的。
@@ -306,6 +306,6 @@ github 返回的token格式：
 + [OAuth 2.0 的一个简单解释](http://www.ruanyifeng.com/blog/2019/04/oauth_design.html)
 + [Go语言实现第三方登录Github (通过OAuth2.0)](https://blog.csdn.net/qq_19018277/article/details/104935403)
 + [basics of authentication](https://docs.github.com/en/rest/guides/basics-of-authentication)
++ [[简易图解]『 OAuth2.0』 猴子都能懂的图解](https://learnku.com/articles/20031)
 + [[简易图解]『 OAuth2.0』 『进阶』 授权模式总结](https://learnku.com/articles/20082)
-
 
