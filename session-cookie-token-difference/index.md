@@ -20,7 +20,7 @@ HTTP 协议是一种`无状态协议`，即每次服务端接收到客户端的�
 
 ![会话](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220824/50c3ccd67e62465ab1beaa691995ed06.png '会话')
 
-接下来客户端每次向同一个网站发送请求时，请求头都会带上该 Cookie信息（包含 sessionId ）， 然后，服务器通过读取请求头中的 Cookie 信息，获取名称为 JSESSIONID 的值，得到此次请求的 sessionId。
+接下来客户端每次向同一个网站发送请求时，请求头都会带上该 Cookie 信息（包含 sessionId ），然后，服务器通过读取请求头中的 Cookie 信息，获取名称为 JSESSIONID 的值，得到此次请求的 sessionId。
 
 ### Session 的缺点
 
@@ -52,25 +52,25 @@ Cookie 曾经用于一般的客户端存储。虽然这是合法的，因为它�
 
 当接收到客户端发出的 HTTP 请求时，服务器可以发送带有响应的 `Set-Cookie` 标头，Cookie 通常由浏览器存储，然后将 Cookie 与 HTTP 标头一同向服务器发出请求。
 
-| 参数名 | 作用 |
-| -----|----|
-| `Max-Age`| 设置cookie的过期时间，单位为秒|
-| `Domain` | 指定了Cookie所属的域名 |
-| `Path` | 指定了Cookie所属的路径 |
-| `HttpOnly` | 告诉浏览器此Cookie只能靠浏览器Http协议传输,禁止其他方式访问 |
-| `Secure` | 告诉浏览器此Cookie只能在Https安全协议中传输,如果是Http则禁止传输|
+| 参数名        | 作用                                             |
+|------------|------------------------------------------------|
+| `Max-Age`  | 设置 cookie 的过期时间，单位为秒                           |
+| `Domain`   | 指定了 Cookie 所属的域名                               |
+| `Path`     | 指定了 Cookie 所属的路径                               |
+| `HttpOnly` | 告诉浏览器此 Cookie 只能靠浏览器 Http 协议传输,禁止其他方式访问        |
+| `Secure`   | 告诉浏览器此 Cookie 只能在 Https 安全协议中传输,如果是 Http 则禁止传输 |
 
 #### Set-Cookie 和 Cookie 标头
 
 `Set-Cookie` HTTP 响应标头将 cookie 从服务器发送到用户代理。下面是一个发送 Cookie 的例子
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e399c20870a~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png)
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/68ec0f0d662d4a8ea816a2e4b1f301e3.png)
 
 此标头告诉客户端存储 Cookie
 
 现在，随着对服务器的每个新请求，浏览器将使用 Cookie 头将所有以前存储的 Cookie 发送回服务器。
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e399aefd856~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png)
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/88919b06618940d9b5c0bae71d0cfb86.png)
 
 有两种类型的 Cookies，一种是 [Session Cookies]^(会话 cookie)，一种是 [Persistent Cookies]^(永久 cookie)，如果 Cookie 不包含到期日期，则将其视为会话 Cookie。会话 Cookie 存储在内存中，永远不会写入磁盘，当浏览器关闭时，此后 Cookie 将永久丢失。如果 Cookie 包含`有效期` ，则将其视为持久性 Cookie。在到期指定的日期，Cookie 将从磁盘中删除。
 
@@ -128,7 +128,7 @@ Set-Cookie: id=a3fWa; Expires=Wed, 21 Oct 2015 07:28:00 GMT;
 
 如果没有这两者，那你可能需要在每个页面切换时都需要进行登录了。因为 HTTP 是一个无状态的协议。这也就意味着当你访问某个网页，然后单击同一站点上的另一个页面时，服务器的`内存中`将不会记住你之前的操作。
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e399ae02cc8~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png)
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/dcc63c8881794018b714769f214547c3.png)
 
 因此，如果你登录并访问了你有权访问的另一个页面，由于 HTTP 不会记录你刚刚登录的信息，因此你将再次登录。
 
@@ -146,19 +146,17 @@ Session Cookies 也称为`会话 Cookies`，在 Session Cookies 中，用户的�
 
 :warning: 下图有点问题，域名应该一致。
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e39cc16b100~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png)
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/7de5d6b609354be5b1a8346b66e2643d.png)
 
 ### 什么是 Json Web Tokens
 
-Json Web Token 的简称就是 JWT，通常可以称为 `Json 令牌`。它是`RFC 7519` 中定义的用于`安全的`将信息作为 `Json 对象`进行传输的一种形式。JWT 中存储的信息是经过`数字签名`
-的，因此可以被信任和理解。可以使用 HMAC 算法或使用 RSA/ECDSA 的公用/专用密钥对 JWT 进行签名。
+Json Web Token 的简称就是 JWT，通常可以称为 `Json 令牌`。它是`RFC 7519` 中定义的用于`安全的`将信息作为 `Json 对象`进行传输的一种形式。JWT 中存储的信息是经过`数字签名`的，因此可以被信任和理解。可以使用 HMAC 算法或使用 RSA/ECDSA 的公用/专用密钥对 JWT 进行签名。
 
 使用 JWT 主要用来下面两点
 
 - `认证(Authorization)`：这是使用 JWT 最常见的一种情况，一旦用户登录，后面每个请求都会包含 JWT，从而允许用户访问该令牌所允许的路由、服务和资源。`单点登录`是当今广泛使用 JWT 的一项功能，因为它的开销很小。
 
-- `信息交换(Information Exchange)`：JWT 是能够安全传输信息的一种方式。通过使用公钥/私钥对 JWT 进行签名认证。此外，由于签名是使用 `head` 和 `payload`
-  计算的，因此你还可以验证内容是否遭到篡改。
+- `信息交换(Information Exchange)`：JWT 是能够安全传输信息的一种方式。通过使用公钥/私钥对 JWT 进行签名认证。此外，由于签名是使用 `head` 和 `payload`计算的，因此你还可以验证内容是否遭到篡改。
 
 #### JWT 的格式
 
@@ -172,7 +170,7 @@ JWT 主要由三部分组成，每个部分用 `.` 进行分割，各个部分�
 
 因此，一个非常简单的 JWT 组成会是下面这样
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e39ca50d82a~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png)
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/e32110689a834f6b86911766f9080ad3.png 'JWT 组成')
 
 **Header**
 
@@ -196,17 +194,18 @@ Token 的第二部分是 `Payload`，Payload 中包含一个声明。声明是�
 
 - `registered 声明`： 包含一组建议使用的预定义声明，主要包括
 
-| ISS | 签发人 |
-| --- | --- |
-| iss (issuer) | 签发人 |
+| ISS                   | 签发人  |
+|-----------------------|------|
+| iss (issuer)          | 签发人  |
 | exp (expiration time) | 过期时间 |
-| sub (subject) | 主题 |
-| aud (audience) | 受众 |
-| nbf (Not Before) | 生效时间 |
-| iat (Issued At) | 签发时间 |
-| jti (JWT ID) | 编号 |
+| sub (subject)         | 主题   |
+| aud (audience)        | 受众   |
+| nbf (Not Before)      | 生效时间 |
+| iat (Issued At)       | 签发时间 |
+| jti (JWT ID)          | 编号   |
 
 - `public 声明`：公共的声明，可以添加任何的信息，一般添加用户的相关信息或其他业务需要的必要信息，但不建议添加敏感信息，因为该部分在客户端可解密。
+
 - `private 声明`：自定义声明，旨在在同意使用它们的各方之间共享信息，既不是注册声明也不是公共声明。
 
 例如
@@ -250,7 +249,7 @@ HMACSHA256(
 eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
 ```
 
-![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e39cc29f678~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png)
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/00f5b92c8950490fa0d836e532dff8d0.png)
 
 如果想自己测试编写的话，可以访问 JWT 官网 [https://jwt.io/#debugger-io](https://jwt.io/#debugger-io)
 
@@ -286,13 +285,96 @@ Session Cookies 只能用在`单个节点的域`或者它的`子域`中有效。
 
 如果你有企业级站点，应用程序或附近的站点，并且需要处理大量的请求，尤其是第三方或很多第三方（包括位于不同域的API），则 JWT 显然更适合。
 
+## JWT 解码
+
+JWT（JSON Web Token）的解码包括以下步骤：
+
+1. 将 JWT 字符串分为头部、负载和签名三个部分。
+
+2. 使用 Base64URL 解码头部和负载，以获取原始的 JSON 数据。
+
+3. 使用头部中的算法信息（通常在 `alg` 字段中）来验证签名。在这种情况下，头部指定了使用 HS256 算法，这意味着需要使用相同的密钥对头部和负载部分进行签名，并验证签名是否匹配。
+
+以下是使用 Golang 进行 JWT 解码的示例代码，不使用第三方包，但假设你已经有了密钥。
+
+```go
+package main
+
+import (
+	"encoding/base64"
+	"encoding/json"
+	"fmt"
+	"strings"
+)
+
+// 定义JWT结构体来解析头部和负载
+type JWT struct {
+	Header    map[string]interface{}
+	Payload   map[string]interface{}
+	Signature string
+}
+
+func main() {
+	// 要解码的JWT字符串
+	jwtString := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTY5MDY5MTcsInVzZXJfaWQiOjF9.-CGzj1oGoQtk3PfY1ppkzGkaArGbvNX5eQIkKNGR4EE"
+
+	// 使用点号分割JWT字符串，得到头部、负载和签名
+	parts := strings.Split(jwtString, ".")
+	if len(parts) != 3 {
+		fmt.Println("Invalid JWT format")
+		return
+	}
+
+	// 解码头部
+	headerJSON, err := base64.RawURLEncoding.DecodeString(parts[0])
+	if err != nil {
+		fmt.Println("Error decoding header:", err)
+		return
+	}
+
+	// 解码负载
+	payloadJSON, err := base64.RawURLEncoding.DecodeString(parts[1])
+	if err != nil {
+		fmt.Println("Error decoding payload:", err)
+		return
+	}
+
+	// 解码头部和负载中的JSON数据
+	var headerData, payloadData map[string]interface{}
+	if err := json.Unmarshal(headerJSON, &headerData); err != nil {
+		fmt.Println("Error unmarshaling header:", err)
+		return
+	}
+	if err := json.Unmarshal(payloadJSON, &payloadData); err != nil {
+		fmt.Println("Error unmarshaling payload:", err)
+		return
+	}
+
+	// 解析签名
+	signature := parts[2]
+
+	// 创建JWT结构体
+	jwt := JWT{
+		Header:    headerData,
+		Payload:   payloadData,
+		Signature: signature,
+	}
+
+	// 打印解析结果
+	fmt.Println("Header:", jwt.Header)
+	fmt.Println("Payload:", jwt.Payload)
+	fmt.Println("Signature:", jwt.Signature)
+}
+```
+
+此示例假定你已经有用于验证签名的密钥，并且使用的是 HS256 算法。要验证签名是否有效，你需要使用相同的密钥对头部和负载部分进行签名，并比较得到的签名与 JWT 中的签名是否匹配。如果匹配，JWT 就是有效的。如果不匹配，说明 JWT 被篡改或无效。
+
 ## FAQ
 
 #### 如何禁用 Cookies 后，使用 Session
 
-+ 如果禁用了 Cookies，服务器仍会将 sessionId 以 cookie 的方式发送给浏览器，但是，浏览器不再保存这个cookie (即sessionId) 了。
-+ 如果想要继续使用 session，需要采用 `URL 重写`
-  的方式来实现，可以参考 [https://www.cnblogs.com/Renyi-Fan/p/11012086.html](https://www.cnblogs.com/Renyi-Fan/p/11012086.html)
++ 如果禁用了 Cookies，服务器仍会将 sessionId 以 cookie 的方式发送给浏览器，但是，浏览器不再保存这个 cookie （即 sessionId） 了。
++ 如果想要继续使用 session，需要采用 `URL 重写`的方式来实现，可以参考 [https://www.cnblogs.com/Renyi-Fan/p/11012086.html](https://www.cnblogs.com/Renyi-Fan/p/11012086.html)
 
 ### JWT 前端解码
 
