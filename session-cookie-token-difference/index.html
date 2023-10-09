@@ -10,7 +10,7 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://www.xiaobinqt.cn/session-cookie-token-difference/" /><meta property="og:image" content="https://www.xiaobinqt.cn/logo.png"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2022-06-11T00:00:00+00:00" />
-<meta property="article:modified_time" content="2022-11-16T22:09:43+08:00" />
+<meta property="article:modified_time" content="2023-10-09T11:29:27+08:00" />
 <meta property="og:see_also" content="https://www.xiaobinqt.cn/highly-concurrent-architecture-evolution/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/mysql-faq-2/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/why-mysql-index-use-btree/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/redis-break-pierce-avalanche/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/go-gc/" />
 
 <meta name="twitter:card" content="summary_large_image"/>
@@ -35,8 +35,8 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/www.xiaobinqt.cn\/session-cookie-token-difference\/"
-        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "web, session, cookie","wordcount":  4461 ,
-        "url": "https:\/\/www.xiaobinqt.cn\/session-cookie-token-difference\/","datePublished": "2022-06-11T00:00:00+00:00","dateModified": "2022-11-16T22:09:43+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "web, session, cookie","wordcount":  5010 ,
+        "url": "https:\/\/www.xiaobinqt.cn\/session-cookie-token-difference\/","datePublished": "2022-06-11T00:00:00+00:00","dateModified": "2023-10-09T11:29:27+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "xxxx","logo": {
                     "@type": "ImageObject",
@@ -161,6 +161,7 @@
         <li><a href="#jwt-和-session-cookies-的选型">JWT 和 Session Cookies 的选型</a></li>
       </ul>
     </li>
+    <li><a href="#jwt-解码">JWT 解码</a></li>
     <li><a href="#faq">FAQ</a>
       <ul>
         <li>
@@ -178,8 +179,8 @@
             <div class="post-meta-line"><span class="post-author">
                     <i class="custom-icon iconfont icon-weibiaoti-"></i>
                 </span>&nbsp;&nbsp;<span class="post-category">收录于 </span>&nbsp;<span class="post-category">类别 <a href="/categories/web/"><i class="far fa-folder fa-fw"></i>web</a></span>&nbsp;<span class="post-category">和</span>&nbsp;<span class="post-series">系列 <a href="/series/reproduce/"><i class="far fa-list-alt fa-fw"></i>转载</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-06-11">2022-06-11</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2022-11-16">2022-11-16</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 4461 字&nbsp;
-                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 9 分钟&nbsp;</div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-06-11">2022-06-11</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2023-10-09">2023-10-09</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 5010 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 10 分钟&nbsp;</div>
         </div><div class="featured-image"><img
         class="lazyload"
         data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220824/ee39a9cb19524d918d984db89b1661a5.png"
@@ -231,6 +232,7 @@
         <li><a href="#jwt-和-session-cookies-的选型">JWT 和 Session Cookies 的选型</a></li>
       </ul>
     </li>
+    <li><a href="#jwt-解码">JWT 解码</a></li>
     <li><a href="#faq">FAQ</a>
       <ul>
         <li>
@@ -263,7 +265,7 @@
             alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220824/50c3ccd67e62465ab1beaa691995ed06.png">
     </a><figcaption class="image-caption">会话</figcaption>
     </figure></p>
-<p>接下来客户端每次向同一个网站发送请求时，请求头都会带上该 Cookie信息（包含 sessionId ）， 然后，服务器通过读取请求头中的 Cookie 信息，获取名称为 JSESSIONID 的值，得到此次请求的 sessionId。</p>
+<p>接下来客户端每次向同一个网站发送请求时，请求头都会带上该 Cookie 信息（包含 sessionId ），然后，服务器通过读取请求头中的 Cookie 信息，获取名称为 JSESSIONID 的值，得到此次请求的 sessionId。</p>
 <h3 id="session-的缺点" class="headerLink">
     <a href="#session-%e7%9a%84%e7%bc%ba%e7%82%b9" class="header-mark"></a>Session 的缺点</h3><p>Session 机制有个缺点，比如 A 服务器存储了 Session，就是做了负载均衡后，假如一段时间内 A 的访问量激增，会转发到 B 进行访问，但是 B 服务器并没有存储 A 的 Session，会导致 Session 的失效。</p>
 <h3 id="cookies-是什么" class="headerLink">
@@ -297,45 +299,45 @@
 <tbody>
 <tr>
 <td><code>Max-Age</code></td>
-<td>设置cookie的过期时间，单位为秒</td>
+<td>设置 cookie 的过期时间，单位为秒</td>
 </tr>
 <tr>
 <td><code>Domain</code></td>
-<td>指定了Cookie所属的域名</td>
+<td>指定了 Cookie 所属的域名</td>
 </tr>
 <tr>
 <td><code>Path</code></td>
-<td>指定了Cookie所属的路径</td>
+<td>指定了 Cookie 所属的路径</td>
 </tr>
 <tr>
 <td><code>HttpOnly</code></td>
-<td>告诉浏览器此Cookie只能靠浏览器Http协议传输,禁止其他方式访问</td>
+<td>告诉浏览器此 Cookie 只能靠浏览器 Http 协议传输,禁止其他方式访问</td>
 </tr>
 <tr>
 <td><code>Secure</code></td>
-<td>告诉浏览器此Cookie只能在Https安全协议中传输,如果是Http则禁止传输</td>
+<td>告诉浏览器此 Cookie 只能在 Https 安全协议中传输,如果是 Http 则禁止传输</td>
 </tr>
 </tbody>
 </table>
 <h4 id="set-cookie-和-cookie-标头" class="headerLink">
     <a href="#set-cookie-%e5%92%8c-cookie-%e6%a0%87%e5%a4%b4" class="header-mark"></a>Set-Cookie 和 Cookie 标头</h4><p><code>Set-Cookie</code> HTTP 响应标头将 cookie 从服务器发送到用户代理。下面是一个发送 Cookie 的例子</p>
-<p><a class="lightgallery" href="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e399c20870a~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png" title="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e399c20870a~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png" data-thumbnail="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e399c20870a~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png">
+<p><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/68ec0f0d662d4a8ea816a2e4b1f301e3.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/68ec0f0d662d4a8ea816a2e4b1f301e3.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/68ec0f0d662d4a8ea816a2e4b1f301e3.png">
         <img
             class="lazyload"
-            data-src="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e399c20870a~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png"
-            data-srcset="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e399c20870a~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png, https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e399c20870a~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png 1.5x, https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e399c20870a~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png 2x"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/68ec0f0d662d4a8ea816a2e4b1f301e3.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/68ec0f0d662d4a8ea816a2e4b1f301e3.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/68ec0f0d662d4a8ea816a2e4b1f301e3.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/68ec0f0d662d4a8ea816a2e4b1f301e3.png 2x"
             data-sizes="auto"
-            alt="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e399c20870a~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png">
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/68ec0f0d662d4a8ea816a2e4b1f301e3.png">
     </a></p>
 <p>此标头告诉客户端存储 Cookie</p>
 <p>现在，随着对服务器的每个新请求，浏览器将使用 Cookie 头将所有以前存储的 Cookie 发送回服务器。</p>
-<p><a class="lightgallery" href="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e399aefd856~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png" title="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e399aefd856~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png" data-thumbnail="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e399aefd856~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png">
+<p><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/88919b06618940d9b5c0bae71d0cfb86.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/88919b06618940d9b5c0bae71d0cfb86.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/88919b06618940d9b5c0bae71d0cfb86.png">
         <img
             class="lazyload"
-            data-src="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e399aefd856~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png"
-            data-srcset="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e399aefd856~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png, https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e399aefd856~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png 1.5x, https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e399aefd856~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png 2x"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/88919b06618940d9b5c0bae71d0cfb86.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/88919b06618940d9b5c0bae71d0cfb86.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/88919b06618940d9b5c0bae71d0cfb86.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/88919b06618940d9b5c0bae71d0cfb86.png 2x"
             data-sizes="auto"
-            alt="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e399aefd856~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png">
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/88919b06618940d9b5c0bae71d0cfb86.png">
     </a></p>
 <p>有两种类型的 Cookies，一种是 <strong><ruby>Session Cookies<rt>会话 cookie</rt></ruby></strong>，一种是 <strong><ruby>Persistent Cookies<rt>永久 cookie</rt></ruby></strong>，如果 Cookie 不包含到期日期，则将其视为会话 Cookie。会话 Cookie 存储在内存中，永远不会写入磁盘，当浏览器关闭时，此后 Cookie 将永久丢失。如果 Cookie 包含<code>有效期</code> ，则将其视为持久性 Cookie。在到期指定的日期，Cookie 将从磁盘中删除。</p>
 <p>还有一种是 Cookie 的 <code>Secure</code> 和 <code>HttpOnly</code> 标记。</p>
@@ -382,13 +384,13 @@
     <a href="#jwt-%e5%92%8c-session-cookies-%e7%9a%84%e7%9b%b8%e5%90%8c%e4%b9%8b%e5%a4%84" class="header-mark"></a>JWT 和 Session Cookies 的相同之处</h3><p>在探讨 JWT 和 Session Cookies 之前，有必要需要先去理解一下它们的相同之处。</p>
 <p>它们既可以对用户进行身份验证，也可以用来在用户单击进入不同页面时以及登陆网站或应用程序后进行身份验证。</p>
 <p>如果没有这两者，那你可能需要在每个页面切换时都需要进行登录了。因为 HTTP 是一个无状态的协议。这也就意味着当你访问某个网页，然后单击同一站点上的另一个页面时，服务器的<code>内存中</code>将不会记住你之前的操作。</p>
-<p><a class="lightgallery" href="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e399ae02cc8~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png" title="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e399ae02cc8~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png" data-thumbnail="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e399ae02cc8~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png">
+<p><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/dcc63c8881794018b714769f214547c3.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/dcc63c8881794018b714769f214547c3.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/dcc63c8881794018b714769f214547c3.png">
         <img
             class="lazyload"
-            data-src="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e399ae02cc8~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png"
-            data-srcset="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e399ae02cc8~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png, https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e399ae02cc8~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png 1.5x, https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e399ae02cc8~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png 2x"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/dcc63c8881794018b714769f214547c3.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/dcc63c8881794018b714769f214547c3.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/dcc63c8881794018b714769f214547c3.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/dcc63c8881794018b714769f214547c3.png 2x"
             data-sizes="auto"
-            alt="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e399ae02cc8~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png">
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/dcc63c8881794018b714769f214547c3.png">
     </a></p>
 <p>因此，如果你登录并访问了你有权访问的另一个页面，由于 HTTP 不会记录你刚刚登录的信息，因此你将再次登录。</p>
 <p><strong>JWT 和 Session Cookies 就是用来处理在不同页面之间切换，保存用户登录信息的机制</strong>。</p>
@@ -398,25 +400,23 @@
     <a href="#%e4%bb%80%e4%b9%88%e6%98%af-session-cookies" class="header-mark"></a>什么是 Session Cookies</h3><p>Session Cookies 也称为<code>会话 Cookies</code>，在 Session Cookies 中，用户的登录状态会保存在<code>服务器</code>的<code>内存</code>中。当用户登录时，Session 就被服务端安全的创建。</p>
 <p>在每次请求时，服务器都会从会话 Cookie 中读取 SessionId，如果服务端的数据和读取的 SessionId 相同，那么服务器就会发送响应给浏览器，允许用户登录。</p>
 <p>⚠️ 下图有点问题，域名应该一致。</p>
-<p><a class="lightgallery" href="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e39cc16b100~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png" title="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e39cc16b100~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png" data-thumbnail="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e39cc16b100~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png">
+<p><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/7de5d6b609354be5b1a8346b66e2643d.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/7de5d6b609354be5b1a8346b66e2643d.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/7de5d6b609354be5b1a8346b66e2643d.png">
         <img
             class="lazyload"
-            data-src="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e39cc16b100~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png"
-            data-srcset="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e39cc16b100~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png, https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e39cc16b100~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png 1.5x, https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e39cc16b100~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png 2x"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/7de5d6b609354be5b1a8346b66e2643d.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/7de5d6b609354be5b1a8346b66e2643d.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/7de5d6b609354be5b1a8346b66e2643d.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/7de5d6b609354be5b1a8346b66e2643d.png 2x"
             data-sizes="auto"
-            alt="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e39cc16b100~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png">
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/7de5d6b609354be5b1a8346b66e2643d.png">
     </a></p>
 <h3 id="什么是-json-web-tokens" class="headerLink">
-    <a href="#%e4%bb%80%e4%b9%88%e6%98%af-json-web-tokens" class="header-mark"></a>什么是 Json Web Tokens</h3><p>Json Web Token 的简称就是 JWT，通常可以称为 <code>Json 令牌</code>。它是<code>RFC 7519</code> 中定义的用于<code>安全的</code>将信息作为 <code>Json 对象</code>进行传输的一种形式。JWT 中存储的信息是经过<code>数字签名</code>
-的，因此可以被信任和理解。可以使用 HMAC 算法或使用 RSA/ECDSA 的公用/专用密钥对 JWT 进行签名。</p>
+    <a href="#%e4%bb%80%e4%b9%88%e6%98%af-json-web-tokens" class="header-mark"></a>什么是 Json Web Tokens</h3><p>Json Web Token 的简称就是 JWT，通常可以称为 <code>Json 令牌</code>。它是<code>RFC 7519</code> 中定义的用于<code>安全的</code>将信息作为 <code>Json 对象</code>进行传输的一种形式。JWT 中存储的信息是经过<code>数字签名</code>的，因此可以被信任和理解。可以使用 HMAC 算法或使用 RSA/ECDSA 的公用/专用密钥对 JWT 进行签名。</p>
 <p>使用 JWT 主要用来下面两点</p>
 <ul>
 <li>
 <p><code>认证(Authorization)</code>：这是使用 JWT 最常见的一种情况，一旦用户登录，后面每个请求都会包含 JWT，从而允许用户访问该令牌所允许的路由、服务和资源。<code>单点登录</code>是当今广泛使用 JWT 的一项功能，因为它的开销很小。</p>
 </li>
 <li>
-<p><code>信息交换(Information Exchange)</code>：JWT 是能够安全传输信息的一种方式。通过使用公钥/私钥对 JWT 进行签名认证。此外，由于签名是使用 <code>head</code> 和 <code>payload</code>
-计算的，因此你还可以验证内容是否遭到篡改。</p>
+<p><code>信息交换(Information Exchange)</code>：JWT 是能够安全传输信息的一种方式。通过使用公钥/私钥对 JWT 进行签名认证。此外，由于签名是使用 <code>head</code> 和 <code>payload</code>计算的，因此你还可以验证内容是否遭到篡改。</p>
 </li>
 </ul>
 <h4 id="jwt-的格式" class="headerLink">
@@ -428,14 +428,15 @@
 <li><code>Signature</code></li>
 </ul>
 <p>因此，一个非常简单的 JWT 组成会是下面这样</p>
-<p><a class="lightgallery" href="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e39ca50d82a~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png" title="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e39ca50d82a~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png" data-thumbnail="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e39ca50d82a~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png">
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/e32110689a834f6b86911766f9080ad3.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/e32110689a834f6b86911766f9080ad3.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/e32110689a834f6b86911766f9080ad3.png" data-sub-html="<h2>JWT 组成</h2>">
         <img
             class="lazyload"
-            data-src="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e39ca50d82a~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png"
-            data-srcset="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e39ca50d82a~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png, https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e39ca50d82a~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png 1.5x, https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e39ca50d82a~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png 2x"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/e32110689a834f6b86911766f9080ad3.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/e32110689a834f6b86911766f9080ad3.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/e32110689a834f6b86911766f9080ad3.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/e32110689a834f6b86911766f9080ad3.png 2x"
             data-sizes="auto"
-            alt="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e39ca50d82a~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png">
-    </a></p>
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/e32110689a834f6b86911766f9080ad3.png">
+    </a><figcaption class="image-caption">JWT 组成</figcaption>
+    </figure></p>
 <p><strong>Header</strong></p>
 <p>Header 是 JWT 的标头，它通常由两部分组成：<code>令牌的类型(即 JWT)</code>和使用的 <code>签名算法</code>，例如 <code>HMAC SHA256</code>（写成 HS256） 或 <code>RSA</code>。</p>
 <p>例如</p>
@@ -498,8 +499,12 @@
 </tbody>
 </table>
 <ul>
-<li><code>public 声明</code>：公共的声明，可以添加任何的信息，一般添加用户的相关信息或其他业务需要的必要信息，但不建议添加敏感信息，因为该部分在客户端可解密。</li>
-<li><code>private 声明</code>：自定义声明，旨在在同意使用它们的各方之间共享信息，既不是注册声明也不是公共声明。</li>
+<li>
+<p><code>public 声明</code>：公共的声明，可以添加任何的信息，一般添加用户的相关信息或其他业务需要的必要信息，但不建议添加敏感信息，因为该部分在客户端可解密。</p>
+</li>
+<li>
+<p><code>private 声明</code>：自定义声明，旨在在同意使用它们的各方之间共享信息，既不是注册声明也不是公共声明。</p>
+</li>
 </ul>
 <p>例如</p>
 <div class="highlight"><div class="chroma">
@@ -553,13 +558,13 @@
 <pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
 </span></span></code></pre></td></tr></table>
 </div>
-</div><p><a class="lightgallery" href="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e39cc29f678~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png" title="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e39cc29f678~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png" data-thumbnail="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e39cc29f678~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png">
+</div><p><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/00f5b92c8950490fa0d836e532dff8d0.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/00f5b92c8950490fa0d836e532dff8d0.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/00f5b92c8950490fa0d836e532dff8d0.png">
         <img
             class="lazyload"
-            data-src="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e39cc29f678~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png"
-            data-srcset="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e39cc29f678~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png, https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e39cc29f678~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png 1.5x, https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e39cc29f678~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png 2x"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/00f5b92c8950490fa0d836e532dff8d0.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/00f5b92c8950490fa0d836e532dff8d0.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/00f5b92c8950490fa0d836e532dff8d0.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/00f5b92c8950490fa0d836e532dff8d0.png 2x"
             data-sizes="auto"
-            alt="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/4/5/17147e39cc29f678~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.png">
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231009/00f5b92c8950490fa0d836e532dff8d0.png">
     </a></p>
 <p>如果想自己测试编写的话，可以访问 JWT 官网 <a href="https://jwt.io/#debugger-io" target="_blank" rel="noopener noreferrer">https://jwt.io/#debugger-io</a></p>
 <h3 id="jwt-和-session-cookies-的不同" class="headerLink">
@@ -578,12 +583,166 @@
     <a href="#jwt-%e5%92%8c-session-cookies-%e7%9a%84%e9%80%89%e5%9e%8b" class="header-mark"></a>JWT 和 Session Cookies 的选型</h3><p>我们上面探讨了 JWT 和 Cookies 的不同点，相信你也会对选型有了更深的认识，大致来说</p>
 <p>对于只需要登录用户并访问存储在站点数据库中的一些信息的中小型网站来说，Session Cookies 通常就能满足。</p>
 <p>如果你有企业级站点，应用程序或附近的站点，并且需要处理大量的请求，尤其是第三方或很多第三方（包括位于不同域的API），则 JWT 显然更适合。</p>
+<h2 id="jwt-解码" class="headerLink">
+    <a href="#jwt-%e8%a7%a3%e7%a0%81" class="header-mark"></a>JWT 解码</h2><p>JWT（JSON Web Token）的解码包括以下步骤：</p>
+<ol>
+<li>
+<p>将 JWT 字符串分为头部、负载和签名三个部分。</p>
+</li>
+<li>
+<p>使用 Base64URL 解码头部和负载，以获取原始的 JSON 数据。</p>
+</li>
+<li>
+<p>使用头部中的算法信息（通常在 <code>alg</code> 字段中）来验证签名。在这种情况下，头部指定了使用 HS256 算法，这意味着需要使用相同的密钥对头部和负载部分进行签名，并验证签名是否匹配。</p>
+</li>
+</ol>
+<p>以下是使用 Golang 进行 JWT 解码的示例代码，不使用第三方包，但假设你已经有了密钥。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;encoding/base64&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;encoding/json&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;strings&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 定义JWT结构体来解析头部和负载
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">JWT</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">Header</span>    <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kd">interface</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">Payload</span>   <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kd">interface</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">Signature</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 要解码的JWT字符串
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">jwtString</span> <span class="o">:=</span> <span class="s">&#34;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTY5MDY5MTcsInVzZXJfaWQiOjF9.-CGzj1oGoQtk3PfY1ppkzGkaArGbvNX5eQIkKNGR4EE&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">// 使用点号分割JWT字符串，得到头部、负载和签名
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">parts</span> <span class="o">:=</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">Split</span><span class="p">(</span><span class="nx">jwtString</span><span class="p">,</span> <span class="s">&#34;.&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">parts</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">3</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Invalid JWT format&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">// 解码头部
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">headerJSON</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">base64</span><span class="p">.</span><span class="nx">RawURLEncoding</span><span class="p">.</span><span class="nf">DecodeString</span><span class="p">(</span><span class="nx">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Error decoding header:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">// 解码负载
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">payloadJSON</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">base64</span><span class="p">.</span><span class="nx">RawURLEncoding</span><span class="p">.</span><span class="nf">DecodeString</span><span class="p">(</span><span class="nx">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Error decoding payload:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">// 解码头部和负载中的JSON数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="kd">var</span> <span class="nx">headerData</span><span class="p">,</span> <span class="nx">payloadData</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kd">interface</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nf">Unmarshal</span><span class="p">(</span><span class="nx">headerJSON</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">headerData</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Error unmarshaling header:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nf">Unmarshal</span><span class="p">(</span><span class="nx">payloadJSON</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">payloadData</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Error unmarshaling payload:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">// 解析签名
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">signature</span> <span class="o">:=</span> <span class="nx">parts</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">// 创建JWT结构体
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">jwt</span> <span class="o">:=</span> <span class="nx">JWT</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">Header</span><span class="p">:</span>    <span class="nx">headerData</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">Payload</span><span class="p">:</span>   <span class="nx">payloadData</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">Signature</span><span class="p">:</span> <span class="nx">signature</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">// 打印解析结果
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Header:&#34;</span><span class="p">,</span> <span class="nx">jwt</span><span class="p">.</span><span class="nx">Header</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Payload:&#34;</span><span class="p">,</span> <span class="nx">jwt</span><span class="p">.</span><span class="nx">Payload</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Signature:&#34;</span><span class="p">,</span> <span class="nx">jwt</span><span class="p">.</span><span class="nx">Signature</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>此示例假定你已经有用于验证签名的密钥，并且使用的是 HS256 算法。要验证签名是否有效，你需要使用相同的密钥对头部和负载部分进行签名，并比较得到的签名与 JWT 中的签名是否匹配。如果匹配，JWT 就是有效的。如果不匹配，说明 JWT 被篡改或无效。</p>
 <h2 id="faq" class="headerLink">
     <a href="#faq" class="header-mark"></a>FAQ</h2><h4 id="如何禁用-cookies-后使用-session" class="headerLink">
     <a href="#%e5%a6%82%e4%bd%95%e7%a6%81%e7%94%a8-cookies-%e5%90%8e%e4%bd%bf%e7%94%a8-session" class="header-mark"></a>如何禁用 Cookies 后，使用 Session</h4><ul>
-<li>如果禁用了 Cookies，服务器仍会将 sessionId 以 cookie 的方式发送给浏览器，但是，浏览器不再保存这个cookie (即sessionId) 了。</li>
-<li>如果想要继续使用 session，需要采用 <code>URL 重写</code>
-的方式来实现，可以参考 <a href="https://www.cnblogs.com/Renyi-Fan/p/11012086.html" target="_blank" rel="noopener noreferrer">https://www.cnblogs.com/Renyi-Fan/p/11012086.html</a></li>
+<li>如果禁用了 Cookies，服务器仍会将 sessionId 以 cookie 的方式发送给浏览器，但是，浏览器不再保存这个 cookie （即 sessionId） 了。</li>
+<li>如果想要继续使用 session，需要采用 <code>URL 重写</code>的方式来实现，可以参考 <a href="https://www.cnblogs.com/Renyi-Fan/p/11012086.html" target="_blank" rel="noopener noreferrer">https://www.cnblogs.com/Renyi-Fan/p/11012086.html</a></li>
 </ul>
 <h3 id="jwt-前端解码" class="headerLink">
     <a href="#jwt-%e5%89%8d%e7%ab%af%e8%a7%a3%e7%a0%81" class="header-mark"></a>JWT 前端解码</h3><p>在线解密工具<a href="https://www.box3.cn/tools/jwt.html" target="_blank" rel="noopener noreferrer">https://www.box3.cn/tools/jwt.html</a></p>
@@ -600,8 +759,8 @@
     <div class="post-info">
         <div class="post-info-line">
             <div class="post-info-mod">
-                <span>更新于 2022-11-16&nbsp;<a class="git-hash" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/2f85c5930e1aca01b8044536a940879b4088c05f" target="_blank" title="commit by weibin(xiaobinqt@163.com) 2f85c5930e1aca01b8044536a940879b4088c05f: categorize into series" rel="noopener noreferrer">
-                                    <i class="fas fa-hashtag fa-fw"></i>2f85c593</a></span>
+                <span>更新于 2023-10-09&nbsp;<a class="git-hash" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/08d4b058c4ab52399f739f4b3415a80c50e3558b" target="_blank" title="commit by weibin(xiaobinqt@163.com) 08d4b058c4ab52399f739f4b3415a80c50e3558b: update session-cookie-token-difference.md" rel="noopener noreferrer">
+                                    <i class="fas fa-hashtag fa-fw"></i>08d4b058</a></span>
             </div>
             <div class="post-info-license"></div>
         </div>
