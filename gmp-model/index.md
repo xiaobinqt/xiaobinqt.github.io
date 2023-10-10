@@ -323,4 +323,5 @@ n =  min(len(GQ) / GOMAXPROCS +  1,  cap(LQ) / 2 )
 + [进程与线程的一个简单解释](https://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html)
 + [Go 面试官：什么是协程，协程和线程的区别和联系？](https://mp.weixin.qq.com/s?__biz=MzUxMDI4MDc1NA==&mid=2247488604&idx=1&sn=83219ea874b1345debc65904cd7f025a)
 + [golang高级进阶（一）：进程、线程、并发、并行、goroutine协程](https://blog.csdn.net/genziisme/article/details/124324755)
++ [GMP模型](https://blog.greycode.top/golang-wiki/#/doc/advanced/gmp_mode?id=gmp%e6%a8%a1%e5%9e%8b)
 
