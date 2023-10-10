@@ -4,7 +4,403 @@
         <link>https://www.xiaobinqt.cn/categories/golang/</link>
         <description>golang - 分类 - xiaobinqt 博客 - 技术改变生活</description>
         <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>xiaobinqt@163.com (xiaobinqt)</managingEditor>
-            <webMaster>xiaobinqt@163.com (xiaobinqt)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Sat, 28 Jan 2023 00:00:00 &#43;0000</lastBuildDate><atom:link href="https://www.xiaobinqt.cn/categories/golang/" rel="self" type="application/rss+xml" /><item>
+            <webMaster>xiaobinqt@163.com (xiaobinqt)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Tue, 10 Oct 2023 00:00:00 &#43;0000</lastBuildDate><atom:link href="https://www.xiaobinqt.cn/categories/golang/" rel="self" type="application/rss+xml" /><item>
+    <title>Golang 内存逃逸</title>
+    <link>https://www.xiaobinqt.cn/escape-heap/</link>
+    <pubDate>Tue, 10 Oct 2023 00:00:00 &#43;0000</pubDate><author>
+        <name>xiaobinqt</name>
+    </author><guid>https://www.xiaobinqt.cn/escape-heap/</guid>
+    <description><![CDATA[<!-- author： xiaobinqt -->
+<!-- email： xiaobinqt@163.com -->
+<!-- https://xiaobinqt.github.io -->
+<!-- https://www.xiaobinqt.cn -->
+<p>在 C/C++ 开发中，动态分配内存（new/malloc）需要开发者手动释放资源。这样做的好处是，需要申请多少内存空间可以很好的掌握怎么分配。但是这有个缺点，如果忘记释放内存，则会导致内存泄漏。在很多高级语言中（python/Go/java）都加上了垃圾回收机制。</p>
+<h2 id="堆和栈" class="headerLink">
+    <a href="#%e5%a0%86%e5%92%8c%e6%a0%88" class="header-mark"></a>堆和栈</h2><p>栈可以简单得理解成一次函数调用内部申请到的内存，它们会随着函数的返回把内存还给系统。下面来看看一个例子：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func F() {
+</span></span><span class="line"><span class="cl">    temp := make([]int, 0, 20)
+</span></span><span class="line"><span class="cl">    ...
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>上面的例子，内函数内部申请的临时变量，即使是用 make 申请到的内存，如果发现在退出函数后没有用了，那么就把丢到栈上，毕竟栈上的内存分配比堆上快很多。</p>
+<p>再看一个堆的例子：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func F() []int{
+</span></span><span class="line"><span class="cl">    a := make([]int, 0, 20)
+</span></span><span class="line"><span class="cl">    return a
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>上面这段代码，申请的代码和上面的一模一样，但是申请后作为返回值返回了，编译器会认为在退出函数之后还有其他地方在引用，当函数返回之后并不会将其内存归还。那么就申请到堆里。</p>
+<p>如果变量都分配到堆上，堆不像栈可以自动清理。它会引起 Go 频繁地进行垃圾回收，而垃圾回收会占用比较大的系统开销。</p>
+<h3 id="堆和栈相比" class="headerLink">
+    <a href="#%e5%a0%86%e5%92%8c%e6%a0%88%e7%9b%b8%e6%af%94" class="header-mark"></a>堆和栈相比</h3><p>堆适合不可预知的大小的内存分配。但是为此付出的代价是分配速度较慢，而且会形成内存碎片。</p>
+<p>栈内存分配则会非常快，栈分配内存只需要两个 CPU 指令：PUSH 和 RELEASE 分配和释放；而堆分配内存首先需要去找到一块大小合适的内存块。之后要通过垃圾回收才能释放。</p>
+<div class="details admonition info open">
+        <div class="details-summary admonition-title">
+            <i class="icon fas fa-info-circle fa-fw"></i>内存碎片<i class="details-icon fas fa-angle-right fa-fw"></i>
+        </div>
+        <div class="details-content">
+            <div class="admonition-content"><p>内存碎片（Memory Fragmentation）是指计算机系统中存在的一种内存分配和释放的情况，它可能导致系统中的可用内存不连续、零散分布，使得系统效率下降或者无法有效地利用可用内存。内存碎片通常分为两种类型：外部碎片和内部碎片。</p>
+<ol>
+<li>
+<p>外部碎片（External Fragmentation）：</p>
+<ul>
+<li>外部碎片指的是在可用内存中存在的未分配的小块内存空间，虽然总的可用内存大小足够，但是这些小块内存分散在不同的地方，无法被有效地利用。</li>
+<li>外部碎片通常发生在动态内存分配和释放的过程中。当程序请求分配一块内存时，系统会找到一个足够大的连续内存块来满足需求，但是如果可用内存被分割成多个小块，就可能出现无法分配所需大小的内存块的情况。</li>
+</ul>
+</li>
+<li>
+<p>内部碎片（Internal Fragmentation）：</p>
+<ul>
+<li>内部碎片是指已经分配给程序的内存块中，有一部分内存没有被程序有效利用，造成了浪费。</li>
+<li>内部碎片通常发生在内存分配时，分配了比实际需要更大的内存块，但程序没有充分利用这些额外的内存空间。</li>
+</ul>
+</li>
+</ol>
+<p>内存碎片的重要性和影响：</p>
+<ul>
+<li>内存碎片会导致系统性能下降，因为操作系统需要更多的时间来寻找足够大的连续内存块来满足程序的需求。</li>
+<li>内存碎片也可能导致程序崩溃或运行不稳定，特别是当内存碎片积累到一定程度时。</li>
+<li>为了减少内存碎片的影响，程序员和操作系统通常采用不同的策略，如内存合并、内存池等，以更有效地管理内存。</li>
+</ul>
+</div>
+        </div>
+    </div>
+<h2 id="逃逸分析" class="headerLink">
+    <a href="#%e9%80%83%e9%80%b8%e5%88%86%e6%9e%90" class="header-mark"></a>逃逸分析</h2><p>逃逸分析是一种确定指针动态范围的方法。简单来说就是分析在程序的哪些地方可以访问到该指针。编译器会根据变量是否被外部引用来决定是否逃逸：</p>
+<ol>
+<li>如果函数外部没有引用，则优先放到栈中；</li>
+<li>如果函数外部存在引用，则必定放到堆中；</li>
+</ol>
+<p>对此可以理解为，逃逸分析是编译器用于决定变量分配到堆上还是栈上的一种行为。</p>
+<p><strong>go 在编译阶段确立逃逸，并不是在运行时</strong>。</p>
+<h2 id="指针逃逸" class="headerLink">
+    <a href="#%e6%8c%87%e9%92%88%e9%80%83%e9%80%b8" class="header-mark"></a>指针逃逸</h2><p>提问：函数传递指针真的比传值效率高吗？</p>
+<p>传递指针可以减少底层值的拷贝，可以提高效率，但是如果拷贝的数据量小，由于指针传递会产生逃逸，可能会使用堆，也可能会增加 GC 的负担，所以传递指针不一定是高效的。</p>
+<p>官网上上有一个关于变量分配的问题 <a href="https://go.dev/doc/faq#stack_or_heap:~:text=From%20a%20correctness,on%20the%20stack." target="_blank" rel="noopener noreferrer">How do I know whether a variable is allocated on the heap or the stack?</a></p>
+<p>Go 可以返回局部变量指针，这其实是一个典型的变量逃逸案例，示例代码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Student</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">Name</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">Age</span>  <span class="kt">int</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">StudentRegister</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">age</span> <span class="kt">int</span><span class="p">)</span> <span class="o">*</span><span class="nx">Student</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">s</span> <span class="o">:=</span> <span class="nb">new</span><span class="p">(</span><span class="nx">Student</span><span class="p">)</span> <span class="c1">//局部变量s逃逸到堆
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">	<span class="nx">s</span><span class="p">.</span><span class="nx">Name</span> <span class="p">=</span> <span class="nx">name</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">s</span><span class="p">.</span><span class="nx">Age</span> <span class="p">=</span> <span class="nx">age</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">s</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">StudentRegister</span><span class="p">(</span><span class="s">&#34;Jim&#34;</span><span class="p">,</span> <span class="mi">18</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>虽然在函数 StudentRegister() 内部 s 为局部变量，其值通过函数返回值返回，s 本身为一指针，其指向的内存地址不会是栈而是堆，这就是典型的逃逸案例。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">λ go build -gcflags=-m main.go
+</span></span><span class="line"><span class="cl"># command-line-arguments
+</span></span><span class="line"><span class="cl">.\main.go:8:6: can inline StudentRegister
+</span></span><span class="line"><span class="cl">.\main.go:17:6: can inline main
+</span></span><span class="line"><span class="cl">.\main.go:18:17: inlining call to StudentRegister
+</span></span><span class="line"><span class="cl">.\main.go:8:22: leaking param: name
+</span></span><span class="line"><span class="cl">.\main.go:9:10: new(Student) escapes to heap
+</span></span><span class="line"><span class="cl">.\main.go:18:17: new(Student) does not escape
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>指令集 -gcflags 用于将标识参数传递给 Go 编译器，-m 会打印出逃逸分析的优化策略。</p>
+<p>可见在 StudentRegister() 函数中，也即代码第 9 行显示 escapes to heap，代表该行内存分配发生了逃逸现象。</p>
+<h3 id="栈空间不足逃逸" class="headerLink">
+    <a href="#%e6%a0%88%e7%a9%ba%e9%97%b4%e4%b8%8d%e8%b6%b3%e9%80%83%e9%80%b8" class="header-mark"></a>栈空间不足逃逸</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">s</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">int</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="nx">index</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">s</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">s</span><span class="p">[</span><span class="nx">index</span><span class="p">]</span> <span class="p">=</span> <span class="nx">index</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>上面代码主函数中分配了一个 1000 个长度的切片，是否逃逸取决于栈空间是否足够大。直接查看编译提示，如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">λ go build -gcflags=-m main.go
+</span></span><span class="line"><span class="cl"># command-line-arguments
+</span></span><span class="line"><span class="cl">.\main.go:3:6: can inline main
+</span></span><span class="line"><span class="cl">.\main.go:5:11: make([]int, 1000, 1000) does not escape
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>根据上面的信息，没有发生逃逸。分配了一个 1000 的长度还不足以发生逃逸现象。x10 倍后，再看看情况。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">s</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">int</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10000</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="nx">index</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">s</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">s</span><span class="p">[</span><span class="nx">index</span><span class="p">]</span> <span class="p">=</span> <span class="nx">index</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">λ go build -gcflags=-m main.go
+</span></span><span class="line"><span class="cl"># command-line-arguments
+</span></span><span class="line"><span class="cl">.\main.go:3:6: can inline main
+</span></span><span class="line"><span class="cl">.\main.go:5:11: make([]int, 10000, 10000) escapes to heap
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>当切片长度扩大到 10000 时就会逃逸。实际上当栈空间不足以存放当前对象时或无法判断当前切片长度时会将对象分配到堆中。</p>
+<h3 id="动态类型逃逸" class="headerLink">
+    <a href="#%e5%8a%a8%e6%80%81%e7%b1%bb%e5%9e%8b%e9%80%83%e9%80%b8" class="header-mark"></a>动态类型逃逸</h3><p>很多函数参数为 interface 类型。比如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func Printf(format string, a ...interface{}) (n int, err error)
+</span></span><span class="line"><span class="cl">func Sprintf(format string, a ...interface{}) string
+</span></span><span class="line"><span class="cl">func Fprint(w io.Writer, a ...interface{}) (n int, err error)
+</span></span><span class="line"><span class="cl">func Print(a ...interface{}) (n int, err error)
+</span></span><span class="line"><span class="cl">func Println(a ...interface{}) (n int, err error)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>编译期间很难确定其参数的具体类型，也能产生逃逸。</p>
+<p>如下代码所示：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;hello 123&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Print</span><span class="p">(</span><span class="s">&#34;hello 456&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">λ go build -gcflags=-m main.go
+</span></span><span class="line"><span class="cl"># command-line-arguments
+</span></span><span class="line"><span class="cl">.\main.go:6:13: inlining call to fmt.Println
+</span></span><span class="line"><span class="cl">.\main.go:7:11: inlining call to fmt.Print
+</span></span><span class="line"><span class="cl">.\main.go:6:13: ... argument does not escape
+</span></span><span class="line"><span class="cl">.\main.go:6:14: &#34;hello 123&#34; escapes to heap
+</span></span><span class="line"><span class="cl">.\main.go:7:11: ... argument does not escape
+</span></span><span class="line"><span class="cl">.\main.go:7:12: &#34;hello 456&#34; escapes to heap
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="逃逸分析的作用" class="headerLink">
+    <a href="#%e9%80%83%e9%80%b8%e5%88%86%e6%9e%90%e7%9a%84%e4%bd%9c%e7%94%a8" class="header-mark"></a>逃逸分析的作用</h2><ol>
+<li>
+<p>逃逸分析的好处是为了减少 gc 的压力，不逃逸的对象分配在栈上，当函数返回时就回收了资源，不需要 gc 标记清除。</p>
+</li>
+<li>
+<p>逃逸分析完后可以确定哪些变量可以分配在栈上，栈的分配比堆快，性能好（逃逸的局部变量会在堆上分配，而没有发生逃逸的则有编译器在栈上分配）。</p>
+</li>
+<li>
+<p>同步消除，如果定义的对象的方法上有同步锁，但在运行时，却只有一个线程在访问，此时逃逸分析后的机器码，会去掉同步锁运行。</p>
+</li>
+</ol>
+<div class="details admonition info open">
+        <div class="details-summary admonition-title">
+            <i class="icon fas fa-info-circle fa-fw"></i>info<i class="details-icon fas fa-angle-right fa-fw"></i>
+        </div>
+        <div class="details-content">
+            <div class="admonition-content"><p>当涉及到同步锁（Mutex）以及只有一个线程在访问的情况时，逃逸分析可能会起到关键作用。下面是一个简单的示例来解释这个情况：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="s">&#34;sync&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">mu</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">Mutex</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">data</span> <span class="kt">int</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">mu</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">data</span> <span class="p">=</span> <span class="mi">42</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">mu</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">// 在这里，编译器会执行逃逸分析
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">// 如果编译器能够确定 data 不会逃逸到堆上，它可能会去除同步锁
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">// 因为只有一个线程在访问 data，不涉及并发竞争
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>在这个示例中，虽然我们使用了同步锁来保护 <code>data</code> 的访问，但是在逃逸分析的过程中，编译器可以发现 <code>data</code> 没有逃逸到堆上，因此它可以选择去掉同步锁，因为只有一个线程在访问 <code>data</code>，不存在并发竞争的情况。</p>
+<p>这种优化可以提高程序的性能，因为同步锁的获取和释放操作可能会引入一些开销。不过需要注意的是，编译器会根据具体情况进行判断，而不是简单地因为只有一个线程就去掉所有同步锁。在多线程情况下，同步锁是必要的，以确保数据的安全访问。因此，在编写多线程程序时，仍然需要谨慎使用同步锁以确保线程安全。</p>
+</div>
+        </div>
+    </div>
+<h2 id="总结" class="headerLink">
+    <a href="#%e6%80%bb%e7%bb%93" class="header-mark"></a>总结</h2><ol>
+<li>
+<p>堆上动态分配内存比栈上静态分配内存，开销大很多。</p>
+</li>
+<li>
+<p>变量分配在栈上需要能在编译期确定它的作用域，否则会分配到堆上。</p>
+</li>
+<li>
+<p>Go 编译器会在编译期对考察变量的作用域，并作一系列检查，如果它的作用域在运行期间对编译器一直是可知的，那么就会分配到栈上。简单来说，<strong>编译器会根据变量是否被外部引用来决定是否逃逸</strong>。</p>
+</li>
+<li>
+<p>编译器的这些逃逸分析规则其实不需要掌握，只需通过 <code>go build -gcflags=-m</code> 命令来观察变量逃逸情况就行了。</p>
+</li>
+<li>
+<p>不要盲目使用变量的指针作为函数参数，虽然它会减少复制操作。但其实当参数为变量自身的时候，复制是在栈上完成的操作，开销远比变量逃逸后动态地在堆上分配内存少的多。</p>
+</li>
+<li>
+<p>逃逸分析在编译阶段完成的。</p>
+</li>
+</ol>
+<h2 id="参考" class="headerLink">
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
+<li><a href="https://colynn.github.io/2020-07-16-go-memory-allocation/" target="_blank" rel="noopener noreferrer">Golang 内存分配 - stack and heap</a></li>
+</ul>
+]]></description>
+</item><item>
     <title>Go 编译标签 build tag</title>
     <link>https://www.xiaobinqt.cn/go-build-tag/</link>
     <pubDate>Sat, 28 Jan 2023 00:00:00 &#43;0000</pubDate><author>
@@ -5538,113 +5934,6 @@
 <h2 id="参考" class="headerLink">
     <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
 <li><a href="https://golang.cafe/blog/golang-functional-options-pattern.html" target="_blank" rel="noopener noreferrer">Golang Functional Options Pattern</a></li>
-</ul>
-]]></description>
-</item><item>
-    <title>golang make 和 new 的区别</title>
-    <link>https://www.xiaobinqt.cn/new-make-difference/</link>
-    <pubDate>Mon, 21 Jun 2021 00:00:00 &#43;0000</pubDate><author>
-        <name>xiaobinqt</name>
-    </author><guid>https://www.xiaobinqt.cn/new-make-difference/</guid>
-    <description><![CDATA[<ul>
-<li>make 的作用是初始化内置的数据结构，也就是 <code>slice</code>、<code>map</code>和 <code>channel</code>。</li>
-<li>new 的作用是根据传入的类型分配一片内存空间并返回指向这片内存空间的指针。</li>
-</ul>
-<h2 id="make" class="headerLink">
-    <a href="#make" class="header-mark"></a>make</h2><p>内置函数 <code>make</code> 仅支持 <code>slice</code>、<code>map</code>、<code>channel</code> 三种数据类型的内存创建，<strong>其返回值是所创建类型的本身，而不是新的指针引用</strong>。</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func make(t Type, size ...IntegerType) Type
-</span></span></code></pre></td></tr></table>
-</div>
-</div><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func main() {
-</span></span><span class="line"><span class="cl"> v1 := make([]int, 1, 5)
-</span></span><span class="line"><span class="cl"> v2 := make(map[int]bool, 5)
-</span></span><span class="line"><span class="cl"> v3 := make(chan int, 1)
-</span></span><span class="line"><span class="cl">    
-</span></span><span class="line"><span class="cl"> fmt.Println(v1, v2, v3)
-</span></span><span class="line"><span class="cl">}
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>在☝️代码中，我们分别对三种类型调用了 <code>make</code> 函数进行了初始化。会发现有的入参是有多个长度指定，有的没有。这里的区别主要是长度（len）和容量（cap）的指定，
-<strong>有的类型是没有容量这一说法</strong>。</p>
-<p>输出结果：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[0] map[] 0xc000044070
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>调用 <code>make</code>函数去初始化切片（slice）的类型时，会带有零值。</p>
-<h2 id="new" class="headerLink">
-    <a href="#new" class="header-mark"></a>new</h2><p>内置函数 <code>new</code> 可以对任意类型进行内存创建和初始化。<strong>其返回值是所创建类型的指针引用</strong>。</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func new(Type) *Type
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><code>new(T)</code> 和 <code>&amp;T{}</code> 效果是一样的。</p>
-<h2 id="区别" class="headerLink">
-    <a href="#%e5%8c%ba%e5%88%ab" class="header-mark"></a>区别</h2><p><code>make</code> 函数在初始化时，会初始化 <code>slice</code>、<code>chan</code>、<code>map</code> 类型的内部数据结构，<code>new</code> 函数并不会。</p>
-<p>例如，在 <code>map</code> 类型中，合理的长度（len）和容量（cap）可以提高效率和减少开销。</p>
-<ul>
-<li>
-<p><code>make</code> 函数：</p>
-<ul>
-<li>能够分配并初始化类型所需的内存空间和结构，返回引用类型的本身。</li>
-<li>具有使用范围的局限性，仅支持 <code>channel</code>、<code>map</code>、<code>slice</code> 三种类型。</li>
-<li>具有独特的优势，<code>make</code> 函数会对三种类型的内部数据结构（长度、容量等）赋值。</li>
-</ul>
-</li>
-<li>
-<p><code>new</code> 函数：</p>
-<ul>
-<li>能够分配类型所需的内存空间，返回指针引用（指向内存的指针），同时把分配的内存置为零，也就是类型的零值。</li>
-<li>可被替代，其实不常用，我们通常都是采用短语句声明以及结构体的字面量达到我们的目的，比如：
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"> i := 0
-</span></span><span class="line"><span class="cl"> u := &amp;user{}
-</span></span></code></pre></td></tr></table>
-</div>
-</div></li>
-</ul>
-</li>
-</ul>
-<h2 id="零值" class="headerLink">
-    <a href="#%e9%9b%b6%e5%80%bc" class="header-mark"></a>零值</h2><ul>
-<li>array、struct 每个元素或字段都是对应该类型的零值</li>
-<li>slice、map 对于零值 nil</li>
-</ul>
-<h2 id="参考" class="headerLink">
-    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
-<li><a href="https://github.com/astaxie/build-web-application-with-golang/blob/master/zh/02.2.md#makenew%E6%93%8D%E4%BD%9C" target="_blank" rel="noopener noreferrer">make、new操作</a></li>
-<li><a href="https://www.cnblogs.com/vincenshen/p/9356974.html" target="_blank" rel="noopener noreferrer">Go make 和 new的区别</a></li>
-<li><a href="https://dryyun.com/2019/05/30/go-new-make-use/" target="_blank" rel="noopener noreferrer">Go - var &amp; make &amp; new 在复杂类型上的使用区别</a></li>
-<li><a href="https://mp.weixin.qq.com/s?__biz=MzUxMDI4MDc1NA==&amp;mid=2247487140&amp;idx=1&amp;sn=36d12263308fd24c32e9f5327e73ba21" target="_blank" rel="noopener noreferrer">Go 面试题： new 和 make 是什么，差异在哪？</a></li>
 </ul>
 ]]></description>
 </item></channel>
