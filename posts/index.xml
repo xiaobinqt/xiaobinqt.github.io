@@ -4,7 +4,7 @@
         <link>https://www.xiaobinqt.cn/posts/</link>
         <description>所有文章 | xiaobinqt 博客 - 技术改变生活</description>
         <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>xiaobinqt@163.com (xiaobinqt)</managingEditor>
-            <webMaster>xiaobinqt@163.com (xiaobinqt)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Tue, 12 Sep 2023 00:00:00 &#43;0000</lastBuildDate><atom:link href="https://www.xiaobinqt.cn/posts/" rel="self" type="application/rss+xml" /><item>
+            <webMaster>xiaobinqt@163.com (xiaobinqt)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Tue, 10 Oct 2023 00:00:00 &#43;0000</lastBuildDate><atom:link href="https://www.xiaobinqt.cn/posts/" rel="self" type="application/rss+xml" /><item>
     <title>纪念一位老友</title>
     <link>https://www.xiaobinqt.cn/old-pal/</link>
     <pubDate>Wed, 16 Mar 2022 00:00:00 &#43;0000</pubDate><author>
@@ -27,6 +27,402 @@
 <p>也许是年纪大了，不知不觉对有些事越来越伤感。几次提笔想写点什么，但是每次都写不出来，心里总记挂这件事，可能是那次我没有停下来见他吧。</p>
 <br>
 <div id="id-1">2021年10月15日完</div>
+]]></description>
+</item><item>
+    <title>Golang 内存逃逸</title>
+    <link>https://www.xiaobinqt.cn/escape-heap/</link>
+    <pubDate>Tue, 10 Oct 2023 00:00:00 &#43;0000</pubDate><author>
+        <name>xiaobinqt</name>
+    </author><guid>https://www.xiaobinqt.cn/escape-heap/</guid>
+    <description><![CDATA[<!-- author： xiaobinqt -->
+<!-- email： xiaobinqt@163.com -->
+<!-- https://xiaobinqt.github.io -->
+<!-- https://www.xiaobinqt.cn -->
+<p>在 C/C++ 开发中，动态分配内存（new/malloc）需要开发者手动释放资源。这样做的好处是，需要申请多少内存空间可以很好的掌握怎么分配。但是这有个缺点，如果忘记释放内存，则会导致内存泄漏。在很多高级语言中（python/Go/java）都加上了垃圾回收机制。</p>
+<h2 id="堆和栈" class="headerLink">
+    <a href="#%e5%a0%86%e5%92%8c%e6%a0%88" class="header-mark"></a>堆和栈</h2><p>栈可以简单得理解成一次函数调用内部申请到的内存，它们会随着函数的返回把内存还给系统。下面来看看一个例子：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func F() {
+</span></span><span class="line"><span class="cl">    temp := make([]int, 0, 20)
+</span></span><span class="line"><span class="cl">    ...
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>上面的例子，内函数内部申请的临时变量，即使是用 make 申请到的内存，如果发现在退出函数后没有用了，那么就把丢到栈上，毕竟栈上的内存分配比堆上快很多。</p>
+<p>再看一个堆的例子：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func F() []int{
+</span></span><span class="line"><span class="cl">    a := make([]int, 0, 20)
+</span></span><span class="line"><span class="cl">    return a
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>上面这段代码，申请的代码和上面的一模一样，但是申请后作为返回值返回了，编译器会认为在退出函数之后还有其他地方在引用，当函数返回之后并不会将其内存归还。那么就申请到堆里。</p>
+<p>如果变量都分配到堆上，堆不像栈可以自动清理。它会引起 Go 频繁地进行垃圾回收，而垃圾回收会占用比较大的系统开销。</p>
+<h3 id="堆和栈相比" class="headerLink">
+    <a href="#%e5%a0%86%e5%92%8c%e6%a0%88%e7%9b%b8%e6%af%94" class="header-mark"></a>堆和栈相比</h3><p>堆适合不可预知的大小的内存分配。但是为此付出的代价是分配速度较慢，而且会形成内存碎片。</p>
+<p>栈内存分配则会非常快，栈分配内存只需要两个 CPU 指令：PUSH 和 RELEASE 分配和释放；而堆分配内存首先需要去找到一块大小合适的内存块。之后要通过垃圾回收才能释放。</p>
+<div class="details admonition info open">
+        <div class="details-summary admonition-title">
+            <i class="icon fas fa-info-circle fa-fw"></i>内存碎片<i class="details-icon fas fa-angle-right fa-fw"></i>
+        </div>
+        <div class="details-content">
+            <div class="admonition-content"><p>内存碎片（Memory Fragmentation）是指计算机系统中存在的一种内存分配和释放的情况，它可能导致系统中的可用内存不连续、零散分布，使得系统效率下降或者无法有效地利用可用内存。内存碎片通常分为两种类型：外部碎片和内部碎片。</p>
+<ol>
+<li>
+<p>外部碎片（External Fragmentation）：</p>
+<ul>
+<li>外部碎片指的是在可用内存中存在的未分配的小块内存空间，虽然总的可用内存大小足够，但是这些小块内存分散在不同的地方，无法被有效地利用。</li>
+<li>外部碎片通常发生在动态内存分配和释放的过程中。当程序请求分配一块内存时，系统会找到一个足够大的连续内存块来满足需求，但是如果可用内存被分割成多个小块，就可能出现无法分配所需大小的内存块的情况。</li>
+</ul>
+</li>
+<li>
+<p>内部碎片（Internal Fragmentation）：</p>
+<ul>
+<li>内部碎片是指已经分配给程序的内存块中，有一部分内存没有被程序有效利用，造成了浪费。</li>
+<li>内部碎片通常发生在内存分配时，分配了比实际需要更大的内存块，但程序没有充分利用这些额外的内存空间。</li>
+</ul>
+</li>
+</ol>
+<p>内存碎片的重要性和影响：</p>
+<ul>
+<li>内存碎片会导致系统性能下降，因为操作系统需要更多的时间来寻找足够大的连续内存块来满足程序的需求。</li>
+<li>内存碎片也可能导致程序崩溃或运行不稳定，特别是当内存碎片积累到一定程度时。</li>
+<li>为了减少内存碎片的影响，程序员和操作系统通常采用不同的策略，如内存合并、内存池等，以更有效地管理内存。</li>
+</ul>
+</div>
+        </div>
+    </div>
+<h2 id="逃逸分析" class="headerLink">
+    <a href="#%e9%80%83%e9%80%b8%e5%88%86%e6%9e%90" class="header-mark"></a>逃逸分析</h2><p>逃逸分析是一种确定指针动态范围的方法。简单来说就是分析在程序的哪些地方可以访问到该指针。编译器会根据变量是否被外部引用来决定是否逃逸：</p>
+<ol>
+<li>如果函数外部没有引用，则优先放到栈中；</li>
+<li>如果函数外部存在引用，则必定放到堆中；</li>
+</ol>
+<p>对此可以理解为，逃逸分析是编译器用于决定变量分配到堆上还是栈上的一种行为。</p>
+<p><strong>go 在编译阶段确立逃逸，并不是在运行时</strong>。</p>
+<h2 id="指针逃逸" class="headerLink">
+    <a href="#%e6%8c%87%e9%92%88%e9%80%83%e9%80%b8" class="header-mark"></a>指针逃逸</h2><p>提问：函数传递指针真的比传值效率高吗？</p>
+<p>传递指针可以减少底层值的拷贝，可以提高效率，但是如果拷贝的数据量小，由于指针传递会产生逃逸，可能会使用堆，也可能会增加 GC 的负担，所以传递指针不一定是高效的。</p>
+<p>官网上上有一个关于变量分配的问题 <a href="https://go.dev/doc/faq#stack_or_heap:~:text=From%20a%20correctness,on%20the%20stack." target="_blank" rel="noopener noreferrer">How do I know whether a variable is allocated on the heap or the stack?</a></p>
+<p>Go 可以返回局部变量指针，这其实是一个典型的变量逃逸案例，示例代码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Student</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">Name</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">Age</span>  <span class="kt">int</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">StudentRegister</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">age</span> <span class="kt">int</span><span class="p">)</span> <span class="o">*</span><span class="nx">Student</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">s</span> <span class="o">:=</span> <span class="nb">new</span><span class="p">(</span><span class="nx">Student</span><span class="p">)</span> <span class="c1">//局部变量s逃逸到堆
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">	<span class="nx">s</span><span class="p">.</span><span class="nx">Name</span> <span class="p">=</span> <span class="nx">name</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">s</span><span class="p">.</span><span class="nx">Age</span> <span class="p">=</span> <span class="nx">age</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">s</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">StudentRegister</span><span class="p">(</span><span class="s">&#34;Jim&#34;</span><span class="p">,</span> <span class="mi">18</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>虽然在函数 StudentRegister() 内部 s 为局部变量，其值通过函数返回值返回，s 本身为一指针，其指向的内存地址不会是栈而是堆，这就是典型的逃逸案例。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">λ go build -gcflags=-m main.go
+</span></span><span class="line"><span class="cl"># command-line-arguments
+</span></span><span class="line"><span class="cl">.\main.go:8:6: can inline StudentRegister
+</span></span><span class="line"><span class="cl">.\main.go:17:6: can inline main
+</span></span><span class="line"><span class="cl">.\main.go:18:17: inlining call to StudentRegister
+</span></span><span class="line"><span class="cl">.\main.go:8:22: leaking param: name
+</span></span><span class="line"><span class="cl">.\main.go:9:10: new(Student) escapes to heap
+</span></span><span class="line"><span class="cl">.\main.go:18:17: new(Student) does not escape
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>指令集 -gcflags 用于将标识参数传递给 Go 编译器，-m 会打印出逃逸分析的优化策略。</p>
+<p>可见在 StudentRegister() 函数中，也即代码第 9 行显示 escapes to heap，代表该行内存分配发生了逃逸现象。</p>
+<h3 id="栈空间不足逃逸" class="headerLink">
+    <a href="#%e6%a0%88%e7%a9%ba%e9%97%b4%e4%b8%8d%e8%b6%b3%e9%80%83%e9%80%b8" class="header-mark"></a>栈空间不足逃逸</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">s</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">int</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="nx">index</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">s</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">s</span><span class="p">[</span><span class="nx">index</span><span class="p">]</span> <span class="p">=</span> <span class="nx">index</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>上面代码主函数中分配了一个 1000 个长度的切片，是否逃逸取决于栈空间是否足够大。直接查看编译提示，如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">λ go build -gcflags=-m main.go
+</span></span><span class="line"><span class="cl"># command-line-arguments
+</span></span><span class="line"><span class="cl">.\main.go:3:6: can inline main
+</span></span><span class="line"><span class="cl">.\main.go:5:11: make([]int, 1000, 1000) does not escape
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>根据上面的信息，没有发生逃逸。分配了一个 1000 的长度还不足以发生逃逸现象。x10 倍后，再看看情况。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">s</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">int</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10000</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="nx">index</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">s</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">s</span><span class="p">[</span><span class="nx">index</span><span class="p">]</span> <span class="p">=</span> <span class="nx">index</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">λ go build -gcflags=-m main.go
+</span></span><span class="line"><span class="cl"># command-line-arguments
+</span></span><span class="line"><span class="cl">.\main.go:3:6: can inline main
+</span></span><span class="line"><span class="cl">.\main.go:5:11: make([]int, 10000, 10000) escapes to heap
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>当切片长度扩大到 10000 时就会逃逸。实际上当栈空间不足以存放当前对象时或无法判断当前切片长度时会将对象分配到堆中。</p>
+<h3 id="动态类型逃逸" class="headerLink">
+    <a href="#%e5%8a%a8%e6%80%81%e7%b1%bb%e5%9e%8b%e9%80%83%e9%80%b8" class="header-mark"></a>动态类型逃逸</h3><p>很多函数参数为 interface 类型。比如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func Printf(format string, a ...interface{}) (n int, err error)
+</span></span><span class="line"><span class="cl">func Sprintf(format string, a ...interface{}) string
+</span></span><span class="line"><span class="cl">func Fprint(w io.Writer, a ...interface{}) (n int, err error)
+</span></span><span class="line"><span class="cl">func Print(a ...interface{}) (n int, err error)
+</span></span><span class="line"><span class="cl">func Println(a ...interface{}) (n int, err error)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>编译期间很难确定其参数的具体类型，也能产生逃逸。</p>
+<p>如下代码所示：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;hello 123&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Print</span><span class="p">(</span><span class="s">&#34;hello 456&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">λ go build -gcflags=-m main.go
+</span></span><span class="line"><span class="cl"># command-line-arguments
+</span></span><span class="line"><span class="cl">.\main.go:6:13: inlining call to fmt.Println
+</span></span><span class="line"><span class="cl">.\main.go:7:11: inlining call to fmt.Print
+</span></span><span class="line"><span class="cl">.\main.go:6:13: ... argument does not escape
+</span></span><span class="line"><span class="cl">.\main.go:6:14: &#34;hello 123&#34; escapes to heap
+</span></span><span class="line"><span class="cl">.\main.go:7:11: ... argument does not escape
+</span></span><span class="line"><span class="cl">.\main.go:7:12: &#34;hello 456&#34; escapes to heap
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="逃逸分析的作用" class="headerLink">
+    <a href="#%e9%80%83%e9%80%b8%e5%88%86%e6%9e%90%e7%9a%84%e4%bd%9c%e7%94%a8" class="header-mark"></a>逃逸分析的作用</h2><ol>
+<li>
+<p>逃逸分析的好处是为了减少 gc 的压力，不逃逸的对象分配在栈上，当函数返回时就回收了资源，不需要 gc 标记清除。</p>
+</li>
+<li>
+<p>逃逸分析完后可以确定哪些变量可以分配在栈上，栈的分配比堆快，性能好（逃逸的局部变量会在堆上分配，而没有发生逃逸的则有编译器在栈上分配）。</p>
+</li>
+<li>
+<p>同步消除，如果定义的对象的方法上有同步锁，但在运行时，却只有一个线程在访问，此时逃逸分析后的机器码，会去掉同步锁运行。</p>
+</li>
+</ol>
+<div class="details admonition info open">
+        <div class="details-summary admonition-title">
+            <i class="icon fas fa-info-circle fa-fw"></i>info<i class="details-icon fas fa-angle-right fa-fw"></i>
+        </div>
+        <div class="details-content">
+            <div class="admonition-content"><p>当涉及到同步锁（Mutex）以及只有一个线程在访问的情况时，逃逸分析可能会起到关键作用。下面是一个简单的示例来解释这个情况：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="s">&#34;sync&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">mu</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">Mutex</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">data</span> <span class="kt">int</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">mu</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">data</span> <span class="p">=</span> <span class="mi">42</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">mu</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">// 在这里，编译器会执行逃逸分析
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">// 如果编译器能够确定 data 不会逃逸到堆上，它可能会去除同步锁
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">// 因为只有一个线程在访问 data，不涉及并发竞争
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>在这个示例中，虽然我们使用了同步锁来保护 <code>data</code> 的访问，但是在逃逸分析的过程中，编译器可以发现 <code>data</code> 没有逃逸到堆上，因此它可以选择去掉同步锁，因为只有一个线程在访问 <code>data</code>，不存在并发竞争的情况。</p>
+<p>这种优化可以提高程序的性能，因为同步锁的获取和释放操作可能会引入一些开销。不过需要注意的是，编译器会根据具体情况进行判断，而不是简单地因为只有一个线程就去掉所有同步锁。在多线程情况下，同步锁是必要的，以确保数据的安全访问。因此，在编写多线程程序时，仍然需要谨慎使用同步锁以确保线程安全。</p>
+</div>
+        </div>
+    </div>
+<h2 id="总结" class="headerLink">
+    <a href="#%e6%80%bb%e7%bb%93" class="header-mark"></a>总结</h2><ol>
+<li>
+<p>堆上动态分配内存比栈上静态分配内存，开销大很多。</p>
+</li>
+<li>
+<p>变量分配在栈上需要能在编译期确定它的作用域，否则会分配到堆上。</p>
+</li>
+<li>
+<p>Go 编译器会在编译期对考察变量的作用域，并作一系列检查，如果它的作用域在运行期间对编译器一直是可知的，那么就会分配到栈上。简单来说，<strong>编译器会根据变量是否被外部引用来决定是否逃逸</strong>。</p>
+</li>
+<li>
+<p>编译器的这些逃逸分析规则其实不需要掌握，只需通过 <code>go build -gcflags=-m</code> 命令来观察变量逃逸情况就行了。</p>
+</li>
+<li>
+<p>不要盲目使用变量的指针作为函数参数，虽然它会减少复制操作。但其实当参数为变量自身的时候，复制是在栈上完成的操作，开销远比变量逃逸后动态地在堆上分配内存少的多。</p>
+</li>
+<li>
+<p>逃逸分析在编译阶段完成的。</p>
+</li>
+</ol>
+<h2 id="参考" class="headerLink">
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
+<li><a href="https://colynn.github.io/2020-07-16-go-memory-allocation/" target="_blank" rel="noopener noreferrer">Golang 内存分配 - stack and heap</a></li>
+</ul>
 ]]></description>
 </item><item>
     <title>Docker 单机安装使用 Elasticsearch</title>
@@ -827,524 +1223,6 @@
 <p><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230526/4093998f664f4d47ad95d563cbfab817.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230526/4093998f664f4d47ad95d563cbfab817.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230526/4093998f664f4d47ad95d563cbfab817.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15">
         
     </a></p>
-]]></description>
-</item><item>
-    <title>Docker bridge 网络与自定义 DNS 解析</title>
-    <link>https://www.xiaobinqt.cn/docker-net-custom-dns/</link>
-    <pubDate>Wed, 24 May 2023 00:00:00 &#43;0000</pubDate><author>
-        <name>xiaobinqt</name>
-    </author><guid>https://www.xiaobinqt.cn/docker-net-custom-dns/</guid>
-    <description><![CDATA[<!-- author： xiaobinqt -->
-<!-- email： xiaobinqt@163.com -->
-<!-- https://xiaobinqt.github.io -->
-<!-- https://www.xiaobinqt.cn -->
-<h2 id="常见-dns-记录类型" class="headerLink">
-    <a href="#%e5%b8%b8%e8%a7%81-dns-%e8%ae%b0%e5%bd%95%e7%b1%bb%e5%9e%8b" class="header-mark"></a>常见 DNS 记录类型</h2><ul>
-<li>A 记录（Address Record）</li>
-</ul>
-<p>记录格式：<code>example.com. IN A 192.0.2.1</code>，将域名映射到 IPv4 地址，不包含端口信息。</p>
-<ul>
-<li>AAAA 记录（IPv6 Address Record）</li>
-</ul>
-<p>记录格式：<code>example.com. IN AAAA 2001:db8::1</code>，将域名映射到 IPv6 地址。</p>
-<ul>
-<li>CNAME 记录（Canonical Name Record）</li>
-</ul>
-<p>记录格式：<code>www.example.com. IN CNAME example.com.</code>，将一个域名指向另一个域名，实现域名的别名或重定向。</p>
-<ul>
-<li>TXT 记录（Text Record）</li>
-</ul>
-<p>记录格式：<code>example.com. IN TXT &quot;Some text here&quot;</code>，存储与域名相关的文本信息，常用于验证域名所有权、防止电子邮件欺诈等。</p>
-<ul>
-<li>SRV 记录（Service Record）</li>
-</ul>
-<p>记录格式：<code>_service._proto.name. IN SRV priority weight port target</code>。<code>priority</code>表示优先级，用于指定备用服务器的顺序。值越小，优先级越高。<code>weight</code>表示权重，用于在具有相同优先级的记录之间进行负载均衡。值越大，权重越高。<code>port</code>表示服务的端口号。<code>target</code>表示提供该服务的目标主机的域名。</p>
-<p>SRV 用于指定特定服务的域名、端口和优先级等信息，它用于在 DNS 中提供服务发现的功能，让客户端能够通过域名查找到提供特定服务的目标主机和端口。</p>
-<ul>
-<li>PTR 记录（Pointer Record）</li>
-</ul>
-<p>记录格式：<code>1.2.0.192.in-addr.arpa. IN PTR example.com.</code>，用于进行反向 DNS 查找，将 IP 地址解析为域名。</p>
-<blockquote>
-<p>IN（表示Internet）在 DNS 记录中是可选的，可以省略。当省略 IN 时，默认为 IN，因为大多数 DNS 记录都是针对互联网的。</p>
-</blockquote>
-<h2 id="resolvconf-配置文件" class="headerLink">
-    <a href="#resolvconf-%e9%85%8d%e7%bd%ae%e6%96%87%e4%bb%b6" class="header-mark"></a>resolv.conf 配置文件</h2><p>resolv.conf 配置文件，存储了用于解析域名的 DNS 服务器的相关信息，用于指定系统的 DNS 解析配置。</p>
-<p>resolv.conf 文件通常位于 Linux 系统中的 /etc/resolv.conf。每行包含一个配置项，配置项由关键字和对应的值组成，以空格或制表符分隔。常见的配置项包括：</p>
-<ul>
-<li>nameserver：指定 DNS 服务器的 IP 地址。可以有多个 nameserver 行，按照优先级从上到下进行解析。</li>
-<li>search：指定默认的搜索域名列表。当使用不完全限定的域名时，系统会自动尝试附加这些域名来进行解析。</li>
-<li>domain：指定系统的默认域名。当使用不完全限定的主机名时，系统会自动尝试附加默认域名来进行解析。</li>
-<li>options：指定其他的解析选项，如超时时间、转发等。</li>
-</ul>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">nameserver 8.8.8.8
-</span></span><span class="line"><span class="cl">nameserver 8.8.4.4
-</span></span><span class="line"><span class="cl">search example.com
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>比如以下的这个配置</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230529/8b4dd5e7b70a4e17870780c2f4708751.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230529/8b4dd5e7b70a4e17870780c2f4708751.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230529/8b4dd5e7b70a4e17870780c2f4708751.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>resolv.conf</h2>">
-        
-    </a><figcaption class="image-caption">resolv.conf</figcaption>
-    </figure></p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">search xae-zcbus-20230523.28e5df10.csphere.local csphere.local
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>这条 search 配置表示系统默认的搜索域名列表包括两个域名：<code>xae-zcbus-20230523.28e5df10.csphere.local</code> 和 <code>csphere.local</code>。</p>
-<p>当进行 DNS 解析时，如果使用一个不完全限定的域名（没有包含点号），系统会按照 search 配置中的顺序尝试逐个附加这些搜索域名，以尝试解析域名。例如，如果要解析的域名是 example，系统会依次尝试解析 <code>example.xae-zcbus-20230523.28e5df10.csphere.local</code> 和 <code>example.csphere.local</code>。</p>
-<p>这样配置搜索域名列表可以简化 DNS 查询过程，特别是在本地网络内部使用内部域名时，通过设置合适的搜索域名，可以直接使用不完全限定的主机名进行解析，而无需每次都输入完整的域名。</p>
-<p>ndots 参数控制着系统在进行 DNS 解析时是否自动追加搜索域名。它指定了一个域名中至少要包含的点号<code>.</code>的数量。点号在域名中的数量表示域名的层级结构，例如<code>example.com</code>有一个点号，而<code>www.example.com</code>有两个点号。当一个域名的层级结构中点号的数量达到或超过 ndots 参数指定的值时，系统将<strong>不再追加</strong>搜索域名。</p>
-<p>如上的配置<code>options ndots:2</code>，表示当进行 DNS 解析时，如果域名中包含至少两个点号（层级结构至少为三级），系统将不会自动追加搜索域名。如果域名的层级结构不足三级（点号少于两个），系统会自动尝试使用 /etc/resolv.conf 中指定的搜索域名列表进行解析。</p>
-<p><code>nameserver 172.17.0.1</code>用于指定 DNS 解析时要使用的 DNS 服务器的 IP 地址。这里的<code>172.17.0.1</code>是 Docker bridge 网络下虚拟网桥 docker0 的 IP 地址。</p>
-<p>因为容器中没有 dns 解析服务，不管是 dnsmasq 还是 pdns 都是装在宿主机上的，所以最后肯定是到宿主机上来解析的域名，但是这里如果直接写宿主机 IP 会影响效率「TODO 待补充」。</p>
-<h2 id="etchosts-配置文件" class="headerLink">
-    <a href="#etchosts-%e9%85%8d%e7%bd%ae%e6%96%87%e4%bb%b6" class="header-mark"></a>/etc/hosts 配置文件</h2><p>/etc/hosts 是本地的主机名解析文件，用于将主机名映射到对应的 IP 地址。/etc/hosts 文件包含了主机名和对应 IP 地址的映射关系。每行的格式为 <code>&lt;IP 地址&gt; &lt;主机名&gt;</code> 或者 <code>&lt;IP 地址&gt; &lt;主机别名&gt; &lt;主机名&gt;</code>。</p>
-<p>/etc/hosts 文件中的条目优先于 DNS（Domain Name System）解析，当系统需要解析主机名时，会首先查看 /etc/hosts 文件，如果找到匹配的主机名，则直接使用对应的 IP 地址进行通信，无需进行 DNS 查询。</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230524/16561b7c30f74809822274beff9af838.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230524/16561b7c30f74809822274beff9af838.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230524/16561b7c30f74809822274beff9af838.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>hosts</h2>">
-        
-    </a><figcaption class="image-caption">hosts</figcaption>
-    </figure></p>
-<h2 id="pdns" class="headerLink">
-    <a href="#pdns" class="header-mark"></a>PDNS</h2><p>PDNS 是 PowerDNS 的简称，它是一款开源的域名系统（DNS）服务器软件。</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 安装 pdns</span>
-</span></span><span class="line"><span class="cl">yum install pdns pdns-backend-pipe -y
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1"># pdns 启动,停止和查看是否运行正常</span>
-</span></span><span class="line"><span class="cl">systemctl start/stop/status pdns
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230525/fa40c2fa19674bd1a29c4edd0496ff5b.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230525/fa40c2fa19674bd1a29c4edd0496ff5b.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230525/fa40c2fa19674bd1a29c4edd0496ff5b.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>查看 dnsmasq 是否正常</h2>">
-        
-    </a><figcaption class="image-caption">查看 dnsmasq 是否正常</figcaption>
-    </figure></p>
-<p>如果有问题需要排查，可以使用如下命令让 pdns 在前台运行</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">/usr/sbin/pdns_server --guardian<span class="o">=</span>no --daemon<span class="o">=</span>no --disable-syslog --log-timestamp<span class="o">=</span>no --write-pid<span class="o">=</span>no
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230527/fc4df6cc9be049929788893a037ccd6f.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230527/fc4df6cc9be049929788893a037ccd6f.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230527/fc4df6cc9be049929788893a037ccd6f.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>前台运行模式</h2>">
-        
-    </a><figcaption class="image-caption">前台运行模式</figcaption>
-    </figure></p>
-<p><code>--guardian=no</code>: 禁用 Guardian 模式。Guardian 模式是 PowerDNS 的守护进程管理机制，它负责监控和重启 PowerDNS 进程。通过将此参数设置为 no，禁用了 Guardian 模式。</p>
-<p><code>--daemon=no</code>: 禁用守护进程模式。默认情况下，PowerDNS 以守护进程的形式运行，即在后台作为系统服务运行。通过将此参数设置为 no，PowerDNS 将在前台运行，输出日志和调试信息到终端。</p>
-<p><code>--disable-syslog</code>: 禁用使用系统日志。默认情况下，PowerDNS 会将日志信息写入系统日志。通过使用此参数，禁用了将日志写入系统日志的功能。</p>
-<p><code>--log-timestamp=no</code>: 禁用日志时间戳。默认情况下，PowerDNS 在日志中添加时间戳以指示每个日志条目的时间。通过将此参数设置为 no，禁用了时间戳的添加。</p>
-<p><code>--write-pid=no</code>: 禁用写入 PID 文件。默认情况下，PowerDNS 会将其进程 ID 写入 PID 文件。通过将此参数设置为 no，禁用了 PID 文件的写入。</p>
-<h3 id="pipe-backend" class="headerLink">
-    <a href="#pipe-backend" class="header-mark"></a>pipe backend</h3><p>在 PowerDNS 中，pipe 是一种后端（Backend）类型，用于将 DNS 查询通过管道（Pipe）方式传递给外部程序进行处理。这种后端类型被称为 &ldquo;pipe backend&rdquo;。</p>
-<p>使用 pipe backend，PowerDNS 可以将接收到的 DNS 查询通过管道发送给一个外部的自定义脚本或程序，然后由该脚本或程序处理查询并返回结果给 PowerDNS。这种方式允许用户根据自己的需求编写自定义逻辑来处理 DNS 查询，从而实现更灵活的功能。</p>
-<p>在 PowerDNS 中配置 pipe backend 需要以下步骤：</p>
-<ol>
-<li>
-<p>编写自定义脚本或程序：根据需求，编写一个能够接收 DNS 查询并返回结果的脚本或程序。该脚本或程序可以使用任何编程语言来实现，例如 Python、Perl、Shell 等。</p>
-</li>
-<li>
-<p>配置 PowerDNS：在 PowerDNS 的配置文件中指定使用 pipe backend，并设置要执行的脚本或程序的路径。通常需要修改 PowerDNS 的配置文件（例如 pdns.conf）来进行配置。</p>
-</li>
-</ol>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nv">launch</span><span class="o">=</span>pipe
-</span></span><span class="line"><span class="cl">pipe-command<span class="o">=</span>/path/to/your/script.py
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>上述示例中，pipe-command 指定了自定义脚本或程序的路径。在修改完配置文件后，<strong>需要重新启动</strong> PowerDNS 服务，使配置生效。</p>
-<p>当 PowerDNS 接收到 DNS 查询时，它将会将查询数据通过管道传递给指定的脚本或程序。脚本或程序可以处理查询并返回结果给 PowerDNS，然后由 PowerDNS 将结果返回给客户端。</p>
-<p>通过配置 pipe backend，可以根据自己的需求编写自定义的逻辑来处理 DNS 查询，例如基于外部数据源、自定义策略、过滤等操作。</p>
-<h2 id="dnsmasq" class="headerLink">
-    <a href="#dnsmasq" class="header-mark"></a>dnsmasq</h2><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span><span class="lnt">8
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 安装 dnsmasq</span>
-</span></span><span class="line"><span class="cl">yum install dnsmasq
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1"># 一些状态命令</span>
-</span></span><span class="line"><span class="cl">systemctl start/stop/restart/status dnsmasq
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1"># 检查配置文件语法是否正确</span>
-</span></span><span class="line"><span class="cl">dnsmasq --test
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230529/21042ad8bf514e519d55c93d7431336d.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230529/21042ad8bf514e519d55c93d7431336d.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230529/21042ad8bf514e519d55c93d7431336d.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>dnsmasq 命令</h2>">
-        
-    </a><figcaption class="image-caption">dnsmasq 命令</figcaption>
-    </figure></p>
-<p>Dnsmasq 是一个轻量级的 DNS 和 DHCP 服务器软件，用于提供本地域名解析和网络地址分配功能，配置文件通常位于 /etc/dnsmasq.conf。下面是一些常用的配置文件字段说明：</p>
-<ul>
-<li>
-<p>port（端口）：指定 Dnsmasq 监听的 DNS 查询端口。默认为 53，但可以根据需要进行更改。</p>
-</li>
-<li>
-<p>cache-size（缓存大小）：指定DNS缓存的最大大小（以条目数量表示）。缓存可以提高解析性能，减少对上游 DNS 服务器的查询次数。例如，cache-size=1000 表示最多缓存 1000 条 DNS 解析记录。</p>
-</li>
-<li>
-<p>server（服务器）：用于指定要使用的上游 DNS 服务器。可以配置多个 server 字段，每个字段后面跟随一个有效的 DNS 服务器地址。Dnsmasq 会按顺序向这些服务器发送 DNS 查询请求。</p>
-</li>
-</ul>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nv">server</span><span class="o">=</span>8.8.8.8
-</span></span><span class="line"><span class="cl"><span class="nv">server</span><span class="o">=</span>8.8.4.4
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>server 的另一种写法是用来指定特定域名的 DNS 服务器映射。比如：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nv">server</span><span class="o">=</span>/domain.org/192.168.14.5
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>这个配置表示将域名 domain.org 解析到 IP 地址 192.168.14.5 上。当 Dnsmasq 收到对<code>domain.org</code>域名的解析请求时，它将使用指定的 IP 地址作为响应。这在本地网络中创建自定义的域名解析规则非常有用，可以用于内部域名解析或重定向特定域名到特定 IP 地址。</p>
-<ul>
-<li>address 参数用于指定域名解析的静态映射，将特定域名解析到指定的IP地址。它的语法如下：</li>
-</ul>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nv">address</span><span class="o">=</span>/域名/IP地址
-</span></span><span class="line"><span class="cl"><span class="nv">address</span><span class="o">=</span>/example.com/192.168.1.100
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>这个配置将域名 example.com 解析为 IP 地址 192.168.1.100。当 Dnsmasq 接收到关于 example.com 的解析请求时，它将使用指定的 IP 地址进行解析，而不会向上游 DNS 服务器发送查询请求。</p>
-<h2 id="演练" class="headerLink">
-    <a href="#%e6%bc%94%e7%bb%83" class="header-mark"></a>演练</h2><p>现在有 2 台机器，分别是<code>192.168.14.103</code>用来做控制器，安装有 powerDNS，作为上游 DNS，用来最后解析 DNS，<code>192.168.14.100</code>用来做 agent，安装有 dnsmasq 解析本地 DNS，通过配置 server 参数，将域名交给上游 DNS 服务器解析，也就是交给<code>192.168.14.103</code>解析处理。 pdns 通过 pipe backend 的 python 脚本，对所有的以<code>domain.org</code>结尾的域名请求都返回<code>192.168.40.223</code>的 IP，以下是 backend.py 的 python 脚本，python 版本是 python 3.6.8。</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">  1
-</span><span class="lnt">  2
-</span><span class="lnt">  3
-</span><span class="lnt">  4
-</span><span class="lnt">  5
-</span><span class="lnt">  6
-</span><span class="lnt">  7
-</span><span class="lnt">  8
-</span><span class="lnt">  9
-</span><span class="lnt"> 10
-</span><span class="lnt"> 11
-</span><span class="lnt"> 12
-</span><span class="lnt"> 13
-</span><span class="lnt"> 14
-</span><span class="lnt"> 15
-</span><span class="lnt"> 16
-</span><span class="lnt"> 17
-</span><span class="lnt"> 18
-</span><span class="lnt"> 19
-</span><span class="lnt"> 20
-</span><span class="lnt"> 21
-</span><span class="lnt"> 22
-</span><span class="lnt"> 23
-</span><span class="lnt"> 24
-</span><span class="lnt"> 25
-</span><span class="lnt"> 26
-</span><span class="lnt"> 27
-</span><span class="lnt"> 28
-</span><span class="lnt"> 29
-</span><span class="lnt"> 30
-</span><span class="lnt"> 31
-</span><span class="lnt"> 32
-</span><span class="lnt"> 33
-</span><span class="lnt"> 34
-</span><span class="lnt"> 35
-</span><span class="lnt"> 36
-</span><span class="lnt"> 37
-</span><span class="lnt"> 38
-</span><span class="lnt"> 39
-</span><span class="lnt"> 40
-</span><span class="lnt"> 41
-</span><span class="lnt"> 42
-</span><span class="lnt"> 43
-</span><span class="lnt"> 44
-</span><span class="lnt"> 45
-</span><span class="lnt"> 46
-</span><span class="lnt"> 47
-</span><span class="lnt"> 48
-</span><span class="lnt"> 49
-</span><span class="lnt"> 50
-</span><span class="lnt"> 51
-</span><span class="lnt"> 52
-</span><span class="lnt"> 53
-</span><span class="lnt"> 54
-</span><span class="lnt"> 55
-</span><span class="lnt"> 56
-</span><span class="lnt"> 57
-</span><span class="lnt"> 58
-</span><span class="lnt"> 59
-</span><span class="lnt"> 60
-</span><span class="lnt"> 61
-</span><span class="lnt"> 62
-</span><span class="lnt"> 63
-</span><span class="lnt"> 64
-</span><span class="lnt"> 65
-</span><span class="lnt"> 66
-</span><span class="lnt"> 67
-</span><span class="lnt"> 68
-</span><span class="lnt"> 69
-</span><span class="lnt"> 70
-</span><span class="lnt"> 71
-</span><span class="lnt"> 72
-</span><span class="lnt"> 73
-</span><span class="lnt"> 74
-</span><span class="lnt"> 75
-</span><span class="lnt"> 76
-</span><span class="lnt"> 77
-</span><span class="lnt"> 78
-</span><span class="lnt"> 79
-</span><span class="lnt"> 80
-</span><span class="lnt"> 81
-</span><span class="lnt"> 82
-</span><span class="lnt"> 83
-</span><span class="lnt"> 84
-</span><span class="lnt"> 85
-</span><span class="lnt"> 86
-</span><span class="lnt"> 87
-</span><span class="lnt"> 88
-</span><span class="lnt"> 89
-</span><span class="lnt"> 90
-</span><span class="lnt"> 91
-</span><span class="lnt"> 92
-</span><span class="lnt"> 93
-</span><span class="lnt"> 94
-</span><span class="lnt"> 95
-</span><span class="lnt"> 96
-</span><span class="lnt"> 97
-</span><span class="lnt"> 98
-</span><span class="lnt"> 99
-</span><span class="lnt">100
-</span><span class="lnt">101
-</span><span class="lnt">102
-</span><span class="lnt">103
-</span><span class="lnt">104
-</span><span class="lnt">105
-</span><span class="lnt">106
-</span><span class="lnt">107
-</span><span class="lnt">108
-</span><span class="lnt">109
-</span><span class="lnt">110
-</span><span class="lnt">111
-</span><span class="lnt">112
-</span><span class="lnt">113
-</span><span class="lnt">114
-</span><span class="lnt">115
-</span><span class="lnt">116
-</span><span class="lnt">117
-</span><span class="lnt">118
-</span><span class="lnt">119
-</span><span class="lnt">120
-</span><span class="lnt">121
-</span><span class="lnt">122
-</span><span class="lnt">123
-</span><span class="lnt">124
-</span><span class="lnt">125
-</span><span class="lnt">126
-</span><span class="lnt">127
-</span><span class="lnt">128
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="ch">#!/usr/bin/env python</span>
-</span></span><span class="line"><span class="cl"><span class="c1"># -*- coding: utf-8 -*-</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">os</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">random</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">sys</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">time</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">DNSLookup</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;Handle PowerDNS pipe-backend domain name lookups.&#34;&#34;&#34;</span>
-</span></span><span class="line"><span class="cl">    <span class="n">ttl</span> <span class="o">=</span> <span class="mi">30</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">):</span>
-</span></span><span class="line"><span class="cl">        <span class="s2">&#34;&#34;&#34;parse DNS query and produce lookup result.
-</span></span></span><span class="line"><span class="cl"><span class="s2">
-</span></span></span><span class="line"><span class="cl"><span class="s2">        query: a sequence containing the DNS query as per PowerDNS manual appendix A:
-</span></span></span><span class="line"><span class="cl"><span class="s2">        http://downloads.powerdns.com/documentation/html/backends-detail.html#PIPEBACKEND-PROTOCOL
-</span></span></span><span class="line"><span class="cl"><span class="s2">        &#34;&#34;&#34;</span>
-</span></span><span class="line"><span class="cl">        <span class="p">(</span><span class="n">_type</span><span class="p">,</span> <span class="n">qname</span><span class="p">,</span> <span class="n">qclass</span><span class="p">,</span> <span class="n">qtype</span><span class="p">,</span> <span class="n">_id</span><span class="p">,</span> <span class="n">ip</span><span class="p">)</span> <span class="o">=</span> <span class="n">query</span>
-</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">has_result</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># has a DNS query response</span>
-</span></span><span class="line"><span class="cl">        <span class="n">qname_lower</span> <span class="o">=</span> <span class="n">qname</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">        <span class="s2">&#34;&#34;&#34;List of servers to round-robin&#34;&#34;&#34;</span>
-</span></span><span class="line"><span class="cl">        <span class="n">servers</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;192.168.40.223&#39;</span><span class="p">]</span>
-</span></span><span class="line"><span class="cl">        <span class="n">server</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">servers</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">        <span class="c1"># if (qtype == &#39;A&#39; or qtype == &#39;ANY&#39;) and qname_lower.endswith(&#39;domain.org&#39;):</span>
-</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">qtype</span> <span class="o">==</span> <span class="s1">&#39;ANY&#39;</span> <span class="ow">and</span> <span class="n">qname_lower</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;domain.org&#39;</span><span class="p">):</span>
-</span></span><span class="line"><span class="cl">            <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;DATA</span><span class="se">\t</span><span class="si">%s</span><span class="se">\t</span><span class="si">%s</span><span class="se">\t</span><span class="s1">A</span><span class="se">\t</span><span class="si">%d</span><span class="se">\t</span><span class="s1">-1</span><span class="se">\t</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">qname</span><span class="p">,</span> <span class="n">qclass</span><span class="p">,</span> <span class="n">DNSLookup</span><span class="o">.</span><span class="n">ttl</span><span class="p">,</span> <span class="n">server</span><span class="p">))</span>
-</span></span><span class="line"><span class="cl">            <span class="bp">self</span><span class="o">.</span><span class="n">has_result</span> <span class="o">=</span> <span class="kc">True</span>
-</span></span><span class="line"><span class="cl">        <span class="k">elif</span> <span class="n">qtype</span> <span class="o">==</span> <span class="s1">&#39;SOA&#39;</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">            <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-</span></span><span class="line"><span class="cl">                <span class="s1">&#39;DATA</span><span class="se">\t</span><span class="si">%s</span><span class="se">\t</span><span class="si">%s</span><span class="se">\t</span><span class="si">%s</span><span class="se">\t</span><span class="s1">3600</span><span class="se">\t</span><span class="s1">-1</span><span class="se">\t</span><span class="s1">ns1.test.soa</span><span class="se">\t</span><span class="s1">admin.test.soa</span><span class="se">\t</span><span class="s1">2014032110</span><span class="se">\t</span><span class="s1">10800</span><span class="se">\t</span><span class="s1">3600</span><span class="se">\t</span><span class="s1">604800</span><span class="se">\t</span><span class="s1">3600&#39;</span>
-</span></span><span class="line"><span class="cl">                <span class="o">%</span> <span class="p">(</span><span class="n">qname</span><span class="p">,</span> <span class="n">qclass</span><span class="p">,</span> <span class="n">qtype</span><span class="p">))</span>
-</span></span><span class="line"><span class="cl">            <span class="bp">self</span><span class="o">.</span><span class="n">has_result</span> <span class="o">=</span> <span class="kc">True</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">str_result</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span></span><span class="line"><span class="cl">        <span class="s2">&#34;&#34;&#34;return string result suitable for pipe-backend output to PowerDNS.&#34;&#34;&#34;</span>
-</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_result</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">        <span class="k">else</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="s1">&#39;&#39;</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">Logger</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span></span><span class="line"><span class="cl">        <span class="n">pid</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">()</span>
-</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">logfile</span> <span class="o">=</span> <span class="s1">&#39;/tmp/backend.log&#39;</span>
-</span></span><span class="line"><span class="cl">        <span class="s2">&#34;&#34;&#34;self.logfile = &#39;/tmp/backend-</span><span class="si">%d</span><span class="s2">.log&#39; % pid&#34;&#34;&#34;</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
-</span></span><span class="line"><span class="cl">        <span class="n">logline</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">|</span><span class="si">%s</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">asctime</span><span class="p">(),</span> <span class="n">msg</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">        <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logfile</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">logline</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">debug_log</span><span class="p">(</span><span class="n">msg</span><span class="p">):</span>
-</span></span><span class="line"><span class="cl">    <span class="n">logger</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">PowerDNSbackend</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;The main PowerDNS pipe backend process.&#34;&#34;&#34;</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filein</span><span class="p">,</span> <span class="n">fileout</span><span class="p">):</span>
-</span></span><span class="line"><span class="cl">        <span class="s2">&#34;&#34;&#34;initialise and run PowerDNS pipe backend process.&#34;&#34;&#34;</span>
-</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">filein</span> <span class="o">=</span> <span class="n">filein</span>
-</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">fileout</span> <span class="o">=</span> <span class="n">fileout</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">_process_requests</span><span class="p">()</span>  <span class="c1"># main program loop</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">_process_requests</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span></span><span class="line"><span class="cl">        <span class="s2">&#34;&#34;&#34;main program loop&#34;&#34;&#34;</span>
-</span></span><span class="line"><span class="cl">        <span class="n">first_time</span> <span class="o">=</span> <span class="kc">True</span>
-</span></span><span class="line"><span class="cl">        <span class="k">while</span> <span class="mi">1</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">            <span class="n">rawline</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filein</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
-</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="n">rawline</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">                <span class="n">debug_log</span><span class="p">(</span><span class="s1">&#39;EOF&#39;</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">                <span class="k">return</span>  <span class="c1"># EOF detected</span>
-</span></span><span class="line"><span class="cl">            <span class="n">line</span> <span class="o">=</span> <span class="n">rawline</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">            <span class="n">debug_log</span><span class="p">(</span><span class="s1">&#39;received from pdns:</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">line</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="n">first_time</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">                <span class="k">if</span> <span class="n">line</span> <span class="o">==</span> <span class="s1">&#39;HELO</span><span class="se">\t</span><span class="s1">1&#39;</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">                    <span class="bp">self</span><span class="o">.</span><span class="n">_fprint</span><span class="p">(</span><span class="s1">&#39;OK</span><span class="se">\t</span><span class="s1">Python backend firing up&#39;</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">                <span class="k">else</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">                    <span class="bp">self</span><span class="o">.</span><span class="n">_fprint</span><span class="p">(</span><span class="s1">&#39;FAIL&#39;</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">                    <span class="n">debug_log</span><span class="p">(</span><span class="s1">&#39;HELO input not received - execution aborted&#39;</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">                    <span class="n">rawline</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filein</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>  <span class="c1"># as per docs - read another line before aborting</span>
-</span></span><span class="line"><span class="cl">                    <span class="n">debug_log</span><span class="p">(</span><span class="s1">&#39;calling sys.exit()&#39;</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">                    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">                <span class="n">first_time</span> <span class="o">=</span> <span class="kc">False</span>
-</span></span><span class="line"><span class="cl">            <span class="k">else</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">                <span class="n">query</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">query</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">6</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">                    <span class="bp">self</span><span class="o">.</span><span class="n">_fprint</span><span class="p">(</span><span class="s1">&#39;LOG</span><span class="se">\t</span><span class="s1">PowerDNS sent unparseable line&#39;</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">                    <span class="bp">self</span><span class="o">.</span><span class="n">_fprint</span><span class="p">(</span><span class="s1">&#39;FAIL&#39;</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">                <span class="k">else</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">                    <span class="n">debug_log</span><span class="p">(</span><span class="s1">&#39;Performing DNSLookup(</span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="nb">repr</span><span class="p">(</span><span class="n">query</span><span class="p">))</span>
-</span></span><span class="line"><span class="cl">                    <span class="n">lookup</span> <span class="o">=</span> <span class="n">DNSLookup</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">                    <span class="k">if</span> <span class="n">lookup</span><span class="o">.</span><span class="n">has_result</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">                        <span class="n">pdns_result</span> <span class="o">=</span> <span class="n">lookup</span><span class="o">.</span><span class="n">str_result</span><span class="p">()</span>
-</span></span><span class="line"><span class="cl">                        <span class="bp">self</span><span class="o">.</span><span class="n">_fprint</span><span class="p">(</span><span class="n">pdns_result</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">                        <span class="n">debug_log</span><span class="p">(</span><span class="s1">&#39;DNSLookup result(</span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="n">pdns_result</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">                    <span class="bp">self</span><span class="o">.</span><span class="n">_fprint</span><span class="p">(</span><span class="s1">&#39;END&#39;</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">_fprint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
-</span></span><span class="line"><span class="cl">        <span class="s2">&#34;&#34;&#34;Print the given message with newline and flushing.&#34;&#34;&#34;</span>
-</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">fileout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">message</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">fileout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
-</span></span><span class="line"><span class="cl">        <span class="n">debug_log</span><span class="p">(</span><span class="s1">&#39;sent to pdns:</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">message</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">    <span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span>
-</span></span><span class="line"><span class="cl">    <span class="n">infile</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdin</span>
-</span></span><span class="line"><span class="cl">    <span class="c1"># sys.stdout.close()</span>
-</span></span><span class="line"><span class="cl">    <span class="c1"># outfile = os.fdopen(1, &#39;w&#39;, 1)</span>
-</span></span><span class="line"><span class="cl">    <span class="n">outfile</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span>
-</span></span><span class="line"><span class="cl">    <span class="k">try</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">        <span class="n">PowerDNSbackend</span><span class="p">(</span><span class="n">infile</span><span class="p">,</span> <span class="n">outfile</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">    <span class="k">except</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">        <span class="n">debug_log</span><span class="p">(</span><span class="s1">&#39;execution failure:&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[</span><span class="mi">0</span><span class="p">]))</span>
-</span></span><span class="line"><span class="cl">        <span class="k">raise</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230529/a1a644dcf7bb425e9cd4eb4606c554a9.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230529/a1a644dcf7bb425e9cd4eb4606c554a9.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230529/a1a644dcf7bb425e9cd4eb4606c554a9.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>pipe backend</h2>">
-        
-    </a><figcaption class="image-caption">pipe backend</figcaption>
-    </figure></p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230529/761e93174f9d4763be59cef6711c3fe0.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230529/761e93174f9d4763be59cef6711c3fe0.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230529/761e93174f9d4763be59cef6711c3fe0.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>dig 解析正常</h2>">
-        
-    </a><figcaption class="image-caption">dig 解析正常</figcaption>
-    </figure></p>
-<p>现在在 agent 机器也就是<code>192.168.14.100</code>上通过 <a href="https://hub.docker.com/r/xiaobinqt/redis/tags" target="_blank" rel="noopener noreferrer">xiaobinqt/redis:7-ping</a> 镜像启动一个 redis 容器，容器名为 c-redis：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-docker" data-lang="docker"><span class="line"><span class="cl">docker run --name c-redis --dns 172.17.0.1 --dns-search domain.org --dns-opt <span class="s2">&#34;ndots:2&#34;</span> -d  xiaobinqt/redis:7-ping<span class="err">
-</span></span></span></code></pre></td></tr></table>
-</div>
-</div><p>比如，当在容器中执行 <code>ping abdd</code>时，正常会先走 hosts 但是这里的 hosts 都没有对应的域名，所以 hosts 失效，再去 nameserver 指定的 DNS 服务器解析域名，由于配置了 ndots:2 ，系统会自动追加搜索域名<code>domain.org</code>，所以会去 172.17.0.1 DNS 服务器搜索域名 <code>abdd.domain.org</code>，172.17.0.1 对应的是宿主机的 docker0 虚拟网桥，最后会走到<strong>宿主机的 dns 服务</strong>，也就是<code>192.168.14.100</code> 的 dnsmasq 服务，对应的端口是 53。</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230529/ae90a8281d72406ca0bf831fc375f36c.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230529/ae90a8281d72406ca0bf831fc375f36c.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230529/ae90a8281d72406ca0bf831fc375f36c.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>调试结果</h2>">
-        
-    </a><figcaption class="image-caption">调试结果</figcaption>
-    </figure></p>
-<h2 id="参考" class="headerLink">
-    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
-<li><a href="https://gist.github.com/sokratisg/10069682" target="_blank" rel="noopener noreferrer">pdns-pipebackend.py</a></li>
-<li><a href="https://www.linuxhelp.com/questions/powerdns-libpipebackend-so-no-such-file-or-directory" target="_blank" rel="noopener noreferrer">PowerDNS : libpipebackend.so no such file or directory</a></li>
-<li><a href="https://community.zextras.com/dns-server-installation-guide-on-centos-7-rhel-7-and-centos-8-rhel-8-using-dnsmasq/" target="_blank" rel="noopener noreferrer">Installing DNS Server on CentOS/RHEL using dnsmasq | Zimbra</a></li>
-</ul>
 ]]></description>
 </item></channel>
 </rss>
