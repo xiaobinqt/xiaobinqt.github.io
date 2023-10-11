@@ -29,7 +29,7 @@ series: [ "golang" ]
 
 series_weight:
 
-toc: true
+toc: false
 
 math: true
 ---
