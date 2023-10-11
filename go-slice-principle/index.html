@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noodp" />
+    <title class="pjax-title">Go Slice 实现原理 - xiaobinqt 博客 - 技术改变生活</title><meta name="Description" content="xiaobinqt,"><meta property="og:title" content="Go Slice 实现原理" />
+<meta property="og:description" content="xiaobinqt," />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.xiaobinqt.cn/go-slice-principle/" /><meta property="og:image" content="https://www.xiaobinqt.cn/logo.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-10-10T00:00:00+00:00" />
+<meta property="article:modified_time" content="2023-10-11T17:47:02+08:00" />
+<meta property="og:see_also" content="https://www.xiaobinqt.cn/escape-heap/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/func-receive-value-pointer/" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://www.xiaobinqt.cn/logo.png"/>
+
+<meta name="twitter:title" content="Go Slice 实现原理"/>
+<meta name="twitter:description" content="xiaobinqt,"/>
+<meta name="application-name" content="xiaobinqt">
+<meta name="apple-mobile-web-app-title" content="xiaobinqt">
+
+<meta name="theme-color" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c">
+<link rel="stylesheet" href="//at.alicdn.com/t/font_3267767_dz25dtwdgdc.css"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://www.xiaobinqt.cn/go-slice-principle/" /><link rel="prev" href="https://www.xiaobinqt.cn/escape-heap/" /><link rel="next" href="https://www.xiaobinqt.cn/old-pal/" /><link rel="stylesheet" href="/lib/md5/md5.min.js"><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/fontawesome-free/all.min.css">
+        <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/animate/animate.min.css">
+        <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><meta name="google-site-verification" content="hFkClWMTOtPBuE0lQaXNiNb707E7P6O2CwexZoSm3VQ" /><meta name="msvalidate.01" content="A961D393878F86E04112E1198500FDBD" /><meta name="baidu-site-verification" content="code-cMh5ORsrP2" /><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Go Slice 实现原理",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/www.xiaobinqt.cn\/go-slice-principle\/"
+        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "golang","wordcount":  2471 ,
+        "url": "https:\/\/www.xiaobinqt.cn\/go-slice-principle\/","datePublished": "2023-10-10T00:00:00+00:00","dateModified": "2023-10-11T17:47:02+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+            "@type": "Organization",
+            "name": "xxxx","logo": {
+                    "@type": "ImageObject",
+                    "url": "https:\/\/www.xiaobinqt.cn\/images\/avatar.png",
+                    "width":  528 ,
+                    "height":  560 
+                }},"author": {
+                "@type": "Person",
+                "name": "xiaobinqt"
+            },"description": "xiaobinqt,"
+    }
+    </script></head>
+
+<body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">
+        function setTheme(theme) {document.body.setAttribute('theme', theme); document.documentElement.style.setProperty('color-scheme', theme === 'light' ? 'light' : 'dark');}
+        function saveTheme(theme) {window.localStorage && localStorage.setItem('theme', theme);}
+        function getMeta(metaName) {const metas = document.getElementsByTagName('meta'); for (let i = 0; i < metas.length; i++) if (metas[i].getAttribute('name') === metaName) return metas[i]; return '';}
+        if (window.localStorage && localStorage.getItem('theme')) {let theme = localStorage.getItem('theme');theme === 'light' || theme === 'dark' || theme === 'black' ? setTheme(theme) : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? setTheme('dark') : setTheme('light')); } else { if ('auto' === 'light' || 'auto' === 'dark' || 'auto' === 'black') setTheme('auto'), saveTheme('auto'); else saveTheme('auto'), window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? setTheme('dark') : setTheme('light');}
+        let metaColors = {'light': '#f8f8f8','dark': '#252627','black': '#000000'}
+        getMeta('theme-color').content = metaColors[document.body.getAttribute('theme')];
+    </script>
+    <div id="back-to-top"></div>
+    <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="xiaobinqt 博客 - 技术改变生活"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>萧十一郎</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/" > 所有文章 </a><a class="menu-item" href="/tags/" > 标签 </a><a class="menu-item" href="/categories/" > 分类 </a><a class="menu-item" href="/series/" > 系列 </a><a class="menu-item" href="/showcase/" > 小册 </a><a class="menu-item" href="/keeplearning/"  rel="noopener noreferrer" target="_blank"> KeepLearning </a><a class="menu-item" href="/leetcode/"  rel="noopener noreferrer" target="_blank"> LeetCode </a><a class="menu-item" href="/links/" > 友链 </a><a class="menu-item" href="/about/" > 关于 </a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" rel="noopener noreferrer" target="_blank" ><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
+                        <a href="#" onclick="return false;" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="#" onclick="return false;" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="#" onclick="return false;" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a></div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="xiaobinqt 博客 - 技术改变生活"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>萧十一郎</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
+                        <a href="#" onclick="return false;" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="#" onclick="return false;" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="#" onclick="return false;" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="" >所有文章</a><a class="menu-item" href="/tags/" title="" >标签</a><a class="menu-item" href="/categories/" title="" >分类</a><a class="menu-item" href="/series/" title="" >系列</a><a class="menu-item" href="/showcase/" title="" >小册</a><a class="menu-item" href="/keeplearning/" title=""  rel="noopener noreferrer" target="_blank">KeepLearning</a><a class="menu-item" href="/leetcode/" title=""  rel="noopener noreferrer" target="_blank">LeetCode</a><a class="menu-item" href="/links/" title="" >友链</a><a class="menu-item" href="/about/" title="" >关于</a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" rel="noopener noreferrer" target="_blank" ><i class='fab fa-github fa-fw'></i></a><a href="#" onclick="return false;" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+            <div class="container"><div class="toc" id="toc-auto">
+        <h2 class="toc-title">目录</h2>
+        <div class="toc-content" id="toc-content-auto"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#什么是-slice">什么是 slice</a></li>
+    <li><a href="#array-和-slice-区别">array 和 slice 区别</a></li>
+    <li><a href="#slice-扩容机制">slice 扩容机制</a>
+      <ul>
+        <li><a href="#旧规则存在的问题">旧规则存在的问题</a></li>
+        <li><a href="#更加平滑的扩容算法">更加平滑的扩容算法</a></li>
+      </ul>
+    </li>
+    <li><a href="#slice-是否是线程安全的">slice 是否是线程安全的</a></li>
+    <li><a href="#参考">参考</a></li>
+  </ul>
+</nav></div>
+    </div><script>document.getElementsByTagName("main")[0].setAttribute("pageStyle", "normal")</script><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Go Slice 实现原理</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><i class="author fas fa-user-circle fa-fw"></i><a href="/" title="Author" rel=" author" class="author">xiaobinqt</a>
+                </span>&nbsp;<span class="post-category">收录于 </span>&nbsp;<span class="post-category">类别 <a href="/categories/golang/"><i class="far fa-folder fa-fw"></i>golang</a></span>&nbsp;<span class="post-category">和</span>&nbsp;<span class="post-series">系列 <a href="/series/golang/"><i class="far fa-list-alt fa-fw"></i>Golang Notes</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2023-10-10">2023-10-10</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2023-10-11">2023-10-11</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2471 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 5 分钟&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#什么是-slice">什么是 slice</a></li>
+    <li><a href="#array-和-slice-区别">array 和 slice 区别</a></li>
+    <li><a href="#slice-扩容机制">slice 扩容机制</a>
+      <ul>
+        <li><a href="#旧规则存在的问题">旧规则存在的问题</a></li>
+        <li><a href="#更加平滑的扩容算法">更加平滑的扩容算法</a></li>
+      </ul>
+    </li>
+    <li><a href="#slice-是否是线程安全的">slice 是否是线程安全的</a></li>
+    <li><a href="#参考">参考</a></li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><!-- author： xiaobinqt -->
+<!-- email： xiaobinqt@163.com -->
+<!-- https://xiaobinqt.github.io -->
+<!-- https://www.xiaobinqt.cn -->
+<h2 id="什么是-slice" class="headerLink">
+    <a href="#%e4%bb%80%e4%b9%88%e6%98%af-slice" class="header-mark"></a>什么是 slice</h2><p>切片是基于数组实现的，它的底层是数组，可以理解为对底层数组的抽象。</p>
+<p>源码包中 src/runtime/slice.go 定义了 slice 的数据结构：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">type slice struct {
+</span></span><span class="line"><span class="cl">	array unsafe.Pointer // ArbitraryType int
+</span></span><span class="line"><span class="cl">	len   int
+</span></span><span class="line"><span class="cl">	cap   int
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>array 是指向底层数组的指针，占用 8 个字节。len 是切片的长度，占用 8 个字节。cap 是切片的容量，cap 总是大于等于 len 的，占用 8 个字节。所以 slice 占用 24 个字节。</p>
+<p>slice 有 4 种初始化方式</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	// 初始化方式1：直接声明
+</span></span><span class="line"><span class="cl">	var slice1 []int
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	// 初始化方式2：使用字面量
+</span></span><span class="line"><span class="cl">	slice2 := []int{1, 2, 3, 4}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	// 初始化方式3：使用 make 创建slice
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	slice3 := make([]int, 3, 5)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	// 初始化方式4: 从切片或数组截取
+</span></span><span class="line"><span class="cl">	slcie4 := arr[1:3]
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>可以通过下面的代码，看下 slice 初始化调用的底层函数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">slice</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">int</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">slice</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">slice</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">slice</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nx">slice</span><span class="p">),</span> <span class="nb">cap</span><span class="p">(</span><span class="nx">slice</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>通过 <code>go tool compile -S main.go | grep CALL</code> 得到汇编代码</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">0x0032 00050 (main.go:6)        CALL    runtime.makeslice(SB)
+</span></span><span class="line"><span class="cl">0x004b 00075 (main.go:7)        CALL    runtime.growslice(SB)
+</span></span><span class="line"><span class="cl">0x0076 00118 (main.go:8)        CALL    runtime.convTslice(SB)
+</span></span><span class="line"><span class="cl">0x0091 00145 (main.go:8)        CALL    runtime.convT64(SB)
+</span></span><span class="line"><span class="cl">0x00ac 00172 (main.go:8)        CALL    runtime.convT64(SB)
+</span></span><span class="line"><span class="cl">0x00e0 00224 ($GOROOT/src/fmt/print.go:274)     CALL    fmt.Fprintln(SB)
+</span></span><span class="line"><span class="cl">0x00f5 00245 (main.go:5)        CALL    runtime.morestack_noctxt(SB)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>初始化 slice 调用的是 runtime.makeslice，makeslice 函数的工作主要就是计算 slice 所需内存大小，然后调用 mallocgc 进行内存的分配。</p>
+<p>所需内存大小 = 切片中元素大小 * 切片的容量。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">runtime</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">makeslice</span><span class="p">(</span><span class="nx">et</span> <span class="o">*</span><span class="nx">_type</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">cap</span> <span class="kt">int</span><span class="p">)</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">mem</span><span class="p">,</span> <span class="nx">overflow</span> <span class="o">:=</span> <span class="nx">math</span><span class="p">.</span><span class="nf">MulUintptr</span><span class="p">(</span><span class="nx">et</span><span class="p">.</span><span class="nx">size</span><span class="p">,</span> <span class="nb">uintptr</span><span class="p">(</span><span class="nx">cap</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">overflow</span> <span class="o">||</span> <span class="nx">mem</span> <span class="p">&gt;</span> <span class="nx">maxAlloc</span> <span class="o">||</span> <span class="nx">len</span> <span class="p">&lt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="nx">len</span> <span class="p">&gt;</span> <span class="nx">cap</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// NOTE: Produce a &#39;len out of range&#39; error instead of a
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="c1">// &#39;cap out of range&#39; error when someone does make([]T, bignumber).
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="c1">// &#39;cap out of range&#39; is true too, but since the cap is only being
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="c1">// supplied implicitly, saying len is clearer.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="c1">// See golang.org/issue/4085.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">mem</span><span class="p">,</span> <span class="nx">overflow</span> <span class="o">:=</span> <span class="nx">math</span><span class="p">.</span><span class="nf">MulUintptr</span><span class="p">(</span><span class="nx">et</span><span class="p">.</span><span class="nx">size</span><span class="p">,</span> <span class="nb">uintptr</span><span class="p">(</span><span class="nx">len</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">overflow</span> <span class="o">||</span> <span class="nx">mem</span> <span class="p">&gt;</span> <span class="nx">maxAlloc</span> <span class="o">||</span> <span class="nx">len</span> <span class="p">&lt;</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nf">panicmakeslicelen</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">panicmakeslicecap</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nf">mallocgc</span><span class="p">(</span><span class="nx">mem</span><span class="p">,</span> <span class="nx">et</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="array-和-slice-区别" class="headerLink">
+    <a href="#array-%e5%92%8c-slice-%e5%8c%ba%e5%88%ab" class="header-mark"></a>array 和 slice 区别</h2><ol>
+<li>
+<p>数组初始化必须指定长度，并且长度就是固定的 切片的长度是不固定的，可以追加元素，在追加时可能使切片的容量增大</p>
+</li>
+<li>
+<p>数组是值类型，将一个数组赋值给另一个数组时，传递的是一份深拷贝，函数传参操作都会复制整个数组数据，会占用额外的内存，函数内对数组元素值的修改，不会修改原数组内容。切片是引用类型，将一个切片赋值给另一个切片时，传递的是一份浅拷贝，函数传参操作不会拷贝整个切片，只会复制 len 和 cap，底层共用同一个数组，不会占用额外的内存，函数内对数组元素值的修改，会修改原数组内容。</p>
+</li>
+<li>
+<p>数组需要遍历计算数组长度，时间复杂度为 O(n) 切片底层包含 len 字段，可以通过 len() 计算切片长度，时间复杂度为 O(1)</p>
+</li>
+</ol>
+<h2 id="slice-扩容机制" class="headerLink">
+    <a href="#slice-%e6%89%a9%e5%ae%b9%e6%9c%ba%e5%88%b6" class="header-mark"></a>slice 扩容机制</h2><h3 id="旧规则存在的问题" class="headerLink">
+    <a href="#%e6%97%a7%e8%a7%84%e5%88%99%e5%ad%98%e5%9c%a8%e7%9a%84%e9%97%ae%e9%a2%98" class="header-mark"></a>旧规则存在的问题</h3><p>在 1.17 及之前的版本中，扩容机制是这样的👇：</p>
+<ul>
+<li>
+<p>当新切片需要的容量 cap 大于两倍扩容的容量，则直接按照新切片需要的容量扩容；</p>
+</li>
+<li>
+<p>当原 slice 容量 &lt; 1024 的时候，新 slice 容量变成原来的 2 倍；</p>
+</li>
+<li>
+<p>当原 slice 容量 &gt; 1024，进入一个循环，每次容量变成原来的1.25倍，直到大于期望容量。</p>
+</li>
+</ul>
+<p>slice 扩容时会调用 <code>runtime.growslice</code>。这里只关注该函数 slice 计算容量部分的逻辑，计算方法如下:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// 1.17及以前的版本中
+</span></span><span class="line"><span class="cl">// old指切片的旧容量, cap指期望的新容量
+</span></span><span class="line"><span class="cl">func growslice(old, cap int) int {
+</span></span><span class="line"><span class="cl">    newcap := old
+</span></span><span class="line"><span class="cl">    doublecap := newcap + newcap
+</span></span><span class="line"><span class="cl">    // 如果期望容量大于旧容量的2倍，则直接使用期望容量作为最终容量
+</span></span><span class="line"><span class="cl">    if cap &gt; doublecap {
+</span></span><span class="line"><span class="cl">        newcap = cap
+</span></span><span class="line"><span class="cl">    } else {
+</span></span><span class="line"><span class="cl">        // 如果旧容量小于1024，则直接翻倍
+</span></span><span class="line"><span class="cl">        if old &lt; 1024 {
+</span></span><span class="line"><span class="cl">            newcap = doublecap
+</span></span><span class="line"><span class="cl">        } else {
+</span></span><span class="line"><span class="cl">            // 每次增长大约1.25倍
+</span></span><span class="line"><span class="cl">            for 0 &lt; newcap &amp;&amp; newcap &lt; cap {
+</span></span><span class="line"><span class="cl">                newcap += newcap / 4
+</span></span><span class="line"><span class="cl">            }
+</span></span><span class="line"><span class="cl">            if newcap &lt;= 0 {
+</span></span><span class="line"><span class="cl">                newcap = cap
+</span></span><span class="line"><span class="cl">            }
+</span></span><span class="line"><span class="cl">        }
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">    // 这里忽略了对齐操作
+</span></span><span class="line"><span class="cl">    return newcap
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这个扩容机制令一些人产生了<a href="https://groups.google.com/g/golang-nuts/c/UaVlMQ8Nz3o" target="_blank" rel="noopener noreferrer">一些困惑</a>，因为它会产生一些 “看起来不那么自然的行为”。比如<strong>它计算出来的新容量不是单调递增的</strong>，下面的程序会将不同容量 slice 的扩容结果打印出来:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">2000</span><span class="p">;</span> <span class="nx">i</span> <span class="o">+=</span> <span class="mi">100</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nb">cap</span><span class="p">(</span><span class="nb">append</span><span class="p">(</span><span class="nb">make</span><span class="p">([]</span><span class="kt">bool</span><span class="p">,</span> <span class="nx">i</span><span class="p">),</span> <span class="kc">true</span><span class="p">)))</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>该程序的输出如下（旧版本的扩容规则）:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// 第一列是切片的旧容量
+</span></span><span class="line"><span class="cl">// 第二列是扩容后的容量
+</span></span><span class="line"><span class="cl">0 8
+</span></span><span class="line"><span class="cl">100 208
+</span></span><span class="line"><span class="cl">200 416
+</span></span><span class="line"><span class="cl">300 640
+</span></span><span class="line"><span class="cl">400 896
+</span></span><span class="line"><span class="cl">500 1024
+</span></span><span class="line"><span class="cl">600 1280
+</span></span><span class="line"><span class="cl">700 1408
+</span></span><span class="line"><span class="cl">800 1792
+</span></span><span class="line"><span class="cl">900 2048
+</span></span><span class="line"><span class="cl">1000 2048
+</span></span><span class="line"><span class="cl">1100 1408 &lt;-- 在这个点，扩容后的新容量比上面的容量要小
+</span></span><span class="line"><span class="cl">1200 1536
+</span></span><span class="line"><span class="cl">1300 1792
+</span></span><span class="line"><span class="cl">1400 1792
+</span></span><span class="line"><span class="cl">1500 2048
+</span></span><span class="line"><span class="cl">1600 2048
+</span></span><span class="line"><span class="cl">1700 2304
+</span></span><span class="line"><span class="cl">1800 2304
+</span></span><span class="line"><span class="cl">1900 2688
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>可以看到，在 slice 的容量刚刚触发<strong>大于 1024 增长 1.25 倍</strong>这个条件的时候，计算出来的新容量要小于之前计算出的容量，这里绘制了一张图表，可以感受一下:</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231010/ee5b46195b3c47338fb6812ea32a5ed1.png" width=800  /></div>
+<h3 id="更加平滑的扩容算法" class="headerLink">
+    <a href="#%e6%9b%b4%e5%8a%a0%e5%b9%b3%e6%bb%91%e7%9a%84%e6%89%a9%e5%ae%b9%e7%ae%97%e6%b3%95" class="header-mark"></a>更加平滑的扩容算法</h3><p>从 <code>go1.18</code> 开始，slice 容量的计算方法被改为了这样:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// 只关心扩容规则的简化版growslice
+</span></span><span class="line"><span class="cl">func growslice(old, cap int) int {
+</span></span><span class="line"><span class="cl">    newcap := old
+</span></span><span class="line"><span class="cl">    doublecap := newcap + newcap
+</span></span><span class="line"><span class="cl">    if cap &gt; doublecap {
+</span></span><span class="line"><span class="cl">        newcap = cap
+</span></span><span class="line"><span class="cl">    } else {
+</span></span><span class="line"><span class="cl">        const threshold = 256 // 不同点1
+</span></span><span class="line"><span class="cl">        if old &lt; threshold {
+</span></span><span class="line"><span class="cl">            newcap = doublecap
+</span></span><span class="line"><span class="cl">        } else {
+</span></span><span class="line"><span class="cl">            for 0 &lt; newcap &amp;&amp; newcap &lt; cap {
+</span></span><span class="line"><span class="cl">                newcap += (newcap + 3*threshold) / 4 // 不同点2
+</span></span><span class="line"><span class="cl">            }
+</span></span><span class="line"><span class="cl">            if newcap &lt;= 0 {
+</span></span><span class="line"><span class="cl">                newcap = cap
+</span></span><span class="line"><span class="cl">            }
+</span></span><span class="line"><span class="cl">        }
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">    return newcap
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>新版的扩容算法相较于旧的有两处不同，首先是双倍容量扩容的最大阈值<strong>从 1024 降为了 256</strong>，只要超过了 256，就开始进行缓慢的增长。其次是增长比例的调整，之前超过了阈值之后，基本为恒定的 1.25 倍增长，而现在超过了阈值之后，增长比例是会动态调整的:</p>
+<ul>
+<li>
+<p>当新切片需要的容量 cap 大于两倍扩容的容量，则直接按照新切片需要的容量扩容；</p>
+</li>
+<li>
+<p>当原 slice 容量 &lt; threshold（256） 的时候，新 slice 容量变成原来的 2 倍；</p>
+</li>
+<li>
+<p>当原 slice 容量 &gt; threshold（256），进入一个循环，每次容量增加 <code>(旧容量+3*threshold)/4</code>。</p>
+</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">初始长度         增长比例
+</span></span><span class="line"><span class="cl">256             2.0
+</span></span><span class="line"><span class="cl">512             1.63
+</span></span><span class="line"><span class="cl">1024            1.44
+</span></span><span class="line"><span class="cl">2048            1.35
+</span></span><span class="line"><span class="cl">4096            1.30
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>可以看到，<strong>随着切片容量的变大，增长比例逐渐向着 1.25 进行靠拢</strong>。</p>
+<p>这次更改之后，slice 扩容整体的增长曲线变得更加平滑：</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231010/e0542263355b401cb34a72f65fc389c9.png" width=800  /></div>
+<p>关于更多信息，可以查看<a href="https://github.com/golang/go/commit/2dda92ff6f9f07eeb110ecbf0fc2d7a0ddd27f9d" target="_blank" rel="noopener noreferrer">#2dda92ff6f9f07eeb110ecbf0fc2d7a0ddd27f9d</a></p>
+<h2 id="slice-是否是线程安全的" class="headerLink">
+    <a href="#slice-%e6%98%af%e5%90%a6%e6%98%af%e7%ba%bf%e7%a8%8b%e5%ae%89%e5%85%a8%e7%9a%84" class="header-mark"></a>slice 是否是线程安全的</h2><p>线程安全的定义是：</p>
+<p>多个线程访问（读）同一个对象时，调用这个对象的行为都可以获得正确的结果，那么这个对象就是线程安全的。</p>
+<p>若有多个线程同时执行写操作，一般都需要考虑线程同步，否则的话就可能影响线程安全。</p>
+<p>Go 语言实现线程安全常用的方式有：</p>
+<ol>
+<li>互斥锁</li>
+<li>读写锁</li>
+<li>原子操作</li>
+<li>sync.once</li>
+<li>sync.atomic</li>
+<li>channel</li>
+</ol>
+<p>slice 底层结构并没有使用加锁等方式，不支持并发读写，所以 slice 并不是线程安全的，使用多个 goroutine 对类型为 slice 的变量进行操作，每次输出的值大概率都不会一样，与预期值不一致，slice 在并发执行中不会报错，但是数据可能会丢失。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;log&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;sync&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 切片非并发安全* 多次执行，每次得到的结果都不一样* 可以考虑使用 channel 本身的特性 (阻塞) 来实现安全的并发读写
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">TestSliceConcurrencySafe</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">TestSliceConcurrencySafe</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">a</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">int</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">wg</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">10000</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">wg</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">go</span> <span class="kd">func</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">a</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}(</span><span class="nx">i</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">wg</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">log</span><span class="p">.</span><span class="nf">Fatalln</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nx">a</span><span class="p">))</span> <span class="c1">// 这里的值不是 10000
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="参考" class="headerLink">
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
+<li><a href="https://juejin.cn/post/7136774425415794719" target="_blank" rel="noopener noreferrer">Go slice新的扩容机制</a></li>
+<li><a href="https://juejin.cn/post/7101928883280150558" target="_blank" rel="noopener noreferrer">Go 1.18 全新的切片扩容机制</a></li>
+</ul>
+</div>
+
+        <div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2023-10-11&nbsp;<a class="git-hash" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/cdaeb832551c2ed822d5b74a78ec93fa51afa5b7" target="_blank" title="commit by weibin(xiaobinqt@163.com) cdaeb832551c2ed822d5b74a78ec93fa51afa5b7: add go-slice-principle.md" rel="noopener noreferrer">
+                                    <i class="fas fa-hashtag fa-fw"></i>cdaeb832</a></span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span><a class="link-to-mardown" href=/go-slice-principle/index.md target="_blank" rel="noopener noreferrer">阅读原始文档</a>
+                    </span></div>
+            <div class="post-info-share">
+                <span><a href="#" onclick="return false;" title="分享到 Twitter" data-sharer="twitter" data-url="https://www.xiaobinqt.cn/go-slice-principle/" data-title="Go Slice 实现原理" data-hashtags="golang"><i class="fab fa-twitter fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Facebook" data-sharer="facebook" data-url="https://www.xiaobinqt.cn/go-slice-principle/" data-hashtag="golang"><i class="fab fa-facebook-square fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Hacker News" data-sharer="hackernews" data-url="https://www.xiaobinqt.cn/go-slice-principle/" data-title="Go Slice 实现原理"><i class="fab fa-hacker-news fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Line" data-sharer="line" data-url="https://www.xiaobinqt.cn/go-slice-principle/" data-title="Go Slice 实现原理"><i data-svg-src="/lib/simple-icons/icons/line.min.svg"></i></a><a href="#" onclick="return false;" title="分享到 微博" data-sharer="weibo" data-url="https://www.xiaobinqt.cn/go-slice-principle/" data-title="Go Slice 实现原理"><i class="fab fa-weibo fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 百度" data-sharer="baidu" data-url="https://www.xiaobinqt.cn/go-slice-principle/" data-title="Go Slice 实现原理"><i data-svg-src="/lib/simple-icons/icons/baidu.min.svg"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/golang/">golang</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/escape-heap/" class="prev" rel="prev" title="Golang 内存逃逸"><i class="fas fa-angle-left fa-fw"></i>Golang 内存逃逸</a>
+            <a href="/old-pal/" class="next" rel="next" title="纪念一位老友">纪念一位老友<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+<div id="comments"><div id="gitalk" class="comment"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://github.com/gitalk/gitalk"></a>Gitalk</a>.
+            </noscript></div></article></div>
+        </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2018 - 2023</span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+            <div class="footer-line"></div>
+            <div class="footer-line">
+            </div>
+        </div></footer></div>
+
+    <div id="fixed-buttons"><a href="#back-to-top" id="back-to-top-button" class="fixed-button" title="回到顶部">
+            <i class="fas fa-arrow-up fa-fw"></i>
+        </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+            <i class="fas fa-comment fa-fw"></i>
+        </a>
+    </div><div class="assets"><script type="text/javascript" src="/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="/lib/algoliasearch/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/topbar/topbar.min.js"></script><script type="text/javascript" src="/lib/pjax/pjax.min.js"></script><script type="text/javascript" src="/js/theme.min.js" defer></script></div>
+
+<div class="pjax-assets"><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":1000},"comment":{"gitalk":{"admin":["xiaobinqt"],"clientID":"47b15de6c2d8a0f8d707","clientSecret":"c70556c8b3a3b38ea7c72e539ff3b37d5bc1b4f3","id":"6019fa760ec31d04c5d10d554b48fde0","owner":"xiaobinqt","repo":"xiaobinqt.github.io","title":"Go Slice 实现原理"}},"lightGallery":{"actualSize":false,"exThumbImage":"data-thumbnail","hideBarsDelay":2000,"selector":".lightgallery","speed":400,"thumbContHeight":80,"thumbWidth":80,"thumbnail":true},"search":{"algoliaAppID":"CPNWIDNX0Y","algoliaIndex":"xiaobinqt.io","algoliaSearchKey":"80b84de0ebc766371dd27cd3e651c41e","highlightTag":"em","maxResultLength":20,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"},"sharerjs":true};</script><script type="text/javascript" src="/lib/gitalk/gitalk.min.js"></script><script type="text/javascript" src="/js/gitalk.min.js" defer></script><script type="text/javascript" src="/lib/lightgallery/lightgallery.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-thumbnail.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-zoom.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><link rel="stylesheet" href="/lib/gitalk/gitalk.min.css"><link rel="stylesheet" href="/lib/lightgallery/lightgallery.min.css"></div>
+</body>
+
+</html>
