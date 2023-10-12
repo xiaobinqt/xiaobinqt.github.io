@@ -93,6 +93,778 @@
 <p>这就是如何使用 <code>CAST</code> 函数和 <code>JSON_CONTAINS</code> 函数来进行 JSON 数据的比较和查询。在这个例子中，它允许在 <code>channel</code> 表中查找包含特定 <code>tag</code> 的记录。</p>
 ]]></description>
 </item><item>
+    <title>Go channel 使用分析</title>
+    <link>https://www.xiaobinqt.cn/go-channel-principle/</link>
+    <pubDate>Wed, 11 Oct 2023 00:00:00 &#43;0000</pubDate><author>
+        <name>xiaobinqt</name>
+    </author><guid>https://www.xiaobinqt.cn/go-channel-principle/</guid>
+    <description><![CDATA[<!-- author： xiaobinqt -->
+<!-- email： xiaobinqt@163.com -->
+<!-- https://xiaobinqt.github.io -->
+<!-- https://www.xiaobinqt.cn -->
+<h2 id="概念" class="headerLink">
+    <a href="#%e6%a6%82%e5%bf%b5" class="header-mark"></a>概念</h2><p>Go 中的 channel 是一个队列，遵循先进先出的原则，负责协程之间的通信。Go 语言提倡不要通过共享内存来通信，而要通过通信来实现内存共享，CSP（Communicating Sequential Process）并发模型，就是通过 goroutine 和 channel 来实现的。</p>
+<p>channel 常用的使用场景有：</p>
+<ul>
+<li>
+<p>停止信号监听</p>
+</li>
+<li>
+<p>定时任务</p>
+</li>
+<li>
+<p>生产方和消费方解耦</p>
+</li>
+<li>
+<p>控制并发数</p>
+</li>
+</ul>
+<h2 id="数据结构" class="headerLink">
+    <a href="#%e6%95%b0%e6%8d%ae%e7%bb%93%e6%9e%84" class="header-mark"></a>数据结构</h2><p>通过 var 声明或者 make 函数创建的 channel 变量是一个存储在函数栈帧上的指针，占用 8 个字节，指向堆上的 hchan 结构体。源码包中 src/runtime/chan.go 定义了 hchan 的数据结构：</p>
+<div align="center"></div>
+<p>hchan结构体：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">type hchan struct {
+</span></span><span class="line"><span class="cl">	closed   uint32 // channel是否关闭的标志
+</span></span><span class="line"><span class="cl">	elemtype *_type // channel中的元素类型，
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	// channel分为无缓冲和有缓冲两种。
+</span></span><span class="line"><span class="cl">	// 对于有缓冲的 channel 存储数据，使用了 ring buffer（环形缓冲区) 来缓存写入的数据，本质是循环数组
+</span></span><span class="line"><span class="cl">	// 为啥是循环数组？普通数组不行吗，普通数组容量固定更适合指定的空间，弹出元素时，普通数组需要全部都前移
+</span></span><span class="line"><span class="cl">	// 当下标超过数组容量后会回到第一个位置，所以需要有两个字段记录当前读和写的下标位置
+</span></span><span class="line"><span class="cl">	buf      unsafe.Pointer // 指向底层循环数组的指针（环形缓冲区）
+</span></span><span class="line"><span class="cl">	qcount   uint           // 循环数组中的元素数量
+</span></span><span class="line"><span class="cl">	dataqsiz uint           // 循环数组的长度
+</span></span><span class="line"><span class="cl">	elemsize uint16         // 元素的大小
+</span></span><span class="line"><span class="cl">	sendx    uint           // 下一次写下标的位置
+</span></span><span class="line"><span class="cl">	recvx    uint           // 下一次读下标的位置
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	// 尝试读取 channel 或向 channel 写入数据而被阻塞的goroutine
+</span></span><span class="line"><span class="cl">	recvq waitq // 读等待队列
+</span></span><span class="line"><span class="cl">	sendq waitq // 写等待队列
+</span></span><span class="line"><span class="cl">	lock  mutex //互斥锁，保证读写 channel 时不存在并发竞争问题
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>等待队列：</p>
+<p>双向链表，包含一个头结点和一个尾结点。每个节点是一个 sudog 结构体变量，记录哪个协程在等待，等待的是哪个 channel，等待发送/接收的数据在哪里。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">type waitq struct {
+</span></span><span class="line"><span class="cl">	first *sudog
+</span></span><span class="line"><span class="cl">	last  *sudog
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">type sudog struct {
+</span></span><span class="line"><span class="cl">	g    *g
+</span></span><span class="line"><span class="cl">	next *sudog
+</span></span><span class="line"><span class="cl">	prev *sudog
+</span></span><span class="line"><span class="cl">	elem unsafe.Pointer
+</span></span><span class="line"><span class="cl">	c    *hchan
+</span></span><span class="line"><span class="cl">	// ...
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="创建" class="headerLink">
+    <a href="#%e5%88%9b%e5%bb%ba" class="header-mark"></a>创建</h3><p>使用 make(chan T, cap) 来创建 channel，make 语法会在编译时，转换为 makechan64 和 makechan</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func makechan64(t *chantype, size int64) *hchan {
+</span></span><span class="line"><span class="cl">	if int64(int(size)) != size {
+</span></span><span class="line"><span class="cl">		panic(plainError(&#34;makechan: size out of range&#34;))
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	return makechan(t, int(size))
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>创建 channel 有两种，一种是带缓冲的 channel，一种是不带缓冲的 channel</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// 带缓冲
+</span></span><span class="line"><span class="cl">ch := make(chan int, 3)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">// 不带缓冲
+</span></span><span class="line"><span class="cl">ch := make(chan int)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>创建时会做一些检查:</p>
+<ul>
+<li>
+<p>元素大小不能超过 64K</p>
+</li>
+<li>
+<p>元素的对齐大小不能超过 maxAlign 也就是 8 字节</p>
+</li>
+<li>
+<p>计算出来的内存是否超过限制</p>
+</li>
+</ul>
+<p>创建时的策略:</p>
+<ul>
+<li>
+<p>如果是无缓冲的 channel，会直接给 hchan 分配内存</p>
+</li>
+<li>
+<p>如果是有缓冲的 channel，并且元素不包含指针，那么会为 hchan 和底层数组分配一段连续的地址</p>
+</li>
+<li>
+<p>如果是有缓冲的 channel，并且元素包含指针，那么会为 hchan 和底层数组分别分配地址</p>
+</li>
+</ul>
+<h3 id="发送" class="headerLink">
+    <a href="#%e5%8f%91%e9%80%81" class="header-mark"></a>发送</h3><p>发送操作，编译时转换为 runtime.chansend 函数</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func chansend(c *hchan, ep unsafe.Pointer, block bool, callerpc uintptr) bool
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>阻塞式：</p>
+<p>调用 chansend 函数，并且 block=true</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">ch &lt;- 10
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>非阻塞式：</p>
+<p>调用 chansend 函数，并且 block=false</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">select {
+</span></span><span class="line"><span class="cl">    case ch &lt;- 10:
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      ...
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    default:
+</span></span><span class="line"><span class="cl"> }
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>向 channel 中发送数据时大概分为两大块：检查和数据发送，数据发送流程如下：</p>
+<ul>
+<li>
+<p>如果 channel 的读等待队列存在接收者goroutine</p>
+<ul>
+<li>将数据<strong>直接发送</strong>给第一个等待的 goroutine，<strong>唤醒接收的 goroutine</strong></li>
+</ul>
+</li>
+<li>
+<p>如果 channel 的读等待队列不存在接收者 goroutine</p>
+<ul>
+<li>
+<p>如果循环数组 buf 未满，那么将会把数据发送到循环数组buf的队尾</p>
+</li>
+<li>
+<p>如果循环数组 buf 已满，这个时候就会走阻塞发送的流程，将当前 goroutine 加入写等待队列，并<strong>挂起等待唤醒</strong></p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="接收" class="headerLink">
+    <a href="#%e6%8e%a5%e6%94%b6" class="header-mark"></a>接收</h3><p>接收操作，编译时转换为 runtime.chanrecv 函数</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func chanrecv(c *hchan, ep unsafe.Pointer, block bool) (selected, received bool)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>阻塞式：</p>
+<p>调用 chanrecv 函数，并且 block=true</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&lt;-ch
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">v := &lt;-ch
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">v, ok := &lt;-ch
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">// 当 channel 关闭时，for 循环会自动退出，无需主动监测 channel 是否关闭，可以防止读取已经关闭的 channel,造成读到数据为通道所存储的数据类型的零值
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">for i := range ch {
+</span></span><span class="line"><span class="cl">	fmt.Println(i)
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>非阻塞式：</p>
+<p>调用 chanrecv 函数，并且 block=false</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">select {
+</span></span><span class="line"><span class="cl">    case &lt;-ch:
+</span></span><span class="line"><span class="cl">    ...
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    default
+</span></span><span class="line"><span class="cl">  }
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>向 channel 中接收数据时大概分为两大块，检查和数据发送，而数据接收流程如下：</p>
+<ul>
+<li>
+<p>如果 channel 的写等待队列存在发送者 goroutine</p>
+<ul>
+<li>
+<p>如果是无缓冲 channel，<strong>直接</strong>从第一个发送者 goroutine 那里把数据拷贝给接收变量，<strong>唤醒发送的 goroutine</strong></p>
+</li>
+<li>
+<p>如果是有缓冲 channel（已满），将循环数组buf的队首元素拷贝给接收变量，将第一个发送者 goroutine 的数据拷贝到 buf循 环数组队尾，<strong>唤醒发送的 goroutine</strong></p>
+</li>
+</ul>
+</li>
+<li>
+<p>如果 channel 的写等待队列不存在发送者 goroutine</p>
+<ul>
+<li>
+<p>如果循环数组 buf 非空，将循环数组 buf 的队首元素拷贝给接收变量</p>
+</li>
+<li>
+<p>如果循环数组 buf 为空，这个时候就会走阻塞接收的流程，将当前 goroutine 加入读等待队列，并<strong>挂起等待唤醒</strong></p>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>关闭</strong></p>
+<p>关闭操作，调用 close 函数，编译时转换为 runtime.closechan 函数</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">close(ch)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func closechan(c *hchan)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>案例分析：</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;time&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;unsafe&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// ch 是长度为 4 的带缓冲的 channel
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">//初始 hchan 结构体重的 buf 为空，sendx 和 recvx 均为 0
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">ch</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">string</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">ch</span><span class="p">,</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nf">Sizeof</span><span class="p">(</span><span class="nx">ch</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="k">go</span> <span class="nf">sendTask</span><span class="p">(</span><span class="nx">ch</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">go</span> <span class="nf">receiveTask</span><span class="p">(</span><span class="nx">ch</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="mi">1</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// G1 是发送者
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 当 G1 向 ch 里发送数据时，首先会对 buf 加锁，然后将 task 存储的数据 copy 到 buf 中，然后 sendx++，然后释放对 buf 的锁
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">sendTask</span><span class="p">(</span><span class="nx">ch</span> <span class="kd">chan</span> <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">taskList</span> <span class="o">:=</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;this&#34;</span><span class="p">,</span> <span class="s">&#34;is&#34;</span><span class="p">,</span> <span class="s">&#34;a&#34;</span><span class="p">,</span> <span class="s">&#34;demo&#34;</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">task</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">taskList</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">ch</span> <span class="o">&lt;-</span> <span class="nx">task</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">//发送任务到 channel
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// G2 是接收者
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 当 G2 消费 ch 的时候，会首先对 buf 加锁，然后将 buf 中的数据 copy 到 task 变量对应的内存里，然后 recvx++,并释放锁
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">receiveTask</span><span class="p">(</span><span class="nx">ch</span> <span class="kd">chan</span> <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">task</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">ch</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">//接收任务
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;received&#34;</span><span class="p">,</span> <span class="nx">task</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">//处理任务
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>hchan 结构体的主要组成部分有四个：</p>
+<ul>
+<li>
+<p>用来保存 goroutine 之间传递数据的循环数组：buf</p>
+</li>
+<li>
+<p>用来记录此循环数组当前发送或接收数据的下标值：sendx 和 recvx</p>
+</li>
+<li>
+<p>用于保存向该 chan 发送和从该 chan 接收数据被阻塞的 goroutine 队列： sendq 和 recvq</p>
+</li>
+<li>
+<p>保证 channel 写入和读取数据时线程安全的锁：lock</p>
+</li>
+</ul>
+<h2 id="特点" class="headerLink">
+    <a href="#%e7%89%b9%e7%82%b9" class="header-mark"></a>特点</h2><p>channel 有 2 种类型：无缓冲、有缓冲</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231012/bfb659b1a9aa4a05b86ef43ae0090a86.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231012/bfb659b1a9aa4a05b86ef43ae0090a86.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231012/bfb659b1a9aa4a05b86ef43ae0090a86.png" data-sub-html="<h2>有无缓冲</h2>">
+        
+    </a><figcaption class="image-caption">有无缓冲</figcaption>
+    </figure></p>
+<p>channel 有 3 种模式：写操作模式（单向通道）、读操作模式（单向通道）、读写操作模式（双向通道）</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231012/77e1a773bb3c4b5cb64c2fea9ce00876.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231012/77e1a773bb3c4b5cb64c2fea9ce00876.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231012/77e1a773bb3c4b5cb64c2fea9ce00876.png" data-sub-html="<h2>模式</h2>">
+        
+    </a><figcaption class="image-caption">模式</figcaption>
+    </figure></p>
+<p>channel有 3 种状态：未初始化、正常、关闭</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231012/307a5fbdc807419db471dd49cbe3f920.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231012/307a5fbdc807419db471dd49cbe3f920.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231012/307a5fbdc807419db471dd49cbe3f920.png" data-sub-html="<h2>状态</h2>">
+        
+    </a><figcaption class="image-caption">状态</figcaption>
+    </figure></p>
+<p><strong>注意点</strong>：</p>
+<ol>
+<li>
+<p>一个 channel不能多次关闭，会导致 panic</p>
+</li>
+<li>
+<p>如果多个 goroutine 都监听同一个 channel，那么 channel 上的数据都<strong>可能随机被某一个 goroutine 取走进行消费</strong></p>
+</li>
+<li>
+<p>如果多个 goroutine 监听同一个 channel，如果这个 channel 被关闭，则所有 goroutine <strong>都能收到退出信号</strong></p>
+</li>
+</ol>
+<h3 id="线程安全" class="headerLink">
+    <a href="#%e7%ba%bf%e7%a8%8b%e5%ae%89%e5%85%a8" class="header-mark"></a>线程安全</h3><p>不同协程通过 channel 进行通信，本身的使用场景就是多线程，为了保证数据的一致性，必须实现线程安全。</p>
+<p>channel 的底层实现中，hchan 结构体中采用 Mutex 锁来保证数据读写安全。在对循环数组 buf 中的数据进行入队和出队操作时，必须先获取互斥锁，才能操作 channel 数据。</p>
+<h3 id="控制并发顺序" class="headerLink">
+    <a href="#%e6%8e%a7%e5%88%b6%e5%b9%b6%e5%8f%91%e9%a1%ba%e5%ba%8f" class="header-mark"></a>控制并发顺序</h3><p>多个 goroutine 并发执行时，每一个 goroutine 抢到处理器的时间点不一致，goroutine 的执行本身不能保证顺序。goroutine 并不能保证先执行。</p>
+<p>可以使用 channel 进行通信通知，用 channel 去传递信息，从而控制并发执行顺序：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;sync&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;time&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">wg</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">ch1</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">struct</span><span class="p">{},</span> <span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">ch2</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">struct</span><span class="p">{},</span> <span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">ch3</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">struct</span><span class="p">{},</span> <span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">ch1</span> <span class="o">&lt;-</span> <span class="kd">struct</span><span class="p">{}{}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">wg</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">start</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">().</span><span class="nf">Unix</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="k">go</span> <span class="nf">myPrint</span><span class="p">(</span><span class="s">&#34;gorouine1&#34;</span><span class="p">,</span> <span class="nx">ch1</span><span class="p">,</span> <span class="nx">ch2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">go</span> <span class="nf">myPrint</span><span class="p">(</span><span class="s">&#34;gorouine2&#34;</span><span class="p">,</span> <span class="nx">ch2</span><span class="p">,</span> <span class="nx">ch3</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">go</span> <span class="nf">myPrint</span><span class="p">(</span><span class="s">&#34;gorouine3&#34;</span><span class="p">,</span> <span class="nx">ch3</span><span class="p">,</span> <span class="nx">ch1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">wg</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">end</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">().</span><span class="nf">Unix</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;duration:%d\n&#34;</span><span class="p">,</span> <span class="nx">end</span><span class="o">-</span><span class="nx">start</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">myPrint</span><span class="p">(</span><span class="nx">gorouine</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">inputchan</span> <span class="kd">chan</span> <span class="kd">struct</span><span class="p">{},</span> <span class="nx">outchan</span> <span class="kd">chan</span> <span class="kd">struct</span><span class="p">{})</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 模拟内部操作耗时
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="mi">1</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">select</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">case</span> <span class="o">&lt;-</span><span class="nx">inputchan</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%s\n&#34;</span><span class="p">,</span> <span class="nx">gorouine</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">outchan</span> <span class="o">&lt;-</span> <span class="kd">struct</span><span class="p">{}{}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>输出：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">gorouine1
+</span></span><span class="line"><span class="cl">gorouine2
+</span></span><span class="line"><span class="cl">gorouine3
+</span></span><span class="line"><span class="cl">duration:1
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="死锁问题" class="headerLink">
+    <a href="#%e6%ad%bb%e9%94%81%e9%97%ae%e9%a2%98" class="header-mark"></a>死锁问题</h2><p><strong>死锁：</strong></p>
+<ul>
+<li>
+<p>单个协程永久阻塞</p>
+</li>
+<li>
+<p>两个或两个以上的协程的执行过程中，由于竞争资源或由于彼此通信而造成的一种阻塞的现象。</p>
+</li>
+</ul>
+<p><strong>channel 死锁场景：</strong></p>
+<ul>
+<li>
+<p>非缓存 channel 只写不读</p>
+</li>
+<li>
+<p>非缓存 channel 读在写后面</p>
+</li>
+<li>
+<p>缓存 channel 写入超过缓冲区数量</p>
+</li>
+<li>
+<p>空读</p>
+</li>
+<li>
+<p>多个协程互相等待</p>
+</li>
+</ul>
+<ol>
+<li>非缓存 channel 只写不读</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func deadlock1() {
+</span></span><span class="line"><span class="cl">	ch := make(chan int)
+</span></span><span class="line"><span class="cl">	ch &lt;- 3 //  这里会发生一直阻塞的情况，执行不到下面一句
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol start="2">
+<li>非缓存 channel 读在写后面</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func deadlock2() {
+</span></span><span class="line"><span class="cl">	ch := make(chan int)
+</span></span><span class="line"><span class="cl">	ch &lt;- 3 //  这里会发生一直阻塞的情况，执行不到下面一句
+</span></span><span class="line"><span class="cl">	num := &lt;-ch
+</span></span><span class="line"><span class="cl">	fmt.Println(&#34;num=&#34;, num)
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func deadlock2() {
+</span></span><span class="line"><span class="cl">	ch := make(chan int)
+</span></span><span class="line"><span class="cl">	ch &lt;- 100 //  这里会发生一直阻塞的情况，执行不到下面一句
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	go func() {
+</span></span><span class="line"><span class="cl">		num := &lt;-ch
+</span></span><span class="line"><span class="cl">		fmt.Println(&#34;num=&#34;, num)
+</span></span><span class="line"><span class="cl">	}()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	time.Sleep(time.Second)
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol start="3">
+<li>缓存 channel 写入超过缓冲区数量</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func deadlock3() {
+</span></span><span class="line"><span class="cl">	ch := make(chan int, 3)
+</span></span><span class="line"><span class="cl">	ch &lt;- 3
+</span></span><span class="line"><span class="cl">	ch &lt;- 4
+</span></span><span class="line"><span class="cl">	ch &lt;- 5
+</span></span><span class="line"><span class="cl">	ch &lt;- 6 //  这里会发生一直阻塞的情况
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol start="4">
+<li>空读</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func deadlock4() {
+</span></span><span class="line"><span class="cl">	ch := make(chan int)
+</span></span><span class="line"><span class="cl">	// ch := make(chan int, 1)
+</span></span><span class="line"><span class="cl">	fmt.Println(&lt;-ch) //  这里会发生一直阻塞的情况
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol start="5">
+<li><strong>多个协程互相等待</strong></li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func deadlock5() {
+</span></span><span class="line"><span class="cl">	ch1 := make(chan int)
+</span></span><span class="line"><span class="cl">	ch2 := make(chan int)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	// 互相等对方造成死锁
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	go func() {
+</span></span><span class="line"><span class="cl">		for {
+</span></span><span class="line"><span class="cl">			select {
+</span></span><span class="line"><span class="cl">			case num := &lt;-ch1:
+</span></span><span class="line"><span class="cl">				fmt.Println(&#34;num=&#34;, num)
+</span></span><span class="line"><span class="cl">				ch2 &lt;- 100
+</span></span><span class="line"><span class="cl">			}
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">	}()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	for {
+</span></span><span class="line"><span class="cl">		select {
+</span></span><span class="line"><span class="cl">		case num := &lt;-ch2:
+</span></span><span class="line"><span class="cl">			fmt.Println(&#34;num=&#34;, num)
+</span></span><span class="line"><span class="cl">			ch1 &lt;- 300
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="参考" class="headerLink">
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
+<li><a href="https://blog.csdn.net/weixin_45627369/article/details/127193703" target="_blank" rel="noopener noreferrer">golang——channel</a></li>
+</ul>
+]]></description>
+</item><item>
     <title>Go Slice 实现原理</title>
     <link>https://www.xiaobinqt.cn/go-slice-principle/</link>
     <pubDate>Tue, 10 Oct 2023 00:00:00 &#43;0000</pubDate><author>
@@ -5485,234 +6257,6 @@
 <li><a href="https://mp.weixin.qq.com/s?__biz=MzU4NzA3MTc5Mg==&amp;mid=2247485997&amp;idx=1&amp;sn=b05b4a56d0248e9c7108bd01eb95438d" target="_blank" rel="noopener noreferrer">MySQL 事务、锁和MVCC</a></li>
 <li><a href="https://mp.weixin.qq.com/s?__biz=MzU4NzA3MTc5Mg==&amp;mid=2247486035&amp;idx=1&amp;sn=7878dd9b45bc79e210eca1478ac2d9be" target="_blank" rel="noopener noreferrer">MySQL 调优</a></li>
 <li><a href="https://juejin.cn/post/6844904199952531463" target="_blank" rel="noopener noreferrer">redo log/binlog/两阶段提交</a></li>
-</ul>
-]]></description>
-</item><item>
-    <title>MySQL 为什么使用 B&#43; 树索引</title>
-    <link>https://www.xiaobinqt.cn/why-mysql-index-use-btree/</link>
-    <pubDate>Fri, 20 May 2022 00:00:00 &#43;0000</pubDate><author>
-        <name>xiaobinqt</name>
-    </author><guid>https://www.xiaobinqt.cn/why-mysql-index-use-btree/</guid>
-    <description><![CDATA[<div class="featured-image">
-                <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221127/8018e68746b147a8bba7dac0c65ae308.png" referrerpolicy="no-referrer">
-            </div><!-- author： xiaobinqt -->
-<!-- email： xiaobinqt@163.com -->
-<!-- https://xiaobinqt.github.io -->
-<!-- https://www.xiaobinqt.cn -->
-<h2 id="前言" class="headerLink">
-    <a href="#%e5%89%8d%e8%a8%80" class="header-mark"></a>前言</h2><p>为什么 MySQL 采用 B+ 树作为索引？</p>
-<p>如果纯粹的猜测 MySQL 数据库索引为什么使用 B+ 树？那么围绕这个问题的回答通常一定是围绕 B+ 树本身是什么，有什么优势这两点去解释这个问题。</p>
-<p>这不是我开始这么去想的，看了很多文章都是从这一维度问答，这些回答让我失望。直到那天问了坐在我旁边那个整天摸鱼的 5 年程序员；他慵懒的回答：你想为什么是使用的是树结构呢？咦，听到这回答，一下打开了我的思绪，有点意思！</p>
-<p>先抛开 B+ 树是什么，有什么优势，这些先入为主的答案。我想要的是为什么❓</p>
-<p>为什么 MySQL 的索引有那么多的数据结构可选，偏偏选树结构？为什么那么多的树结构？为什么又偏偏采用 B+ 树作为索引?</p>
-<p>这才是我要想明白的！我想要的是不只是答案，还要答案背后的脉络！我想要的不仅是要知其然，更想要知其所以然。</p>
-<h2 id="那么多数据结构为什么选树结构" class="headerLink">
-    <a href="#%e9%82%a3%e4%b9%88%e5%a4%9a%e6%95%b0%e6%8d%ae%e7%bb%93%e6%9e%84%e4%b8%ba%e4%bb%80%e4%b9%88%e9%80%89%e6%a0%91%e7%bb%93%e6%9e%84" class="header-mark"></a>那么多数据结构，为什么选树结构？</h2><p>众多的数据结构在逻辑层面可分为：<strong>线性结构</strong>和<strong>非线性结构</strong>。</p>
-<p>线性结构有：<strong>数组</strong>、<strong>链表</strong>，基于它们衍生出的有<strong>哈希表</strong>（哈希表也称散列表）、<strong>栈</strong>、<strong>队列</strong>等。</p>
-<p>非线性结构有：<strong>树</strong>、<strong>图</strong>。</p>
-<p>还有其他数据结构如：<strong>跳表</strong>、<strong>位图</strong> 也都由基础数据结构演化而来，不同的数据结构存在即都是为了解决某些场景问题。</p>
-<p>如果要知道索引适合什么数据结构，那我们得先来回答索引需要来解决什么样的问题（痛点）？和发挥着什么样的作用？其次再才是选择什么样的数据结构。后者只是果，前者才是因。</p>
-<p>我们都知道 MySQL 存储的数据是在磁盘里，因为即使设备断电，放在磁盘的数据是不会有影响的，保障了数据不丢失，这意味着 MySQL 在磁盘上的数据是持久化的。</p>
-<p>但数据存储在磁盘得到保障的同时也是有代价的，这代价就是磁盘的处理速度是毫秒级别的，相比<strong>内存纳秒级别</strong>的速度，简直是小巫见大巫。</p>
-<p>你可能对时间单位没什么概念，可以看 1 毫秒能慢上纳秒几万倍。</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/f12d0ec3934f47c49269efd3c57283a0.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/f12d0ec3934f47c49269efd3c57283a0.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/f12d0ec3934f47c49269efd3c57283a0.png" data-sub-html="<h2>图片</h2>">
-        
-    </a><figcaption class="image-caption">图片</figcaption>
-    </figure></p>
-<p>索引虽然存储在磁盘上，但使用索引查找数据时，可以从磁盘先读取索引放到内存中，再通过索引从磁盘找到数据；再然后将磁盘读取到的数据也放到内存里。索引就让磁盘和内存强强联手，趁机搭上了内存的车，感受了一把纳秒级别速度的推背感。</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/134c7c03e62d4c8bbc867daa00cbc789.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/134c7c03e62d4c8bbc867daa00cbc789.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/134c7c03e62d4c8bbc867daa00cbc789.png" data-sub-html="<h2>图片</h2>">
-        
-    </a><figcaption class="image-caption">图片</figcaption>
-    </figure></p>
-<p>但是不管查询的过程中怎么优化，只要根还在磁盘，就避免不了会发生多次磁盘 I/O ，而磁盘 I/O 次数越多，消耗的时间也越多。聪明的你这会儿可以看出这其实就是个需要考虑解决的痛点了。</p>
-<ul>
-<li><strong>要尽少在磁盘做 I/O 操作</strong></li>
-</ul>
-<p>但还有那么多的数据结构可选呢。其实索引需要发挥的目的已经决定了有哪些数据结构可选，那么就可以缩小选择其他数据结构的范围。从为什么要建索引本身的首要目的出发。</p>
-<ul>
-<li><strong>要能尽快的按照区间高效地范围查找</strong></li>
-</ul>
-<p>当然索引首要目的<strong>能支持高效范围查询，还要有插入更新等操作的动态数据结构</strong>。</p>
-<p>所以有满足以这两条主要条件的除了树结构你还会想到其他什么数据结构？还有就是哈希表、跳表</p>
-<h3 id="哈希表" class="headerLink">
-    <a href="#%e5%93%88%e5%b8%8c%e8%a1%a8" class="header-mark"></a>哈希表</h3><p>哈希表的物理存储是一个数组⚠️，而数组在内存中是<strong>连续地址</strong>的空间。</p>
-<p>数据以 <code>Key</code>、<code>Value</code> 的方式存储。哈希表拥有精确的查询，所以时间复杂度是 <code>O(1)</code>。</p>
-<p>而哈希表之所以能这么快是通过 <code>Key </code>计算数组下标来快速找到 <code>Value</code>。</p>
-<p>最简单的计算的方式是 <strong>余数法</strong>，通过先计算<code>key</code>的 <code>HashCode</code>，再通过<strong>哈希表的数组长度</strong>对 <code>HashCode</code> 求余，求余得出的余数就是数组下标，最后由下标访问到哈希表中存的<code>Key、Value</code>。</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/c9364955db264236a436b221756a1a1a.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/c9364955db264236a436b221756a1a1a.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/c9364955db264236a436b221756a1a1a.png" data-sub-html="<h2>图片</h2>">
-        
-    </a><figcaption class="image-caption">图片</figcaption>
-    </figure></p>
-<p>但是 <code>Key</code> 计算出的下标<strong>可能会有相同</strong>的情况，例如 <code>HashCode 1010</code> 对 <code>6</code> 取余是 <code>2</code>，但是 <code>HashCode 1112</code> 对 <code>6</code> 取余也是 <code>2</code>。</p>
-<p>哈希算法随机计算出 HashCode 取余数组长度可能出现数组下标相同的情况，就是所谓的 <strong><code>哈希冲突</code></strong>。</p>
-<p>而 <code>哈希冲突</code> 常用 <code>链表</code> 的方法解决。当发生 <code>哈希冲突</code>，相同下标的数据元素会替换成存储指针，而不同 <code>Key</code> 的数据元素添加到链表中。查找时通过指针遍历这个链表，再匹配出正确的 <code>Key</code> 就可以。</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/7cdd6369532c417a9843dcf83fcfa584.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/7cdd6369532c417a9843dcf83fcfa584.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/7cdd6369532c417a9843dcf83fcfa584.png" data-sub-html="<h2>图片</h2>">
-        
-    </a><figcaption class="image-caption">图片</figcaption>
-    </figure></p>
-<p>如上图所示，<code>Key</code> 是 &ldquo;一颗剽悍的种子&rdquo; 的字符串 ，<code>Value</code> 是 &ldquo;不要忘了关注、点赞、评论&rdquo;。我们通过计算<code>key</code>为 <code>HashCode（1010）</code> 的整数型值<code>int</code>。然后用 <code>HashCode（1010）</code> 对长度为 <code>6</code> 的哈希表数组长度做取余得出 <code>2</code>，这 <code>2</code> 的值元素就是 ( Key = &ldquo;一颗剽悍的种子&rdquo;,Value = &ldquo;不要忘了关注、点赞、评论&rdquo;) 。</p>
-<p>虽然哈希表虽然可以高效的等值查询。例如SQL：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">select * from weixin where username = &#34;一颗剽悍的种子&#34;
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>但是<strong>不支持区间查询</strong>。例如SQL：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">select * from weixin where age &lt; 18
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>那么如果哈希表用来做成索引，当进行范围查询时意味着要全部扫描。类似 Redis 存储形式是 KV 的 NoSQL 数据库，会适合等值查询的场景。</p>
-<h3 id="跳表" class="headerLink">
-    <a href="#%e8%b7%b3%e8%a1%a8" class="header-mark"></a>跳表</h3><p>跳表似乎对于我们来说是一个比较陌生的数据结构，但是在 Redis 中却是比较常用的数据结构之一。跳表底层实质就是可以进行二分查找的<strong>有序链表</strong>，他在链表基础加上索引层，即能支持插入、删除等动态操作，也支持按区间高效查询。而且不管是查找、插入、删除对应的时间复杂度都是 <code>O(logn)</code>。</p>
-<p>要理解跳表，先来看链表，假设链表存储是有序的数据，我们要想查询某一个数据，在最差的情况下要从头全遍历整个链表，时间复杂度是 <code>O(n)</code>。</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/8b760ec0cec045aea1302676ec385eaf.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/8b760ec0cec045aea1302676ec385eaf.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/8b760ec0cec045aea1302676ec385eaf.png" data-sub-html="<h2>图片</h2>">
-        
-    </a><figcaption class="image-caption">图片</figcaption>
-    </figure></p>
-<p>如下图所示，跳表是在链表基础上加了索引层。可以起到支持区间查询的作用。</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/de330e29044d428c93fcaa5b6f1669d8.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/de330e29044d428c93fcaa5b6f1669d8.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/de330e29044d428c93fcaa5b6f1669d8.png" data-sub-html="<h2>图片</h2>">
-        
-    </a><figcaption class="image-caption">图片</figcaption>
-    </figure></p>
-<p>从上图所示，我们如果要查询一个 <code>26</code> 的节点，跳表就可以先从索引层遍历，当遍历到在索引层的 <code>21</code> 节点，会发现下一个索引层的节点是 <code>36</code> 节点时，很明显要找的 <code>26</code>
-的节点就在这区间。此时我们只要再通过索引层指向原始链表的指针往下移到原始链这一层遍历，只要遍历 <code>2</code> 个节点即可找到 <code>26</code> 了。<del>如果用原来的链表需要遍历 <code>10</code> 个节点，现在只要遍历 <code>8</code> 个节点</del>。如果用原来的链表需要遍历 <code>8</code> 个节点，现在也只要遍历 <code>8</code> 个节点（<code>5-&gt;10-&gt;16-&gt;21-&gt;36-&gt;21-&gt;21-&gt;26</code>
-），但是对于大量数据来说，是可以节省查询时间的。（原文应该是有误，这是按照我的理解写的，具体可以参看<a href="https://juejin.cn/post/7081065180301361183#heading-3:~:text=%E5%A6%82%E6%9E%9C%E7%94%A8%E5%8E%9F%E6%9D%A5%E7%9A%84%E9%93%BE%E8%A1%A8%E9%9C%80%E8%A6%81%E9%81%8D%E5%8E%86%2010%20%E4%B8%AA%E8%8A%82%E7%82%B9%EF%BC%8C%E7%8E%B0%E5%9C%A8%E5%8F%AA%E8%A6%81%E9%81%8D%E5%8E%86%208%20%E4%B8%AA%E8%8A%82%E7%82%B9%E3%80%82" target="_blank" rel="noopener noreferrer">原文</a>）。</p>
-<p>如下图中，一图胜千言。当数据量大时，一个包含多个结点的链表，在建立了五级索引后可以突显的看到索引层的优势。同时注意道这样一个规律 <strong>“加一层索引，查询所需要遍历的节点个数减少，查询效率也就提高了。”</strong></p>
-<p>从用户的角度就是，跳表这家伙其实就是在告诉链表从什么地方开始找比较快。</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/03cc278b5ef545138f52074efec2999b.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/03cc278b5ef545138f52074efec2999b.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/03cc278b5ef545138f52074efec2999b.png" data-sub-html="<h2>图片</h2>">
-        
-    </a><figcaption class="image-caption">图片</figcaption>
-    </figure></p>
-<p>看到这，跳表似乎也很适合用来作为索引的数据结构。但是不要忘了还有首个条件没满足，就是 <strong>&ldquo;要尽少在磁盘做 I/O 操作。&rdquo;</strong>
-而跳表显然没能满足这一条件，<strong>跳表在随数据量增多的情况，索引层也会随着增高，相应的就会增加读取I/O的次数，从而影响性能</strong>。</p>
-<p>那么回到 “那么多数据结构，为什么选树结构的问题？”，我们发现哈希表和跳表并不能很好的满足解决磁盘痛点和索引目的的这两个主要条件。那么我们来看为什么要来选树结构。</p>
-<h3 id="树结构" class="headerLink">
-    <a href="#%e6%a0%91%e7%bb%93%e6%9e%84" class="header-mark"></a>树结构</h3><p>我们先来看现实中一颗树都有哪些部分组成，首先要有根、树枝、还有树叶。那抽象成树结构也是一样的，树结构的顶端是 <code>根节点（root）</code>，左侧的节点称为 <code>左子树</code>，右子树对应的在右侧的节点，树的末端没有节点的称为 <code>叶子节点</code>。</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/06fe0d461c284c218f616c98b0d14dff.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/06fe0d461c284c218f616c98b0d14dff.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/06fe0d461c284c218f616c98b0d14dff.png" data-sub-html="<h2>图片</h2>">
-        
-    </a><figcaption class="image-caption">图片</figcaption>
-    </figure></p>
-<p>从树的层级关系可以分为上下级和同级节点，如下图，<code>D、E</code>是<code>B</code>节点的子节点，那么<code>B</code> 节点就是它们的父节点，跟<code>B</code>节点在同一层级的<code>C</code>节点是<code>B</code>节点的兄弟节点。</p>
-<p>同时树的最大层级数，称为树的高度（深度），图下的树高度是<strong>3</strong>。</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/316bcf4e06bd4b15a480b56eb5665b99.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/316bcf4e06bd4b15a480b56eb5665b99.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/316bcf4e06bd4b15a480b56eb5665b99.png" data-sub-html="<h2>图片</h2>">
-        
-    </a><figcaption class="image-caption">图片</figcaption>
-    </figure></p>
-<p>从树结构的层级角度看，其实树结构是不是跟前面的跳表还有点相似。而跳表之所以这么快是因为有能按区间高效查询的索引层。</p>
-<p>而树结构其特性决定了遍历数据方式本身就纯天然的支持按区间查询。再加上树是非线性结构的优势相比于线性结构的数组，不必像数组的数据是连续存放的。那么当树结构在插入新数据时就不用像数组插入数据前时，需要将数据所在往后的所有数据节点都得往后挪动的开销。所以树结构更适合插入更新等动态操作的数据结构。</p>
-<p>树结构在满足了索引目的和其他条件的情况下，至于减少磁盘查询操作的痛点其实我们就可以在基于树结构的数据结构中去选择。</p>
-<h2 id="那么多的树结构为什么偏偏采用-b-树作为索引" class="headerLink">
-    <a href="#%e9%82%a3%e4%b9%88%e5%a4%9a%e7%9a%84%e6%a0%91%e7%bb%93%e6%9e%84%e4%b8%ba%e4%bb%80%e4%b9%88%e5%81%8f%e5%81%8f%e9%87%87%e7%94%a8-b-%e6%a0%91%e4%bd%9c%e4%b8%ba%e7%b4%a2%e5%bc%95" class="header-mark"></a>那么多的树结构？为什么偏偏采用 B+ 树作为索引?</h2><p>那么多的树结构中，除了B+树，你还会想到哪些树结构？二叉树查找树、自平衡二叉树、B树。</p>
-<h3 id="二叉树" class="headerLink">
-    <a href="#%e4%ba%8c%e5%8f%89%e6%a0%91" class="header-mark"></a>二叉树</h3><p>在了解二叉查找树或者自平衡二叉树前需要先简单知道什么是二叉树，什么是二分查找树。因为你看二叉查找树不就是这两棵树的合并吗。</p>
-<p>我们先来看看二叉树，二叉树的树结构中定义的是每个节点的可以是<code>0个子节</code>或<code>1个子节点</code>，但是最多不超<code>2个子节点</code>。</p>
-<p>而二叉树还有两个形式：<strong>满二叉树、完全二叉树</strong></p>
-<p><strong>满二叉树</strong></p>
-<p>满二叉树的定义是一棵二叉树的所有非叶子节点都存在左右子节点，并且所有子节点在同一层级。</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/a5ecaccfda4246f086a976cdd3988a54.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/a5ecaccfda4246f086a976cdd3988a54.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/a5ecaccfda4246f086a976cdd3988a54.png" data-sub-html="<h2>图片</h2>">
-        
-    </a><figcaption class="image-caption">图片</figcaption>
-    </figure></p>
-<p><strong>完全二叉树</strong></p>
-<p>完全二叉树是指从左至右填充节点，直到最后一层，且最后一层的节点都靠左对齐。因此，满二叉树的所有层都可能被填充满，而完全二叉树虽然最后一层不一定满，但是尽可能填充到最左侧。如下图。</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/90538ecd70fc4c439054eed2e33b93c6.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/90538ecd70fc4c439054eed2e33b93c6.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/90538ecd70fc4c439054eed2e33b93c6.png" data-sub-html="<h2>图片</h2>">
-        
-    </a><figcaption class="image-caption">图片</figcaption>
-    </figure></p>
-<h3 id="二叉查找树" class="headerLink">
-    <a href="#%e4%ba%8c%e5%8f%89%e6%9f%a5%e6%89%be%e6%a0%91" class="header-mark"></a>二叉查找树</h3><p>此二叉查找树的 “二” 非彼二，因为此 “二” 既可以说是表示二叉的树，也可以表示二分查找，因为二叉查找树既是二叉也融合了二分查找。</p>
-<p>先简单的看看二分查找，二分查找可以避免有序的数组从头依次的遍历查询，因为我们知道这种情况如果要查找一个数最差的情况时间复杂就是<code>O(n)</code>
-，整体查询效率不高。而如果数组是<strong>有序</strong>的，就可以通过二分查找将每次的查询范围减半，时间复杂度自然就是<code>O(logn)</code>。如下图所示。</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/1689be2bb3d24f7da12fbf2d4ec37736.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/1689be2bb3d24f7da12fbf2d4ec37736.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/1689be2bb3d24f7da12fbf2d4ec37736.png" data-sub-html="<h2>图片</h2>">
-        
-    </a><figcaption class="image-caption">图片</figcaption>
-    </figure></p>
-<p>所以说，二叉查找树不同于普通二叉查找树，是将小于根节点的元素放在左子树，而右子树正好相反是放大于根节点的元素。说白了就是根节点是左子树和右子树的中位数，左边放小于中位数的，右边放大于中位数，这不就是二分查找算法的奥义。</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/cbb74bc84a5c4c88abde473347b77dd6~tplv-k3u1fbpfcp-zoom-in-crop-mark_3024_0_0_0.gif" title="640.gif" data-thumbnail="https://cdn.xiaobinqt.cn/cbb74bc84a5c4c88abde473347b77dd6~tplv-k3u1fbpfcp-zoom-in-crop-mark_3024_0_0_0.gif" data-sub-html="<h2>图片</h2><p>640.gif</p>">
-        
-    </a><figcaption class="image-caption">图片</figcaption>
-    </figure></p>
-<p>如上动图所示，二分查找树在查找数据时，只需要将需要查找的元素与树节点元素进行比较，当元素大于根节点则往右子树中查找，元素小于根节点则往左子树中查找，元素如果正好是中位数那么就是正好是根节点，所以二叉查找树具备高效查询。</p>
-<p>但是二叉树也有明显<strong>弊端</strong>，在极端情况下，如果每次插入的数据都是最小或者都是最大的元素，那么树结构会退化成一条链表。查询数据是的时间复杂度就会是<code>O(n)</code>，如下图所示。</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/2fa9c648547f4c15a87959a2b3459dfa.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/2fa9c648547f4c15a87959a2b3459dfa.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/2fa9c648547f4c15a87959a2b3459dfa.png" data-sub-html="<h2>图片</h2>">
-        
-    </a><figcaption class="image-caption">图片</figcaption>
-    </figure></p>
-<p>当二分查找树退化成链表时，我们知道链表不仅不能高效查询而且也增加了磁盘 IO 操作，所以我们得划向下一个树型数据结构。</p>
-<h3 id="自平衡二叉树avl树" class="headerLink">
-    <a href="#%e8%87%aa%e5%b9%b3%e8%a1%a1%e4%ba%8c%e5%8f%89%e6%a0%91avl%e6%a0%91" class="header-mark"></a>自平衡二叉树/AVL树</h3><p>自平衡二叉树就是来解决二叉查找树极端下退化成链表的问题，自平衡二叉树也称<strong>平衡二叉查找树</strong>（AVL树）。</p>
-<blockquote>
-<p>可以看到从简单的二叉树，一步步演化到二分查找树再到现在的自平衡二叉树。一个简单的东西慢慢的逐渐走向复杂。如果只知道答案，我们是不会知道来龙去脉的。</p>
-</blockquote>
-<p>平衡二叉查找树其实主要就是在二叉查找树的基础上加上约束：<strong>让每个节点的左右子树高度差不能超过 1</strong>。那么这样让可以让左右子树都保持平衡，让查询数据操作的时间复杂度在 <code>O(logn)</code>。</p>
-<p>如下图所示，平衡二叉查找树将每次插入的元素数据都会维持自平衡。</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/202308053871d3e8b2e34eaa8253be7643052ae1~tplv-k3u1fbpfcp-zoom-in-crop-mark_3024_0_0_0.gif" title="640.gif" data-thumbnail="https://cdn.xiaobinqt.cn/202308053871d3e8b2e34eaa8253be7643052ae1~tplv-k3u1fbpfcp-zoom-in-crop-mark_3024_0_0_0.gif" data-sub-html="<h2>图片</h2><p>640.gif</p>">
-        
-    </a><figcaption class="image-caption">图片</figcaption>
-    </figure></p>
-<p>如下图所示，普通非平衡二叉树和平衡二叉树的对比。</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/87466af324fb41dbae9f8bd27e91ecfc.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/87466af324fb41dbae9f8bd27e91ecfc.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/87466af324fb41dbae9f8bd27e91ecfc.png" data-sub-html="<h2>图片</h2>">
-        
-    </a><figcaption class="image-caption">图片</figcaption>
-    </figure></p>
-<p>还有在 Java 中集合类常见的红黑树，也是自平衡二叉树中的一种。</p>
-<p>但是不管自平衡树是平衡二叉查找树还是红黑树，都会<strong>随着插入的元素增多，而导致树的高度变高</strong>，这同样意味着磁盘 I/O 操作次数多，影响到整体查询的效率。</p>
-<h3 id="b树" class="headerLink">
-    <a href="#b%e6%a0%91" class="header-mark"></a>B树</h3><p>我们平时看到<code>B+树</code>还有<code>B-树</code>，不免就会将<code>B-树</code>读成<code>B减树</code> ，但<code>B-树</code>其<code>-</code>横线只是连接符，所以<code>B-树</code>就是称为<code>B树</code>。</p>
-<p>自平衡二叉树虽然查找的时间复杂度在<code>O(logn)</code>，前面也说过它本身是一个二叉树，每个节点只能有2个子节点，那么随着数据量增大的时候，节点个数越多，树高度也会增高（也就是树的深度越深），增加磁盘 I/O 次数，影响查询效率。</p>
-<p>那么你如果从树形结构的二叉树这一路的进阶过程中可以看到，二叉树每一次为了解决一个新的问题都会创造出新的<code>bug</code>或者创造一个又个的痛点。看到这就不难猜到，B树的出现可以解决树高度的问题。</p>
-<p>之所以是 B 树，而并不是名称中 “xxx二叉树”，就是它<strong>不再限制一个父节点中只能有两个子节点</strong>，而是允许 <code>M</code> 个子节点<code>（M &gt; 2）</code>。不仅如此，<strong>B树的一个节点可以存储多个元素</strong>，相比较于前面的那些二叉树数据结构又将整体的树高度降低了。</p>
-<p>B 树的节点可以包含有多个子节点，所以<strong>B树是一棵多叉树</strong>，它的每一个节点包含的最多子节点数量的称为B树的<strong>阶</strong>。如下图是一颗 3 阶的 B 树。</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/e0c9903e46ab49558dd38d7e803da058.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/e0c9903e46ab49558dd38d7e803da058.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/e0c9903e46ab49558dd38d7e803da058.png" data-sub-html="<h2>图片</h2>">
-        
-    </a><figcaption class="image-caption">图片</figcaption>
-    </figure></p>
-<blockquote>
-<p>上图中每一个节点称为页，在 mysql 中数据读取的基本单位是页，而页就是我们上面所说的磁盘块。磁盘块中的 p 节点是指向子节点的指针。</p>
-<p>指针在树结构中都有，在前面的二叉树中也都是有的。</p>
-</blockquote>
-<p>那我们来看一下上图所示，当一颗 3 阶的B树查找 <code>90</code> 这个的元素时的流程是怎么样的？</p>
-<p>先从根节点出发，也就是 <code>磁盘块1</code>，判断 <code>90</code> 在<code>17 ~ 35</code>之间，通过<code>磁盘块1</code>中的指针 <code>p3</code> 找到<code>磁盘块4</code>。还是按照原来的步骤，在<code>磁盘块4</code>中的<code>65 ~ 87</code>之间相比较，最后<code>磁盘4</code>的指针<code>p3</code>找到<code>磁盘块11</code>。也就找到有匹配<code>90</code>的键值。</p>
-<p>可以发现一颗 3 阶的 B 树在查找叶子节点时，由于树高度只有 <code>3</code>，所以查找过程最多只需要<code>3次</code>的磁盘 I/O 操作。</p>
-<p>数据量不大时可能不太真切。但当数据量大时，节点也会随着增多；此时如果还是前面的自平衡二叉树的场景下，由于二叉树只能最多<code>2</code>个叶子节点的约束，也只能纵向去的去扩展子节点，树的高度会很高，意味着需要更多的操作磁盘 I/O 次数。而 B 树则可以通过横向扩展节点从而降低树的高度，所以效率自然要比二叉树效率更高。直白说就是变矮胖了。</p>
-<p>看到这，相信你也知道如果 B 树这么适合，也就没有接下来 B+ 树的什么事了。</p>
-<p>接着，那为什么不用 B 树，而用 了B+ 树呢？</p>
-<p>其实，B 树其实已经满足了我们最前面所要满足的条件，减少磁盘 I/O 操作，同时支持按区间查找。但注意，虽然 <strong>B 树支持按区间查找，但并不高效</strong>。</p>
-<p>例如上面的例子中，B树能高效的通过<strong>等值查询</strong> <code>90</code>这个值，但不方便查询出一个区间内比如，<code>3 ~ 10</code> 区间内所有数的结果。因为当B树做范围查询时需要使用中序遍历，那么父节点和子节点也就需要不断的来回切换涉及了多个节点会给磁盘 I/O 带来很多负担。</p>
-<h3 id="b树-1" class="headerLink">
-    <a href="#b%e6%a0%91-1" class="header-mark"></a>B+树</h3><p>B+ 树从<code>+</code>的符号可以看出是 B 树的升级版，MySQL 中 innoDB 引擎中的索引底层数据结构采用的正是 B+ 树。</p>
-<p>B+ 树相比于 B 树，做了这样的升级：<strong>B+ 树中的非叶子节点都不存储数据，而是只作为索引</strong>。</p>
-<p>由叶子节点存放整棵树的所有数据。而叶子节点之间构成一个从小到大有序的链表互相指向相邻的叶子节点，也就是叶子节点之间形成了有序的双向链表。如下图 B+ 树的结构。</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/f8eec821424f49598a2d62e82f63e711.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/f8eec821424f49598a2d62e82f63e711.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230805/f8eec821424f49598a2d62e82f63e711.png" data-sub-html="<h2>图片</h2>">
-        
-    </a><figcaption class="image-caption">图片</figcaption>
-    </figure></p>
-<p>B+ 树是不是有点像前面的跳表，数据底层是数据，上层都是按底层区间构成的索引层，只不过它不像跳表是纵向扩展，而是横向扩展的 “跳表”。这么做的好处即减少磁盘的 IO 操作又提高了范围查找的效率。</p>
-<p>接着再来看 B+ 树的插入和删除，B+ 树做了大量冗余节点，从上面可以发现父节点的所有元素都会在子节点中出现，这样当删除一个节点时，可以直接从叶子节点中删除，这样效率更快。</p>
-<p>B 树相比于 B+ 树，B 树没有冗余节点，删除节点时会发生复杂的<strong>树变形</strong>，而 B+ 树有冗余节点，不会涉及到复杂的树变形。而且 B+ 树的插入也是如此，最多只涉及树的一条分支路径。B+ 树也不用更多复杂算法，可以类似黑红树的旋转去自动平衡。</p>
-<h2 id="总结" class="headerLink">
-    <a href="#%e6%80%bb%e7%bb%93" class="header-mark"></a>总结</h2><p>从文章的题目开始就是一个问题，我们并没有直接回答为什么MySQL 采用 B+ 树作为索引的答案，而是相反的问出了两个问题，一个问题是那么多数据结构，为什么选树结构？另一个问题是那么多的树结构，又为什么偏偏采用 B+ 树？</p>
-<p>要得到果，得先知道因，我们从两个方面开始出发，因为 MySQL 的数据是放在磁盘的，而磁盘的处理速度是毫秒级别的，如果在磁盘 IO 做过多查询操作，会给查询带来负担，所以要尽少在磁盘 I/O 操作中做查询。另一个是从索引本身的首要目的，要能按区间高效地范围查找。</p>
-<p>有了因，我们就开始去探索果，我们就可以先来回答第一个问题，<strong>“那么多数据结构，为什么选树结构？”</strong>
-在其他数据结构中按逻辑结构的线性结构有哈希表和跳表。哈希表底层基于数组，虽然可以高效查询，但是只能等值查询，而不能支持范围查询。而跳表底层是链表，通过索引层可以实现高效的区间查询，但是随着数据量的递增，索引层也随着数据量的增多而增加。所以采用树的数据结构，树结构其特性决定了遍历数据方式本身就纯天然的支持按区间查询。树结构在插入等操作不用线性结构数组的开销，所以更适合插入更新等动态操作的数据结构。</p>
-<p>接着我们另一个问题，<strong>“那么多的树结构，又为什么偏偏采用B+树？”</strong> 我们从树结构中父节点最多只能有两个子节点的二叉树，再从二叉树加上二分查找的二叉查找树，二叉树展现了高效的查询能力；但二叉查找树在<strong>极端情况下会退化成链表</strong>，所以进阶到自平衡二叉树，自平衡二叉树约束了每个节点的左右子树相差不能大于 1，但是二叉树因为只能最多是两个子节点，所以树的高度过高会导致磁盘做过多 I/O 的查询操作负担。</p>
-<p>所以最后真正到了 B 树，B 树是多叉树，但只能高效单查询，并不能高效区间查询。所以才有 B+ 树，B+ 树是 B 树的升级，所有非叶子节点都用来做索引，只有叶子节点存储数据而且是有序双向的链表，树节点做了冗余，相比于 B 树既能支持高效的区间查询，插入和删除都比 B 树更加出色。</p>
-<h2 id="参考" class="headerLink">
-    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
-<li><a href="https://blog.csdn.net/zzti_erlie/article/details/82973742" target="_blank" rel="noopener noreferrer">MySQL索引为什么要用B+树实现</a></li>
-<li><a href="https://www.cnblogs.com/cqqfboy/p/15323462.html" target="_blank" rel="noopener noreferrer">MySQL 为什么使用 B+ 树来作索引？MySQL 为什么使用 B+ 树来作索引？</a></li>
-<li><a href="https://ivanzz1001.github.io/records/post/data-structure/2018/06/16/ds-bplustree" target="_blank" rel="noopener noreferrer">B+树详解</a></li>
-<li><a href="https://www.bilibili.com/video/BV1HX4y1N7v6/" target="_blank" rel="noopener noreferrer">【干货】数据库索引为什么使用B+Tree？</a></li>
-<li><a href="https://juejin.cn/post/7081065180301361183" target="_blank" rel="noopener noreferrer">MySQL 为什么采用 B+树作为索引？5年经验程序员回答让我悟了</a></li>
-<li><a href="https://zhuanlan.zhihu.com/p/152285749" target="_blank" rel="noopener noreferrer">满二叉树和完全二叉树的区别</a></li>
 </ul>
 ]]></description>
 </item></channel>
