@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noodp" />
+    <title class="pjax-title">记一次 MySQL 8.0 JSON 查询 - xiaobinqt 博客 - 技术改变生活</title><meta name="Description" content="xiaobinqt,mysql8.0,json,JSON_CONTAINS"><meta property="og:title" content="记一次 MySQL 8.0 JSON 查询" />
+<meta property="og:description" content="xiaobinqt,mysql8.0,json,JSON_CONTAINS" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.xiaobinqt.cn/mysql-json-like-search/" /><meta property="og:image" content="https://www.xiaobinqt.cn/logo.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-10-12T00:00:00+00:00" />
+<meta property="article:modified_time" content="2023-10-12T15:22:16+08:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://www.xiaobinqt.cn/logo.png"/>
+
+<meta name="twitter:title" content="记一次 MySQL 8.0 JSON 查询"/>
+<meta name="twitter:description" content="xiaobinqt,mysql8.0,json,JSON_CONTAINS"/>
+<meta name="application-name" content="xiaobinqt">
+<meta name="apple-mobile-web-app-title" content="xiaobinqt">
+
+<meta name="theme-color" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c">
+<link rel="stylesheet" href="//at.alicdn.com/t/font_3267767_dz25dtwdgdc.css"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://www.xiaobinqt.cn/mysql-json-like-search/" /><link rel="prev" href="https://www.xiaobinqt.cn/go-slice-principle/" /><link rel="next" href="https://www.xiaobinqt.cn/old-pal/" /><link rel="stylesheet" href="/lib/md5/md5.min.js"><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/fontawesome-free/all.min.css">
+        <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/animate/animate.min.css">
+        <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><meta name="google-site-verification" content="hFkClWMTOtPBuE0lQaXNiNb707E7P6O2CwexZoSm3VQ" /><meta name="msvalidate.01" content="A961D393878F86E04112E1198500FDBD" /><meta name="baidu-site-verification" content="code-cMh5ORsrP2" /><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "记一次 MySQL 8.0 JSON 查询",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/www.xiaobinqt.cn\/mysql-json-like-search\/"
+        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "mysql","wordcount":  865 ,
+        "url": "https:\/\/www.xiaobinqt.cn\/mysql-json-like-search\/","datePublished": "2023-10-12T00:00:00+00:00","dateModified": "2023-10-12T15:22:16+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+            "@type": "Organization",
+            "name": "xxxx","logo": {
+                    "@type": "ImageObject",
+                    "url": "https:\/\/www.xiaobinqt.cn\/images\/avatar.png",
+                    "width":  528 ,
+                    "height":  560 
+                }},"author": {
+                "@type": "Person",
+                "name": "xiaobinqt"
+            },"description": "xiaobinqt,mysql8.0,json,JSON_CONTAINS"
+    }
+    </script></head>
+
+<body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">
+        function setTheme(theme) {document.body.setAttribute('theme', theme); document.documentElement.style.setProperty('color-scheme', theme === 'light' ? 'light' : 'dark');}
+        function saveTheme(theme) {window.localStorage && localStorage.setItem('theme', theme);}
+        function getMeta(metaName) {const metas = document.getElementsByTagName('meta'); for (let i = 0; i < metas.length; i++) if (metas[i].getAttribute('name') === metaName) return metas[i]; return '';}
+        if (window.localStorage && localStorage.getItem('theme')) {let theme = localStorage.getItem('theme');theme === 'light' || theme === 'dark' || theme === 'black' ? setTheme(theme) : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? setTheme('dark') : setTheme('light')); } else { if ('auto' === 'light' || 'auto' === 'dark' || 'auto' === 'black') setTheme('auto'), saveTheme('auto'); else saveTheme('auto'), window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? setTheme('dark') : setTheme('light');}
+        let metaColors = {'light': '#f8f8f8','dark': '#252627','black': '#000000'}
+        getMeta('theme-color').content = metaColors[document.body.getAttribute('theme')];
+    </script>
+    <div id="back-to-top"></div>
+    <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="xiaobinqt 博客 - 技术改变生活"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>萧十一郎</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/" > 所有文章 </a><a class="menu-item" href="/tags/" > 标签 </a><a class="menu-item" href="/categories/" > 分类 </a><a class="menu-item" href="/series/" > 系列 </a><a class="menu-item" href="/showcase/" > 小册 </a><a class="menu-item" href="/keeplearning/"  rel="noopener noreferrer" target="_blank"> KeepLearning </a><a class="menu-item" href="/leetcode/"  rel="noopener noreferrer" target="_blank"> LeetCode </a><a class="menu-item" href="/links/" > 友链 </a><a class="menu-item" href="/about/" > 关于 </a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" rel="noopener noreferrer" target="_blank" ><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
+                        <a href="#" onclick="return false;" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="#" onclick="return false;" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="#" onclick="return false;" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a></div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="xiaobinqt 博客 - 技术改变生活"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>萧十一郎</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
+                        <a href="#" onclick="return false;" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="#" onclick="return false;" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="#" onclick="return false;" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="" >所有文章</a><a class="menu-item" href="/tags/" title="" >标签</a><a class="menu-item" href="/categories/" title="" >分类</a><a class="menu-item" href="/series/" title="" >系列</a><a class="menu-item" href="/showcase/" title="" >小册</a><a class="menu-item" href="/keeplearning/" title=""  rel="noopener noreferrer" target="_blank">KeepLearning</a><a class="menu-item" href="/leetcode/" title=""  rel="noopener noreferrer" target="_blank">LeetCode</a><a class="menu-item" href="/links/" title="" >友链</a><a class="menu-item" href="/about/" title="" >关于</a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" rel="noopener noreferrer" target="_blank" ><i class='fab fa-github fa-fw'></i></a><a href="#" onclick="return false;" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+            <div class="container"><script>document.getElementsByTagName("main")[0].setAttribute("pageStyle", "normal")</script><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "false")</script><article class="page single"><h1 class="single-title animate__animated animate__flipInX">记一次 MySQL 8.0 JSON 查询</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><i class="author fas fa-user-circle fa-fw"></i><a href="/" title="Author" rel=" author" class="author">xiaobinqt</a>
+                </span>&nbsp;<span class="post-category">收录于 </span>&nbsp;<span class="post-category">类别 <a href="/categories/mysql/"><i class="far fa-folder fa-fw"></i>mysql</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2023-10-12">2023-10-12</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2023-10-12">2023-10-12</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 865 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 2 分钟&nbsp;</div>
+        </div><div class="content" id="content"><!-- author： xiaobinqt -->
+<!-- email： xiaobinqt@163.com -->
+<!-- https://xiaobinqt.github.io -->
+<!-- https://www.xiaobinqt.cn -->
+<p>有 2 张表，一张 tag 表，主要字段有 id，name。一张 channel 表，有个 tags 字段，存 tag 表中 id，如：<code>[1,5]</code>。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231012/972fed7bb89b4b57824d8ac62c4f226e.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231012/972fed7bb89b4b57824d8ac62c4f226e.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231012/972fed7bb89b4b57824d8ac62c4f226e.png" data-sub-html="<h2>tags</h2>">
+        <img
+            class="lazyload"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231012/972fed7bb89b4b57824d8ac62c4f226e.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231012/972fed7bb89b4b57824d8ac62c4f226e.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20231012/972fed7bb89b4b57824d8ac62c4f226e.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20231012/972fed7bb89b4b57824d8ac62c4f226e.png 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231012/972fed7bb89b4b57824d8ac62c4f226e.png">
+    </a><figcaption class="image-caption">tags</figcaption>
+    </figure></p>
+<p>现在的需求是，通过 channel 表可以支持模糊搜索 tag 的 name，比如 tag 表中的数据如下：</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231012/753d023454524eb58b26a043e24c59ef.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231012/753d023454524eb58b26a043e24c59ef.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231012/753d023454524eb58b26a043e24c59ef.png" data-sub-html="<h2>tag</h2>">
+        <img
+            class="lazyload"
+            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231012/753d023454524eb58b26a043e24c59ef.png"
+            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231012/753d023454524eb58b26a043e24c59ef.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20231012/753d023454524eb58b26a043e24c59ef.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20231012/753d023454524eb58b26a043e24c59ef.png 2x"
+            data-sizes="auto"
+            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231012/753d023454524eb58b26a043e24c59ef.png">
+    </a><figcaption class="image-caption">tag</figcaption>
+    </figure></p>
+<p>channel 表中的某条数据的 tags 字段的值是 <code>[5,6]</code>，那我就可以通过搜索 <code>测试系统</code> 找到这条 channel 数据。</p>
+<p>首先，可以使用 JSON 函数来解析 <code>tags</code> 列，然后再连接 <code>tag</code> 表以匹配 <code>id</code>。以下是一个示例 SQL 查询：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="o">*</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">FROM</span><span class="w"> </span><span class="n">channel</span><span class="w"> </span><span class="k">c</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">         </span><span class="k">INNER</span><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="n">tag</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">JSON_CONTAINS</span><span class="p">(</span><span class="k">c</span><span class="p">.</span><span class="n">tags</span><span class="p">,</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">t</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">JSON</span><span class="p">))</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">WHERE</span><span class="w"> </span><span class="n">t</span><span class="p">.</span><span class="n">name</span><span class="w"> </span><span class="k">LIKE</span><span class="w"> </span><span class="s1">&#39;%your_search_query%&#39;</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>这个查询的步骤是：</p>
+<ol>
+<li><code>FROM channel c</code>：从 <code>channel</code> 表中选择数据。</li>
+<li><code>INNER JOIN tag t ON JSON_CONTAINS(c.tags, CAST(t.id AS JSON))</code>：将 <code>channel</code> 表与 <code>tag</code> 表连接，其中 <code>JSON_CONTAINS</code> 用于检查 <code>tag</code> 是否在 <code>channel</code> 的 JSON 数组中。</li>
+<li><code>WHERE t.name LIKE '%your_search_query%'</code>：在连接后的结果中，使用 <code>LIKE</code> 子句来执行模糊匹配。</li>
+</ol>
+<p>在上面的查询中，可以将 <code>%your_search_query%</code> 替换为想搜索的标签名称的部分。这将返回包含匹配的 <code>tag</code> 名称的结果集。</p>
+<p>当在 SQL 中处理 JSON 数据时，可能需要将数据转换为 JSON 类型以进行比较或操作。在查询中，<code>JSON_CONTAINS(c.tags, CAST(t.id AS JSON))</code> 是一个用于检查 JSON 数组中是否包含特定值的 SQL 表达式。</p>
+<p>以下是对这个表达式的详细解释：</p>
+<ol>
+<li>
+<p><strong>CAST(t.id AS JSON)</strong>：这部分将 <code>t.id</code> 转换为 JSON 数据类型。在 SQL 中，<code>CAST</code> 函数用于将一个数据类型转换为另一个数据类型。在这里，<code>t.id</code> 是整数类型，通过 <code>CAST(t.id AS JSON)</code>，它被显式地转换为 JSON 类型。这是因为 <code>c.tags</code> 是一个 JSON 数据类型，所以需要确保进行比较的值也是 JSON 类型。</p>
+</li>
+<li>
+<p><strong>JSON_CONTAINS(c.tags, CAST(t.id AS JSON))</strong>：这是主要的比较部分。<code>JSON_CONTAINS</code> 函数用于检查一个 JSON 数组（在这里是 <code>c.tags</code>）是否包含特定值（在这里是 <code>t.id</code> 的 JSON 表示）。如果 <code>c.tags</code> 包含 <code>t.id</code> 的 JSON 表示，它将返回 true；否则，返回 false。这就允许查找 <code>channel</code> 表中具有特定 <code>tag</code> 的记录。</p>
+</li>
+</ol>
+<p>再用一个示例来解释这个过程：</p>
+<p>假设 <code>channel</code> 表的某一行的 <code>tags</code> 列中包含 JSON 数组 <code>[1, 3, 5]</code>，想查找所有包含 <code>tag</code> 表中 <code>id</code> 为 3 的记录。</p>
+<ul>
+<li><code>CAST(t.id AS JSON)</code> 将 <code>t.id</code>（3）转换为 JSON 数据类型，变成 <code>3</code>。</li>
+<li><code>JSON_CONTAINS(c.tags, 3)</code> 将检查 <code>tags</code> 列中是否包含值为 3 的元素。</li>
+<li>因为 <code>[1, 3, 5]</code> 包含值 3，所以这个表达式将返回 true。</li>
+</ul>
+<p>这就是如何使用 <code>CAST</code> 函数和 <code>JSON_CONTAINS</code> 函数来进行 JSON 数据的比较和查询。在这个例子中，它允许在 <code>channel</code> 表中查找包含特定 <code>tag</code> 的记录。</p>
+</div>
+
+        <div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2023-10-12&nbsp;<a class="git-hash" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/0b1c2d1bdeb6fb1a97e5f6407482896343a93ad8" target="_blank" title="commit by weibin(xiaobinqt@163.com) 0b1c2d1bdeb6fb1a97e5f6407482896343a93ad8: add mysql-json-like-search.md" rel="noopener noreferrer">
+                                    <i class="fas fa-hashtag fa-fw"></i>0b1c2d1b</a></span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span><a class="link-to-mardown" href=/mysql-json-like-search/index.md target="_blank" rel="noopener noreferrer">阅读原始文档</a>
+                    </span></div>
+            <div class="post-info-share">
+                <span><a href="#" onclick="return false;" title="分享到 Twitter" data-sharer="twitter" data-url="https://www.xiaobinqt.cn/mysql-json-like-search/" data-title="记一次 MySQL 8.0 JSON 查询" data-hashtags="mysql"><i class="fab fa-twitter fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Facebook" data-sharer="facebook" data-url="https://www.xiaobinqt.cn/mysql-json-like-search/" data-hashtag="mysql"><i class="fab fa-facebook-square fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Hacker News" data-sharer="hackernews" data-url="https://www.xiaobinqt.cn/mysql-json-like-search/" data-title="记一次 MySQL 8.0 JSON 查询"><i class="fab fa-hacker-news fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Line" data-sharer="line" data-url="https://www.xiaobinqt.cn/mysql-json-like-search/" data-title="记一次 MySQL 8.0 JSON 查询"><i data-svg-src="/lib/simple-icons/icons/line.min.svg"></i></a><a href="#" onclick="return false;" title="分享到 微博" data-sharer="weibo" data-url="https://www.xiaobinqt.cn/mysql-json-like-search/" data-title="记一次 MySQL 8.0 JSON 查询"><i class="fab fa-weibo fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 百度" data-sharer="baidu" data-url="https://www.xiaobinqt.cn/mysql-json-like-search/" data-title="记一次 MySQL 8.0 JSON 查询"><i data-svg-src="/lib/simple-icons/icons/baidu.min.svg"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/mysql/">mysql</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/go-slice-principle/" class="prev" rel="prev" title="Go Slice 实现原理"><i class="fas fa-angle-left fa-fw"></i>Go Slice 实现原理</a>
+            <a href="/old-pal/" class="next" rel="next" title="纪念一位老友">纪念一位老友<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+<div id="comments"><div id="gitalk" class="comment"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://github.com/gitalk/gitalk"></a>Gitalk</a>.
+            </noscript></div></article></div>
+        </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2018 - 2023</span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+            <div class="footer-line"></div>
+            <div class="footer-line">
+            </div>
+        </div></footer></div>
+
+    <div id="fixed-buttons"><a href="#back-to-top" id="back-to-top-button" class="fixed-button" title="回到顶部">
+            <i class="fas fa-arrow-up fa-fw"></i>
+        </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+            <i class="fas fa-comment fa-fw"></i>
+        </a>
+    </div><div class="assets"><script type="text/javascript" src="/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="/lib/algoliasearch/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/topbar/topbar.min.js"></script><script type="text/javascript" src="/lib/pjax/pjax.min.js"></script><script type="text/javascript" src="/js/theme.min.js" defer></script></div>
+
+<div class="pjax-assets"><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":1000},"comment":{"gitalk":{"admin":["xiaobinqt"],"clientID":"47b15de6c2d8a0f8d707","clientSecret":"c70556c8b3a3b38ea7c72e539ff3b37d5bc1b4f3","id":"c12f09abf8281bfe53ced9e9c133895b","owner":"xiaobinqt","repo":"xiaobinqt.github.io","title":"记一次 MySQL 8.0 JSON 查询"}},"lightGallery":{"actualSize":false,"exThumbImage":"data-thumbnail","hideBarsDelay":2000,"selector":".lightgallery","speed":400,"thumbContHeight":80,"thumbWidth":80,"thumbnail":true},"search":{"algoliaAppID":"CPNWIDNX0Y","algoliaIndex":"xiaobinqt.io","algoliaSearchKey":"80b84de0ebc766371dd27cd3e651c41e","highlightTag":"em","maxResultLength":20,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"},"sharerjs":true};</script><script type="text/javascript" src="/lib/gitalk/gitalk.min.js"></script><script type="text/javascript" src="/js/gitalk.min.js" defer></script><script type="text/javascript" src="/lib/lightgallery/lightgallery.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-thumbnail.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-zoom.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><link rel="stylesheet" href="/lib/gitalk/gitalk.min.css"><link rel="stylesheet" href="/lib/lightgallery/lightgallery.min.css"></div>
+</body>
+
+</html>

@@ -4,7 +4,69 @@
         <link>https://www.xiaobinqt.cn/categories/mysql/</link>
         <description>mysql - 分类 - xiaobinqt 博客 - 技术改变生活</description>
         <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>xiaobinqt@163.com (xiaobinqt)</managingEditor>
-            <webMaster>xiaobinqt@163.com (xiaobinqt)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Mon, 11 Jul 2022 00:00:00 &#43;0000</lastBuildDate><atom:link href="https://www.xiaobinqt.cn/categories/mysql/" rel="self" type="application/rss+xml" /><item>
+            <webMaster>xiaobinqt@163.com (xiaobinqt)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Thu, 12 Oct 2023 00:00:00 &#43;0000</lastBuildDate><atom:link href="https://www.xiaobinqt.cn/categories/mysql/" rel="self" type="application/rss+xml" /><item>
+    <title>记一次 MySQL 8.0 JSON 查询</title>
+    <link>https://www.xiaobinqt.cn/mysql-json-like-search/</link>
+    <pubDate>Thu, 12 Oct 2023 00:00:00 &#43;0000</pubDate><author>
+        <name>xiaobinqt</name>
+    </author><guid>https://www.xiaobinqt.cn/mysql-json-like-search/</guid>
+    <description><![CDATA[<!-- author： xiaobinqt -->
+<!-- email： xiaobinqt@163.com -->
+<!-- https://xiaobinqt.github.io -->
+<!-- https://www.xiaobinqt.cn -->
+<p>有 2 张表，一张 tag 表，主要字段有 id，name。一张 channel 表，有个 tags 字段，存 tag 表中 id，如：<code>[1,5]</code>。</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231012/972fed7bb89b4b57824d8ac62c4f226e.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231012/972fed7bb89b4b57824d8ac62c4f226e.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231012/972fed7bb89b4b57824d8ac62c4f226e.png" data-sub-html="<h2>tags</h2>">
+        
+    </a><figcaption class="image-caption">tags</figcaption>
+    </figure></p>
+<p>现在的需求是，通过 channel 表可以支持模糊搜索 tag 的 name，比如 tag 表中的数据如下：</p>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231012/753d023454524eb58b26a043e24c59ef.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231012/753d023454524eb58b26a043e24c59ef.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20231012/753d023454524eb58b26a043e24c59ef.png" data-sub-html="<h2>tag</h2>">
+        
+    </a><figcaption class="image-caption">tag</figcaption>
+    </figure></p>
+<p>channel 表中的某条数据的 tags 字段的值是 <code>[5,6]</code>，那我就可以通过搜索 <code>测试系统</code> 找到这条 channel 数据。</p>
+<p>首先，可以使用 JSON 函数来解析 <code>tags</code> 列，然后再连接 <code>tag</code> 表以匹配 <code>id</code>。以下是一个示例 SQL 查询：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="o">*</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">FROM</span><span class="w"> </span><span class="n">channel</span><span class="w"> </span><span class="k">c</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">         </span><span class="k">INNER</span><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="n">tag</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">JSON_CONTAINS</span><span class="p">(</span><span class="k">c</span><span class="p">.</span><span class="n">tags</span><span class="p">,</span><span class="w"> </span><span class="k">CAST</span><span class="p">(</span><span class="n">t</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">JSON</span><span class="p">))</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">WHERE</span><span class="w"> </span><span class="n">t</span><span class="p">.</span><span class="n">name</span><span class="w"> </span><span class="k">LIKE</span><span class="w"> </span><span class="s1">&#39;%your_search_query%&#39;</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>这个查询的步骤是：</p>
+<ol>
+<li><code>FROM channel c</code>：从 <code>channel</code> 表中选择数据。</li>
+<li><code>INNER JOIN tag t ON JSON_CONTAINS(c.tags, CAST(t.id AS JSON))</code>：将 <code>channel</code> 表与 <code>tag</code> 表连接，其中 <code>JSON_CONTAINS</code> 用于检查 <code>tag</code> 是否在 <code>channel</code> 的 JSON 数组中。</li>
+<li><code>WHERE t.name LIKE '%your_search_query%'</code>：在连接后的结果中，使用 <code>LIKE</code> 子句来执行模糊匹配。</li>
+</ol>
+<p>在上面的查询中，可以将 <code>%your_search_query%</code> 替换为想搜索的标签名称的部分。这将返回包含匹配的 <code>tag</code> 名称的结果集。</p>
+<p>当在 SQL 中处理 JSON 数据时，可能需要将数据转换为 JSON 类型以进行比较或操作。在查询中，<code>JSON_CONTAINS(c.tags, CAST(t.id AS JSON))</code> 是一个用于检查 JSON 数组中是否包含特定值的 SQL 表达式。</p>
+<p>以下是对这个表达式的详细解释：</p>
+<ol>
+<li>
+<p><strong>CAST(t.id AS JSON)</strong>：这部分将 <code>t.id</code> 转换为 JSON 数据类型。在 SQL 中，<code>CAST</code> 函数用于将一个数据类型转换为另一个数据类型。在这里，<code>t.id</code> 是整数类型，通过 <code>CAST(t.id AS JSON)</code>，它被显式地转换为 JSON 类型。这是因为 <code>c.tags</code> 是一个 JSON 数据类型，所以需要确保进行比较的值也是 JSON 类型。</p>
+</li>
+<li>
+<p><strong>JSON_CONTAINS(c.tags, CAST(t.id AS JSON))</strong>：这是主要的比较部分。<code>JSON_CONTAINS</code> 函数用于检查一个 JSON 数组（在这里是 <code>c.tags</code>）是否包含特定值（在这里是 <code>t.id</code> 的 JSON 表示）。如果 <code>c.tags</code> 包含 <code>t.id</code> 的 JSON 表示，它将返回 true；否则，返回 false。这就允许查找 <code>channel</code> 表中具有特定 <code>tag</code> 的记录。</p>
+</li>
+</ol>
+<p>再用一个示例来解释这个过程：</p>
+<p>假设 <code>channel</code> 表的某一行的 <code>tags</code> 列中包含 JSON 数组 <code>[1, 3, 5]</code>，想查找所有包含 <code>tag</code> 表中 <code>id</code> 为 3 的记录。</p>
+<ul>
+<li><code>CAST(t.id AS JSON)</code> 将 <code>t.id</code>（3）转换为 JSON 数据类型，变成 <code>3</code>。</li>
+<li><code>JSON_CONTAINS(c.tags, 3)</code> 将检查 <code>tags</code> 列中是否包含值为 3 的元素。</li>
+<li>因为 <code>[1, 3, 5]</code> 包含值 3，所以这个表达式将返回 true。</li>
+</ul>
+<p>这就是如何使用 <code>CAST</code> 函数和 <code>JSON_CONTAINS</code> 函数来进行 JSON 数据的比较和查询。在这个例子中，它允许在 <code>channel</code> 表中查找包含特定 <code>tag</code> 的记录。</p>
+]]></description>
+</item><item>
     <title>MySQL 常见问题（三）</title>
     <link>https://www.xiaobinqt.cn/mysql-faq-3/</link>
     <pubDate>Mon, 11 Jul 2022 00:00:00 &#43;0000</pubDate><author>
@@ -2532,36 +2594,6 @@
 <li><a href="https://tool.oschina.net/hexconvert/" target="_blank" rel="noopener noreferrer">在线进制转换</a></li>
 <li><a href="https://juejin.cn/book/6844733802426662926/section/6844733802611245070" target="_blank" rel="noopener noreferrer">MySQL数据类型</a></li>
 </ul>
-]]></description>
-</item><item>
-    <title>Mysql 常用函数备忘</title>
-    <link>https://www.xiaobinqt.cn/mysql-common-func-memo/</link>
-    <pubDate>Thu, 08 Nov 2018 00:00:00 &#43;0000</pubDate><author>
-        <name>xiaobinqt</name>
-    </author><guid>https://www.xiaobinqt.cn/mysql-common-func-memo/</guid>
-    <description><![CDATA[<!-- author： xiaobinqt -->
-<!-- email： xiaobinqt@163.com -->
-<!-- https://xiaobinqt.github.io -->
-<!-- https://www.xiaobinqt.cn -->
-<h2 id="时间戳与日期格式转换" class="headerLink">
-    <a href="#%e6%97%b6%e9%97%b4%e6%88%b3%e4%b8%8e%e6%97%a5%e6%9c%9f%e6%a0%bc%e5%bc%8f%e8%bd%ac%e6%8d%a2" class="header-mark"></a>时间戳与日期格式转换</h2><p>UNIX时间戳转换为日期用函数： <code>FROM_UNIXTIME()</code></p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="nf">FROM_UNIXTIME</span><span class="p">(</span><span class="mi">1156219870</span><span class="p">);</span><span class="w">
-</span></span></span></code></pre></td></tr></table>
-</div>
-</div><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220511/16f68bfe754148f1bd995b6aa0b2e74c.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="FROM_UNIXTIME" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220511/16f68bfe754148f1bd995b6aa0b2e74c.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>FROM_UNIXTIME</h2><p>FROM_UNIXTIME</p>">
-        
-    </a><figcaption class="image-caption">FROM_UNIXTIME</figcaption>
-    </figure></p>
-<p>日期转换为UNIX时间戳用函数： <code>UNIX_TIMESTAMP()</code></p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220511/d1182fbf011d43bf95af2b195956f88b.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="UNIX_TIMESTAMP" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220511/d1182fbf011d43bf95af2b195956f88b.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>UNIX_TIMESTAMP</h2><p>UNIX_TIMESTAMP</p>">
-        
-    </a><figcaption class="image-caption">UNIX_TIMESTAMP</figcaption>
-    </figure></p>
 ]]></description>
 </item></channel>
 </rss>
