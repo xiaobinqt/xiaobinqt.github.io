@@ -66,6 +66,7 @@ title: "收藏夹"
 + [www.topgoer.com](https://www.topgoer.com/)
 + [Go语言圣经](https://gopl-zh.github.io/index.html)
 + [数据结构和算法（Golang实现）](https://hunterhug.gitlab.io/goa.c/#/)
++ [JavaScript Promise迷你书（中文版）](http://liubin.org/promises-book)
 
 ## 博主
 
