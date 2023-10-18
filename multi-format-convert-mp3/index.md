@@ -32,6 +32,12 @@
 
 ![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20231016/388e4e1179d9419393db7cf133dcb450.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'ffmpeg 在线工具')
 
+## kgm
+
+可以使用在线工具 [https://kgm.worthsee.com/](https://kgm.worthsee.com/)
+
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20231018/8ba18c7c22ef41ff8e2b3c52ccad0dd5.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'kgm')
+
 ## 参考
 
 + [How can I convert audio from ogg to mp3?](https://askubuntu.com/questions/442997/how-can-i-convert-audio-from-ogg-to-mp3)
