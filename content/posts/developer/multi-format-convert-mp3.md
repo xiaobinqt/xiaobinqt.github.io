@@ -11,7 +11,7 @@ lastmod: 2023-10-16
 draft: false
 
 author: "xiaobinqt"
-description: "xiaobinqt,"
+description: "xiaobinqt,kgm 转 mp3,ogg 转 mp3,mgg 转 mp3"
 
 featuredImage: ""
 
@@ -64,6 +64,12 @@ math: true
 **ffmpeg 的在线工具**可以使用 [https://ffmpeg-online.vercel.app/](https://ffmpeg-online.vercel.app/)
 
 ![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20231016/388e4e1179d9419393db7cf133dcb450.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'ffmpeg 在线工具')
+
+## kgm
+
+可以使用在线工具 [https://kgm.worthsee.com/](https://kgm.worthsee.com/)
+
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20231018/8ba18c7c22ef41ff8e2b3c52ccad0dd5.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'kgm')
 
 ## 参考
 
