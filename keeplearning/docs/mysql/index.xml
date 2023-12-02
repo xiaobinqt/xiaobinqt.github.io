@@ -5,12 +5,12 @@
     <link>https://example.com/keeplearning/docs/mysql/</link>
     <description>Recent content in MySQL on KeepLearning</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>zh</language><atom:link href="https://example.com/keeplearning/docs/mysql/index.xml" rel="self" type="application/rss+xml" />
+    <language>zh</language>
+    <atom:link href="https://example.com/keeplearning/docs/mysql/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>总览</title>
       <link>https://example.com/keeplearning/docs/mysql/overview/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
       <guid>https://example.com/keeplearning/docs/mysql/overview/</guid>
       <description>总览 # 一、索引 # B+ Tree 原理 # 1. 数据结构 # B Tree 指的是 Balance Tree，也就是平衡树。平衡树是一颗查找树，并且所有叶子节点位于同一层。
 B+ Tree 是基于 B Tree 和叶子节点顺序访问指针进行实现，它具有 B Tree 的平衡性，并且通过顺序访问指针来提高区间查询的性能。
@@ -21,12 +21,10 @@ B+ Tree 是基于 B Tree 和叶子节点顺序访问指针进行实现，它具�
 （一）B+ 树有更低的树高
 平衡树的树高 O(h)=O(logdN)，其中 d 为每个节点的出度。红黑树的出度为 2，而 B+ Tree 的出度一般都非常大，所以红黑树的树高 h 很明显比 B+ Tree 大非常多。</description>
     </item>
-    
     <item>
       <title>SQL 语法</title>
       <link>https://example.com/keeplearning/docs/mysql/sql-grammar/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
       <guid>https://example.com/keeplearning/docs/mysql/sql-grammar/</guid>
       <description>SQL 语法 # 一、基础 # 模式定义了数据如何存储、存储什么样的数据以及数据如何分解等信息，数据库和表都有模式。
 主键的值不允许修改，也不允许复用（不能将已经删除的主键值赋给新数据行的主键）。
@@ -36,12 +34,10 @@ SQL 支持以下三种注释：
 --- 注释 SELECT * FROM mytable; -- 注释 /* 注释1 注释2 */ 数据库创建与使用：
 CREATE DATABASE test; USE test; 二、创建表 # CREATE TABLE mytable ( --- int 类型，不为空，自增 id INT NOT NULL AUTO_INCREMENT, --- int 类型，不可为空，默认值为 1，不为空 col1 INT NOT NULL DEFAULT 1, --- 变长字符串类型，最长为 45 个字符，可以为空 col2 VARCHAR(45) NULL, --- 日期类型，可为空 col3 DATE NULL, --- 设置主键为 id PRIMARY KEY (`id`)); 三、修改表 # 添加列</description>
     </item>
-    
     <item>
       <title>数据库系统原理</title>
       <link>https://example.com/keeplearning/docs/mysql/dbs-theory/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
       <guid>https://example.com/keeplearning/docs/mysql/dbs-theory/</guid>
       <description>数据库系统原理 # 一、事务 # 概念 # 事务指的是满足 ACID 特性的一组操作，可以通过 Commit 提交一个事务，也可以使用 Rollback 进行回滚。
 ACID # 1. 原子性（Atomicity） # 事务被视为不可分割的最小单元，事务的所有操作要么全部提交成功，要么全部失败回滚。
@@ -56,12 +52,10 @@ ACID # 1. 原子性（Atomicity） # 事务被视为不可分割的最小单元�
 丢失修改 # 丢失修改指一个事务的更新操作被另外一个事务的更新操作替换。一般在现实生活中常会遇到，例如：T1 和 T2 两个事务都对一个数据进行修改，T1 先修改并提交生效，T2 随后修改，T2 的修改覆盖了 T1 的修改。
 读脏数据 # 读脏数据指在不同的事务下，当前事务可以读到另外事务未提交的数据。例如：T1 修改一个数据但未提交，T2 随后读取这个数据。如果 T1 撤销了这次修改，那么 T2 读取的数据是脏数据。</description>
     </item>
-    
     <item>
       <title>常见问题（一）</title>
       <link>https://example.com/keeplearning/docs/mysql/faq1.md/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
       <guid>https://example.com/keeplearning/docs/mysql/faq1.md/</guid>
       <description>MySQL 常见问题（一） # 1. 出现 Unknown column 错误是在哪个阶段 # MySQL 会在分析器中判断语句是否正确，表是否存在，列是否存在等，如果没有问题再提交给优化器。
 2. 为什么对权限的检查不在优化器之前做 # 有些时候，SQL 语句要操作的表不只是 SQL 字面上那些。比如有个触发器，得在执行器阶段（过程中）才能确定，优化器阶段前是无能为力的。
@@ -73,6 +67,5 @@ redo log 是循环写的，空间固定会用完；binlog 是可以追加写入�
 InnoDB 的 redo log 是固定大小的，比如可以配置为一组 4 个文件，每个文件的大小是 1GB，那么总共就可以记录 4GB 的操作。从头开始写，写到末尾就又回到开头循环写，如下图所示
 write pos 是当前记录的位置，一边写一边后移，写到第 3 号文件末尾后就回到 0 号文件开头。checkpoint 是当前要擦除的位置，也是往后推移并且循环的，擦除记录前要把记录更新到数据文件。擦除后“空着的部分”就是 write pos 到 3 号文件末尾，再加上 0 号文件开头到 checkpoint 的部分。</description>
     </item>
-    
   </channel>
 </rss>

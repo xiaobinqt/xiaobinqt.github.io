@@ -18,8 +18,8 @@
     </a><figcaption class="image-caption">缓存击穿</figcaption>
     </figure></p>
 <h3 id="解决方案" class="headerLink">
-    <a href="#%e8%a7%a3%e5%86%b3%e6%96%b9%e6%a1%88" class="header-mark"></a>解决方案</h3><h4 id="过期时间随机值" class="headerLink">
-    <a href="#%e8%bf%87%e6%9c%9f%e6%97%b6%e9%97%b4%e9%9a%8f%e6%9c%ba%e5%80%bc" class="header-mark"></a>过期时间➕随机值</h4><p>对于热点数据，我们不设置过期时间，这样就可以把请求都放在缓存中处理，充分把 Redis 高吞吐量性能利用起来。或者过期时间再加一个随机值。</p>
+    <a href="#%e8%a7%a3%e5%86%b3%e6%96%b9%e6%a1%88" class="header-mark"></a>解决方案</h3><h4 id="过期时间heavy_plus_sign随机值" class="headerLink">
+    <a href="#%e8%bf%87%e6%9c%9f%e6%97%b6%e9%97%b4heavy_plus_sign%e9%9a%8f%e6%9c%ba%e5%80%bc" class="header-mark"></a>过期时间&#x2795;随机值</h4><p>对于热点数据，我们不设置过期时间，这样就可以把请求都放在缓存中处理，充分把 Redis 高吞吐量性能利用起来。或者过期时间再加一个随机值。</p>
 <p>设计缓存的过期时间时，使用公式：<strong>过期时间 = baes 时间 + 随机时间</strong>。</p>
 <p>即相同业务数据写缓存时，在基础过期时间之上，再加一个随机的过期时间，让数据在未来一段时间内慢慢过期，避免瞬时全部过期，对 DB 造成过大压力。</p>
 <h4 id="预热" class="headerLink">
@@ -149,7 +149,7 @@
     </figure></p>
 <h2 id="常见问题" class="headerLink">
     <a href="#%e5%b8%b8%e8%a7%81%e9%97%ae%e9%a2%98" class="header-mark"></a>常见问题</h2><h3 id="cc-command-not-found" class="headerLink">
-    <a href="#cc-command-not-found" class="header-mark"></a>cc: command not found</h3><p>需要安装 gcc👇</p>
+    <a href="#cc-command-not-found" class="header-mark"></a>cc: command not found</h3><p>需要安装 gcc&#x1f447;</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
@@ -159,7 +159,7 @@
 </span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="struct-redisserver-server_xxx" class="headerLink">
-    <a href="#struct-redisserver-server_xxx" class="header-mark"></a>struct redisServer server_xxx</h3><p>需要升级 gcc 到 9 版本👇</p>
+    <a href="#struct-redisserver-server_xxx" class="header-mark"></a>struct redisServer server_xxx</h3><p>需要升级 gcc 到 9 版本&#x1f447;</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
@@ -229,7 +229,7 @@
         
     </a><figcaption class="image-caption">read 阻塞</figcaption>
     </figure></p>
-<p>这就是传统的阻塞 IO。整体流程如下图👇</p>
+<p>这就是传统的阻塞 IO。整体流程如下图&#x1f447;</p>
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221124/631dedf37f5544d2b74214112468e72f.png" title="阻塞IO流程" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221124/631dedf37f5544d2b74214112468e72f.png" data-sub-html="<h2>阻塞IO流程</h2><p>阻塞IO流程</p>">
         
     </a><figcaption class="image-caption">阻塞IO流程</figcaption>
@@ -284,7 +284,7 @@
         
     </a><figcaption class="image-caption">非阻塞IO</figcaption>
     </figure></p>
-<p>这里有一个细节☝️。非阻塞的<code>read</code>，指的是在数据到达前，即数据还未到达网卡，或者到达网卡但还没有拷贝到内核缓冲区之前，这个阶段是非阻塞的，一旦数据已到达内核缓冲区，此时调用<code>read</code>函数<strong>仍然是阻塞的</strong>，需要等待数据从内核缓冲区拷贝到用户缓冲区，才能返回。整体流程如下图👇</p>
+<p>这里有一个细节&#x261d;&#xfe0f;。非阻塞的<code>read</code>，指的是在数据到达前，即数据还未到达网卡，或者到达网卡但还没有拷贝到内核缓冲区之前，这个阶段是非阻塞的，一旦数据已到达内核缓冲区，此时调用<code>read</code>函数<strong>仍然是阻塞的</strong>，需要等待数据从内核缓冲区拷贝到用户缓冲区，才能返回。整体流程如下图&#x1f447;</p>
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221124/15b4551071694947a1df10ef9d80208a.png" title="非阻塞IO流程" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221124/15b4551071694947a1df10ef9d80208a.png" data-sub-html="<h2>非阻塞IO流程</h2><p>非阻塞IO流程</p>">
         
     </a><figcaption class="image-caption">非阻塞IO流程</figcaption>
@@ -456,7 +456,7 @@
 <p>select 仅仅返回可读文件描述符的个数，具体哪个可读还是要用户自己遍历。（可优化为只返回给用户就绪的文件描述符，无需用户做无效的遍历）</p>
 </li>
 </ol>
-<p>整个 select 的流程图如下👇</p>
+<p>整个 select 的流程图如下&#x1f447;</p>
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221124/d4914bc01ce140c790589ec87cf3b181.png" title="select流程图" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221124/d4914bc01ce140c790589ec87cf3b181.png" data-sub-html="<h2>select流程图</h2><p>select流程图</p>">
         
     </a><figcaption class="image-caption">select流程图</figcaption>
@@ -487,7 +487,7 @@
 </div><p>它和 select 的主要区别就是，去掉了 select 只能监听 1024 个文件描述符的限制。</p>
 <h3 id="epoll" class="headerLink">
     <a href="#epoll" class="header-mark"></a>epoll</h3><p>epoll 是最终的大 boss，它解决了 select 和 poll 的一些问题。</p>
-<p>还记得上面说的 select 的三个细节么❓</p>
+<p>还记得上面说的 select 的三个细节么&#x2753;</p>
 <ol>
 <li>
 <p>select 调用需要传入 fd 数组，需要拷贝一份到内核，高并发场景下这样的拷贝消耗的资源是惊人的。（可优化为不复制）</p>
@@ -533,7 +533,7 @@
 <p>Redis 作为一个内存服务器，它需要处理很多来自外部的网络请求，它使用 I/O 多路复用机制同时监听多个文件描述符的可读和可写状态，一旦收到网络请求就会在内存中快速处理，由于绝大多数的操作都是纯内存的，所以处理的速度会非常地快。</p>
 <p>在 Redis 4.0 之后的版本，情况就有了一些变动，新版的 Redis 服务在执行一些命令时就会使用『主处理线程』之外的其他线程。虽然 Redis 在较新的版本中引入了多线程，不过是在<strong>部分命令</strong>上引入的，其中包括非阻塞的删除操作，在整体的架构设计上，主处理程序还是单线程模型的。</p>
 <h3 id="单线程模型" class="headerLink">
-    <a href="#%e5%8d%95%e7%ba%bf%e7%a8%8b%e6%a8%a1%e5%9e%8b" class="header-mark"></a>单线程模型</h3><p>Redis 从一开始就选择使用单线程模型处理来自客户端的绝大多数网络请求，这种考虑其实是多方面的，其中最重要的几个原因如下👇</p>
+    <a href="#%e5%8d%95%e7%ba%bf%e7%a8%8b%e6%a8%a1%e5%9e%8b" class="header-mark"></a>单线程模型</h3><p>Redis 从一开始就选择使用单线程模型处理来自客户端的绝大多数网络请求，这种考虑其实是多方面的，其中最重要的几个原因如下&#x1f447;</p>
 <ul>
 <li>使用单线程模型能带来更好的可维护性，方便开发和调试；</li>
 <li>使用单线程模型也能并发的处理客户端的请求；</li>
@@ -770,9 +770,9 @@
     </figure></p>
 <p>集合类型也是用来保存多个字符串的元素，但和列表有几个不同的点：</p>
 <ul>
-<li>👉 不允许有重复的元素</li>
-<li>👉 集合中的元素是无序的，不能通过索引下标获取元素</li>
-<li>👉 支持集合间的操作，可以取多个集合取交集、并集、差集</li>
+<li>&#x1f449; 不允许有重复的元素</li>
+<li>&#x1f449; 集合中的元素是无序的，不能通过索引下标获取元素</li>
+<li>&#x1f449; 支持集合间的操作，可以取多个集合取交集、并集、差集</li>
 </ul>
 <h3 id="常用命令-3" class="headerLink">
     <a href="#%e5%b8%b8%e7%94%a8%e5%91%bd%e4%bb%a4-3" class="header-mark"></a>常用命令</h3><ol>
@@ -894,7 +894,7 @@
 <strong>只支持</strong>最简单的 k/v 数据类型。</li>
 <li>Redis 的容灾更好，支持数据的持久化，可以将内存中的数据保持在磁盘中，重启的时候可以再次加载进行使用，而 Memecache 把数据全部存在内存中。</li>
 <li>Memcached 没有原生的集群模式，需要依靠客户端来实现往集群中分片写入数据，但是 Redis 目前是原生支持 cluster 模式的。</li>
-<li>⚠️Redis 在服务器内存使用完之后，可以将不用的数据放到磁盘上。而 Memcached 在服务器内存使用完之后，就会直接报异常。</li>
+<li>&#x26a0;&#xfe0f;Redis 在服务器内存使用完之后，可以将不用的数据放到磁盘上。而 Memcached 在服务器内存使用完之后，就会直接报异常。</li>
 <li>Memcached 是多线程，非阻塞 IO 复用的网络模型，Redis 使用单线程的多路 IO 复用模型（Redis 6.0 引入了多线程 IO ）。</li>
 <li>Memcached 过期数据的删除策略只用了惰性删除，而 Redis 同时使用了惰性删除与定期删除。</li>
 <li>Redis 支持发布订阅模型、Lua 脚本、事务等功能，而 Memcached 不支持。</li>
@@ -907,7 +907,7 @@
 <li>惰性删除：只会在取出 key 的时候才对数据进行过期检查。这样对 CPU 最友好，但是<strong>可能会造成太多过期 key 没有被删除</strong>。</li>
 <li>定期删除：每隔一段时间抽取一批 key 执行删除过期 key 操作。Redis 底层会通过限制删除操作执行的时长和频率来减少删除操作对 CPU 时间的影响。</li>
 </ul>
-<p><strong>定期删除对内存更加友好，惰性删除对 CPU 更加友好</strong>。Redis 采用的是定期删除➕惰性删除。</p>
+<p><strong>定期删除对内存更加友好，惰性删除对 CPU 更加友好</strong>。Redis 采用的是定期删除&#x2795;惰性删除。</p>
 <h3 id="内存淘汰机制" class="headerLink">
     <a href="#%e5%86%85%e5%ad%98%e6%b7%98%e6%b1%b0%e6%9c%ba%e5%88%b6" class="header-mark"></a>内存淘汰机制</h3><p>我们通过给 key 设置过期时间还是有问题的，因为还是可能存在定期删除和惰性删除<strong>漏掉</strong>
 了很多过期 key 的情况。这样就导致大量过期 key 堆积在内存里，然后就 OOM 了，Redis 的数据淘汰机制可以解决这个问题。</p>
@@ -941,7 +941,7 @@
 </tr>
 <tr>
 <td><code>no-eviction</code></td>
-<td>禁止驱逐数据，也就是说当内存不足以容纳新写入数据时，新写入操作会报错😱。</td>
+<td>禁止驱逐数据，也就是说当内存不足以容纳新写入数据时，新写入操作会报错&#x1f631;。</td>
 </tr>
 <tr>
 <td><code>volatile-lfu</code></td>

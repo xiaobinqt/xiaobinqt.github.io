@@ -38,9 +38,9 @@
         
     </a><figcaption class="image-caption">程序与对象的可达关系</figcaption>
     </figure>
-<p>👆图中表示是程序与对象的可达关系，目前<strong>程序的可达</strong>对象有对象 1-2-3，对象 4-7 等五个对象。</p>
+<p>&#x1f446;图中表示是程序与对象的可达关系，目前<strong>程序的可达</strong>对象有对象 1-2-3，对象 4-7 等五个对象。</p>
 <h3 id="第二步" class="headerLink">
-    <a href="#%e7%ac%ac%e4%ba%8c%e6%ad%a5" class="header-mark"></a>第二步</h3><p>开始标记，程序找出它所有可达的对象，并做上标记👇。</p>
+    <a href="#%e7%ac%ac%e4%ba%8c%e6%ad%a5" class="header-mark"></a>第二步</h3><p>开始标记，程序找出它所有可达的对象，并做上标记&#x1f447;。</p>
 <figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220406/00d8aba1d229497c9cc907b359010178.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220406/00d8aba1d229497c9cc907b359010178.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220406/00d8aba1d229497c9cc907b359010178.png" data-sub-html="<h2>找出可达对象</h2>">
         
     </a><figcaption class="image-caption">找出可达对象</figcaption>
@@ -59,13 +59,13 @@
     <a href="#%e7%ac%ac%e5%9b%9b%e6%ad%a5" class="header-mark"></a>第四步</h3><p>停止暂停，让程序继续执行。然后循环重复这个过程，直到 process 程序生命周期结束。</p>
 <h3 id="缺点与优化" class="headerLink">
     <a href="#%e7%bc%ba%e7%82%b9%e4%b8%8e%e4%bc%98%e5%8c%96" class="header-mark"></a>缺点与优化</h3><p>标记清除算法明了，过程鲜明干脆，但是也有非常严重的问题，就是 STW，让程序暂停，程序出现卡顿。</p>
-<p>Go V1.3 版本之前就是用这种方式来实施的。执行 GC 的基本流程就是首先启动 STW 暂停，然后执行标记，再执行数据回收，最后停止 STW ，如下图👇</p>
+<p>Go V1.3 版本之前就是用这种方式来实施的。执行 GC 的基本流程就是首先启动 STW 暂停，然后执行标记，再执行数据回收，最后停止 STW ，如下图&#x1f447;</p>
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220406/7913f2957c4f4b5c9ba01013cb0c44fa.png" title="STW" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220406/7913f2957c4f4b5c9ba01013cb0c44fa.png" data-sub-html="<h2>STW</h2><p>STW</p>">
         
     </a><figcaption class="image-caption">STW</figcaption>
     </figure></p>
-<p>从👆来看，全部的 GC 时间都是包裹在 STW 范围之内的，这样貌似程序暂停的时间过长，影响程序的运行性能。所以Go V1.3 做了简单的优化，将 STW 的步骤提前，减少 STW 暂停的时间范围
-👇</p>
+<p>从&#x1f446;来看，全部的 GC 时间都是包裹在 STW 范围之内的，这样貌似程序暂停的时间过长，影响程序的运行性能。所以Go V1.3 做了简单的优化，将 STW 的步骤提前，减少 STW 暂停的时间范围
+&#x1f447;</p>
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220406/2b64ccd849624544ae495ed36236a780.png" title="STW优化" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220406/2b64ccd849624544ae495ed36236a780.png" data-sub-html="<h2>STW优化</h2><p>STW优化</p>">
         
     </a><figcaption class="image-caption">STW优化</figcaption>
@@ -76,7 +76,7 @@
     <a href="#%e6%9c%89stw%e7%9a%84%e4%b8%89%e8%89%b2%e6%a0%87%e8%ae%b0%e6%b3%95" class="header-mark"></a>有STW的三色标记法</h2><p>Go 中的垃圾回收主要应用三色标记法，GC 过程和其他用户 goroutine 可并发运行，但需要一定时间的 STW。</p>
 <p>所谓三色标记法实际上就是通过<strong>三个阶段的标记</strong>来确定需要清除的对象有哪些。</p>
 <h3 id="第一步-1" class="headerLink">
-    <a href="#%e7%ac%ac%e4%b8%80%e6%ad%a5-1" class="header-mark"></a>第一步</h3><p>每次新创建的对象，默认的颜色都是标记为 “白色”👇</p>
+    <a href="#%e7%ac%ac%e4%b8%80%e6%ad%a5-1" class="header-mark"></a>第一步</h3><p>每次新创建的对象，默认的颜色都是标记为 “白色”&#x1f447;</p>
 <figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220407/3b601d5fc23247b4b05de52b7fb2ed52.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220407/3b601d5fc23247b4b05de52b7fb2ed52.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220407/3b601d5fc23247b4b05de52b7fb2ed52.png" data-sub-html="<h2>白色对象</h2>">
         
     </a><figcaption class="image-caption">白色对象</figcaption>
@@ -101,7 +101,7 @@
     </figure></p>
 <p>这一次遍历是<strong>只扫描灰色对象</strong>，将灰色对象的第一层遍历可抵达的对象由白色变为灰色，如：对象2、对象7。 而之前的灰色对象1 和对象4 则会被标记为黑色，同时由灰色标记表移动到黑色标记表中。</p>
 <h3 id="第四步-1" class="headerLink">
-    <a href="#%e7%ac%ac%e5%9b%9b%e6%ad%a5-1" class="header-mark"></a>第四步</h3><p>重复第三步， 直到灰色中无任何对象，如图👇所示：</p>
+    <a href="#%e7%ac%ac%e5%9b%9b%e6%ad%a5-1" class="header-mark"></a>第四步</h3><p>重复第三步， 直到灰色中无任何对象，如图&#x1f447;所示：</p>
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220406/3a751806772e445d813bee6344ab81d1.png" title="遍历_3" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220406/3a751806772e445d813bee6344ab81d1.png" data-sub-html="<h2>遍历_3</h2><p>遍历_3</p>">
         
     </a><figcaption class="image-caption">遍历_3</figcaption>
@@ -113,7 +113,7 @@
 <p>当我们全部的可达对象都遍历完后，<strong>灰色标记表将不再存在灰色对象</strong>。</p>
 <p>目前全部内存的数据只有两种颜色，黑色和白色。那么，黑色对象就是我们程序逻辑可达（需要的）对象，这些数据是目前支撑程序正常业务运行的，是合法的有用数据，不可删除。白色的对象是全部不可达对象，目前程序逻辑并不依赖他们，那么白色对象就是内存中目前的垃圾数据，需要被清除。</p>
 <h3 id="第五步" class="headerLink">
-    <a href="#%e7%ac%ac%e4%ba%94%e6%ad%a5" class="header-mark"></a>第五步</h3><p>回收所有的白色标记表的对象，也就是回收垃圾，如图所示👇</p>
+    <a href="#%e7%ac%ac%e4%ba%94%e6%ad%a5" class="header-mark"></a>第五步</h3><p>回收所有的白色标记表的对象，也就是回收垃圾，如图所示&#x1f447;</p>
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220406/f271ee96ace2416c8eaf808d3f45b8f0.png" title="GC 回收" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220406/f271ee96ace2416c8eaf808d3f45b8f0.png" data-sub-html="<h2>GC 回收</h2><p>GC 回收</p>">
         
     </a><figcaption class="image-caption">GC 回收</figcaption>
@@ -122,9 +122,9 @@
 <p>这里面可能会有很多并发流程均会被扫描，执行并发流程的内存可能相互依赖，为了在 GC 过程中保证数据的安全，<strong>在开始三色标记之前就会加上 STW，在扫描确定黑白对象之后再放开 STW</strong>。但是很明显这样的 GC 扫描的性能实在是太低了。</p>
 <p>所以现在的三色标记法还是会 STW。</p>
 <h2 id="没有stw的三色标记法" class="headerLink">
-    <a href="#%e6%b2%a1%e6%9c%89stw%e7%9a%84%e4%b8%89%e8%89%b2%e6%a0%87%e8%ae%b0%e6%b3%95" class="header-mark"></a>没有STW的三色标记法</h2><p>如果没有 STW，那么也就不会再存在性能上的问题，那么假设如果三色标记法不加入 STW 会发生什么事情❓</p>
+    <a href="#%e6%b2%a1%e6%9c%89stw%e7%9a%84%e4%b8%89%e8%89%b2%e6%a0%87%e8%ae%b0%e6%b3%95" class="header-mark"></a>没有STW的三色标记法</h2><p>如果没有 STW，那么也就不会再存在性能上的问题，那么假设如果三色标记法不加入 STW 会发生什么事情&#x2753;</p>
 <p>还是基于上述的三色标记法来分析，他是一定要依赖 STW 的，因为如果不暂停程序，程序的逻辑可能会改变对象的引用关系，这种动作如果在标记阶段做了修改，会影响标记结果的正确性。</p>
-<p>来看看一个场景，如果三色标记法，标记过程不使用 STW 将会发生什么事情❓</p>
+<p>来看看一个场景，如果三色标记法，标记过程不使用 STW 将会发生什么事情&#x2753;</p>
 <p>我们把初始状态设置为已经经历了第一轮扫描，目前黑色的有对象 1 和对象 4，灰色的有对象 2 和对象 7，其他的为白色对象，且对象 2 是通过指针 p 指向对象 3 的，如下图所示。</p>
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220406/df4917c4b48d4e12857a5b8552cf3815.png" title="no ST2 01" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220406/df4917c4b48d4e12857a5b8552cf3815.png" data-sub-html="<h2>no ST2 01</h2><p>no ST2 01</p>">
         
@@ -154,8 +154,8 @@
 <p>最后我们发现，本来是对象4合法引用的对象 3，却被GC给“误杀”回收掉了。</p>
 <p>可以看出，有两种情况，在三色标记法中是不希望被发生的。</p>
 <ul>
-<li>👉 一个白色对象被黑色对象引用 <strong>（白色被挂在黑色下）</strong></li>
-<li>👉 灰色对象与它之间可达关系的白色对象遭到破坏 <strong>（灰色同时丢了该白色）</strong></li>
+<li>&#x1f449; 一个白色对象被黑色对象引用 <strong>（白色被挂在黑色下）</strong></li>
+<li>&#x1f449; 灰色对象与它之间可达关系的白色对象遭到破坏 <strong>（灰色同时丢了该白色）</strong></li>
 </ul>
 <p>如果当以上两个条件同时满足时，就会出现对象丢失现象！</p>
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/f9e8dce78c274ccfb76bb491967d8fc2.png" title="三色标记对象丢失" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221120/f9e8dce78c274ccfb76bb491967d8fc2.png" data-sub-html="<h2>三色标记对象丢失</h2><p>三色标记对象丢失</p>">
@@ -164,7 +164,7 @@
     </figure></p>
 <p>并且，上面所示的场景中，如果示例中的白色对象3还有很多下游对象的话，也会一并都清理掉。</p>
 <p>为了防止这种现象的发生，最简单的方式就是 STW，直接禁止掉其他用户程序对对象引用关系的干扰，但是<strong>STW的过程有明显的资源浪费，对所有的用户程序都有很大影响</strong>。</p>
-<p>那么是否可以在保证对象不丢失的情况下合理的尽可能的提高 GC 效率，减少 STW 时间呢❓</p>
+<p>那么是否可以在保证对象不丢失的情况下合理的尽可能的提高 GC 效率，减少 STW 时间呢&#x2753;</p>
 <p>答案是可以的，我们只要使用一种机制，尝试去破坏上面的两个必要条件就可以了。</p>
 <h2 id="屏障机制" class="headerLink">
     <a href="#%e5%b1%8f%e9%9a%9c%e6%9c%ba%e5%88%b6" class="header-mark"></a>屏障机制</h2><p>如果让 GC 回收器，满足下面两种情况之一时，即可保证对象不丢失。这两种方式就是<strong>强三色不变式</strong>和<strong>弱三色不变式</strong>。</p>

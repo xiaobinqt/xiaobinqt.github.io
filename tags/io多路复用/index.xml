@@ -51,7 +51,7 @@
         
     </a><figcaption class="image-caption">read 阻塞</figcaption>
     </figure></p>
-<p>这就是传统的阻塞 IO。整体流程如下图👇</p>
+<p>这就是传统的阻塞 IO。整体流程如下图&#x1f447;</p>
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221124/631dedf37f5544d2b74214112468e72f.png" title="阻塞IO流程" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221124/631dedf37f5544d2b74214112468e72f.png" data-sub-html="<h2>阻塞IO流程</h2><p>阻塞IO流程</p>">
         
     </a><figcaption class="image-caption">阻塞IO流程</figcaption>
@@ -106,7 +106,7 @@
         
     </a><figcaption class="image-caption">非阻塞IO</figcaption>
     </figure></p>
-<p>这里有一个细节☝️。非阻塞的<code>read</code>，指的是在数据到达前，即数据还未到达网卡，或者到达网卡但还没有拷贝到内核缓冲区之前，这个阶段是非阻塞的，一旦数据已到达内核缓冲区，此时调用<code>read</code>函数<strong>仍然是阻塞的</strong>，需要等待数据从内核缓冲区拷贝到用户缓冲区，才能返回。整体流程如下图👇</p>
+<p>这里有一个细节&#x261d;&#xfe0f;。非阻塞的<code>read</code>，指的是在数据到达前，即数据还未到达网卡，或者到达网卡但还没有拷贝到内核缓冲区之前，这个阶段是非阻塞的，一旦数据已到达内核缓冲区，此时调用<code>read</code>函数<strong>仍然是阻塞的</strong>，需要等待数据从内核缓冲区拷贝到用户缓冲区，才能返回。整体流程如下图&#x1f447;</p>
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221124/15b4551071694947a1df10ef9d80208a.png" title="非阻塞IO流程" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221124/15b4551071694947a1df10ef9d80208a.png" data-sub-html="<h2>非阻塞IO流程</h2><p>非阻塞IO流程</p>">
         
     </a><figcaption class="image-caption">非阻塞IO流程</figcaption>
@@ -278,7 +278,7 @@
 <p>select 仅仅返回可读文件描述符的个数，具体哪个可读还是要用户自己遍历。（可优化为只返回给用户就绪的文件描述符，无需用户做无效的遍历）</p>
 </li>
 </ol>
-<p>整个 select 的流程图如下👇</p>
+<p>整个 select 的流程图如下&#x1f447;</p>
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221124/d4914bc01ce140c790589ec87cf3b181.png" title="select流程图" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221124/d4914bc01ce140c790589ec87cf3b181.png" data-sub-html="<h2>select流程图</h2><p>select流程图</p>">
         
     </a><figcaption class="image-caption">select流程图</figcaption>
@@ -309,7 +309,7 @@
 </div><p>它和 select 的主要区别就是，去掉了 select 只能监听 1024 个文件描述符的限制。</p>
 <h3 id="epoll" class="headerLink">
     <a href="#epoll" class="header-mark"></a>epoll</h3><p>epoll 是最终的大 boss，它解决了 select 和 poll 的一些问题。</p>
-<p>还记得上面说的 select 的三个细节么❓</p>
+<p>还记得上面说的 select 的三个细节么&#x2753;</p>
 <ol>
 <li>
 <p>select 调用需要传入 fd 数组，需要拷贝一份到内核，高并发场景下这样的拷贝消耗的资源是惊人的。（可优化为不复制）</p>
@@ -355,7 +355,7 @@
 <p>Redis 作为一个内存服务器，它需要处理很多来自外部的网络请求，它使用 I/O 多路复用机制同时监听多个文件描述符的可读和可写状态，一旦收到网络请求就会在内存中快速处理，由于绝大多数的操作都是纯内存的，所以处理的速度会非常地快。</p>
 <p>在 Redis 4.0 之后的版本，情况就有了一些变动，新版的 Redis 服务在执行一些命令时就会使用『主处理线程』之外的其他线程。虽然 Redis 在较新的版本中引入了多线程，不过是在<strong>部分命令</strong>上引入的，其中包括非阻塞的删除操作，在整体的架构设计上，主处理程序还是单线程模型的。</p>
 <h3 id="单线程模型" class="headerLink">
-    <a href="#%e5%8d%95%e7%ba%bf%e7%a8%8b%e6%a8%a1%e5%9e%8b" class="header-mark"></a>单线程模型</h3><p>Redis 从一开始就选择使用单线程模型处理来自客户端的绝大多数网络请求，这种考虑其实是多方面的，其中最重要的几个原因如下👇</p>
+    <a href="#%e5%8d%95%e7%ba%bf%e7%a8%8b%e6%a8%a1%e5%9e%8b" class="header-mark"></a>单线程模型</h3><p>Redis 从一开始就选择使用单线程模型处理来自客户端的绝大多数网络请求，这种考虑其实是多方面的，其中最重要的几个原因如下&#x1f447;</p>
 <ul>
 <li>使用单线程模型能带来更好的可维护性，方便开发和调试；</li>
 <li>使用单线程模型也能并发的处理客户端的请求；</li>
