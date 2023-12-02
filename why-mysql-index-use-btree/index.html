@@ -13,6 +13,7 @@
 <meta property="article:modified_time" content="2023-08-18T15:34:38+08:00" />
 <meta property="og:see_also" content="https://www.xiaobinqt.cn/highly-concurrent-architecture-evolution/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/session-cookie-token-difference/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/mysql-faq-2/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/redis-break-pierce-avalanche/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/go-gc/" />
 
+
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://www.xiaobinqt.cn/logo.png"/>
 
@@ -35,7 +36,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/www.xiaobinqt.cn\/why-mysql-index-use-btree\/"
-        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "mysql","wordcount":  6864 ,
+        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "mysql","wordcount":  6885 ,
         "url": "https:\/\/www.xiaobinqt.cn\/why-mysql-index-use-btree\/","datePublished": "2022-05-20T00:00:00+00:00","dateModified": "2023-08-18T15:34:38+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "xxxx","logo": {
@@ -148,7 +149,7 @@
             <div class="post-meta-line"><span class="post-author">
                     <i class="custom-icon iconfont icon-weibiaoti-"></i>
                 </span>&nbsp;&nbsp;<span class="post-category">收录于 </span>&nbsp;<span class="post-category">类别 <a href="/categories/mysql/"><i class="far fa-folder fa-fw"></i>mysql</a></span>&nbsp;<span class="post-category">和</span>&nbsp;<span class="post-series">系列 <a href="/series/reproduce/"><i class="far fa-list-alt fa-fw"></i>转载</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-05-20">2022-05-20</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2023-08-18">2023-08-18</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 6864 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-05-20">2022-05-20</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2023-08-18">2023-08-18</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 6885 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 14 分钟&nbsp;</div>
         </div><div class="featured-image"><img
         class="lazyload"
@@ -192,7 +193,7 @@
     <a href="#%e5%89%8d%e8%a8%80" class="header-mark"></a>前言</h2><p>为什么 MySQL 采用 B+ 树作为索引？</p>
 <p>如果纯粹的猜测 MySQL 数据库索引为什么使用 B+ 树？那么围绕这个问题的回答通常一定是围绕 B+ 树本身是什么，有什么优势这两点去解释这个问题。</p>
 <p>这不是我开始这么去想的，看了很多文章都是从这一维度问答，这些回答让我失望。直到那天问了坐在我旁边那个整天摸鱼的 5 年程序员；他慵懒的回答：你想为什么是使用的是树结构呢？咦，听到这回答，一下打开了我的思绪，有点意思！</p>
-<p>先抛开 B+ 树是什么，有什么优势，这些先入为主的答案。我想要的是为什么❓</p>
+<p>先抛开 B+ 树是什么，有什么优势，这些先入为主的答案。我想要的是为什么&#x2753;</p>
 <p>为什么 MySQL 的索引有那么多的数据结构可选，偏偏选树结构？为什么那么多的树结构？为什么又偏偏采用 B+ 树作为索引?</p>
 <p>这才是我要想明白的！我想要的是不只是答案，还要答案背后的脉络！我想要的不仅是要知其然，更想要知其所以然。</p>
 <h2 id="那么多数据结构为什么选树结构" class="headerLink">
@@ -234,7 +235,7 @@
 <p>当然索引首要目的<strong>能支持高效范围查询，还要有插入更新等操作的动态数据结构</strong>。</p>
 <p>所以有满足以这两条主要条件的除了树结构你还会想到其他什么数据结构？还有就是哈希表、跳表</p>
 <h3 id="哈希表" class="headerLink">
-    <a href="#%e5%93%88%e5%b8%8c%e8%a1%a8" class="header-mark"></a>哈希表</h3><p>哈希表的物理存储是一个数组⚠️，而数组在内存中是<strong>连续地址</strong>的空间。</p>
+    <a href="#%e5%93%88%e5%b8%8c%e8%a1%a8" class="header-mark"></a>哈希表</h3><p>哈希表的物理存储是一个数组&#x26a0;&#xfe0f;，而数组在内存中是<strong>连续地址</strong>的空间。</p>
 <p>数据以 <code>Key</code>、<code>Value</code> 的方式存储。哈希表拥有精确的查询，所以时间复杂度是 <code>O(1)</code>。</p>
 <p>而哈希表之所以能这么快是通过 <code>Key </code>计算数组下标来快速找到 <code>Value</code>。</p>
 <p>最简单的计算的方式是 <strong>余数法</strong>，通过先计算<code>key</code>的 <code>HashCode</code>，再通过<strong>哈希表的数组长度</strong>对 <code>HashCode</code> 求余，求余得出的余数就是数组下标，最后由下标访问到哈希表中存的<code>Key、Value</code>。</p>
