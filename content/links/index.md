@@ -25,7 +25,7 @@ math: true
 
 <br/>
 
-<a target="_blank" href="https://www.qianxiaoduan.com/" title="前小端" class="friendurl">
+<a target="_blank" href="https://www.cosdk.com/" title="前小端" class="friendurl">
     <div class="frienddiv">
         <div class="frienddivleft">
             <img class="myfriend" src="https://img.qianxiaoduan.com/logo.png">
