@@ -10,18 +10,19 @@ Ingress 只是一些 HTTP 路由规则的集合，相当于一份静态的描述
 由于 Ingress Controller 与上层业务联系密切，所以 Kubernetes 把 Ingress Controller 的实现交给了社区，只要遵守 Ingress 规则，任何人都可以开发 Ingress Controller。在众多 Ingress Controller 中，Nginx 公司开发实现 Ingress Controller 是最多使用的。
 最初 Kubernetes 的构想是，一个集群里有一个 Ingress Controller，再给它配上许多不同的 Ingress 规则，应该就可以解决请求的路由和分发问题了。但随着 Ingress 在实践中的大量应用，有很多问题逐渐显现出来，比如：">
 <meta name="theme-color" content="#FFFFFF">
-<meta name="color-scheme" content="light dark"><meta property="og:title" content="2.12 Ingress" />
-<meta property="og:description" content="2.12 Ingress # Service 的负载均衡功能有限，只能够依据 IP 地址和端口号做一些简单的判断和组合，而更多的高级路由条件，比如主机名、URI、请求头、证书等 Service 无法实现。Service 还有一个缺点，它比较适合代理集群内部的服务。如果想要把服务暴露到集群外部，就只能使用 NodePort 或者 LoadBalancer 这两种方式，而它们缺乏足够的灵活性，难以管控。
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/kubernetes/docs/part2-break-ice/2.12-ingress/">
+  <meta property="og:site_name" content="Kubernetes 学习笔记">
+  <meta property="og:title" content="2.12 Ingress">
+  <meta property="og:description" content="2.12 Ingress # Service 的负载均衡功能有限，只能够依据 IP 地址和端口号做一些简单的判断和组合，而更多的高级路由条件，比如主机名、URI、请求头、证书等 Service 无法实现。Service 还有一个缺点，它比较适合代理集群内部的服务。如果想要把服务暴露到集群外部，就只能使用 NodePort 或者 LoadBalancer 这两种方式，而它们缺乏足够的灵活性，难以管控。
 Ingress 对象可以作为流量的总入口，统管集群的进出口数据，“扇入” “扇出” 流量（也就是常说的 “南北向”），让外部用户能够安全、顺畅、便捷地访问内部服务。
 2.12.1 Ingress Controller &amp; Class # Service 本身是没有服务能力的，它只是一些 iptables 规则，真正配置、应用这些规则的实际上是节点里的 kube-proxy 组件。如果没有 kube-proxy，Service 定义得再完善也没有用。
 Ingress 只是一些 HTTP 路由规则的集合，相当于一份静态的描述文件，真正要把这些规则在集群里实施运行，需要的是 Ingress Controller，它的作用就相当于 Service 的 kube-proxy，能够读取、应用 Ingress 规则，处理、调度流量。
 由于 Ingress Controller 与上层业务联系密切，所以 Kubernetes 把 Ingress Controller 的实现交给了社区，只要遵守 Ingress 规则，任何人都可以开发 Ingress Controller。在众多 Ingress Controller 中，Nginx 公司开发实现 Ingress Controller 是最多使用的。
-最初 Kubernetes 的构想是，一个集群里有一个 Ingress Controller，再给它配上许多不同的 Ingress 规则，应该就可以解决请求的路由和分发问题了。但随着 Ingress 在实践中的大量应用，有很多问题逐渐显现出来，比如：" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://example.com/kubernetes/docs/part2-break-ice/2.12-ingress/" /><meta property="article:section" content="docs" />
-
-<meta property="article:modified_time" content="2023-06-13T14:29:11+08:00" />
-
+最初 Kubernetes 的构想是，一个集群里有一个 Ingress Controller，再给它配上许多不同的 Ingress 规则，应该就可以解决请求的路由和分发问题了。但随着 Ingress 在实践中的大量应用，有很多问题逐渐显现出来，比如：">
+  <meta property="og:locale" content="zh">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:modified_time" content="2023-06-13T14:29:11+08:00">
 <title>2.12 Ingress | Kubernetes 学习笔记</title>
 <link rel="manifest" href="/kubernetes/manifest.json">
 <link rel="icon" href="/kubernetes/favicon.png" type="image/x-icon">
@@ -30,6 +31,9 @@ Ingress 只是一些 HTTP 路由规则的集合，相当于一份静态的描述
   <script defer src="/kubernetes/zh.search.min.6a49f949d6c64c82c1530df1a06dca2b9fc0405bdaedd9bb43bc1e183bad6c4e.js" integrity="sha256-akn5SdbGTILBUw3xoG3KK5/AQFva7dm7Q7weGDutbE4=" crossorigin="anonymous"></script>
 
   <script defer src="/kubernetes/sw.min.448c1a1f6d77a9e91ad10af73bc5bccfa94948c630159862e4b698042cdae427.js" integrity="sha256-RIwaH213qeka0Qr3O8W8z6lJSMYwFZhi5LaYBCza5Cc=" crossorigin="anonymous"></script>
+
+  
+
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book

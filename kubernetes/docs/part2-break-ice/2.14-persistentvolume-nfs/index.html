@@ -11,19 +11,20 @@
 sudo apt -y install nfs-kernel-server 安装好之后，需要给 NFS 指定一个存储位置，也就是网络共享目录。一般来说，应该建立一个专门的 /data 目录，这里使用了临时目录 /tmp/nfs：
 mkdir -p /tmp/nfs 接下来需要配置 NFS 访问共享目录，修改 /etc/exports，指定目录名、允许访问的网段，还有权限等参数。把下面这行加上就行，注意目录名和 IP 地址要改成和自己的环境一致：">
 <meta name="theme-color" content="#FFFFFF">
-<meta name="color-scheme" content="light dark"><meta property="og:title" content="2.14 网络共享存储" />
-<meta property="og:description" content="2.14 网络共享存储 # 由于 Kubernetes 里的 Pod 经常会在集群里 “漂移”，要想让存储卷真正能被 Pod 任意挂载，就不能限定在本地磁盘，而是要改成网络存储，这样 Pod 无论在哪里运行，只要知道 IP 地址或者域名，就可以通过网络通信访问存储设备。
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/kubernetes/docs/part2-break-ice/2.14-persistentvolume-nfs/">
+  <meta property="og:site_name" content="Kubernetes 学习笔记">
+  <meta property="og:title" content="2.14 网络共享存储">
+  <meta property="og:description" content="2.14 网络共享存储 # 由于 Kubernetes 里的 Pod 经常会在集群里 “漂移”，要想让存储卷真正能被 Pod 任意挂载，就不能限定在本地磁盘，而是要改成网络存储，这样 Pod 无论在哪里运行，只要知道 IP 地址或者域名，就可以通过网络通信访问存储设备。
 在网络存储中有比较简单的 NFS 系统（Network File System），可以通过 NFS 理解在 Kubernetes 里使用网络存储，以及静态存储卷和动态存储卷的概念。
 2.14.1 安装 NFS 服务器 # NFS 采用的是 Client/Server 架构，需要选定一台主机作为 Server，安装 NFS 服务端；其他要使用存储的主机作为 Client，安装 NFS 客户端工具。
 可以在 Kubernetes 集群里增添一台名字叫 Storage 的服务器，在上面安装 NFS，实现网络存储、共享网盘的功能。这台 Storage 只是一个逻辑概念，在实际安装部署的时候完全可以把它合并到集群里的某台主机里。
 在 Ubuntu/Debian 系统里安装 NFS 服务端很容易，使用 apt 即可：
 sudo apt -y install nfs-kernel-server 安装好之后，需要给 NFS 指定一个存储位置，也就是网络共享目录。一般来说，应该建立一个专门的 /data 目录，这里使用了临时目录 /tmp/nfs：
-mkdir -p /tmp/nfs 接下来需要配置 NFS 访问共享目录，修改 /etc/exports，指定目录名、允许访问的网段，还有权限等参数。把下面这行加上就行，注意目录名和 IP 地址要改成和自己的环境一致：" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://example.com/kubernetes/docs/part2-break-ice/2.14-persistentvolume-nfs/" /><meta property="article:section" content="docs" />
-
-<meta property="article:modified_time" content="2023-06-21T11:00:52+08:00" />
-
+mkdir -p /tmp/nfs 接下来需要配置 NFS 访问共享目录，修改 /etc/exports，指定目录名、允许访问的网段，还有权限等参数。把下面这行加上就行，注意目录名和 IP 地址要改成和自己的环境一致：">
+  <meta property="og:locale" content="zh">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:modified_time" content="2023-06-21T11:00:52+08:00">
 <title>2.14 网络共享存储 | Kubernetes 学习笔记</title>
 <link rel="manifest" href="/kubernetes/manifest.json">
 <link rel="icon" href="/kubernetes/favicon.png" type="image/x-icon">
@@ -32,6 +33,9 @@ mkdir -p /tmp/nfs 接下来需要配置 NFS 访问共享目录，修改 /etc/exp
   <script defer src="/kubernetes/zh.search.min.6a49f949d6c64c82c1530df1a06dca2b9fc0405bdaedd9bb43bc1e183bad6c4e.js" integrity="sha256-akn5SdbGTILBUw3xoG3KK5/AQFva7dm7Q7weGDutbE4=" crossorigin="anonymous"></script>
 
   <script defer src="/kubernetes/sw.min.448c1a1f6d77a9e91ad10af73bc5bccfa94948c630159862e4b698042cdae427.js" integrity="sha256-RIwaH213qeka0Qr3O8W8z6lJSMYwFZhi5LaYBCza5Cc=" crossorigin="anonymous"></script>
+
+  
+
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book
@@ -688,7 +692,6 @@ https://github.com/alex-shpak/hugo-book
   <p>spec.nfs 里的路径一定要事先存在，不然在创建 Pod 时会报错</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>Output: mount.nfs: mounting 192.168.14.142:/tmp/nfs/1g-pv failed, reason given by server: No such file or directory
 </span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230616/b078b89c35d84bcfa94fa78ca576b62b.png" width=  /></div>
-
 </blockquote>
 
 <p>在用 kubectl apply 创建 Pod 之后，可以使用 kubectl exec 进入 Pod，再试着操作 NFS 共享目录：</p>
