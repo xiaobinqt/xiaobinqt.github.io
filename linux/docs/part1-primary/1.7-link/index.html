@@ -11,19 +11,20 @@ gcc -o hello hello.c 这个过程大致如下：
 当静态库更新时那么整个程序都要重新进行链接； 对于 printf 这种标准函数库，如果每个程序都要有代码，这会极大浪费资源。 共享库是为了解决静态库的这两个问题而设计的，在 Linux 系统中通常用 .so 后缀来表示，Windows 系统上它们被称为 DLL。它具有以下特点：
 在给定的文件系统中一个库只有一个文件，所有引用该库的可执行目标文件都共享这个文件，它不会被复制到引用它的可执行文件中； 在内存中，一个共享库的 .text 节（已编译程序的机器代码）的一个副本可以被不同的正在运行的进程共享。 ">
 <meta name="theme-color" content="#FFFFFF">
-<meta name="color-scheme" content="light dark"><meta property="og:title" content="1.7 链接" />
-<meta property="og:description" content=" 1.7 链接 # 1.7.1 编译系统 # 以下是一个 hello.c 程序：
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/linux/docs/part1-primary/1.7-link/">
+  <meta property="og:site_name" content="Linux 学习笔记">
+  <meta property="og:title" content="1.7 链接">
+  <meta property="og:description" content=" 1.7 链接 # 1.7.1 编译系统 # 以下是一个 hello.c 程序：
 #include &lt;stdio.h&gt; int main() { printf(&#34;hello, world\n&#34;); return 0; } 在 Unix 系统上，由编译器把源文件转换为目标文件。
 gcc -o hello hello.c 这个过程大致如下：
 预处理阶段：处理以 # 开头的预处理命令； 编译阶段：翻译成汇编文件； 汇编阶段：将汇编文件翻译成可重定位目标文件； 链接阶段：将可重定位目标文件和 printf.o 等单独预编译好的目标文件进行合并，得到最终的可执行目标文件。 1.7.2 静态链接 # 静态链接器以一组可重定位目标文件为输入，生成一个完全链接的可执行目标文件作为输出。链接器主要完成以下两个任务：
 符号解析：每个符号对应于一个函数、一个全局变量或一个静态变量，符号解析的目的是将每个符号引用与一个符号定义关联起来。 重定位：链接器通过把每个符号定义与一个内存位置关联起来，然后修改所有对这些符号的引用，使得它们指向这个内存位置。 1.7.2 目标文件 # 可执行目标文件：可以直接在内存中执行； 可重定位目标文件：可与其它可重定位目标文件在链接阶段合并，创建一个可执行目标文件； 共享目标文件：这是一种特殊的可重定位目标文件，可以在运行时被动态加载进内存并链接； 1.7.3 动态链接 # 静态库有以下两个问题：
 当静态库更新时那么整个程序都要重新进行链接； 对于 printf 这种标准函数库，如果每个程序都要有代码，这会极大浪费资源。 共享库是为了解决静态库的这两个问题而设计的，在 Linux 系统中通常用 .so 后缀来表示，Windows 系统上它们被称为 DLL。它具有以下特点：
-在给定的文件系统中一个库只有一个文件，所有引用该库的可执行目标文件都共享这个文件，它不会被复制到引用它的可执行文件中； 在内存中，一个共享库的 .text 节（已编译程序的机器代码）的一个副本可以被不同的正在运行的进程共享。 " />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://example.com/linux/docs/part1-primary/1.7-link/" /><meta property="article:section" content="docs" />
-
-<meta property="article:modified_time" content="2023-03-14T10:05:56+08:00" />
-
+在给定的文件系统中一个库只有一个文件，所有引用该库的可执行目标文件都共享这个文件，它不会被复制到引用它的可执行文件中； 在内存中，一个共享库的 .text 节（已编译程序的机器代码）的一个副本可以被不同的正在运行的进程共享。 ">
+  <meta property="og:locale" content="zh">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:modified_time" content="2023-03-14T10:05:56+08:00">
 <title>1.7 链接 | Linux 学习笔记</title>
 <link rel="manifest" href="/linux/manifest.json">
 <link rel="icon" href="/linux/favicon.png" type="image/x-icon">
@@ -32,6 +33,9 @@ gcc -o hello hello.c 这个过程大致如下：
   <script defer src="/linux/zh.search.min.4255bb51fefe12beb719fa99814aff14a9032f6767f09d28d03df087aa2efc4f.js" integrity="sha256-QlW7Uf7&#43;Er63GfqZgUr/FKkDL2dn8J0o0D3wh6ou/E8=" crossorigin="anonymous"></script>
 
   <script defer src="/linux/sw.min.e3338ad661715b83bfd6397040a613605d8bb26c10798773e2176216e2123560.js" integrity="sha256-4zOK1mFxW4O/1jlwQKYTYF2LsmwQeYdz4hdiFuISNWA=" crossorigin="anonymous"></script>
+
+  
+
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book

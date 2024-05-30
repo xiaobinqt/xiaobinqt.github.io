@@ -11,19 +11,20 @@ Pod 是对容器的 “打包”，里面的容器是一个整体，总是能够
 name 只是一个基本的标识，信息有限，所以 labels 字段就很有用，它可以添加任意数量的 Key-Value，给 Pod “贴” 上归类的标签，结合 name 就更方便识别和管理。比如：
 apiVersion: v1 kind: Pod metadata: name: busy-pod labels: owner: xiaobinqt env: demo region: north tier: back “metadata” 一般写上 name 和 labels 就足够了，但是 “spec” 字段由于需要管理、维护 Pod 这个基本调度单元，里面有非常多的关键信息，厂常见的有 containers、hostname、restartPolicy 等字段。">
 <meta name="theme-color" content="#FFFFFF">
-<meta name="color-scheme" content="light dark"><meta property="og:title" content="2.4 Pod" />
-<meta property="og:description" content="2.4 Pod # 2.4.1 什么是 Pod # 当容器进入到现实的生产环境中时，容器的隔离性就带来了一些麻烦。因为很少有应用是完全独立运行的，经常需要几个进程互相协作才能完成任务。比如可能有多个应用结合得非常紧密以至于无法把它们拆开，但是将它们都放在同一个容器中又不是一种好的做法，因为容器的理念是对应用的独立封装，它里面就应该是一个进程、一个应用，如果里面有多个应用，不仅违背了容器的初衷，也会让容器更难以管理。
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/kubernetes/docs/part2-break-ice/2.4-pod/">
+  <meta property="og:site_name" content="Kubernetes 学习笔记">
+  <meta property="og:title" content="2.4 Pod">
+  <meta property="og:description" content="2.4 Pod # 2.4.1 什么是 Pod # 当容器进入到现实的生产环境中时，容器的隔离性就带来了一些麻烦。因为很少有应用是完全独立运行的，经常需要几个进程互相协作才能完成任务。比如可能有多个应用结合得非常紧密以至于无法把它们拆开，但是将它们都放在同一个容器中又不是一种好的做法，因为容器的理念是对应用的独立封装，它里面就应该是一个进程、一个应用，如果里面有多个应用，不仅违背了容器的初衷，也会让容器更难以管理。
 为了解决多应用联合运行的问题，同时还要不破坏容器的隔离，就需要在容器外面再建立一个 “收纳舱”，让多个容器既保持相对独立，又能够小范围共享网络、存储等资源，而且永远是 “绑在一起” 的状态。这就是 Pod 的初衷，实际上，“spec.containers” 字段其实是一个数组，里面允许定义多个容器。
 Pod 是对容器的 “打包”，里面的容器是一个整体，总是能够一起调度、一起运行，绝不会出现分离的情况。Pod 属于 Kubernetes，可以在不触碰下层容器的情况下任意定制修改。Kubernetes 让 Pod 去编排处理容器，然后把 Pod 作为应用调度部署的最小单位，Pod 也因此成为了 Kubernetes 世界里的 “原子”，基于 Pod 就可以构建出更多更复杂的业务形态了。
 2.4.2 YAML 描述 Pod # 可以理解为所有的 API 对象都天然具有 apiVersion、kind、metadata、spec 这四个基本组成部分，当然也包括 Pod。
 在使用 Docker 创建容器的时候，可以不给容器起名字，但在 Kubernetes 里，Pod 必须要有一个名字，这也是 Kubernetes 里所有资源对象的一个约定。通常会为 Pod 名字统一加上 pod 后缀，这样可以和其他类型的资源区分开。
 name 只是一个基本的标识，信息有限，所以 labels 字段就很有用，它可以添加任意数量的 Key-Value，给 Pod “贴” 上归类的标签，结合 name 就更方便识别和管理。比如：
-apiVersion: v1 kind: Pod metadata: name: busy-pod labels: owner: xiaobinqt env: demo region: north tier: back “metadata” 一般写上 name 和 labels 就足够了，但是 “spec” 字段由于需要管理、维护 Pod 这个基本调度单元，里面有非常多的关键信息，厂常见的有 containers、hostname、restartPolicy 等字段。" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://example.com/kubernetes/docs/part2-break-ice/2.4-pod/" /><meta property="article:section" content="docs" />
-
-<meta property="article:modified_time" content="2023-06-03T12:45:04+08:00" />
-
+apiVersion: v1 kind: Pod metadata: name: busy-pod labels: owner: xiaobinqt env: demo region: north tier: back “metadata” 一般写上 name 和 labels 就足够了，但是 “spec” 字段由于需要管理、维护 Pod 这个基本调度单元，里面有非常多的关键信息，厂常见的有 containers、hostname、restartPolicy 等字段。">
+  <meta property="og:locale" content="zh">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:modified_time" content="2023-06-03T12:45:04+08:00">
 <title>2.4 Pod | Kubernetes 学习笔记</title>
 <link rel="manifest" href="/kubernetes/manifest.json">
 <link rel="icon" href="/kubernetes/favicon.png" type="image/x-icon">
@@ -32,6 +33,9 @@ apiVersion: v1 kind: Pod metadata: name: busy-pod labels: owner: xiaobinqt env: 
   <script defer src="/kubernetes/zh.search.min.6a49f949d6c64c82c1530df1a06dca2b9fc0405bdaedd9bb43bc1e183bad6c4e.js" integrity="sha256-akn5SdbGTILBUw3xoG3KK5/AQFva7dm7Q7weGDutbE4=" crossorigin="anonymous"></script>
 
   <script defer src="/kubernetes/sw.min.448c1a1f6d77a9e91ad10af73bc5bccfa94948c630159862e4b698042cdae427.js" integrity="sha256-RIwaH213qeka0Qr3O8W8z6lJSMYwFZhi5LaYBCza5Cc=" crossorigin="anonymous"></script>
+
+  
+
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book

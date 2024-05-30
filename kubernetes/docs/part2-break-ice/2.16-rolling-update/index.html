@@ -8,16 +8,17 @@
 在 Kubernetes 里，版本更新使用的不是 API 对象，而是两个命令：kubectl apply 和 kubectl rollout，需要搭配部署应用所需要的 Deployment、DaemonSet 等 YAML 文件。
 在 Kubernetes 里应用都是以 Pod 的形式运行的，而 Pod 通常又会被 Deployment 等对象来管理，所以应用的 “版本更新” 实际上更新的是整个 Pod。Pod 是由 YAML 描述文件来确定的，是 Deployment 等对象里的字段 template。所以，在 Kubernetes 里应用的版本变化就是 template 里 Pod 的变化，哪怕 template 里只变动了一个字段，那也会形成一个新的版本，也算是版本变化。但在 template 里的内容太多了，拿这么长的字符串来当做 “版本号” 不太现实，所以 Kubernetes 就使用了 “摘要” 功能，用摘要算法计算 template 的 Hash 值作为 “版本号”。">
 <meta name="theme-color" content="#FFFFFF">
-<meta name="color-scheme" content="light dark"><meta property="og:title" content="2.16 滚动更新" />
-<meta property="og:description" content="2.16 滚动更新 # 在实际生产环境中，只是把应用发布到集群里是远远不够的，要让应用稳定可靠地运行，还需要有持续的运维工作。比如 Deployment 的 “应用伸缩” 功能就是一种常见的运维操作，在 Kubernetes 里，使用命令 kubectl scale，可以轻松调整 Deployment 下属的 Pod 数量。除了 “应用伸缩”，其他的运维操作比如应用更新、版本回退等工作也是日常运维中经常会遇到的问题。
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/kubernetes/docs/part2-break-ice/2.16-rolling-update/">
+  <meta property="og:site_name" content="Kubernetes 学习笔记">
+  <meta property="og:title" content="2.16 滚动更新">
+  <meta property="og:description" content="2.16 滚动更新 # 在实际生产环境中，只是把应用发布到集群里是远远不够的，要让应用稳定可靠地运行，还需要有持续的运维工作。比如 Deployment 的 “应用伸缩” 功能就是一种常见的运维操作，在 Kubernetes 里，使用命令 kubectl scale，可以轻松调整 Deployment 下属的 Pod 数量。除了 “应用伸缩”，其他的运维操作比如应用更新、版本回退等工作也是日常运维中经常会遇到的问题。
 2.16.1 应用版本 # 版本更新实际做起来是一个相当棘手的事。因为系统已经上线运行，必须要保证不间断地对外提供服务。尤其在特殊时候可能需要开发、测试、运维、监控、网络等各个部门的一大堆人来协同工作，费时又费力。
 在 Kubernetes 里，版本更新使用的不是 API 对象，而是两个命令：kubectl apply 和 kubectl rollout，需要搭配部署应用所需要的 Deployment、DaemonSet 等 YAML 文件。
-在 Kubernetes 里应用都是以 Pod 的形式运行的，而 Pod 通常又会被 Deployment 等对象来管理，所以应用的 “版本更新” 实际上更新的是整个 Pod。Pod 是由 YAML 描述文件来确定的，是 Deployment 等对象里的字段 template。所以，在 Kubernetes 里应用的版本变化就是 template 里 Pod 的变化，哪怕 template 里只变动了一个字段，那也会形成一个新的版本，也算是版本变化。但在 template 里的内容太多了，拿这么长的字符串来当做 “版本号” 不太现实，所以 Kubernetes 就使用了 “摘要” 功能，用摘要算法计算 template 的 Hash 值作为 “版本号”。" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://example.com/kubernetes/docs/part2-break-ice/2.16-rolling-update/" /><meta property="article:section" content="docs" />
-
-<meta property="article:modified_time" content="2023-06-21T17:16:18+08:00" />
-
+在 Kubernetes 里应用都是以 Pod 的形式运行的，而 Pod 通常又会被 Deployment 等对象来管理，所以应用的 “版本更新” 实际上更新的是整个 Pod。Pod 是由 YAML 描述文件来确定的，是 Deployment 等对象里的字段 template。所以，在 Kubernetes 里应用的版本变化就是 template 里 Pod 的变化，哪怕 template 里只变动了一个字段，那也会形成一个新的版本，也算是版本变化。但在 template 里的内容太多了，拿这么长的字符串来当做 “版本号” 不太现实，所以 Kubernetes 就使用了 “摘要” 功能，用摘要算法计算 template 的 Hash 值作为 “版本号”。">
+  <meta property="og:locale" content="zh">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:modified_time" content="2023-06-21T17:16:18+08:00">
 <title>2.16 滚动更新 | Kubernetes 学习笔记</title>
 <link rel="manifest" href="/kubernetes/manifest.json">
 <link rel="icon" href="/kubernetes/favicon.png" type="image/x-icon">
@@ -26,6 +27,9 @@
   <script defer src="/kubernetes/zh.search.min.6a49f949d6c64c82c1530df1a06dca2b9fc0405bdaedd9bb43bc1e183bad6c4e.js" integrity="sha256-akn5SdbGTILBUw3xoG3KK5/AQFva7dm7Q7weGDutbE4=" crossorigin="anonymous"></script>
 
   <script defer src="/kubernetes/sw.min.448c1a1f6d77a9e91ad10af73bc5bccfa94948c630159862e4b698042cdae427.js" integrity="sha256-RIwaH213qeka0Qr3O8W8z6lJSMYwFZhi5LaYBCza5Cc=" crossorigin="anonymous"></script>
+
+  
+
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book

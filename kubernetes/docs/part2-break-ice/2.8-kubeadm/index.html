@@ -10,18 +10,19 @@ kubeadm 具有了和 minikube 一样的易用性，只要很少的几条命令�
 第一，由于 Kubernetes 使用主机名来区分集群里的节点，所以每个节点的 hostname 必须不能重名。需要修改 /etc/hostname 这个文件，把它改成容易辨识的名字，比如 Master 节点就叫 master，Worker 节点就叫 worker。
 第二，虽然 Kubernetes 目前支持多种容器运行时，但 Docker 还是最方便最易用的一种，所以使用 Docker 作为 Kubernetes 的底层支持，这里可以参考 Docker 官网 安装 Docker Engine。安装完成后需要再对 Docker 的配置做一点修改，在 /etc/docker/daemon.">
 <meta name="theme-color" content="#FFFFFF">
-<meta name="color-scheme" content="light dark"><meta property="og:title" content="2.8 kubeadm 搭建" />
-<meta property="og:description" content="2.8 kubeadm 搭建 # kubeadm 和 minikube 类似，也是用容器和镜像来封装 Kubernetes 的各种组件，但它的目标不是单机部署，而是要能够轻松地在集群环境里部署 Kubernetes，并且让这个集群接近甚至达到生产级别质量。
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/kubernetes/docs/part2-break-ice/2.8-kubeadm/">
+  <meta property="og:site_name" content="Kubernetes 学习笔记">
+  <meta property="og:title" content="2.8 kubeadm 搭建">
+  <meta property="og:description" content="2.8 kubeadm 搭建 # kubeadm 和 minikube 类似，也是用容器和镜像来封装 Kubernetes 的各种组件，但它的目标不是单机部署，而是要能够轻松地在集群环境里部署 Kubernetes，并且让这个集群接近甚至达到生产级别质量。
 kubeadm 具有了和 minikube 一样的易用性，只要很少的几条命令，如 init、join、upgrade、reset 就能够完成 Kubernetes 集群的管理维护工作，让它不仅适用于集群管理员，也适用于开发、测试人员。
 2.8.1 准备工作 # 所谓的多节点集群，要求服务器应该有两台或者更多，其实最小可用的 Kubernetes 集群就只有两台主机，一台是 Master 节点，另一台是 Worker 节点。Master 节点需要运行 apiserver、etcd、scheduler、controller-manager 等组件，管理整个集群，Worker 节点只运行业务应用。
 因为 Kubernetes 对系统有一些特殊要求，所以要先在 Master 和 Worker 节点上做一些准备，包括改主机名、改 Docker 配置、改网络设置、改交换分区这四步。
 第一，由于 Kubernetes 使用主机名来区分集群里的节点，所以每个节点的 hostname 必须不能重名。需要修改 /etc/hostname 这个文件，把它改成容易辨识的名字，比如 Master 节点就叫 master，Worker 节点就叫 worker。
-第二，虽然 Kubernetes 目前支持多种容器运行时，但 Docker 还是最方便最易用的一种，所以使用 Docker 作为 Kubernetes 的底层支持，这里可以参考 Docker 官网 安装 Docker Engine。安装完成后需要再对 Docker 的配置做一点修改，在 /etc/docker/daemon." />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://example.com/kubernetes/docs/part2-break-ice/2.8-kubeadm/" /><meta property="article:section" content="docs" />
-
-<meta property="article:modified_time" content="2023-06-28T16:41:17+08:00" />
-
+第二，虽然 Kubernetes 目前支持多种容器运行时，但 Docker 还是最方便最易用的一种，所以使用 Docker 作为 Kubernetes 的底层支持，这里可以参考 Docker 官网 安装 Docker Engine。安装完成后需要再对 Docker 的配置做一点修改，在 /etc/docker/daemon.">
+  <meta property="og:locale" content="zh">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:modified_time" content="2023-06-28T16:41:17+08:00">
 <title>2.8 kubeadm 搭建 | Kubernetes 学习笔记</title>
 <link rel="manifest" href="/kubernetes/manifest.json">
 <link rel="icon" href="/kubernetes/favicon.png" type="image/x-icon">
@@ -30,6 +31,9 @@ kubeadm 具有了和 minikube 一样的易用性，只要很少的几条命令�
   <script defer src="/kubernetes/zh.search.min.6a49f949d6c64c82c1530df1a06dca2b9fc0405bdaedd9bb43bc1e183bad6c4e.js" integrity="sha256-akn5SdbGTILBUw3xoG3KK5/AQFva7dm7Q7weGDutbE4=" crossorigin="anonymous"></script>
 
   <script defer src="/kubernetes/sw.min.448c1a1f6d77a9e91ad10af73bc5bccfa94948c630159862e4b698042cdae427.js" integrity="sha256-RIwaH213qeka0Qr3O8W8z6lJSMYwFZhi5LaYBCza5Cc=" crossorigin="anonymous"></script>
+
+  
+
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book
