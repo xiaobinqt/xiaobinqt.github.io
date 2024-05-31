@@ -26,7 +26,7 @@ math: true
 + 手机/微信：15209272743
 + Github：[https://github.com/xiaobinqt](https://github.com/xiaobinqt)
 + DockerHub：[https://hub.docker.com/u/xiaobinqt](https://hub.docker.com/u/xiaobinqt)
-+ 个人网站：[https://xiaobinqt.github.io](https://xiaobinqt.github.io/)
++ 个人网站：[https://www.xiaobinqt.cn](https://www.xiaobinqt.cn)
 + Email：[xiaobinqt@163.com](mailto:xiaobinqt@163.com)
 + 开源项目：[Go微信机器人](https://github.com/xiaobinqt/go-wxbot) / [豆奶签到](https://github.com/xiaobinqt/dounai-checkin)
 
@@ -71,7 +71,7 @@ math: true
 
 ### [西安维客软件科技有限公司](https://www.victtech.com/) （ 2017/4 ~ 2019/3 ）
 
-在公司担任 PHP 开发并在项目中接触到 Go，主动学习并使用 Go 开发一些小功能。主要在公司参与了 pop 商城，小程序和一些 [wordpress](https://wordpress.com) 项目的开发，如 [西班牙旅游网站](http://aragontourism.cn)。
+在公司担任 PHP 开发并在项目中接触到 Go，主动学习并使用 Go 开发一些小功能。主要在公司参与了 pop 商城，医疗器械租赁项目，小程序和一些 [wordpress](https://wordpress.com) 项目的开发，如 [西班牙旅游网站](http://aragontourism.cn)。
 
 ## 项目经验
 
@@ -106,8 +106,7 @@ math: true
 
 **项目成果**
 
-+ 一期目前已通过太极演示，正在太极内网试运行。
-+ 获得 MySQL8.0，数据加密，断点续传使用经验，接触 Go sync.Map 源码并了解其底层实现。
++ 一期目前已通过太极演示，正在太极内网试运行。大唐，北控已经上线使用。
 
 ### 烽火统一 PUSH 平台
 
