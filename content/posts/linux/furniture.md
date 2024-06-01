@@ -39,7 +39,7 @@ math: true
 <!-- https://xiaobinqt.github.io -->
 <!-- https://www.xiaobinqt.cn -->
 
-{{< music server="netease" type="song" autoplay=true loop="all" id="1868553"  >}}
+{{< music url="/music/Wavelength.mp3" name=Wavelength artist=oldmanyoung cover="/music/Wavelength.webp" >}}
 
 
 ![家具1](https://cdn.xiaobinqt.cn/xiaobinqt.io/20240601/c27a69b7189c4eb485c021cf8587eef1.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15)
