@@ -66,7 +66,7 @@
         
     </a><figcaption class="image-caption">mgg</figcaption>
     </figure></p>
-<p>如何将 mgg 格式转 mgg 格式转成 MP3 格式呢&#x2753; mgg 文件暂时不支持直接转成 mp3，可以先把 mgg 文件转成 ogg 文件，再把 ogg 文件转成 mp3 文件。</p>
+<p>如何将 mgg 格式转 mgg 格式转成 MP3 格式呢❓ mgg 文件暂时不支持直接转成 mp3，可以先把 mgg 文件转成 ogg 文件，再把 ogg 文件转成 mp3 文件。</p>
 <ol>
 <li>先用工具将 mgg 文件转成 ogg 文件，可以通过在线工具 <a href="https://openyyy.com/" target="_blank" rel="noopener noreferrer">OpenYYY - https://openyyy.com/</a></li>
 </ol>
@@ -288,12 +288,12 @@
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">func</span> <span class="n">makechan64</span><span class="p">(</span><span class="n">t</span> <span class="o">*</span><span class="n">chantype</span><span class="p">,</span> <span class="n">size</span> <span class="n">int64</span><span class="p">)</span> <span class="o">*</span><span class="n">hchan</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="n">int64</span><span class="p">(</span><span class="ne">int</span><span class="p">(</span><span class="n">size</span><span class="p">))</span> <span class="o">!=</span> <span class="n">size</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">		<span class="n">panic</span><span class="p">(</span><span class="n">plainError</span><span class="p">(</span><span class="s2">&#34;makechan: size out of range&#34;</span><span class="p">))</span>
-</span></span><span class="line"><span class="cl">	<span class="p">}</span>
-</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="n">makechan</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="ne">int</span><span class="p">(</span><span class="n">size</span><span class="p">))</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func makechan64(t *chantype, size int64) *hchan {
+</span></span><span class="line"><span class="cl">	if int64(int(size)) != size {
+</span></span><span class="line"><span class="cl">		panic(plainError(&#34;makechan: size out of range&#34;))
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	return makechan(t, int(size))
+</span></span><span class="line"><span class="cl">}
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>创建 channel 有两种，一种是带缓冲的 channel，一种是不带缓冲的 channel</p>
@@ -344,7 +344,7 @@
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">func</span> <span class="n">chansend</span><span class="p">(</span><span class="n">c</span> <span class="o">*</span><span class="n">hchan</span><span class="p">,</span> <span class="n">ep</span> <span class="n">unsafe</span><span class="o">.</span><span class="n">Pointer</span><span class="p">,</span> <span class="n">block</span> <span class="ne">bool</span><span class="p">,</span> <span class="n">callerpc</span> <span class="n">uintptr</span><span class="p">)</span> <span class="ne">bool</span>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func chansend(c *hchan, ep unsafe.Pointer, block bool, callerpc uintptr) bool
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>阻塞式：</p>
@@ -406,7 +406,7 @@
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">func</span> <span class="n">chanrecv</span><span class="p">(</span><span class="n">c</span> <span class="o">*</span><span class="n">hchan</span><span class="p">,</span> <span class="n">ep</span> <span class="n">unsafe</span><span class="o">.</span><span class="n">Pointer</span><span class="p">,</span> <span class="n">block</span> <span class="ne">bool</span><span class="p">)</span> <span class="p">(</span><span class="n">selected</span><span class="p">,</span> <span class="n">received</span> <span class="ne">bool</span><span class="p">)</span>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func chanrecv(c *hchan, ep unsafe.Pointer, block bool) (selected, received bool)
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>阻塞式：</p>
@@ -499,7 +499,7 @@
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">func</span> <span class="n">closechan</span><span class="p">(</span><span class="n">c</span> <span class="o">*</span><span class="n">hchan</span><span class="p">)</span>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func closechan(c *hchan)
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p><strong>案例分析：</strong></p>
@@ -782,10 +782,10 @@
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">func</span> <span class="n">deadlock1</span><span class="p">()</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">	<span class="n">ch</span> <span class="p">:</span><span class="o">=</span> <span class="n">make</span><span class="p">(</span><span class="n">chan</span> <span class="ne">int</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">	<span class="n">ch</span> <span class="o">&lt;-</span> <span class="mi">3</span> <span class="o">//</span>  <span class="err">这里会发生一直阻塞的情况，执行不到下面一句</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func deadlock1() {
+</span></span><span class="line"><span class="cl">	ch := make(chan int)
+</span></span><span class="line"><span class="cl">	ch &lt;- 3 //  这里会发生一直阻塞的情况，执行不到下面一句
+</span></span><span class="line"><span class="cl">}
 </span></span></code></pre></td></tr></table>
 </div>
 </div><ol start="2">
@@ -813,24 +813,24 @@
 </span><span class="lnt">18
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">func</span> <span class="n">deadlock2</span><span class="p">()</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">	<span class="n">ch</span> <span class="p">:</span><span class="o">=</span> <span class="n">make</span><span class="p">(</span><span class="n">chan</span> <span class="ne">int</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">	<span class="n">ch</span> <span class="o">&lt;-</span> <span class="mi">3</span> <span class="o">//</span>  <span class="err">这里会发生一直阻塞的情况，执行不到下面一句</span>
-</span></span><span class="line"><span class="cl">	<span class="n">num</span> <span class="p">:</span><span class="o">=</span> <span class="o">&lt;-</span><span class="n">ch</span>
-</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s2">&#34;num=&#34;</span><span class="p">,</span> <span class="n">num</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func deadlock2() {
+</span></span><span class="line"><span class="cl">	ch := make(chan int)
+</span></span><span class="line"><span class="cl">	ch &lt;- 3 //  这里会发生一直阻塞的情况，执行不到下面一句
+</span></span><span class="line"><span class="cl">	num := &lt;-ch
+</span></span><span class="line"><span class="cl">	fmt.Println(&#34;num=&#34;, num)
+</span></span><span class="line"><span class="cl">}
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">deadlock2</span><span class="p">()</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">	<span class="n">ch</span> <span class="p">:</span><span class="o">=</span> <span class="n">make</span><span class="p">(</span><span class="n">chan</span> <span class="ne">int</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">	<span class="n">ch</span> <span class="o">&lt;-</span> <span class="mi">100</span> <span class="o">//</span>  <span class="err">这里会发生一直阻塞的情况，执行不到下面一句</span>
+</span></span><span class="line"><span class="cl">func deadlock2() {
+</span></span><span class="line"><span class="cl">	ch := make(chan int)
+</span></span><span class="line"><span class="cl">	ch &lt;- 100 //  这里会发生一直阻塞的情况，执行不到下面一句
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	<span class="n">go</span> <span class="k">func</span><span class="p">()</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">		<span class="n">num</span> <span class="p">:</span><span class="o">=</span> <span class="o">&lt;-</span><span class="n">ch</span>
-</span></span><span class="line"><span class="cl">		<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s2">&#34;num=&#34;</span><span class="p">,</span> <span class="n">num</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">	<span class="p">}()</span>
+</span></span><span class="line"><span class="cl">	go func() {
+</span></span><span class="line"><span class="cl">		num := &lt;-ch
+</span></span><span class="line"><span class="cl">		fmt.Println(&#34;num=&#34;, num)
+</span></span><span class="line"><span class="cl">	}()
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	<span class="n">time</span><span class="o">.</span><span class="n">Sleep</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">Second</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">	time.Sleep(time.Second)
+</span></span><span class="line"><span class="cl">}
 </span></span></code></pre></td></tr></table>
 </div>
 </div><ol start="3">
@@ -847,13 +847,13 @@
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">func</span> <span class="n">deadlock3</span><span class="p">()</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">	<span class="n">ch</span> <span class="p">:</span><span class="o">=</span> <span class="n">make</span><span class="p">(</span><span class="n">chan</span> <span class="ne">int</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">	<span class="n">ch</span> <span class="o">&lt;-</span> <span class="mi">3</span>
-</span></span><span class="line"><span class="cl">	<span class="n">ch</span> <span class="o">&lt;-</span> <span class="mi">4</span>
-</span></span><span class="line"><span class="cl">	<span class="n">ch</span> <span class="o">&lt;-</span> <span class="mi">5</span>
-</span></span><span class="line"><span class="cl">	<span class="n">ch</span> <span class="o">&lt;-</span> <span class="mi">6</span> <span class="o">//</span>  <span class="err">这里会发生一直阻塞的情况</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func deadlock3() {
+</span></span><span class="line"><span class="cl">	ch := make(chan int, 3)
+</span></span><span class="line"><span class="cl">	ch &lt;- 3
+</span></span><span class="line"><span class="cl">	ch &lt;- 4
+</span></span><span class="line"><span class="cl">	ch &lt;- 5
+</span></span><span class="line"><span class="cl">	ch &lt;- 6 //  这里会发生一直阻塞的情况
+</span></span><span class="line"><span class="cl">}
 </span></span></code></pre></td></tr></table>
 </div>
 </div><ol start="4">
@@ -868,11 +868,11 @@
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">func</span> <span class="n">deadlock4</span><span class="p">()</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">	<span class="n">ch</span> <span class="p">:</span><span class="o">=</span> <span class="n">make</span><span class="p">(</span><span class="n">chan</span> <span class="ne">int</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="n">ch</span> <span class="p">:</span><span class="o">=</span> <span class="n">make</span><span class="p">(</span><span class="n">chan</span> <span class="ne">int</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="o">&lt;-</span><span class="n">ch</span><span class="p">)</span> <span class="o">//</span>  <span class="err">这里会发生一直阻塞的情况</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func deadlock4() {
+</span></span><span class="line"><span class="cl">	ch := make(chan int)
+</span></span><span class="line"><span class="cl">	// ch := make(chan int, 1)
+</span></span><span class="line"><span class="cl">	fmt.Println(&lt;-ch) //  这里会发生一直阻塞的情况
+</span></span><span class="line"><span class="cl">}
 </span></span></code></pre></td></tr></table>
 </div>
 </div><ol start="5">
@@ -906,30 +906,30 @@
 </span><span class="lnt">24
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">func</span> <span class="n">deadlock5</span><span class="p">()</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">	<span class="n">ch1</span> <span class="p">:</span><span class="o">=</span> <span class="n">make</span><span class="p">(</span><span class="n">chan</span> <span class="ne">int</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">	<span class="n">ch2</span> <span class="p">:</span><span class="o">=</span> <span class="n">make</span><span class="p">(</span><span class="n">chan</span> <span class="ne">int</span><span class="p">)</span>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func deadlock5() {
+</span></span><span class="line"><span class="cl">	ch1 := make(chan int)
+</span></span><span class="line"><span class="cl">	ch2 := make(chan int)
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="err">互相等对方造成死锁</span>
+</span></span><span class="line"><span class="cl">	// 互相等对方造成死锁
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	<span class="n">go</span> <span class="k">func</span><span class="p">()</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">		<span class="k">for</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">			<span class="n">select</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">			<span class="k">case</span> <span class="n">num</span> <span class="p">:</span><span class="o">=</span> <span class="o">&lt;-</span><span class="n">ch1</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">				<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s2">&#34;num=&#34;</span><span class="p">,</span> <span class="n">num</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">				<span class="n">ch2</span> <span class="o">&lt;-</span> <span class="mi">100</span>
-</span></span><span class="line"><span class="cl">			<span class="p">}</span>
-</span></span><span class="line"><span class="cl">		<span class="p">}</span>
-</span></span><span class="line"><span class="cl">	<span class="p">}()</span>
+</span></span><span class="line"><span class="cl">	go func() {
+</span></span><span class="line"><span class="cl">		for {
+</span></span><span class="line"><span class="cl">			select {
+</span></span><span class="line"><span class="cl">			case num := &lt;-ch1:
+</span></span><span class="line"><span class="cl">				fmt.Println(&#34;num=&#34;, num)
+</span></span><span class="line"><span class="cl">				ch2 &lt;- 100
+</span></span><span class="line"><span class="cl">			}
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">	}()
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">		<span class="n">select</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">		<span class="k">case</span> <span class="n">num</span> <span class="p">:</span><span class="o">=</span> <span class="o">&lt;-</span><span class="n">ch2</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">			<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s2">&#34;num=&#34;</span><span class="p">,</span> <span class="n">num</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">			<span class="n">ch1</span> <span class="o">&lt;-</span> <span class="mi">300</span>
-</span></span><span class="line"><span class="cl">		<span class="p">}</span>
-</span></span><span class="line"><span class="cl">	<span class="p">}</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">	for {
+</span></span><span class="line"><span class="cl">		select {
+</span></span><span class="line"><span class="cl">		case num := &lt;-ch2:
+</span></span><span class="line"><span class="cl">			fmt.Println(&#34;num=&#34;, num)
+</span></span><span class="line"><span class="cl">			ch1 &lt;- 300
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">}
 </span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="参考" class="headerLink">

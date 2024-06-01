@@ -5,28 +5,19 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noodp" />
-    <title class="pjax-title">Redis 缓存击穿、缓存穿透、缓存雪崩 - xiaobinqt 博客 - 技术改变生活</title><meta name="Description" content="xiaobinqt,Redis 缓存击穿,缓存穿透,缓存雪崩,Redis"><meta property="og:url" content="https://www.xiaobinqt.cn/redis-break-pierce-avalanche/">
-  <meta property="og:site_name" content="xiaobinqt 博客 - 技术改变生活">
-  <meta property="og:title" content="Redis 缓存击穿、缓存穿透、缓存雪崩">
-  <meta property="og:description" content="xiaobinqt,Redis 缓存击穿,缓存穿透,缓存雪崩,Redis">
-  <meta property="og:locale" content="zh_CN">
-  <meta property="og:type" content="article">
-    <meta property="article:section" content="posts">
-    <meta property="article:published_time" content="2022-04-13T00:00:00+00:00">
-    <meta property="article:modified_time" content="2023-07-27T10:32:06+08:00">
-    <meta property="article:tag" content="Redis">
-    <meta property="og:image" content="https://www.xiaobinqt.cn/logo.png">
-      <meta property="og:see_also" content="https://www.xiaobinqt.cn/highly-concurrent-architecture-evolution/">
-      <meta property="og:see_also" content="https://www.xiaobinqt.cn/session-cookie-token-difference/">
-      <meta property="og:see_also" content="https://www.xiaobinqt.cn/mysql-faq-2/">
-      <meta property="og:see_also" content="https://www.xiaobinqt.cn/why-mysql-index-use-btree/">
-      <meta property="og:see_also" content="https://www.xiaobinqt.cn/go-gc/">
-      <meta property="og:see_also" content="https://www.xiaobinqt.cn/net-protocol-glance/">
+    <title class="pjax-title">Redis 缓存击穿、缓存穿透、缓存雪崩 - xiaobinqt 博客 - 技术改变生活</title><meta name="Description" content="xiaobinqt,Redis 缓存击穿,缓存穿透,缓存雪崩,Redis"><meta property="og:title" content="Redis 缓存击穿、缓存穿透、缓存雪崩" />
+<meta property="og:description" content="xiaobinqt,Redis 缓存击穿,缓存穿透,缓存雪崩,Redis" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.xiaobinqt.cn/redis-break-pierce-avalanche/" /><meta property="og:image" content="https://www.xiaobinqt.cn/logo.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-04-13T00:00:00+00:00" />
+<meta property="article:modified_time" content="2023-07-27T10:32:06+08:00" />
+<meta property="og:see_also" content="https://www.xiaobinqt.cn/highly-concurrent-architecture-evolution/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/session-cookie-token-difference/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/mysql-faq-2/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/why-mysql-index-use-btree/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/go-gc/" />
 
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="https://www.xiaobinqt.cn/logo.png">
-  <meta name="twitter:title" content="Redis 缓存击穿、缓存穿透、缓存雪崩">
-  <meta name="twitter:description" content="xiaobinqt,Redis 缓存击穿,缓存穿透,缓存雪崩,Redis">
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://www.xiaobinqt.cn/logo.png"/>
+
+<meta name="twitter:title" content="Redis 缓存击穿、缓存穿透、缓存雪崩"/>
+<meta name="twitter:description" content="xiaobinqt,Redis 缓存击穿,缓存穿透,缓存雪崩,Redis"/>
 <meta name="application-name" content="xiaobinqt">
 <meta name="apple-mobile-web-app-title" content="xiaobinqt">
 
@@ -44,7 +35,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/www.xiaobinqt.cn\/redis-break-pierce-avalanche\/"
-        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "redis","wordcount":  2285 ,
+        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "redis","wordcount":  2278 ,
         "url": "https:\/\/www.xiaobinqt.cn\/redis-break-pierce-avalanche\/","datePublished": "2022-04-13T00:00:00+00:00","dateModified": "2023-07-27T10:32:06+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "xxxx","logo": {
@@ -136,7 +127,7 @@
       <ul>
         <li><a href="#解决方案">解决方案</a>
           <ul>
-            <li><a href="#过期时间heavy_plus_sign随机值">过期时间&#x2795;随机值</a></li>
+            <li><a href="#过期时间随机值">过期时间➕随机值</a></li>
             <li><a href="#预热">预热</a></li>
             <li><a href="#使用锁">使用锁</a></li>
           </ul>
@@ -177,7 +168,7 @@
             <div class="post-meta-line"><span class="post-author">
                     <i class="custom-icon iconfont icon-weibiaoti-"></i>
                 </span>&nbsp;&nbsp;<span class="post-category">收录于 </span>&nbsp;<span class="post-category">类别 <a href="/categories/%E5%BC%80%E5%8F%91%E8%80%85%E6%89%8B%E5%86%8C/"><i class="far fa-folder fa-fw"></i>开发者手册</a></span>&nbsp;<span class="post-category">和</span>&nbsp;<span class="post-series">系列 <a href="/series/reproduce/"><i class="far fa-list-alt fa-fw"></i>转载</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-04-13">2022-04-13</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2023-07-27">2023-07-27</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2285 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-04-13">2022-04-13</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2023-07-27">2023-07-27</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2278 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 5 分钟&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
@@ -190,7 +181,7 @@
       <ul>
         <li><a href="#解决方案">解决方案</a>
           <ul>
-            <li><a href="#过期时间heavy_plus_sign随机值">过期时间&#x2795;随机值</a></li>
+            <li><a href="#过期时间随机值">过期时间➕随机值</a></li>
             <li><a href="#预热">预热</a></li>
             <li><a href="#使用锁">使用锁</a></li>
           </ul>
@@ -240,8 +231,8 @@
     </a><figcaption class="image-caption">缓存击穿</figcaption>
     </figure></p>
 <h3 id="解决方案" class="headerLink">
-    <a href="#%e8%a7%a3%e5%86%b3%e6%96%b9%e6%a1%88" class="header-mark"></a>解决方案</h3><h4 id="过期时间heavy_plus_sign随机值" class="headerLink">
-    <a href="#%e8%bf%87%e6%9c%9f%e6%97%b6%e9%97%b4heavy_plus_sign%e9%9a%8f%e6%9c%ba%e5%80%bc" class="header-mark"></a>过期时间&#x2795;随机值</h4><p>对于热点数据，我们不设置过期时间，这样就可以把请求都放在缓存中处理，充分把 Redis 高吞吐量性能利用起来。或者过期时间再加一个随机值。</p>
+    <a href="#%e8%a7%a3%e5%86%b3%e6%96%b9%e6%a1%88" class="header-mark"></a>解决方案</h3><h4 id="过期时间随机值" class="headerLink">
+    <a href="#%e8%bf%87%e6%9c%9f%e6%97%b6%e9%97%b4%e9%9a%8f%e6%9c%ba%e5%80%bc" class="header-mark"></a>过期时间➕随机值</h4><p>对于热点数据，我们不设置过期时间，这样就可以把请求都放在缓存中处理，充分把 Redis 高吞吐量性能利用起来。或者过期时间再加一个随机值。</p>
 <p>设计缓存的过期时间时，使用公式：<strong>过期时间 = baes 时间 + 随机时间</strong>。</p>
 <p>即相同业务数据写缓存时，在基础过期时间之上，再加一个随机的过期时间，让数据在未来一段时间内慢慢过期，避免瞬时全部过期，对 DB 造成过大压力。</p>
 <h4 id="预热" class="headerLink">
@@ -365,7 +356,7 @@
     </div>
 
     <div class="post-info-more">
-        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/redis/">Redis</a></section>
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/redis/">redis</a></section>
         <section>
             <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
         </section>

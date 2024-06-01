@@ -5,25 +5,19 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noodp" />
-    <title class="pjax-title">Golang 内存逃逸 - xiaobinqt 博客 - 技术改变生活</title><meta name="Description" content="xiaobinqt,"><meta property="og:url" content="https://www.xiaobinqt.cn/escape-heap/">
-  <meta property="og:site_name" content="xiaobinqt 博客 - 技术改变生活">
-  <meta property="og:title" content="Golang 内存逃逸">
-  <meta property="og:description" content="xiaobinqt,">
-  <meta property="og:locale" content="zh_CN">
-  <meta property="og:type" content="article">
-    <meta property="article:section" content="posts">
-    <meta property="article:published_time" content="2023-10-10T00:00:00+00:00">
-    <meta property="article:modified_time" content="2023-10-10T12:59:57+08:00">
-    <meta property="article:tag" content="Golang">
-    <meta property="og:image" content="https://www.xiaobinqt.cn/logo.png">
-      <meta property="og:see_also" content="https://www.xiaobinqt.cn/go-channel-principle/">
-      <meta property="og:see_also" content="https://www.xiaobinqt.cn/go-slice-principle/">
-      <meta property="og:see_also" content="https://www.xiaobinqt.cn/func-receive-value-pointer/">
+    <title class="pjax-title">Golang 内存逃逸 - xiaobinqt 博客 - 技术改变生活</title><meta name="Description" content="xiaobinqt,"><meta property="og:title" content="Golang 内存逃逸" />
+<meta property="og:description" content="xiaobinqt," />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.xiaobinqt.cn/escape-heap/" /><meta property="og:image" content="https://www.xiaobinqt.cn/logo.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-10-10T00:00:00+00:00" />
+<meta property="article:modified_time" content="2023-10-10T12:59:57+08:00" />
+<meta property="og:see_also" content="https://www.xiaobinqt.cn/go-channel-principle/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/go-slice-principle/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/func-receive-value-pointer/" />
 
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="https://www.xiaobinqt.cn/logo.png">
-  <meta name="twitter:title" content="Golang 内存逃逸">
-  <meta name="twitter:description" content="xiaobinqt,">
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://www.xiaobinqt.cn/logo.png"/>
+
+<meta name="twitter:title" content="Golang 内存逃逸"/>
+<meta name="twitter:description" content="xiaobinqt,"/>
 <meta name="application-name" content="xiaobinqt">
 <meta name="apple-mobile-web-app-title" content="xiaobinqt">
 
@@ -148,7 +142,7 @@
 </nav></div>
     </div><script>document.getElementsByTagName("main")[0].setAttribute("pageStyle", "normal")</script><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Golang 内存逃逸</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><i class="author fas fa-user-circle fa-fw"></i><a href="/" title="Author" rel=" author" class="author">xiaobinqt</a>
-                </span>&nbsp;<span class="post-category">收录于 </span>&nbsp;<span class="post-category">类别 <a href="/categories/golang/"><i class="far fa-folder fa-fw"></i>Golang</a></span>&nbsp;<span class="post-category">和</span>&nbsp;<span class="post-series">系列 <a href="/series/golang/"><i class="far fa-list-alt fa-fw"></i>Golang Notes</a></span></div>
+                </span>&nbsp;<span class="post-category">收录于 </span>&nbsp;<span class="post-category">类别 <a href="/categories/golang/"><i class="far fa-folder fa-fw"></i>golang</a></span>&nbsp;<span class="post-category">和</span>&nbsp;<span class="post-series">系列 <a href="/series/golang/"><i class="far fa-list-alt fa-fw"></i>Golang Notes</a></span></div>
             <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2023-10-10">2023-10-10</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2023-10-10">2023-10-10</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 3009 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 7 分钟&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
@@ -190,10 +184,10 @@
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">func</span> <span class="n">F</span><span class="p">()</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="n">temp</span> <span class="p">:</span><span class="o">=</span> <span class="n">make</span><span class="p">([]</span><span class="ne">int</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">    <span class="o">...</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func F() {
+</span></span><span class="line"><span class="cl">    temp := make([]int, 0, 20)
+</span></span><span class="line"><span class="cl">    ...
+</span></span><span class="line"><span class="cl">}
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>上面的例子，内函数内部申请的临时变量，即使是用 make 申请到的内存，如果发现在退出函数后没有用了，那么就把丢到栈上，毕竟栈上的内存分配比堆上快很多。</p>
@@ -206,10 +200,10 @@
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">func</span> <span class="n">F</span><span class="p">()</span> <span class="p">[]</span><span class="ne">int</span><span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="n">a</span> <span class="p">:</span><span class="o">=</span> <span class="n">make</span><span class="p">([]</span><span class="ne">int</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">a</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func F() []int{
+</span></span><span class="line"><span class="cl">    a := make([]int, 0, 20)
+</span></span><span class="line"><span class="cl">    return a
+</span></span><span class="line"><span class="cl">}
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>上面这段代码，申请的代码和上面的一模一样，但是申请后作为返回值返回了，编译器会认为在退出函数之后还有其他地方在引用，当函数返回之后并不会将其内存归还。那么就申请到堆里。</p>
@@ -425,11 +419,11 @@
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">func</span> <span class="n">Printf</span><span class="p">(</span><span class="n">format</span> <span class="n">string</span><span class="p">,</span> <span class="n">a</span> <span class="o">...</span><span class="n">interface</span><span class="p">{})</span> <span class="p">(</span><span class="n">n</span> <span class="ne">int</span><span class="p">,</span> <span class="n">err</span> <span class="n">error</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">Sprintf</span><span class="p">(</span><span class="n">format</span> <span class="n">string</span><span class="p">,</span> <span class="n">a</span> <span class="o">...</span><span class="n">interface</span><span class="p">{})</span> <span class="n">string</span>
-</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">Fprint</span><span class="p">(</span><span class="n">w</span> <span class="n">io</span><span class="o">.</span><span class="n">Writer</span><span class="p">,</span> <span class="n">a</span> <span class="o">...</span><span class="n">interface</span><span class="p">{})</span> <span class="p">(</span><span class="n">n</span> <span class="ne">int</span><span class="p">,</span> <span class="n">err</span> <span class="n">error</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">Print</span><span class="p">(</span><span class="n">a</span> <span class="o">...</span><span class="n">interface</span><span class="p">{})</span> <span class="p">(</span><span class="n">n</span> <span class="ne">int</span><span class="p">,</span> <span class="n">err</span> <span class="n">error</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">Println</span><span class="p">(</span><span class="n">a</span> <span class="o">...</span><span class="n">interface</span><span class="p">{})</span> <span class="p">(</span><span class="n">n</span> <span class="ne">int</span><span class="p">,</span> <span class="n">err</span> <span class="n">error</span><span class="p">)</span>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func Printf(format string, a ...interface{}) (n int, err error)
+</span></span><span class="line"><span class="cl">func Sprintf(format string, a ...interface{}) string
+</span></span><span class="line"><span class="cl">func Fprint(w io.Writer, a ...interface{}) (n int, err error)
+</span></span><span class="line"><span class="cl">func Print(a ...interface{}) (n int, err error)
+</span></span><span class="line"><span class="cl">func Println(a ...interface{}) (n int, err error)
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>编译期间很难确定其参数的具体类型，也能产生逃逸。</p>
@@ -585,7 +579,7 @@
     </div>
 
     <div class="post-info-more">
-        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/golang/">Golang</a></section>
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/golang/">golang</a></section>
         <section>
             <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
         </section>

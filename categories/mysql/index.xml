@@ -1,8 +1,8 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
-        <title>Mysql - 分类 - xiaobinqt 博客 - 技术改变生活</title>
+        <title>mysql - 分类 - xiaobinqt 博客 - 技术改变生活</title>
         <link>https://www.xiaobinqt.cn/categories/mysql/</link>
-        <description>Mysql - 分类 - xiaobinqt 博客 - 技术改变生活</description>
+        <description>mysql - 分类 - xiaobinqt 博客 - 技术改变生活</description>
         <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>xiaobinqt@163.com (xiaobinqt)</managingEditor>
             <webMaster>xiaobinqt@163.com (xiaobinqt)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Thu, 12 Oct 2023 00:00:00 &#43;0000</lastBuildDate><atom:link href="https://www.xiaobinqt.cn/categories/mysql/" rel="self" type="application/rss+xml" /><item>
     <title>记一次 MySQL 8.0 JSON 查询</title>
@@ -110,7 +110,7 @@
 <h2 id="死锁发生的原因该如何避免" class="headerLink">
     <a href="#%e6%ad%bb%e9%94%81%e5%8f%91%e7%94%9f%e7%9a%84%e5%8e%9f%e5%9b%a0%e8%af%a5%e5%a6%82%e4%bd%95%e9%81%bf%e5%85%8d" class="header-mark"></a>死锁发生的原因，该如何避免</h2><p>死锁，简单来说就是两个或者两个以上的线程在执行的过程中，争夺同一个共享资源造成的相互等待的现象。</p>
 <p>如果没有外部干预，线程会一直阻塞无法往下执行，这些一直处于相互等待资源的线程就称为死锁线程。</p>
-<p>导致死锁的条件有四个，也就是这四个条件<strong>同时满足</strong>就会产生死锁&#x1f447;</p>
+<p>导致死锁的条件有四个，也就是这四个条件<strong>同时满足</strong>就会产生死锁👇</p>
 <ul>
 <li>互斥条件，共享资源 X 和 Y 只能被一个线程占用</li>
 <li>请求和保持条件，线程 T1 已经取得共享资源 X，在等待共享资源 Y 的时候，不释放共享资源 X</li>
@@ -173,7 +173,7 @@
 </span></span><span class="line"><span class="cl">}
 </span></span></code></pre></td></tr></table>
 </div>
-</div><p>比如 zz_users 表中有数据&#x261d;&#xfe0f;，索引<code>user_name、user_sex、password</code>，查询 SQL：</p>
+</div><p>比如 zz_users 表中有数据☝️，索引<code>user_name、user_sex、password</code>，查询 SQL：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
@@ -240,7 +240,7 @@
     </a><figcaption class="image-caption">b+树</figcaption>
     </figure></p>
 <p>在 MySQL InnoDB 引擎下，每创建一个索引，相当于生成了一颗 B+ 树。如果该索引是「聚集（聚簇）索引」，那当前 B+ 树的叶子节点存储着「主键和当前行的数据」，如果该索引是「非聚簇索引」，那当前 B+ 树的叶子节点存储着「主键和当前索引列值」</p>
-<p>比如写了一句&#x1f447;</p>
+<p>比如写了一句👇</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
@@ -306,7 +306,7 @@
     </figure></p>
 <h2 id="什么是两阶段提交" class="headerLink">
     <a href="#%e4%bb%80%e4%b9%88%e6%98%af%e4%b8%a4%e9%98%b6%e6%ae%b5%e6%8f%90%e4%ba%a4" class="header-mark"></a>什么是两阶段提交</h2><p>MySQL 的 bin log 只能用于归档，不足以实现<strong><ruby>崩溃恢复<rt>crash-safe</rt></ruby></strong>，需要借助 InnoDB 引擎的 redo log 才能拥有崩溃恢复的能力。所谓崩溃恢复就是，即使在数据库宕机的情况下，也不会出现操作一半的情况。</p>
-<p><strong>bin log 和 redo log 的区别</strong>&#x1f447;</p>
+<p><strong>bin log 和 redo log 的区别</strong>👇</p>
 <p>bin log 是 MySQL 的 Server 层实现的，对所有引擎都可以使用，而 redo log 是 InnoDB 引擎特有的。</p>
 <p>bin log 是可以追加写入的。“追加写” 是指 bin log 文件写到一定大小后会切换到下一个，并不会覆盖以前的日志，保存的是全量的日志。但是这就会导致一个问题，就是没有标志能让 InnoDB 从 bin log 中判断哪些数据已经刷入磁盘了，哪些数据还没有。</p>
 <p>redo log 是循环写的，redo log 只会记录未刷入磁盘的日志，已经刷入磁盘的数据都会从 redo log 这个有限大小的日志文件里删除。</p>
@@ -332,7 +332,7 @@
 <li>否则，回滚事务。</li>
 </ol>
 <h2 id="为什么需要两阶段提交" class="headerLink">
-    <a href="#%e4%b8%ba%e4%bb%80%e4%b9%88%e9%9c%80%e8%a6%81%e4%b8%a4%e9%98%b6%e6%ae%b5%e6%8f%90%e4%ba%a4" class="header-mark"></a>为什么需要两阶段提交</h2><p>两阶段提交主要是<strong>为了解决主从数据同步的问题</strong>。如果没有两阶段提交，那么 binlog 和 redolog 的提交，无非就是两种形式&#x1f447;</p>
+    <a href="#%e4%b8%ba%e4%bb%80%e4%b9%88%e9%9c%80%e8%a6%81%e4%b8%a4%e9%98%b6%e6%ae%b5%e6%8f%90%e4%ba%a4" class="header-mark"></a>为什么需要两阶段提交</h2><p>两阶段提交主要是<strong>为了解决主从数据同步的问题</strong>。如果没有两阶段提交，那么 binlog 和 redolog 的提交，无非就是两种形式👇</p>
 <ol>
 <li>先写 bin-log 再写 redo-log</li>
 <li>先写 redo-log 再写 bin-log</li>
@@ -362,7 +362,7 @@
         
     </a><figcaption class="image-caption">MVCC</figcaption>
     </figure></p>
-<p>在 MVCC 下，就可以做到读写不阻塞，且避免了类似脏读这样的问题。那 MVCC 是怎么做的呢&#x2753;</p>
+<p>在 MVCC 下，就可以做到读写不阻塞，且避免了类似脏读这样的问题。那 MVCC 是怎么做的呢❓</p>
 <p>MVCC 通过生成数据<strong><ruby>快照<rt>Snapshot</rt></ruby></strong>，并用这个快照来提供一定级别（语句级或事务级）的一致性读取。</p>
 <p>回到事务隔离级别下，针对于<strong><ruby>read committed<rt>读已提交</rt></ruby></strong> 隔离级别，它生成的就是<strong>语句级快照</strong>，而针对于<strong><ruby>repeatable read<rt>可重复读</rt></ruby></strong>，它生成的就是<strong>事务级的快照</strong>。</p>
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221202/00282fd01288429b8b03a1407b7c5227.png" title="MVCC2" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221202/00282fd01288429b8b03a1407b7c5227.png" data-sub-html="<h2> </h2><p>MVCC2</p>">
@@ -385,7 +385,7 @@
 <p>而如果是当前读（指的是<code>select * from table for update</code>），则需要配合间隙锁来解决幻读的问题。</p>
 <p>剩下的就是<strong><ruby>serializable<rt>串行</rt></ruby></strong>隔离级别了，它的最高的隔离级别，相当于不允许事务的并发，事务与事务之间执行是串行的，它的效率最低，但同时也是最安全的。</p>
 <h2 id="事务隔离机制的底层实现" class="headerLink">
-    <a href="#%e4%ba%8b%e5%8a%a1%e9%9a%94%e7%a6%bb%e6%9c%ba%e5%88%b6%e7%9a%84%e5%ba%95%e5%b1%82%e5%ae%9e%e7%8e%b0" class="header-mark"></a>事务隔离机制的底层实现</h2><p>每种隔离级别都是基于锁和 MVCC 机制实现的&#x1f447;</p>
+    <a href="#%e4%ba%8b%e5%8a%a1%e9%9a%94%e7%a6%bb%e6%9c%ba%e5%88%b6%e7%9a%84%e5%ba%95%e5%b1%82%e5%ae%9e%e7%8e%b0" class="header-mark"></a>事务隔离机制的底层实现</h2><p>每种隔离级别都是基于锁和 MVCC 机制实现的👇</p>
 <ul>
 <li>读未提交/RU：写操作加排他锁，读操作不加锁。</li>
 <li>读已提交/RC：写操作加排他锁，读操作使用 MVCC，但每次 select 都生成读视图。</li>
@@ -409,7 +409,7 @@
 <p>在每行数据有两列隐藏的字段，分别是<code>DB_TRX_ID</code>（记录着当前 ID）以及<code>DB_ROLL_PTR</code> 指向上一个版本数据在 undo log 里的位置指针，到这里，很容易就发现，MVCC 其实就是靠「比对版本」来实现读写不阻塞，而版本的数据存在于 undo log 中。</p>
 <p>而针对于不同的隔离级别 read committed 和 repeatable read，无非就是 read committed 隔离级别下，每次都获取一个新的 read view，repeatable read 隔离级别则每次事务只获取一个 read view。</p>
 <h2 id="工作中如何建索引" class="headerLink">
-    <a href="#%e5%b7%a5%e4%bd%9c%e4%b8%ad%e5%a6%82%e4%bd%95%e5%bb%ba%e7%b4%a2%e5%bc%95" class="header-mark"></a>工作中如何建索引</h2><p>如果表有一定的数据量，那就应该要创建对应的索引，创建索引需要注意的点，比如说&#x1f447;</p>
+    <a href="#%e5%b7%a5%e4%bd%9c%e4%b8%ad%e5%a6%82%e4%bd%95%e5%bb%ba%e7%b4%a2%e5%bc%95" class="header-mark"></a>工作中如何建索引</h2><p>如果表有一定的数据量，那就应该要创建对应的索引，创建索引需要注意的点，比如说👇</p>
 <ol>
 <li>
 <p>是否能使用「覆盖索引」，减少「回表」所消耗的时间。意味着，我们在 select 的时候，一定要指明对应的列，而不是<code>select *</code></p>
@@ -445,7 +445,7 @@
     </figure></p>
 <h2 id="为什么走了索引查询还是慢" class="headerLink">
     <a href="#%e4%b8%ba%e4%bb%80%e4%b9%88%e8%b5%b0%e4%ba%86%e7%b4%a2%e5%bc%95%e6%9f%a5%e8%af%a2%e8%bf%98%e6%98%af%e6%85%a2" class="header-mark"></a>为什么走了索引查询还是慢</h2><p>如果走对了索引，但查询还是慢，那一般来说就是表的数据量实在是太大了。</p>
-<p>首先，考虑能不能把「旧的数据」给 “删掉” &#x1f622; 如果「旧的数据」已经没有查询的业务了，那最简单的办法肯定是 “删掉” 部分数据咯。数据量降低了，那自然，检索速度就快了&hellip;.</p>
+<p>首先，考虑能不能把「旧的数据」给 “删掉” 😢 如果「旧的数据」已经没有查询的业务了，那最简单的办法肯定是 “删掉” 部分数据咯。数据量降低了，那自然，检索速度就快了&hellip;.</p>
 <p>其实，只有极少部分业务可以删掉数据&hellip;</p>
 <p>那么，就考虑另一种情况，能不能在查询之前，直接走一层缓存（Redis）。</p>
 <p>而走缓存的话，又要看业务能不能忍受读取的「非真正实时」的数据（毕竟 Redis 和 MySQL 的数据一致性需要保证），如果查询条件相对复杂且多变的话（涉及各种 group by 和 sum ），那走缓存也不是一种好的办法，维护起来就不方便了…</p>
@@ -505,7 +505,7 @@
     <a href="#%e5%89%8d%e8%a8%80" class="header-mark"></a>前言</h2><p>为什么 MySQL 采用 B+ 树作为索引？</p>
 <p>如果纯粹的猜测 MySQL 数据库索引为什么使用 B+ 树？那么围绕这个问题的回答通常一定是围绕 B+ 树本身是什么，有什么优势这两点去解释这个问题。</p>
 <p>这不是我开始这么去想的，看了很多文章都是从这一维度问答，这些回答让我失望。直到那天问了坐在我旁边那个整天摸鱼的 5 年程序员；他慵懒的回答：你想为什么是使用的是树结构呢？咦，听到这回答，一下打开了我的思绪，有点意思！</p>
-<p>先抛开 B+ 树是什么，有什么优势，这些先入为主的答案。我想要的是为什么&#x2753;</p>
+<p>先抛开 B+ 树是什么，有什么优势，这些先入为主的答案。我想要的是为什么❓</p>
 <p>为什么 MySQL 的索引有那么多的数据结构可选，偏偏选树结构？为什么那么多的树结构？为什么又偏偏采用 B+ 树作为索引?</p>
 <p>这才是我要想明白的！我想要的是不只是答案，还要答案背后的脉络！我想要的不仅是要知其然，更想要知其所以然。</p>
 <h2 id="那么多数据结构为什么选树结构" class="headerLink">
@@ -537,7 +537,7 @@
 <p>当然索引首要目的<strong>能支持高效范围查询，还要有插入更新等操作的动态数据结构</strong>。</p>
 <p>所以有满足以这两条主要条件的除了树结构你还会想到其他什么数据结构？还有就是哈希表、跳表</p>
 <h3 id="哈希表" class="headerLink">
-    <a href="#%e5%93%88%e5%b8%8c%e8%a1%a8" class="header-mark"></a>哈希表</h3><p>哈希表的物理存储是一个数组&#x26a0;&#xfe0f;，而数组在内存中是<strong>连续地址</strong>的空间。</p>
+    <a href="#%e5%93%88%e5%b8%8c%e8%a1%a8" class="header-mark"></a>哈希表</h3><p>哈希表的物理存储是一个数组⚠️，而数组在内存中是<strong>连续地址</strong>的空间。</p>
 <p>数据以 <code>Key</code>、<code>Value</code> 的方式存储。哈希表拥有精确的查询，所以时间复杂度是 <code>O(1)</code>。</p>
 <p>而哈希表之所以能这么快是通过 <code>Key </code>计算数组下标来快速找到 <code>Value</code>。</p>
 <p>最简单的计算的方式是 <strong>余数法</strong>，通过先计算<code>key</code>的 <code>HashCode</code>，再通过<strong>哈希表的数组长度</strong>对 <code>HashCode</code> 求余，求余得出的余数就是数组下标，最后由下标访问到哈希表中存的<code>Key、Value</code>。</p>
@@ -727,7 +727,7 @@
 <!-- email： xiaobinqt@163.com -->
 <!-- https://xiaobinqt.github.io -->
 <!-- https://www.xiaobinqt.cn -->
-<p>mysql <a href="https://dev.mysql.com/downloads/workbench/" target="_blank" rel="noopener noreferrer">workbench</a> 是官方推荐的数据库工具，用了很长时间却一直不知道触发器在哪儿&#x1f622;。</p>
+<p>mysql <a href="https://dev.mysql.com/downloads/workbench/" target="_blank" rel="noopener noreferrer">workbench</a> 是官方推荐的数据库工具，用了很长时间却一直不知道触发器在哪儿😢。</p>
 <p>触发器是对单个表的操作，而不是整个数据库的操作，所以 <code>Alter Table </code>就可以看到触发器：</p>
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/795d688e27b34d9d8f7b512a99721148.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="图1" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220420/795d688e27b34d9d8f7b512a99721148.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>图1</h2><p>图1</p>">
         
@@ -767,7 +767,7 @@
 <pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">cat /etc/docker/daemon.json
 </span></span></code></pre></td></tr></table>
 </div>
-</div><p>如果没有<code>daemon.json</code>文件可以手动创建一个。可以设置中国区镜像或是网易镜像，也可以设置阿里云镜像（推荐使用阿里云的加速器，因为快&#x1f923;）。</p>
+</div><p>如果没有<code>daemon.json</code>文件可以手动创建一个。可以设置中国区镜像或是网易镜像，也可以设置阿里云镜像（推荐使用阿里云的加速器，因为快🤣）。</p>
 <ul>
 <li>中国区镜像</li>
 </ul>
@@ -840,7 +840,7 @@
     </a><figcaption class="image-caption">查看镜像源</figcaption>
     </figure></p>
 <h2 id="下载镜像" class="headerLink">
-    <a href="#%e4%b8%8b%e8%bd%bd%e9%95%9c%e5%83%8f" class="header-mark"></a>下载镜像</h2><p>可以去 <a href="https://hub.docker.com/_/mysql/tags" target="_blank" rel="noopener noreferrer">https://hub.docker.com/_/mysql/tags</a> 仓库找需要的 mysql 版本&#x1f447;</p>
+    <a href="#%e4%b8%8b%e8%bd%bd%e9%95%9c%e5%83%8f" class="header-mark"></a>下载镜像</h2><p>可以去 <a href="https://hub.docker.com/_/mysql/tags" target="_blank" rel="noopener noreferrer">https://hub.docker.com/_/mysql/tags</a> 仓库找需要的 mysql 版本👇</p>
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221121/09ed0f1adae443d3a22a34796c8b3c0e.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="镜像下载" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221121/09ed0f1adae443d3a22a34796c8b3c0e.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>镜像下载</h2><p>镜像下载</p>">
         
     </a><figcaption class="image-caption">镜像下载</figcaption>
@@ -977,7 +977,7 @@
     </figure></p>
 <h2 id="faq" class="headerLink">
     <a href="#faq" class="header-mark"></a>FAQ</h2><ul>
-<li>&#x2753; <strong>secure-file-priv</strong></li>
+<li>❓ <strong>secure-file-priv</strong></li>
 </ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -997,7 +997,7 @@
     </a><figcaption class="image-caption">999:999</figcaption>
     </figure></p>
 <ul>
-<li>&#x2753; <strong>flush privileges</strong></li>
+<li>❓ <strong>flush privileges</strong></li>
 </ul>
 <p><code>flush privileges</code>命令本质上的作用是将当前 user 和 privilige 表中的用户信息/权限设置从 mysql 库中提取到内存里。</p>
 <p>MySQL 用户数据和权限有修改后，希望在<strong>不重启MySQL服务</strong>的情况下直接生效，就可以执行这个命令。</p>
@@ -1021,7 +1021,7 @@
 <!-- https://xiaobinqt.github.io -->
 <!-- https://www.xiaobinqt.cn -->
 <p>不论客户端进程和服务器进程是采用哪种方式进行通信，最后实现的效果都是：客户端进程向服务器进程发送一段文本（MySQL语句），服务器进程处理后再向客户端进程发送一段文本（处理结果）。</p>
-<p>那服务器进程对客户端进程发送的请求做了什么处理，才能产生最后的处理结果呢？客户端可以向服务器发送增删改查各类请求，这里以查询请求为例，图示一下大致的过程&#x1f447;</p>
+<p>那服务器进程对客户端进程发送的请求做了什么处理，才能产生最后的处理结果呢？客户端可以向服务器发送增删改查各类请求，这里以查询请求为例，图示一下大致的过程👇</p>
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220517/e3f164a15a2e49bdb4481b4bfced866d.png" title="client-server" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220517/e3f164a15a2e49bdb4481b4bfced866d.png" data-sub-html="<h2>client-server</h2><p>client-server</p>">
         
     </a><figcaption class="image-caption">client-server</figcaption>
@@ -1070,7 +1070,7 @@
         
     </a><figcaption class="image-caption">存储程序</figcaption>
     </figure></p>
-<p>存储程序可以封装一些语句，然后给用户提供一种简单的方式来调用这个存储程序，从而间接地执行某些语句。根据调用方式的不同，可以把存储程序分为<code>存储例程</code>、<code>触发器</code>和<code>事件</code>，存储例程又分为<code>存储函数</code>和<code>存储过程</code>，如&#x261d;&#xfe0f;
+<p>存储程序可以封装一些语句，然后给用户提供一种简单的方式来调用这个存储程序，从而间接地执行某些语句。根据调用方式的不同，可以把存储程序分为<code>存储例程</code>、<code>触发器</code>和<code>事件</code>，存储例程又分为<code>存储函数</code>和<code>存储过程</code>，如☝️
 上图。</p>
 <h2 id="存储函数" class="headerLink">
     <a href="#%e5%ad%98%e5%82%a8%e5%87%bd%e6%95%b0" class="header-mark"></a>存储函数</h2><p>存储函数<strong>只有一个返回值</strong>，可以从 mysql 内置的函数理解，所有 mysql 内置的函数都是只有一个返回值，比如：</p>
@@ -1139,7 +1139,7 @@
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">END</span><span class="w"> </span><span class="n">EOF</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
-</div><p>存储函数的调用跟普通函数的调用也是一样的&#x1f447;</p>
+</div><p>存储函数的调用跟普通函数的调用也是一样的👇</p>
 <p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/fbbd1bb4c54341368ccda472619df5d2.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="效果" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220419/fbbd1bb4c54341368ccda472619df5d2.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>效果</h2><p>效果</p>">
         
     </a><figcaption class="image-caption">效果</figcaption>
@@ -1174,7 +1174,7 @@
         
     </a><figcaption class="image-caption">局部变量和自定义变量</figcaption>
     </figure></p>
-<p>&#x261d;&#xfe0f; 可知，在存储函数<code>get_phone</code>中有一个局部变量 <code>ph</code>和自定义变量 <code>@ii</code>，函数调用结束后 <code>@ii</code> 被赋值为<code>100</code> 且可以在函数执行完后访问，但是 <code>@ph</code> 是空的。</p>
+<p>☝️ 可知，在存储函数<code>get_phone</code>中有一个局部变量 <code>ph</code>和自定义变量 <code>@ii</code>，函数调用结束后 <code>@ii</code> 被赋值为<code>100</code> 且可以在函数执行完后访问，但是 <code>@ph</code> 是空的。</p>
 <h2 id="存储过程" class="headerLink">
     <a href="#%e5%ad%98%e5%82%a8%e8%bf%87%e7%a8%8b" class="header-mark"></a>存储过程</h2><p>存储函数侧重于执行某些语句并<strong>返回一个值</strong>，而存储过程更侧重于单纯的去执行这些语句。存储过程的定义<strong>不需要声明返回值类型</strong>。</p>
 <div class="highlight"><div class="chroma">
@@ -1240,9 +1240,9 @@
         
     </a><figcaption class="image-caption">存储过程</figcaption>
     </figure></p>
-<p>&#x261d;&#xfe0f; <code>my_operate</code> 定义并执行了 4 条 sql，完美诠释了存储过程更侧重于单纯的去执行这些语句。</p>
+<p>☝️ <code>my_operate</code> 定义并执行了 4 条 sql，完美诠释了存储过程更侧重于单纯的去执行这些语句。</p>
 <h2 id="存储过程的参数前缀" class="headerLink">
-    <a href="#%e5%ad%98%e5%82%a8%e8%bf%87%e7%a8%8b%e7%9a%84%e5%8f%82%e6%95%b0%e5%89%8d%e7%bc%80" class="header-mark"></a>存储过程的参数前缀</h2><p>存储过程在定义参数的时候可以选择添加一些前缀&#x1f447;，如果不写，<strong>默认的前缀是<code>IN</code></strong>：</p>
+    <a href="#%e5%ad%98%e5%82%a8%e8%bf%87%e7%a8%8b%e7%9a%84%e5%8f%82%e6%95%b0%e5%89%8d%e7%bc%80" class="header-mark"></a>存储过程的参数前缀</h2><p>存储过程在定义参数的时候可以选择添加一些前缀👇，如果不写，<strong>默认的前缀是<code>IN</code></strong>：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
@@ -1277,7 +1277,7 @@
 </tr>
 </tbody>
 </table>
-<p>&#x1f447;以下的示例，综合了 <code>in</code>，<code>out</code>，<code>inout</code> 参数：</p>
+<p>👇以下的示例，综合了 <code>in</code>，<code>out</code>，<code>inout</code> 参数：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt"> 1
@@ -1314,7 +1314,7 @@
         
     </a><figcaption class="image-caption">综合示例</figcaption>
     </figure></p>
-<p>由&#x261d;&#xfe0f;可以看出，虽然在存储过程中修改了 <code>pname</code> 的值为 <code>公孙胜</code>，但是并<strong>没有生效</strong>，值依然是最初的<code>宋江</code>。<code>IN</code>参数只能被用于读取，对它赋值是不会被调用者看到的。</p>
+<p>由☝️可以看出，虽然在存储过程中修改了 <code>pname</code> 的值为 <code>公孙胜</code>，但是并<strong>没有生效</strong>，值依然是最初的<code>宋江</code>。<code>IN</code>参数只能被用于读取，对它赋值是不会被调用者看到的。</p>
 <p><code>out</code> 参数 <code>ophone</code> 最初是空的，通过存储过程赋值成功为<code>公孙胜</code>。</p>
 <p><code>inout</code> 参数 <code>io_name</code> 最初是空的，通过存储过程赋值成功为<code>公孙胜</code>，这里如果 <code>io_name</code> 不为空，也会被修改为<code>公孙胜</code>。</p>
 <h2 id="存储过程和存储函数的区别" class="headerLink">
@@ -1342,7 +1342,7 @@
 <blockquote>
 <p>不显式的使用<code>CLOSE</code>语句关闭游标的话，在该存储函数或存储过程执行完之后会自动关闭游标。</p>
 </blockquote>
-<p>可以使用&#x1f447;来获取结果集中的记录：</p>
+<p>可以使用👇来获取结果集中的记录：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
@@ -1352,7 +1352,7 @@
 </span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="示例-2" class="headerLink">
-    <a href="#%e7%a4%ba%e4%be%8b-2" class="header-mark"></a>示例</h3><p>&#x1f911;以下创建一个存储过程，在存储过程中使用游标。</p>
+    <a href="#%e7%a4%ba%e4%be%8b-2" class="header-mark"></a>示例</h3><p>🤑以下创建一个存储过程，在存储过程中使用游标。</p>
 <p>创建游标<code>t_cursor</code>，游标执行语句为 <code>SELECT phone, name FROM t</code>。</p>
 <p><code>DECLARE CONTINUE HANDLER FOR NOT FOUND 处理语句;</code> 的作用是结果集遍历结束后会自动执行这句，这里也可以使用 <code>WHILE</code> 循环遍历，但是 <code>while</code>
 有个弊端是需要提前知道结束条件，比如结果集的总数是多少。这样写的好处是直接遍历，遍历结束自动处理，将 <code>done</code> 变量设置为 <code>1</code>，也就是说只要 <code>done = 1</code> 就说明遍历结束了，利用 <code>LEAVE</code> 关键字跳出循环。</p>
@@ -1447,7 +1447,7 @@
 <li>对于<code>UPDATE</code>语句设置的触发器来说，<code>NEW</code>代表修改后的记录，<code>OLD</code>代表修改前的记录。</li>
 </ul>
 <h3 id="示例-3" class="headerLink">
-    <a href="#%e7%a4%ba%e4%be%8b-3" class="header-mark"></a>示例</h3><p>&#x1f926;&zwj;&#x2642;&#xfe0f;以下示例，对表 <code>t</code> 创建一个 <code>my_trigger</code>触发器，表 <code>t</code> 有三个字段，<code>name</code>，<code>phone</code>，<code>my_join</code>，对于每条 <code>insert</code> 的语句，在执行 <code>insert</code>
+    <a href="#%e7%a4%ba%e4%be%8b-3" class="header-mark"></a>示例</h3><p>🤦‍♂️以下示例，对表 <code>t</code> 创建一个 <code>my_trigger</code>触发器，表 <code>t</code> 有三个字段，<code>name</code>，<code>phone</code>，<code>my_join</code>，对于每条 <code>insert</code> 的语句，在执行 <code>insert</code>
 之前判断如果
 <code>name = admin</code> 那么将即将插入的 <code>name</code> 值改为 <code>valid</code>，如果 <code>name</code> 值为<code>空</code>，将即将插入的 <code>name</code> 值改为<code>无名氏</code>，除此之外将 <code>name</code> 和 <code>phone</code> 拼接后赋给 <code>my_join</code>
 字段。</p>
@@ -1653,7 +1653,7 @@
         
     </a><figcaption class="image-caption">修改结束符</figcaption>
     </figure></p>
-<p>由&#x261d;&#xfe0f;图可知，将默认的结束符从 <code>;</code> 改为 <code>EOF</code>。</p>
+<p>由☝️图可知，将默认的结束符从 <code>;</code> 改为 <code>EOF</code>。</p>
 <h2 id="什么是外键" class="headerLink">
     <a href="#%e4%bb%80%e4%b9%88%e6%98%af%e5%a4%96%e9%94%ae" class="header-mark"></a>什么是外键</h2><p>如果<code>A</code>表中的某个列或者某些列依赖与<code>B</code>表中的某个列或者某些列，那么就称<code>A</code>表为子表，<code>B</code>表为父表。子表和父表可以使用外键来关联起来。</p>
 <p><strong>父表中被子表依赖的列或者列组合必须建立索引</strong>，如果该列或者列组合已经是主键或者有<code>UNIQUE</code>属性，那么也就被默认建立了索引。</p>
@@ -1689,7 +1689,7 @@
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">);</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
-</div><p>&#x261d;&#xfe0f; 如上，在对<code>student_score</code>表插入数据的时候，MySQL 都会检查插入的学号是否能在<code>student_info</code>
+</div><p>☝️ 如上，在对<code>student_score</code>表插入数据的时候，MySQL 都会检查插入的学号是否能在<code>student_info</code>
 表中找到，如果找不到则会报错，因为<code>student_score</code>表中的<code>number</code>
 列依赖于<code>student_info</code>表的<code>number</code>列，也就是，如果没有这个学生，何来成绩？</p>
 <h2 id="zerofill" class="headerLink">
@@ -2020,7 +2020,7 @@
 </ul>
 <p><strong>两者的区别是会不会忽略统计列的值为NULL的行</strong>。</p>
 <h2 id="查询" class="headerLink">
-    <a href="#%e6%9f%a5%e8%af%a2" class="header-mark"></a>查询</h2><p><code>where</code> 竟然可以这么写&#x1f607;</p>
+    <a href="#%e6%9f%a5%e8%af%a2" class="header-mark"></a>查询</h2><p><code>where</code> 竟然可以这么写😇</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
@@ -2033,7 +2033,7 @@
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">where</span><span class="w"> </span><span class="p">(</span><span class="n">ip</span><span class="p">,</span><span class="w"> </span><span class="k">mode</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;192.168.50.101&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">);</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
-</div><p><code>in</code> 竟然可以这么写&#x1f602;</p>
+</div><p><code>in</code> 竟然可以这么写😂</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
@@ -2190,7 +2190,7 @@
 </span></span><span class="line"><span class="cl">END
 </span></span></code></pre></td></tr></table>
 </div>
-</div><p>&#x261d;&#xfe0f;示例中，在<code>LOOP</code>语句前加了一个<code>flag:</code>，相当于为这个循环打了一个名叫<code>flag</code>的标记，然后在对应的<code>END LOOP</code>
+</div><p>☝️示例中，在<code>LOOP</code>语句前加了一个<code>flag:</code>，相当于为这个循环打了一个名叫<code>flag</code>的标记，然后在对应的<code>END LOOP</code>
 语句后边也把这个标记名<code>flag</code>
 给写上了。在存储函数的函数体中使用<code>LEAVE flag</code>语句来结束<code>flag</code>这个标记所代表的循环。</p>
 <blockquote>
@@ -2302,7 +2302,7 @@
     <a href="#%e5%a6%82%e4%bd%95%e6%ad%a3%e7%a1%ae%e4%bd%bf%e7%94%a8%e7%b4%a2%e5%bc%95%e5%93%aa%e4%ba%9b%e6%83%85%e5%86%b5%e4%bc%9a%e5%af%bc%e8%87%b4%e7%b4%a2%e5%bc%95%e5%a4%b1%e6%95%88" class="header-mark"></a>如何正确使用索引，哪些情况会导致索引失效</h2><ul>
 <li>查询 SQL 中尽量不要使用<code>OR</code>关键字，可以使用子查询代替。</li>
 <li>模糊查询尽量不要以<code>%</code>开头，如果实在要实现这个功能可以建立全文索引。</li>
-<li>&#x26a0;&#xfe0f;编写 SQL 时一定要注意字段的数据类型，否则 MySQL 的隐式转换会导致索引失效。</li>
+<li>⚠️编写 SQL 时一定要注意字段的数据类型，否则 MySQL 的隐式转换会导致索引失效。</li>
 <li>一定不要在编写 SQL 时让索引字段执行计算工作，尽量将计算工作放在客户端中完成。</li>
 <li>对于索引字段尽量不要使用计算类函数，一定要使用时请记得将函数计算放在<code>=</code>后面。</li>
 <li>多条件的查询 SQL 一定要使用联合索引中的第一个字段，否则会打破最左匹配原则。</li>
