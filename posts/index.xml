@@ -4,7 +4,7 @@
         <link>https://www.xiaobinqt.cn/posts/</link>
         <description>所有文章 | xiaobinqt 博客 - 技术改变生活</description>
         <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>xiaobinqt@163.com (xiaobinqt)</managingEditor>
-            <webMaster>xiaobinqt@163.com (xiaobinqt)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Sat, 01 Jun 2024 00:00:00 &#43;0000</lastBuildDate><atom:link href="https://www.xiaobinqt.cn/posts/" rel="self" type="application/rss+xml" /><item>
+            <webMaster>xiaobinqt@163.com (xiaobinqt)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Mon, 16 Oct 2023 00:00:00 &#43;0000</lastBuildDate><atom:link href="https://www.xiaobinqt.cn/posts/" rel="self" type="application/rss+xml" /><item>
     <title>纪念一位老友</title>
     <link>https://www.xiaobinqt.cn/old-pal/</link>
     <pubDate>Wed, 16 Mar 2022 00:00:00 &#43;0000</pubDate><author>
@@ -27,24 +27,6 @@
 <p>也许是年纪大了，不知不觉对有些事越来越伤感。几次提笔想写点什么，但是每次都写不出来，心里总记挂这件事，可能是那次我没有停下来见他吧。</p>
 <br>
 <div id="id-1">2021年10月15日完</div>
-]]></description>
-</item><item>
-    <title>老表，这是一个家具测试</title>
-    <link>https://www.xiaobinqt.cn/furniture/</link>
-    <pubDate>Sat, 01 Jun 2024 00:00:00 &#43;0000</pubDate><author>
-        <name>xiaobinqt</name>
-    </author><guid>https://www.xiaobinqt.cn/furniture/</guid>
-    <description><![CDATA[<!-- author： xiaobinqt -->
-<!-- email： xiaobinqt@163.com -->
-<!-- https://xiaobinqt.github.io -->
-<!-- https://www.xiaobinqt.cn -->
-<meting-js server="netease" type="song" id="1868553" theme="#448aff" autoplay="true" loop="all"></meting-js>
-<p><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20240601/c27a69b7189c4eb485c021cf8587eef1.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="家具1" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20240601/c27a69b7189c4eb485c021cf8587eef1.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15">
-        
-    </a></p>
-<p><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20240601/e168f29ff5394a6ba53bf3a536538631.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="家具2" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20240601/e168f29ff5394a6ba53bf3a536538631.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15">
-        
-    </a></p>
 ]]></description>
 </item><item>
     <title>各种音乐文件格式转 MP3</title>
@@ -935,6 +917,486 @@
 </div><h2 id="参考" class="headerLink">
     <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
 <li><a href="https://blog.csdn.net/weixin_45627369/article/details/127193703" target="_blank" rel="noopener noreferrer">golang——channel</a></li>
+</ul>
+]]></description>
+</item><item>
+    <title>Go Slice 实现原理</title>
+    <link>https://www.xiaobinqt.cn/go-slice-principle/</link>
+    <pubDate>Tue, 10 Oct 2023 00:00:00 &#43;0000</pubDate><author>
+        <name>xiaobinqt</name>
+    </author><guid>https://www.xiaobinqt.cn/go-slice-principle/</guid>
+    <description><![CDATA[<!-- author： xiaobinqt -->
+<!-- email： xiaobinqt@163.com -->
+<!-- https://xiaobinqt.github.io -->
+<!-- https://www.xiaobinqt.cn -->
+<h2 id="什么是-slice" class="headerLink">
+    <a href="#%e4%bb%80%e4%b9%88%e6%98%af-slice" class="header-mark"></a>什么是 slice</h2><p>切片是基于数组实现的，它的底层是数组，可以理解为对底层数组的抽象。</p>
+<p>源码包中 src/runtime/slice.go 定义了 slice 的数据结构：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">type slice struct {
+</span></span><span class="line"><span class="cl">	array unsafe.Pointer // ArbitraryType int
+</span></span><span class="line"><span class="cl">	len   int
+</span></span><span class="line"><span class="cl">	cap   int
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>array 是指向底层数组的指针，占用 8 个字节。len 是切片的长度，占用 8 个字节。cap 是切片的容量，cap 总是大于等于 len 的，占用 8 个字节。所以 slice 占用 24 个字节。</p>
+<p>slice 有 4 种初始化方式</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	// 初始化方式1：直接声明
+</span></span><span class="line"><span class="cl">	var slice1 []int
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	// 初始化方式2：使用字面量
+</span></span><span class="line"><span class="cl">	slice2 := []int{1, 2, 3, 4}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	// 初始化方式3：使用 make 创建slice
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	slice3 := make([]int, 3, 5)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	// 初始化方式4: 从切片或数组截取
+</span></span><span class="line"><span class="cl">	slcie4 := arr[1:3]
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>可以通过下面的代码，看下 slice 初始化调用的底层函数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">slice</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">int</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">slice</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">slice</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">slice</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nx">slice</span><span class="p">),</span> <span class="nb">cap</span><span class="p">(</span><span class="nx">slice</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>通过 <code>go tool compile -S main.go | grep CALL</code> 得到汇编代码</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">0x0032 00050 (main.go:6)        CALL    runtime.makeslice(SB)
+</span></span><span class="line"><span class="cl">0x004b 00075 (main.go:7)        CALL    runtime.growslice(SB)
+</span></span><span class="line"><span class="cl">0x0076 00118 (main.go:8)        CALL    runtime.convTslice(SB)
+</span></span><span class="line"><span class="cl">0x0091 00145 (main.go:8)        CALL    runtime.convT64(SB)
+</span></span><span class="line"><span class="cl">0x00ac 00172 (main.go:8)        CALL    runtime.convT64(SB)
+</span></span><span class="line"><span class="cl">0x00e0 00224 ($GOROOT/src/fmt/print.go:274)     CALL    fmt.Fprintln(SB)
+</span></span><span class="line"><span class="cl">0x00f5 00245 (main.go:5)        CALL    runtime.morestack_noctxt(SB)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>初始化 slice 调用的是 runtime.makeslice，makeslice 函数的工作主要就是计算 slice 所需内存大小，然后调用 mallocgc 进行内存的分配。</p>
+<p>所需内存大小 = 切片中元素大小 * 切片的容量。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">runtime</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">makeslice</span><span class="p">(</span><span class="nx">et</span> <span class="o">*</span><span class="nx">_type</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">cap</span> <span class="kt">int</span><span class="p">)</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">mem</span><span class="p">,</span> <span class="nx">overflow</span> <span class="o">:=</span> <span class="nx">math</span><span class="p">.</span><span class="nf">MulUintptr</span><span class="p">(</span><span class="nx">et</span><span class="p">.</span><span class="nx">size</span><span class="p">,</span> <span class="nb">uintptr</span><span class="p">(</span><span class="nx">cap</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">overflow</span> <span class="o">||</span> <span class="nx">mem</span> <span class="p">&gt;</span> <span class="nx">maxAlloc</span> <span class="o">||</span> <span class="nx">len</span> <span class="p">&lt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="nx">len</span> <span class="p">&gt;</span> <span class="nx">cap</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// NOTE: Produce a &#39;len out of range&#39; error instead of a
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="c1">// &#39;cap out of range&#39; error when someone does make([]T, bignumber).
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="c1">// &#39;cap out of range&#39; is true too, but since the cap is only being
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="c1">// supplied implicitly, saying len is clearer.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="c1">// See golang.org/issue/4085.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">mem</span><span class="p">,</span> <span class="nx">overflow</span> <span class="o">:=</span> <span class="nx">math</span><span class="p">.</span><span class="nf">MulUintptr</span><span class="p">(</span><span class="nx">et</span><span class="p">.</span><span class="nx">size</span><span class="p">,</span> <span class="nb">uintptr</span><span class="p">(</span><span class="nx">len</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">overflow</span> <span class="o">||</span> <span class="nx">mem</span> <span class="p">&gt;</span> <span class="nx">maxAlloc</span> <span class="o">||</span> <span class="nx">len</span> <span class="p">&lt;</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nf">panicmakeslicelen</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">panicmakeslicecap</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nf">mallocgc</span><span class="p">(</span><span class="nx">mem</span><span class="p">,</span> <span class="nx">et</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="array-和-slice-区别" class="headerLink">
+    <a href="#array-%e5%92%8c-slice-%e5%8c%ba%e5%88%ab" class="header-mark"></a>array 和 slice 区别</h2><ol>
+<li>
+<p>数组初始化必须指定长度，并且长度就是固定的 切片的长度是不固定的，可以追加元素，在追加时可能使切片的容量增大</p>
+</li>
+<li>
+<p>数组是值类型，将一个数组赋值给另一个数组时，传递的是一份深拷贝，函数传参操作都会复制整个数组数据，会占用额外的内存，函数内对数组元素值的修改，不会修改原数组内容。切片是引用类型，将一个切片赋值给另一个切片时，传递的是一份浅拷贝，函数传参操作不会拷贝整个切片，只会复制 len 和 cap，底层共用同一个数组，不会占用额外的内存，函数内对数组元素值的修改，会修改原数组内容。</p>
+</li>
+<li>
+<p>数组需要遍历计算数组长度，时间复杂度为 O(n) 切片底层包含 len 字段，可以通过 len() 计算切片长度，时间复杂度为 O(1)</p>
+</li>
+</ol>
+<h2 id="slice-扩容机制" class="headerLink">
+    <a href="#slice-%e6%89%a9%e5%ae%b9%e6%9c%ba%e5%88%b6" class="header-mark"></a>slice 扩容机制</h2><h3 id="旧规则存在的问题" class="headerLink">
+    <a href="#%e6%97%a7%e8%a7%84%e5%88%99%e5%ad%98%e5%9c%a8%e7%9a%84%e9%97%ae%e9%a2%98" class="header-mark"></a>旧规则存在的问题</h3><p>在 1.17 及之前的版本中，扩容机制是这样的👇：</p>
+<ul>
+<li>
+<p>当新切片需要的容量 cap 大于两倍扩容的容量，则直接按照新切片需要的容量扩容；</p>
+</li>
+<li>
+<p>当原 slice 容量 &lt; 1024 的时候，新 slice 容量变成原来的 2 倍；</p>
+</li>
+<li>
+<p>当原 slice 容量 &gt; 1024，进入一个循环，每次容量变成原来的1.25倍，直到大于期望容量。</p>
+</li>
+</ul>
+<p>slice 扩容时会调用 <code>runtime.growslice</code>。这里只关注该函数 slice 计算容量部分的逻辑，计算方法如下:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// 1.17及以前的版本中
+</span></span><span class="line"><span class="cl">// old指切片的旧容量, cap指期望的新容量
+</span></span><span class="line"><span class="cl">func growslice(old, cap int) int {
+</span></span><span class="line"><span class="cl">    newcap := old
+</span></span><span class="line"><span class="cl">    doublecap := newcap + newcap
+</span></span><span class="line"><span class="cl">    // 如果期望容量大于旧容量的2倍，则直接使用期望容量作为最终容量
+</span></span><span class="line"><span class="cl">    if cap &gt; doublecap {
+</span></span><span class="line"><span class="cl">        newcap = cap
+</span></span><span class="line"><span class="cl">    } else {
+</span></span><span class="line"><span class="cl">        // 如果旧容量小于1024，则直接翻倍
+</span></span><span class="line"><span class="cl">        if old &lt; 1024 {
+</span></span><span class="line"><span class="cl">            newcap = doublecap
+</span></span><span class="line"><span class="cl">        } else {
+</span></span><span class="line"><span class="cl">            // 每次增长大约1.25倍
+</span></span><span class="line"><span class="cl">            for 0 &lt; newcap &amp;&amp; newcap &lt; cap {
+</span></span><span class="line"><span class="cl">                newcap += newcap / 4
+</span></span><span class="line"><span class="cl">            }
+</span></span><span class="line"><span class="cl">            if newcap &lt;= 0 {
+</span></span><span class="line"><span class="cl">                newcap = cap
+</span></span><span class="line"><span class="cl">            }
+</span></span><span class="line"><span class="cl">        }
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">    // 这里忽略了对齐操作
+</span></span><span class="line"><span class="cl">    return newcap
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这个扩容机制令一些人产生了<a href="https://groups.google.com/g/golang-nuts/c/UaVlMQ8Nz3o" target="_blank" rel="noopener noreferrer">一些困惑</a>，因为它会产生一些 “看起来不那么自然的行为”。比如<strong>它计算出来的新容量不是单调递增的</strong>，下面的程序会将不同容量 slice 的扩容结果打印出来:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">2000</span><span class="p">;</span> <span class="nx">i</span> <span class="o">+=</span> <span class="mi">100</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nb">cap</span><span class="p">(</span><span class="nb">append</span><span class="p">(</span><span class="nb">make</span><span class="p">([]</span><span class="kt">bool</span><span class="p">,</span> <span class="nx">i</span><span class="p">),</span> <span class="kc">true</span><span class="p">)))</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>该程序的输出如下（旧版本的扩容规则）:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// 第一列是切片的旧容量
+</span></span><span class="line"><span class="cl">// 第二列是扩容后的容量
+</span></span><span class="line"><span class="cl">0 8
+</span></span><span class="line"><span class="cl">100 208
+</span></span><span class="line"><span class="cl">200 416
+</span></span><span class="line"><span class="cl">300 640
+</span></span><span class="line"><span class="cl">400 896
+</span></span><span class="line"><span class="cl">500 1024
+</span></span><span class="line"><span class="cl">600 1280
+</span></span><span class="line"><span class="cl">700 1408
+</span></span><span class="line"><span class="cl">800 1792
+</span></span><span class="line"><span class="cl">900 2048
+</span></span><span class="line"><span class="cl">1000 2048
+</span></span><span class="line"><span class="cl">1100 1408 &lt;-- 在这个点，扩容后的新容量比上面的容量要小
+</span></span><span class="line"><span class="cl">1200 1536
+</span></span><span class="line"><span class="cl">1300 1792
+</span></span><span class="line"><span class="cl">1400 1792
+</span></span><span class="line"><span class="cl">1500 2048
+</span></span><span class="line"><span class="cl">1600 2048
+</span></span><span class="line"><span class="cl">1700 2304
+</span></span><span class="line"><span class="cl">1800 2304
+</span></span><span class="line"><span class="cl">1900 2688
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>可以看到，在 slice 的容量刚刚触发<strong>大于 1024 增长 1.25 倍</strong>这个条件的时候，计算出来的新容量要小于之前计算出的容量，这里绘制了一张图表，可以感受一下:</p>
+<div align="center"></div>
+<h3 id="更加平滑的扩容算法" class="headerLink">
+    <a href="#%e6%9b%b4%e5%8a%a0%e5%b9%b3%e6%bb%91%e7%9a%84%e6%89%a9%e5%ae%b9%e7%ae%97%e6%b3%95" class="header-mark"></a>更加平滑的扩容算法</h3><p>从 <code>go1.18</code> 开始，slice 容量的计算方法被改为了这样:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// 只关心扩容规则的简化版growslice
+</span></span><span class="line"><span class="cl">func growslice(old, cap int) int {
+</span></span><span class="line"><span class="cl">    newcap := old
+</span></span><span class="line"><span class="cl">    doublecap := newcap + newcap
+</span></span><span class="line"><span class="cl">    if cap &gt; doublecap {
+</span></span><span class="line"><span class="cl">        newcap = cap
+</span></span><span class="line"><span class="cl">    } else {
+</span></span><span class="line"><span class="cl">        const threshold = 256 // 不同点1
+</span></span><span class="line"><span class="cl">        if old &lt; threshold {
+</span></span><span class="line"><span class="cl">            newcap = doublecap
+</span></span><span class="line"><span class="cl">        } else {
+</span></span><span class="line"><span class="cl">            for 0 &lt; newcap &amp;&amp; newcap &lt; cap {
+</span></span><span class="line"><span class="cl">                newcap += (newcap + 3*threshold) / 4 // 不同点2
+</span></span><span class="line"><span class="cl">            }
+</span></span><span class="line"><span class="cl">            if newcap &lt;= 0 {
+</span></span><span class="line"><span class="cl">                newcap = cap
+</span></span><span class="line"><span class="cl">            }
+</span></span><span class="line"><span class="cl">        }
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">    return newcap
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>新版的扩容算法相较于旧的有两处不同，首先是双倍容量扩容的最大阈值<strong>从 1024 降为了 256</strong>，只要超过了 256，就开始进行缓慢的增长。其次是增长比例的调整，之前超过了阈值之后，基本为恒定的 1.25 倍增长，而现在超过了阈值之后，增长比例是会动态调整的:</p>
+<ul>
+<li>
+<p>当新切片需要的容量 cap 大于两倍扩容的容量，则直接按照新切片需要的容量扩容；</p>
+</li>
+<li>
+<p>当原 slice 容量 &lt; threshold（256） 的时候，新 slice 容量变成原来的 2 倍；</p>
+</li>
+<li>
+<p>当原 slice 容量 &gt; threshold（256），进入一个循环，每次容量增加 <code>(旧容量+3*threshold)/4</code>。</p>
+</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">初始长度         增长比例
+</span></span><span class="line"><span class="cl">256             2.0
+</span></span><span class="line"><span class="cl">512             1.63
+</span></span><span class="line"><span class="cl">1024            1.44
+</span></span><span class="line"><span class="cl">2048            1.35
+</span></span><span class="line"><span class="cl">4096            1.30
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>可以看到，<strong>随着切片容量的变大，增长比例逐渐向着 1.25 进行靠拢</strong>。</p>
+<p>这次更改之后，slice 扩容整体的增长曲线变得更加平滑：</p>
+<div align="center"></div>
+<p>关于更多信息，可以查看<a href="https://github.com/golang/go/commit/2dda92ff6f9f07eeb110ecbf0fc2d7a0ddd27f9d" target="_blank" rel="noopener noreferrer">#2dda92ff6f9f07eeb110ecbf0fc2d7a0ddd27f9d</a></p>
+<h2 id="slice-是否是线程安全的" class="headerLink">
+    <a href="#slice-%e6%98%af%e5%90%a6%e6%98%af%e7%ba%bf%e7%a8%8b%e5%ae%89%e5%85%a8%e7%9a%84" class="header-mark"></a>slice 是否是线程安全的</h2><p>线程安全的定义是：</p>
+<p>多个线程访问（读）同一个对象时，调用这个对象的行为都可以获得正确的结果，那么这个对象就是线程安全的。</p>
+<p>若有多个线程同时执行写操作，一般都需要考虑线程同步，否则的话就可能影响线程安全。</p>
+<p>Go 语言实现线程安全常用的方式有：</p>
+<ol>
+<li>互斥锁</li>
+<li>读写锁</li>
+<li>原子操作</li>
+<li>sync.once</li>
+<li>sync.atomic</li>
+<li>channel</li>
+</ol>
+<p>slice 底层结构并没有使用加锁等方式，不支持并发读写，所以 slice 并不是线程安全的，使用多个 goroutine 对类型为 slice 的变量进行操作，每次输出的值大概率都不会一样，与预期值不一致，slice 在并发执行中不会报错，但是数据可能会丢失。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;log&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;sync&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 切片非并发安全* 多次执行，每次得到的结果都不一样* 可以考虑使用 channel 本身的特性 (阻塞) 来实现安全的并发读写
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">TestSliceConcurrencySafe</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">TestSliceConcurrencySafe</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">a</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">int</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">wg</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">10000</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">wg</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">go</span> <span class="kd">func</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">a</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}(</span><span class="nx">i</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">wg</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">log</span><span class="p">.</span><span class="nf">Fatalln</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nx">a</span><span class="p">))</span> <span class="c1">// 这里的值不是 10000
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="参考" class="headerLink">
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
+<li><a href="https://juejin.cn/post/7136774425415794719" target="_blank" rel="noopener noreferrer">Go slice新的扩容机制</a></li>
+<li><a href="https://juejin.cn/post/7101928883280150558" target="_blank" rel="noopener noreferrer">Go 1.18 全新的切片扩容机制</a></li>
 </ul>
 ]]></description>
 </item></channel>
