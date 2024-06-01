@@ -4,197 +4,395 @@
     <title>简介 on Kubernetes 学习笔记</title>
     <link>https://example.com/kubernetes/</link>
     <description>Recent content in 简介 on Kubernetes 学习笔记</description>
-    <generator>Hugo</generator>
-    <language>zh</language>
-    <atom:link href="https://example.com/kubernetes/index.xml" rel="self" type="application/rss+xml" />
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language><atom:link href="https://example.com/kubernetes/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>1.1 Docker 简介</title>
       <link>https://example.com/kubernetes/docs/part1-primary/1.1-docker-brief/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
       <guid>https://example.com/kubernetes/docs/part1-primary/1.1-docker-brief/</guid>
-      <description>1.1 Docker 简介 # 目前使用 Docker 基本上有两个选择：Docker Desktop 和 Docker Engine。&#xA;Docker Desktop 是专门针对个人使用而设计的，支持 Mac 和 Windows 快速安装，具有直观的图形界面，还集成了许多周边工具，方便易用。Docker Engine 完全免费，但只能在 Linux 上运行，只能使用命令行操作，缺乏辅助工具，需要我们自己动手安装运行环境，是现在各个公司在生产环境中实际使用的 Docker 产品，毕竟机房里 99% 的服务器跑的都是 Linux。&#xA;1.1.1 Docker 安装 # Docker 的安装可以参看官网 https://docs.docker.com/engine/install/&#xA;Docker Engine 不像 Docker Desktop 那样可以安装后就直接使用，必须要做一些手工调整才能用起来，所以在安装完毕后需要执行下面的两条命令：&#xA;sudo service docker start #启动docker服务 sudo usermod -aG docker ${USER} #当前用户加入docker组 第一个 service docker start 是启动 Docker 的后台服务，第二个 usermod -aG 是把当前的用户加入 Docker 的用户组。这是因为操作 Docker 必须要有 root 权限，而直接使用 root 用户不够安全，加入 Docker 用户组是一个比较好的选择，这也是 Docker 官方推荐的做法。当然，如果为了图省事，也可以直接切换到 root 用户来操作 Docker。</description>
+      <description>1.1 Docker 简介 # 目前使用 Docker 基本上有两个选择：Docker Desktop 和 Docker Engine。
+Docker Desktop 是专门针对个人使用而设计的，支持 Mac 和 Windows 快速安装，具有直观的图形界面，还集成了许多周边工具，方便易用。Docker Engine 完全免费，但只能在 Linux 上运行，只能使用命令行操作，缺乏辅助工具，需要我们自己动手安装运行环境，是现在各个公司在生产环境中实际使用的 Docker 产品，毕竟机房里 99% 的服务器跑的都是 Linux。
+1.1.1 Docker 安装 # Docker 的安装可以参看官网 https://docs.docker.com/engine/install/
+Docker Engine 不像 Docker Desktop 那样可以安装后就直接使用，必须要做一些手工调整才能用起来，所以在安装完毕后需要执行下面的两条命令：
+sudo service docker start #启动docker服务 sudo usermod -aG docker ${USER} #当前用户加入docker组 第一个 service docker start 是启动 Docker 的后台服务，第二个 usermod -aG 是把当前的用户加入 Docker 的用户组。这是因为操作 Docker 必须要有 root 权限，而直接使用 root 用户不够安全，加入 Docker 用户组是一个比较好的选择，这也是 Docker 官方推荐的做法。当然，如果为了图省事，也可以直接切换到 root 用户来操作 Docker。</description>
     </item>
+    
     <item>
       <title>2.1 简介</title>
       <link>https://example.com/kubernetes/docs/part2-break-ice/2.1-k8s-overview/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
       <guid>https://example.com/kubernetes/docs/part2-break-ice/2.1-k8s-overview/</guid>
-      <description>2.1 k8s 简介 # 2.1.1 容器编排 # 容器技术其实只是解决了运维部署工作中一个很小的问题，在现实中的生产环境复杂程度特别高，除了最基本的安装，还会有各式各样的需求，比如服务发现、负载均衡、状态监控、健康检查、扩容缩容、应用迁移、高可用等等。&#xA;这些问题已经不再是隔离一两个进程的普通问题，而是要隔离数不清的进程，还有它们之间互相通信、互相协作的超级问题，困难程度可以说是指数级别的上升。这些容器之上的管理、调度工作，就是 “容器编排”（Container Orchestration）。&#xA;2.1.2 什么是 k8s # 简单来说，Kubernetes 就是一个生产级别的容器编排平台和集群管理系统，不仅能够创建、调度容器，还能够监控、管理服务器，它凝聚了 Google 等大公司和开源社区的集体智慧，从而让中小型公司也可以具备轻松运维海量计算节点 —— 也就是 “云计算” 的能力。&#xA;k8s 脱胎与 Google 内部代号为 Borg 的集群应用管理系统。在 2015 年，Google 又联合 Linux 基金会成立了 CNCF（Cloud Native Computing Foundation，云原生基金会），并把 Kubernetes 捐献出来作为种子项目。&#xA;有了 Google 和 Linux 两大家族的保驾护航，再加上宽容开放的社区，作为 CNCF 的 “头把交椅”，Kubernetes 旗下很快就汇集了众多行业精英，仅用几年的时间就打败了同期的竞争对手 Apache Mesos 和 Docker Swarm，成为了容器编排和集群管理这个领域的唯一霸主。</description>
+      <description>2.1 k8s 简介 # 2.1.1 容器编排 # 容器技术其实只是解决了运维部署工作中一个很小的问题，在现实中的生产环境复杂程度特别高，除了最基本的安装，还会有各式各样的需求，比如服务发现、负载均衡、状态监控、健康检查、扩容缩容、应用迁移、高可用等等。
+这些问题已经不再是隔离一两个进程的普通问题，而是要隔离数不清的进程，还有它们之间互相通信、互相协作的超级问题，困难程度可以说是指数级别的上升。这些容器之上的管理、调度工作，就是 “容器编排”（Container Orchestration）。
+2.1.2 什么是 k8s # 简单来说，Kubernetes 就是一个生产级别的容器编排平台和集群管理系统，不仅能够创建、调度容器，还能够监控、管理服务器，它凝聚了 Google 等大公司和开源社区的集体智慧，从而让中小型公司也可以具备轻松运维海量计算节点 —— 也就是 “云计算” 的能力。
+k8s 脱胎与 Google 内部代号为 Borg 的集群应用管理系统。在 2015 年，Google 又联合 Linux 基金会成立了 CNCF（Cloud Native Computing Foundation，云原生基金会），并把 Kubernetes 捐献出来作为种子项目。
+有了 Google 和 Linux 两大家族的保驾护航，再加上宽容开放的社区，作为 CNCF 的 “头把交椅”，Kubernetes 旗下很快就汇集了众多行业精英，仅用几年的时间就打败了同期的竞争对手 Apache Mesos 和 Docker Swarm，成为了容器编排和集群管理这个领域的唯一霸主。</description>
     </item>
+    
     <item>
       <title>1.2 Docker 常用命令</title>
       <link>https://example.com/kubernetes/docs/part1-primary/1.2-docker-cmd/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
       <guid>https://example.com/kubernetes/docs/part1-primary/1.2-docker-cmd/</guid>
-      <description>1.2 Docker 常用命令 # docker version # docker version 会输出 Docker 客户端和服务器各自的版本信息：&#xA;docker info # docker info 会显示当前 Docker 系统相关的信息，例如 CPU、内存、容器数量、镜像数量、容器运行时、存储文件系统等等：&#xA;Server: Containers: 1 Running: 0 Paused: 0 Stopped: 1 Images: 8 Server Version: 20.10.12 Storage Driver: overlay2 Backing Filesystem: extfs Cgroup Driver: systemd Default Runtime: runc Kernel Version: 5.13.0-19-generic Operating System: Ubuntu Jammy Jellyfish (development branch) OSType: linux Architecture: aarch64 CPUs: 2 Total Memory: 3.822GiB Docker Root Dir: /var/lib/docker docker info 显示的信息，对了解 Docker 的内部运行状态非常有用，比如可以很直观的能够看到当前有一个容器处于停止状态，有 8 个镜像，存储用的文件系统是 overlay2，Linux 内核是 5.</description>
+      <description>1.2 Docker 常用命令 # docker version # docker version 会输出 Docker 客户端和服务器各自的版本信息：
+docker info # docker info 会显示当前 Docker 系统相关的信息，例如 CPU、内存、容器数量、镜像数量、容器运行时、存储文件系统等等：
+Server: Containers: 1 Running: 0 Paused: 0 Stopped: 1 Images: 8 Server Version: 20.10.12 Storage Driver: overlay2 Backing Filesystem: extfs Cgroup Driver: systemd Default Runtime: runc Kernel Version: 5.13.0-19-generic Operating System: Ubuntu Jammy Jellyfish (development branch) OSType: linux Architecture: aarch64 CPUs: 2 Total Memory: 3.822GiB Docker Root Dir: /var/lib/docker docker info 显示的信息，对了解 Docker 的内部运行状态非常有用，比如可以很直观的能够看到当前有一个容器处于停止状态，有 8 个镜像，存储用的文件系统是 overlay2，Linux 内核是 5.</description>
     </item>
+    
     <item>
       <title>2.2 minikube</title>
       <link>https://example.com/kubernetes/docs/part2-break-ice/2.2-minikube/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
       <guid>https://example.com/kubernetes/docs/part2-break-ice/2.2-minikube/</guid>
-      <description>2.2 minikube # minikube 是一个 “迷你” 版本的 Kubernetes，自从 2016 年发布以来一直在积极地开发维护，紧跟 Kubernetes 的版本更新，同时也兼容较旧的版本（最多可以到之前的 6 个小版本）。&#xA;minikube 最大特点就是 “小而美”，可执行文件仅有不到 100MB，运行镜像也不过 1GB。minikube 集成了 Kubernetes 的绝大多数功能特性，不仅有核心的容器编排功能，还有丰富的插件，例如 Dashboard、GPU、Ingress、Istio、Kong、Registry 等。&#xA;2.2.1 安装 Docker # 我的系统是 debian 11，本文所有的操作都是在 debian 11 的环境下进行。&#xA;Docker 的安装可以参考官网 Install Docker Engine on Debian，其他系统的安装方式都可以在官网找到。debian 11 的安装步骤大致如下。&#xA;apt-get remove docker docker-engine docker.io containerd runc # 卸载旧版本 apt-get update apt-get install \ ca-certificates \ curl \ gnupg \ lsb-release mkdir -p /etc/apt/keyrings curl -fsSL https://download.</description>
+      <description>2.2 minikube # minikube 是一个 “迷你” 版本的 Kubernetes，自从 2016 年发布以来一直在积极地开发维护，紧跟 Kubernetes 的版本更新，同时也兼容较旧的版本（最多可以到之前的 6 个小版本）。
+minikube 最大特点就是 “小而美”，可执行文件仅有不到 100MB，运行镜像也不过 1GB。minikube 集成了 Kubernetes 的绝大多数功能特性，不仅有核心的容器编排功能，还有丰富的插件，例如 Dashboard、GPU、Ingress、Istio、Kong、Registry 等。
+2.2.1 安装 Docker # 我的系统是 debian 11，本文所有的操作都是在 debian 11 的环境下进行。
+Docker 的安装可以参考官网 Install Docker Engine on Debian，其他系统的安装方式都可以在官网找到。debian 11 的安装步骤大致如下。
+apt-get remove docker docker-engine docker.io containerd runc # 卸载旧版本 apt-get update apt-get install \ ca-certificates \ curl \ gnupg \ lsb-release mkdir -p /etc/apt/keyrings curl -fsSL https://download.</description>
     </item>
+    
     <item>
       <title>1.3 容器</title>
       <link>https://example.com/kubernetes/docs/part1-primary/1.3-container/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
       <guid>https://example.com/kubernetes/docs/part1-primary/1.3-container/</guid>
-      <description>1.3 容器 # 可以使用 docker pull 命令，拉取一个新的镜像——操作系统 Alpine：&#xA;docker pull alpine 然后使用 docker run 命令运行它的 Shell 程序：&#xA;docker run -it alpine sh -it参数，可以离开当前的操作系统，进入容器内部。&#xA;容器，就是一个特殊的隔离环境，它能够让进程只看到这个环境里的有限信息，不能对外界环境施加影响。&#xA;1.3.1 为什么需要隔离 # 对于操作系统来说，一个不受任何限制的应用程序是十分危险的。这个进程能够看到系统里所有的文件、所有的进程、所有的网络流量，访问内存里的任何数据，那么恶意程序很容易就会把系统搞瘫痪，正常程序也可能会因为无意的 Bug 导致信息泄漏或者其他安全事故。&#xA;使用容器技术，就可以让应用程序运行在一个有严密防护的 “沙盒”（Sandbox）环境之内，它可以在这个环境里自由活动，但绝不允许 “越界”，从而保证了容器外系统的安全。&#xA;在计算机里有各种各样的资源，CPU、内存、硬盘、网卡，虽然目前的高性能服务器都是几十核 CPU、上百 GB 的内存、数 TB 的硬盘、万兆网卡，但这些资源终究是有限的，而且考虑到成本，也不允许某个应用程序无限制地占用。容器技术的另一个本领就是为应用程序加上资源隔离，在系统里切分出一部分资源，让它只能使用指定的配额，比如只能使用一个 CPU，只能使用 1GB 内存等等，这样就可以避免容器内进程的过度系统消耗，充分利用计算机硬件，让有限的资源能够提供稳定可靠的服务。&#xA;1.3.2 容器和虚拟机的区别 # 容器和虚拟机面对的都是相同的问题，使用的也都是虚拟化技术，只是所在的层次不同。&#xA;容器和虚拟机的目的都是隔离资源，保证系统安全，尽量提高资源的利用率。&#xA;从实现的角度来看，虚拟机虚拟化出来的是硬件，需要在上面再安装一个操作系统后才能够运行应用程序，而硬件虚拟化和操作系统都比较 “重”，会消耗大量的 CPU、内存、硬盘等系统资源，但这些消耗其实并没有带来什么价值，属于 “重复劳动” 和 “无用功”，不过好处就是隔离程度非常高，每个虚拟机之间可以做到完全无干扰。&#xA;容器直接利用了下层的计算机硬件和操作系统，因为比虚拟机少了一层，所以自然就会节约 CPU 和内存，显得非常轻量级，能够更高效地利用硬件资源。不过，因为多个容器共用操作系统内核，应用程序的隔离程度就没有虚拟机那么高。&#xA;1.3.3 隔离的实现 # Linux 操作系统内核为资源隔离提供了三种技术：namespace、cgroup、chroot，虽然这三种技术的初衷并不是为了实现容器，但它们三个结合在一起就会发生奇妙的 “化学反应”。&#xA;namespace 是 2002 年从 Linux 2.4.19 开始出现的，和编程语言里的 namespace 有点类似，它可以创建出独立的文件系统、主机名、进程号、网络等资源空间，相当于给进程盖了一间小板房，这样就实现了系统全局资源和进程局部资源的隔离。</description>
+      <description>1.3 容器 # 可以使用 docker pull 命令，拉取一个新的镜像——操作系统 Alpine：
+docker pull alpine 然后使用 docker run 命令运行它的 Shell 程序：
+docker run -it alpine sh -it参数，可以离开当前的操作系统，进入容器内部。
+容器，就是一个特殊的隔离环境，它能够让进程只看到这个环境里的有限信息，不能对外界环境施加影响。
+1.3.1 为什么需要隔离 # 对于操作系统来说，一个不受任何限制的应用程序是十分危险的。这个进程能够看到系统里所有的文件、所有的进程、所有的网络流量，访问内存里的任何数据，那么恶意程序很容易就会把系统搞瘫痪，正常程序也可能会因为无意的 Bug 导致信息泄漏或者其他安全事故。
+使用容器技术，就可以让应用程序运行在一个有严密防护的 “沙盒”（Sandbox）环境之内，它可以在这个环境里自由活动，但绝不允许 “越界”，从而保证了容器外系统的安全。
+在计算机里有各种各样的资源，CPU、内存、硬盘、网卡，虽然目前的高性能服务器都是几十核 CPU、上百 GB 的内存、数 TB 的硬盘、万兆网卡，但这些资源终究是有限的，而且考虑到成本，也不允许某个应用程序无限制地占用。容器技术的另一个本领就是为应用程序加上资源隔离，在系统里切分出一部分资源，让它只能使用指定的配额，比如只能使用一个 CPU，只能使用 1GB 内存等等，这样就可以避免容器内进程的过度系统消耗，充分利用计算机硬件，让有限的资源能够提供稳定可靠的服务。
+1.3.2 容器和虚拟机的区别 # 容器和虚拟机面对的都是相同的问题，使用的也都是虚拟化技术，只是所在的层次不同。
+容器和虚拟机的目的都是隔离资源，保证系统安全，尽量提高资源的利用率。
+从实现的角度来看，虚拟机虚拟化出来的是硬件，需要在上面再安装一个操作系统后才能够运行应用程序，而硬件虚拟化和操作系统都比较 “重”，会消耗大量的 CPU、内存、硬盘等系统资源，但这些消耗其实并没有带来什么价值，属于 “重复劳动” 和 “无用功”，不过好处就是隔离程度非常高，每个虚拟机之间可以做到完全无干扰。
+容器直接利用了下层的计算机硬件和操作系统，因为比虚拟机少了一层，所以自然就会节约 CPU 和内存，显得非常轻量级，能够更高效地利用硬件资源。不过，因为多个容器共用操作系统内核，应用程序的隔离程度就没有虚拟机那么高。
+1.3.3 隔离的实现 # Linux 操作系统内核为资源隔离提供了三种技术：namespace、cgroup、chroot，虽然这三种技术的初衷并不是为了实现容器，但它们三个结合在一起就会发生奇妙的 “化学反应”。
+namespace 是 2002 年从 Linux 2.4.19 开始出现的，和编程语言里的 namespace 有点类似，它可以创建出独立的文件系统、主机名、进程号、网络等资源空间，相当于给进程盖了一间小板房，这样就实现了系统全局资源和进程局部资源的隔离。</description>
     </item>
+    
     <item>
       <title>2.3 工作机制</title>
       <link>https://example.com/kubernetes/docs/part2-break-ice/2.3-working-mechanism/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
       <guid>https://example.com/kubernetes/docs/part2-break-ice/2.3-working-mechanism/</guid>
-      <description>2.3 工作机制 # 2.3.1 基本架构 # Kubernetes 采用了 “控制面 / 数据面”（Control Plane / Data Plane）架构，集群里的计算机被称为 “节点”（Node），可以是物理机也可以是虚拟机，少量的节点用作控制面来执行集群的管理维护工作，其他的大部分节点都被划归数据面，用来跑业务应用。&#xA;控制面的节点在 Kubernetes 里叫做 Master Node，一般简称为 Master，它是整个集群里最重要的部分，可以说是 Kubernetes 的大脑和心脏。数据面的节点叫做 Worker Node，一般就简称为 Worker 或者 Node，相当于 Kubernetes 的手和脚，在 Master 的指挥下干活。Node 的数量非常多，构成了一个资源池，Kubernetes 就在这个池里分配资源，调度应用。因为资源被 “池化”了，所以管理也就变得比较简单，可以在集群中任意添加或者删除节点。&#xA;Master 和 Node 的划分不是绝对的。当集群的规模较小，工作负载较少的时候，Master 也可以承担 Node 的工作，就像 minikube 环境，它就只有一个节点，这个节点既是 Master 又是 Node。&#xA;在下面这张架构图中，可以看到有一个 kubectl，它是 Kubernetes 的客户端工具，用来操作 Kubernetes，但它位于集群之外，理论上不属于集群。&#xA;2.3.2 节点内部结构 # Kubernetes 的节点内部具有非常复杂的结构，由很多的模块构成的，这些模块又可以分成组件（Component）和插件（Addon）两类。&#xA;组件实现了 Kubernetes 的核心功能特性，没有这些组件 Kubernetes 就无法启动，而插件则是 Kubernetes 的一些附加功能，属于 “锦上添花”，不安装也不会影响 Kubernetes 的正常运行。&#xA;组件 # Master 有 4 个组件，分别是 apiserver、etcd、scheduler、controller-manager。</description>
+      <description>2.3 工作机制 # 2.3.1 基本架构 # Kubernetes 采用了 “控制面 / 数据面”（Control Plane / Data Plane）架构，集群里的计算机被称为 “节点”（Node），可以是物理机也可以是虚拟机，少量的节点用作控制面来执行集群的管理维护工作，其他的大部分节点都被划归数据面，用来跑业务应用。
+控制面的节点在 Kubernetes 里叫做 Master Node，一般简称为 Master，它是整个集群里最重要的部分，可以说是 Kubernetes 的大脑和心脏。数据面的节点叫做 Worker Node，一般就简称为 Worker 或者 Node，相当于 Kubernetes 的手和脚，在 Master 的指挥下干活。Node 的数量非常多，构成了一个资源池，Kubernetes 就在这个池里分配资源，调度应用。因为资源被 “池化”了，所以管理也就变得比较简单，可以在集群中任意添加或者删除节点。
+Master 和 Node 的划分不是绝对的。当集群的规模较小，工作负载较少的时候，Master 也可以承担 Node 的工作，就像 minikube 环境，它就只有一个节点，这个节点既是 Master 又是 Node。
+在下面这张架构图中，可以看到有一个 kubectl，它是 Kubernetes 的客户端工具，用来操作 Kubernetes，但它位于集群之外，理论上不属于集群。
+2.3.2 节点内部结构 # Kubernetes 的节点内部具有非常复杂的结构，由很多的模块构成的，这些模块又可以分成组件（Component）和插件（Addon）两类。
+组件实现了 Kubernetes 的核心功能特性，没有这些组件 Kubernetes 就无法启动，而插件则是 Kubernetes 的一些附加功能，属于 “锦上添花”，不安装也不会影响 Kubernetes 的正常运行。
+组件 # Master 有 4 个组件，分别是 apiserver、etcd、scheduler、controller-manager。</description>
     </item>
+    
     <item>
       <title>1.4 镜像</title>
       <link>https://example.com/kubernetes/docs/part1-primary/1.4-image/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
       <guid>https://example.com/kubernetes/docs/part1-primary/1.4-image/</guid>
-      <description>1.4 镜像 # 1.4.1 什么是镜像 # 镜像和常见的 tar、rpm、deb 等安装包一样，都打包了应用程序，但最大的不同点在于它里面不仅有基本的可执行文件，还有应用运行时的整个系统环境。这就让镜像具有了非常好的跨平台便携性和兼容性，能够让开发者在一个系统上开发（例如 Ubuntu），然后打包成镜像，再去另一个系统上运行（例如 CentOS），完全不需要考虑环境依赖的问题，是一种更高级的应用打包方式。&#xA;1.4.2 镜像的内部机制 # 容器镜像内部并不是一个平坦的结构，而是由许多的镜像层组成的，每层都是只读不可修改的一组文件，相同的层可以在镜像之间共享，然后多个层像搭积木一样堆叠起来，再使用一种叫 “Union FS 联合文件系统” 的技术把它们合并在一起，就形成了容器最终看到的文件系统。&#xA;Docker 会检查是否有重复的层，如果本地已经存在就不会重复下载，如果层被其他镜像共享就不会删除，这样就可以节约磁盘和网络成本。&#xA;1.4.3 容器化应用 # “容器化的应用” 或 “应用的容器化”，就是指应用程序不再直接和操作系统打交道，而是封装成镜像，再交给容器环境去运行。镜像就是静态的应用容器，容器就是动态的应用镜像，两者互相依存，互相转化，密不可分。&#xA;1.4.4 镜像的命名规则 # 镜像的完整名字由两个部分组成，名字和标签，中间用:连接起来。&#xA;名字表明了应用的身份，比如 busybox、Alpine、Nginx、Redis 等等。&#xA;标签（tag）可以理解成是为了区分不同版本的应用而做的额外标记，任何字符串都可以，比如 3.15 是纯数字的版本号、jammy 是项目代号、1.21-alpine 是版本号加操作系统名等等。其中有一个比较特殊的标签叫 “latest”，它是默认的标签，如果只提供名字没有附带标签，那么就会使用这个默认的 “latest” 标签。&#xA;通常来说，镜像标签的格式是应用的版本号加上操作系统。版本号基本上都是主版本号 + 次版本号 + 补丁号的形式，有的还会在正式发布前出 rc 版（候选版本，release candidate）。而操作系统的情况略微复杂，因为各个 Linux 发行版的命名方式 “花样” 太多。Alpine、CentOS 的命名比较简单明了，就是数字的版本号，像 alpine3.15 ，而 Ubuntu、Debian 则采用了代号的形式。比如 Ubuntu 18.04 是 bionic，Ubuntu 20.04 是 focal，Debian 9 是 stretch，Debian 10 是 buster，Debian 11 是 bullseye。另外，有的标签还会加上 slim、fat，来进一步表示这个镜像的内容是经过精简的，还是包含了较多的辅助工具。通常 slim 镜像会比较小，运行效率高，而 fat 镜像会比较大，适合用来开发调试。</description>
+      <description>1.4 镜像 # 1.4.1 什么是镜像 # 镜像和常见的 tar、rpm、deb 等安装包一样，都打包了应用程序，但最大的不同点在于它里面不仅有基本的可执行文件，还有应用运行时的整个系统环境。这就让镜像具有了非常好的跨平台便携性和兼容性，能够让开发者在一个系统上开发（例如 Ubuntu），然后打包成镜像，再去另一个系统上运行（例如 CentOS），完全不需要考虑环境依赖的问题，是一种更高级的应用打包方式。
+1.4.2 镜像的内部机制 # 容器镜像内部并不是一个平坦的结构，而是由许多的镜像层组成的，每层都是只读不可修改的一组文件，相同的层可以在镜像之间共享，然后多个层像搭积木一样堆叠起来，再使用一种叫 “Union FS 联合文件系统” 的技术把它们合并在一起，就形成了容器最终看到的文件系统。
+Docker 会检查是否有重复的层，如果本地已经存在就不会重复下载，如果层被其他镜像共享就不会删除，这样就可以节约磁盘和网络成本。
+1.4.3 容器化应用 # “容器化的应用” 或 “应用的容器化”，就是指应用程序不再直接和操作系统打交道，而是封装成镜像，再交给容器环境去运行。镜像就是静态的应用容器，容器就是动态的应用镜像，两者互相依存，互相转化，密不可分。
+1.4.4 镜像的命名规则 # 镜像的完整名字由两个部分组成，名字和标签，中间用:连接起来。
+名字表明了应用的身份，比如 busybox、Alpine、Nginx、Redis 等等。
+标签（tag）可以理解成是为了区分不同版本的应用而做的额外标记，任何字符串都可以，比如 3.15 是纯数字的版本号、jammy 是项目代号、1.21-alpine 是版本号加操作系统名等等。其中有一个比较特殊的标签叫 “latest”，它是默认的标签，如果只提供名字没有附带标签，那么就会使用这个默认的 “latest” 标签。
+通常来说，镜像标签的格式是应用的版本号加上操作系统。版本号基本上都是主版本号 + 次版本号 + 补丁号的形式，有的还会在正式发布前出 rc 版（候选版本，release candidate）。而操作系统的情况略微复杂，因为各个 Linux 发行版的命名方式 “花样” 太多。Alpine、CentOS 的命名比较简单明了，就是数字的版本号，像 alpine3.15 ，而 Ubuntu、Debian 则采用了代号的形式。比如 Ubuntu 18.04 是 bionic，Ubuntu 20.04 是 focal，Debian 9 是 stretch，Debian 10 是 buster，Debian 11 是 bullseye。另外，有的标签还会加上 slim、fat，来进一步表示这个镜像的内容是经过精简的，还是包含了较多的辅助工具。通常 slim 镜像会比较小，运行效率高，而 fat 镜像会比较大，适合用来开发调试。</description>
     </item>
+    
     <item>
       <title>2.4 Pod</title>
       <link>https://example.com/kubernetes/docs/part2-break-ice/2.4-pod/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
       <guid>https://example.com/kubernetes/docs/part2-break-ice/2.4-pod/</guid>
-      <description>2.4 Pod # 2.4.1 什么是 Pod # 当容器进入到现实的生产环境中时，容器的隔离性就带来了一些麻烦。因为很少有应用是完全独立运行的，经常需要几个进程互相协作才能完成任务。比如可能有多个应用结合得非常紧密以至于无法把它们拆开，但是将它们都放在同一个容器中又不是一种好的做法，因为容器的理念是对应用的独立封装，它里面就应该是一个进程、一个应用，如果里面有多个应用，不仅违背了容器的初衷，也会让容器更难以管理。&#xA;为了解决多应用联合运行的问题，同时还要不破坏容器的隔离，就需要在容器外面再建立一个 “收纳舱”，让多个容器既保持相对独立，又能够小范围共享网络、存储等资源，而且永远是 “绑在一起” 的状态。这就是 Pod 的初衷，实际上，“spec.containers” 字段其实是一个数组，里面允许定义多个容器。&#xA;Pod 是对容器的 “打包”，里面的容器是一个整体，总是能够一起调度、一起运行，绝不会出现分离的情况。Pod 属于 Kubernetes，可以在不触碰下层容器的情况下任意定制修改。Kubernetes 让 Pod 去编排处理容器，然后把 Pod 作为应用调度部署的最小单位，Pod 也因此成为了 Kubernetes 世界里的 “原子”，基于 Pod 就可以构建出更多更复杂的业务形态了。&#xA;2.4.2 YAML 描述 Pod # 可以理解为所有的 API 对象都天然具有 apiVersion、kind、metadata、spec 这四个基本组成部分，当然也包括 Pod。&#xA;在使用 Docker 创建容器的时候，可以不给容器起名字，但在 Kubernetes 里，Pod 必须要有一个名字，这也是 Kubernetes 里所有资源对象的一个约定。通常会为 Pod 名字统一加上 pod 后缀，这样可以和其他类型的资源区分开。&#xA;name 只是一个基本的标识，信息有限，所以 labels 字段就很有用，它可以添加任意数量的 Key-Value，给 Pod “贴” 上归类的标签，结合 name 就更方便识别和管理。比如：&#xA;apiVersion: v1 kind: Pod metadata: name: busy-pod labels: owner: xiaobinqt env: demo region: north tier: back “metadata” 一般写上 name 和 labels 就足够了，但是 “spec” 字段由于需要管理、维护 Pod 这个基本调度单元，里面有非常多的关键信息，厂常见的有 containers、hostname、restartPolicy 等字段。</description>
+      <description>2.4 Pod # 2.4.1 什么是 Pod # 当容器进入到现实的生产环境中时，容器的隔离性就带来了一些麻烦。因为很少有应用是完全独立运行的，经常需要几个进程互相协作才能完成任务。比如可能有多个应用结合得非常紧密以至于无法把它们拆开，但是将它们都放在同一个容器中又不是一种好的做法，因为容器的理念是对应用的独立封装，它里面就应该是一个进程、一个应用，如果里面有多个应用，不仅违背了容器的初衷，也会让容器更难以管理。
+为了解决多应用联合运行的问题，同时还要不破坏容器的隔离，就需要在容器外面再建立一个 “收纳舱”，让多个容器既保持相对独立，又能够小范围共享网络、存储等资源，而且永远是 “绑在一起” 的状态。这就是 Pod 的初衷，实际上，“spec.containers” 字段其实是一个数组，里面允许定义多个容器。
+Pod 是对容器的 “打包”，里面的容器是一个整体，总是能够一起调度、一起运行，绝不会出现分离的情况。Pod 属于 Kubernetes，可以在不触碰下层容器的情况下任意定制修改。Kubernetes 让 Pod 去编排处理容器，然后把 Pod 作为应用调度部署的最小单位，Pod 也因此成为了 Kubernetes 世界里的 “原子”，基于 Pod 就可以构建出更多更复杂的业务形态了。
+2.4.2 YAML 描述 Pod # 可以理解为所有的 API 对象都天然具有 apiVersion、kind、metadata、spec 这四个基本组成部分，当然也包括 Pod。
+在使用 Docker 创建容器的时候，可以不给容器起名字，但在 Kubernetes 里，Pod 必须要有一个名字，这也是 Kubernetes 里所有资源对象的一个约定。通常会为 Pod 名字统一加上 pod 后缀，这样可以和其他类型的资源区分开。
+name 只是一个基本的标识，信息有限，所以 labels 字段就很有用，它可以添加任意数量的 Key-Value，给 Pod “贴” 上归类的标签，结合 name 就更方便识别和管理。比如：
+apiVersion: v1 kind: Pod metadata: name: busy-pod labels: owner: xiaobinqt env: demo region: north tier: back “metadata” 一般写上 name 和 labels 就足够了，但是 “spec” 字段由于需要管理、维护 Pod 这个基本调度单元，里面有非常多的关键信息，厂常见的有 containers、hostname、restartPolicy 等字段。</description>
     </item>
+    
     <item>
       <title>1.5 网络互通</title>
       <link>https://example.com/kubernetes/docs/part1-primary/1.5-network/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
       <guid>https://example.com/kubernetes/docs/part1-primary/1.5-network/</guid>
-      <description>1.5 网络互通 # 1.5.1 容器网络 # 在 Docker 网络中，有三个比较核心的概念，分别是：沙盒（Sandbox）、网络（Network）、端点（Endpoint）。&#xA;沙盒提供了容器的虚拟网络栈，也就是端口套接字、IP 路由表、防火墙等内容。实现隔离容器网络与宿主机网络，形成了完全独立的容器网络环境。&#xA;网络可以理解为 Docker 内部的虚拟子网，网络内的参与者相互可见并能够进行通讯。Docker 的这种虚拟网络也是与宿主机网络存在隔离关系的，其目的主要是形成容器间的安全通讯环境。&#xA;端点是位于容器或网络隔离墙之上的 “洞”，其主要目的是形成一个可以控制的突破封闭的网络环境的出入口。当容器的端点与网络的端点形成配对后，就如同在这两者之间搭建了桥梁，便能够进行数据传输了。&#xA;这三者形成了 Docker 网络的核心模型，也就是容器网络模型（Container Network Model）。&#xA;1.5.2 网络驱动 # Docker 官方提供了五种基础的 Docker 网络驱动：Bridge Driver、Host Driver、Overlay Driver、MacLan Driver、None Driver，并基于这些网络驱动又衍生了一些其他的网络驱动，如 IPvlan。&#xA;Bridge # Bridge（桥接）网络是默认的网络驱动程序，它提供了容器之间的基本网络通信功能。Docker 桥接网络通过在主机上创建一个虚拟网桥并将容器连接到该网桥来实现容器之间的通信。&#xA;当创建一个桥接网络时，Docker 会在主机上创建一个虚拟网桥（默认为 docker0），并为该网桥分配一个 IP 地址172.17.0.1。每个容器连接到这个桥接网络时，都会分配一个唯一的 B 类私 IP 地址，如172.17.0.2，并通过网络地址转换（NAT）实现与主机和其他容器之间的通信。&#xA;端口号映射需要使用 bridge 模式，并且在 docker run 启动容器时使用 -p 参数，用:分隔本机端口和容器端口。&#xA;使用 Docker 桥接网络有以下特点：&#xA;默认网络驱动程序：桥接网络是 Docker 的默认网络驱动程序，因此当创建容器时，如果没有显式指定网络驱动程序，则会自动使用桥接网络。&#xA;内部网络隔离：每个桥接网络都有自己的 IP 地址范围（默认为172.17.0.0/16），容器之间在网络上是相互隔离的，它们可以使用相同的 IP 地址范围而不会发生冲突。&#xA;网络地址转换（NAT）：通过桥接网络，容器可以与主机和其他容器进行通信。桥接网络使用网络地址转换（NAT）将容器的私有 IP 地址转换为主机的公共 IP 地址。</description>
+      <description>1.5 网络互通 # 1.5.1 容器网络 # 在 Docker 网络中，有三个比较核心的概念，分别是：沙盒（Sandbox）、网络（Network）、端点（Endpoint）。
+沙盒提供了容器的虚拟网络栈，也就是端口套接字、IP 路由表、防火墙等内容。实现隔离容器网络与宿主机网络，形成了完全独立的容器网络环境。
+网络可以理解为 Docker 内部的虚拟子网，网络内的参与者相互可见并能够进行通讯。Docker 的这种虚拟网络也是与宿主机网络存在隔离关系的，其目的主要是形成容器间的安全通讯环境。
+端点是位于容器或网络隔离墙之上的 “洞”，其主要目的是形成一个可以控制的突破封闭的网络环境的出入口。当容器的端点与网络的端点形成配对后，就如同在这两者之间搭建了桥梁，便能够进行数据传输了。
+这三者形成了 Docker 网络的核心模型，也就是容器网络模型（Container Network Model）。
+1.5.2 网络驱动 # Docker 官方提供了五种基础的 Docker 网络驱动：Bridge Driver、Host Driver、Overlay Driver、MacLan Driver、None Driver，并基于这些网络驱动又衍生了一些其他的网络驱动，如 IPvlan。
+Bridge # Bridge（桥接）网络是默认的网络驱动程序，它提供了容器之间的基本网络通信功能。Docker 桥接网络通过在主机上创建一个虚拟网桥并将容器连接到该网桥来实现容器之间的通信。
+当创建一个桥接网络时，Docker 会在主机上创建一个虚拟网桥（默认为 docker0），并为该网桥分配一个 IP 地址172.17.0.1。每个容器连接到这个桥接网络时，都会分配一个唯一的 B 类私 IP 地址，如172.17.0.2，并通过网络地址转换（NAT）实现与主机和其他容器之间的通信。
+端口号映射需要使用 bridge 模式，并且在 docker run 启动容器时使用 -p 参数，用:分隔本机端口和容器端口。
+使用 Docker 桥接网络有以下特点：
+默认网络驱动程序：桥接网络是 Docker 的默认网络驱动程序，因此当创建容器时，如果没有显式指定网络驱动程序，则会自动使用桥接网络。
+内部网络隔离：每个桥接网络都有自己的 IP 地址范围（默认为172.17.0.0/16），容器之间在网络上是相互隔离的，它们可以使用相同的 IP 地址范围而不会发生冲突。
+网络地址转换（NAT）：通过桥接网络，容器可以与主机和其他容器进行通信。桥接网络使用网络地址转换（NAT）将容器的私有 IP 地址转换为主机的公共 IP 地址。</description>
     </item>
+    
     <item>
       <title>2.5 Job</title>
       <link>https://example.com/kubernetes/docs/part2-break-ice/2.5-job/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
       <guid>https://example.com/kubernetes/docs/part2-break-ice/2.5-job/</guid>
-      <description>2.5 Job # 2.5.1 业务分类 # Kubernetes 里的有两大业务类型。一类是像 Nginx、MySQL 这样长时间运行的 “在线业务”，一旦运行起来基本上不会停，也就是永远在线。另一类是像日志分析这样短时间运行的 “离线业务”，“离线业务” 的特点是必定会退出，不会无期限地运行下去。&#xA;“离线业务” 可以分为两种。一种是 “临时任务”，跑完就完事了，下次有需求再重新安排；另一种是 “定时任务”，可以按时按点周期运行，不需要过多干预。在 Kubernetes 里，“临时任务” 是 API 对象 Job，“定时任务” 是 API 对象 CronJob，使用这两个对象就能够在 Kubernetes 里调度管理任意的离线业务。&#xA;2.5.2 Job # 比如用 busybox 创建一个 “echo-job”，命令就是这样的：&#xA;export out=&amp;#34;--dry-run=client -o yaml&amp;#34; # 定义Shell变量 kubectl create job echo-job --image=busybox $out 会生成一个基本的 YAML 文件，保存之后做点修改，就有了一个 Job 对象：&#xA;apiVersion: batch/v1 kind: Job metadata: name: echo-job spec: template: spec: restartPolicy: OnFailure containers: - image: busybox name: echo-job imagePullPolicy: IfNotPresent command: [ &amp;#34;/bin/echo&amp;#34; ] args: [ &amp;#34;hello&amp;#34;, &amp;#34;world&amp;#34; ] Job 的描述与 Pod 很像，但又有些不一样，主要的区别在 “spec” 字段里多了一个 template 字段，然后又是一个 “spec”，显得很奇怪。这主要是在 Job 对象里应用了组合模式，template 字段定义了一个 “应用模板”，里面嵌入了一个 Pod，这样 Job 就可以从这个模板来创建出 Pod。而这个 Pod 因为受 Job 的管理控制，不直接和 apiserver 打交道，也就没必要重复 apiVersion 等 “头字段”，只需要定义好关键的 spec，描述清楚容器相关的信息就可以了，可以说是一个 “无头” 的 Pod 对象。</description>
+      <description>2.5 Job # 2.5.1 业务分类 # Kubernetes 里的有两大业务类型。一类是像 Nginx、MySQL 这样长时间运行的 “在线业务”，一旦运行起来基本上不会停，也就是永远在线。另一类是像日志分析这样短时间运行的 “离线业务”，“离线业务” 的特点是必定会退出，不会无期限地运行下去。
+“离线业务” 可以分为两种。一种是 “临时任务”，跑完就完事了，下次有需求再重新安排；另一种是 “定时任务”，可以按时按点周期运行，不需要过多干预。在 Kubernetes 里，“临时任务” 是 API 对象 Job，“定时任务” 是 API 对象 CronJob，使用这两个对象就能够在 Kubernetes 里调度管理任意的离线业务。
+2.5.2 Job # 比如用 busybox 创建一个 “echo-job”，命令就是这样的：
+export out=&amp;#34;--dry-run=client -o yaml&amp;#34; # 定义Shell变量 kubectl create job echo-job --image=busybox $out 会生成一个基本的 YAML 文件，保存之后做点修改，就有了一个 Job 对象：
+apiVersion: batch/v1 kind: Job metadata: name: echo-job spec: template: spec: restartPolicy: OnFailure containers: - image: busybox name: echo-job imagePullPolicy: IfNotPresent command: [ &amp;#34;/bin/echo&amp;#34; ] args: [ &amp;#34;hello&amp;#34;, &amp;#34;world&amp;#34; ] Job 的描述与 Pod 很像，但又有些不一样，主要的区别在 “spec” 字段里多了一个 template 字段，然后又是一个 “spec”，显得很奇怪。这主要是在 Job 对象里应用了组合模式，template 字段定义了一个 “应用模板”，里面嵌入了一个 Pod，这样 Job 就可以从这个模板来创建出 Pod。而这个 Pod 因为受 Job 的管理控制，不直接和 apiserver 打交道，也就没必要重复 apiVersion 等 “头字段”，只需要定义好关键的 spec，描述清楚容器相关的信息就可以了，可以说是一个 “无头” 的 Pod 对象。</description>
     </item>
+    
     <item>
       <title>1.6 Docker Compose</title>
       <link>https://example.com/kubernetes/docs/part1-primary/1.6-docker-compose/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
       <guid>https://example.com/kubernetes/docs/part1-primary/1.6-docker-compose/</guid>
-      <description>1.6 Docker Compose # docker-compose 是一个在单机环境里轻量级的容器编排工具。&#xA;在 Docker 把容器技术大众化之后，Docker 周边涌现出了数不胜数的扩展、增强产品，其中有一个名字叫 Fig 的项目。Fig 为 Docker 引入了 “容器编排” 的概念，使用 YAML 来定义容器的启动参数、先后顺序和依赖关系，让用户不再有 Docker 冗长命令行的烦恼，第一次见识到了 “声明式” 的威力。Docker 公司在 2014 年 7 月把 Fig 买了下来，集成进 Docker 内部，然后改名成了 docker-compose。&#xA;1.6.1 安装 # docker-compose 的安装比较简单，它在 GitHub https://github.com/docker/compose 上提供了多种形式的二进制可执行文件，支持 Windows、macOS、Linux 等操作系统，也支持 x86_64、arm64 等硬件架构，可以直接下载。docker-compose 还可以安装成 docker 的插件，以子命令的形式使用，也就是docker compose（没有中间的横线），具体可以参看文档 Install the Compose plugin。建议使用传统的 docker-compose 的形式，这样兼容性更强。&#xA;sudo curl -SL https://github.com/docker/compose/releases/download/v2.17.2/docker-compose-linux-x86_64 \ -o /usr/local/bin/docker-compose chmod +x /usr/local/bin/docker-compose docker-compose version 1.6.2 使用 # docker-compose 里管理容器的核心概念是 service。service 就是一个容器化的应用程序，通常是一个后台服务，用 YAML 定义这些容器的参数和相互之间的关系。下面的这个就是私有镜像仓库 Registry 的 YAML 文件：</description>
+      <description>1.6 Docker Compose # docker-compose 是一个在单机环境里轻量级的容器编排工具。
+在 Docker 把容器技术大众化之后，Docker 周边涌现出了数不胜数的扩展、增强产品，其中有一个名字叫 Fig 的项目。Fig 为 Docker 引入了 “容器编排” 的概念，使用 YAML 来定义容器的启动参数、先后顺序和依赖关系，让用户不再有 Docker 冗长命令行的烦恼，第一次见识到了 “声明式” 的威力。Docker 公司在 2014 年 7 月把 Fig 买了下来，集成进 Docker 内部，然后改名成了 docker-compose。
+1.6.1 安装 # docker-compose 的安装比较简单，它在 GitHub https://github.com/docker/compose 上提供了多种形式的二进制可执行文件，支持 Windows、macOS、Linux 等操作系统，也支持 x86_64、arm64 等硬件架构，可以直接下载。docker-compose 还可以安装成 docker 的插件，以子命令的形式使用，也就是docker compose（没有中间的横线），具体可以参看文档 Install the Compose plugin。建议使用传统的 docker-compose 的形式，这样兼容性更强。
+sudo curl -SL https://github.com/docker/compose/releases/download/v2.17.2/docker-compose-linux-x86_64 \ -o /usr/local/bin/docker-compose chmod +x /usr/local/bin/docker-compose docker-compose version 1.6.2 使用 # docker-compose 里管理容器的核心概念是 service。service 就是一个容器化的应用程序，通常是一个后台服务，用 YAML 定义这些容器的参数和相互之间的关系。下面的这个就是私有镜像仓库 Registry 的 YAML 文件：</description>
     </item>
+    
     <item>
       <title>2.6 配置管理</title>
       <link>https://example.com/kubernetes/docs/part2-break-ice/2.6-config-manage/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
       <guid>https://example.com/kubernetes/docs/part2-break-ice/2.6-config-manage/</guid>
-      <description>2.6 配置管理 # 服务中的配置信息，从数据安全的角度来看可以分成两类：一类是明文配置，可以任意查询修改，比如服务端口、运行参数、文件路径等等。另一类则是机密配置，由于涉及敏感信息需要保密，不能随便查看，比如密码、密钥、证书等等。这两类配置信息本质上都是字符串，只是由于安全性的原因，在存放和使用方面有些差异。&#xA;Kubernetes 中的 ConfigMap API 用来保存明文配置，Secret API 用来保存秘密配置。&#xA;2.6.1 ConfigMap # export out=&amp;#34;--dry-run=client -o yaml&amp;#34; # 定义Shell变量 kubectl create cm info --from-literal=k=v $out ConfigMap 里的数据都是 Key-Value 结构，所以 --from-literal 参数使用 k=v 的形式生成数据。ConfigMap 的 YAML 描述大概如下：&#xA;apiVersion: v1 kind: ConfigMap metadata: name: info data: count: &amp;#39;10&amp;#39; debug: &amp;#39;on&amp;#39; path: &amp;#39;/etc/systemd&amp;#39; greeting: | say hello to kubernetes. 由上图可知，现在 ConfigMap 的 Key-Value 信息就已经存入了 etcd 数据库，后续就可以被其他 API 对象使用。&#xA;2.6.2 Secret # Secret 和 ConfigMap 的结构和用法很类似，不过 Secret 对象又细分出很多类，比如：</description>
+      <description>2.6 配置管理 # 服务中的配置信息，从数据安全的角度来看可以分成两类：一类是明文配置，可以任意查询修改，比如服务端口、运行参数、文件路径等等。另一类则是机密配置，由于涉及敏感信息需要保密，不能随便查看，比如密码、密钥、证书等等。这两类配置信息本质上都是字符串，只是由于安全性的原因，在存放和使用方面有些差异。
+Kubernetes 中的 ConfigMap API 用来保存明文配置，Secret API 用来保存秘密配置。
+2.6.1 ConfigMap # export out=&amp;#34;--dry-run=client -o yaml&amp;#34; # 定义Shell变量 kubectl create cm info --from-literal=k=v $out ConfigMap 里的数据都是 Key-Value 结构，所以 --from-literal 参数使用 k=v 的形式生成数据。ConfigMap 的 YAML 描述大概如下：
+apiVersion: v1 kind: ConfigMap metadata: name: info data: count: &amp;#39;10&amp;#39; debug: &amp;#39;on&amp;#39; path: &amp;#39;/etc/systemd&amp;#39; greeting: | say hello to kubernetes. 由上图可知，现在 ConfigMap 的 Key-Value 信息就已经存入了 etcd 数据库，后续就可以被其他 API 对象使用。
+2.6.2 Secret # Secret 和 ConfigMap 的结构和用法很类似，不过 Secret 对象又细分出很多类，比如：</description>
     </item>
+    
     <item>
       <title>1.7 私有镜像仓库</title>
       <link>https://example.com/kubernetes/docs/part1-primary/1.7-private-registry/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
       <guid>https://example.com/kubernetes/docs/part1-primary/1.7-private-registry/</guid>
-      <description>1.7 私有镜像仓库 # 在离线环境里，可以自己搭建私有仓库。私有镜像仓库有很多现成的解决方案，最简单的是 Docker Registry，也有功能更完善的 CNCF Harbor。&#xA;1.7.1 registry # 可以在 Docker Hub 网站上搜索 “registry”，找到官方页面 https://registry.hub.docker.com/_/registry/：&#xA;首先，需要使用 docker pull 命令拉取镜像：&#xA;docker pull registry 然后，需要做一个端口映射，对外暴露端口，这样 Docker Registry 才能提供服务。它的容器内端口是 5000，可以再容器外也使用同样的 5000 端口，运行命令是&#xA;docker run -d -p 5000:5000 registry ：docker run -d -p 5000:5000 registry 启动 Docker Registry 之后，可以使用 docker ps 查看运行状态，可以看到它确实把本机的 5000 端口映射到了容器内的 5000 端口。&#xA;可以使用 docker tag 命令给镜像打标签再上传了。因为上传的目标不是默认的 Docker Hub，而是本地的私有仓库，所以镜像的名字前面还必须再加上仓库的地址（域名或者 IP 地址都行），形式上和 HTTP 的 URL 相似。&#xA;下面示例中，把 “nginx:alpine” 改成了 “127.</description>
+      <description>1.7 私有镜像仓库 # 在离线环境里，可以自己搭建私有仓库。私有镜像仓库有很多现成的解决方案，最简单的是 Docker Registry，也有功能更完善的 CNCF Harbor。
+1.7.1 registry # 可以在 Docker Hub 网站上搜索 “registry”，找到官方页面 https://registry.hub.docker.com/_/registry/：
+首先，需要使用 docker pull 命令拉取镜像：
+docker pull registry 然后，需要做一个端口映射，对外暴露端口，这样 Docker Registry 才能提供服务。它的容器内端口是 5000，可以再容器外也使用同样的 5000 端口，运行命令是
+docker run -d -p 5000:5000 registry ：docker run -d -p 5000:5000 registry 启动 Docker Registry 之后，可以使用 docker ps 查看运行状态，可以看到它确实把本机的 5000 端口映射到了容器内的 5000 端口。
+可以使用 docker tag 命令给镜像打标签再上传了。因为上传的目标不是默认的 Docker Hub，而是本地的私有仓库，所以镜像的名字前面还必须再加上仓库的地址（域名或者 IP 地址都行），形式上和 HTTP 的 URL 相似。
+下面示例中，把 “nginx:alpine” 改成了 “127.</description>
     </item>
+    
     <item>
       <title>2.7 常用命令</title>
       <link>https://example.com/kubernetes/docs/part2-break-ice/2.7-general-cmd/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
       <guid>https://example.com/kubernetes/docs/part2-break-ice/2.7-general-cmd/</guid>
-      <description>2.7 常用命令 # port-forward 端口映射&#xA;因为 Pod 都是运行在 Kubernetes 内部的私有网段里的，外界无法直接访问，想要对外暴露服务，需要使用一个专门的 kubectl port-forward 命令，它专门负责把本机的端口映射到在目标对象的端口号，有点类似 Docker 的参数 -p，经常用于 Kubernetes 的临时调试和测试。&#xA;比如将本地的 8080 映射到 a-pod 的 80 端口，kubectl 会把这个端口的所有数据都转发给集群内部的 Pod：&#xA;kubectl port-forward a-pod 8080:80 &amp;amp; 命令的末尾使用了一个 &amp;amp; 符号，让端口转发工作在后台进行，这样就不会阻碍我们后续的操作。如果想关闭端口转发，需要敲命令 fg ，它会把后台的任务带回到前台，然后就可以简单地用 “Ctrl + C” 来停止转发了。</description>
+      <description>2.7 常用命令 # port-forward 端口映射
+因为 Pod 都是运行在 Kubernetes 内部的私有网段里的，外界无法直接访问，想要对外暴露服务，需要使用一个专门的 kubectl port-forward 命令，它专门负责把本机的端口映射到在目标对象的端口号，有点类似 Docker 的参数 -p，经常用于 Kubernetes 的临时调试和测试。
+比如将本地的 8080 映射到 a-pod 的 80 端口，kubectl 会把这个端口的所有数据都转发给集群内部的 Pod：
+kubectl port-forward a-pod 8080:80 &amp;amp; 命令的末尾使用了一个 &amp;amp; 符号，让端口转发工作在后台进行，这样就不会阻碍我们后续的操作。如果想关闭端口转发，需要敲命令 fg ，它会把后台的任务带回到前台，然后就可以简单地用 “Ctrl + C” 来停止转发了。</description>
     </item>
+    
     <item>
       <title>2.8 kubeadm 搭建</title>
       <link>https://example.com/kubernetes/docs/part2-break-ice/2.8-kubeadm/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
       <guid>https://example.com/kubernetes/docs/part2-break-ice/2.8-kubeadm/</guid>
-      <description>2.8 kubeadm 搭建 # kubeadm 和 minikube 类似，也是用容器和镜像来封装 Kubernetes 的各种组件，但它的目标不是单机部署，而是要能够轻松地在集群环境里部署 Kubernetes，并且让这个集群接近甚至达到生产级别质量。&#xA;kubeadm 具有了和 minikube 一样的易用性，只要很少的几条命令，如 init、join、upgrade、reset 就能够完成 Kubernetes 集群的管理维护工作，让它不仅适用于集群管理员，也适用于开发、测试人员。&#xA;2.8.1 准备工作 # 所谓的多节点集群，要求服务器应该有两台或者更多，其实最小可用的 Kubernetes 集群就只有两台主机，一台是 Master 节点，另一台是 Worker 节点。Master 节点需要运行 apiserver、etcd、scheduler、controller-manager 等组件，管理整个集群，Worker 节点只运行业务应用。&#xA;因为 Kubernetes 对系统有一些特殊要求，所以要先在 Master 和 Worker 节点上做一些准备，包括改主机名、改 Docker 配置、改网络设置、改交换分区这四步。&#xA;第一，由于 Kubernetes 使用主机名来区分集群里的节点，所以每个节点的 hostname 必须不能重名。需要修改 /etc/hostname 这个文件，把它改成容易辨识的名字，比如 Master 节点就叫 master，Worker 节点就叫 worker。&#xA;第二，虽然 Kubernetes 目前支持多种容器运行时，但 Docker 还是最方便最易用的一种，所以使用 Docker 作为 Kubernetes 的底层支持，这里可以参考 Docker 官网 安装 Docker Engine。安装完成后需要再对 Docker 的配置做一点修改，在 /etc/docker/daemon.</description>
+      <description>2.8 kubeadm 搭建 # kubeadm 和 minikube 类似，也是用容器和镜像来封装 Kubernetes 的各种组件，但它的目标不是单机部署，而是要能够轻松地在集群环境里部署 Kubernetes，并且让这个集群接近甚至达到生产级别质量。
+kubeadm 具有了和 minikube 一样的易用性，只要很少的几条命令，如 init、join、upgrade、reset 就能够完成 Kubernetes 集群的管理维护工作，让它不仅适用于集群管理员，也适用于开发、测试人员。
+2.8.1 准备工作 # 所谓的多节点集群，要求服务器应该有两台或者更多，其实最小可用的 Kubernetes 集群就只有两台主机，一台是 Master 节点，另一台是 Worker 节点。Master 节点需要运行 apiserver、etcd、scheduler、controller-manager 等组件，管理整个集群，Worker 节点只运行业务应用。
+因为 Kubernetes 对系统有一些特殊要求，所以要先在 Master 和 Worker 节点上做一些准备，包括改主机名、改 Docker 配置、改网络设置、改交换分区这四步。
+第一，由于 Kubernetes 使用主机名来区分集群里的节点，所以每个节点的 hostname 必须不能重名。需要修改 /etc/hostname 这个文件，把它改成容易辨识的名字，比如 Master 节点就叫 master，Worker 节点就叫 worker。
+第二，虽然 Kubernetes 目前支持多种容器运行时，但 Docker 还是最方便最易用的一种，所以使用 Docker 作为 Kubernetes 的底层支持，这里可以参考 Docker 官网 安装 Docker Engine。安装完成后需要再对 Docker 的配置做一点修改，在 /etc/docker/daemon.</description>
     </item>
+    
     <item>
       <title>2.9 Deployment</title>
       <link>https://example.com/kubernetes/docs/part2-break-ice/2.9-deployment/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
       <guid>https://example.com/kubernetes/docs/part2-break-ice/2.9-deployment/</guid>
-      <description>2.9 Deployment # 在线业务远不是单纯启动一个 Pod 这么简单，还有多实例、高可用、版本更新等许多复杂的操作。比如多实例需求，为了提高系统的服务能力，应对突发的流量和压力，需要创建多个应用的副本，还要即时监控它们的状态。如果只使用 Pod，但有人不小心用 kubectl delete 误删了 Pod，又或者 Pod 运行的节点发生了断电故障，那么 Pod 就会在集群里彻底消失，Pod 容器里运行的服务也会消息，这样就会导致业务出现异常。&#xA;处理这种问题的思路就是 “单一职责” 和 “对象组合”。既然 Pod 管理不了自己，那么就再创建一个新的对象，由它来管理 Pod，采用 “对象套对象” 的形式。这个用来管理 Pod，实现在线业务应用的新 API 对象，就是 Deployment。&#xA;2.9.1 创建 # Deployment 的简称是 deploy，它的 apiVersion 是 apps/v1，kind 是 Deployment。&#xA;Deployment 的 YAML 描述大致如下：&#xA;apiVersion: apps/v1 kind: Deployment metadata: labels: app: ngx-dep name: ngx-dep spec: replicas: 2 selector: matchLabels: app: ngx-dep template: metadata: labels: app: ngx-dep spec: containers: - image: nginx:alpine name: nginx replicas 字段 # replicas 字段的含义比较简单明了，就是 “副本数量” 的意思，也就是说，指定要在 Kubernetes 集群里运行多少个 Pod 实例。有了这个字段，就相当于为 Kubernetes 明确了应用部署的 “期望状态”，Deployment 对象就可以扮演运维监控人员的角色，自动地在集群里调整 Pod 的数量。</description>
+      <description>2.9 Deployment # 在线业务远不是单纯启动一个 Pod 这么简单，还有多实例、高可用、版本更新等许多复杂的操作。比如多实例需求，为了提高系统的服务能力，应对突发的流量和压力，需要创建多个应用的副本，还要即时监控它们的状态。如果只使用 Pod，但有人不小心用 kubectl delete 误删了 Pod，又或者 Pod 运行的节点发生了断电故障，那么 Pod 就会在集群里彻底消失，Pod 容器里运行的服务也会消息，这样就会导致业务出现异常。
+处理这种问题的思路就是 “单一职责” 和 “对象组合”。既然 Pod 管理不了自己，那么就再创建一个新的对象，由它来管理 Pod，采用 “对象套对象” 的形式。这个用来管理 Pod，实现在线业务应用的新 API 对象，就是 Deployment。
+2.9.1 创建 # Deployment 的简称是 deploy，它的 apiVersion 是 apps/v1，kind 是 Deployment。
+Deployment 的 YAML 描述大致如下：
+apiVersion: apps/v1 kind: Deployment metadata: labels: app: ngx-dep name: ngx-dep spec: replicas: 2 selector: matchLabels: app: ngx-dep template: metadata: labels: app: ngx-dep spec: containers: - image: nginx:alpine name: nginx replicas 字段 # replicas 字段的含义比较简单明了，就是 “副本数量” 的意思，也就是说，指定要在 Kubernetes 集群里运行多少个 Pod 实例。有了这个字段，就相当于为 Kubernetes 明确了应用部署的 “期望状态”，Deployment 对象就可以扮演运维监控人员的角色，自动地在集群里调整 Pod 的数量。</description>
     </item>
+    
     <item>
       <title>2.10 DaemonSet</title>
       <link>https://example.com/kubernetes/docs/part2-break-ice/2.10-daemonset/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
       <guid>https://example.com/kubernetes/docs/part2-break-ice/2.10-daemonset/</guid>
-      <description>2.10 DaemonSet # DaemonSet 会在 Kubernetes 集群的每个节点上都运行一个 Pod，就好像是 Linux 系统里的 “守护进程”（Daemon）一样。&#xA;DaemonSet 和 Deployment 有很大区别，Deployment 能够创建任意多个的 Pod 实例，并且维护这些 Pod 的正常运行，保证应用始终处于可用状态。但是，Deployment 并不关心这些 Pod 会在集群的哪些节点上运行，在它看来，Pod 的运行环境与功能是无关的，只要 Pod 的数量足够，应用程序应该会正常工作。但是对一些业务比较特殊服务，它们不是完全独立于系统运行的，而是与主机存在 “绑定” 关系，必须要依附于节点才能产生价值，比如：&#xA;网络应用（如 kube-proxy），必须每个节点都运行一个 Pod，否则节点就无法加入 Kubernetes 网络。&#xA;监控应用（如 Prometheus），必须每个节点都有一个 Pod 用来监控节点的状态，实时上报信息。&#xA;日志应用（如 Fluentd），必须在每个节点上运行一个 Pod，才能够搜集容器运行时产生的日志数据。&#xA;安全应用，每个节点都要有一个 Pod 来执行安全审计、入侵检查、漏洞扫描等工作。&#xA;以上这些业务如果用 Deployment 来部署就不太合适了，因为 Deployment 所管理的 Pod 数量是固定的，而且可能会在集群里 “漂移”，但，实际的需求却是要在集群里的每个节点上都运行 Pod，也就是说 Pod 的数量与节点数量保持同步。&#xA;DaemonSet，它在形式上和 Deployment 类似，都是管理控制 Pod，但管理调度策略却不同。DaemonSet 的目标是在集群的每个节点上运行且仅运行一个 Pod。&#xA;2.10.1 描述 DaemonSet # kubectl 不提供自动创建 DaemonSet YAML 样板的功能，不过可以在 Kubernetes 的官网 https://kubernetes.</description>
+      <description>2.10 DaemonSet # DaemonSet 会在 Kubernetes 集群的每个节点上都运行一个 Pod，就好像是 Linux 系统里的 “守护进程”（Daemon）一样。
+DaemonSet 和 Deployment 有很大区别，Deployment 能够创建任意多个的 Pod 实例，并且维护这些 Pod 的正常运行，保证应用始终处于可用状态。但是，Deployment 并不关心这些 Pod 会在集群的哪些节点上运行，在它看来，Pod 的运行环境与功能是无关的，只要 Pod 的数量足够，应用程序应该会正常工作。但是对一些业务比较特殊服务，它们不是完全独立于系统运行的，而是与主机存在 “绑定” 关系，必须要依附于节点才能产生价值，比如：
+网络应用（如 kube-proxy），必须每个节点都运行一个 Pod，否则节点就无法加入 Kubernetes 网络。
+监控应用（如 Prometheus），必须每个节点都有一个 Pod 用来监控节点的状态，实时上报信息。
+日志应用（如 Fluentd），必须在每个节点上运行一个 Pod，才能够搜集容器运行时产生的日志数据。
+安全应用，每个节点都要有一个 Pod 来执行安全审计、入侵检查、漏洞扫描等工作。
+以上这些业务如果用 Deployment 来部署就不太合适了，因为 Deployment 所管理的 Pod 数量是固定的，而且可能会在集群里 “漂移”，但，实际的需求却是要在集群里的每个节点上都运行 Pod，也就是说 Pod 的数量与节点数量保持同步。
+DaemonSet，它在形式上和 Deployment 类似，都是管理控制 Pod，但管理调度策略却不同。DaemonSet 的目标是在集群的每个节点上运行且仅运行一个 Pod。
+2.10.1 描述 DaemonSet # kubectl 不提供自动创建 DaemonSet YAML 样板的功能，不过可以在 Kubernetes 的官网 https://kubernetes.</description>
     </item>
+    
     <item>
       <title>2.11 Service</title>
       <link>https://example.com/kubernetes/docs/part2-break-ice/2.11-service/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
       <guid>https://example.com/kubernetes/docs/part2-break-ice/2.11-service/</guid>
-      <description>2.11 Service # 2.11.1 什么是 Service # Service 是集群内部的负载均衡机制，用来解决服务发现的关键问题。在 Kubernetes 集群里 Pod 的生命周期是比较 “短暂” 的，虽然 Deployment 和 DaemonSet 可以维持 Pod 总体数量的稳定，但在运行过程中，难免会有 Pod 销毁又重建，这就会导致 Pod 集合处于动态的变化之中。这种 “动态稳定” 对于现在流行的微服务架构来说是非常致命的，如果后台 Pod 的 IP 地址老是变来变去，客户端该怎么访问呢？&#xA;对于这种 “不稳定” 的后端服务问题，业内的解决方案是 “负载均衡”，典型的应用有 LVS、Nginx 等，它们在前端与后端之间加入了一个 “中间层”，屏蔽后端的变化，为前端提供一个稳定的服务。Service 的工作原理和 LVS、Nginx 差不多，Kubernetes 会给它分配一个静态 IP 地址，然后它再去自动管理、维护后面动态变化的 Pod 集合，当客户端访问 Service，它就根据某种策略，把流量转发给后面的某个 Pod。&#xA;LVS 即 Linux Virtual Server，是由章文嵩发起的一个开源项目，后来被集成进 Linux 内核。&#xA;Service 使用了 iptables 技术，每个节点上的 kube-proxy 组件自动维护 iptables 规则，客户不再关心 Pod 的具体地址，只要访问 Service 的固定 IP 地址，Service 就会根据 iptables 规则转发请求给它管理的多个 Pod，是典型的负载均衡架构。</description>
+      <description>2.11 Service # 2.11.1 什么是 Service # Service 是集群内部的负载均衡机制，用来解决服务发现的关键问题。在 Kubernetes 集群里 Pod 的生命周期是比较 “短暂” 的，虽然 Deployment 和 DaemonSet 可以维持 Pod 总体数量的稳定，但在运行过程中，难免会有 Pod 销毁又重建，这就会导致 Pod 集合处于动态的变化之中。这种 “动态稳定” 对于现在流行的微服务架构来说是非常致命的，如果后台 Pod 的 IP 地址老是变来变去，客户端该怎么访问呢？
+对于这种 “不稳定” 的后端服务问题，业内的解决方案是 “负载均衡”，典型的应用有 LVS、Nginx 等，它们在前端与后端之间加入了一个 “中间层”，屏蔽后端的变化，为前端提供一个稳定的服务。Service 的工作原理和 LVS、Nginx 差不多，Kubernetes 会给它分配一个静态 IP 地址，然后它再去自动管理、维护后面动态变化的 Pod 集合，当客户端访问 Service，它就根据某种策略，把流量转发给后面的某个 Pod。
+LVS 即 Linux Virtual Server，是由章文嵩发起的一个开源项目，后来被集成进 Linux 内核。
+Service 使用了 iptables 技术，每个节点上的 kube-proxy 组件自动维护 iptables 规则，客户不再关心 Pod 的具体地址，只要访问 Service 的固定 IP 地址，Service 就会根据 iptables 规则转发请求给它管理的多个 Pod，是典型的负载均衡架构。</description>
     </item>
+    
     <item>
       <title>2.12 Ingress</title>
       <link>https://example.com/kubernetes/docs/part2-break-ice/2.12-ingress/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
       <guid>https://example.com/kubernetes/docs/part2-break-ice/2.12-ingress/</guid>
-      <description>2.12 Ingress # Service 的负载均衡功能有限，只能够依据 IP 地址和端口号做一些简单的判断和组合，而更多的高级路由条件，比如主机名、URI、请求头、证书等 Service 无法实现。Service 还有一个缺点，它比较适合代理集群内部的服务。如果想要把服务暴露到集群外部，就只能使用 NodePort 或者 LoadBalancer 这两种方式，而它们缺乏足够的灵活性，难以管控。&#xA;Ingress 对象可以作为流量的总入口，统管集群的进出口数据，“扇入” “扇出” 流量（也就是常说的 “南北向”），让外部用户能够安全、顺畅、便捷地访问内部服务。&#xA;2.12.1 Ingress Controller &amp;amp; Class # Service 本身是没有服务能力的，它只是一些 iptables 规则，真正配置、应用这些规则的实际上是节点里的 kube-proxy 组件。如果没有 kube-proxy，Service 定义得再完善也没有用。&#xA;Ingress 只是一些 HTTP 路由规则的集合，相当于一份静态的描述文件，真正要把这些规则在集群里实施运行，需要的是 Ingress Controller，它的作用就相当于 Service 的 kube-proxy，能够读取、应用 Ingress 规则，处理、调度流量。&#xA;由于 Ingress Controller 与上层业务联系密切，所以 Kubernetes 把 Ingress Controller 的实现交给了社区，只要遵守 Ingress 规则，任何人都可以开发 Ingress Controller。在众多 Ingress Controller 中，Nginx 公司开发实现 Ingress Controller 是最多使用的。&#xA;最初 Kubernetes 的构想是，一个集群里有一个 Ingress Controller，再给它配上许多不同的 Ingress 规则，应该就可以解决请求的路由和分发问题了。但随着 Ingress 在实践中的大量应用，有很多问题逐渐显现出来，比如：</description>
+      <description>2.12 Ingress # Service 的负载均衡功能有限，只能够依据 IP 地址和端口号做一些简单的判断和组合，而更多的高级路由条件，比如主机名、URI、请求头、证书等 Service 无法实现。Service 还有一个缺点，它比较适合代理集群内部的服务。如果想要把服务暴露到集群外部，就只能使用 NodePort 或者 LoadBalancer 这两种方式，而它们缺乏足够的灵活性，难以管控。
+Ingress 对象可以作为流量的总入口，统管集群的进出口数据，“扇入” “扇出” 流量（也就是常说的 “南北向”），让外部用户能够安全、顺畅、便捷地访问内部服务。
+2.12.1 Ingress Controller &amp;amp; Class # Service 本身是没有服务能力的，它只是一些 iptables 规则，真正配置、应用这些规则的实际上是节点里的 kube-proxy 组件。如果没有 kube-proxy，Service 定义得再完善也没有用。
+Ingress 只是一些 HTTP 路由规则的集合，相当于一份静态的描述文件，真正要把这些规则在集群里实施运行，需要的是 Ingress Controller，它的作用就相当于 Service 的 kube-proxy，能够读取、应用 Ingress 规则，处理、调度流量。
+由于 Ingress Controller 与上层业务联系密切，所以 Kubernetes 把 Ingress Controller 的实现交给了社区，只要遵守 Ingress 规则，任何人都可以开发 Ingress Controller。在众多 Ingress Controller 中，Nginx 公司开发实现 Ingress Controller 是最多使用的。
+最初 Kubernetes 的构想是，一个集群里有一个 Ingress Controller，再给它配上许多不同的 Ingress 规则，应该就可以解决请求的路由和分发问题了。但随着 Ingress 在实践中的大量应用，有很多问题逐渐显现出来，比如：</description>
     </item>
+    
     <item>
       <title>2.13 PersistentVolume</title>
       <link>https://example.com/kubernetes/docs/part2-break-ice/2.13-persistent-volume/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
       <guid>https://example.com/kubernetes/docs/part2-break-ice/2.13-persistent-volume/</guid>
-      <description>2.13 PersistentVolume # Pod 里的容器是由镜像产生的，而镜像文件本身是只读的，进程要读写磁盘只能用一个临时的存储空间，一旦 Pod 销毁，临时存储也就会立即回收释放，数据也就丢失了。&#xA;Kubernetes 的 Volume 对数据存储已经给出了一个很好的抽象，它只是定义了有这么一个 “存储卷”，而这个 “存储卷” 是什么类型、有多大容量、怎么存储，可以自由发挥。Pod 不需要关心那些专业、复杂的细节，只要设置好 volumeMounts，就可以把 Volume 加载进容器里使用。所以，由 Volume 的概念，延伸出了 PersistentVolume 对象，它专门用来表示持久存储设备，但隐藏了存储的底层实现，使用者只需要知道它能安全可靠地保管数据就可以了（由于 PersistentVolume 这个词很长，一般把它简称为 PV）。&#xA;作为存储的抽象，PV 实际上就是一些存储设备、文件系统，比如 Ceph、GlusterFS、NFS，甚至是本地磁盘，管理它们已经超出了 Kubernetes 的能力范围，所以，一般会由系统管理员单独维护，然后再在 Kubernetes 里创建对应的 PV。PV 属于集群的系统资源，是和 Node 平级的一种对象，Pod 对它没有管理权，只有使用权。&#xA;2.13.1 PersistentVolumeClaim/StorageClass # 由于不同存储设备的差异实在是太大了：有的速度快，有的速度慢；有的可以共享读写，有的只能独占读写；有的容量小，只有几百 MB，有的容量大到 TB、PB 级别等，这么多种存储设备，只用一个 PV 对象来管理不符合 “单一职责” 的原则，让 Pod 直接去选择 PV 也不灵活。所以 Kubernetes 就又增加了两个新对象，PersistentVolumeClaim 和 StorageClass，这种 “中间层” 的思想，把存储卷的分配管理过程再次细化。&#xA;PersistentVolumeClaim，简称 PVC，用来向 Kubernetes 申请存储资源。PVC 是给 Pod 使用的对象，它相当于是 Pod 的代理，代表 Pod 向系统申请 PV。一旦资源申请成功，Kubernetes 就会把 PV 和 PVC 关联在一起，这个动作叫做 “绑定”（bind）。</description>
+      <description>2.13 PersistentVolume # Pod 里的容器是由镜像产生的，而镜像文件本身是只读的，进程要读写磁盘只能用一个临时的存储空间，一旦 Pod 销毁，临时存储也就会立即回收释放，数据也就丢失了。
+Kubernetes 的 Volume 对数据存储已经给出了一个很好的抽象，它只是定义了有这么一个 “存储卷”，而这个 “存储卷” 是什么类型、有多大容量、怎么存储，可以自由发挥。Pod 不需要关心那些专业、复杂的细节，只要设置好 volumeMounts，就可以把 Volume 加载进容器里使用。所以，由 Volume 的概念，延伸出了 PersistentVolume 对象，它专门用来表示持久存储设备，但隐藏了存储的底层实现，使用者只需要知道它能安全可靠地保管数据就可以了（由于 PersistentVolume 这个词很长，一般把它简称为 PV）。
+作为存储的抽象，PV 实际上就是一些存储设备、文件系统，比如 Ceph、GlusterFS、NFS，甚至是本地磁盘，管理它们已经超出了 Kubernetes 的能力范围，所以，一般会由系统管理员单独维护，然后再在 Kubernetes 里创建对应的 PV。PV 属于集群的系统资源，是和 Node 平级的一种对象，Pod 对它没有管理权，只有使用权。
+2.13.1 PersistentVolumeClaim/StorageClass # 由于不同存储设备的差异实在是太大了：有的速度快，有的速度慢；有的可以共享读写，有的只能独占读写；有的容量小，只有几百 MB，有的容量大到 TB、PB 级别等，这么多种存储设备，只用一个 PV 对象来管理不符合 “单一职责” 的原则，让 Pod 直接去选择 PV 也不灵活。所以 Kubernetes 就又增加了两个新对象，PersistentVolumeClaim 和 StorageClass，这种 “中间层” 的思想，把存储卷的分配管理过程再次细化。
+PersistentVolumeClaim，简称 PVC，用来向 Kubernetes 申请存储资源。PVC 是给 Pod 使用的对象，它相当于是 Pod 的代理，代表 Pod 向系统申请 PV。一旦资源申请成功，Kubernetes 就会把 PV 和 PVC 关联在一起，这个动作叫做 “绑定”（bind）。</description>
     </item>
+    
     <item>
       <title>2.14 网络共享存储</title>
       <link>https://example.com/kubernetes/docs/part2-break-ice/2.14-persistentvolume-nfs/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
       <guid>https://example.com/kubernetes/docs/part2-break-ice/2.14-persistentvolume-nfs/</guid>
-      <description>2.14 网络共享存储 # 由于 Kubernetes 里的 Pod 经常会在集群里 “漂移”，要想让存储卷真正能被 Pod 任意挂载，就不能限定在本地磁盘，而是要改成网络存储，这样 Pod 无论在哪里运行，只要知道 IP 地址或者域名，就可以通过网络通信访问存储设备。&#xA;在网络存储中有比较简单的 NFS 系统（Network File System），可以通过 NFS 理解在 Kubernetes 里使用网络存储，以及静态存储卷和动态存储卷的概念。&#xA;2.14.1 安装 NFS 服务器 # NFS 采用的是 Client/Server 架构，需要选定一台主机作为 Server，安装 NFS 服务端；其他要使用存储的主机作为 Client，安装 NFS 客户端工具。&#xA;可以在 Kubernetes 集群里增添一台名字叫 Storage 的服务器，在上面安装 NFS，实现网络存储、共享网盘的功能。这台 Storage 只是一个逻辑概念，在实际安装部署的时候完全可以把它合并到集群里的某台主机里。&#xA;在 Ubuntu/Debian 系统里安装 NFS 服务端很容易，使用 apt 即可：&#xA;sudo apt -y install nfs-kernel-server 安装好之后，需要给 NFS 指定一个存储位置，也就是网络共享目录。一般来说，应该建立一个专门的 /data 目录，这里使用了临时目录 /tmp/nfs：&#xA;mkdir -p /tmp/nfs 接下来需要配置 NFS 访问共享目录，修改 /etc/exports，指定目录名、允许访问的网段，还有权限等参数。把下面这行加上就行，注意目录名和 IP 地址要改成和自己的环境一致：</description>
+      <description>2.14 网络共享存储 # 由于 Kubernetes 里的 Pod 经常会在集群里 “漂移”，要想让存储卷真正能被 Pod 任意挂载，就不能限定在本地磁盘，而是要改成网络存储，这样 Pod 无论在哪里运行，只要知道 IP 地址或者域名，就可以通过网络通信访问存储设备。
+在网络存储中有比较简单的 NFS 系统（Network File System），可以通过 NFS 理解在 Kubernetes 里使用网络存储，以及静态存储卷和动态存储卷的概念。
+2.14.1 安装 NFS 服务器 # NFS 采用的是 Client/Server 架构，需要选定一台主机作为 Server，安装 NFS 服务端；其他要使用存储的主机作为 Client，安装 NFS 客户端工具。
+可以在 Kubernetes 集群里增添一台名字叫 Storage 的服务器，在上面安装 NFS，实现网络存储、共享网盘的功能。这台 Storage 只是一个逻辑概念，在实际安装部署的时候完全可以把它合并到集群里的某台主机里。
+在 Ubuntu/Debian 系统里安装 NFS 服务端很容易，使用 apt 即可：
+sudo apt -y install nfs-kernel-server 安装好之后，需要给 NFS 指定一个存储位置，也就是网络共享目录。一般来说，应该建立一个专门的 /data 目录，这里使用了临时目录 /tmp/nfs：
+mkdir -p /tmp/nfs 接下来需要配置 NFS 访问共享目录，修改 /etc/exports，指定目录名、允许访问的网段，还有权限等参数。把下面这行加上就行，注意目录名和 IP 地址要改成和自己的环境一致：</description>
     </item>
+    
     <item>
       <title>2.15 StatefulSet</title>
       <link>https://example.com/kubernetes/docs/part2-break-ice/2.15-statefulset/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
       <guid>https://example.com/kubernetes/docs/part2-break-ice/2.15-statefulset/</guid>
-      <description>2.15 StatefulSet # 2.15.1 状态和应用 # 理论上任何应用都是有状态的，只是有的应用的状态信息不是很重要，即使不恢复状态也能够正常运行，这就是 “无状态应用”。“无状态应用” 典型的例子就是 Nginx 这样的 Web 服务器，它只是处理 HTTP 请求，本身不生产数据（日志除外），不需要特意保存状态，无论以什么状态重启都能很好地对外提供服务。&#xA;还有一些应用，运行状态信息很重要，如果因为重启而丢失了状态是绝对无法接受的，这样的应用是 “有状态应用”。比如 Redis、MySQL 这样的数据库，它们的 “状态” 就是在内存或者磁盘上产生的数据，是应用的核心价值所在，如果不能够把这些数据及时保存再恢复，那绝对会是灾难性的后果。&#xA;对于 Deployment 来说，多个实例之间是无关的，启动的顺序不固定，Pod 的名字、IP 地址、域名也都是完全随机的，这正是 “无状态应用” 的特点。对于 “有状态应用”，多个实例之间可能存在依赖关系，比如 master/slave、active/passive，需要依次启动才能保证应用正常运行，外界的客户端也可能要使用固定的网络标识来访问实例，而且这些信息还必须要保证在 Pod 重启后不变。&#xA;Kubernetes 定义了一个新的 API 对象 StatefulSet，专门用来管理有状态的应用。&#xA;2.15.2 描述 StatefulSet # StatefulSet 也可以看做是 Deployment 的一个特例，它不能直接用 kubectl create 创建样板文件，它的对象描述和 Deployment 差不多，可以把 Deployment 适当修改一下，就变成了 StatefulSet 对象。以下是一个使用 Redis 的 StatefulSet 描述文件：&#xA;apiVersion: apps/v1 kind: StatefulSet metadata: name: redis-sts spec: serviceName: redis-svc replicas: 2 selector: matchLabels: app: redis-sts template: metadata: labels: app: redis-sts spec: containers: - image: redis:5-alpine name: redis ports: - containerPort: 6379 YAML 文件里除了 kind 必须是 “StatefulSet”，在 spec 里还多出了一个 “serviceName” 字段外，其余的部分和 Deployment 是一模一样的，比如 replicas、selector、template。</description>
+      <description>2.15 StatefulSet # 2.15.1 状态和应用 # 理论上任何应用都是有状态的，只是有的应用的状态信息不是很重要，即使不恢复状态也能够正常运行，这就是 “无状态应用”。“无状态应用” 典型的例子就是 Nginx 这样的 Web 服务器，它只是处理 HTTP 请求，本身不生产数据（日志除外），不需要特意保存状态，无论以什么状态重启都能很好地对外提供服务。
+还有一些应用，运行状态信息很重要，如果因为重启而丢失了状态是绝对无法接受的，这样的应用是 “有状态应用”。比如 Redis、MySQL 这样的数据库，它们的 “状态” 就是在内存或者磁盘上产生的数据，是应用的核心价值所在，如果不能够把这些数据及时保存再恢复，那绝对会是灾难性的后果。
+对于 Deployment 来说，多个实例之间是无关的，启动的顺序不固定，Pod 的名字、IP 地址、域名也都是完全随机的，这正是 “无状态应用” 的特点。对于 “有状态应用”，多个实例之间可能存在依赖关系，比如 master/slave、active/passive，需要依次启动才能保证应用正常运行，外界的客户端也可能要使用固定的网络标识来访问实例，而且这些信息还必须要保证在 Pod 重启后不变。
+Kubernetes 定义了一个新的 API 对象 StatefulSet，专门用来管理有状态的应用。
+2.15.2 描述 StatefulSet # StatefulSet 也可以看做是 Deployment 的一个特例，它不能直接用 kubectl create 创建样板文件，它的对象描述和 Deployment 差不多，可以把 Deployment 适当修改一下，就变成了 StatefulSet 对象。以下是一个使用 Redis 的 StatefulSet 描述文件：
+apiVersion: apps/v1 kind: StatefulSet metadata: name: redis-sts spec: serviceName: redis-svc replicas: 2 selector: matchLabels: app: redis-sts template: metadata: labels: app: redis-sts spec: containers: - image: redis:5-alpine name: redis ports: - containerPort: 6379 YAML 文件里除了 kind 必须是 “StatefulSet”，在 spec 里还多出了一个 “serviceName” 字段外，其余的部分和 Deployment 是一模一样的，比如 replicas、selector、template。</description>
     </item>
+    
     <item>
       <title>2.16 滚动更新</title>
       <link>https://example.com/kubernetes/docs/part2-break-ice/2.16-rolling-update/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
       <guid>https://example.com/kubernetes/docs/part2-break-ice/2.16-rolling-update/</guid>
-      <description>2.16 滚动更新 # 在实际生产环境中，只是把应用发布到集群里是远远不够的，要让应用稳定可靠地运行，还需要有持续的运维工作。比如 Deployment 的 “应用伸缩” 功能就是一种常见的运维操作，在 Kubernetes 里，使用命令 kubectl scale，可以轻松调整 Deployment 下属的 Pod 数量。除了 “应用伸缩”，其他的运维操作比如应用更新、版本回退等工作也是日常运维中经常会遇到的问题。&#xA;2.16.1 应用版本 # 版本更新实际做起来是一个相当棘手的事。因为系统已经上线运行，必须要保证不间断地对外提供服务。尤其在特殊时候可能需要开发、测试、运维、监控、网络等各个部门的一大堆人来协同工作，费时又费力。&#xA;在 Kubernetes 里，版本更新使用的不是 API 对象，而是两个命令：kubectl apply 和 kubectl rollout，需要搭配部署应用所需要的 Deployment、DaemonSet 等 YAML 文件。&#xA;在 Kubernetes 里应用都是以 Pod 的形式运行的，而 Pod 通常又会被 Deployment 等对象来管理，所以应用的 “版本更新” 实际上更新的是整个 Pod。Pod 是由 YAML 描述文件来确定的，是 Deployment 等对象里的字段 template。所以，在 Kubernetes 里应用的版本变化就是 template 里 Pod 的变化，哪怕 template 里只变动了一个字段，那也会形成一个新的版本，也算是版本变化。但在 template 里的内容太多了，拿这么长的字符串来当做 “版本号” 不太现实，所以 Kubernetes 就使用了 “摘要” 功能，用摘要算法计算 template 的 Hash 值作为 “版本号”。</description>
+      <description>2.16 滚动更新 # 在实际生产环境中，只是把应用发布到集群里是远远不够的，要让应用稳定可靠地运行，还需要有持续的运维工作。比如 Deployment 的 “应用伸缩” 功能就是一种常见的运维操作，在 Kubernetes 里，使用命令 kubectl scale，可以轻松调整 Deployment 下属的 Pod 数量。除了 “应用伸缩”，其他的运维操作比如应用更新、版本回退等工作也是日常运维中经常会遇到的问题。
+2.16.1 应用版本 # 版本更新实际做起来是一个相当棘手的事。因为系统已经上线运行，必须要保证不间断地对外提供服务。尤其在特殊时候可能需要开发、测试、运维、监控、网络等各个部门的一大堆人来协同工作，费时又费力。
+在 Kubernetes 里，版本更新使用的不是 API 对象，而是两个命令：kubectl apply 和 kubectl rollout，需要搭配部署应用所需要的 Deployment、DaemonSet 等 YAML 文件。
+在 Kubernetes 里应用都是以 Pod 的形式运行的，而 Pod 通常又会被 Deployment 等对象来管理，所以应用的 “版本更新” 实际上更新的是整个 Pod。Pod 是由 YAML 描述文件来确定的，是 Deployment 等对象里的字段 template。所以，在 Kubernetes 里应用的版本变化就是 template 里 Pod 的变化，哪怕 template 里只变动了一个字段，那也会形成一个新的版本，也算是版本变化。但在 template 里的内容太多了，拿这么长的字符串来当做 “版本号” 不太现实，所以 Kubernetes 就使用了 “摘要” 功能，用摘要算法计算 template 的 Hash 值作为 “版本号”。</description>
     </item>
+    
     <item>
       <title>2.17 应用保障</title>
       <link>https://example.com/kubernetes/docs/part2-break-ice/2.17-app-assurance/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
       <guid>https://example.com/kubernetes/docs/part2-break-ice/2.17-app-assurance/</guid>
-      <description>2.17 应用保障 # 2.17.1 容器资源配额 # 创建容器有三大隔离技术：namespace、cgroup、chroot。其中的 namespace 实现了独立的进程空间，chroot 实现了独立的文件系统，cgroup 的作用是管控 CPU、内存，保证容器不会无节制地占用基础资源，进而影响到系统里的其他应用。&#xA;因为 CPU、内存与存储卷有明显的不同，它是直接 “内置” 在系统里的，不像硬盘那样需要 “外挂”，所以申请和管理的过程会简单很多。Kubernetes 在管控容器使用 CPU 和内存的做法是，只要在 Pod 容器的描述部分添加一个新字段 resources 就可以了，它就相当于申请资源的 Claim。&#xA;以下是一个 YAML 描述示例：&#xA;apiVersion: v1 kind: Pod metadata: name: ngx-pod-resources spec: containers: - image: nginx:alpine name: ngx resources: requests: cpu: 10m memory: 100Mi limits: cpu: 20m memory: 200Mi requests 意思是容器要申请的资源，也就是说要求 Kubernetes 在创建 Pod 的时候必须分配这里列出的资源，否则容器就无法运行。&#xA;limits 意思是容器使用资源的上限，不能超过设定值，否则就有可能被强制停止运行。&#xA;内存的写法和磁盘容量一样，使用 Ki、Mi、Gi 来表示 KB、MB、GB，比如 512Ki、100Mi、0.5Gi 等。&#xA;因为 CPU 因为在计算机中数量有限，非常宝贵，所以 Kubernetes 允许容器精细分割 CPU，既可以 1 个、2 个地完整使用 CPU，也可以用小数 0.</description>
+      <description>2.17 应用保障 # 2.17.1 容器资源配额 # 创建容器有三大隔离技术：namespace、cgroup、chroot。其中的 namespace 实现了独立的进程空间，chroot 实现了独立的文件系统，cgroup 的作用是管控 CPU、内存，保证容器不会无节制地占用基础资源，进而影响到系统里的其他应用。
+因为 CPU、内存与存储卷有明显的不同，它是直接 “内置” 在系统里的，不像硬盘那样需要 “外挂”，所以申请和管理的过程会简单很多。Kubernetes 在管控容器使用 CPU 和内存的做法是，只要在 Pod 容器的描述部分添加一个新字段 resources 就可以了，它就相当于申请资源的 Claim。
+以下是一个 YAML 描述示例：
+apiVersion: v1 kind: Pod metadata: name: ngx-pod-resources spec: containers: - image: nginx:alpine name: ngx resources: requests: cpu: 10m memory: 100Mi limits: cpu: 20m memory: 200Mi requests 意思是容器要申请的资源，也就是说要求 Kubernetes 在创建 Pod 的时候必须分配这里列出的资源，否则容器就无法运行。
+limits 意思是容器使用资源的上限，不能超过设定值，否则就有可能被强制停止运行。
+内存的写法和磁盘容量一样，使用 Ki、Mi、Gi 来表示 KB、MB、GB，比如 512Ki、100Mi、0.5Gi 等。
+因为 CPU 因为在计算机中数量有限，非常宝贵，所以 Kubernetes 允许容器精细分割 CPU，既可以 1 个、2 个地完整使用 CPU，也可以用小数 0.</description>
     </item>
+    
     <item>
       <title>2.18 集群管理</title>
       <link>https://example.com/kubernetes/docs/part2-break-ice/2.18-cluster-management/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
       <guid>https://example.com/kubernetes/docs/part2-break-ice/2.18-cluster-management/</guid>
-      <description>2.18 集群管理 # 2.18.1 名字空间 # Kubernetes 的名字空间并不是一个实体对象，只是一个逻辑上的概念。它可以把集群切分成一个个彼此独立的区域，然后把对象放到这些区域里，就实现了类似容器技术里 namespace 的隔离效果，应用只能在自己的名字空间里分配资源和运行，不会干扰到其他名字空间里的应用。&#xA;在 Master/Node 架构里引入名字空间，是因为集群很大、计算资源充足，会有非常多的用户在 Kubernetes 里创建各式各样的应用，可能会有百万数量级别的 Pod，这就使得资源争抢和命名冲突的概率大大增加了，情形和单机 Linux 系统里是非常相似的。&#xA;比如，现在有一个 Kubernetes 集群，前端组、后端组、测试组都在使用它。这个时候就很容易命名冲突，比如后端组先创建了一个 Pod 叫 Web，这个名字就被 “占用” 了，之后前端组和测试组就只能绞尽脑汁再新起一个不冲突的名字。资源争抢也容易出现，比如，测试组不小心部署了有 Bug 的应用，在节点上把资源都给 “吃” 完了，就会导致其他组的同事根本无法工作。&#xA;当多团队、多项目共用 Kubernetes 的时候，就需要把集群给适当地 “局部化”，为每一类用户创建出只属于它自己的 “工作空间”。&#xA;2.18.2 使用名字空间 # 名字空间也是一种 API 对象，使用命令 kubectl api-resources 可以看到它的简称是 “ns”，命令 kubectl create 不需要额外的参数，可以很容易地创建一个名字空间，比如：&#xA;kubectl create ns test-ns kubectl get ns Kubernetes 初始化集群的时会预设 4 个名字空间：default、kube-system、kube-public、kube-node-lease。default 是用户对象默认的名字空间，kube-system 是系统组件所在的名字空间。&#xA;想要把一个对象放入特定的名字空间，需要在它的 metadata 里添加一个 namespace 字段，比如要在 “test-ns” 名字空间里创建一个简单的 Nginx Pod，就要这样写：</description>
+      <description>2.18 集群管理 # 2.18.1 名字空间 # Kubernetes 的名字空间并不是一个实体对象，只是一个逻辑上的概念。它可以把集群切分成一个个彼此独立的区域，然后把对象放到这些区域里，就实现了类似容器技术里 namespace 的隔离效果，应用只能在自己的名字空间里分配资源和运行，不会干扰到其他名字空间里的应用。
+在 Master/Node 架构里引入名字空间，是因为集群很大、计算资源充足，会有非常多的用户在 Kubernetes 里创建各式各样的应用，可能会有百万数量级别的 Pod，这就使得资源争抢和命名冲突的概率大大增加了，情形和单机 Linux 系统里是非常相似的。
+比如，现在有一个 Kubernetes 集群，前端组、后端组、测试组都在使用它。这个时候就很容易命名冲突，比如后端组先创建了一个 Pod 叫 Web，这个名字就被 “占用” 了，之后前端组和测试组就只能绞尽脑汁再新起一个不冲突的名字。资源争抢也容易出现，比如，测试组不小心部署了有 Bug 的应用，在节点上把资源都给 “吃” 完了，就会导致其他组的同事根本无法工作。
+当多团队、多项目共用 Kubernetes 的时候，就需要把集群给适当地 “局部化”，为每一类用户创建出只属于它自己的 “工作空间”。
+2.18.2 使用名字空间 # 名字空间也是一种 API 对象，使用命令 kubectl api-resources 可以看到它的简称是 “ns”，命令 kubectl create 不需要额外的参数，可以很容易地创建一个名字空间，比如：
+kubectl create ns test-ns kubectl get ns Kubernetes 初始化集群的时会预设 4 个名字空间：default、kube-system、kube-public、kube-node-lease。default 是用户对象默认的名字空间，kube-system 是系统组件所在的名字空间。
+想要把一个对象放入特定的名字空间，需要在它的 metadata 里添加一个 namespace 字段，比如要在 “test-ns” 名字空间里创建一个简单的 Nginx Pod，就要这样写：</description>
     </item>
+    
     <item>
       <title>2.19 系统监控</title>
       <link>https://example.com/kubernetes/docs/part2-break-ice/2.19-system-monitor/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
       <guid>https://example.com/kubernetes/docs/part2-break-ice/2.19-system-monitor/</guid>
-      <description>2.19 系统监控 # 2.19.1 Metrics Server # Linux top 命令能够实时显示当前系统的 CPU 和内存利用率，是性能分析和调优的工具。Kubernetes 也提供了类似的命令，就是 kubectl top，不过默认情况下这个命令不会生效，必须要安装插件 Metrics Server 才可以。&#xA;Metrics Server 是一个专门用来收集 Kubernetes 核心资源指标（metrics）的工具，它定时从所有节点的 kubelet 里采集信息，但是对集群的整体性能影响极小，每个节点只大约会占用 1m 的 CPU 和 2MB 的内存，性价比非常高。项目网址在 https://github.com/kubernetes-sigs/metrics-server。&#xA;Metrics Server 调用 kubelet 的 API 拿到节点和 Pod 的指标，再把这些信息交给 apiserver，这样 kubectl、HPA 就可以利用 apiserver 来读取指标了。&#xA;Metrics Server 的所有依赖都放在了一个 YAML 描述文件里，你可以使用 wget 或者 curl 下载：&#xA;wget https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml 下载下来的 YAML 描述文件不能直接使用，需要修改下。&#xA;需要在 Metrics Server 的 Deployment 对象里，加上一个额外的运行参数 --kubelet-insecure-tls，也就是这样： apiVersion: apps/v1 kind: Deployment metadata: name: metrics-server namespace: kube-system spec: .</description>
+      <description>2.19 系统监控 # 2.19.1 Metrics Server # Linux top 命令能够实时显示当前系统的 CPU 和内存利用率，是性能分析和调优的工具。Kubernetes 也提供了类似的命令，就是 kubectl top，不过默认情况下这个命令不会生效，必须要安装插件 Metrics Server 才可以。
+Metrics Server 是一个专门用来收集 Kubernetes 核心资源指标（metrics）的工具，它定时从所有节点的 kubelet 里采集信息，但是对集群的整体性能影响极小，每个节点只大约会占用 1m 的 CPU 和 2MB 的内存，性价比非常高。项目网址在 https://github.com/kubernetes-sigs/metrics-server。
+Metrics Server 调用 kubelet 的 API 拿到节点和 Pod 的指标，再把这些信息交给 apiserver，这样 kubectl、HPA 就可以利用 apiserver 来读取指标了。
+Metrics Server 的所有依赖都放在了一个 YAML 描述文件里，你可以使用 wget 或者 curl 下载：
+wget https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml 下载下来的 YAML 描述文件不能直接使用，需要修改下。
+需要在 Metrics Server 的 Deployment 对象里，加上一个额外的运行参数 --kubelet-insecure-tls，也就是这样： apiVersion: apps/v1 kind: Deployment metadata: name: metrics-server namespace: kube-system spec: .</description>
     </item>
+    
     <item>
       <title>2.20 网络通信</title>
       <link>https://example.com/kubernetes/docs/part2-break-ice/2.20-network-communications/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
       <guid>https://example.com/kubernetes/docs/part2-break-ice/2.20-network-communications/</guid>
-      <description>2.20 网络通信 # 2.20.1 网络模型 # Docker 有三种常见的网络模式： null、host 和 bridge。下图，描述了 Docker 里最常用的 bridge 网络模式：&#xA;Docker 会创建一个名字叫 “docker0” 的网桥，默认是私有网段 “172.17.0.0/16”。每个容器都会创建一个虚拟网卡对（veth pair），两个虚拟网卡分别 “插” 在容器和网桥上，这样容器之间就可以互联互通了。Docker 的网络方案简单有效，但只局限在单机环境里工作，跨主机通信非常困难（需要做端口映射和网络地址转换）。&#xA;Kubernetes 的网络模型 “IP-per-pod”，能够很好地适应集群系统的网络需求，它有下面的这 4 点基本假设：&#xA;集群里的每个 Pod 都会有唯一的一个 IP 地址。&#xA;Pod 里的所有容器共享这个 IP 地址。&#xA;集群里的所有 Pod 都属于同一个网段。&#xA;Pod 直接可以基于 IP 地址直接访问另一个 Pod，不需要做麻烦的网络地址转换（NAT）。&#xA;这种网络让 Pod 摆脱了主机的硬限制，是一个 “平坦” 的网络模型，通信也非常简单。因为 Pod 都具有独立的 IP 地址，相当于一台虚拟机，而且直连互通，也就可以很容易地实施域名解析、负载均衡、服务发现等工作，对应用的管理和迁移都非常友好。&#xA;2.20.2 什么是 CNI # CNI（Container Networking Interface）为网络插件定义了一系列通用接口，开发者只要遵循这个规范就可以接入 Kubernetes，为 Pod 创建虚拟网卡、分配 IP 地址、设置路由规则，最后就能够实现 “IP-per-pod” 网络模型。依据实现技术的不同，CNI 插件可以大致上分成 “Overlay” “Route” 和 “Underlay” 三种。</description>
+      <description>2.20 网络通信 # 2.20.1 网络模型 # Docker 有三种常见的网络模式： null、host 和 bridge。下图，描述了 Docker 里最常用的 bridge 网络模式：
+Docker 会创建一个名字叫 “docker0” 的网桥，默认是私有网段 “172.17.0.0/16”。每个容器都会创建一个虚拟网卡对（veth pair），两个虚拟网卡分别 “插” 在容器和网桥上，这样容器之间就可以互联互通了。Docker 的网络方案简单有效，但只局限在单机环境里工作，跨主机通信非常困难（需要做端口映射和网络地址转换）。
+Kubernetes 的网络模型 “IP-per-pod”，能够很好地适应集群系统的网络需求，它有下面的这 4 点基本假设：
+集群里的每个 Pod 都会有唯一的一个 IP 地址。
+Pod 里的所有容器共享这个 IP 地址。
+集群里的所有 Pod 都属于同一个网段。
+Pod 直接可以基于 IP 地址直接访问另一个 Pod，不需要做麻烦的网络地址转换（NAT）。
+这种网络让 Pod 摆脱了主机的硬限制，是一个 “平坦” 的网络模型，通信也非常简单。因为 Pod 都具有独立的 IP 地址，相当于一台虚拟机，而且直连互通，也就可以很容易地实施域名解析、负载均衡、服务发现等工作，对应用的管理和迁移都非常友好。
+2.20.2 什么是 CNI # CNI（Container Networking Interface）为网络插件定义了一系列通用接口，开发者只要遵循这个规范就可以接入 Kubernetes，为 Pod 创建虚拟网卡、分配 IP 地址、设置路由规则，最后就能够实现 “IP-per-pod” 网络模型。依据实现技术的不同，CNI 插件可以大致上分成 “Overlay” “Route” 和 “Underlay” 三种。</description>
     </item>
+    
   </channel>
 </rss>

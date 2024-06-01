@@ -9,18 +9,16 @@
 Deployment 的 YAML 描述大致如下：
 apiVersion: apps/v1 kind: Deployment metadata: labels: app: ngx-dep name: ngx-dep spec: replicas: 2 selector: matchLabels: app: ngx-dep template: metadata: labels: app: ngx-dep spec: containers: - image: nginx:alpine name: nginx replicas 字段 # replicas 字段的含义比较简单明了，就是 “副本数量” 的意思，也就是说，指定要在 Kubernetes 集群里运行多少个 Pod 实例。有了这个字段，就相当于为 Kubernetes 明确了应用部署的 “期望状态”，Deployment 对象就可以扮演运维监控人员的角色，自动地在集群里调整 Pod 的数量。">
 <meta name="theme-color" content="#FFFFFF">
-<meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/kubernetes/docs/part2-break-ice/2.9-deployment/">
-  <meta property="og:site_name" content="Kubernetes 学习笔记">
-  <meta property="og:title" content="2.9 Deployment">
-  <meta property="og:description" content="2.9 Deployment # 在线业务远不是单纯启动一个 Pod 这么简单，还有多实例、高可用、版本更新等许多复杂的操作。比如多实例需求，为了提高系统的服务能力，应对突发的流量和压力，需要创建多个应用的副本，还要即时监控它们的状态。如果只使用 Pod，但有人不小心用 kubectl delete 误删了 Pod，又或者 Pod 运行的节点发生了断电故障，那么 Pod 就会在集群里彻底消失，Pod 容器里运行的服务也会消息，这样就会导致业务出现异常。
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="2.9 Deployment" />
+<meta property="og:description" content="2.9 Deployment # 在线业务远不是单纯启动一个 Pod 这么简单，还有多实例、高可用、版本更新等许多复杂的操作。比如多实例需求，为了提高系统的服务能力，应对突发的流量和压力，需要创建多个应用的副本，还要即时监控它们的状态。如果只使用 Pod，但有人不小心用 kubectl delete 误删了 Pod，又或者 Pod 运行的节点发生了断电故障，那么 Pod 就会在集群里彻底消失，Pod 容器里运行的服务也会消息，这样就会导致业务出现异常。
 处理这种问题的思路就是 “单一职责” 和 “对象组合”。既然 Pod 管理不了自己，那么就再创建一个新的对象，由它来管理 Pod，采用 “对象套对象” 的形式。这个用来管理 Pod，实现在线业务应用的新 API 对象，就是 Deployment。
 2.9.1 创建 # Deployment 的简称是 deploy，它的 apiVersion 是 apps/v1，kind 是 Deployment。
 Deployment 的 YAML 描述大致如下：
-apiVersion: apps/v1 kind: Deployment metadata: labels: app: ngx-dep name: ngx-dep spec: replicas: 2 selector: matchLabels: app: ngx-dep template: metadata: labels: app: ngx-dep spec: containers: - image: nginx:alpine name: nginx replicas 字段 # replicas 字段的含义比较简单明了，就是 “副本数量” 的意思，也就是说，指定要在 Kubernetes 集群里运行多少个 Pod 实例。有了这个字段，就相当于为 Kubernetes 明确了应用部署的 “期望状态”，Deployment 对象就可以扮演运维监控人员的角色，自动地在集群里调整 Pod 的数量。">
-  <meta property="og:locale" content="zh">
-  <meta property="og:type" content="article">
-    <meta property="article:section" content="docs">
-    <meta property="article:modified_time" content="2023-06-03T12:45:04+08:00">
+apiVersion: apps/v1 kind: Deployment metadata: labels: app: ngx-dep name: ngx-dep spec: replicas: 2 selector: matchLabels: app: ngx-dep template: metadata: labels: app: ngx-dep spec: containers: - image: nginx:alpine name: nginx replicas 字段 # replicas 字段的含义比较简单明了，就是 “副本数量” 的意思，也就是说，指定要在 Kubernetes 集群里运行多少个 Pod 实例。有了这个字段，就相当于为 Kubernetes 明确了应用部署的 “期望状态”，Deployment 对象就可以扮演运维监控人员的角色，自动地在集群里调整 Pod 的数量。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://example.com/kubernetes/docs/part2-break-ice/2.9-deployment/" /><meta property="article:section" content="docs" />
+
+<meta property="article:modified_time" content="2023-06-03T12:45:04+08:00" />
 <title>2.9 Deployment | Kubernetes 学习笔记</title>
 <link rel="manifest" href="/kubernetes/manifest.json">
 <link rel="icon" href="/kubernetes/favicon.png" type="image/x-icon">
@@ -29,9 +27,6 @@ apiVersion: apps/v1 kind: Deployment metadata: labels: app: ngx-dep name: ngx-de
   <script defer src="/kubernetes/zh.search.min.6a49f949d6c64c82c1530df1a06dca2b9fc0405bdaedd9bb43bc1e183bad6c4e.js" integrity="sha256-akn5SdbGTILBUw3xoG3KK5/AQFva7dm7Q7weGDutbE4=" crossorigin="anonymous"></script>
 
   <script defer src="/kubernetes/sw.min.448c1a1f6d77a9e91ad10af73bc5bccfa94948c630159862e4b698042cdae427.js" integrity="sha256-RIwaH213qeka0Qr3O8W8z6lJSMYwFZhi5LaYBCza5Cc=" crossorigin="anonymous"></script>
-
-  
-
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book

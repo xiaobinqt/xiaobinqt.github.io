@@ -4,57 +4,116 @@
     <title>第一部分 Docker on Kubernetes 学习笔记</title>
     <link>https://example.com/kubernetes/docs/part1-primary/</link>
     <description>Recent content in 第一部分 Docker on Kubernetes 学习笔记</description>
-    <generator>Hugo</generator>
-    <language>zh</language>
-    <atom:link href="https://example.com/kubernetes/docs/part1-primary/index.xml" rel="self" type="application/rss+xml" />
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language><atom:link href="https://example.com/kubernetes/docs/part1-primary/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>1.1 Docker 简介</title>
       <link>https://example.com/kubernetes/docs/part1-primary/1.1-docker-brief/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
       <guid>https://example.com/kubernetes/docs/part1-primary/1.1-docker-brief/</guid>
-      <description>1.1 Docker 简介 # 目前使用 Docker 基本上有两个选择：Docker Desktop 和 Docker Engine。&#xA;Docker Desktop 是专门针对个人使用而设计的，支持 Mac 和 Windows 快速安装，具有直观的图形界面，还集成了许多周边工具，方便易用。Docker Engine 完全免费，但只能在 Linux 上运行，只能使用命令行操作，缺乏辅助工具，需要我们自己动手安装运行环境，是现在各个公司在生产环境中实际使用的 Docker 产品，毕竟机房里 99% 的服务器跑的都是 Linux。&#xA;1.1.1 Docker 安装 # Docker 的安装可以参看官网 https://docs.docker.com/engine/install/&#xA;Docker Engine 不像 Docker Desktop 那样可以安装后就直接使用，必须要做一些手工调整才能用起来，所以在安装完毕后需要执行下面的两条命令：&#xA;sudo service docker start #启动docker服务 sudo usermod -aG docker ${USER} #当前用户加入docker组 第一个 service docker start 是启动 Docker 的后台服务，第二个 usermod -aG 是把当前的用户加入 Docker 的用户组。这是因为操作 Docker 必须要有 root 权限，而直接使用 root 用户不够安全，加入 Docker 用户组是一个比较好的选择，这也是 Docker 官方推荐的做法。当然，如果为了图省事，也可以直接切换到 root 用户来操作 Docker。</description>
+      <description>1.1 Docker 简介 # 目前使用 Docker 基本上有两个选择：Docker Desktop 和 Docker Engine。
+Docker Desktop 是专门针对个人使用而设计的，支持 Mac 和 Windows 快速安装，具有直观的图形界面，还集成了许多周边工具，方便易用。Docker Engine 完全免费，但只能在 Linux 上运行，只能使用命令行操作，缺乏辅助工具，需要我们自己动手安装运行环境，是现在各个公司在生产环境中实际使用的 Docker 产品，毕竟机房里 99% 的服务器跑的都是 Linux。
+1.1.1 Docker 安装 # Docker 的安装可以参看官网 https://docs.docker.com/engine/install/
+Docker Engine 不像 Docker Desktop 那样可以安装后就直接使用，必须要做一些手工调整才能用起来，所以在安装完毕后需要执行下面的两条命令：
+sudo service docker start #启动docker服务 sudo usermod -aG docker ${USER} #当前用户加入docker组 第一个 service docker start 是启动 Docker 的后台服务，第二个 usermod -aG 是把当前的用户加入 Docker 的用户组。这是因为操作 Docker 必须要有 root 权限，而直接使用 root 用户不够安全，加入 Docker 用户组是一个比较好的选择，这也是 Docker 官方推荐的做法。当然，如果为了图省事，也可以直接切换到 root 用户来操作 Docker。</description>
     </item>
+    
     <item>
       <title>1.2 Docker 常用命令</title>
       <link>https://example.com/kubernetes/docs/part1-primary/1.2-docker-cmd/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
       <guid>https://example.com/kubernetes/docs/part1-primary/1.2-docker-cmd/</guid>
-      <description>1.2 Docker 常用命令 # docker version # docker version 会输出 Docker 客户端和服务器各自的版本信息：&#xA;docker info # docker info 会显示当前 Docker 系统相关的信息，例如 CPU、内存、容器数量、镜像数量、容器运行时、存储文件系统等等：&#xA;Server: Containers: 1 Running: 0 Paused: 0 Stopped: 1 Images: 8 Server Version: 20.10.12 Storage Driver: overlay2 Backing Filesystem: extfs Cgroup Driver: systemd Default Runtime: runc Kernel Version: 5.13.0-19-generic Operating System: Ubuntu Jammy Jellyfish (development branch) OSType: linux Architecture: aarch64 CPUs: 2 Total Memory: 3.822GiB Docker Root Dir: /var/lib/docker docker info 显示的信息，对了解 Docker 的内部运行状态非常有用，比如可以很直观的能够看到当前有一个容器处于停止状态，有 8 个镜像，存储用的文件系统是 overlay2，Linux 内核是 5.</description>
+      <description>1.2 Docker 常用命令 # docker version # docker version 会输出 Docker 客户端和服务器各自的版本信息：
+docker info # docker info 会显示当前 Docker 系统相关的信息，例如 CPU、内存、容器数量、镜像数量、容器运行时、存储文件系统等等：
+Server: Containers: 1 Running: 0 Paused: 0 Stopped: 1 Images: 8 Server Version: 20.10.12 Storage Driver: overlay2 Backing Filesystem: extfs Cgroup Driver: systemd Default Runtime: runc Kernel Version: 5.13.0-19-generic Operating System: Ubuntu Jammy Jellyfish (development branch) OSType: linux Architecture: aarch64 CPUs: 2 Total Memory: 3.822GiB Docker Root Dir: /var/lib/docker docker info 显示的信息，对了解 Docker 的内部运行状态非常有用，比如可以很直观的能够看到当前有一个容器处于停止状态，有 8 个镜像，存储用的文件系统是 overlay2，Linux 内核是 5.</description>
     </item>
+    
     <item>
       <title>1.3 容器</title>
       <link>https://example.com/kubernetes/docs/part1-primary/1.3-container/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
       <guid>https://example.com/kubernetes/docs/part1-primary/1.3-container/</guid>
-      <description>1.3 容器 # 可以使用 docker pull 命令，拉取一个新的镜像——操作系统 Alpine：&#xA;docker pull alpine 然后使用 docker run 命令运行它的 Shell 程序：&#xA;docker run -it alpine sh -it参数，可以离开当前的操作系统，进入容器内部。&#xA;容器，就是一个特殊的隔离环境，它能够让进程只看到这个环境里的有限信息，不能对外界环境施加影响。&#xA;1.3.1 为什么需要隔离 # 对于操作系统来说，一个不受任何限制的应用程序是十分危险的。这个进程能够看到系统里所有的文件、所有的进程、所有的网络流量，访问内存里的任何数据，那么恶意程序很容易就会把系统搞瘫痪，正常程序也可能会因为无意的 Bug 导致信息泄漏或者其他安全事故。&#xA;使用容器技术，就可以让应用程序运行在一个有严密防护的 “沙盒”（Sandbox）环境之内，它可以在这个环境里自由活动，但绝不允许 “越界”，从而保证了容器外系统的安全。&#xA;在计算机里有各种各样的资源，CPU、内存、硬盘、网卡，虽然目前的高性能服务器都是几十核 CPU、上百 GB 的内存、数 TB 的硬盘、万兆网卡，但这些资源终究是有限的，而且考虑到成本，也不允许某个应用程序无限制地占用。容器技术的另一个本领就是为应用程序加上资源隔离，在系统里切分出一部分资源，让它只能使用指定的配额，比如只能使用一个 CPU，只能使用 1GB 内存等等，这样就可以避免容器内进程的过度系统消耗，充分利用计算机硬件，让有限的资源能够提供稳定可靠的服务。&#xA;1.3.2 容器和虚拟机的区别 # 容器和虚拟机面对的都是相同的问题，使用的也都是虚拟化技术，只是所在的层次不同。&#xA;容器和虚拟机的目的都是隔离资源，保证系统安全，尽量提高资源的利用率。&#xA;从实现的角度来看，虚拟机虚拟化出来的是硬件，需要在上面再安装一个操作系统后才能够运行应用程序，而硬件虚拟化和操作系统都比较 “重”，会消耗大量的 CPU、内存、硬盘等系统资源，但这些消耗其实并没有带来什么价值，属于 “重复劳动” 和 “无用功”，不过好处就是隔离程度非常高，每个虚拟机之间可以做到完全无干扰。&#xA;容器直接利用了下层的计算机硬件和操作系统，因为比虚拟机少了一层，所以自然就会节约 CPU 和内存，显得非常轻量级，能够更高效地利用硬件资源。不过，因为多个容器共用操作系统内核，应用程序的隔离程度就没有虚拟机那么高。&#xA;1.3.3 隔离的实现 # Linux 操作系统内核为资源隔离提供了三种技术：namespace、cgroup、chroot，虽然这三种技术的初衷并不是为了实现容器，但它们三个结合在一起就会发生奇妙的 “化学反应”。&#xA;namespace 是 2002 年从 Linux 2.4.19 开始出现的，和编程语言里的 namespace 有点类似，它可以创建出独立的文件系统、主机名、进程号、网络等资源空间，相当于给进程盖了一间小板房，这样就实现了系统全局资源和进程局部资源的隔离。</description>
+      <description>1.3 容器 # 可以使用 docker pull 命令，拉取一个新的镜像——操作系统 Alpine：
+docker pull alpine 然后使用 docker run 命令运行它的 Shell 程序：
+docker run -it alpine sh -it参数，可以离开当前的操作系统，进入容器内部。
+容器，就是一个特殊的隔离环境，它能够让进程只看到这个环境里的有限信息，不能对外界环境施加影响。
+1.3.1 为什么需要隔离 # 对于操作系统来说，一个不受任何限制的应用程序是十分危险的。这个进程能够看到系统里所有的文件、所有的进程、所有的网络流量，访问内存里的任何数据，那么恶意程序很容易就会把系统搞瘫痪，正常程序也可能会因为无意的 Bug 导致信息泄漏或者其他安全事故。
+使用容器技术，就可以让应用程序运行在一个有严密防护的 “沙盒”（Sandbox）环境之内，它可以在这个环境里自由活动，但绝不允许 “越界”，从而保证了容器外系统的安全。
+在计算机里有各种各样的资源，CPU、内存、硬盘、网卡，虽然目前的高性能服务器都是几十核 CPU、上百 GB 的内存、数 TB 的硬盘、万兆网卡，但这些资源终究是有限的，而且考虑到成本，也不允许某个应用程序无限制地占用。容器技术的另一个本领就是为应用程序加上资源隔离，在系统里切分出一部分资源，让它只能使用指定的配额，比如只能使用一个 CPU，只能使用 1GB 内存等等，这样就可以避免容器内进程的过度系统消耗，充分利用计算机硬件，让有限的资源能够提供稳定可靠的服务。
+1.3.2 容器和虚拟机的区别 # 容器和虚拟机面对的都是相同的问题，使用的也都是虚拟化技术，只是所在的层次不同。
+容器和虚拟机的目的都是隔离资源，保证系统安全，尽量提高资源的利用率。
+从实现的角度来看，虚拟机虚拟化出来的是硬件，需要在上面再安装一个操作系统后才能够运行应用程序，而硬件虚拟化和操作系统都比较 “重”，会消耗大量的 CPU、内存、硬盘等系统资源，但这些消耗其实并没有带来什么价值，属于 “重复劳动” 和 “无用功”，不过好处就是隔离程度非常高，每个虚拟机之间可以做到完全无干扰。
+容器直接利用了下层的计算机硬件和操作系统，因为比虚拟机少了一层，所以自然就会节约 CPU 和内存，显得非常轻量级，能够更高效地利用硬件资源。不过，因为多个容器共用操作系统内核，应用程序的隔离程度就没有虚拟机那么高。
+1.3.3 隔离的实现 # Linux 操作系统内核为资源隔离提供了三种技术：namespace、cgroup、chroot，虽然这三种技术的初衷并不是为了实现容器，但它们三个结合在一起就会发生奇妙的 “化学反应”。
+namespace 是 2002 年从 Linux 2.4.19 开始出现的，和编程语言里的 namespace 有点类似，它可以创建出独立的文件系统、主机名、进程号、网络等资源空间，相当于给进程盖了一间小板房，这样就实现了系统全局资源和进程局部资源的隔离。</description>
     </item>
+    
     <item>
       <title>1.4 镜像</title>
       <link>https://example.com/kubernetes/docs/part1-primary/1.4-image/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
       <guid>https://example.com/kubernetes/docs/part1-primary/1.4-image/</guid>
-      <description>1.4 镜像 # 1.4.1 什么是镜像 # 镜像和常见的 tar、rpm、deb 等安装包一样，都打包了应用程序，但最大的不同点在于它里面不仅有基本的可执行文件，还有应用运行时的整个系统环境。这就让镜像具有了非常好的跨平台便携性和兼容性，能够让开发者在一个系统上开发（例如 Ubuntu），然后打包成镜像，再去另一个系统上运行（例如 CentOS），完全不需要考虑环境依赖的问题，是一种更高级的应用打包方式。&#xA;1.4.2 镜像的内部机制 # 容器镜像内部并不是一个平坦的结构，而是由许多的镜像层组成的，每层都是只读不可修改的一组文件，相同的层可以在镜像之间共享，然后多个层像搭积木一样堆叠起来，再使用一种叫 “Union FS 联合文件系统” 的技术把它们合并在一起，就形成了容器最终看到的文件系统。&#xA;Docker 会检查是否有重复的层，如果本地已经存在就不会重复下载，如果层被其他镜像共享就不会删除，这样就可以节约磁盘和网络成本。&#xA;1.4.3 容器化应用 # “容器化的应用” 或 “应用的容器化”，就是指应用程序不再直接和操作系统打交道，而是封装成镜像，再交给容器环境去运行。镜像就是静态的应用容器，容器就是动态的应用镜像，两者互相依存，互相转化，密不可分。&#xA;1.4.4 镜像的命名规则 # 镜像的完整名字由两个部分组成，名字和标签，中间用:连接起来。&#xA;名字表明了应用的身份，比如 busybox、Alpine、Nginx、Redis 等等。&#xA;标签（tag）可以理解成是为了区分不同版本的应用而做的额外标记，任何字符串都可以，比如 3.15 是纯数字的版本号、jammy 是项目代号、1.21-alpine 是版本号加操作系统名等等。其中有一个比较特殊的标签叫 “latest”，它是默认的标签，如果只提供名字没有附带标签，那么就会使用这个默认的 “latest” 标签。&#xA;通常来说，镜像标签的格式是应用的版本号加上操作系统。版本号基本上都是主版本号 + 次版本号 + 补丁号的形式，有的还会在正式发布前出 rc 版（候选版本，release candidate）。而操作系统的情况略微复杂，因为各个 Linux 发行版的命名方式 “花样” 太多。Alpine、CentOS 的命名比较简单明了，就是数字的版本号，像 alpine3.15 ，而 Ubuntu、Debian 则采用了代号的形式。比如 Ubuntu 18.04 是 bionic，Ubuntu 20.04 是 focal，Debian 9 是 stretch，Debian 10 是 buster，Debian 11 是 bullseye。另外，有的标签还会加上 slim、fat，来进一步表示这个镜像的内容是经过精简的，还是包含了较多的辅助工具。通常 slim 镜像会比较小，运行效率高，而 fat 镜像会比较大，适合用来开发调试。</description>
+      <description>1.4 镜像 # 1.4.1 什么是镜像 # 镜像和常见的 tar、rpm、deb 等安装包一样，都打包了应用程序，但最大的不同点在于它里面不仅有基本的可执行文件，还有应用运行时的整个系统环境。这就让镜像具有了非常好的跨平台便携性和兼容性，能够让开发者在一个系统上开发（例如 Ubuntu），然后打包成镜像，再去另一个系统上运行（例如 CentOS），完全不需要考虑环境依赖的问题，是一种更高级的应用打包方式。
+1.4.2 镜像的内部机制 # 容器镜像内部并不是一个平坦的结构，而是由许多的镜像层组成的，每层都是只读不可修改的一组文件，相同的层可以在镜像之间共享，然后多个层像搭积木一样堆叠起来，再使用一种叫 “Union FS 联合文件系统” 的技术把它们合并在一起，就形成了容器最终看到的文件系统。
+Docker 会检查是否有重复的层，如果本地已经存在就不会重复下载，如果层被其他镜像共享就不会删除，这样就可以节约磁盘和网络成本。
+1.4.3 容器化应用 # “容器化的应用” 或 “应用的容器化”，就是指应用程序不再直接和操作系统打交道，而是封装成镜像，再交给容器环境去运行。镜像就是静态的应用容器，容器就是动态的应用镜像，两者互相依存，互相转化，密不可分。
+1.4.4 镜像的命名规则 # 镜像的完整名字由两个部分组成，名字和标签，中间用:连接起来。
+名字表明了应用的身份，比如 busybox、Alpine、Nginx、Redis 等等。
+标签（tag）可以理解成是为了区分不同版本的应用而做的额外标记，任何字符串都可以，比如 3.15 是纯数字的版本号、jammy 是项目代号、1.21-alpine 是版本号加操作系统名等等。其中有一个比较特殊的标签叫 “latest”，它是默认的标签，如果只提供名字没有附带标签，那么就会使用这个默认的 “latest” 标签。
+通常来说，镜像标签的格式是应用的版本号加上操作系统。版本号基本上都是主版本号 + 次版本号 + 补丁号的形式，有的还会在正式发布前出 rc 版（候选版本，release candidate）。而操作系统的情况略微复杂，因为各个 Linux 发行版的命名方式 “花样” 太多。Alpine、CentOS 的命名比较简单明了，就是数字的版本号，像 alpine3.15 ，而 Ubuntu、Debian 则采用了代号的形式。比如 Ubuntu 18.04 是 bionic，Ubuntu 20.04 是 focal，Debian 9 是 stretch，Debian 10 是 buster，Debian 11 是 bullseye。另外，有的标签还会加上 slim、fat，来进一步表示这个镜像的内容是经过精简的，还是包含了较多的辅助工具。通常 slim 镜像会比较小，运行效率高，而 fat 镜像会比较大，适合用来开发调试。</description>
     </item>
+    
     <item>
       <title>1.5 网络互通</title>
       <link>https://example.com/kubernetes/docs/part1-primary/1.5-network/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
       <guid>https://example.com/kubernetes/docs/part1-primary/1.5-network/</guid>
-      <description>1.5 网络互通 # 1.5.1 容器网络 # 在 Docker 网络中，有三个比较核心的概念，分别是：沙盒（Sandbox）、网络（Network）、端点（Endpoint）。&#xA;沙盒提供了容器的虚拟网络栈，也就是端口套接字、IP 路由表、防火墙等内容。实现隔离容器网络与宿主机网络，形成了完全独立的容器网络环境。&#xA;网络可以理解为 Docker 内部的虚拟子网，网络内的参与者相互可见并能够进行通讯。Docker 的这种虚拟网络也是与宿主机网络存在隔离关系的，其目的主要是形成容器间的安全通讯环境。&#xA;端点是位于容器或网络隔离墙之上的 “洞”，其主要目的是形成一个可以控制的突破封闭的网络环境的出入口。当容器的端点与网络的端点形成配对后，就如同在这两者之间搭建了桥梁，便能够进行数据传输了。&#xA;这三者形成了 Docker 网络的核心模型，也就是容器网络模型（Container Network Model）。&#xA;1.5.2 网络驱动 # Docker 官方提供了五种基础的 Docker 网络驱动：Bridge Driver、Host Driver、Overlay Driver、MacLan Driver、None Driver，并基于这些网络驱动又衍生了一些其他的网络驱动，如 IPvlan。&#xA;Bridge # Bridge（桥接）网络是默认的网络驱动程序，它提供了容器之间的基本网络通信功能。Docker 桥接网络通过在主机上创建一个虚拟网桥并将容器连接到该网桥来实现容器之间的通信。&#xA;当创建一个桥接网络时，Docker 会在主机上创建一个虚拟网桥（默认为 docker0），并为该网桥分配一个 IP 地址172.17.0.1。每个容器连接到这个桥接网络时，都会分配一个唯一的 B 类私 IP 地址，如172.17.0.2，并通过网络地址转换（NAT）实现与主机和其他容器之间的通信。&#xA;端口号映射需要使用 bridge 模式，并且在 docker run 启动容器时使用 -p 参数，用:分隔本机端口和容器端口。&#xA;使用 Docker 桥接网络有以下特点：&#xA;默认网络驱动程序：桥接网络是 Docker 的默认网络驱动程序，因此当创建容器时，如果没有显式指定网络驱动程序，则会自动使用桥接网络。&#xA;内部网络隔离：每个桥接网络都有自己的 IP 地址范围（默认为172.17.0.0/16），容器之间在网络上是相互隔离的，它们可以使用相同的 IP 地址范围而不会发生冲突。&#xA;网络地址转换（NAT）：通过桥接网络，容器可以与主机和其他容器进行通信。桥接网络使用网络地址转换（NAT）将容器的私有 IP 地址转换为主机的公共 IP 地址。</description>
+      <description>1.5 网络互通 # 1.5.1 容器网络 # 在 Docker 网络中，有三个比较核心的概念，分别是：沙盒（Sandbox）、网络（Network）、端点（Endpoint）。
+沙盒提供了容器的虚拟网络栈，也就是端口套接字、IP 路由表、防火墙等内容。实现隔离容器网络与宿主机网络，形成了完全独立的容器网络环境。
+网络可以理解为 Docker 内部的虚拟子网，网络内的参与者相互可见并能够进行通讯。Docker 的这种虚拟网络也是与宿主机网络存在隔离关系的，其目的主要是形成容器间的安全通讯环境。
+端点是位于容器或网络隔离墙之上的 “洞”，其主要目的是形成一个可以控制的突破封闭的网络环境的出入口。当容器的端点与网络的端点形成配对后，就如同在这两者之间搭建了桥梁，便能够进行数据传输了。
+这三者形成了 Docker 网络的核心模型，也就是容器网络模型（Container Network Model）。
+1.5.2 网络驱动 # Docker 官方提供了五种基础的 Docker 网络驱动：Bridge Driver、Host Driver、Overlay Driver、MacLan Driver、None Driver，并基于这些网络驱动又衍生了一些其他的网络驱动，如 IPvlan。
+Bridge # Bridge（桥接）网络是默认的网络驱动程序，它提供了容器之间的基本网络通信功能。Docker 桥接网络通过在主机上创建一个虚拟网桥并将容器连接到该网桥来实现容器之间的通信。
+当创建一个桥接网络时，Docker 会在主机上创建一个虚拟网桥（默认为 docker0），并为该网桥分配一个 IP 地址172.17.0.1。每个容器连接到这个桥接网络时，都会分配一个唯一的 B 类私 IP 地址，如172.17.0.2，并通过网络地址转换（NAT）实现与主机和其他容器之间的通信。
+端口号映射需要使用 bridge 模式，并且在 docker run 启动容器时使用 -p 参数，用:分隔本机端口和容器端口。
+使用 Docker 桥接网络有以下特点：
+默认网络驱动程序：桥接网络是 Docker 的默认网络驱动程序，因此当创建容器时，如果没有显式指定网络驱动程序，则会自动使用桥接网络。
+内部网络隔离：每个桥接网络都有自己的 IP 地址范围（默认为172.17.0.0/16），容器之间在网络上是相互隔离的，它们可以使用相同的 IP 地址范围而不会发生冲突。
+网络地址转换（NAT）：通过桥接网络，容器可以与主机和其他容器进行通信。桥接网络使用网络地址转换（NAT）将容器的私有 IP 地址转换为主机的公共 IP 地址。</description>
     </item>
+    
     <item>
       <title>1.6 Docker Compose</title>
       <link>https://example.com/kubernetes/docs/part1-primary/1.6-docker-compose/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
       <guid>https://example.com/kubernetes/docs/part1-primary/1.6-docker-compose/</guid>
-      <description>1.6 Docker Compose # docker-compose 是一个在单机环境里轻量级的容器编排工具。&#xA;在 Docker 把容器技术大众化之后，Docker 周边涌现出了数不胜数的扩展、增强产品，其中有一个名字叫 Fig 的项目。Fig 为 Docker 引入了 “容器编排” 的概念，使用 YAML 来定义容器的启动参数、先后顺序和依赖关系，让用户不再有 Docker 冗长命令行的烦恼，第一次见识到了 “声明式” 的威力。Docker 公司在 2014 年 7 月把 Fig 买了下来，集成进 Docker 内部，然后改名成了 docker-compose。&#xA;1.6.1 安装 # docker-compose 的安装比较简单，它在 GitHub https://github.com/docker/compose 上提供了多种形式的二进制可执行文件，支持 Windows、macOS、Linux 等操作系统，也支持 x86_64、arm64 等硬件架构，可以直接下载。docker-compose 还可以安装成 docker 的插件，以子命令的形式使用，也就是docker compose（没有中间的横线），具体可以参看文档 Install the Compose plugin。建议使用传统的 docker-compose 的形式，这样兼容性更强。&#xA;sudo curl -SL https://github.com/docker/compose/releases/download/v2.17.2/docker-compose-linux-x86_64 \ -o /usr/local/bin/docker-compose chmod +x /usr/local/bin/docker-compose docker-compose version 1.6.2 使用 # docker-compose 里管理容器的核心概念是 service。service 就是一个容器化的应用程序，通常是一个后台服务，用 YAML 定义这些容器的参数和相互之间的关系。下面的这个就是私有镜像仓库 Registry 的 YAML 文件：</description>
+      <description>1.6 Docker Compose # docker-compose 是一个在单机环境里轻量级的容器编排工具。
+在 Docker 把容器技术大众化之后，Docker 周边涌现出了数不胜数的扩展、增强产品，其中有一个名字叫 Fig 的项目。Fig 为 Docker 引入了 “容器编排” 的概念，使用 YAML 来定义容器的启动参数、先后顺序和依赖关系，让用户不再有 Docker 冗长命令行的烦恼，第一次见识到了 “声明式” 的威力。Docker 公司在 2014 年 7 月把 Fig 买了下来，集成进 Docker 内部，然后改名成了 docker-compose。
+1.6.1 安装 # docker-compose 的安装比较简单，它在 GitHub https://github.com/docker/compose 上提供了多种形式的二进制可执行文件，支持 Windows、macOS、Linux 等操作系统，也支持 x86_64、arm64 等硬件架构，可以直接下载。docker-compose 还可以安装成 docker 的插件，以子命令的形式使用，也就是docker compose（没有中间的横线），具体可以参看文档 Install the Compose plugin。建议使用传统的 docker-compose 的形式，这样兼容性更强。
+sudo curl -SL https://github.com/docker/compose/releases/download/v2.17.2/docker-compose-linux-x86_64 \ -o /usr/local/bin/docker-compose chmod +x /usr/local/bin/docker-compose docker-compose version 1.6.2 使用 # docker-compose 里管理容器的核心概念是 service。service 就是一个容器化的应用程序，通常是一个后台服务，用 YAML 定义这些容器的参数和相互之间的关系。下面的这个就是私有镜像仓库 Registry 的 YAML 文件：</description>
     </item>
+    
     <item>
       <title>1.7 私有镜像仓库</title>
       <link>https://example.com/kubernetes/docs/part1-primary/1.7-private-registry/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
       <guid>https://example.com/kubernetes/docs/part1-primary/1.7-private-registry/</guid>
-      <description>1.7 私有镜像仓库 # 在离线环境里，可以自己搭建私有仓库。私有镜像仓库有很多现成的解决方案，最简单的是 Docker Registry，也有功能更完善的 CNCF Harbor。&#xA;1.7.1 registry # 可以在 Docker Hub 网站上搜索 “registry”，找到官方页面 https://registry.hub.docker.com/_/registry/：&#xA;首先，需要使用 docker pull 命令拉取镜像：&#xA;docker pull registry 然后，需要做一个端口映射，对外暴露端口，这样 Docker Registry 才能提供服务。它的容器内端口是 5000，可以再容器外也使用同样的 5000 端口，运行命令是&#xA;docker run -d -p 5000:5000 registry ：docker run -d -p 5000:5000 registry 启动 Docker Registry 之后，可以使用 docker ps 查看运行状态，可以看到它确实把本机的 5000 端口映射到了容器内的 5000 端口。&#xA;可以使用 docker tag 命令给镜像打标签再上传了。因为上传的目标不是默认的 Docker Hub，而是本地的私有仓库，所以镜像的名字前面还必须再加上仓库的地址（域名或者 IP 地址都行），形式上和 HTTP 的 URL 相似。&#xA;下面示例中，把 “nginx:alpine” 改成了 “127.</description>
+      <description>1.7 私有镜像仓库 # 在离线环境里，可以自己搭建私有仓库。私有镜像仓库有很多现成的解决方案，最简单的是 Docker Registry，也有功能更完善的 CNCF Harbor。
+1.7.1 registry # 可以在 Docker Hub 网站上搜索 “registry”，找到官方页面 https://registry.hub.docker.com/_/registry/：
+首先，需要使用 docker pull 命令拉取镜像：
+docker pull registry 然后，需要做一个端口映射，对外暴露端口，这样 Docker Registry 才能提供服务。它的容器内端口是 5000，可以再容器外也使用同样的 5000 端口，运行命令是
+docker run -d -p 5000:5000 registry ：docker run -d -p 5000:5000 registry 启动 Docker Registry 之后，可以使用 docker ps 查看运行状态，可以看到它确实把本机的 5000 端口映射到了容器内的 5000 端口。
+可以使用 docker tag 命令给镜像打标签再上传了。因为上传的目标不是默认的 Docker Hub，而是本地的私有仓库，所以镜像的名字前面还必须再加上仓库的地址（域名或者 IP 地址都行），形式上和 HTTP 的 URL 相似。
+下面示例中，把 “nginx:alpine” 改成了 “127.</description>
     </item>
+    
   </channel>
 </rss>

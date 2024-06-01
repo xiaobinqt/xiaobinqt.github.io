@@ -10,19 +10,17 @@ Kubernetes 定义了一个新的 API 对象 StatefulSet，专门用来管理有�
 2.15.2 描述 StatefulSet # StatefulSet 也可以看做是 Deployment 的一个特例，它不能直接用 kubectl create 创建样板文件，它的对象描述和 Deployment 差不多，可以把 Deployment 适当修改一下，就变成了 StatefulSet 对象。以下是一个使用 Redis 的 StatefulSet 描述文件：
 apiVersion: apps/v1 kind: StatefulSet metadata: name: redis-sts spec: serviceName: redis-svc replicas: 2 selector: matchLabels: app: redis-sts template: metadata: labels: app: redis-sts spec: containers: - image: redis:5-alpine name: redis ports: - containerPort: 6379 YAML 文件里除了 kind 必须是 “StatefulSet”，在 spec 里还多出了一个 “serviceName” 字段外，其余的部分和 Deployment 是一模一样的，比如 replicas、selector、template。">
 <meta name="theme-color" content="#FFFFFF">
-<meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/kubernetes/docs/part2-break-ice/2.15-statefulset/">
-  <meta property="og:site_name" content="Kubernetes 学习笔记">
-  <meta property="og:title" content="2.15 StatefulSet">
-  <meta property="og:description" content="2.15 StatefulSet # 2.15.1 状态和应用 # 理论上任何应用都是有状态的，只是有的应用的状态信息不是很重要，即使不恢复状态也能够正常运行，这就是 “无状态应用”。“无状态应用” 典型的例子就是 Nginx 这样的 Web 服务器，它只是处理 HTTP 请求，本身不生产数据（日志除外），不需要特意保存状态，无论以什么状态重启都能很好地对外提供服务。
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="2.15 StatefulSet" />
+<meta property="og:description" content="2.15 StatefulSet # 2.15.1 状态和应用 # 理论上任何应用都是有状态的，只是有的应用的状态信息不是很重要，即使不恢复状态也能够正常运行，这就是 “无状态应用”。“无状态应用” 典型的例子就是 Nginx 这样的 Web 服务器，它只是处理 HTTP 请求，本身不生产数据（日志除外），不需要特意保存状态，无论以什么状态重启都能很好地对外提供服务。
 还有一些应用，运行状态信息很重要，如果因为重启而丢失了状态是绝对无法接受的，这样的应用是 “有状态应用”。比如 Redis、MySQL 这样的数据库，它们的 “状态” 就是在内存或者磁盘上产生的数据，是应用的核心价值所在，如果不能够把这些数据及时保存再恢复，那绝对会是灾难性的后果。
 对于 Deployment 来说，多个实例之间是无关的，启动的顺序不固定，Pod 的名字、IP 地址、域名也都是完全随机的，这正是 “无状态应用” 的特点。对于 “有状态应用”，多个实例之间可能存在依赖关系，比如 master/slave、active/passive，需要依次启动才能保证应用正常运行，外界的客户端也可能要使用固定的网络标识来访问实例，而且这些信息还必须要保证在 Pod 重启后不变。
 Kubernetes 定义了一个新的 API 对象 StatefulSet，专门用来管理有状态的应用。
 2.15.2 描述 StatefulSet # StatefulSet 也可以看做是 Deployment 的一个特例，它不能直接用 kubectl create 创建样板文件，它的对象描述和 Deployment 差不多，可以把 Deployment 适当修改一下，就变成了 StatefulSet 对象。以下是一个使用 Redis 的 StatefulSet 描述文件：
-apiVersion: apps/v1 kind: StatefulSet metadata: name: redis-sts spec: serviceName: redis-svc replicas: 2 selector: matchLabels: app: redis-sts template: metadata: labels: app: redis-sts spec: containers: - image: redis:5-alpine name: redis ports: - containerPort: 6379 YAML 文件里除了 kind 必须是 “StatefulSet”，在 spec 里还多出了一个 “serviceName” 字段外，其余的部分和 Deployment 是一模一样的，比如 replicas、selector、template。">
-  <meta property="og:locale" content="zh">
-  <meta property="og:type" content="article">
-    <meta property="article:section" content="docs">
-    <meta property="article:modified_time" content="2023-06-21T11:00:52+08:00">
+apiVersion: apps/v1 kind: StatefulSet metadata: name: redis-sts spec: serviceName: redis-svc replicas: 2 selector: matchLabels: app: redis-sts template: metadata: labels: app: redis-sts spec: containers: - image: redis:5-alpine name: redis ports: - containerPort: 6379 YAML 文件里除了 kind 必须是 “StatefulSet”，在 spec 里还多出了一个 “serviceName” 字段外，其余的部分和 Deployment 是一模一样的，比如 replicas、selector、template。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://example.com/kubernetes/docs/part2-break-ice/2.15-statefulset/" /><meta property="article:section" content="docs" />
+
+<meta property="article:modified_time" content="2023-06-21T11:00:52+08:00" />
 <title>2.15 StatefulSet | Kubernetes 学习笔记</title>
 <link rel="manifest" href="/kubernetes/manifest.json">
 <link rel="icon" href="/kubernetes/favicon.png" type="image/x-icon">
@@ -31,9 +29,6 @@ apiVersion: apps/v1 kind: StatefulSet metadata: name: redis-sts spec: serviceNam
   <script defer src="/kubernetes/zh.search.min.6a49f949d6c64c82c1530df1a06dca2b9fc0405bdaedd9bb43bc1e183bad6c4e.js" integrity="sha256-akn5SdbGTILBUw3xoG3KK5/AQFva7dm7Q7weGDutbE4=" crossorigin="anonymous"></script>
 
   <script defer src="/kubernetes/sw.min.448c1a1f6d77a9e91ad10af73bc5bccfa94948c630159862e4b698042cdae427.js" integrity="sha256-RIwaH213qeka0Qr3O8W8z6lJSMYwFZhi5LaYBCza5Cc=" crossorigin="anonymous"></script>
-
-  
-
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book

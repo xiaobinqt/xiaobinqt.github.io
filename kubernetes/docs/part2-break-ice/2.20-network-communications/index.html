@@ -13,10 +13,8 @@ Pod 直接可以基于 IP 地址直接访问另一个 Pod，不需要做麻烦�
 这种网络让 Pod 摆脱了主机的硬限制，是一个 “平坦” 的网络模型，通信也非常简单。因为 Pod 都具有独立的 IP 地址，相当于一台虚拟机，而且直连互通，也就可以很容易地实施域名解析、负载均衡、服务发现等工作，对应用的管理和迁移都非常友好。
 2.20.2 什么是 CNI # CNI（Container Networking Interface）为网络插件定义了一系列通用接口，开发者只要遵循这个规范就可以接入 Kubernetes，为 Pod 创建虚拟网卡、分配 IP 地址、设置路由规则，最后就能够实现 “IP-per-pod” 网络模型。依据实现技术的不同，CNI 插件可以大致上分成 “Overlay” “Route” 和 “Underlay” 三种。">
 <meta name="theme-color" content="#FFFFFF">
-<meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/kubernetes/docs/part2-break-ice/2.20-network-communications/">
-  <meta property="og:site_name" content="Kubernetes 学习笔记">
-  <meta property="og:title" content="2.20 网络通信">
-  <meta property="og:description" content="2.20 网络通信 # 2.20.1 网络模型 # Docker 有三种常见的网络模式： null、host 和 bridge。下图，描述了 Docker 里最常用的 bridge 网络模式：
+<meta name="color-scheme" content="light dark"><meta property="og:title" content="2.20 网络通信" />
+<meta property="og:description" content="2.20 网络通信 # 2.20.1 网络模型 # Docker 有三种常见的网络模式： null、host 和 bridge。下图，描述了 Docker 里最常用的 bridge 网络模式：
 Docker 会创建一个名字叫 “docker0” 的网桥，默认是私有网段 “172.17.0.0/16”。每个容器都会创建一个虚拟网卡对（veth pair），两个虚拟网卡分别 “插” 在容器和网桥上，这样容器之间就可以互联互通了。Docker 的网络方案简单有效，但只局限在单机环境里工作，跨主机通信非常困难（需要做端口映射和网络地址转换）。
 Kubernetes 的网络模型 “IP-per-pod”，能够很好地适应集群系统的网络需求，它有下面的这 4 点基本假设：
 集群里的每个 Pod 都会有唯一的一个 IP 地址。
@@ -24,11 +22,11 @@ Pod 里的所有容器共享这个 IP 地址。
 集群里的所有 Pod 都属于同一个网段。
 Pod 直接可以基于 IP 地址直接访问另一个 Pod，不需要做麻烦的网络地址转换（NAT）。
 这种网络让 Pod 摆脱了主机的硬限制，是一个 “平坦” 的网络模型，通信也非常简单。因为 Pod 都具有独立的 IP 地址，相当于一台虚拟机，而且直连互通，也就可以很容易地实施域名解析、负载均衡、服务发现等工作，对应用的管理和迁移都非常友好。
-2.20.2 什么是 CNI # CNI（Container Networking Interface）为网络插件定义了一系列通用接口，开发者只要遵循这个规范就可以接入 Kubernetes，为 Pod 创建虚拟网卡、分配 IP 地址、设置路由规则，最后就能够实现 “IP-per-pod” 网络模型。依据实现技术的不同，CNI 插件可以大致上分成 “Overlay” “Route” 和 “Underlay” 三种。">
-  <meta property="og:locale" content="zh">
-  <meta property="og:type" content="article">
-    <meta property="article:section" content="docs">
-    <meta property="article:modified_time" content="2023-06-28T16:48:34+08:00">
+2.20.2 什么是 CNI # CNI（Container Networking Interface）为网络插件定义了一系列通用接口，开发者只要遵循这个规范就可以接入 Kubernetes，为 Pod 创建虚拟网卡、分配 IP 地址、设置路由规则，最后就能够实现 “IP-per-pod” 网络模型。依据实现技术的不同，CNI 插件可以大致上分成 “Overlay” “Route” 和 “Underlay” 三种。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://example.com/kubernetes/docs/part2-break-ice/2.20-network-communications/" /><meta property="article:section" content="docs" />
+
+<meta property="article:modified_time" content="2023-06-28T16:48:34+08:00" />
 <title>2.20 网络通信 | Kubernetes 学习笔记</title>
 <link rel="manifest" href="/kubernetes/manifest.json">
 <link rel="icon" href="/kubernetes/favicon.png" type="image/x-icon">
@@ -37,9 +35,6 @@ Pod 直接可以基于 IP 地址直接访问另一个 Pod，不需要做麻烦�
   <script defer src="/kubernetes/zh.search.min.6a49f949d6c64c82c1530df1a06dca2b9fc0405bdaedd9bb43bc1e183bad6c4e.js" integrity="sha256-akn5SdbGTILBUw3xoG3KK5/AQFva7dm7Q7weGDutbE4=" crossorigin="anonymous"></script>
 
   <script defer src="/kubernetes/sw.min.448c1a1f6d77a9e91ad10af73bc5bccfa94948c630159862e4b698042cdae427.js" integrity="sha256-RIwaH213qeka0Qr3O8W8z6lJSMYwFZhi5LaYBCza5Cc=" crossorigin="anonymous"></script>
-
-  
-
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book

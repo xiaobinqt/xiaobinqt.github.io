@@ -5,25 +5,19 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noodp" />
-    <title class="pjax-title">Go Slice 实现原理 - xiaobinqt 博客 - 技术改变生活</title><meta name="Description" content="xiaobinqt,"><meta property="og:url" content="https://www.xiaobinqt.cn/go-slice-principle/">
-  <meta property="og:site_name" content="xiaobinqt 博客 - 技术改变生活">
-  <meta property="og:title" content="Go Slice 实现原理">
-  <meta property="og:description" content="xiaobinqt,">
-  <meta property="og:locale" content="zh_CN">
-  <meta property="og:type" content="article">
-    <meta property="article:section" content="posts">
-    <meta property="article:published_time" content="2023-10-10T00:00:00+00:00">
-    <meta property="article:modified_time" content="2023-10-11T17:47:02+08:00">
-    <meta property="article:tag" content="Golang">
-    <meta property="og:image" content="https://www.xiaobinqt.cn/logo.png">
-      <meta property="og:see_also" content="https://www.xiaobinqt.cn/go-channel-principle/">
-      <meta property="og:see_also" content="https://www.xiaobinqt.cn/escape-heap/">
-      <meta property="og:see_also" content="https://www.xiaobinqt.cn/func-receive-value-pointer/">
+    <title class="pjax-title">Go Slice 实现原理 - xiaobinqt 博客 - 技术改变生活</title><meta name="Description" content="xiaobinqt,"><meta property="og:title" content="Go Slice 实现原理" />
+<meta property="og:description" content="xiaobinqt," />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.xiaobinqt.cn/go-slice-principle/" /><meta property="og:image" content="https://www.xiaobinqt.cn/logo.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-10-10T00:00:00+00:00" />
+<meta property="article:modified_time" content="2023-10-11T17:47:02+08:00" />
+<meta property="og:see_also" content="https://www.xiaobinqt.cn/go-channel-principle/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/escape-heap/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/func-receive-value-pointer/" />
 
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="https://www.xiaobinqt.cn/logo.png">
-  <meta name="twitter:title" content="Go Slice 实现原理">
-  <meta name="twitter:description" content="xiaobinqt,">
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://www.xiaobinqt.cn/logo.png"/>
+
+<meta name="twitter:title" content="Go Slice 实现原理"/>
+<meta name="twitter:description" content="xiaobinqt,"/>
 <meta name="application-name" content="xiaobinqt">
 <meta name="apple-mobile-web-app-title" content="xiaobinqt">
 
@@ -41,7 +35,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/www.xiaobinqt.cn\/go-slice-principle\/"
-        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "golang","wordcount":  2479 ,
+        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "golang","wordcount":  2471 ,
         "url": "https:\/\/www.xiaobinqt.cn\/go-slice-principle\/","datePublished": "2023-10-10T00:00:00+00:00","dateModified": "2023-10-11T17:47:02+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "xxxx","logo": {
@@ -143,8 +137,8 @@
 </nav></div>
     </div><script>document.getElementsByTagName("main")[0].setAttribute("pageStyle", "normal")</script><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Go Slice 实现原理</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><i class="author fas fa-user-circle fa-fw"></i><a href="/" title="Author" rel=" author" class="author">xiaobinqt</a>
-                </span>&nbsp;<span class="post-category">收录于 </span>&nbsp;<span class="post-category">类别 <a href="/categories/golang/"><i class="far fa-folder fa-fw"></i>Golang</a></span>&nbsp;<span class="post-category">和</span>&nbsp;<span class="post-series">系列 <a href="/series/golang/"><i class="far fa-list-alt fa-fw"></i>Golang Notes</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2023-10-10">2023-10-10</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2023-10-11">2023-10-11</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2479 字&nbsp;
+                </span>&nbsp;<span class="post-category">收录于 </span>&nbsp;<span class="post-category">类别 <a href="/categories/golang/"><i class="far fa-folder fa-fw"></i>golang</a></span>&nbsp;<span class="post-category">和</span>&nbsp;<span class="post-series">系列 <a href="/series/golang/"><i class="far fa-list-alt fa-fw"></i>Golang Notes</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2023-10-10">2023-10-10</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2023-10-11">2023-10-11</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2471 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 5 分钟&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
@@ -206,18 +200,18 @@
 </span><span class="lnt">12
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl">	<span class="o">//</span> <span class="err">初始化方式</span><span class="mi">1</span><span class="err">：直接声明</span>
-</span></span><span class="line"><span class="cl">	<span class="k">var</span> <span class="n">slice1</span> <span class="p">[]</span><span class="ne">int</span>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">	// 初始化方式1：直接声明
+</span></span><span class="line"><span class="cl">	var slice1 []int
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="err">初始化方式</span><span class="mi">2</span><span class="err">：使用字面量</span>
-</span></span><span class="line"><span class="cl">	<span class="n">slice2</span> <span class="p">:</span><span class="o">=</span> <span class="p">[]</span><span class="ne">int</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">	// 初始化方式2：使用字面量
+</span></span><span class="line"><span class="cl">	slice2 := []int{1, 2, 3, 4}
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="err">初始化方式</span><span class="mi">3</span><span class="err">：使用</span> <span class="n">make</span> <span class="err">创建</span><span class="n">slice</span>
+</span></span><span class="line"><span class="cl">	// 初始化方式3：使用 make 创建slice
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	<span class="n">slice3</span> <span class="p">:</span><span class="o">=</span> <span class="n">make</span><span class="p">([]</span><span class="ne">int</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	slice3 := make([]int, 3, 5)
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	<span class="o">//</span> <span class="err">初始化方式</span><span class="mi">4</span><span class="p">:</span> <span class="err">从切片或数组截取</span>
-</span></span><span class="line"><span class="cl">	<span class="n">slcie4</span> <span class="p">:</span><span class="o">=</span> <span class="n">arr</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">	// 初始化方式4: 从切片或数组截取
+</span></span><span class="line"><span class="cl">	slcie4 := arr[1:3]
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>可以通过下面的代码，看下 slice 初始化调用的底层函数：</p>
@@ -326,7 +320,7 @@
 </ol>
 <h2 id="slice-扩容机制" class="headerLink">
     <a href="#slice-%e6%89%a9%e5%ae%b9%e6%9c%ba%e5%88%b6" class="header-mark"></a>slice 扩容机制</h2><h3 id="旧规则存在的问题" class="headerLink">
-    <a href="#%e6%97%a7%e8%a7%84%e5%88%99%e5%ad%98%e5%9c%a8%e7%9a%84%e9%97%ae%e9%a2%98" class="header-mark"></a>旧规则存在的问题</h3><p>在 1.17 及之前的版本中，扩容机制是这样的&#x1f447;：</p>
+    <a href="#%e6%97%a7%e8%a7%84%e5%88%99%e5%ad%98%e5%9c%a8%e7%9a%84%e9%97%ae%e9%a2%98" class="header-mark"></a>旧规则存在的问题</h3><p>在 1.17 及之前的版本中，扩容机制是这样的👇：</p>
 <ul>
 <li>
 <p>当新切片需要的容量 cap 大于两倍扩容的容量，则直接按照新切片需要的容量扩容；</p>
@@ -368,31 +362,31 @@
 </span><span class="lnt">25
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="o">//</span> <span class="mf">1.17</span><span class="err">及以前的版本中</span>
-</span></span><span class="line"><span class="cl"><span class="o">//</span> <span class="n">old指切片的旧容量</span><span class="p">,</span> <span class="n">cap指期望的新容量</span>
-</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">growslice</span><span class="p">(</span><span class="n">old</span><span class="p">,</span> <span class="n">cap</span> <span class="ne">int</span><span class="p">)</span> <span class="ne">int</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="n">newcap</span> <span class="p">:</span><span class="o">=</span> <span class="n">old</span>
-</span></span><span class="line"><span class="cl">    <span class="n">doublecap</span> <span class="p">:</span><span class="o">=</span> <span class="n">newcap</span> <span class="o">+</span> <span class="n">newcap</span>
-</span></span><span class="line"><span class="cl">    <span class="o">//</span> <span class="err">如果期望容量大于旧容量的</span><span class="mi">2</span><span class="err">倍，则直接使用期望容量作为最终容量</span>
-</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">cap</span> <span class="o">&gt;</span> <span class="n">doublecap</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">        <span class="n">newcap</span> <span class="o">=</span> <span class="n">cap</span>
-</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">        <span class="o">//</span> <span class="err">如果旧容量小于</span><span class="mi">1024</span><span class="err">，则直接翻倍</span>
-</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">old</span> <span class="o">&lt;</span> <span class="mi">1024</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">            <span class="n">newcap</span> <span class="o">=</span> <span class="n">doublecap</span>
-</span></span><span class="line"><span class="cl">        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">            <span class="o">//</span> <span class="err">每次增长大约</span><span class="mf">1.25</span><span class="err">倍</span>
-</span></span><span class="line"><span class="cl">            <span class="k">for</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">newcap</span> <span class="o">&amp;&amp;</span> <span class="n">newcap</span> <span class="o">&lt;</span> <span class="n">cap</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">                <span class="n">newcap</span> <span class="o">+=</span> <span class="n">newcap</span> <span class="o">/</span> <span class="mi">4</span>
-</span></span><span class="line"><span class="cl">            <span class="p">}</span>
-</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="n">newcap</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">                <span class="n">newcap</span> <span class="o">=</span> <span class="n">cap</span>
-</span></span><span class="line"><span class="cl">            <span class="p">}</span>
-</span></span><span class="line"><span class="cl">        <span class="p">}</span>
-</span></span><span class="line"><span class="cl">    <span class="p">}</span>
-</span></span><span class="line"><span class="cl">    <span class="o">//</span> <span class="err">这里忽略了对齐操作</span>
-</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">newcap</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// 1.17及以前的版本中
+</span></span><span class="line"><span class="cl">// old指切片的旧容量, cap指期望的新容量
+</span></span><span class="line"><span class="cl">func growslice(old, cap int) int {
+</span></span><span class="line"><span class="cl">    newcap := old
+</span></span><span class="line"><span class="cl">    doublecap := newcap + newcap
+</span></span><span class="line"><span class="cl">    // 如果期望容量大于旧容量的2倍，则直接使用期望容量作为最终容量
+</span></span><span class="line"><span class="cl">    if cap &gt; doublecap {
+</span></span><span class="line"><span class="cl">        newcap = cap
+</span></span><span class="line"><span class="cl">    } else {
+</span></span><span class="line"><span class="cl">        // 如果旧容量小于1024，则直接翻倍
+</span></span><span class="line"><span class="cl">        if old &lt; 1024 {
+</span></span><span class="line"><span class="cl">            newcap = doublecap
+</span></span><span class="line"><span class="cl">        } else {
+</span></span><span class="line"><span class="cl">            // 每次增长大约1.25倍
+</span></span><span class="line"><span class="cl">            for 0 &lt; newcap &amp;&amp; newcap &lt; cap {
+</span></span><span class="line"><span class="cl">                newcap += newcap / 4
+</span></span><span class="line"><span class="cl">            }
+</span></span><span class="line"><span class="cl">            if newcap &lt;= 0 {
+</span></span><span class="line"><span class="cl">                newcap = cap
+</span></span><span class="line"><span class="cl">            }
+</span></span><span class="line"><span class="cl">        }
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">    // 这里忽略了对齐操作
+</span></span><span class="line"><span class="cl">    return newcap
+</span></span><span class="line"><span class="cl">}
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>这个扩容机制令一些人产生了<a href="https://groups.google.com/g/golang-nuts/c/UaVlMQ8Nz3o" target="_blank" rel="noopener noreferrer">一些困惑</a>，因为它会产生一些 “看起来不那么自然的行为”。比如<strong>它计算出来的新容量不是单调递增的</strong>，下面的程序会将不同容量 slice 的扩容结果打印出来:</p>
@@ -504,27 +498,27 @@
 </span><span class="lnt">21
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="o">//</span> <span class="err">只关心扩容规则的简化版</span><span class="n">growslice</span>
-</span></span><span class="line"><span class="cl"><span class="k">func</span> <span class="n">growslice</span><span class="p">(</span><span class="n">old</span><span class="p">,</span> <span class="n">cap</span> <span class="ne">int</span><span class="p">)</span> <span class="ne">int</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="n">newcap</span> <span class="p">:</span><span class="o">=</span> <span class="n">old</span>
-</span></span><span class="line"><span class="cl">    <span class="n">doublecap</span> <span class="p">:</span><span class="o">=</span> <span class="n">newcap</span> <span class="o">+</span> <span class="n">newcap</span>
-</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">cap</span> <span class="o">&gt;</span> <span class="n">doublecap</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">        <span class="n">newcap</span> <span class="o">=</span> <span class="n">cap</span>
-</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">        <span class="k">const</span> <span class="n">threshold</span> <span class="o">=</span> <span class="mi">256</span> <span class="o">//</span> <span class="err">不同点</span><span class="mi">1</span>
-</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">old</span> <span class="o">&lt;</span> <span class="n">threshold</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">            <span class="n">newcap</span> <span class="o">=</span> <span class="n">doublecap</span>
-</span></span><span class="line"><span class="cl">        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">            <span class="k">for</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">newcap</span> <span class="o">&amp;&amp;</span> <span class="n">newcap</span> <span class="o">&lt;</span> <span class="n">cap</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">                <span class="n">newcap</span> <span class="o">+=</span> <span class="p">(</span><span class="n">newcap</span> <span class="o">+</span> <span class="mi">3</span><span class="o">*</span><span class="n">threshold</span><span class="p">)</span> <span class="o">/</span> <span class="mi">4</span> <span class="o">//</span> <span class="err">不同点</span><span class="mi">2</span>
-</span></span><span class="line"><span class="cl">            <span class="p">}</span>
-</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="n">newcap</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">                <span class="n">newcap</span> <span class="o">=</span> <span class="n">cap</span>
-</span></span><span class="line"><span class="cl">            <span class="p">}</span>
-</span></span><span class="line"><span class="cl">        <span class="p">}</span>
-</span></span><span class="line"><span class="cl">    <span class="p">}</span>
-</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">newcap</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// 只关心扩容规则的简化版growslice
+</span></span><span class="line"><span class="cl">func growslice(old, cap int) int {
+</span></span><span class="line"><span class="cl">    newcap := old
+</span></span><span class="line"><span class="cl">    doublecap := newcap + newcap
+</span></span><span class="line"><span class="cl">    if cap &gt; doublecap {
+</span></span><span class="line"><span class="cl">        newcap = cap
+</span></span><span class="line"><span class="cl">    } else {
+</span></span><span class="line"><span class="cl">        const threshold = 256 // 不同点1
+</span></span><span class="line"><span class="cl">        if old &lt; threshold {
+</span></span><span class="line"><span class="cl">            newcap = doublecap
+</span></span><span class="line"><span class="cl">        } else {
+</span></span><span class="line"><span class="cl">            for 0 &lt; newcap &amp;&amp; newcap &lt; cap {
+</span></span><span class="line"><span class="cl">                newcap += (newcap + 3*threshold) / 4 // 不同点2
+</span></span><span class="line"><span class="cl">            }
+</span></span><span class="line"><span class="cl">            if newcap &lt;= 0 {
+</span></span><span class="line"><span class="cl">                newcap = cap
+</span></span><span class="line"><span class="cl">            }
+</span></span><span class="line"><span class="cl">        }
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">    return newcap
+</span></span><span class="line"><span class="cl">}
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>新版的扩容算法相较于旧的有两处不同，首先是双倍容量扩容的最大阈值<strong>从 1024 降为了 256</strong>，只要超过了 256，就开始进行缓慢的增长。其次是增长比例的调整，之前超过了阈值之后，基本为恒定的 1.25 倍增长，而现在超过了阈值之后，增长比例是会动态调整的:</p>
@@ -659,7 +653,7 @@
     </div>
 
     <div class="post-info-more">
-        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/golang/">Golang</a></section>
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/golang/">golang</a></section>
         <section>
             <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
         </section>
