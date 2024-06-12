@@ -851,7 +851,7 @@
 <h2 id="什么是最左匹配原则" class="headerLink">
     <a href="#%e4%bb%80%e4%b9%88%e6%98%af%e6%9c%80%e5%b7%a6%e5%8c%b9%e9%85%8d%e5%8e%9f%e5%88%99" class="header-mark"></a>什么是最左匹配原则</h2><p>如果有联合索引 (a,b,c,d)，实际上其实新建了 <code>a</code>，<code>ab</code>，<code>abc</code>，<code>abcb</code> 四个索引，因此只要查询中使用了这 4 组字段，都可以让联合索引生效。</p>
 <p>查询条件 <code>a=1 and b=2 and c&gt;3 and d=4</code>，这里只能使用<code>a</code>，<code>b</code>和<code>a、b</code>索引，而不能使用<code>a、b、c</code>或<code>a、b、c、d</code>索引。</p>
-<p>先匹配最左边的，索引只能用于查找<code>key</code>是否存在或相等，遇到范围查询<code>&gt;</code>、<code>&lt;</code>、<code>between</code>、<code>like</code>左匹配等就不能进一步匹配了，后续退化为线性查找，这就是最左匹配原则。</p>
+<p>先匹配最左边的，索引<strong>只能用于查找<code>key</code>是否存在或相等</strong>，遇到范围查询<code>&gt;</code>、<code>&lt;</code>、<code>between</code>、<code>like</code>左匹配等就不能进一步匹配了，后续退化为线性查找，这就是最左匹配原则。</p>
 <h2 id="实际项目中如何生成主键" class="headerLink">
     <a href="#%e5%ae%9e%e9%99%85%e9%a1%b9%e7%9b%ae%e4%b8%ad%e5%a6%82%e4%bd%95%e7%94%9f%e6%88%90%e4%b8%bb%e9%94%ae" class="header-mark"></a>实际项目中如何生成主键</h2><p>用自增主键。首先主键得保证它的唯一性和空间尽可能短，这两块是需要考虑的。由于索引的有序特性，id 本身具有连续性使得对应的数据也会按照顺序存储在磁盘上，写入性能和检索性能都很高。如果使用 uuid 这种随机 id，那么在频繁插入数据的时候，就会导致随机磁盘 IO，从而导致性能较低。</p>
 <h2 id="如何理解innodb引擎中的事务" class="headerLink">
@@ -927,7 +927,7 @@
 <li>Serializable：序列化/串行化，处于该隔离级别的数据库，解决了脏读、不可重复读、幻读问题都不存在。</li>
 </ol>
 <p>数据库事务的隔离级别，<strong>由低到高</strong>依次为 Read uncommitted 、Read committed、Repeatable read 、Serializable。</p>
-<p>上述四个级别，越靠后并发控制度越高，也就是在多线程并发操作的情况下，出现问题的几率越小，但对应的也性能越差，MySQL 的事务隔离级别， 默认为第三级别：<code>Repeatable read</code>可重复读。</p>
+<p>上述四个级别，越靠后并发控制度越高，也就是在多线程并发操作的情况下，出现问题的几率越小，但对应的也性能越差，MySQL 的事务隔离级别，<strong>默认</strong>第三级别：<code>Repeatable read</code>可重复读。</p>
 <p>首先来看下<strong><ruby>read uncommitted<rt>读未提交</rt></ruby></strong>。比如说：A 向 B 转账，A 执行了转账语句，但 A 还没有提交事务，B 读取数据，发现自己账户钱变多了！B 跟 A 说，我已经收到钱了。A 回滚事务【rollback】，等 B 再查看账户的钱时，发现钱并没有多。</p>
 <p>简单的定义就是：事务 B 读取到了事务 A 还没提交的数据，这种用专业术语来说叫做「<strong>脏读</strong>」。</p>
 <p>对于锁的维度而言，其实就是在 read uncommitted 隔离级别下，读不会加任何锁，而写会加排他锁。读什么锁都不加，这就让排他锁无法排它了。</p>

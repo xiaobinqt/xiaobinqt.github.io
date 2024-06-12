@@ -10,7 +10,7 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://www.xiaobinqt.cn/mysql-faq-2/" /><meta property="og:image" content="https://www.xiaobinqt.cn/logo.png"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2022-05-21T00:00:00+00:00" />
-<meta property="article:modified_time" content="2023-09-12T16:56:41+08:00" />
+<meta property="article:modified_time" content="2024-06-12T21:39:45+08:00" />
 <meta property="og:see_also" content="https://www.xiaobinqt.cn/highly-concurrent-architecture-evolution/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/session-cookie-token-difference/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/why-mysql-index-use-btree/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/redis-break-pierce-avalanche/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/go-gc/" />
 
 <meta name="twitter:card" content="summary_large_image"/>
@@ -35,8 +35,8 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/www.xiaobinqt.cn\/mysql-faq-2\/"
-        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "mysql, 索引, MVCC","wordcount":  8018 ,
-        "url": "https:\/\/www.xiaobinqt.cn\/mysql-faq-2\/","datePublished": "2022-05-21T00:00:00+00:00","dateModified": "2023-09-12T16:56:41+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "mysql, 索引, MVCC","wordcount":  8017 ,
+        "url": "https:\/\/www.xiaobinqt.cn\/mysql-faq-2\/","datePublished": "2022-05-21T00:00:00+00:00","dateModified": "2024-06-12T21:39:45+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "xxxx","logo": {
                     "@type": "ImageObject",
@@ -147,7 +147,7 @@
             <div class="post-meta-line"><span class="post-author">
                     <i class="custom-icon iconfont icon-weibiaoti-"></i>
                 </span>&nbsp;&nbsp;<span class="post-category">收录于 </span>&nbsp;<span class="post-category">类别 <a href="/categories/mysql/"><i class="far fa-folder fa-fw"></i>mysql</a></span>&nbsp;<span class="post-category">和</span>&nbsp;<span class="post-series">系列 <a href="/series/reproduce/"><i class="far fa-list-alt fa-fw"></i>转载</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-05-21">2022-05-21</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2023-09-12">2023-09-12</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 8018 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-05-21">2022-05-21</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2024-06-12">2024-06-12</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 8017 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 17 分钟&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
@@ -239,7 +239,7 @@
 <h2 id="什么是最左匹配原则" class="headerLink">
     <a href="#%e4%bb%80%e4%b9%88%e6%98%af%e6%9c%80%e5%b7%a6%e5%8c%b9%e9%85%8d%e5%8e%9f%e5%88%99" class="header-mark"></a>什么是最左匹配原则</h2><p>如果有联合索引 (a,b,c,d)，实际上其实新建了 <code>a</code>，<code>ab</code>，<code>abc</code>，<code>abcb</code> 四个索引，因此只要查询中使用了这 4 组字段，都可以让联合索引生效。</p>
 <p>查询条件 <code>a=1 and b=2 and c&gt;3 and d=4</code>，这里只能使用<code>a</code>，<code>b</code>和<code>a、b</code>索引，而不能使用<code>a、b、c</code>或<code>a、b、c、d</code>索引。</p>
-<p>先匹配最左边的，索引只能用于查找<code>key</code>是否存在或相等，遇到范围查询<code>&gt;</code>、<code>&lt;</code>、<code>between</code>、<code>like</code>左匹配等就不能进一步匹配了，后续退化为线性查找，这就是最左匹配原则。</p>
+<p>先匹配最左边的，索引<strong>只能用于查找<code>key</code>是否存在或相等</strong>，遇到范围查询<code>&gt;</code>、<code>&lt;</code>、<code>between</code>、<code>like</code>左匹配等就不能进一步匹配了，后续退化为线性查找，这就是最左匹配原则。</p>
 <h2 id="实际项目中如何生成主键" class="headerLink">
     <a href="#%e5%ae%9e%e9%99%85%e9%a1%b9%e7%9b%ae%e4%b8%ad%e5%a6%82%e4%bd%95%e7%94%9f%e6%88%90%e4%b8%bb%e9%94%ae" class="header-mark"></a>实际项目中如何生成主键</h2><p>用自增主键。首先主键得保证它的唯一性和空间尽可能短，这两块是需要考虑的。由于索引的有序特性，id 本身具有连续性使得对应的数据也会按照顺序存储在磁盘上，写入性能和检索性能都很高。如果使用 uuid 这种随机 id，那么在频繁插入数据的时候，就会导致随机磁盘 IO，从而导致性能较低。</p>
 <h2 id="如何理解innodb引擎中的事务" class="headerLink">
@@ -340,7 +340,7 @@
 <li>Serializable：序列化/串行化，处于该隔离级别的数据库，解决了脏读、不可重复读、幻读问题都不存在。</li>
 </ol>
 <p>数据库事务的隔离级别，<strong>由低到高</strong>依次为 Read uncommitted 、Read committed、Repeatable read 、Serializable。</p>
-<p>上述四个级别，越靠后并发控制度越高，也就是在多线程并发操作的情况下，出现问题的几率越小，但对应的也性能越差，MySQL 的事务隔离级别， 默认为第三级别：<code>Repeatable read</code>可重复读。</p>
+<p>上述四个级别，越靠后并发控制度越高，也就是在多线程并发操作的情况下，出现问题的几率越小，但对应的也性能越差，MySQL 的事务隔离级别，<strong>默认</strong>第三级别：<code>Repeatable read</code>可重复读。</p>
 <p>首先来看下<strong><ruby>read uncommitted<rt>读未提交</rt></ruby></strong>。比如说：A 向 B 转账，A 执行了转账语句，但 A 还没有提交事务，B 读取数据，发现自己账户钱变多了！B 跟 A 说，我已经收到钱了。A 回滚事务【rollback】，等 B 再查看账户的钱时，发现钱并没有多。</p>
 <p>简单的定义就是：事务 B 读取到了事务 A 还没提交的数据，这种用专业术语来说叫做「<strong>脏读</strong>」。</p>
 <p>对于锁的维度而言，其实就是在 read uncommitted 隔离级别下，读不会加任何锁，而写会加排他锁。读什么锁都不加，这就让排他锁无法排它了。</p>
@@ -537,8 +537,8 @@
     <div class="post-info">
         <div class="post-info-line">
             <div class="post-info-mod">
-                <span>更新于 2023-09-12&nbsp;<a class="git-hash" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/64cc149f09c0b1f54a2d59fa02b21cba5fc85044" target="_blank" title="commit by weibin(xiaobinqt@163.com) 64cc149f09c0b1f54a2d59fa02b21cba5fc85044: update posts" rel="noopener noreferrer">
-                                    <i class="fas fa-hashtag fa-fw"></i>64cc149f</a></span>
+                <span>更新于 2024-06-12&nbsp;<a class="git-hash" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/dc24cc8f6955bb12f1684496d47c386abc23cc44" target="_blank" title="commit by weibin(xiaobinqt@163.com) dc24cc8f6955bb12f1684496d47c386abc23cc44: :sparkles: update" rel="noopener noreferrer">
+                                    <i class="fas fa-hashtag fa-fw"></i>dc24cc8f</a></span>
             </div>
             <div class="post-info-license"></div>
         </div>
