@@ -88,7 +88,7 @@ select orderId,orderName from orderdetail where orderId = 123
 
 查询条件 `a=1 and b=2 and c>3 and d=4`，这里只能使用`a`，`b`和`a、b`索引，而不能使用`a、b、c`或`a、b、c、d`索引。
 
-先匹配最左边的，索引只能用于查找`key`是否存在或相等，遇到范围查询`>`、`<`、`between`、`like`左匹配等就不能进一步匹配了，后续退化为线性查找，这就是最左匹配原则。
+先匹配最左边的，索引**只能用于查找`key`是否存在或相等**，遇到范围查询`>`、`<`、`between`、`like`左匹配等就不能进一步匹配了，后续退化为线性查找，这就是最左匹配原则。
 
 ## 实际项目中如何生成主键
 
@@ -181,7 +181,7 @@ update table set age = age + 1 where id = 1;
 
 数据库事务的隔离级别，**由低到高**依次为 Read uncommitted 、Read committed、Repeatable read 、Serializable。
 
-上述四个级别，越靠后并发控制度越高，也就是在多线程并发操作的情况下，出现问题的几率越小，但对应的也性能越差，MySQL 的事务隔离级别， 默认为第三级别：`Repeatable read`可重复读。
+上述四个级别，越靠后并发控制度越高，也就是在多线程并发操作的情况下，出现问题的几率越小，但对应的也性能越差，MySQL 的事务隔离级别，**默认**第三级别：`Repeatable read`可重复读。
 
 首先来看下[read uncommitted]^(读未提交)。比如说：A 向 B 转账，A 执行了转账语句，但 A 还没有提交事务，B 读取数据，发现自己账户钱变多了！B 跟 A 说，我已经收到钱了。A 回滚事务【rollback】，等 B 再查看账户的钱时，发现钱并没有多。
 
