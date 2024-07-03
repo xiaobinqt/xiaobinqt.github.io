@@ -7,7 +7,7 @@
 + 手机/微信：15209272743
 + Github：[https://github.com/xiaobinqt](https://github.com/xiaobinqt)
 + DockerHub：[https://hub.docker.com/u/xiaobinqt](https://hub.docker.com/u/xiaobinqt)
-+ 个人网站：[https://www.xiaobinqt.cn](https://www.xiaobinqt.cn)
++ 个人网站：[https://www.xiaobinqt.cn](https://www.xiaobinqt.cn) / [https://xiaobinqt.github.io](https://xiaobinqt.github.io/)
 + Email：[xiaobinqt@163.com](mailto:xiaobinqt@163.com)
 + 开源项目：[Go微信机器人](https://github.com/xiaobinqt/go-wxbot) / [豆奶签到](https://github.com/xiaobinqt/dounai-checkin)
 
@@ -19,16 +19,16 @@
 
 ## 个人技能
 
-+ 熟悉 Go 语法，并发编程，协程，管道的使用，熟悉 Go GC，GMP 模型。可熟练使用 gin 框架开发。
-+ 熟悉 php 的 Laravel，Thinkphp，CI 框架，可熟练使用。熟悉微信小程序开发。
-+ 熟练使用 MySQL 数据库，了解 MySQL 索引，事务，锁机制等。
-+ 熟悉 Docker 的使用，工作中可熟练编写 Dockerfile。了解 Linux 常用命令和 Shell 脚本的编写。
-+ 熟悉 Git 版本控制软件，具有良好的编码风格和习惯，热爱开源。
-+ 熟悉 Python 的使用，可使用 Python 进行常用脚本的编写。
-+ 熟悉 Redis 的数据结构和高并发使用场景，比如缓存雪崩，缓存穿透，缓存击穿等。
-+ 了解 [Kubernetes](https://www.xiaobinqt.cn/kubernetes/) 的基本使用。
-+ 了解 JS、Node、npm、jQuery、CSS+DIV 盒模型等 web 前端技术。
-+ 了解 [wordpress](https://wordpress.com/) 的基本使用。了解常用的设计模式。
++ 熟练使用 Go 语言进行项目开发，对 Slice、Map、Goroutine、Channel 有深入了解，擅长并发编程；
++ 熟练使用 Gin、GRPC、GoFrame、Go-zero 等 web 和微服务框架，熟悉熔断，限流，服务治理等；
++ 深入理解 CSP 模型，深入理解 GC 垃圾回收机制和三色标记法，有过实际性能调优经验;
++ 熟悉 MySQL 的存储引擎、事务隔离级别、锁、索引，有 MySQL 的性能调优经验;
++ 熟悉 Redis 持久化机制、过期策略以及集群部署;
++ 熟悉 RabbitMQ 消息队列事务消息底层原理，掌握消息丢失、消息重复等问题的解决方案;
++ 熟练使用 Docker 和 K8S，有 CICD 经验；擅长敏捷开发；熟练使用常见的设计模式；
++ 精通基于 LNMP 环境的编程，具备扎实的 PHP 基础知识，理解面向对象编程思想。
++ 熟练使用 Yii、ThinkPHP 和 Laravel 等框架进行快速开发，了解基本的核心源代码，熟悉 swoole 扩展。
++ 熟练使用 python 编写脚本。
 
 ## 自我评价
 
@@ -42,11 +42,11 @@
 
 ## 工作经历
 
-### [希云科技（北京）有限公司](http://xii.cloud/) （ 2021/4 ~ ）
+### [希云科技（北京）有限公司](http://xii.cloud/) （ 2021/4 ~ 2024/5）
 
 在公司担任 Go 开发，参与研发了 [柔性开发仿真一体化项目](http://g.xii.cloud:42225/) 和 xae 项目。目前柔性开发仿真一体化项目已上线，服务于国家电网，该项目是组态化微应用开发仿真发布一体化云平台，可以帮助客户快速开发应用并部署。xae 是信创项目，目的是赋能企业数字化转型，快速搭建迁徙适配测试平台。
 
-### 法本信息技术股份有限公司外派腾讯 （ 2019/4 ~ 2021/4 ）
+### 北京腾讯公司 （ 2019/4 ~ 2021/4 ）
 
 在北京腾讯总部参与了星盘数据平台和烽火统一 PUSH 平台的开发。星盘数据平台使用 php 开发。PUSH 平台使用 Go 开发，主要使用了 Go 协程，channel 等提高系统整体性能和并发。
 

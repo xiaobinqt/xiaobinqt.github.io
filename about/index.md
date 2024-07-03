@@ -30,7 +30,7 @@
 
 2017/4 - 2019/3 &nbsp;&nbsp;  [西安维客软件科技有限公司](https://www.victtech.com/)从事 PHP 开发。
 
-2019/4 - 2021/3 &nbsp;&nbsp; 驻场北京腾讯从事 PHP 和 Golang 开发。
+2019/4 - 2021/3 &nbsp;&nbsp; 北京腾讯驻场从事 PHP 和 Golang 开发。
 
 2021/4 - 至今 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [希云科技(北京)有限公司](http://www.xii.cloud/)从事 Go 开发。
 
