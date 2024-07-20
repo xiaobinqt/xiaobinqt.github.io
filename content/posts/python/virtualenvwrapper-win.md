@@ -1,5 +1,5 @@
 ---
-title: "windows 下 python virtualenvwrapper-win 使用"
+title: "python virtualenvwrapper 使用"
 subtitle: ""
 
 init_date: "2023-05-26T17:19:38+08:00"
@@ -42,7 +42,9 @@ math: true
 
 Virtualenvwrapper 是一个用于管理 Python 虚拟环境的工具，它为创建、切换和删除虚拟环境提供了一组方便的命令，并通过简化管理多个虚拟环境的过程来提高开发效率。
 
-## 安装
+## windows
+
+### 安装
 
 可以使用 pip 安装 Virtualenvwrapper：
 
@@ -57,25 +59,25 @@ pip install virtualenvwrapper-win
 
 在安装并配置好 Virtualenvwrapper 后，打开一个**新的**命令行窗口，以便新的环境变量生效。
 
-## 创建虚拟环境
+### 创建虚拟环境
 
 使用 mkvirtualenv 命令创建一个新的虚拟环境。例如，要创建一个名为 go.src 的虚拟环境，可以运行以下命令：
 
 ![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230526/9b1e834a1bff4c54b551bedd9b49e384.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'mkvirtualenv')
 
-## 查看所有虚拟环境
+### 查看所有虚拟环境
 
 要列出所有可用的虚拟环境，可以使用 workon 命令，不带任何参数运行它：
 
 ![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230526/cce01cbdc5254cee8b9115e2bd2cb30d.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'workon')
 
-## 激活虚拟环境
+### 激活虚拟环境
 
 创建虚拟环境后，可以使用 workon 命令来激活该环境。例如，要激活名为 go.src 的虚拟环境，可以运行以下命令：
 
 ![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230526/1109c7cf3de9479081bbf3aeafdf4c61.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '激活虚拟环境')
 
-## 删除虚拟环境
+### 删除虚拟环境
 
 如果要删除不再需要的虚拟环境，可以使用 rmvirtualenv 命令，后跟要删除的虚拟环境的名称。例如，要删除名为 myenv 的虚拟环境，可以运行以下命令：
 
@@ -84,11 +86,39 @@ rmvirtualenv myenv
 
 ```
 
-## 退出虚拟环境
+### 退出虚拟环境
 
 可以使用 deactivate 命令退出虚拟环境：
 
 ![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230526/3a979dd3e94942f1aaeaa2a2d54a967e.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 '退出虚拟环境')
+
+## mac 使用
+
+这是我的 mac 型号
+
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20240720/35469fe5f0374e4eae05c947d23117d6.png 'mac 型号')
+
+通过 brew 安装的的 python 版本是 3.12.4。
+
+其实可以直接使用 python3 的 venv 模块来创建一个虚拟环境。假设需要创建一个名为 myenv 的虚拟环境：
+
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20240720/19e8da1758524258a1c8cd133e9513d2.png '创建虚拟环境')
+
+激活虚拟环境后，你可以在这个环境中自由安装 Python 包而不会影响系统的 Python 安装：
+
+```shell
+source ~/myenv/bin/activate
+```
+
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20240720/5bce893b9764480a9e9d97c0b5139cd6.png '激活虚拟环境')
+
+在激活的虚拟环境中，可以运行 pip 安装包：
+
+```shell
+pip install --upgrade pip
+```
+
+现在可以在虚拟环境中安装需要的任何包。退出虚拟环境可以直接使用 deactivate 命令。
 
 ## pycharm 配置
 
