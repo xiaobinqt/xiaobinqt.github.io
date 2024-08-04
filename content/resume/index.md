@@ -39,7 +39,7 @@ math: true
 ## 个人技能
 
 + 熟练使用 Go 语言进行项目开发，对 Slice、Map、Goroutine、Channel 有深入了解，擅长并发编程；
-+ 熟练使用 Gin、GRPC、GoFrame、Go-zero 等 web 和微服务框架，熟悉熔断，限流，服务治理等；
++ 熟练使用 Gin、GRPC、GoFrame、Go-kratos 等 web 和微服务框架，熟悉熔断，限流，服务治理等；
 + 深入理解 CSP 模型，深入理解 GC 垃圾回收机制和三色标记法，有过实际性能调优经验;
 + 熟悉 MySQL 的存储引擎、事务隔离级别、锁、索引，有 MySQL 的性能调优经验;
 + 熟悉 Redis 持久化机制、过期策略以及集群部署;
