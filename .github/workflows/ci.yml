@@ -43,12 +43,14 @@ jobs:
           hugo-version: '0.132.1'
           extended: true # 启用 extended
 
-      - name: 删除 tweet shortcode
-        run: |
-          rm -rf themes/do/exampleSite
-
       - name: Build
         run: hugo
+
+      - name: Setup Hugo another lower version
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: '0.126.3'
+          extended: true # 启用 extended
 
       - name: Build leetcode book
         run: hugo --config book.leetcode.toml
