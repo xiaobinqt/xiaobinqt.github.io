@@ -401,7 +401,7 @@ func main() {
 
 ## FAQ
 
-#### 如何禁用 Cookies 后，使用 Session
+### 如何禁用 Cookies 后，使用 Session
 
 + 如果禁用了 Cookies，服务器仍会将 sessionId 以 cookie 的方式发送给浏览器，但是，浏览器不再保存这个 cookie （即 sessionId） 了。
 + 如果想要继续使用 session，需要采用 `URL 重写`的方式来实现，可以参考 [https://www.cnblogs.com/Renyi-Fan/p/11012086.html](https://www.cnblogs.com/Renyi-Fan/p/11012086.html)

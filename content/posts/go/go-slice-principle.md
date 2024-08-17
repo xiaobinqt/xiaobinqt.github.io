@@ -25,7 +25,7 @@ tags: [ "golang" ]
 categories: [ "golang" ]
 lightgallery: true
 
-series: [ "golang" ]
+series: [ "go-lang" ]
 
 series_weight:
 
