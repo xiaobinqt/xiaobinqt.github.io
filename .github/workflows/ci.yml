@@ -18,17 +18,24 @@ jobs:
         run: |
           git submodule update --init --recursive
 
-      - name: 配置参数替换
+      - name: 配置 search 搜索参数替换
+        uses: falnyr/replace-env-vars-action@master
+        env:
+          ALGOLIA_SEARCH_API_KEY: ${{ secrets.ALGOLIA_SEARCH_API_KEY }}
+          ALGOLIA_APP_ID: ${{ secrets.ALGOLIA_APP_ID }}
+        with:
+          filename: config.io/_default/params.zh-cn.toml
+
+      - name: 配置 comment 参数替换
         uses: falnyr/replace-env-vars-action@master
         env:
           VALINE_ENABLE: ""
           GITALK_ENABLE: true
           GITALK_CLIENT_ID: ${{ secrets.GITALK_CLIENT_ID }}
           GITALK_SECRET: ${{ secrets.GITALK_TOKEN }}
-          ALGOLIA_SEARCH_API_KEY: ${{ secrets.ALGOLIA_SEARCH_API_KEY }}
-          ALGOLIA_APP_ID: ${{ secrets.ALGOLIA_APP_ID }}
         with:
-          filename: config.io/_default/params.zh-cn.toml
+          filename: config.io/_default/params.toml
+
 
       - name: 配置参数icp
         uses: NicoG60/simple-template-renderer@v1
