@@ -18,9 +18,12 @@
 举例：一个系统为某进程分配了三个物理块，并有如下页面引用序列：
 7，0，1，2，0，3，0，4，2，3，0，3，2，1，2，0，1，7，0，1 开始运行时，先将 7, 0, 1 三个页面装入内存。当进程要访问页面 2 时，产生缺页中断，会将页面 7 换出，因为页面 7 再次被访问的时间最长。
 2. 最近最久未使用 # LRU, Least Recently Used">
-<meta name="theme-color" content="#FFFFFF">
-<meta name="color-scheme" content="light dark"><meta property="og:title" content="1.6 内存管理" />
-<meta property="og:description" content="1.6 内存管理 # 1.6.1 虚拟内存 # 虚拟内存的目的是为了让物理内存扩充成更大的逻辑内存，从而让程序获得更多的可用内存。
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/linux/docs/part1-primary/1.6-memory-manage/">
+  <meta property="og:site_name" content="Linux 学习笔记">
+  <meta property="og:title" content="1.6 内存管理">
+  <meta property="og:description" content="1.6 内存管理 # 1.6.1 虚拟内存 # 虚拟内存的目的是为了让物理内存扩充成更大的逻辑内存，从而让程序获得更多的可用内存。
 为了更好的管理内存，操作系统将内存抽象成地址空间。每个程序拥有自己的地址空间，这个地址空间被分割成多个块，每一块称为一页。这些页被映射到物理内存，但不需要映射到连续的物理内存，也不需要所有页都必须在物理内存中。当程序引用到不在物理内存中的页时，由硬件执行必要的映射，将缺失的部分装入物理内存并重新执行失败的指令。
 从上面的描述中可以看出，虚拟内存允许程序不用将地址空间中的每一页都映射到物理内存，也就是说一个程序不需要全部调入内存就可以运行，这使得有限的内存运行大程序成为可能。例如有一台计算机可以产生 16 位地址，那么一个程序的地址空间范围是 0~64K。该计算机只有 32KB 的物理内存，虚拟内存技术允许该计算机运行一个 64K 大小的程序。
 1.6.2 分页系统地址映射 # 内存管理单元（MMU）管理着地址空间和物理内存的转换，其中的页表（Page table）存储着页（程序地址空间）和页框（物理内存空间）的映射表。
@@ -34,19 +37,23 @@
 是一种理论上的算法，因为无法知道一个页面多长时间不再被访问。
 举例：一个系统为某进程分配了三个物理块，并有如下页面引用序列：
 7，0，1，2，0，3，0，4，2，3，0，3，2，1，2，0，1，7，0，1 开始运行时，先将 7, 0, 1 三个页面装入内存。当进程要访问页面 2 时，产生缺页中断，会将页面 7 换出，因为页面 7 再次被访问的时间最长。
-2. 最近最久未使用 # LRU, Least Recently Used" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://example.com/linux/docs/part1-primary/1.6-memory-manage/" /><meta property="article:section" content="docs" />
-
-<meta property="article:modified_time" content="2023-03-14T10:05:56+08:00" />
+2. 最近最久未使用 # LRU, Least Recently Used">
+  <meta property="og:locale" content="zh">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:modified_time" content="2023-03-14T10:05:56+08:00">
 <title>1.6 内存管理 | Linux 学习笔记</title>
 <link rel="manifest" href="/linux/manifest.json">
-<link rel="icon" href="/linux/favicon.png" type="image/x-icon">
-<link rel="stylesheet" href="/linux/book.min.cad59a3be22b32d901c8b99a5bf0c00f01535383d8d0e86742e5449f598d17af.css" integrity="sha256-ytWaO&#43;IrMtkByLmaW/DADwFTU4PY0OhnQuVEn1mNF68=" crossorigin="anonymous">
-  <script defer src="/linux/flexsearch.min.js"></script>
-  <script defer src="/linux/zh.search.min.4255bb51fefe12beb719fa99814aff14a9032f6767f09d28d03df087aa2efc4f.js" integrity="sha256-QlW7Uf7&#43;Er63GfqZgUr/FKkDL2dn8J0o0D3wh6ou/E8=" crossorigin="anonymous"></script>
+<link rel="icon" href="/linux/favicon.png" >
+<link rel="canonical" href="https://example.com/linux/docs/part1-primary/1.6-memory-manage/">
+<link rel="stylesheet" href="/linux/book.min.c800dd82e49099945db6750ce1011947221e4464ea7e2ba833b653fe2dd19d1c.css" integrity="sha256-yADdguSQmZRdtnUM4QEZRyIeRGTqfiuoM7ZT/i3RnRw=" crossorigin="anonymous">
+  <script defer src="/linux/fuse.min.js"></script>
+  <script defer src="/linux/zh.search.min.0afc493c0e2806c47e6ea5c37eb3a83b7fd85c5ed030b4ef2823216a214c554a.js" integrity="sha256-CvxJPA4oBsR&#43;bqXDfrOoO3/YXF7QMLTvKCMhaiFMVUo=" crossorigin="anonymous"></script>
 
-  <script defer src="/linux/sw.min.e3338ad661715b83bfd6397040a613605d8bb26c10798773e2176216e2123560.js" integrity="sha256-4zOK1mFxW4O/1jlwQKYTYF2LsmwQeYdz4hdiFuISNWA=" crossorigin="anonymous"></script>
+  <script defer src="/linux/sw.min.06246f7b13a877707832946d0b1941d626f4349fd8e3bdfd318889981ed22d49.js" integrity="sha256-BiRvexOod3B4MpRtCxlB1ib0NJ/Y4739MYiJmB7SLUk=" crossorigin="anonymous"></script>
+
+  
+
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book
@@ -67,11 +74,12 @@ https://github.com/alex-shpak/hugo-book
 </h2>
 
 
-<div class="book-search">
+<div class="book-search hidden">
   <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
   <div class="book-search-spinner hidden"></div>
   <ul id="book-search-results"></ul>
 </div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
 
 
 
@@ -950,7 +958,7 @@ https://github.com/alex-shpak/hugo-book
 
       
       
-  <article class="markdown"><h1 id="16-内存管理">
+  <article class="markdown book-article"><h1 id="16-内存管理">
   1.6 内存管理
   <a class="anchor" href="#16-%e5%86%85%e5%ad%98%e7%ae%a1%e7%90%86">#</a>
 </h1>
@@ -1080,9 +1088,9 @@ https://github.com/alex-shpak/hugo-book
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/b0cc6c190723e17328db57a4e1d41d8d2dec5880" title='最后修改者 weibin | March 14, 2023' target="_blank" rel="noopener">
-      <img src="/linux/svg/calendar.svg" class="book-icon" alt="Calendar" />
-      <span>March 14, 2023</span>
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/b0cc6c190723e17328db57a4e1d41d8d2dec5880" title='最后修改者 weibin | 三月 14, 2023' target="_blank" rel="noopener">
+      <img src="/linux/svg/calendar.svg" class="book-icon" alt="" />
+      <span>三月 14, 2023</span>
     </a>
   </div>
 
@@ -1090,7 +1098,7 @@ https://github.com/alex-shpak/hugo-book
 
   <div>
     <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/content/docs/part1-primary/1.6-memory-manage.md" target="_blank" rel="noopener">
-      <img src="/linux/svg/edit.svg" class="book-icon" alt="Edit" />
+      <img src="/linux/svg/edit.svg" class="book-icon" alt="" />
       <span>编辑本页</span>
     </a>
   </div>

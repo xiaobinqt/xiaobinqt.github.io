@@ -19,9 +19,12 @@
 4. 波分复用 # 光的频分复用。由于光的频率很高，因此习惯上用波长而不是频率来表示所使用的光载波。
 5. 码分复用 # 为每个用户分配 m bit 的码片，并且所有的码片正交，对于任意两个码片 和 有
 为了讨论方便，取 m=8，设码片 为 00011011。在拥有该码片的用户发送比特 1 时就发送该码片，发送比特 0 时就发送该码片的反码 11100100。">
-<meta name="theme-color" content="#FFFFFF">
-<meta name="color-scheme" content="light dark"><meta property="og:title" content="1.4 链路层" />
-<meta property="og:description" content="1.4 链路层 # 1.4.1 基本问题 # 1. 封装成帧 # 将网络层传下来的分组添加首部和尾部，用于标记帧的开始和结束。
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/http/docs/part1-overview/1.4-link-layer/">
+  <meta property="og:site_name" content="HTTP 协议学习笔记">
+  <meta property="og:title" content="1.4 链路层">
+  <meta property="og:description" content="1.4 链路层 # 1.4.1 基本问题 # 1. 封装成帧 # 将网络层传下来的分组添加首部和尾部，用于标记帧的开始和结束。
 2. 透明传输 # 透明表示一个实际存在的事物看起来好像不存在一样。
 帧使用首部和尾部进行定界，如果帧的数据部分含有和首部尾部相同的内容，那么帧的开始和结束位置就会被错误的判定。需要在数据部分出现首部尾部相同的内容前面插入转义字符。如果数据部分出现转义字符，那么就在转义字符前面再加个转义字符。在接收端进行处理之后可以还原出原始数据。这个过程透明传输的内容是转义字符，用户察觉不到转义字符的存在。
 3. 差错检测 # 目前数据链路层广泛使用了循环冗余检验（CRC）来检查比特差错。
@@ -36,19 +39,23 @@
 3. 统计时分复用 # 是对时分复用的一种改进，不固定每个用户在时分复用帧中的位置，只要有数据就集中起来组成统计时分复用帧然后发送。
 4. 波分复用 # 光的频分复用。由于光的频率很高，因此习惯上用波长而不是频率来表示所使用的光载波。
 5. 码分复用 # 为每个用户分配 m bit 的码片，并且所有的码片正交，对于任意两个码片 和 有
-为了讨论方便，取 m=8，设码片 为 00011011。在拥有该码片的用户发送比特 1 时就发送该码片，发送比特 0 时就发送该码片的反码 11100100。" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://example.com/http/docs/part1-overview/1.4-link-layer/" /><meta property="article:section" content="docs" />
-
-<meta property="article:modified_time" content="2023-03-13T22:44:10+08:00" />
+为了讨论方便，取 m=8，设码片 为 00011011。在拥有该码片的用户发送比特 1 时就发送该码片，发送比特 0 时就发送该码片的反码 11100100。">
+  <meta property="og:locale" content="zh">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:modified_time" content="2023-03-13T22:44:10+08:00">
 <title>1.4 链路层 | HTTP 协议学习笔记</title>
 <link rel="manifest" href="/http/manifest.json">
-<link rel="icon" href="/http/favicon.png" type="image/x-icon">
-<link rel="stylesheet" href="/http/book.min.cad59a3be22b32d901c8b99a5bf0c00f01535383d8d0e86742e5449f598d17af.css" integrity="sha256-ytWaO&#43;IrMtkByLmaW/DADwFTU4PY0OhnQuVEn1mNF68=" crossorigin="anonymous">
-  <script defer src="/http/flexsearch.min.js"></script>
-  <script defer src="/http/zh.search.min.c41b7b3e573836b0f4b3108c02d007d52493aefbb6b115ff51db6150998a31ea.js" integrity="sha256-xBt7Plc4NrD0sxCMAtAH1SSTrvu2sRX/UdthUJmKMeo=" crossorigin="anonymous"></script>
+<link rel="icon" href="/http/favicon.png" >
+<link rel="canonical" href="https://example.com/http/docs/part1-overview/1.4-link-layer/">
+<link rel="stylesheet" href="/http/book.min.c800dd82e49099945db6750ce1011947221e4464ea7e2ba833b653fe2dd19d1c.css" integrity="sha256-yADdguSQmZRdtnUM4QEZRyIeRGTqfiuoM7ZT/i3RnRw=" crossorigin="anonymous">
+  <script defer src="/http/fuse.min.js"></script>
+  <script defer src="/http/zh.search.min.f9f2f3302a4b57cf76d2121622538f10c28f78b3ecf6c5745eff2905c7aca156.js" integrity="sha256-&#43;fLzMCpLV8920hIWIlOPEMKPeLPs9sV0Xv8pBcesoVY=" crossorigin="anonymous"></script>
 
-  <script defer src="/http/sw.min.ec0a06eafc9cbe0e763898565619289d1cc6675fd3e61b207a2fb42ee592dca0.js" integrity="sha256-7AoG6vycvg52OJhWVhkonRzGZ1/T5hsgei&#43;0LuWS3KA=" crossorigin="anonymous"></script>
+  <script defer src="/http/sw.min.9c2899688c7eda021eaf848ecb15bf0131bffb6b338096110fdb0e7027cfec8b.js" integrity="sha256-nCiZaIx&#43;2gIer4SOyxW/ATG/&#43;2szgJYRD9sOcCfP7Is=" crossorigin="anonymous"></script>
+
+  
+
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book
@@ -69,11 +76,12 @@ https://github.com/alex-shpak/hugo-book
 </h2>
 
 
-<div class="book-search">
+<div class="book-search hidden">
   <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
   <div class="book-search-spinner hidden"></div>
   <ul id="book-search-results"></ul>
 </div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
 
 
 
@@ -448,7 +456,7 @@ https://github.com/alex-shpak/hugo-book
 
       
       
-  <article class="markdown"><h1 id="14-链路层">
+  <article class="markdown book-article"><h1 id="14-链路层">
   1.4 链路层
   <a class="anchor" href="#14-%e9%93%be%e8%b7%af%e5%b1%82">#</a>
 </h1>
@@ -619,9 +627,9 @@ https://github.com/alex-shpak/hugo-book
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/19912f48e7c848c8075817d7232e9e1436eb2d54" title='最后修改者 weibin | March 13, 2023' target="_blank" rel="noopener">
-      <img src="/http/svg/calendar.svg" class="book-icon" alt="Calendar" />
-      <span>March 13, 2023</span>
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/19912f48e7c848c8075817d7232e9e1436eb2d54" title='最后修改者 weibin | 三月 13, 2023' target="_blank" rel="noopener">
+      <img src="/http/svg/calendar.svg" class="book-icon" alt="" />
+      <span>三月 13, 2023</span>
     </a>
   </div>
 
@@ -629,7 +637,7 @@ https://github.com/alex-shpak/hugo-book
 
   <div>
     <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/content/docs/part1-overview/1.4-link-layer.md" target="_blank" rel="noopener">
-      <img src="/http/svg/edit.svg" class="book-icon" alt="Edit" />
+      <img src="/http/svg/edit.svg" class="book-icon" alt="" />
       <span>编辑本页</span>
     </a>
   </div>

@@ -14,9 +14,12 @@
 每种类型一个资源的死锁检测算法是通过检测有向图是否存在环来实现，从一个节点出发进行深度优先搜索，对访问过的节点进行标记，如果访问了已经标记的节点，就表示有向图存在环，也就是检测到死锁的发生。
 2. 每种类型多个资源的死锁检测 # 上图中，有三个进程四个资源，每个数据代表的含义如下：
 E 向量：资源总量 A 向量：资源剩余量 C 矩阵：每个进程所拥有的资源数量，每一行都代表一个进程拥有资源的数量 R 矩阵：每个进程请求的资源数量 进程 P1 和 P2 所请求的资源都得不到满足，只有进程 P3 可以，让 P3 执行，之后释放 P3 拥有的资源，此时 A = (2 2 2 0)。P2 可以执行，执行后释放 P2 拥有的资源，A = (4 2 2 1) 。P1 也可以执行。所有进程都可以顺利执行，没有死锁。">
-<meta name="theme-color" content="#FFFFFF">
-<meta name="color-scheme" content="light dark"><meta property="og:title" content="1.5 死锁" />
-<meta property="og:description" content="1.5 死锁 # 1.5.1 必要条件 # 互斥：每个资源要么已经分配给了一个进程，要么就是可用的。 占有和等待：已经得到了某个资源的进程可以再请求新的资源。 不可抢占：已经分配给一个进程的资源不能强制性地被抢占，它只能被占有它的进程显式地释放。 环路等待：有两个或者两个以上的进程组成一条环路，该环路中的每个进程都在等待下一个进程所占有的资源。 1.5.2 处理方法 # 主要有以下四种方法：
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/linux/docs/part1-primary/1.5-deadlock/">
+  <meta property="og:site_name" content="Linux 学习笔记">
+  <meta property="og:title" content="1.5 死锁">
+  <meta property="og:description" content="1.5 死锁 # 1.5.1 必要条件 # 互斥：每个资源要么已经分配给了一个进程，要么就是可用的。 占有和等待：已经得到了某个资源的进程可以再请求新的资源。 不可抢占：已经分配给一个进程的资源不能强制性地被抢占，它只能被占有它的进程显式地释放。 环路等待：有两个或者两个以上的进程组成一条环路，该环路中的每个进程都在等待下一个进程所占有的资源。 1.5.2 处理方法 # 主要有以下四种方法：
 鸵鸟策略 死锁检测与死锁恢复 死锁预防 死锁避免 1.5.3 鸵鸟策略 # 把头埋在沙子里，假装根本没发生问题。
 因为解决死锁问题的代价很高，因此鸵鸟策略这种不采取任务措施的方案会获得更高的性能。
 当发生死锁时不会对用户造成多大影响，或发生死锁的概率很低，可以采用鸵鸟策略。
@@ -26,19 +29,23 @@ E 向量：资源总量 A 向量：资源剩余量 C 矩阵：每个进程所拥
 图 a 可以抽取出环，如图 b，它满足了环路等待条件，因此会发生死锁。
 每种类型一个资源的死锁检测算法是通过检测有向图是否存在环来实现，从一个节点出发进行深度优先搜索，对访问过的节点进行标记，如果访问了已经标记的节点，就表示有向图存在环，也就是检测到死锁的发生。
 2. 每种类型多个资源的死锁检测 # 上图中，有三个进程四个资源，每个数据代表的含义如下：
-E 向量：资源总量 A 向量：资源剩余量 C 矩阵：每个进程所拥有的资源数量，每一行都代表一个进程拥有资源的数量 R 矩阵：每个进程请求的资源数量 进程 P1 和 P2 所请求的资源都得不到满足，只有进程 P3 可以，让 P3 执行，之后释放 P3 拥有的资源，此时 A = (2 2 2 0)。P2 可以执行，执行后释放 P2 拥有的资源，A = (4 2 2 1) 。P1 也可以执行。所有进程都可以顺利执行，没有死锁。" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://example.com/linux/docs/part1-primary/1.5-deadlock/" /><meta property="article:section" content="docs" />
-
-<meta property="article:modified_time" content="2023-03-14T10:05:56+08:00" />
+E 向量：资源总量 A 向量：资源剩余量 C 矩阵：每个进程所拥有的资源数量，每一行都代表一个进程拥有资源的数量 R 矩阵：每个进程请求的资源数量 进程 P1 和 P2 所请求的资源都得不到满足，只有进程 P3 可以，让 P3 执行，之后释放 P3 拥有的资源，此时 A = (2 2 2 0)。P2 可以执行，执行后释放 P2 拥有的资源，A = (4 2 2 1) 。P1 也可以执行。所有进程都可以顺利执行，没有死锁。">
+  <meta property="og:locale" content="zh">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:modified_time" content="2023-03-14T10:05:56+08:00">
 <title>1.5 死锁 | Linux 学习笔记</title>
 <link rel="manifest" href="/linux/manifest.json">
-<link rel="icon" href="/linux/favicon.png" type="image/x-icon">
-<link rel="stylesheet" href="/linux/book.min.cad59a3be22b32d901c8b99a5bf0c00f01535383d8d0e86742e5449f598d17af.css" integrity="sha256-ytWaO&#43;IrMtkByLmaW/DADwFTU4PY0OhnQuVEn1mNF68=" crossorigin="anonymous">
-  <script defer src="/linux/flexsearch.min.js"></script>
-  <script defer src="/linux/zh.search.min.4255bb51fefe12beb719fa99814aff14a9032f6767f09d28d03df087aa2efc4f.js" integrity="sha256-QlW7Uf7&#43;Er63GfqZgUr/FKkDL2dn8J0o0D3wh6ou/E8=" crossorigin="anonymous"></script>
+<link rel="icon" href="/linux/favicon.png" >
+<link rel="canonical" href="https://example.com/linux/docs/part1-primary/1.5-deadlock/">
+<link rel="stylesheet" href="/linux/book.min.c800dd82e49099945db6750ce1011947221e4464ea7e2ba833b653fe2dd19d1c.css" integrity="sha256-yADdguSQmZRdtnUM4QEZRyIeRGTqfiuoM7ZT/i3RnRw=" crossorigin="anonymous">
+  <script defer src="/linux/fuse.min.js"></script>
+  <script defer src="/linux/zh.search.min.0afc493c0e2806c47e6ea5c37eb3a83b7fd85c5ed030b4ef2823216a214c554a.js" integrity="sha256-CvxJPA4oBsR&#43;bqXDfrOoO3/YXF7QMLTvKCMhaiFMVUo=" crossorigin="anonymous"></script>
 
-  <script defer src="/linux/sw.min.e3338ad661715b83bfd6397040a613605d8bb26c10798773e2176216e2123560.js" integrity="sha256-4zOK1mFxW4O/1jlwQKYTYF2LsmwQeYdz4hdiFuISNWA=" crossorigin="anonymous"></script>
+  <script defer src="/linux/sw.min.06246f7b13a877707832946d0b1941d626f4349fd8e3bdfd318889981ed22d49.js" integrity="sha256-BiRvexOod3B4MpRtCxlB1ib0NJ/Y4739MYiJmB7SLUk=" crossorigin="anonymous"></script>
+
+  
+
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book
@@ -59,11 +66,12 @@ https://github.com/alex-shpak/hugo-book
 </h2>
 
 
-<div class="book-search">
+<div class="book-search hidden">
   <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
   <div class="book-search-spinner hidden"></div>
   <ul id="book-search-results"></ul>
 </div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
 
 
 
@@ -953,7 +961,7 @@ https://github.com/alex-shpak/hugo-book
 
       
       
-  <article class="markdown"><h1 id="15-死锁">
+  <article class="markdown book-article"><h1 id="15-死锁">
   1.5 死锁
   <a class="anchor" href="#15-%e6%ad%bb%e9%94%81">#</a>
 </h1>
@@ -1101,9 +1109,9 @@ https://github.com/alex-shpak/hugo-book
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/b0cc6c190723e17328db57a4e1d41d8d2dec5880" title='最后修改者 weibin | March 14, 2023' target="_blank" rel="noopener">
-      <img src="/linux/svg/calendar.svg" class="book-icon" alt="Calendar" />
-      <span>March 14, 2023</span>
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/b0cc6c190723e17328db57a4e1d41d8d2dec5880" title='最后修改者 weibin | 三月 14, 2023' target="_blank" rel="noopener">
+      <img src="/linux/svg/calendar.svg" class="book-icon" alt="" />
+      <span>三月 14, 2023</span>
     </a>
   </div>
 
@@ -1111,7 +1119,7 @@ https://github.com/alex-shpak/hugo-book
 
   <div>
     <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/content/docs/part1-primary/1.5-deadlock.md" target="_blank" rel="noopener">
-      <img src="/linux/svg/edit.svg" class="book-icon" alt="Edit" />
+      <img src="/linux/svg/edit.svg" class="book-icon" alt="" />
       <span>编辑本页</span>
     </a>
   </div>

@@ -1,0 +1,1 @@
+navigator.serviceWorker&&navigator.serviceWorker.register("/kubernetes/sw.js",{scope:"/kubernetes/"})

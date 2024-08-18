@@ -17,10 +17,13 @@ must-revalidate：可以放进冰箱，保鲜期内可以吃，过期了就要�
 2.6.2 客户端缓存控制 # 其实不止服务器可以发 “Cache-Control” 头，浏览器也可以发 “Cache-Control”，也就是说请求 - 应答的双方都可以用这个字段进行缓存控制，互相协商缓存的使用策略。
 当点 “刷新” 按钮的时候，浏览器会在请求头里加一个 “Cache-Control: max-age=0”。因为 max-age 是 “生存时间”，max-age=0 的意思就是拿到最新的数据，而本地缓存里的数据至少保存了几秒钟，所以浏览器就不会使用缓存，而是向服务器发请求。服务器看到 max-age=0，也就会用一个最新生成的报文回应浏览器。
 浏览器用 “Cache-Control” 做缓存控制只能是刷新数据，不能很好地利用缓存数据，又因为缓存会失效，使用前还必须要去服务器验证是否是最新版。所以 HTTP 协议就定义了一系列 “If” 开头的 “条件请求” 字段，专门用来检查验证资源是否过期，验证的责任交给服务器，浏览器只需 “坐享其成”。">
-<meta name="theme-color" content="#FFFFFF">
-<meta name="color-scheme" content="light dark"><meta property="og:title" content="2.6 Cache" />
-<meta property="og:description" content="2.6 Cache # 2.6.1 服务端缓存控制 # 服务器标记资源有效期使用的头字段是 “Cache-Control”，里面的值 “max-age=30” 就是资源的有效时间，相当于告诉浏览器，“这个页面只能缓存 30 秒，之后就算是过期，不能用。”
-除了 “Cache-Control&rsquo;”，服务器也可以用 “Expires” 字段来标记资源的有效期，它的形式和 Cookie 的差不多，同样属于 “过时” 的属性，优先级低于 “Cache-Control&rsquo;”。 还有一个历史遗留字段 “Pragma:no-cache”，它相当于 “Cache-Control: no-cache”，除非为了兼容HTTP/1.0 否则不建议使用。
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/http/docs/part2-break-ice/2.6-cache/">
+  <meta property="og:site_name" content="HTTP 协议学习笔记">
+  <meta property="og:title" content="2.6 Cache">
+  <meta property="og:description" content="2.6 Cache # 2.6.1 服务端缓存控制 # 服务器标记资源有效期使用的头字段是 “Cache-Control”，里面的值 “max-age=30” 就是资源的有效时间，相当于告诉浏览器，“这个页面只能缓存 30 秒，之后就算是过期，不能用。”
+除了 “Cache-Control’”，服务器也可以用 “Expires” 字段来标记资源的有效期，它的形式和 Cookie 的差不多，同样属于 “过时” 的属性，优先级低于 “Cache-Control’”。 还有一个历史遗留字段 “Pragma:no-cache”，它相当于 “Cache-Control: no-cache”，除非为了兼容HTTP/1.0 否则不建议使用。
 这里的 max-age 是 “生存时间”（又叫“新鲜度” “缓存寿命”，类似 TTL，Time-To-Live），时间的计算起点是响应报文的创建时刻（即 Date 字段，也就是离开服务器的时刻），而不是客户端收到报文的时刻，也就是说包含了在链路传输过程中所有节点所停留的时间。
 “max-age” 是 HTTP 缓存控制最常用的属性，此外在响应报文里还可以用其他的属性来更精确地指示浏览器应该如何使用缓存：
 no-store：不允许缓存，用于某些变化非常频繁的数据，例如秒杀页面；
@@ -32,19 +35,23 @@ no-cache：可以放进冰箱，但吃之前必须问超市有没有更新鲜的
 must-revalidate：可以放进冰箱，保鲜期内可以吃，过期了就要问超市让不让吃。
 2.6.2 客户端缓存控制 # 其实不止服务器可以发 “Cache-Control” 头，浏览器也可以发 “Cache-Control”，也就是说请求 - 应答的双方都可以用这个字段进行缓存控制，互相协商缓存的使用策略。
 当点 “刷新” 按钮的时候，浏览器会在请求头里加一个 “Cache-Control: max-age=0”。因为 max-age 是 “生存时间”，max-age=0 的意思就是拿到最新的数据，而本地缓存里的数据至少保存了几秒钟，所以浏览器就不会使用缓存，而是向服务器发请求。服务器看到 max-age=0，也就会用一个最新生成的报文回应浏览器。
-浏览器用 “Cache-Control” 做缓存控制只能是刷新数据，不能很好地利用缓存数据，又因为缓存会失效，使用前还必须要去服务器验证是否是最新版。所以 HTTP 协议就定义了一系列 “If” 开头的 “条件请求” 字段，专门用来检查验证资源是否过期，验证的责任交给服务器，浏览器只需 “坐享其成”。" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://example.com/http/docs/part2-break-ice/2.6-cache/" /><meta property="article:section" content="docs" />
-
-<meta property="article:modified_time" content="2023-05-06T15:03:32+08:00" />
+浏览器用 “Cache-Control” 做缓存控制只能是刷新数据，不能很好地利用缓存数据，又因为缓存会失效，使用前还必须要去服务器验证是否是最新版。所以 HTTP 协议就定义了一系列 “If” 开头的 “条件请求” 字段，专门用来检查验证资源是否过期，验证的责任交给服务器，浏览器只需 “坐享其成”。">
+  <meta property="og:locale" content="zh">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:modified_time" content="2023-05-06T15:03:32+08:00">
 <title>2.6 Cache | HTTP 协议学习笔记</title>
 <link rel="manifest" href="/http/manifest.json">
-<link rel="icon" href="/http/favicon.png" type="image/x-icon">
-<link rel="stylesheet" href="/http/book.min.cad59a3be22b32d901c8b99a5bf0c00f01535383d8d0e86742e5449f598d17af.css" integrity="sha256-ytWaO&#43;IrMtkByLmaW/DADwFTU4PY0OhnQuVEn1mNF68=" crossorigin="anonymous">
-  <script defer src="/http/flexsearch.min.js"></script>
-  <script defer src="/http/zh.search.min.c41b7b3e573836b0f4b3108c02d007d52493aefbb6b115ff51db6150998a31ea.js" integrity="sha256-xBt7Plc4NrD0sxCMAtAH1SSTrvu2sRX/UdthUJmKMeo=" crossorigin="anonymous"></script>
+<link rel="icon" href="/http/favicon.png" >
+<link rel="canonical" href="https://example.com/http/docs/part2-break-ice/2.6-cache/">
+<link rel="stylesheet" href="/http/book.min.c800dd82e49099945db6750ce1011947221e4464ea7e2ba833b653fe2dd19d1c.css" integrity="sha256-yADdguSQmZRdtnUM4QEZRyIeRGTqfiuoM7ZT/i3RnRw=" crossorigin="anonymous">
+  <script defer src="/http/fuse.min.js"></script>
+  <script defer src="/http/zh.search.min.f9f2f3302a4b57cf76d2121622538f10c28f78b3ecf6c5745eff2905c7aca156.js" integrity="sha256-&#43;fLzMCpLV8920hIWIlOPEMKPeLPs9sV0Xv8pBcesoVY=" crossorigin="anonymous"></script>
 
-  <script defer src="/http/sw.min.ec0a06eafc9cbe0e763898565619289d1cc6675fd3e61b207a2fb42ee592dca0.js" integrity="sha256-7AoG6vycvg52OJhWVhkonRzGZ1/T5hsgei&#43;0LuWS3KA=" crossorigin="anonymous"></script>
+  <script defer src="/http/sw.min.9c2899688c7eda021eaf848ecb15bf0131bffb6b338096110fdb0e7027cfec8b.js" integrity="sha256-nCiZaIx&#43;2gIer4SOyxW/ATG/&#43;2szgJYRD9sOcCfP7Is=" crossorigin="anonymous"></script>
+
+  
+
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book
@@ -65,11 +72,12 @@ https://github.com/alex-shpak/hugo-book
 </h2>
 
 
-<div class="book-search">
+<div class="book-search hidden">
   <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
   <div class="book-search-spinner hidden"></div>
   <ul id="book-search-results"></ul>
 </div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
 
 
 
@@ -424,7 +432,7 @@ https://github.com/alex-shpak/hugo-book
 
       
       
-  <article class="markdown"><h1 id="26-cache">
+  <article class="markdown book-article"><h1 id="26-cache">
   2.6 Cache
   <a class="anchor" href="#26-cache">#</a>
 </h1>
@@ -539,9 +547,9 @@ HTML 里的标签顺序调整，或者多了几个空格。</p>
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/f6b616048204f3bea78194e654534905db97ba24" title='最后修改者 weibin | May 6, 2023' target="_blank" rel="noopener">
-      <img src="/http/svg/calendar.svg" class="book-icon" alt="Calendar" />
-      <span>May 6, 2023</span>
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/f6b616048204f3bea78194e654534905db97ba24" title='最后修改者 weibin | 五月 6, 2023' target="_blank" rel="noopener">
+      <img src="/http/svg/calendar.svg" class="book-icon" alt="" />
+      <span>五月 6, 2023</span>
     </a>
   </div>
 
@@ -549,7 +557,7 @@ HTML 里的标签顺序调整，或者多了几个空格。</p>
 
   <div>
     <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/content/docs/part2-break-ice/2.6-cache.md" target="_blank" rel="noopener">
-      <img src="/http/svg/edit.svg" class="book-icon" alt="Edit" />
+      <img src="/http/svg/edit.svg" class="book-icon" alt="" />
       <span>编辑本页</span>
     </a>
   </div>

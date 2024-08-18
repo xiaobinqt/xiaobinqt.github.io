@@ -10,27 +10,34 @@ sudo可以避免暴露 root 密码，可以直接把某些命令授权给普通�
 2.9.1 sudo # 以其他身份来执行命令。
 visudo 设置需要使用 sudo 的用户（组）。
 wilson ALL=/usr/sbin/shutdown # wilson 用户被授予 shutdown 执行权限，多个命令以 , 分隔。 wilson ALL=/usr/sbin/shutdown NOPASSWD # wilson 用户被授予 shutdown 执行权限，不需要输入密码 ">
-<meta name="theme-color" content="#FFFFFF">
-<meta name="color-scheme" content="light dark"><meta property="og:title" content="2.9 切换用户" />
-<meta property="og:description" content=" 2.9 切换用户 # su用于切换用户，如果普通用户切换成管理员需要输入密码，那么就需要把密码告诉普通用户，有暴露 root 密码的风险。
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/linux/docs/part2-sys-operate/2.9-switch-user/">
+  <meta property="og:site_name" content="Linux 学习笔记">
+  <meta property="og:title" content="2.9 切换用户">
+  <meta property="og:description" content=" 2.9 切换用户 # su用于切换用户，如果普通用户切换成管理员需要输入密码，那么就需要把密码告诉普通用户，有暴露 root 密码的风险。
 sudo可以避免暴露 root 密码，可以直接把某些命令授权给普通用户执行，普通用户在执行时不需要 root 用户密码。
 2.9.1 su # 用于切换当前用户身份到其他用户身份。
 - 参数在变更账号后并改变工作目录到该账号的家目录。
 2.9.1 sudo # 以其他身份来执行命令。
 visudo 设置需要使用 sudo 的用户（组）。
-wilson ALL=/usr/sbin/shutdown # wilson 用户被授予 shutdown 执行权限，多个命令以 , 分隔。 wilson ALL=/usr/sbin/shutdown NOPASSWD # wilson 用户被授予 shutdown 执行权限，不需要输入密码 " />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://example.com/linux/docs/part2-sys-operate/2.9-switch-user/" /><meta property="article:section" content="docs" />
-
-<meta property="article:modified_time" content="2023-02-03T16:05:21+08:00" />
+wilson ALL=/usr/sbin/shutdown # wilson 用户被授予 shutdown 执行权限，多个命令以 , 分隔。 wilson ALL=/usr/sbin/shutdown NOPASSWD # wilson 用户被授予 shutdown 执行权限，不需要输入密码 ">
+  <meta property="og:locale" content="zh">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:modified_time" content="2023-02-03T16:05:21+08:00">
 <title>2.9 切换用户 | Linux 学习笔记</title>
 <link rel="manifest" href="/linux/manifest.json">
-<link rel="icon" href="/linux/favicon.png" type="image/x-icon">
-<link rel="stylesheet" href="/linux/book.min.cad59a3be22b32d901c8b99a5bf0c00f01535383d8d0e86742e5449f598d17af.css" integrity="sha256-ytWaO&#43;IrMtkByLmaW/DADwFTU4PY0OhnQuVEn1mNF68=" crossorigin="anonymous">
-  <script defer src="/linux/flexsearch.min.js"></script>
-  <script defer src="/linux/zh.search.min.4255bb51fefe12beb719fa99814aff14a9032f6767f09d28d03df087aa2efc4f.js" integrity="sha256-QlW7Uf7&#43;Er63GfqZgUr/FKkDL2dn8J0o0D3wh6ou/E8=" crossorigin="anonymous"></script>
+<link rel="icon" href="/linux/favicon.png" >
+<link rel="canonical" href="https://example.com/linux/docs/part2-sys-operate/2.9-switch-user/">
+<link rel="stylesheet" href="/linux/book.min.c800dd82e49099945db6750ce1011947221e4464ea7e2ba833b653fe2dd19d1c.css" integrity="sha256-yADdguSQmZRdtnUM4QEZRyIeRGTqfiuoM7ZT/i3RnRw=" crossorigin="anonymous">
+  <script defer src="/linux/fuse.min.js"></script>
+  <script defer src="/linux/zh.search.min.0afc493c0e2806c47e6ea5c37eb3a83b7fd85c5ed030b4ef2823216a214c554a.js" integrity="sha256-CvxJPA4oBsR&#43;bqXDfrOoO3/YXF7QMLTvKCMhaiFMVUo=" crossorigin="anonymous"></script>
 
-  <script defer src="/linux/sw.min.e3338ad661715b83bfd6397040a613605d8bb26c10798773e2176216e2123560.js" integrity="sha256-4zOK1mFxW4O/1jlwQKYTYF2LsmwQeYdz4hdiFuISNWA=" crossorigin="anonymous"></script>
+  <script defer src="/linux/sw.min.06246f7b13a877707832946d0b1941d626f4349fd8e3bdfd318889981ed22d49.js" integrity="sha256-BiRvexOod3B4MpRtCxlB1ib0NJ/Y4739MYiJmB7SLUk=" crossorigin="anonymous"></script>
+
+  
+
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book
@@ -51,11 +58,12 @@ https://github.com/alex-shpak/hugo-book
 </h2>
 
 
-<div class="book-search">
+<div class="book-search hidden">
   <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
   <div class="book-search-spinner hidden"></div>
   <ul id="book-search-results"></ul>
 </div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
 
 
 
@@ -922,7 +930,7 @@ https://github.com/alex-shpak/hugo-book
 
       
       
-  <article class="markdown"><h1 id="29-切换用户">
+  <article class="markdown book-article"><h1 id="29-切换用户">
   2.9 切换用户
   <a class="anchor" href="#29-%e5%88%87%e6%8d%a2%e7%94%a8%e6%88%b7">#</a>
 </h1>
@@ -953,9 +961,9 @@ https://github.com/alex-shpak/hugo-book
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/d4c8d9f833842c6a6fcd88b1c700c142f8fc8835" title='最后修改者 weibin | February 3, 2023' target="_blank" rel="noopener">
-      <img src="/linux/svg/calendar.svg" class="book-icon" alt="Calendar" />
-      <span>February 3, 2023</span>
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/d4c8d9f833842c6a6fcd88b1c700c142f8fc8835" title='最后修改者 weibin | 二月 3, 2023' target="_blank" rel="noopener">
+      <img src="/linux/svg/calendar.svg" class="book-icon" alt="" />
+      <span>二月 3, 2023</span>
     </a>
   </div>
 
@@ -963,7 +971,7 @@ https://github.com/alex-shpak/hugo-book
 
   <div>
     <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/content/docs/part2-sys-operate/2.9-switch-user.md" target="_blank" rel="noopener">
-      <img src="/linux/svg/edit.svg" class="book-icon" alt="Edit" />
+      <img src="/linux/svg/edit.svg" class="book-icon" alt="" />
       <span>编辑本页</span>
     </a>
   </div>
