@@ -164,13 +164,17 @@ def delete_index():
     client = SearchClient.create(algolia_app_id, algolia_admin_api_key)
     index = client.init_index('xiaobinqt.io')
     index.delete()
-    print("algolia delete_index success")
+    print("algolia delete index success")
+    with open(file='public/index.json', mode='r', encoding='utf-8') as file:
+        data = json.load(file)
+        index.save_objects(data)
+        print("algolia update index success")
 
 
 if __name__ == "__main__":
     # print(get_uri_md5("/new-make-difference/"))
     ## 执行....
     delete_index()
-    get_all_gitalk_issues(token, username, repo_name)
-    get_post_titles()
-    init_gitalk()
+    # get_all_gitalk_issues(token, username, repo_name)
+    # get_post_titles()
+    # init_gitalk()
