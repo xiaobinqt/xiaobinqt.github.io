@@ -18,6 +18,10 @@ lightgallery: true
 toc: true
 
 math: true
+
+header:
+  number:
+    enable: false
 ---
 
 ## 个人信息
