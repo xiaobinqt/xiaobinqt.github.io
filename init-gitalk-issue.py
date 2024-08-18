@@ -175,6 +175,6 @@ if __name__ == "__main__":
     # print(get_uri_md5("/new-make-difference/"))
     ## 执行....
     delete_index()
-    # get_all_gitalk_issues(token, username, repo_name)
-    # get_post_titles()
-    # init_gitalk()
+    get_all_gitalk_issues(token, username, repo_name)
+    get_post_titles()
+    init_gitalk()
