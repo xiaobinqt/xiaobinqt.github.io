@@ -4,7 +4,7 @@ import sys
 import time
 
 import requests
-from algoliasearch.search.client import SearchClient
+from algoliasearch.search_client import SearchClient
 
 site_url = "https://xiaobinqt.github.io"
 
