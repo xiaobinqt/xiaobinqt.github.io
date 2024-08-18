@@ -1,114 +1,181 @@
+
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="robots" content="noodp" />
-    <title class="pjax-title">TCP和UDP连接管理 - xiaobinqt 博客 - 技术改变生活</title><meta name="Description" content=" tcp,tcp连接管理,三次握手,四次挥手,为什么建立连接需要三次握手,为什么不能用两次握手进行连接,SYN,FIN,ACK,PSH,SYN_SENT,SYN_RECV,ESTABLISHED,FIN_WAIT_1,FIN_WAIT_2,CLOSE_WAIT,LAST_ACK,TIME_WAIT,CLOSE"><meta property="og:title" content="TCP和UDP连接管理" />
-<meta property="og:description" content=" tcp,tcp连接管理,三次握手,四次挥手,为什么建立连接需要三次握手,为什么不能用两次握手进行连接,SYN,FIN,ACK,PSH,SYN_SENT,SYN_RECV,ESTABLISHED,FIN_WAIT_1,FIN_WAIT_2,CLOSE_WAIT,LAST_ACK,TIME_WAIT,CLOSE" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://www.xiaobinqt.cn/tcp-handshark/" /><meta property="og:image" content="https://www.xiaobinqt.cn/logo.png"/><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2022-03-21T00:00:00+00:00" />
-<meta property="article:modified_time" content="2022-12-07T16:14:31+08:00" />
+    <meta name="robots" content="noodp" /><title>TCP和UDP连接管理 - xiaobinqt 博客 - 技术改变生活</title><meta name="Description" content=" tcp,tcp连接管理,三次握手,四次挥手,为什么建立连接需要三次握手,为什么不能用两次握手进行连接,SYN,FIN,ACK,PSH,SYN_SENT,SYN_RECV,ESTABLISHED,FIN_WAIT_1,FIN_WAIT_2,CLOSE_WAIT,LAST_ACK,TIME_WAIT,CLOSE"><meta property="og:url" content="https://www.xiaobinqt.cn/tcp-handshark/">
+  <meta property="og:site_name" content="xiaobinqt 博客 - 技术改变生活">
+  <meta property="og:title" content="TCP和UDP连接管理">
+  <meta property="og:description" content=" tcp,tcp连接管理,三次握手,四次挥手,为什么建立连接需要三次握手,为什么不能用两次握手进行连接,SYN,FIN,ACK,PSH,SYN_SENT,SYN_RECV,ESTABLISHED,FIN_WAIT_1,FIN_WAIT_2,CLOSE_WAIT,LAST_ACK,TIME_WAIT,CLOSE">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2022-03-21T00:00:00+00:00">
+    <meta property="article:modified_time" content="2022-12-07T16:14:31+08:00">
+    <meta property="article:tag" content="Tcp">
+    <meta property="article:tag" content="Udp">
+    <meta property="article:tag" content="三次握手">
+    <meta property="article:tag" content="四次挥手">
+    <meta property="og:image" content="https://www.xiaobinqt.cn/images/avatar.webp">
 
-<meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image" content="https://www.xiaobinqt.cn/logo.png"/>
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://www.xiaobinqt.cn/images/avatar.webp">
+  <meta name="twitter:title" content="TCP和UDP连接管理">
+  <meta name="twitter:description" content=" tcp,tcp连接管理,三次握手,四次挥手,为什么建立连接需要三次握手,为什么不能用两次握手进行连接,SYN,FIN,ACK,PSH,SYN_SENT,SYN_RECV,ESTABLISHED,FIN_WAIT_1,FIN_WAIT_2,CLOSE_WAIT,LAST_ACK,TIME_WAIT,CLOSE">
+<meta name="application-name" content="DoIt">
+<meta name="apple-mobile-web-app-title" content="DoIt">
 
-<meta name="twitter:title" content="TCP和UDP连接管理"/>
-<meta name="twitter:description" content=" tcp,tcp连接管理,三次握手,四次挥手,为什么建立连接需要三次握手,为什么不能用两次握手进行连接,SYN,FIN,ACK,PSH,SYN_SENT,SYN_RECV,ESTABLISHED,FIN_WAIT_1,FIN_WAIT_2,CLOSE_WAIT,LAST_ACK,TIME_WAIT,CLOSE"/>
-<meta name="application-name" content="xiaobinqt">
-<meta name="apple-mobile-web-app-title" content="xiaobinqt">
-
-<meta name="theme-color" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c">
-<link rel="stylesheet" href="//at.alicdn.com/t/font_3267767_dz25dtwdgdc.css"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+<meta name="theme-color" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://www.xiaobinqt.cn/tcp-handshark/" /><link rel="prev" href="https://www.xiaobinqt.cn/js-cb-asyn/" /><link rel="next" href="https://www.xiaobinqt.cn/hugo-title-support-emoji/" /><link rel="stylesheet" href="/lib/md5/md5.min.js"><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/fontawesome-free/all.min.css">
-        <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/animate/animate.min.css">
-        <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><meta name="google-site-verification" content="hFkClWMTOtPBuE0lQaXNiNb707E7P6O2CwexZoSm3VQ" /><meta name="msvalidate.01" content="A961D393878F86E04112E1198500FDBD" /><meta name="baidu-site-verification" content="code-cMh5ORsrP2" /><script type="application/ld+json">
-    {
-        "@context": "http://schema.org",
-        "@type": "BlogPosting",
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<link rel="canonical" href="https://www.xiaobinqt.cn/tcp-handshark/" /><link rel="prev" href="https://www.xiaobinqt.cn/js-cb-asyn/" /><link rel="next" href="https://www.xiaobinqt.cn/hugo-title-support-emoji/" />
+<link rel="stylesheet" href="/css/main.min.css"><link rel="stylesheet" href="/css/style.min.css"><meta name="google-site-verification" content="hFkClWMTOtPBuE0lQaXNiNb707E7P6O2CwexZoSm3VQ" /><meta name="msvalidate.01" content="A961D393878F86E04112E1198500FDBD" /><meta name="baidu-site-verification" content="code-cMh5ORsrP2" /><script type="application/ld+json">{"@context": "https://schema.org","@type": "BlogPosting",
         "headline": "TCP和UDP连接管理",
         "inLanguage": "zh-CN",
         "mainEntityOfPage": {
             "@type": "WebPage",
-            "@id": "https:\/\/www.xiaobinqt.cn\/tcp-handshark\/"
-        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "tcp, udp, 三次握手, 四次挥手","wordcount":  5253 ,
-        "url": "https:\/\/www.xiaobinqt.cn\/tcp-handshark\/","datePublished": "2022-03-21T00:00:00+00:00","dateModified": "2022-12-07T16:14:31+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+            "@id": "https://www.xiaobinqt.cn/tcp-handshark/"
+        },"image": ["https://cdn.xiaobinqt.cn/xiaobinqt.io/20221118/54f90c85427d4f59b34831801d5770bb.png"],"genre": "posts","keywords":["tcp","udp","三次握手","四次挥手"],"wordcount":  5291 ,
+        "url": "https://www.xiaobinqt.cn/tcp-handshark/","datePublished": "2022-03-21T00:00:00+00:00","dateModified": "2022-12-07T16:14:31+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "xxxx","logo": {
                     "@type": "ImageObject",
-                    "url": "https:\/\/www.xiaobinqt.cn\/images\/avatar.png",
-                    "width":  528 ,
-                    "height":  560 
+                    "url": "https://www.xiaobinqt.cn/images/avatar.webp",
+                    "width":  400 ,
+                    "height":  400 
                 }},"author": {
                 "@type": "Person",
-                "name": "xiaobinqt"
+                "name": "xiaobinqt",
+                "url": "https://github.com/xiaobinqt"
             },"description": " tcp,tcp连接管理,三次握手,四次挥手,为什么建立连接需要三次握手,为什么不能用两次握手进行连接,SYN,FIN,ACK,PSH,SYN_SENT,SYN_RECV,ESTABLISHED,FIN_WAIT_1,FIN_WAIT_2,CLOSE_WAIT,LAST_ACK,TIME_WAIT,CLOSE"
-    }
-    </script></head>
+    }</script></head>
 
-<body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">
-        function setTheme(theme) {document.body.setAttribute('theme', theme); document.documentElement.style.setProperty('color-scheme', theme === 'light' ? 'light' : 'dark');}
+
+<body data-instant-intensity="viewport" ><script type="text/javascript">
+        function setTheme(theme) {
+          document.body.setAttribute('theme', theme); 
+          document.documentElement.className = theme;
+          document.documentElement.style.setProperty('color-scheme', theme === 'light' ? 'light' : 'dark');
+          if (theme === 'light') {
+            document.documentElement.classList.remove('tw-dark')
+          } else {
+            document.documentElement.classList.add('tw-dark')
+          }
+          window.theme = theme;   
+          window.isDark = window.theme !== 'light' 
+        }
         function saveTheme(theme) {window.localStorage && localStorage.setItem('theme', theme);}
         function getMeta(metaName) {const metas = document.getElementsByTagName('meta'); for (let i = 0; i < metas.length; i++) if (metas[i].getAttribute('name') === metaName) return metas[i]; return '';}
-        if (window.localStorage && localStorage.getItem('theme')) {let theme = localStorage.getItem('theme');theme === 'light' || theme === 'dark' || theme === 'black' ? setTheme(theme) : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? setTheme('dark') : setTheme('light')); } else { if ('auto' === 'light' || 'auto' === 'dark' || 'auto' === 'black') setTheme('auto'), saveTheme('auto'); else saveTheme('auto'), window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? setTheme('dark') : setTheme('light');}
-        let metaColors = {'light': '#f8f8f8','dark': '#252627','black': '#000000'}
+        if (window.localStorage && localStorage.getItem('theme')) {
+            let theme = localStorage.getItem('theme');
+            if (theme === 'light' || theme === 'dark') {
+            setTheme(theme);
+            } else {
+                if ((window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    setTheme('dark');
+                } else {
+                    setTheme('light');
+                }
+            }
+         } else { 
+            if ('auto' === 'light' || 'auto' === 'dark') 
+                setTheme('auto'), saveTheme('auto'); 
+            else saveTheme('auto'), window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? setTheme('dark') : setTheme('light');
+        }
+        let metaColors = {'light': '#f8f8f8','dark': '#161b22'}
         getMeta('theme-color').content = metaColors[document.body.getAttribute('theme')];
+        window.switchThemeEventSet = new Set()
     </script>
     <div id="back-to-top"></div>
-    <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div id="mask"></div><div class="wrapper"><header class="desktop print:!tw-hidden" id="header-desktop">
     <div class="header-wrapper">
         <div class="header-title">
-            <a href="/" title="xiaobinqt 博客 - 技术改变生活"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>萧十一郎</a>
+            <a href="/" title="xiaobinqt 博客 - 技术改变生活"><span class="tw-mr-1"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M402.3 344.9l32-32c5-5 13.7-1.5 13.7 5.7V464c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h273.5c7.1 0 10.7 8.6 5.7 13.7l-32 32c-1.5 1.5-3.5 2.3-5.7 2.3H48v352h352V350.5c0-2.1.8-4.1 2.3-5.6zm156.6-201.8L296.3 405.7l-90.4 10c-26.2 2.9-48.5-19.2-45.6-45.6l10-90.4L432.9 17.1c22.9-22.9 59.9-22.9 82.7 0l43.2 43.2c22.9 22.9 22.9 60 .1 82.8zM460.1 174L402 115.9 216.2 301.8l-7.3 65.3 65.3-7.3L460.1 174zm64.8-79.7l-43.2-43.2c-4.1-4.1-10.8-4.1-14.8 0L436 82l58.1 58.1 30.9-30.9c4-4.2 4-10.8-.1-14.9z"/></svg></span>萧十一郎</a>
         </div>
         <div class="menu">
-            <div class="menu-inner"><a class="menu-item" href="/posts/" > 所有文章 </a><a class="menu-item" href="/tags/" > 标签 </a><a class="menu-item" href="/categories/" > 分类 </a><a class="menu-item" href="/series/" > 系列 </a><a class="menu-item" href="/showcase/" > 小册 </a><a class="menu-item" href="/keeplearning/"  rel="noopener noreferrer" target="_blank"> KeepLearning </a><a class="menu-item" href="/leetcode/"  rel="noopener noreferrer" target="_blank"> LeetCode </a><a class="menu-item" href="/links/" > 友链 </a><a class="menu-item" href="/about/" > 关于 </a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" rel="noopener noreferrer" target="_blank" ><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
-                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
-                        <a href="#" onclick="return false;" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
-                            <i class="fas fa-search fa-fw"></i>
-                        </a>
-                        <a href="#" onclick="return false;" class="search-button search-clear" id="search-clear-desktop" title="清空">
-                            <i class="fas fa-times-circle fa-fw"></i>
-                        </a>
-                        <span class="search-button search-loading" id="search-loading-desktop">
-                            <i class="fas fa-spinner fa-fw fa-spin"></i>
-                        </span>
-                    </span><a href="#" onclick="return false;" class="menu-item theme-switch" title="切换主题">
-                    <i class="fas fa-adjust fa-fw"></i>
-                </a></div>
+            <div class="menu-inner"><a class="menu-item"
+                    href="/posts/" > 所有文章 </a><a class="menu-item"
+                    href="/tags/" > 标签 </a><a class="menu-item"
+                    href="/categories/" > 分类 </a><a class="menu-item"
+                    href="/series/" > 系列 </a><a class="menu-item"
+                    href="/showcase/" > 小册 </a><a class="menu-item"
+                    href="/keeplearning/-open-blank-target" > KeepLearning </a><a class="menu-item"
+                    href="/leetcode/-open-blank-target" > LeetCode </a><a class="menu-item"
+                    href="/links/" > 友链 </a><a class="menu-item"
+                    href="/about/" > 关于 </a><a class="menu-item"
+                    href="https://github.com/xiaobinqt"  title="GitHub" 
+                    rel="noopener noreferrer" target="_blank" ><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                    <input type="text"
+                        placeholder="搜索文章标题或内容..."
+                        id="search-input-desktop">
+                    <button class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                        <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg>
+                    </button>
+                    <button class="search-button search-clear" id="search-clear-desktop" title="清空">
+                        <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm121.6 313.1c4.7 4.7 4.7 12.3 0 17L338 377.6c-4.7 4.7-12.3 4.7-17 0L256 312l-65.1 65.6c-4.7 4.7-12.3 4.7-17 0L134.4 338c-4.7-4.7-4.7-12.3 0-17l65.6-65-65.6-65.1c-4.7-4.7-4.7-12.3 0-17l39.6-39.6c4.7-4.7 12.3-4.7 17 0l65 65.7 65.1-65.6c4.7-4.7 12.3-4.7 17 0l39.6 39.6c4.7 4.7 4.7 12.3 0 17L312 256l65.6 65.1z"/></svg>
+                    </button>
+                    <span class="search-button search-loading tw-animate-spin" id="search-loading-desktop">
+                        <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M304 48c0 26.51-21.49 48-48 48s-48-21.49-48-48 21.49-48 48-48 48 21.49 48 48zm-48 368c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zm208-208c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zM96 256c0-26.51-21.49-48-48-48S0 229.49 0 256s21.49 48 48 48 48-21.49 48-48zm12.922 99.078c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.491-48-48-48zm294.156 0c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.49-48-48-48zM108.922 60.922c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.491-48-48-48z"/></svg>
+                    </span>
+                </span><button class="menu-item theme-select" aria-label="切换主题">
+                    <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M8 256c0 136.966 111.033 248 248 248s248-111.034 248-248S392.966 8 256 8 8 119.033 8 256zm248 184V72c101.705 0 184 82.311 184 184 0 101.705-82.311 184-184 184z"/></svg>
+                    <select class="color-theme-select" id="theme-select-desktop" aria-label="切换主题">
+                        <option value="light">浅色</option>
+                        <option value="dark">深色</option>
+                        <option value="auto">跟随系统</option>
+                    </select>
+                </button></div>
         </div>
     </div>
-</header><header class="mobile" id="header-mobile">
+</header><header class="mobile print:!tw-hidden" id="header-mobile">
     <div class="header-container">
         <div class="header-wrapper">
             <div class="header-title">
-                <a href="/" title="xiaobinqt 博客 - 技术改变生活"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>萧十一郎</a>
+                <a href="/" title="xiaobinqt 博客 - 技术改变生活"><span class="tw-mr-1"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M402.3 344.9l32-32c5-5 13.7-1.5 13.7 5.7V464c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h273.5c7.1 0 10.7 8.6 5.7 13.7l-32 32c-1.5 1.5-3.5 2.3-5.7 2.3H48v352h352V350.5c0-2.1.8-4.1 2.3-5.6zm156.6-201.8L296.3 405.7l-90.4 10c-26.2 2.9-48.5-19.2-45.6-45.6l10-90.4L432.9 17.1c22.9-22.9 59.9-22.9 82.7 0l43.2 43.2c22.9 22.9 22.9 60 .1 82.8zM460.1 174L402 115.9 216.2 301.8l-7.3 65.3 65.3-7.3L460.1 174zm64.8-79.7l-43.2-43.2c-4.1-4.1-10.8-4.1-14.8 0L436 82l58.1 58.1 30.9-30.9c4-4.2 4-10.8-.1-14.9z"/></svg></span>萧十一郎</a>
             </div>
             <div class="menu-toggle" id="menu-toggle-mobile">
                 <span></span><span></span><span></span>
             </div>
         </div>
         <div class="menu" id="menu-mobile"><div class="search-wrapper">
-                    <div class="search mobile" id="search-mobile">
-                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
-                        <a href="#" onclick="return false;" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
-                            <i class="fas fa-search fa-fw"></i>
-                        </a>
-                        <a href="#" onclick="return false;" class="search-button search-clear" id="search-clear-mobile" title="清空">
-                            <i class="fas fa-times-circle fa-fw"></i>
-                        </a>
-                        <span class="search-button search-loading" id="search-loading-mobile">
-                            <i class="fas fa-spinner fa-fw fa-spin"></i>
-                        </span>
-                    </div>
-                    <a href="#" onclick="return false;" class="search-cancel" id="search-cancel-mobile">
-                        取消
-                    </a>
-                </div><a class="menu-item" href="/posts/" title="" >所有文章</a><a class="menu-item" href="/tags/" title="" >标签</a><a class="menu-item" href="/categories/" title="" >分类</a><a class="menu-item" href="/series/" title="" >系列</a><a class="menu-item" href="/showcase/" title="" >小册</a><a class="menu-item" href="/keeplearning/" title=""  rel="noopener noreferrer" target="_blank">KeepLearning</a><a class="menu-item" href="/leetcode/" title=""  rel="noopener noreferrer" target="_blank">LeetCode</a><a class="menu-item" href="/links/" title="" >友链</a><a class="menu-item" href="/about/" title="" >关于</a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" rel="noopener noreferrer" target="_blank" ><i class='fab fa-github fa-fw'></i></a><a href="#" onclick="return false;" class="menu-item theme-switch" title="切换主题">
-                <i class="fas fa-adjust fa-fw"></i>
-            </a></div>
+                <div class="search mobile" id="search-mobile">
+                    <input type="text"
+                        placeholder="搜索文章标题或内容..."
+                        id="search-input-mobile">
+                    <button class="search-button search-toggle tw-h-10" id="search-toggle-mobile" title="搜索">
+                        <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg>
+                    </button>
+                    <button class="search-button search-clear" id="search-clear-mobile" title="清空">
+                        <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm121.6 313.1c4.7 4.7 4.7 12.3 0 17L338 377.6c-4.7 4.7-12.3 4.7-17 0L256 312l-65.1 65.6c-4.7 4.7-12.3 4.7-17 0L134.4 338c-4.7-4.7-4.7-12.3 0-17l65.6-65-65.6-65.1c-4.7-4.7-4.7-12.3 0-17l39.6-39.6c4.7-4.7 12.3-4.7 17 0l65 65.7 65.1-65.6c4.7-4.7 12.3-4.7 17 0l39.6 39.6c4.7 4.7 4.7 12.3 0 17L312 256l65.6 65.1z"/></svg>
+                    </button>
+                    <span class="search-button search-loading tw-animate-spin" id="search-loading-mobile">
+                        <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M304 48c0 26.51-21.49 48-48 48s-48-21.49-48-48 21.49-48 48-48 48 21.49 48 48zm-48 368c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zm208-208c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zM96 256c0-26.51-21.49-48-48-48S0 229.49 0 256s21.49 48 48 48 48-21.49 48-48zm12.922 99.078c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.491-48-48-48zm294.156 0c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.49-48-48-48zM108.922 60.922c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.491-48-48-48z"/></svg>
+                    </span>
+                </div>
+                <button class="search-cancel" id="search-cancel-mobile">
+                    取消
+                </button>
+            </div><a class="menu-item" href="/posts/" title="" >所有文章</a><a class="menu-item" href="/tags/" title="" >标签</a><a class="menu-item" href="/categories/" title="" >分类</a><a class="menu-item" href="/series/" title="" >系列</a><a class="menu-item" href="/showcase/" title="" >小册</a><a class="menu-item" href="/keeplearning/-open-blank-target" title="" >KeepLearning</a><a class="menu-item" href="/leetcode/-open-blank-target" title="" >LeetCode</a><a class="menu-item" href="/links/" title="" >友链</a><a class="menu-item" href="/about/" title="" >关于</a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" 
+                rel="noopener noreferrer" target="_blank" ><i class='fab fa-github fa-fw'></i></a><button class="menu-item theme-select tw-w-full" aria-label="切换主题">
+                <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M8 256c0 136.966 111.033 248 248 248s248-111.034 248-248S392.966 8 256 8 8 119.033 8 256zm248 184V72c101.705 0 184 82.311 184 184 0 101.705-82.311 184-184 184z"/></svg>
+                <select class="color-theme-select" id="theme-select-mobile" aria-label="切换主题">
+                    <option value="light">浅色</option>
+                    <option value="dark">深色</option>
+                    <option value="auto">跟随系统</option>
+                </select>
+            </button></div>
     </div>
 </header>
 <div class="search-dropdown desktop">
@@ -116,9 +183,8 @@
 </div>
 <div class="search-dropdown mobile">
     <div id="search-dropdown-mobile"></div>
-</div>
-<main class="main">
-            <div class="container"><div class="toc" id="toc-auto">
+</div><main class="main">
+            <div class="container"><div class="toc print:!tw-hidden" id="toc-auto">
         <h2 class="toc-title">目录</h2>
         <div class="toc-content" id="toc-content-auto"><nav id="TableOfContents">
   <ul>
@@ -175,21 +241,21 @@
     <li><a href="#参考">参考</a></li>
   </ul>
 </nav></div>
-    </div><script>document.getElementsByTagName("main")[0].setAttribute("pageStyle", "normal")</script><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single"><h1 class="single-title animate__animated animate__flipInX">TCP和UDP连接管理</h1><div class="post-meta">
-            <div class="post-meta-line"><span class="post-author"><i class="author fas fa-user-circle fa-fw"></i><a href="/" title="Author" rel=" author" class="author">xiaobinqt</a>
-                </span>&nbsp;<span class="post-category">收录于 </span>&nbsp;<span class="post-category">类别 <a href="/categories/%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA/"><i class="far fa-folder fa-fw"></i>理解计算机</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-03-21">2022-03-21</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2022-12-07">2022-12-07</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 5253 字&nbsp;
-                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 11 分钟&nbsp;</div>
-        </div><div class="featured-image"><img
-        class="lazyload"
-        data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221118/54f90c85427d4f59b34831801d5770bb.png"
-        data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221118/54f90c85427d4f59b34831801d5770bb.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20221118/54f90c85427d4f59b34831801d5770bb.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20221118/54f90c85427d4f59b34831801d5770bb.png 2x"
-        data-sizes="auto"
-        alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221118/54f90c85427d4f59b34831801d5770bb.png"
-        title=" tcp,tcp连接管理,三次握手,四次挥手,为什么建立连接需要三次握手,为什么不能用两次握手进行连接,SYN,FIN,ACK,PSH,SYN_SENT,SYN_RECV,ESTABLISHED,FIN_WAIT_1,FIN_WAIT_2,CLOSE_WAIT,LAST_ACK,TIME_WAIT,CLOSE" height="auto" width="auto"></div><div class="details toc" id="toc-static"  kept="">
+    </div><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single print:!tw-w-full print:!tw-max-w-none print:!tw-m-0 print:!tw-p-0"><h1 class="single-title">TCP和UDP连接管理</h1><div class="post-meta">
+            <div class="post-meta-line">
+                <span class="post-author"><img class="tw-inline-block tw-max-h-4 tw-rounded-full tw-translate-y-[-2px] tw-mr-1"  src="/images/avatar.webp" srcset="/images/avatar_hu11269060449570882715.webp 16w, /images/avatar_hu2515534640531409486.webp 24w, /images/avatar_hu9855092516384270799.webp 32w"  alt="xiaobinqt avatar" height="16" width="16"><a href="https://github.com/xiaobinqt" title="Author" target="_blank" rel="noopener noreferrer author" class="author">xiaobinqt</a>
+                </span>&nbsp;<span class="post-category">收录于 </span>&nbsp;<span class="post-category">类别 <a href="/categories/%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA/"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M464 128H272l-54.63-54.63c-6-6-14.14-9.37-22.63-9.37H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V176c0-26.51-21.49-48-48-48zm0 272H48V112h140.12l54.63 54.63c6 6 14.14 9.37 22.63 9.37H464v224z"/></svg>理解计算机</a></span></div>
+            <div class="post-meta-line"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M148 288h-40c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12zm108-12v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm-96 96v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm-96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm192 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm96-260v352c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h48V12c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h128V12c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h48c26.5 0 48 21.5 48 48zm-48 346V160H48v298c0 3.3 2.7 6 6 6h340c3.3 0 6-2.7 6-6z"/></svg>&nbsp;<time datetime="2022-03-21">2022-03-21</time>&nbsp;<svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M402.3 344.9l32-32c5-5 13.7-1.5 13.7 5.7V464c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h273.5c7.1 0 10.7 8.6 5.7 13.7l-32 32c-1.5 1.5-3.5 2.3-5.7 2.3H48v352h352V350.5c0-2.1.8-4.1 2.3-5.6zm156.6-201.8L296.3 405.7l-90.4 10c-26.2 2.9-48.5-19.2-45.6-45.6l10-90.4L432.9 17.1c22.9-22.9 59.9-22.9 82.7 0l43.2 43.2c22.9 22.9 22.9 60 .1 82.8zM460.1 174L402 115.9 216.2 301.8l-7.3 65.3 65.3-7.3L460.1 174zm64.8-79.7l-43.2-43.2c-4.1-4.1-10.8-4.1-14.8 0L436 82l58.1 58.1 30.9-30.9c4-4.2 4-10.8-.1-14.9z"/></svg>&nbsp;<time datetime="2022-12-07">2022-12-07</time>&nbsp;<svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;约 5291 字&nbsp;<svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm0 448c-110.5 0-200-89.5-200-200S145.5 56 256 56s200 89.5 200 200-89.5 200-200 200zm61.8-104.4l-84.9-61.7c-3.1-2.3-4.9-5.9-4.9-9.7V116c0-6.6 5.4-12 12-12h32c6.6 0 12 5.4 12 12v141.7l66.8 48.6c5.4 3.9 6.5 11.4 2.6 16.8L334.6 349c-3.9 5.3-11.4 6.5-16.8 2.6z"/></svg>&nbsp;预计阅读 11 分钟&nbsp;</div>
+        </div><div class="featured-image"><img  loading="eager" src="/54f90c85427d4f59b34831801d5770bb_1100379089724475981.png" srcset="/54f90c85427d4f59b34831801d5770bb_1100379089724475981_hu8030196509824626327.webp 800w, /54f90c85427d4f59b34831801d5770bb_1100379089724475981_hu5805308561544742988.webp 1200w, /54f90c85427d4f59b34831801d5770bb_1100379089724475981_hu15613340330939089144.webp 1600w"  alt=" tcp,tcp连接管理,三次握手,四次挥手,为什么建立连接需要三次握手,为什么不能用两次握手进行连接,SYN,FIN,ACK,PSH,SYN_SENT,SYN_RECV,ESTABLISHED,FIN_WAIT_1,FIN_WAIT_2,CLOSE_WAIT,LAST_ACK,TIME_WAIT,CLOSE" height="493" width="1024"></div><div class="details toc print:!tw-block" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
                     <span>目录</span>
-                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                    <span class="details-icon"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M224.3 273l-136 136c-9.4 9.4-24.6 9.4-33.9 0l-22.6-22.6c-9.4-9.4-9.4-24.6 0-33.9l96.4-96.4-96.4-96.4c-9.4-9.4-9.4-24.6 0-33.9L54.3 103c9.4-9.4 24.6-9.4 33.9 0l136 136c9.5 9.4 9.5 24.6.1 34z"/></svg></span>
                 </div>
                 <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
   <ul>
@@ -248,7 +314,7 @@
 </nav></div>
             </div><div class="content" id="content"><p>TCP 协议和 UDP 协议都是工作在传输层，是为了在程序之间传递数据，数据可以是多种形式，比如视频，文本，图片等。对于 TCP 协议和 UDP 协议来说，都是一堆二进制数，只是 TCP 基于连接，而 UDP 基于非连接。</p>
 <h2 id="名词解释" class="headerLink">
-    <a href="#%e5%90%8d%e8%af%8d%e8%a7%a3%e9%87%8a" class="header-mark"></a>名词解释</h2><table>
+    <a href="#%e5%90%8d%e8%af%8d%e8%a7%a3%e9%87%8a" class="header-mark" aria-label="Header mark for '名词解释'"></a>1 名词解释</h2><table>
 <thead>
 <tr>
 <th>名词</th>
@@ -287,40 +353,33 @@
 </tbody>
 </table>
 <div class="details admonition info open">
-        <div class="details-summary admonition-title">
-            <i class="icon fas fa-info-circle fa-fw"></i>Info<i class="details-icon fas fa-angle-right fa-fw"></i>
-        </div>
-        <div class="details-content">
-            <div class="admonition-content"><code>ACK</code>、<code>SYN</code> 和 <code>FIN</code> 这些大写的单词表示标志位，其值要么是 1，要么是 0；<code>ack</code>、<code>seq</code> 小写的单词表示序号。</div>
-        </div>
+    <div class="details-summary admonition-title">
+        <span class="icon"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M256 8C119.043 8 8 119.083 8 256c0 136.997 111.043 248 248 248s248-111.003 248-248C504 119.083 392.957 8 256 8zm0 110c23.196 0 42 18.804 42 42s-18.804 42-42 42-42-18.804-42-42 18.804-42 42-42zm56 254c0 6.627-5.373 12-12 12h-88c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h12v-64h-12c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h64c6.627 0 12 5.373 12 12v100h12c6.627 0 12 5.373 12 12v24z"/></svg></span>Info<span class="details-icon"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M224.3 273l-136 136c-9.4 9.4-24.6 9.4-33.9 0l-22.6-22.6c-9.4-9.4-9.4-24.6 0-33.9l96.4-96.4-96.4-96.4c-9.4-9.4-9.4-24.6 0-33.9L54.3 103c9.4-9.4 24.6-9.4 33.9 0l136 136c9.5 9.4 9.5 24.6.1 34z"/></svg></span>
     </div>
+    <div class="details-content">
+        <div class="admonition-content"><code>ACK</code>、<code>SYN</code> 和 <code>FIN</code> 这些大写的单词表示标志位，其值要么是 1，要么是 0；<code>ack</code>、<code>seq</code> 小写的单词表示序号。</div></div></div>
 <p><code>ACK</code> 是可能与 <code>SYN</code>，<code>FIN</code> 等同时使用的。比如 <code>SYN</code>和<code>ACK</code>可能同时为 1，它表示的就是建立连接之后的响应搜索 如果只是单个的一个<code>SYN</code>，它表示的只是建立连接。</p>
 <p><code>SYN</code>与<code>FIN</code>是不会同时为 1 的，因为前者表示的是建立连接，而后者表示的是断开连接。</p>
 <p><code>RST</code>一般是在<code>FIN</code>之后才会出现为 1 的情况，表示的是连接重置。</p>
 <p>一般，当出现<code>FIN</code>包或<code>RST</code>包时，便认为客户端与服务器端断开了连接；而当出现<code>SYN</code>和<code>SYN＋ACK</code>包时，我们认为客户端与服务器建立了一个连接。</p>
 <p><code>PSH</code>为 1 的情况，一般只出现在<code>DATA</code>内容不为 0 的包中，也就是说<code>PSH</code>为1表示的是有真正的 TCP 数据包内容被传递。</p>
 <h2 id="三次握手" class="headerLink">
-    <a href="#%e4%b8%89%e6%ac%a1%e6%8f%a1%e6%89%8b" class="header-mark"></a>三次握手</h2><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220326/43c6821afd6d4a9fadcceb9e98c228b9.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="三次握手" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220326/43c6821afd6d4a9fadcceb9e98c228b9.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>三次握手</h2><p>三次握手</p>">
-        <img
-            class="lazyload"
-            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220326/43c6821afd6d4a9fadcceb9e98c228b9.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
-            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220326/43c6821afd6d4a9fadcceb9e98c228b9.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220326/43c6821afd6d4a9fadcceb9e98c228b9.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220326/43c6821afd6d4a9fadcceb9e98c228b9.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
-            data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220326/43c6821afd6d4a9fadcceb9e98c228b9.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15">
-    </a><figcaption class="image-caption">三次握手</figcaption>
-    </figure></p>
+    <a href="#%e4%b8%89%e6%ac%a1%e6%8f%a1%e6%89%8b" class="header-mark" aria-label="Header mark for '三次握手'"></a>2 三次握手</h2><p><figure><a class="lightgallery" href="/43c6821afd6d4a9fadcceb9e98c228b9_13193994232301497293.png" title="三次握手" data-thumbnail="/43c6821afd6d4a9fadcceb9e98c228b9_13193994232301497293.png" data-sub-html="<h2>三次握手</h2><p>三次握手</p>"><img  loading="lazy" src="/43c6821afd6d4a9fadcceb9e98c228b9_13193994232301497293.png" srcset="/43c6821afd6d4a9fadcceb9e98c228b9_13193994232301497293_hu14109990114826213800.webp 800w, /43c6821afd6d4a9fadcceb9e98c228b9_13193994232301497293_hu17507098920684954277.webp 1200w, /43c6821afd6d4a9fadcceb9e98c228b9_13193994232301497293_hu4500909020457872311.webp 1600w"  alt="三次握手" height="453" width="731"></a><figcaption class="image-caption">三次握手</figcaption>
+</figure></p>
 <p>三次握手是建立请求的过程，当客户端向服务端发送请求时，会先发一包连接请求数据，这包数据称为<code>SYN</code>包，如果服务端同意连接，则会回复一包<code>SYN+ACK</code>包，客户端收到后回复一包<code>ACK</code>包，连接建立成功。在连接建立的过程中，客户端和服务端互相发送了 3 包数据，所以把这个过程称为 3 次握手。</p>
 <h3 id="第一次握手" class="headerLink">
-    <a href="#%e7%ac%ac%e4%b8%80%e6%ac%a1%e6%8f%a1%e6%89%8b" class="header-mark"></a>第一次握手</h3><h4 id="客户端" class="headerLink">
-    <a href="#%e5%ae%a2%e6%88%b7%e7%ab%af" class="header-mark"></a>客户端</h4><p>主动打开（active open），向服务端发送 <code>SYN</code> 报文段<code>SYN=1, SN=client_isn, OPT=client_mss</code>，请求建立连接。</p>
+    <a href="#%e7%ac%ac%e4%b8%80%e6%ac%a1%e6%8f%a1%e6%89%8b" class="header-mark" aria-label="Header mark for '第一次握手'"></a>2.1 第一次握手</h3><h4 id="客户端" class="headerLink">
+    <a href="#%e5%ae%a2%e6%88%b7%e7%ab%af" class="header-mark" aria-label="Header mark for '客户端'"></a>2.1.1 客户端</h4><p>主动打开（active open），向服务端发送 <code>SYN</code> 报文段<code>SYN=1, SN=client_isn, OPT=client_mss</code>，请求建立连接。</p>
 <p><code>client_isn</code> 是客户端初始序号，动态生成，用于实现可靠传输，<code>client_sn-client_isn</code> 等于客户端已发送字节数。</p>
 <p><code>SYN</code> 报文段虽然不能携带数据，但是会消耗一个序号（相当于发送了1个字节的有效数据），下次客户端再向服务端发送的报文段中 <code>SN=client_isn+1</code>。 除了 <code>SYN</code> 报文段和 <code>ACK-SYN</code>
 报文段，其他所有后续报文段的序号 <code>SN</code> 值都等于上次接收的 <code>ACK</code> 报文段中的确认号 <code>AN</code> 值。</p>
 <p><code>client_mss</code> 是客户端最大报文段长度，在 <code>TCP</code> 首部的选项和填充部分，会在客户端与服务端的 <code>MSS</code> 中选择一个较小值使用。</p>
 <p>客户端变为 <code>SYN_SENT</code> 状态，然后等待服务端 <code>ACK</code> 报文段。</p>
 <h3 id="第二次握手" class="headerLink">
-    <a href="#%e7%ac%ac%e4%ba%8c%e6%ac%a1%e6%8f%a1%e6%89%8b" class="header-mark"></a>第二次握手</h3><h4 id="服务端" class="headerLink">
-    <a href="#%e6%9c%8d%e5%8a%a1%e7%ab%af" class="header-mark"></a>服务端</h4><p>接收来自客户端的 <code>SYN</code> 报文段，得知客户端发送能力正常。</p>
+    <a href="#%e7%ac%ac%e4%ba%8c%e6%ac%a1%e6%8f%a1%e6%89%8b" class="header-mark" aria-label="Header mark for '第二次握手'"></a>2.2 第二次握手</h3><h4 id="服务端" class="headerLink">
+    <a href="#%e6%9c%8d%e5%8a%a1%e7%ab%af" class="header-mark" aria-label="Header mark for '服务端'"></a>2.2.1 服务端</h4><p>接收来自客户端的 <code>SYN</code> 报文段，得知客户端发送能力正常。</p>
 <p>被动打开<code>passive open</code>，向客户端发送 <code>SYN-ACK </code>报文段<code>ACK=1, AN=client_isn+1, SYN=1, SN=server_isn, OPT=server_mss</code>
 ，应答来自客户端的建立连接请求并向客户端发起建立连接请求。</p>
 <p><code>SN=server_isn</code> 是服务端初始序号，<code>ACK-SYN</code> 报文段虽然不能携带数据，但是会消耗一个序号（相当于发送了1个字节的有效数据），下次服务端再向客户端发送的报文中 <code>SN=server_isn+1</code> 。</p>
@@ -328,8 +387,8 @@
 <p><code>AN=client_isn+1</code> 是确认号，表明服务端接下来要开始接收来自客户端的第 <code>client_isn+1</code> 个字节的有效数据。</p>
 <p>服务端变为 <code>SYN_RCVD</code> 状态，并等待客户端 <code>ACK</code> 报文段。</p>
 <h3 id="第三次握手" class="headerLink">
-    <a href="#%e7%ac%ac%e4%b8%89%e6%ac%a1%e6%8f%a1%e6%89%8b" class="header-mark"></a>第三次握手</h3><h4 id="客户端-1" class="headerLink">
-    <a href="#%e5%ae%a2%e6%88%b7%e7%ab%af-1" class="header-mark"></a>客户端</h4><p>接收来自服务端的 <code>SYN-ACK</code> 报文段，得知服务端发送能力和接收能力都正常。</p>
+    <a href="#%e7%ac%ac%e4%b8%89%e6%ac%a1%e6%8f%a1%e6%89%8b" class="header-mark" aria-label="Header mark for '第三次握手'"></a>2.3 第三次握手</h3><h4 id="客户端-1" class="headerLink">
+    <a href="#%e5%ae%a2%e6%88%b7%e7%ab%af-1" class="header-mark" aria-label="Header mark for '客户端'"></a>2.3.1 客户端</h4><p>接收来自服务端的 <code>SYN-ACK</code> 报文段，得知服务端发送能力和接收能力都正常。</p>
 <p>向客户端发送 <code>ACK</code> 报文段<code>ACK=1, AN=server_isn+1, SN=client_isn+1, MESSAGE=message</code>，应答来自服务端的建立连接请求。</p>
 <p><code>SN=client_isn+1</code> 是序号，表明当前报文段发送的有效数据首字节是从请求建立连接到现在为止客户端向服务端发送的第 <code>(client_isn+1)-clien_isn+1=2</code> 个字节的有效数据。</p>
 <p>有效数据：一般有效数据指的是应用层的报文数据，不过 <code>SYN</code> 报文段、 <code>ACK-SYN</code> 报文段和 <code>FIN</code> 报文段虽然没有携带报文数据，但认为发送了1个字节的有效数据。</p>
@@ -338,24 +397,17 @@
 可以等于0，即不携带有效数据，此时 <code>ACK</code>报文段不消耗序号），下次客户端再向服务端发送的报文段中 <code>SN=client_isn+1+message_length</code> 。</p>
 <p>客户端变为 <code>ESTABLISHED</code> 状态，<code>client——&gt;server</code> 数据流建立。</p>
 <h4 id="服务端-1" class="headerLink">
-    <a href="#%e6%9c%8d%e5%8a%a1%e7%ab%af-1" class="header-mark"></a>服务端</h4><p>接收来自客户端的 <code>ACK</code> 报文段，得知客户端接收能力正常。</p>
+    <a href="#%e6%9c%8d%e5%8a%a1%e7%ab%af-1" class="header-mark" aria-label="Header mark for '服务端'"></a>2.3.2 服务端</h4><p>接收来自客户端的 <code>ACK</code> 报文段，得知客户端接收能力正常。</p>
 <p>变为 <code>ESTABLISHED</code> 状态，<code>server——&gt;client</code> 数据流也建立。</p>
 <h2 id="丢包问题" class="headerLink">
-    <a href="#%e4%b8%a2%e5%8c%85%e9%97%ae%e9%a2%98" class="header-mark"></a>丢包问题</h2><p>一包数据有可能被拆成多包发送，如何处理丢包问题❓这些数据包到达的先后顺序不同，如何处理乱序问题❓</p>
+    <a href="#%e4%b8%a2%e5%8c%85%e9%97%ae%e9%a2%98" class="header-mark" aria-label="Header mark for '丢包问题'"></a>3 丢包问题</h2><p>一包数据有可能被拆成多包发送，如何处理丢包问题&#x2753;这些数据包到达的先后顺序不同，如何处理乱序问题&#x2753;</p>
 <p>TCP 协议为每一个连接建立了一个发送缓冲区，从建立连接后的第一个字节的序列号为 0，后面每个字节的序列号就会增加 1，发送数据时，从发送缓冲区取一部分数据组成发送报文，在其 TCP 协议头中会附带序列号和长度，接收端在收到数据后，需要回复确认报文，确认报文中的<code>ACK</code>等于
 <strong>接收序列号加上长度</strong>
 ，也就是下一包数据需要发送的起始序列号，这样的发送方式，能够使发送端确认发送的数据，已经被对方收到，发送端也可以一次发送，连续的多包数据，接收端只需要回复一次<code>ACK</code>就可以了，这样发送端可以把待发送的数据分隔成一系列的碎片，发送到对端，对端根据序列号和长度，在接收后重构出来完整的数据。</p>
 <p>假设其中丢失了某些数据，则接收端可以要求发送端重传，比如丢失了 100-199 这 100 个字节，接收端向发送端发送<code>ACK=100</code>的报文，发送端收到后重传这一包数据，接收端进行补齐。</p>
 <h2 id="四次挥手" class="headerLink">
-    <a href="#%e5%9b%9b%e6%ac%a1%e6%8c%a5%e6%89%8b" class="header-mark"></a>四次挥手</h2><p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220326/dd8453fee5ce45579e5022be5763923d.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" title="TCP四次挥手" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220326/dd8453fee5ce45579e5022be5763923d.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" data-sub-html="<h2>TCP四次挥手</h2><p>TCP四次挥手</p>">
-        <img
-            class="lazyload"
-            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220326/dd8453fee5ce45579e5022be5763923d.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15"
-            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220326/dd8453fee5ce45579e5022be5763923d.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220326/dd8453fee5ce45579e5022be5763923d.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220326/dd8453fee5ce45579e5022be5763923d.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 2x"
-            data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220326/dd8453fee5ce45579e5022be5763923d.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15">
-    </a><figcaption class="image-caption">TCP四次挥手</figcaption>
-    </figure></p>
+    <a href="#%e5%9b%9b%e6%ac%a1%e6%8c%a5%e6%89%8b" class="header-mark" aria-label="Header mark for '四次挥手'"></a>4 四次挥手</h2><p><figure><a class="lightgallery" href="/dd8453fee5ce45579e5022be5763923d_12573990027277817477.png" title="TCP四次挥手" data-thumbnail="/dd8453fee5ce45579e5022be5763923d_12573990027277817477.png" data-sub-html="<h2>TCP四次挥手</h2><p>TCP四次挥手</p>"><img  loading="lazy" src="/dd8453fee5ce45579e5022be5763923d_12573990027277817477.png" srcset="/dd8453fee5ce45579e5022be5763923d_12573990027277817477_hu4563118820770458833.webp 800w, /dd8453fee5ce45579e5022be5763923d_12573990027277817477_hu6949913020993959258.webp 1200w, /dd8453fee5ce45579e5022be5763923d_12573990027277817477_hu15847523390252432244.webp 1600w"  alt="TCP四次挥手" height="511" width="763"></a><figcaption class="image-caption">TCP四次挥手</figcaption>
+</figure></p>
 <p>断开连接前，客户端和服务端都处于 <code>ESTABLISHED</code> 状态，两者谁都可以先发起断开连接请求。以下假设客户端先发起断开连接请求。</p>
 <p>客户端向服务端发送一包<code>FIN</code>包，表示要关闭连接，客户端自己进入<strong>终止等待1 状态</strong>，这是第一次挥手。</p>
 <p>服务端收到<code>FIN</code>包，发送一包<code>ACK</code>包，表示自己进入了<strong>关闭等待状态</strong>，客户端进入<strong>终止等待2 状态</strong>，这是第二次挥手。</p>
@@ -363,51 +415,51 @@
 ，这是第三次挥手。</p>
 <p>客户端收到之后回复<code>ACK</code>包，进入<strong>超时等待状态</strong>，经过超时时间后关闭连接，而服务端收到<code>ACK</code>包后立即关闭连接，这是第四次挥手。</p>
 <h3 id="第一次挥手" class="headerLink">
-    <a href="#%e7%ac%ac%e4%b8%80%e6%ac%a1%e6%8c%a5%e6%89%8b" class="header-mark"></a>第一次挥手</h3><h4 id="客户端-2" class="headerLink">
-    <a href="#%e5%ae%a2%e6%88%b7%e7%ab%af-2" class="header-mark"></a>客户端</h4><p>向服务端发送 <code>FIN</code> 报文段<code>FIN=1, SN=client_sn</code>，请求断开连接。</p>
+    <a href="#%e7%ac%ac%e4%b8%80%e6%ac%a1%e6%8c%a5%e6%89%8b" class="header-mark" aria-label="Header mark for '第一次挥手'"></a>4.1 第一次挥手</h3><h4 id="客户端-2" class="headerLink">
+    <a href="#%e5%ae%a2%e6%88%b7%e7%ab%af-2" class="header-mark" aria-label="Header mark for '客户端'"></a>4.1.1 客户端</h4><p>向服务端发送 <code>FIN</code> 报文段<code>FIN=1, SN=client_sn</code>，请求断开连接。</p>
 <p><code>SN=client_sn</code>是序号，表明当前报文段发送的有效数据首字节是从请求建立连接到现在为止客户端向服务端发送的第 <code>client_sn-clien_isn+1</code> 个字节的有效数据。</p>
 <p><code>FIN</code> 报文段虽然不能携带数据，但是会消耗一个序号（相当于发送了1个字节的有效数据），下次客户端再向服务端发送的报文中 <code>SN=client_isn+1</code> 。</p>
 <p>客户端变为 <code>FIN_WAIT1</code> 状态，等待服务端 <code>ACK</code> 报文段。</p>
 <h3 id="第二次挥手" class="headerLink">
-    <a href="#%e7%ac%ac%e4%ba%8c%e6%ac%a1%e6%8c%a5%e6%89%8b" class="header-mark"></a>第二次挥手</h3><h4 id="服务端-2" class="headerLink">
-    <a href="#%e6%9c%8d%e5%8a%a1%e7%ab%af-2" class="header-mark"></a>服务端</h4><p>接收来自客户端的 <code>FIN</code> 报文段。</p>
+    <a href="#%e7%ac%ac%e4%ba%8c%e6%ac%a1%e6%8c%a5%e6%89%8b" class="header-mark" aria-label="Header mark for '第二次挥手'"></a>4.2 第二次挥手</h3><h4 id="服务端-2" class="headerLink">
+    <a href="#%e6%9c%8d%e5%8a%a1%e7%ab%af-2" class="header-mark" aria-label="Header mark for '服务端'"></a>4.2.1 服务端</h4><p>接收来自客户端的 <code>FIN</code> 报文段。</p>
 <p>向客户端发送 <code>ACK</code> 报文段<code>ACK=1, AN=client_sn+1, SN=server_sn_wave2</code>，应答客户端的断开连接请求。</p>
 <p><code>SN=server_sn_wave2</code> 是序号，表明当前报文段发送的有效数据首字节是从请求建立连接到现在为止服务端向客户端发送的第 <code>server_sn_wave2-client_isn+1</code> 个字节的有效数据。</p>
 <p><code>AN=client_sn+1</code> 是确认号，表明服务端接下来要开始接收来自客户端的第 <code>client_sn+1</code> 个字节的有效数据。</p>
 <p>此时服务端变为 <code>CLOSE_WAIT</code> 状态。</p>
 <h4 id="客户端-3" class="headerLink">
-    <a href="#%e5%ae%a2%e6%88%b7%e7%ab%af-3" class="header-mark"></a>客户端</h4><p>接收来自服务端的 <code>ACK</code> 包。</p>
+    <a href="#%e5%ae%a2%e6%88%b7%e7%ab%af-3" class="header-mark" aria-label="Header mark for '客户端'"></a>4.2.2 客户端</h4><p>接收来自服务端的 <code>ACK</code> 包。</p>
 <p>变为 <code>FIN_WAIT2</code> 状态，等待服务端关闭连接请求<code>FIN</code>报文段。</p>
 <h3 id="第三次挥手" class="headerLink">
-    <a href="#%e7%ac%ac%e4%b8%89%e6%ac%a1%e6%8c%a5%e6%89%8b" class="header-mark"></a>第三次挥手</h3><h4 id="服务端-3" class="headerLink">
-    <a href="#%e6%9c%8d%e5%8a%a1%e7%ab%af-3" class="header-mark"></a>服务端</h4><p>（服务端想断开连接时）向客户端发送 <code>FIN</code> 报文段<code>FIN=1, SN=server_sn</code>，请求断开连接。</p>
+    <a href="#%e7%ac%ac%e4%b8%89%e6%ac%a1%e6%8c%a5%e6%89%8b" class="header-mark" aria-label="Header mark for '第三次挥手'"></a>4.3 第三次挥手</h3><h4 id="服务端-3" class="headerLink">
+    <a href="#%e6%9c%8d%e5%8a%a1%e7%ab%af-3" class="header-mark" aria-label="Header mark for '服务端'"></a>4.3.1 服务端</h4><p>（服务端想断开连接时）向客户端发送 <code>FIN</code> 报文段<code>FIN=1, SN=server_sn</code>，请求断开连接。</p>
 <p><code>SN=server_sn</code> 是序号，表明当前报文段发送的有效数据首字节是从请求建立连接到现在为止服务端向客户端发送的第 <code>server_sn-clien_isn+1</code> 个字节的有效数据。</p>
 <p><code>FIN</code> 报文段虽然不能携带数据，但是会消耗一个序号（相当于发送了1个字节的有效数据），下次服务端再向客户端发送的报文中 <code>SN=client_isn+2</code> （若断开连接成功，则服务端不会再向客户端发送下一个报文段）。</p>
 <p>第二次挥手和第三次挥手之间，服务端又向客户端发送了 <code>server_sn - server_sn_wave2</code> 个字节的有效数据。</p>
 <p>服务端变为 <code>LAST_ACK</code> 状态，等待客户端的 <code>ACK</code> 报文段。</p>
 <h3 id="第四次挥手" class="headerLink">
-    <a href="#%e7%ac%ac%e5%9b%9b%e6%ac%a1%e6%8c%a5%e6%89%8b" class="header-mark"></a>第四次挥手</h3><h4 id="客户端-4" class="headerLink">
-    <a href="#%e5%ae%a2%e6%88%b7%e7%ab%af-4" class="header-mark"></a>客户端</h4><p>接收来自服务端的 <code>FIN</code> 报文段。</p>
+    <a href="#%e7%ac%ac%e5%9b%9b%e6%ac%a1%e6%8c%a5%e6%89%8b" class="header-mark" aria-label="Header mark for '第四次挥手'"></a>4.4 第四次挥手</h3><h4 id="客户端-4" class="headerLink">
+    <a href="#%e5%ae%a2%e6%88%b7%e7%ab%af-4" class="header-mark" aria-label="Header mark for '客户端'"></a>4.4.1 客户端</h4><p>接收来自服务端的 <code>FIN</code> 报文段。</p>
 <p>向服务端发送 <code>ACK</code> 报文段<code>ACK=1, AN=server_sn+1, SN=client_sn+1</code>，应答服务端断开连接请求。
 <code>client_sn+1</code> 是序号，表明当前报文段发送的有效数据首字节是从请求建立连接到现在为止客户端向客户端发送的第 <code>client_isn+1)-clien_isn+1</code> 个字节的有效数据。<code>AN=server_sn+1</code>
 是确认号，表明服务端接下来要开始接收来自客户端的第 <code>client_sn+1</code> 个字节的有效数据。</p>
 <p>客户端变为 <code>TIME_WAIT</code> 状态，等待2MSL时间后进入 <code>CLOSED</code> 状态，至此 <code>client——&gt;server</code> 数据流被关闭。</p>
 <h4 id="服务端-4" class="headerLink">
-    <a href="#%e6%9c%8d%e5%8a%a1%e7%ab%af-4" class="header-mark"></a>服务端</h4><p>接收来自客户端的 <code>ACK</code> 报文段。</p>
+    <a href="#%e6%9c%8d%e5%8a%a1%e7%ab%af-4" class="header-mark" aria-label="Header mark for '服务端'"></a>4.4.2 服务端</h4><p>接收来自客户端的 <code>ACK</code> 报文段。</p>
 <p>变为 <code>CLOSED</code> 状态，至此 <code>server——&gt;client</code> 数据流被关闭。</p>
 <div class="details admonition info open">
-        <div class="details-summary admonition-title">
-            <i class="icon fas fa-info-circle fa-fw"></i>Tips<i class="details-icon fas fa-angle-right fa-fw"></i>
-        </div>
-        <div class="details-content">
-            <div class="admonition-content">当收到对方的<code>FIN</code>报文时，仅仅表示对方不再发送数据了但是还能接收数据。</div>
-        </div>
+    <div class="details-summary admonition-title">
+        <span class="icon"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M256 8C119.043 8 8 119.083 8 256c0 136.997 111.043 248 248 248s248-111.003 248-248C504 119.083 392.957 8 256 8zm0 110c23.196 0 42 18.804 42 42s-18.804 42-42 42-42-18.804-42-42 18.804-42 42-42zm56 254c0 6.627-5.373 12-12 12h-88c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h12v-64h-12c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h64c6.627 0 12 5.373 12 12v100h12c6.627 0 12 5.373 12 12v24z"/></svg></span>Tips<span class="details-icon"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M224.3 273l-136 136c-9.4 9.4-24.6 9.4-33.9 0l-22.6-22.6c-9.4-9.4-9.4-24.6 0-33.9l96.4-96.4-96.4-96.4c-9.4-9.4-9.4-24.6 0-33.9L54.3 103c9.4-9.4 24.6-9.4 33.9 0l136 136c9.5 9.4 9.5 24.6.1 34z"/></svg></span>
     </div>
+    <div class="details-content">
+        <div class="admonition-content">当收到对方的<code>FIN</code>报文时，仅仅表示对方不再发送数据了但是还能接收数据。</div></div></div>
 <h2 id="udp协议" class="headerLink">
-    <a href="#udp%e5%8d%8f%e8%ae%ae" class="header-mark"></a>UDP协议</h2><p>UDP 协议是进行非连接的，发送数据就是简单的把数据包封装一下，然后从网卡发出去，数据包之间并没有状态上的联系。由于 UDP 这种简单的处理方式，所以它的性能损耗非常少，对于 CPU 内存资源的占用也远小于 TCP，但是对于网络传输过程中的丢包，UDP 协议并不能保证，所以 UDP 在传输稳定性上弱于 TCP。</p>
+    <a href="#udp%e5%8d%8f%e8%ae%ae" class="header-mark" aria-label="Header mark for 'UDP协议'"></a>5 UDP协议</h2><p>UDP 协议是进行非连接的，发送数据就是简单的把数据包封装一下，然后从网卡发出去，数据包之间并没有状态上的联系。由于 UDP 这种简单的处理方式，所以它的性能损耗非常少，对于 CPU 内存资源的占用也远小于 TCP，但是对于网络传输过程中的丢包，UDP 协议并不能保证，所以 UDP 在传输稳定性上弱于 TCP。</p>
 <h2 id="常见问题" class="headerLink">
-    <a href="#%e5%b8%b8%e8%a7%81%e9%97%ae%e9%a2%98" class="header-mark"></a>常见问题</h2><ul>
-<li>❓ 为什么建立连接需要三次握手而不是二次</li>
+    <a href="#%e5%b8%b8%e8%a7%81%e9%97%ae%e9%a2%98" class="header-mark" aria-label="Header mark for '常见问题'"></a>6 常见问题</h2><ul>
+<li>&#x2753; 为什么建立连接需要三次握手而不是二次</li>
 </ul>
 <p>客户端和服务端之间建立的 TCP 是全双工通信，双方都要确保对方发送能力和接收能力正常。</p>
 <p>一次握手后，服务端得知客户端发送能力正常。</p>
@@ -416,23 +468,23 @@
 <p>如果在第二次也就是服务端回复<code>SYN+ACK</code>就建立连接的话，那么可能存在已经失效的请求报文，突然又传到服务器引起错误。</p>
 <p>假设采用两次握手建立连接，客户端向服务端发送了一个<code>SYN</code>包来请求建立连接，由于某些未知的原因，并没有到达服务器，在中间某个网络节点产生了滞留，为了建立连接，客户端会重新发送<code>SYN</code>包，这次的数据包正常送达，服务端回复<code>SYN+ACK</code>之后建立了连接，但是此时第一次数据阻塞的网络节点突然恢复，第一包<code>SYN</code>又送达到服务器，这时服务端会误认为客户端又发起了一个新的连接，又向客户端发送了<code>SYN+ACK</code>包，但事实是此时客户端并没有发出建立请求的连接，因此不会理睬服务端的确认，也不会向服务端发送数据，但服务端却以为新的连接已经建立了，并一直等待客户端发来的数据，从而在两次握手之后进入等待数据状态。此时服务端认为是两个连接，而客户端认为是一个连接，造成了状态不一致。如果在三次握手的情况下，服务端收不到最后的<code>ACK</code>包，便不会认为连接建立成功，所以三次握手是为了解决网络不可靠的问题。</p>
 <ul>
-<li>❓ 为什么第四次挥手时客户端需要等待超时时间再进入CLOSED状态</li>
+<li>&#x2753; 为什么第四次挥手时客户端需要等待超时时间再进入CLOSED状态</li>
 </ul>
 <p><strong><ruby>MSL<rt>Maximum Segment Lifetime</rt></ruby></strong>，报文段最大生存时间，是一个未被接受的报文段在网络中被丢弃前存活的最大时间。</p>
 <p>保证建立新连接时网络中不存在上次连接时发送的数据包，进入<code>CLOSED</code>状态意味着可以建立新连接，等待 &gt;MSL 的时间再进入<code>CLOSED</code>状态可以保证建立新连接后，网络中不会存在上次连接时发送出去的数据包。若网络中同时存在发送端在两次连接中发出的数据包，对接收端接收数据可能会有影响。</p>
 <p>客户端需要等待超时时间，这是为了保证对方已收到<code>ACK</code>包。</p>
 <p>假设客户端发送最后一包<code>ACK</code>包后就CLOSED释放了连接，一旦<code>ACK</code>包在网络中丢失，服务端将一直停留在最后确认状态，如果客户端发送最后一包<code>ACK</code>包后，等待一段时间，这时服务端因为没有收到<code>ACK</code>包，会重发<code>FIN</code>包，客户端会响应这个<code>FIN</code>包，重发<code>ACK</code>包并刷新超时时间。这是为了在不可靠的网络中，进行可靠的连接断开确认。</p>
 <ul>
-<li>❓ 已经建立了连接，客户端突然出现故障怎么办</li>
+<li>&#x2753; 已经建立了连接，客户端突然出现故障怎么办</li>
 </ul>
 <p>TCP 设有一个保活计时器，客户端如果出现故障，服务器不能一直等下去，白白浪费资源。服务器每收到一次客户端的请求后都会重新复位这个计时器，时间通常是设置为 2 小时，若两小时还没有收到客户端的任何数据，服务器就会发送一个探测报文段，以后每隔 75 秒钟发送一次。若一连发送 10 个探测报文仍然没反应， 服务器就认为客户端出了故障，接着就关闭连接。</p>
 <ul>
-<li>❓ TCP VS UDP</li>
+<li>&#x2753; TCP VS UDP</li>
 </ul>
 <p>TCP 传输数据稳定可靠，适用于对网络通讯质量要求较高的场景，需要准确无误的传输给对方，比如传输文件，发送邮件，浏览网页等。</p>
 <p>UDP 优点是速度快，但是可能产生丢包，所以适用于对实时性要求较高，但是对少量丢包并没有太大要求的场景，比如域名查询，语音通话，视频直播等。</p>
 <h2 id="参考" class="headerLink">
-    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark" aria-label="Header mark for '参考'"></a>7 参考</h2><ul>
 <li><a href="http://www.javashuo.com/article/p-shnnqhql-so.html" target="_blank" rel="noopener noreferrer">计算机网络——TCP连接管理（三次握手和四次挥手）</a></li>
 <li><a href="https://zhuanlan.zhihu.com/p/53374516" target="_blank" rel="noopener noreferrer">“三次握手，四次挥手”你真的懂吗？</a></li>
 <li><a href="https://www.bilibili.com/video/BV1kV411j7hA/?vd_source=1230278c476e4b633e6d1d0aa5433749" target="_blank" rel="noopener noreferrer">一条视频讲清楚TCP协议与UDP协议-什么是三次握手与四次挥手</a></li>
@@ -447,47 +499,101 @@
         <div class="post-info-line">
             <div class="post-info-mod">
                 <span>更新于 2022-12-07&nbsp;<a class="git-hash" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/e6197299987118f2fb62700e4543ad96d6f6cb0b" target="_blank" title="commit by weibin(xiaobinqt@163.com) e6197299987118f2fb62700e4543ad96d6f6cb0b: add tcp-handshark.md" rel="noopener noreferrer">
-                                    <i class="fas fa-hashtag fa-fw"></i>e6197299</a></span>
+                                    <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M440.667 182.109l7.143-40c1.313-7.355-4.342-14.109-11.813-14.109h-74.81l14.623-81.891C377.123 38.754 371.468 32 363.997 32h-40.632a12 12 0 0 0-11.813 9.891L296.175 128H197.54l14.623-81.891C213.477 38.754 207.822 32 200.35 32h-40.632a12 12 0 0 0-11.813 9.891L132.528 128H53.432a12 12 0 0 0-11.813 9.891l-7.143 40C33.163 185.246 38.818 192 46.289 192h74.81L98.242 320H19.146a12 12 0 0 0-11.813 9.891l-7.143 40C-1.123 377.246 4.532 384 12.003 384h74.81L72.19 465.891C70.877 473.246 76.532 480 84.003 480h40.632a12 12 0 0 0 11.813-9.891L151.826 384h98.634l-14.623 81.891C234.523 473.246 240.178 480 247.65 480h40.632a12 12 0 0 0 11.813-9.891L315.472 384h79.096a12 12 0 0 0 11.813-9.891l7.143-40c1.313-7.355-4.342-14.109-11.813-14.109h-74.81l22.857-128h79.096a12 12 0 0 0 11.813-9.891zM261.889 320h-98.634l22.857-128h98.634l-22.857 128z"/></svg>e6197299</a></span>
             </div>
             <div class="post-info-license"></div>
         </div>
-        <div class="post-info-line">
+        <div class="post-info-line print:!tw-hidden">
             <div class="post-info-md"><span><a class="link-to-mardown" href=/tcp-handshark/index.md target="_blank" rel="noopener noreferrer">阅读原始文档</a>
+                    </span><span>|&nbsp;<a class="link-to-source" href=https://github.com/xiaobinqt/xiaobinqt.github.io/blob/main/content/posts/network/tcp-handshark.md target="_blank" rel="noopener noreferrer">查看源代码</a>
+                    </span><span>|&nbsp;<a class="link-to-edit" href=https://github.com/xiaobinqt/xiaobinqt.github.io/edit/main/content/posts/network/tcp-handshark.md target="_blank" rel="noopener noreferrer">编辑此页</a>
                     </span></div>
-            <div class="post-info-share">
-                <span><a href="#" onclick="return false;" title="分享到 Twitter" data-sharer="twitter" data-url="https://www.xiaobinqt.cn/tcp-handshark/" data-title="TCP和UDP连接管理" data-hashtags="tcp,udp,三次握手,四次挥手"><i class="fab fa-twitter fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Facebook" data-sharer="facebook" data-url="https://www.xiaobinqt.cn/tcp-handshark/" data-hashtag="tcp"><i class="fab fa-facebook-square fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Hacker News" data-sharer="hackernews" data-url="https://www.xiaobinqt.cn/tcp-handshark/" data-title="TCP和UDP连接管理"><i class="fab fa-hacker-news fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Line" data-sharer="line" data-url="https://www.xiaobinqt.cn/tcp-handshark/" data-title="TCP和UDP连接管理"><i data-svg-src="/lib/simple-icons/icons/line.min.svg"></i></a><a href="#" onclick="return false;" title="分享到 微博" data-sharer="weibo" data-url="https://www.xiaobinqt.cn/tcp-handshark/" data-title="TCP和UDP连接管理" data-image="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221118/54f90c85427d4f59b34831801d5770bb.png"><i class="fab fa-weibo fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 百度" data-sharer="baidu" data-url="https://www.xiaobinqt.cn/tcp-handshark/" data-title="TCP和UDP连接管理"><i data-svg-src="/lib/simple-icons/icons/baidu.min.svg"></i></a></span>
-            </div>
+            <div class="post-info-share"><button title="分享到 微博" data-sharer="weibo" data-url="https://www.xiaobinqt.cn/tcp-handshark/" data-title="TCP和UDP连接管理" data-image="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221118/54f90c85427d4f59b34831801d5770bb.png"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M407 177.6c7.6-24-13.4-46.8-37.4-41.7-22 4.8-28.8-28.1-7.1-32.8 50.1-10.9 92.3 37.1 76.5 84.8-6.8 21.2-38.8 10.8-32-10.3zM214.8 446.7C108.5 446.7 0 395.3 0 310.4c0-44.3 28-95.4 76.3-143.7C176 67 279.5 65.8 249.9 161c-4 13.1 12.3 5.7 12.3 6 79.5-33.6 140.5-16.8 114 51.4-3.7 9.4 1.1 10.9 8.3 13.1 135.7 42.3 34.8 215.2-169.7 215.2zm143.7-146.3c-5.4-55.7-78.5-94-163.4-85.7-84.8 8.6-148.8 60.3-143.4 116s78.5 94 163.4 85.7c84.8-8.6 148.8-60.3 143.4-116zM347.9 35.1c-25.9 5.6-16.8 43.7 8.3 38.3 72.3-15.2 134.8 52.8 111.7 124-7.4 24.2 29.1 37 37.4 12 31.9-99.8-55.1-195.9-157.4-174.3zm-78.5 311c-17.1 38.8-66.8 60-109.1 46.3-40.8-13.1-58-53.4-40.3-89.7 17.7-35.4 63.1-55.4 103.4-45.1 42 10.8 63.1 50.2 46 88.5zm-86.3-30c-12.9-5.4-30 .3-38 12.9-8.3 12.9-4.3 28 8.6 34 13.1 6 30.8.3 39.1-12.9 8-13.1 3.7-28.3-9.7-34zm32.6-13.4c-5.1-1.7-11.4.6-14.3 5.4-2.9 5.1-1.4 10.6 3.7 12.9 5.1 2 11.7-.3 14.6-5.4 2.8-5.2 1.1-10.9-4-12.9z"/></svg></button><button title="分享到 百度" data-sharer="baidu" data-url="https://www.xiaobinqt.cn/tcp-handshark/" data-title="TCP和UDP连接管理"><svg class="icon" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>Baidu</title><path d="M9.154 0C7.71 0 6.54 1.658 6.54 3.707c0 2.051 1.171 3.71 2.615 3.71 1.446 0 2.614-1.659 2.614-3.71C11.768 1.658 10.6 0 9.154 0zm7.025.594C14.86.58 13.347 2.589 13.2 3.927c-.187 1.745.25 3.487 2.179 3.735 1.933.25 3.175-1.806 3.422-3.364.252-1.555-.995-3.364-2.362-3.674a1.218 1.218 0 0 0-.261-.03zM3.582 5.535a2.811 2.811 0 0 0-.156.008c-2.118.19-2.428 3.24-2.428 3.24-.287 1.41.686 4.425 3.297 3.864 2.617-.561 2.262-3.68 2.183-4.362-.125-1.018-1.292-2.773-2.896-2.75zm16.534 1.753c-2.308 0-2.617 2.119-2.617 3.616 0 1.43.121 3.425 2.988 3.362 2.867-.063 2.553-3.238 2.553-3.988 0-.745-.62-2.99-2.924-2.99zm-8.264 2.478c-1.424.014-2.708.925-3.323 1.947-1.118 1.868-2.863 3.05-3.112 3.363-.25.309-3.61 2.116-2.864 5.42.746 3.301 3.365 3.237 3.365 3.237s1.93.19 4.171-.31c2.24-.495 4.17.123 4.17.123s5.233 1.748 6.665-1.616c1.43-3.364-.808-5.109-.808-5.109s-2.99-2.306-4.736-4.798c-1.072-1.665-2.348-2.268-3.528-2.257zm-2.234 3.84l1.542.024v8.197H7.758c-1.47-.291-2.055-1.292-2.13-1.462-.072-.173-.488-.976-.268-2.343.635-2.049 2.447-2.196 2.447-2.196h1.81zm3.964 2.39v3.881c.096.413.612.488.612.488h1.614v-4.343h1.689v5.782h-3.915c-1.517-.39-1.59-1.465-1.59-1.465v-4.317zm-5.458 1.147c-.66.197-.978.708-1.05.928-.076.22-.247.78-.1 1.269.294 1.095 1.248 1.144 1.248 1.144h1.37v-3.34z"/></svg></button></div>
         </div>
     </div>
 
     <div class="post-info-more">
-        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/tcp/">tcp</a>,&nbsp;<a href="/tags/udp/">udp</a>,&nbsp;<a href="/tags/%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B/">三次握手</a>,&nbsp;<a href="/tags/%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B/">四次挥手</a></section>
-        <section>
-            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        <section class="post-tags"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M497.941 225.941L286.059 14.059A48 48 0 0 0 252.118 0H48C21.49 0 0 21.49 0 48v204.118a48 48 0 0 0 14.059 33.941l211.882 211.882c18.744 18.745 49.136 18.746 67.882 0l204.118-204.118c18.745-18.745 18.745-49.137 0-67.882zM112 160c-26.51 0-48-21.49-48-48s21.49-48 48-48 48 21.49 48 48-21.49 48-48 48zm513.941 133.823L421.823 497.941c-18.745 18.745-49.137 18.745-67.882 0l-.36-.36L527.64 323.522c16.999-16.999 26.36-39.6 26.36-63.64s-9.362-46.641-26.36-63.64L331.397 0h48.721a48 48 0 0 1 33.941 14.059l211.882 211.882c18.745 18.745 18.745 49.137 0 67.882z"/></svg>&nbsp;<a href="/tags/tcp/">Tcp</a>,&nbsp;<a href="/tags/udp/">Udp</a>,&nbsp;<a href="/tags/%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B/">三次握手</a>,&nbsp;<a href="/tags/%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B/">四次挥手</a></section>
+        <section class="print:!tw-hidden">
+            <span><button class="tw-text-fgColor-link-muted hover:tw-text-fgColor-link-muted-hover" onclick="window.history.back();">返回</button></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
         </section>
     </div>
 
-    <div class="post-nav"><a href="/js-cb-asyn/" class="prev" rel="prev" title="JS运行机制"><i class="fas fa-angle-left fa-fw"></i>JS运行机制</a>
-            <a href="/hugo-title-support-emoji/" class="next" rel="next" title="hugo主题标题支持emoji:smile:">hugo主题标题支持emoji:smile:<i class="fas fa-angle-right fa-fw"></i></a></div>
+    <div class="post-nav print:tw-hidden"><a href="/js-cb-asyn/" class="prev" rel="prev" title="JS运行机制"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M31.7 239l136-136c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9L127.9 256l96.4 96.4c9.4 9.4 9.4 24.6 0 33.9L201.7 409c-9.4 9.4-24.6 9.4-33.9 0l-136-136c-9.5-9.4-9.5-24.6-.1-34z"/></svg>JS运行机制</a>
+            <a href="/hugo-title-support-emoji/" class="next" rel="next" title="hugo主题标题支持emoji:smile:">hugo主题标题支持emoji:smile:<svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M224.3 273l-136 136c-9.4 9.4-24.6 9.4-33.9 0l-22.6-22.6c-9.4-9.4-9.4-24.6 0-33.9l96.4-96.4-96.4-96.4c-9.4-9.4-9.4-24.6 0-33.9L54.3 103c9.4-9.4 24.6-9.4 33.9 0l136 136c9.5 9.4 9.5 24.6.1 34z"/></svg></a></div>
 </div>
-<div id="comments"><div id="gitalk" class="comment"></div><noscript>
+<div id="comments" class="print:!tw-hidden tw-pt-32 tw-pb-8"><div id="gitalk" class="comment"></div><noscript>
                 Please enable JavaScript to view the comments powered by <a href="https://github.com/gitalk/gitalk"></a>Gitalk</a>.
             </noscript></div></article></div>
         </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2018 - 2024</span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        <div class="footer-container"><div class="footer-line"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M256 8C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 448c-110.532 0-200-89.451-200-200 0-110.531 89.451-200 200-200 110.532 0 200 89.451 200 200 0 110.532-89.451 200-200 200zm107.351-101.064c-9.614 9.712-45.53 41.396-104.065 41.396-82.43 0-140.484-61.425-140.484-141.567 0-79.152 60.275-139.401 139.762-139.401 55.531 0 88.738 26.62 97.593 34.779a11.965 11.965 0 0 1 1.936 15.322l-18.155 28.113c-3.841 5.95-11.966 7.282-17.499 2.921-8.595-6.776-31.814-22.538-61.708-22.538-48.303 0-77.916 35.33-77.916 80.082 0 41.589 26.888 83.692 78.277 83.692 32.657 0 56.843-19.039 65.726-27.225 5.27-4.857 13.596-4.039 17.82 1.738l19.865 27.17a11.947 11.947 0 0 1-1.152 15.518z"/></svg>2018 - 2024<span class="author">&nbsp;<a href="https://github.com/xiaobinqt" target="_blank" rel="noopener noreferrer">xiaobinqt</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span><span class="icp-splitter">&nbsp;|&nbsp;</span><br class="icp-br"/>
+                    <span class="icp">${ICP}</span></div>
             <div class="footer-line"></div>
             <div class="footer-line">
             </div>
         </div></footer></div>
 
-    <div id="fixed-buttons"><a href="#back-to-top" id="back-to-top-button" class="fixed-button" title="回到顶部">
-            <i class="fas fa-arrow-up fa-fw"></i>
-        </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
-            <i class="fas fa-comment fa-fw"></i>
-        </a>
-    </div><div class="assets"><script type="text/javascript" src="/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="/lib/algoliasearch/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/topbar/topbar.min.js"></script><script type="text/javascript" src="/lib/pjax/pjax.min.js"></script><script type="text/javascript" src="/js/theme.min.js" defer></script></div>
-
-<div class="pjax-assets"><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":1000},"comment":{"gitalk":{"admin":["xiaobinqt"],"clientID":"47b15de6c2d8a0f8d707","clientSecret":"c70556c8b3a3b38ea7c72e539ff3b37d5bc1b4f3","id":"a9f0e222587bf72a3048249f334cc7f3","owner":"xiaobinqt","repo":"xiaobinqt.github.io","title":"TCP和UDP连接管理"}},"lightGallery":{"actualSize":false,"exThumbImage":"data-thumbnail","hideBarsDelay":2000,"selector":".lightgallery","speed":400,"thumbContHeight":80,"thumbWidth":80,"thumbnail":true},"search":{"algoliaAppID":"U7QBQFMJWZ","algoliaIndex":"xiaobinqt.io","algoliaSearchKey":"1679f7a929fbfff6be0d47ba33947c03","highlightTag":"em","maxResultLength":20,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"},"sharerjs":true};</script><script type="text/javascript" src="/lib/gitalk/gitalk.min.js"></script><script type="text/javascript" src="/js/gitalk.min.js" defer></script><script type="text/javascript" src="/lib/lightgallery/lightgallery.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-thumbnail.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-zoom.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><link rel="stylesheet" href="/lib/gitalk/gitalk.min.css"><link rel="stylesheet" href="/lib/lightgallery/lightgallery.min.css"></div>
+    <div id="fixed-buttons" class="print:!tw-hidden"><a href="#back-to-top" id="back-to-top-button" class="fixed-button tw-transition-opacity tw-opacity-0" title="回到顶部">
+            <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M34.9 289.5l-22.2-22.2c-9.4-9.4-9.4-24.6 0-33.9L207 39c9.4-9.4 24.6-9.4 33.9 0l194.3 194.3c9.4 9.4 9.4 24.6 0 33.9L413 289.4c-9.5 9.5-25 9.3-34.3-.4L264 168.6V456c0 13.3-10.7 24-24 24h-32c-13.3 0-24-10.7-24-24V168.6L69.2 289.1c-9.3 9.8-24.8 10-34.3.4z"/></svg>
+        </a><a href="#comments" id="view-comments" class="fixed-button" title="查看评论">
+            <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M256 32C114.6 32 0 125.1 0 240c0 49.6 21.4 95 57 130.7C44.5 421.1 2.7 466 2.2 466.5c-2.2 2.3-2.8 5.7-1.5 8.7S4.8 480 8 480c66.3 0 116-31.8 140.6-51.4 32.7 12.3 69 19.4 107.4 19.4 141.4 0 256-93.1 256-208S397.4 32 256 32z"/></svg>
+        </a></div><script type="module">
+        (async () => {
+            const supportSpeculationRules = HTMLScriptElement.supports && HTMLScriptElement.supports("speculationrules");
+            if (!supportSpeculationRules) {
+              await import("\/lib\/instant.page\/instantpage.min.js");
+            }
+        })();
+    </script><link rel="stylesheet" href="/lib/gitalk/gitalk.min.css"><link rel="stylesheet" href="/lib/lightgallery/lightgallery.min.css">
+<script>window.config={"algoliasearch.min.js":"/lib/algoliasearch/algoliasearch-lite.umd.min.js","autocomplete.min.js":"/lib/autocomplete/autocomplete.min.js","comment":{"gitalk":{"admin":["xiaobinqt"],"clientID":"47b15de6c2d8a0f8d707","clientSecret":"c70556c8b3a3b38ea7c72e539ff3b37d5bc1b4f3","id":"a9f0e222587bf72a3048249f334cc7f3","owner":"xiaobinqt","repo":"xiaobinqt.github.io","title":"TCP和UDP连接管理"}},"lightGallery":{"actualSize":false,"exThumbImage":"data-thumbnail","hideBarsDelay":2000,"selector":".lightgallery","speed":400,"thumbContHeight":80,"thumbWidth":80,"thumbnail":true},"search":{"algoliaAppID":"__ALGOLIA_APP_ID__","algoliaIndex":"xiaobinqt.io","algoliaSearchKey":"__ALGOLIA_SEARCH_API_KEY__","highlightTag":"em","maxResultLength":20,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"},"sharerjs":true,"table":{"sort":true}};</script><script
+    src="/lib/tablesort/tablesort.min.js"
+    
+  ></script><script
+    src="/lib/lightgallery/lightgallery.min.js"
+    
+  ></script><script
+    src="/lib/lightgallery/lg-thumbnail.min.js"
+    
+  ></script><script
+    src="/lib/lightgallery/lg-zoom.min.js"
+    
+  ></script><script
+    src="/lib/sharer/sharer.min.js"
+    
+  ></script><script
+    src="/js/theme.min.js"
+    
+      defer
+    
+  ></script><script
+    src="/lib/gitalk/gitalk.min.js"
+    
+  ></script><script
+    src="/js/gitalk.min.js"
+    
+      defer
+    
+  ></script>
+    
+    <script type="speculationrules">
+        {
+          "prerender": [
+            {
+              "where": { "href_matches": "/*" },
+              "eagerness": "moderate"
+            }
+          ]
+        }
+    </script>
+      
 </body>
 
 </html>

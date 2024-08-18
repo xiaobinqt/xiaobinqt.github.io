@@ -1,115 +1,184 @@
+
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="robots" content="noodp" />
-    <title class="pjax-title">Redis 缓存击穿、缓存穿透、缓存雪崩 - xiaobinqt 博客 - 技术改变生活</title><meta name="Description" content="xiaobinqt,Redis 缓存击穿,缓存穿透,缓存雪崩,Redis"><meta property="og:title" content="Redis 缓存击穿、缓存穿透、缓存雪崩" />
-<meta property="og:description" content="xiaobinqt,Redis 缓存击穿,缓存穿透,缓存雪崩,Redis" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://www.xiaobinqt.cn/redis-break-pierce-avalanche/" /><meta property="og:image" content="https://www.xiaobinqt.cn/logo.png"/><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2022-04-13T00:00:00+00:00" />
-<meta property="article:modified_time" content="2023-07-27T10:32:06+08:00" />
-<meta property="og:see_also" content="https://www.xiaobinqt.cn/highly-concurrent-architecture-evolution/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/session-cookie-token-difference/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/mysql-faq-2/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/why-mysql-index-use-btree/" /><meta property="og:see_also" content="https://www.xiaobinqt.cn/go-gc/" />
+    <meta name="robots" content="noodp" /><title>Redis 缓存击穿、缓存穿透、缓存雪崩 - xiaobinqt 博客 - 技术改变生活</title><meta name="Description" content="xiaobinqt,Redis 缓存击穿,缓存穿透,缓存雪崩,Redis"><meta property="og:url" content="https://www.xiaobinqt.cn/redis-break-pierce-avalanche/">
+  <meta property="og:site_name" content="xiaobinqt 博客 - 技术改变生活">
+  <meta property="og:title" content="Redis 缓存击穿、缓存穿透、缓存雪崩">
+  <meta property="og:description" content="xiaobinqt,Redis 缓存击穿,缓存穿透,缓存雪崩,Redis">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2022-04-13T00:00:00+00:00">
+    <meta property="article:modified_time" content="2023-07-27T10:32:06+08:00">
+    <meta property="article:tag" content="Redis">
+    <meta property="og:image" content="https://www.xiaobinqt.cn/images/avatar.webp">
+      <meta property="og:see_also" content="https://www.xiaobinqt.cn/highly-concurrent-architecture-evolution/">
+      <meta property="og:see_also" content="https://www.xiaobinqt.cn/session-cookie-token-difference/">
+      <meta property="og:see_also" content="https://www.xiaobinqt.cn/mysql-faq-2/">
+      <meta property="og:see_also" content="https://www.xiaobinqt.cn/why-mysql-index-use-btree/">
+      <meta property="og:see_also" content="https://www.xiaobinqt.cn/go-gc/">
+      <meta property="og:see_also" content="https://www.xiaobinqt.cn/net-protocol-glance/">
 
-<meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image" content="https://www.xiaobinqt.cn/logo.png"/>
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://www.xiaobinqt.cn/images/avatar.webp">
+  <meta name="twitter:title" content="Redis 缓存击穿、缓存穿透、缓存雪崩">
+  <meta name="twitter:description" content="xiaobinqt,Redis 缓存击穿,缓存穿透,缓存雪崩,Redis">
+<meta name="application-name" content="DoIt">
+<meta name="apple-mobile-web-app-title" content="DoIt">
 
-<meta name="twitter:title" content="Redis 缓存击穿、缓存穿透、缓存雪崩"/>
-<meta name="twitter:description" content="xiaobinqt,Redis 缓存击穿,缓存穿透,缓存雪崩,Redis"/>
-<meta name="application-name" content="xiaobinqt">
-<meta name="apple-mobile-web-app-title" content="xiaobinqt">
-
-<meta name="theme-color" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c">
-<link rel="stylesheet" href="//at.alicdn.com/t/font_3267767_dz25dtwdgdc.css"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+<meta name="theme-color" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://www.xiaobinqt.cn/redis-break-pierce-avalanche/" /><link rel="prev" href="https://www.xiaobinqt.cn/go-gc/" /><link rel="next" href="https://www.xiaobinqt.cn/mysql-workbench-show-triggers/" /><link rel="stylesheet" href="/lib/md5/md5.min.js"><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/fontawesome-free/all.min.css">
-        <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/animate/animate.min.css">
-        <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><meta name="google-site-verification" content="hFkClWMTOtPBuE0lQaXNiNb707E7P6O2CwexZoSm3VQ" /><meta name="msvalidate.01" content="A961D393878F86E04112E1198500FDBD" /><meta name="baidu-site-verification" content="code-cMh5ORsrP2" /><script type="application/ld+json">
-    {
-        "@context": "http://schema.org",
-        "@type": "BlogPosting",
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<link rel="canonical" href="https://www.xiaobinqt.cn/redis-break-pierce-avalanche/" /><link rel="prev" href="https://www.xiaobinqt.cn/go-gc/" /><link rel="next" href="https://www.xiaobinqt.cn/mysql-workbench-show-triggers/" />
+<link rel="stylesheet" href="/css/main.min.css"><link rel="stylesheet" href="/css/style.min.css"><meta name="google-site-verification" content="hFkClWMTOtPBuE0lQaXNiNb707E7P6O2CwexZoSm3VQ" /><meta name="msvalidate.01" content="A961D393878F86E04112E1198500FDBD" /><meta name="baidu-site-verification" content="code-cMh5ORsrP2" /><script type="application/ld+json">{"@context": "https://schema.org","@type": "BlogPosting",
         "headline": "Redis 缓存击穿、缓存穿透、缓存雪崩",
         "inLanguage": "zh-CN",
         "mainEntityOfPage": {
             "@type": "WebPage",
-            "@id": "https:\/\/www.xiaobinqt.cn\/redis-break-pierce-avalanche\/"
-        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "redis","wordcount":  2278 ,
-        "url": "https:\/\/www.xiaobinqt.cn\/redis-break-pierce-avalanche\/","datePublished": "2022-04-13T00:00:00+00:00","dateModified": "2023-07-27T10:32:06+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+            "@id": "https://www.xiaobinqt.cn/redis-break-pierce-avalanche/"
+        },"image": ["https://www.xiaobinqt.cn/images/Apple-Devices-Preview.png"],"genre": "posts","keywords":["redis"],"wordcount":  2303 ,
+        "url": "https://www.xiaobinqt.cn/redis-break-pierce-avalanche/","datePublished": "2022-04-13T00:00:00+00:00","dateModified": "2023-07-27T10:32:06+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "xxxx","logo": {
                     "@type": "ImageObject",
-                    "url": "https:\/\/www.xiaobinqt.cn\/images\/avatar.png",
-                    "width":  528 ,
-                    "height":  560 
+                    "url": "https://www.xiaobinqt.cn/images/avatar.webp",
+                    "width":  400 ,
+                    "height":  400 
                 }},"author": {
                 "@type": "Person",
-                "name": "xiaobinqt"
+                "name": "xiaobinqt",
+                "url": "https://github.com/xiaobinqt"
             },"description": "xiaobinqt,Redis 缓存击穿,缓存穿透,缓存雪崩,Redis"
-    }
-    </script></head>
+    }</script></head>
 
-<body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">
-        function setTheme(theme) {document.body.setAttribute('theme', theme); document.documentElement.style.setProperty('color-scheme', theme === 'light' ? 'light' : 'dark');}
+
+<body data-instant-intensity="viewport" ><script type="text/javascript">
+        function setTheme(theme) {
+          document.body.setAttribute('theme', theme); 
+          document.documentElement.className = theme;
+          document.documentElement.style.setProperty('color-scheme', theme === 'light' ? 'light' : 'dark');
+          if (theme === 'light') {
+            document.documentElement.classList.remove('tw-dark')
+          } else {
+            document.documentElement.classList.add('tw-dark')
+          }
+          window.theme = theme;   
+          window.isDark = window.theme !== 'light' 
+        }
         function saveTheme(theme) {window.localStorage && localStorage.setItem('theme', theme);}
         function getMeta(metaName) {const metas = document.getElementsByTagName('meta'); for (let i = 0; i < metas.length; i++) if (metas[i].getAttribute('name') === metaName) return metas[i]; return '';}
-        if (window.localStorage && localStorage.getItem('theme')) {let theme = localStorage.getItem('theme');theme === 'light' || theme === 'dark' || theme === 'black' ? setTheme(theme) : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? setTheme('dark') : setTheme('light')); } else { if ('auto' === 'light' || 'auto' === 'dark' || 'auto' === 'black') setTheme('auto'), saveTheme('auto'); else saveTheme('auto'), window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? setTheme('dark') : setTheme('light');}
-        let metaColors = {'light': '#f8f8f8','dark': '#252627','black': '#000000'}
+        if (window.localStorage && localStorage.getItem('theme')) {
+            let theme = localStorage.getItem('theme');
+            if (theme === 'light' || theme === 'dark') {
+            setTheme(theme);
+            } else {
+                if ((window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    setTheme('dark');
+                } else {
+                    setTheme('light');
+                }
+            }
+         } else { 
+            if ('auto' === 'light' || 'auto' === 'dark') 
+                setTheme('auto'), saveTheme('auto'); 
+            else saveTheme('auto'), window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? setTheme('dark') : setTheme('light');
+        }
+        let metaColors = {'light': '#f8f8f8','dark': '#161b22'}
         getMeta('theme-color').content = metaColors[document.body.getAttribute('theme')];
+        window.switchThemeEventSet = new Set()
     </script>
     <div id="back-to-top"></div>
-    <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div id="mask"></div><div class="wrapper"><header class="desktop print:!tw-hidden" id="header-desktop">
     <div class="header-wrapper">
         <div class="header-title">
-            <a href="/" title="xiaobinqt 博客 - 技术改变生活"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>萧十一郎</a>
+            <a href="/" title="xiaobinqt 博客 - 技术改变生活"><span class="tw-mr-1"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M402.3 344.9l32-32c5-5 13.7-1.5 13.7 5.7V464c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h273.5c7.1 0 10.7 8.6 5.7 13.7l-32 32c-1.5 1.5-3.5 2.3-5.7 2.3H48v352h352V350.5c0-2.1.8-4.1 2.3-5.6zm156.6-201.8L296.3 405.7l-90.4 10c-26.2 2.9-48.5-19.2-45.6-45.6l10-90.4L432.9 17.1c22.9-22.9 59.9-22.9 82.7 0l43.2 43.2c22.9 22.9 22.9 60 .1 82.8zM460.1 174L402 115.9 216.2 301.8l-7.3 65.3 65.3-7.3L460.1 174zm64.8-79.7l-43.2-43.2c-4.1-4.1-10.8-4.1-14.8 0L436 82l58.1 58.1 30.9-30.9c4-4.2 4-10.8-.1-14.9z"/></svg></span>萧十一郎</a>
         </div>
         <div class="menu">
-            <div class="menu-inner"><a class="menu-item" href="/posts/" > 所有文章 </a><a class="menu-item" href="/tags/" > 标签 </a><a class="menu-item" href="/categories/" > 分类 </a><a class="menu-item" href="/series/" > 系列 </a><a class="menu-item" href="/showcase/" > 小册 </a><a class="menu-item" href="/keeplearning/"  rel="noopener noreferrer" target="_blank"> KeepLearning </a><a class="menu-item" href="/leetcode/"  rel="noopener noreferrer" target="_blank"> LeetCode </a><a class="menu-item" href="/links/" > 友链 </a><a class="menu-item" href="/about/" > 关于 </a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" rel="noopener noreferrer" target="_blank" ><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
-                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
-                        <a href="#" onclick="return false;" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
-                            <i class="fas fa-search fa-fw"></i>
-                        </a>
-                        <a href="#" onclick="return false;" class="search-button search-clear" id="search-clear-desktop" title="清空">
-                            <i class="fas fa-times-circle fa-fw"></i>
-                        </a>
-                        <span class="search-button search-loading" id="search-loading-desktop">
-                            <i class="fas fa-spinner fa-fw fa-spin"></i>
-                        </span>
-                    </span><a href="#" onclick="return false;" class="menu-item theme-switch" title="切换主题">
-                    <i class="fas fa-adjust fa-fw"></i>
-                </a></div>
+            <div class="menu-inner"><a class="menu-item"
+                    href="/posts/" > 所有文章 </a><a class="menu-item"
+                    href="/tags/" > 标签 </a><a class="menu-item"
+                    href="/categories/" > 分类 </a><a class="menu-item"
+                    href="/series/" > 系列 </a><a class="menu-item"
+                    href="/showcase/" > 小册 </a><a class="menu-item"
+                    href="/keeplearning/-open-blank-target" > KeepLearning </a><a class="menu-item"
+                    href="/leetcode/-open-blank-target" > LeetCode </a><a class="menu-item"
+                    href="/links/" > 友链 </a><a class="menu-item"
+                    href="/about/" > 关于 </a><a class="menu-item"
+                    href="https://github.com/xiaobinqt"  title="GitHub" 
+                    rel="noopener noreferrer" target="_blank" ><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                    <input type="text"
+                        placeholder="搜索文章标题或内容..."
+                        id="search-input-desktop">
+                    <button class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                        <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg>
+                    </button>
+                    <button class="search-button search-clear" id="search-clear-desktop" title="清空">
+                        <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm121.6 313.1c4.7 4.7 4.7 12.3 0 17L338 377.6c-4.7 4.7-12.3 4.7-17 0L256 312l-65.1 65.6c-4.7 4.7-12.3 4.7-17 0L134.4 338c-4.7-4.7-4.7-12.3 0-17l65.6-65-65.6-65.1c-4.7-4.7-4.7-12.3 0-17l39.6-39.6c4.7-4.7 12.3-4.7 17 0l65 65.7 65.1-65.6c4.7-4.7 12.3-4.7 17 0l39.6 39.6c4.7 4.7 4.7 12.3 0 17L312 256l65.6 65.1z"/></svg>
+                    </button>
+                    <span class="search-button search-loading tw-animate-spin" id="search-loading-desktop">
+                        <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M304 48c0 26.51-21.49 48-48 48s-48-21.49-48-48 21.49-48 48-48 48 21.49 48 48zm-48 368c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zm208-208c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zM96 256c0-26.51-21.49-48-48-48S0 229.49 0 256s21.49 48 48 48 48-21.49 48-48zm12.922 99.078c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.491-48-48-48zm294.156 0c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.49-48-48-48zM108.922 60.922c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.491-48-48-48z"/></svg>
+                    </span>
+                </span><button class="menu-item theme-select" aria-label="切换主题">
+                    <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M8 256c0 136.966 111.033 248 248 248s248-111.034 248-248S392.966 8 256 8 8 119.033 8 256zm248 184V72c101.705 0 184 82.311 184 184 0 101.705-82.311 184-184 184z"/></svg>
+                    <select class="color-theme-select" id="theme-select-desktop" aria-label="切换主题">
+                        <option value="light">浅色</option>
+                        <option value="dark">深色</option>
+                        <option value="auto">跟随系统</option>
+                    </select>
+                </button></div>
         </div>
     </div>
-</header><header class="mobile" id="header-mobile">
+</header><header class="mobile print:!tw-hidden" id="header-mobile">
     <div class="header-container">
         <div class="header-wrapper">
             <div class="header-title">
-                <a href="/" title="xiaobinqt 博客 - 技术改变生活"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>萧十一郎</a>
+                <a href="/" title="xiaobinqt 博客 - 技术改变生活"><span class="tw-mr-1"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M402.3 344.9l32-32c5-5 13.7-1.5 13.7 5.7V464c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h273.5c7.1 0 10.7 8.6 5.7 13.7l-32 32c-1.5 1.5-3.5 2.3-5.7 2.3H48v352h352V350.5c0-2.1.8-4.1 2.3-5.6zm156.6-201.8L296.3 405.7l-90.4 10c-26.2 2.9-48.5-19.2-45.6-45.6l10-90.4L432.9 17.1c22.9-22.9 59.9-22.9 82.7 0l43.2 43.2c22.9 22.9 22.9 60 .1 82.8zM460.1 174L402 115.9 216.2 301.8l-7.3 65.3 65.3-7.3L460.1 174zm64.8-79.7l-43.2-43.2c-4.1-4.1-10.8-4.1-14.8 0L436 82l58.1 58.1 30.9-30.9c4-4.2 4-10.8-.1-14.9z"/></svg></span>萧十一郎</a>
             </div>
             <div class="menu-toggle" id="menu-toggle-mobile">
                 <span></span><span></span><span></span>
             </div>
         </div>
         <div class="menu" id="menu-mobile"><div class="search-wrapper">
-                    <div class="search mobile" id="search-mobile">
-                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
-                        <a href="#" onclick="return false;" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
-                            <i class="fas fa-search fa-fw"></i>
-                        </a>
-                        <a href="#" onclick="return false;" class="search-button search-clear" id="search-clear-mobile" title="清空">
-                            <i class="fas fa-times-circle fa-fw"></i>
-                        </a>
-                        <span class="search-button search-loading" id="search-loading-mobile">
-                            <i class="fas fa-spinner fa-fw fa-spin"></i>
-                        </span>
-                    </div>
-                    <a href="#" onclick="return false;" class="search-cancel" id="search-cancel-mobile">
-                        取消
-                    </a>
-                </div><a class="menu-item" href="/posts/" title="" >所有文章</a><a class="menu-item" href="/tags/" title="" >标签</a><a class="menu-item" href="/categories/" title="" >分类</a><a class="menu-item" href="/series/" title="" >系列</a><a class="menu-item" href="/showcase/" title="" >小册</a><a class="menu-item" href="/keeplearning/" title=""  rel="noopener noreferrer" target="_blank">KeepLearning</a><a class="menu-item" href="/leetcode/" title=""  rel="noopener noreferrer" target="_blank">LeetCode</a><a class="menu-item" href="/links/" title="" >友链</a><a class="menu-item" href="/about/" title="" >关于</a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" rel="noopener noreferrer" target="_blank" ><i class='fab fa-github fa-fw'></i></a><a href="#" onclick="return false;" class="menu-item theme-switch" title="切换主题">
-                <i class="fas fa-adjust fa-fw"></i>
-            </a></div>
+                <div class="search mobile" id="search-mobile">
+                    <input type="text"
+                        placeholder="搜索文章标题或内容..."
+                        id="search-input-mobile">
+                    <button class="search-button search-toggle tw-h-10" id="search-toggle-mobile" title="搜索">
+                        <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg>
+                    </button>
+                    <button class="search-button search-clear" id="search-clear-mobile" title="清空">
+                        <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm121.6 313.1c4.7 4.7 4.7 12.3 0 17L338 377.6c-4.7 4.7-12.3 4.7-17 0L256 312l-65.1 65.6c-4.7 4.7-12.3 4.7-17 0L134.4 338c-4.7-4.7-4.7-12.3 0-17l65.6-65-65.6-65.1c-4.7-4.7-4.7-12.3 0-17l39.6-39.6c4.7-4.7 12.3-4.7 17 0l65 65.7 65.1-65.6c4.7-4.7 12.3-4.7 17 0l39.6 39.6c4.7 4.7 4.7 12.3 0 17L312 256l65.6 65.1z"/></svg>
+                    </button>
+                    <span class="search-button search-loading tw-animate-spin" id="search-loading-mobile">
+                        <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M304 48c0 26.51-21.49 48-48 48s-48-21.49-48-48 21.49-48 48-48 48 21.49 48 48zm-48 368c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zm208-208c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zM96 256c0-26.51-21.49-48-48-48S0 229.49 0 256s21.49 48 48 48 48-21.49 48-48zm12.922 99.078c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.491-48-48-48zm294.156 0c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.49-48-48-48zM108.922 60.922c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.491-48-48-48z"/></svg>
+                    </span>
+                </div>
+                <button class="search-cancel" id="search-cancel-mobile">
+                    取消
+                </button>
+            </div><a class="menu-item" href="/posts/" title="" >所有文章</a><a class="menu-item" href="/tags/" title="" >标签</a><a class="menu-item" href="/categories/" title="" >分类</a><a class="menu-item" href="/series/" title="" >系列</a><a class="menu-item" href="/showcase/" title="" >小册</a><a class="menu-item" href="/keeplearning/-open-blank-target" title="" >KeepLearning</a><a class="menu-item" href="/leetcode/-open-blank-target" title="" >LeetCode</a><a class="menu-item" href="/links/" title="" >友链</a><a class="menu-item" href="/about/" title="" >关于</a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" 
+                rel="noopener noreferrer" target="_blank" ><i class='fab fa-github fa-fw'></i></a><button class="menu-item theme-select tw-w-full" aria-label="切换主题">
+                <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M8 256c0 136.966 111.033 248 248 248s248-111.034 248-248S392.966 8 256 8 8 119.033 8 256zm248 184V72c101.705 0 184 82.311 184 184 0 101.705-82.311 184-184 184z"/></svg>
+                <select class="color-theme-select" id="theme-select-mobile" aria-label="切换主题">
+                    <option value="light">浅色</option>
+                    <option value="dark">深色</option>
+                    <option value="auto">跟随系统</option>
+                </select>
+            </button></div>
     </div>
 </header>
 <div class="search-dropdown desktop">
@@ -117,9 +186,8 @@
 </div>
 <div class="search-dropdown mobile">
     <div id="search-dropdown-mobile"></div>
-</div>
-<main class="main">
-            <div class="container"><div class="toc" id="toc-auto">
+</div><main class="main">
+            <div class="container"><div class="toc print:!tw-hidden" id="toc-auto">
         <h2 class="toc-title">目录</h2>
         <div class="toc-content" id="toc-content-auto"><nav id="TableOfContents">
   <ul>
@@ -127,7 +195,7 @@
       <ul>
         <li><a href="#解决方案">解决方案</a>
           <ul>
-            <li><a href="#过期时间随机值">过期时间➕随机值</a></li>
+            <li><a href="#过期时间heavy_plus_sign随机值">过期时间&#x2795;随机值</a></li>
             <li><a href="#预热">预热</a></li>
             <li><a href="#使用锁">使用锁</a></li>
           </ul>
@@ -164,16 +232,22 @@
     <li><a href="#参考">参考</a></li>
   </ul>
 </nav></div>
-    </div><script>document.getElementsByTagName("main")[0].setAttribute("pageStyle", "normal")</script><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Redis 缓存击穿、缓存穿透、缓存雪崩</h1><div class="post-meta">
-            <div class="post-meta-line"><span class="post-author">
-                    <i class="custom-icon iconfont icon-weibiaoti-"></i>
-                </span>&nbsp;&nbsp;<span class="post-category">收录于 </span>&nbsp;<span class="post-category">类别 <a href="/categories/%E5%BC%80%E5%8F%91%E8%80%85%E6%89%8B%E5%86%8C/"><i class="far fa-folder fa-fw"></i>开发者手册</a></span>&nbsp;<span class="post-category">和</span>&nbsp;<span class="post-series">系列 <a href="/series/reproduce/"><i class="far fa-list-alt fa-fw"></i>转载</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-04-13">2022-04-13</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2023-07-27">2023-07-27</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 2278 字&nbsp;
-                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 5 分钟&nbsp;</div>
-        </div><div class="details toc" id="toc-static"  kept="">
+    </div><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single print:!tw-w-full print:!tw-max-w-none print:!tw-m-0 print:!tw-p-0"><h1 class="single-title">Redis 缓存击穿、缓存穿透、缓存雪崩</h1><div class="post-meta">
+            <div class="post-meta-line">
+                <span class="post-author"><img class="tw-inline-block tw-max-h-4 tw-rounded-full tw-translate-y-[-2px] tw-mr-1"  src="/images/avatar.webp" srcset="/images/avatar_hu11269060449570882715.webp 16w, /images/avatar_hu2515534640531409486.webp 24w, /images/avatar_hu9855092516384270799.webp 32w"  alt="xiaobinqt avatar" height="16" width="16"><a href="https://github.com/xiaobinqt" title="Author" target="_blank" rel="noopener noreferrer author" class="author">xiaobinqt</a>
+                </span>&nbsp;<span class="post-category">收录于 </span>&nbsp;<span class="post-category">类别 <a href="/categories/%E5%BC%80%E5%8F%91%E8%80%85%E6%89%8B%E5%86%8C/"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M464 128H272l-54.63-54.63c-6-6-14.14-9.37-22.63-9.37H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V176c0-26.51-21.49-48-48-48zm0 272H48V112h140.12l54.63 54.63c6 6 14.14 9.37 22.63 9.37H464v224z"/></svg>开发者手册</a></span>&nbsp;<span class="post-category">和</span>&nbsp;<span class="post-series">系列 <a href="/series/reproduce/"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M464 32H48C21.49 32 0 53.49 0 80v352c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V80c0-26.51-21.49-48-48-48zm-6 400H54a6 6 0 0 1-6-6V86a6 6 0 0 1 6-6h404a6 6 0 0 1 6 6v340a6 6 0 0 1-6 6zm-42-92v24c0 6.627-5.373 12-12 12H204c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h200c6.627 0 12 5.373 12 12zm0-96v24c0 6.627-5.373 12-12 12H204c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h200c6.627 0 12 5.373 12 12zm0-96v24c0 6.627-5.373 12-12 12H204c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h200c6.627 0 12 5.373 12 12zm-252 12c0 19.882-16.118 36-36 36s-36-16.118-36-36 16.118-36 36-36 36 16.118 36 36zm0 96c0 19.882-16.118 36-36 36s-36-16.118-36-36 16.118-36 36-36 36 16.118 36 36zm0 96c0 19.882-16.118 36-36 36s-36-16.118-36-36 16.118-36 36-36 36 16.118 36 36z"/></svg>转载</a></span></div>
+            <div class="post-meta-line"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M148 288h-40c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12zm108-12v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm-96 96v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm-96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm192 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm96-260v352c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h48V12c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h128V12c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h48c26.5 0 48 21.5 48 48zm-48 346V160H48v298c0 3.3 2.7 6 6 6h340c3.3 0 6-2.7 6-6z"/></svg>&nbsp;<time datetime="2022-04-13">2022-04-13</time>&nbsp;<svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M402.3 344.9l32-32c5-5 13.7-1.5 13.7 5.7V464c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h273.5c7.1 0 10.7 8.6 5.7 13.7l-32 32c-1.5 1.5-3.5 2.3-5.7 2.3H48v352h352V350.5c0-2.1.8-4.1 2.3-5.6zm156.6-201.8L296.3 405.7l-90.4 10c-26.2 2.9-48.5-19.2-45.6-45.6l10-90.4L432.9 17.1c22.9-22.9 59.9-22.9 82.7 0l43.2 43.2c22.9 22.9 22.9 60 .1 82.8zM460.1 174L402 115.9 216.2 301.8l-7.3 65.3 65.3-7.3L460.1 174zm64.8-79.7l-43.2-43.2c-4.1-4.1-10.8-4.1-14.8 0L436 82l58.1 58.1 30.9-30.9c4-4.2 4-10.8-.1-14.9z"/></svg>&nbsp;<time datetime="2023-07-27">2023-07-27</time>&nbsp;<svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;约 2303 字&nbsp;<svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm0 448c-110.5 0-200-89.5-200-200S145.5 56 256 56s200 89.5 200 200-89.5 200-200 200zm61.8-104.4l-84.9-61.7c-3.1-2.3-4.9-5.9-4.9-9.7V116c0-6.6 5.4-12 12-12h32c6.6 0 12 5.4 12 12v141.7l66.8 48.6c5.4 3.9 6.5 11.4 2.6 16.8L334.6 349c-3.9 5.3-11.4 6.5-16.8 2.6z"/></svg>&nbsp;预计阅读 5 分钟&nbsp;</div>
+        </div><div class="details toc print:!tw-block" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
                     <span>目录</span>
-                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                    <span class="details-icon"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M224.3 273l-136 136c-9.4 9.4-24.6 9.4-33.9 0l-22.6-22.6c-9.4-9.4-9.4-24.6 0-33.9l96.4-96.4-96.4-96.4c-9.4-9.4-9.4-24.6 0-33.9L54.3 103c9.4-9.4 24.6-9.4 33.9 0l136 136c9.5 9.4 9.5 24.6.1 34z"/></svg></span>
                 </div>
                 <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
   <ul>
@@ -181,7 +255,7 @@
       <ul>
         <li><a href="#解决方案">解决方案</a>
           <ul>
-            <li><a href="#过期时间随机值">过期时间➕随机值</a></li>
+            <li><a href="#过期时间heavy_plus_sign随机值">过期时间&#x2795;随机值</a></li>
             <li><a href="#预热">预热</a></li>
             <li><a href="#使用锁">使用锁</a></li>
           </ul>
@@ -219,56 +293,35 @@
   </ul>
 </nav></div>
             </div><div class="content" id="content"><h2 id="缓存击穿" class="headerLink">
-    <a href="#%e7%bc%93%e5%ad%98%e5%87%bb%e7%a9%bf" class="header-mark"></a>缓存击穿</h2><p>高并发流量，访问的这个数据是热点数据，请求的数据在 DB 中存在，但是 Redis 存的那一份已经过期，后端需要从 DB 从加载数据并写到 Redis。</p>
+    <a href="#%e7%bc%93%e5%ad%98%e5%87%bb%e7%a9%bf" class="header-mark" aria-label="Header mark for '缓存击穿'"></a>1 缓存击穿</h2><p>高并发流量，访问的这个数据是热点数据，请求的数据在 DB 中存在，但是 Redis 存的那一份已经过期，后端需要从 DB 从加载数据并写到 Redis。</p>
 <p>总结起来就是：单一热点数据、高并发、数据失效。</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/10c8c8557c8b41ea967c82617bef1814.png" title="缓存击穿" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/10c8c8557c8b41ea967c82617bef1814.png" data-sub-html="<h2>缓存击穿</h2><p>缓存击穿</p>">
-        <img
-            class="lazyload"
-            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/10c8c8557c8b41ea967c82617bef1814.png"
-            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/10c8c8557c8b41ea967c82617bef1814.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/10c8c8557c8b41ea967c82617bef1814.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/10c8c8557c8b41ea967c82617bef1814.png 2x"
-            data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/10c8c8557c8b41ea967c82617bef1814.png">
-    </a><figcaption class="image-caption">缓存击穿</figcaption>
-    </figure></p>
+<p><figure><a class="lightgallery" href="/10c8c8557c8b41ea967c82617bef1814_9641744110265768403.png" title="缓存击穿" data-thumbnail="/10c8c8557c8b41ea967c82617bef1814_9641744110265768403.png" data-sub-html="<h2>缓存击穿</h2><p>缓存击穿</p>"><img  loading="lazy" src="/10c8c8557c8b41ea967c82617bef1814_9641744110265768403.png" srcset="/10c8c8557c8b41ea967c82617bef1814_9641744110265768403_hu11537864452636906095.webp 800w, /10c8c8557c8b41ea967c82617bef1814_9641744110265768403_hu1278765708233988348.webp 1200w, /10c8c8557c8b41ea967c82617bef1814_9641744110265768403_hu15736551144651494971.webp 1600w"  alt="缓存击穿" height="1004" width="1080"></a><figcaption class="image-caption">缓存击穿</figcaption>
+</figure></p>
 <h3 id="解决方案" class="headerLink">
-    <a href="#%e8%a7%a3%e5%86%b3%e6%96%b9%e6%a1%88" class="header-mark"></a>解决方案</h3><h4 id="过期时间随机值" class="headerLink">
-    <a href="#%e8%bf%87%e6%9c%9f%e6%97%b6%e9%97%b4%e9%9a%8f%e6%9c%ba%e5%80%bc" class="header-mark"></a>过期时间➕随机值</h4><p>对于热点数据，我们不设置过期时间，这样就可以把请求都放在缓存中处理，充分把 Redis 高吞吐量性能利用起来。或者过期时间再加一个随机值。</p>
+    <a href="#%e8%a7%a3%e5%86%b3%e6%96%b9%e6%a1%88" class="header-mark" aria-label="Header mark for '解决方案'"></a>1.1 解决方案</h3><h4 id="过期时间heavy_plus_sign随机值" class="headerLink">
+    <a href="#%e8%bf%87%e6%9c%9f%e6%97%b6%e9%97%b4heavy_plus_sign%e9%9a%8f%e6%9c%ba%e5%80%bc" class="header-mark" aria-label="Header mark for '过期时间&amp;#x2795;随机值'"></a>1.1.1 过期时间&#x2795;随机值</h4><p>对于热点数据，我们不设置过期时间，这样就可以把请求都放在缓存中处理，充分把 Redis 高吞吐量性能利用起来。或者过期时间再加一个随机值。</p>
 <p>设计缓存的过期时间时，使用公式：<strong>过期时间 = baes 时间 + 随机时间</strong>。</p>
 <p>即相同业务数据写缓存时，在基础过期时间之上，再加一个随机的过期时间，让数据在未来一段时间内慢慢过期，避免瞬时全部过期，对 DB 造成过大压力。</p>
 <h4 id="预热" class="headerLink">
-    <a href="#%e9%a2%84%e7%83%ad" class="header-mark"></a>预热</h4><p>预先把热门数据提前存入 Redis 中，并设热门数据的过期时间超大值。</p>
+    <a href="#%e9%a2%84%e7%83%ad" class="header-mark" aria-label="Header mark for '预热'"></a>1.1.2 预热</h4><p>预先把热门数据提前存入 Redis 中，并设热门数据的过期时间超大值。</p>
 <h4 id="使用锁" class="headerLink">
-    <a href="#%e4%bd%bf%e7%94%a8%e9%94%81" class="header-mark"></a>使用锁</h4><p>当发现缓存失效的时候，不是立即从数据库加载数据。</p>
+    <a href="#%e4%bd%bf%e7%94%a8%e9%94%81" class="header-mark" aria-label="Header mark for '使用锁'"></a>1.1.3 使用锁</h4><p>当发现缓存失效的时候，不是立即从数据库加载数据。</p>
 <p>而是先获取分布式锁，获取锁成功才执行数据库查询和写数据到缓存的操作，获取锁失败，则说明当前有线程在执行数据库查询操作，当前线程睡眠一段时间再重试。这样只让一个请求去数据库读取数据。</p>
 <h2 id="缓存穿透" class="headerLink">
-    <a href="#%e7%bc%93%e5%ad%98%e7%a9%bf%e9%80%8f" class="header-mark"></a>缓存穿透</h2><p>数据库本就没有这个数据，请求直奔数据库，缓存系统形同虚设。</p>
+    <a href="#%e7%bc%93%e5%ad%98%e7%a9%bf%e9%80%8f" class="header-mark" aria-label="Header mark for '缓存穿透'"></a>2 缓存穿透</h2><p>数据库本就没有这个数据，请求直奔数据库，缓存系统形同虚设。</p>
 <p>大量请求的 key 根本<font color="red"><strong>不存在于缓存中也不存在数据库</strong></font>，导致请求直接到了数据库上，根本没有经过缓存这一层，对数据库造成压力而影响正常服务。</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/19352698c9c047d4a635c3e561b8293b.png" title="缓存穿透" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/19352698c9c047d4a635c3e561b8293b.png" data-sub-html="<h2>缓存穿透</h2><p>缓存穿透</p>">
-        <img
-            class="lazyload"
-            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/19352698c9c047d4a635c3e561b8293b.png"
-            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/19352698c9c047d4a635c3e561b8293b.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/19352698c9c047d4a635c3e561b8293b.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/19352698c9c047d4a635c3e561b8293b.png 2x"
-            data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/19352698c9c047d4a635c3e561b8293b.png">
-    </a><figcaption class="image-caption">缓存穿透</figcaption>
-    </figure></p>
+<p><figure><a class="lightgallery" href="/19352698c9c047d4a635c3e561b8293b_2799895058453699920.png" title="缓存穿透" data-thumbnail="/19352698c9c047d4a635c3e561b8293b_2799895058453699920.png" data-sub-html="<h2>缓存穿透</h2><p>缓存穿透</p>"><img  loading="lazy" src="/19352698c9c047d4a635c3e561b8293b_2799895058453699920.png" srcset="/19352698c9c047d4a635c3e561b8293b_2799895058453699920_hu635653981261058946.webp 800w, /19352698c9c047d4a635c3e561b8293b_2799895058453699920_hu3040083290050781970.webp 1200w, /19352698c9c047d4a635c3e561b8293b_2799895058453699920_hu9426098114309062230.webp 1600w"  alt="缓存穿透" height="1070" width="692"></a><figcaption class="image-caption">缓存穿透</figcaption>
+</figure></p>
 <h3 id="解决方案-1" class="headerLink">
-    <a href="#%e8%a7%a3%e5%86%b3%e6%96%b9%e6%a1%88-1" class="header-mark"></a>解决方案</h3><p>最基本的首先就是做好参数校验，一些不合法的参数请求直接抛出异常信息返回给客户端。</p>
+    <a href="#%e8%a7%a3%e5%86%b3%e6%96%b9%e6%a1%88-1" class="header-mark" aria-label="Header mark for '解决方案'"></a>2.1 解决方案</h3><p>最基本的首先就是做好参数校验，一些不合法的参数请求直接抛出异常信息返回给客户端。</p>
 <h4 id="缓存无效的-key" class="headerLink">
-    <a href="#%e7%bc%93%e5%ad%98%e6%97%a0%e6%95%88%e7%9a%84-key" class="header-mark"></a>缓存无效的 key</h4><p>如果<strong>缓存和数据库都查不到</strong>
+    <a href="#%e7%bc%93%e5%ad%98%e6%97%a0%e6%95%88%e7%9a%84-key" class="header-mark" aria-label="Header mark for '缓存无效的 key'"></a>2.1.1 缓存无效的 key</h4><p>如果<strong>缓存和数据库都查不到</strong>
 某个 key 的数据就写一个到 Redis 中去并设置过期时间。这种方式可以解决请求的 key 变化不频繁的情况，如果黑客恶意攻击，每次构建不同的请求 key，会导致 Redis 中缓存大量无效的 key 。这种方案并不能从根本上解决此问题。如果非要用这种方式来解决穿透问题的话，应该尽量将无效的 key 的过期时间设置短一点比如 1 分钟。</p>
 <h4 id="布隆过滤器" class="headerLink">
-    <a href="#%e5%b8%83%e9%9a%86%e8%bf%87%e6%bb%a4%e5%99%a8" class="header-mark"></a>布隆过滤器</h4><p>布隆过滤器是一个非常神奇的数据结构，通过它我们可以非常方便地<strong>判断一个给定数据是否存在于海量数据中</strong>。我们需要的仅仅就是判断 key 是否合法。</p>
+    <a href="#%e5%b8%83%e9%9a%86%e8%bf%87%e6%bb%a4%e5%99%a8" class="header-mark" aria-label="Header mark for '布隆过滤器'"></a>2.1.2 布隆过滤器</h4><p>布隆过滤器是一个非常神奇的数据结构，通过它我们可以非常方便地<strong>判断一个给定数据是否存在于海量数据中</strong>。我们需要的仅仅就是判断 key 是否合法。</p>
 <p>具体是这样做的：把所有可能存在的请求的值都存放在布隆过滤器中，当用户请求过来，先判断用户发来的请求的值是否存在于布隆过滤器中。不存在的话，直接返回请求参数错误信息给客户端，存在的话再走其他的判断流程。</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220407/c81922434bf5420c94e349e07980054b.png" title="布隆过滤器" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220407/c81922434bf5420c94e349e07980054b.png" data-sub-html="<h2>布隆过滤器</h2><p>布隆过滤器</p>">
-        <img
-            class="lazyload"
-            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220407/c81922434bf5420c94e349e07980054b.png"
-            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220407/c81922434bf5420c94e349e07980054b.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220407/c81922434bf5420c94e349e07980054b.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220407/c81922434bf5420c94e349e07980054b.png 2x"
-            data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220407/c81922434bf5420c94e349e07980054b.png">
-    </a><figcaption class="image-caption">布隆过滤器</figcaption>
-    </figure></p>
+<p><figure><a class="lightgallery" href="/c81922434bf5420c94e349e07980054b_12835169665026046972.png" title="布隆过滤器" data-thumbnail="/c81922434bf5420c94e349e07980054b_12835169665026046972.png" data-sub-html="<h2>布隆过滤器</h2><p>布隆过滤器</p>"><img  loading="lazy" src="/c81922434bf5420c94e349e07980054b_12835169665026046972.png" srcset="/c81922434bf5420c94e349e07980054b_12835169665026046972_hu9351168702886058976.webp 800w, /c81922434bf5420c94e349e07980054b_12835169665026046972_hu16026703174959639716.webp 1200w, /c81922434bf5420c94e349e07980054b_12835169665026046972_hu10995250180808678687.webp 1600w"  alt="布隆过滤器" height="758" width="626"></a><figcaption class="image-caption">布隆过滤器</figcaption>
+</figure></p>
 <p>需要注意的是布隆过滤器可能会存在误判的情况。</p>
 <p><strong>布隆过滤器说某个元素存在，小概率会误判。布隆过滤器说某个元素不在，这个元素一定不在</strong>。</p>
 <p>这是因为，当一个元素加入布隆过滤器中的时候，会进行如下操作：</p>
@@ -283,56 +336,42 @@
 </ol>
 <p>然而，一定会出现这样一种情况：不同的字符串可能哈希出来的位置相同。我们可以适当增加位数组大小或者调整我们的哈希函数来降低概率。</p>
 <h2 id="缓存雪崩" class="headerLink">
-    <a href="#%e7%bc%93%e5%ad%98%e9%9b%aa%e5%b4%a9" class="header-mark"></a>缓存雪崩</h2><p>缓存在同一时间大面积的失效，后面的请求都直接落到了数据库上，造成数据库短时间内承受大量请求。或是有一些被大量访问数据（热点缓存）在某一时刻大面积失效，导致对应的请求直接落到了数据库上。</p>
+    <a href="#%e7%bc%93%e5%ad%98%e9%9b%aa%e5%b4%a9" class="header-mark" aria-label="Header mark for '缓存雪崩'"></a>3 缓存雪崩</h2><p>缓存在同一时间大面积的失效，后面的请求都直接落到了数据库上，造成数据库短时间内承受大量请求。或是有一些被大量访问数据（热点缓存）在某一时刻大面积失效，导致对应的请求直接落到了数据库上。</p>
 <p>而出现该原因主要有两种：</p>
 <ul>
 <li>大量热点数据同时过期，导致大量请求需要查询数据库并写到缓存。</li>
 <li>Redis 故障宕机，缓存系统异常。</li>
 </ul>
 <h3 id="缓存大量数据同时过期" class="headerLink">
-    <a href="#%e7%bc%93%e5%ad%98%e5%a4%a7%e9%87%8f%e6%95%b0%e6%8d%ae%e5%90%8c%e6%97%b6%e8%bf%87%e6%9c%9f" class="header-mark"></a>缓存大量数据同时过期</h3><p>数据保存在缓存系统并设置了过期时间，但是由于在同时一刻，大量数据同时过期。系统就把请求全部打到数据库获取数据，并发量大的话就会导致数据库压力激增。</p>
+    <a href="#%e7%bc%93%e5%ad%98%e5%a4%a7%e9%87%8f%e6%95%b0%e6%8d%ae%e5%90%8c%e6%97%b6%e8%bf%87%e6%9c%9f" class="header-mark" aria-label="Header mark for '缓存大量数据同时过期'"></a>3.1 缓存大量数据同时过期</h3><p>数据保存在缓存系统并设置了过期时间，但是由于在同时一刻，大量数据同时过期。系统就把请求全部打到数据库获取数据，并发量大的话就会导致数据库压力激增。</p>
 <p><font color="red"><strong>缓存雪崩是发生在大量数据同时失效的场景，而缓存击穿是在某个热点数据失效的场景，这是他们最大的区别</strong>
 </font>。</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/12a33b5773ef4e36be2c71a94b93df11.png" title="缓存大量数据同时过期" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/12a33b5773ef4e36be2c71a94b93df11.png" data-sub-html="<h2>缓存大量数据同时过期</h2><p>缓存大量数据同时过期</p>">
-        <img
-            class="lazyload"
-            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/12a33b5773ef4e36be2c71a94b93df11.png"
-            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/12a33b5773ef4e36be2c71a94b93df11.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/12a33b5773ef4e36be2c71a94b93df11.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/12a33b5773ef4e36be2c71a94b93df11.png 2x"
-            data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/12a33b5773ef4e36be2c71a94b93df11.png">
-    </a><figcaption class="image-caption">缓存大量数据同时过期</figcaption>
-    </figure></p>
+<p><figure><a class="lightgallery" href="/12a33b5773ef4e36be2c71a94b93df11_1368679492002761918.png" title="缓存大量数据同时过期" data-thumbnail="/12a33b5773ef4e36be2c71a94b93df11_1368679492002761918.png" data-sub-html="<h2>缓存大量数据同时过期</h2><p>缓存大量数据同时过期</p>"><img  loading="lazy" src="/12a33b5773ef4e36be2c71a94b93df11_1368679492002761918.png" srcset="/12a33b5773ef4e36be2c71a94b93df11_1368679492002761918_hu368425256648297207.webp 800w, /12a33b5773ef4e36be2c71a94b93df11_1368679492002761918_hu4402664830697396758.webp 1200w, /12a33b5773ef4e36be2c71a94b93df11_1368679492002761918_hu16892593111748229496.webp 1600w"  alt="缓存大量数据同时过期" height="851" width="614"></a><figcaption class="image-caption">缓存大量数据同时过期</figcaption>
+</figure></p>
 <h4 id="过期时间添加随机值" class="headerLink">
-    <a href="#%e8%bf%87%e6%9c%9f%e6%97%b6%e9%97%b4%e6%b7%bb%e5%8a%a0%e9%9a%8f%e6%9c%ba%e5%80%bc" class="header-mark"></a>过期时间添加随机值</h4><p>要避免给大量的数据设置一样的过期时间，过期时间 = baes 时间+ 随机时间（较小的随机数，比如随机增加 1~5 分钟）。</p>
+    <a href="#%e8%bf%87%e6%9c%9f%e6%97%b6%e9%97%b4%e6%b7%bb%e5%8a%a0%e9%9a%8f%e6%9c%ba%e5%80%bc" class="header-mark" aria-label="Header mark for '过期时间添加随机值'"></a>3.1.1 过期时间添加随机值</h4><p>要避免给大量的数据设置一样的过期时间，过期时间 = baes 时间+ 随机时间（较小的随机数，比如随机增加 1~5 分钟）。</p>
 <p>这样一来，就不会导致同一时刻热点数据全部失效，同时过期时间差别也不会太大，既保证了相近时间失效，又能满足业务需求。</p>
 <h4 id="接口限流" class="headerLink">
-    <a href="#%e6%8e%a5%e5%8f%a3%e9%99%90%e6%b5%81" class="header-mark"></a>接口限流</h4><p>当访问的不是核心数据的时候，在查询的方法上加上接口限流保护。比如设置 10000 req/s。如果访问的是核心数据接口，缓存不存在允许从数据库中查询并设置到缓存中。这样的话，只有部分请求会发送到数据库，减少了压力。</p>
+    <a href="#%e6%8e%a5%e5%8f%a3%e9%99%90%e6%b5%81" class="header-mark" aria-label="Header mark for '接口限流'"></a>3.1.2 接口限流</h4><p>当访问的不是核心数据的时候，在查询的方法上加上接口限流保护。比如设置 10000 req/s。如果访问的是核心数据接口，缓存不存在允许从数据库中查询并设置到缓存中。这样的话，只有部分请求会发送到数据库，减少了压力。</p>
 <p><strong>限流，就是指，我们在业务系统的请求入口前端控制每秒进入系统的请求数，避免过多的请求被发送到数据库</strong>。</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/340401972fac48f391fa6906a9444eac.png" title="限流" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/340401972fac48f391fa6906a9444eac.png" data-sub-html="<h2>限流</h2><p>限流</p>">
-        <img
-            class="lazyload"
-            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/340401972fac48f391fa6906a9444eac.png"
-            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/340401972fac48f391fa6906a9444eac.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/340401972fac48f391fa6906a9444eac.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/340401972fac48f391fa6906a9444eac.png 2x"
-            data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/340401972fac48f391fa6906a9444eac.png">
-    </a><figcaption class="image-caption">限流</figcaption>
-    </figure></p>
+<p><figure><a class="lightgallery" href="/340401972fac48f391fa6906a9444eac_1573906051014200624.png" title="限流" data-thumbnail="/340401972fac48f391fa6906a9444eac_1573906051014200624.png" data-sub-html="<h2>限流</h2><p>限流</p>"><img  loading="lazy" src="/340401972fac48f391fa6906a9444eac_1573906051014200624.png" srcset="/340401972fac48f391fa6906a9444eac_1573906051014200624_hu13523653521085272089.webp 800w, /340401972fac48f391fa6906a9444eac_1573906051014200624_hu1948172932993891564.webp 1200w, /340401972fac48f391fa6906a9444eac_1573906051014200624_hu16289545717475520840.webp 1600w"  alt="限流" height="758" width="525"></a><figcaption class="image-caption">限流</figcaption>
+</figure></p>
 <h3 id="redis-故障" class="headerLink">
-    <a href="#redis-%e6%95%85%e9%9a%9c" class="header-mark"></a>Redis 故障</h3><p>一旦 Redis 故障或宕机，会导致大量请求打到数据库，从而发生缓存雪崩。对于 Redis 故障，主要有以下两种解决方案。</p>
+    <a href="#redis-%e6%95%85%e9%9a%9c" class="header-mark" aria-label="Header mark for 'Redis 故障'"></a>3.2 Redis 故障</h3><p>一旦 Redis 故障或宕机，会导致大量请求打到数据库，从而发生缓存雪崩。对于 Redis 故障，主要有以下两种解决方案。</p>
 <h4 id="服务熔断和限流" class="headerLink">
-    <a href="#%e6%9c%8d%e5%8a%a1%e7%86%94%e6%96%ad%e5%92%8c%e9%99%90%e6%b5%81" class="header-mark"></a>服务熔断和限流</h4><p>在业务系统中，针对高并发的使用服务熔断来有损提供服务从而保证系统的可用性。</p>
+    <a href="#%e6%9c%8d%e5%8a%a1%e7%86%94%e6%96%ad%e5%92%8c%e9%99%90%e6%b5%81" class="header-mark" aria-label="Header mark for '服务熔断和限流'"></a>3.2.1 服务熔断和限流</h4><p>在业务系统中，针对高并发的使用服务熔断来有损提供服务从而保证系统的可用性。</p>
 <p>服务熔断就是当从缓存获取数据发现异常，则直接返回错误数据给前端，防止所有流量打到数据库导致宕机。</p>
 <p>服务熔断和限流属于在发生了缓存雪崩，如何<strong>降低雪崩对数据库造成的影响</strong>的方案。</p>
 <h4 id="高可用缓存集群" class="headerLink">
-    <a href="#%e9%ab%98%e5%8f%af%e7%94%a8%e7%bc%93%e5%ad%98%e9%9b%86%e7%be%a4" class="header-mark"></a>高可用缓存集群</h4><p>缓存系统一定要构建一套 Redis 高可用集群，比如 <a href="" rel="">Redis 哨兵集群 TODO</a> 或者 <a href="" rel="">Redis Cluster 集群 TODO</a>，如果 Redis 的主节点故障宕机了，从节点还可以切换成为主节点，继续提供缓存服务，避免了由于缓存实例宕机而导致的缓存雪崩问题。</p>
+    <a href="#%e9%ab%98%e5%8f%af%e7%94%a8%e7%bc%93%e5%ad%98%e9%9b%86%e7%be%a4" class="header-mark" aria-label="Header mark for '高可用缓存集群'"></a>3.2.2 高可用缓存集群</h4><p>缓存系统一定要构建一套 Redis 高可用集群，比如 <a href="" rel="">Redis 哨兵集群 TODO</a> 或者 <a href="" rel="">Redis Cluster 集群 TODO</a>，如果 Redis 的主节点故障宕机了，从节点还可以切换成为主节点，继续提供缓存服务，避免了由于缓存实例宕机而导致的缓存雪崩问题。</p>
 <h2 id="总结" class="headerLink">
-    <a href="#%e6%80%bb%e7%bb%93" class="header-mark"></a>总结</h2><ul>
+    <a href="#%e6%80%bb%e7%bb%93" class="header-mark" aria-label="Header mark for '总结'"></a>4 总结</h2><ul>
 <li>缓存穿透指的是数据库本就没有这个数据，请求直奔数据库，缓存系统形同虚设。</li>
 <li>缓存击穿（失效）指的是数据库有数据，缓存本应该也有数据，但是缓存过期了，Redis 这层流量防护屏障被击穿了，请求直奔数据库。</li>
 <li>缓存雪崩指的是大量的热点数据无法在 Redis 缓存中处理（大面积热点数据缓存失效、Redis 宕机），流量全部打到数据库，导致数据库极大压力。</li>
 </ul>
 <h2 id="参考" class="headerLink">
-    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark" aria-label="Header mark for '参考'"></a>5 参考</h2><ul>
 <li><a href="https://mp.weixin.qq.com/s?__biz=Mzg5NDY2MDk4Mw==&amp;mid=2247488270&amp;idx=1&amp;sn=03674abcaa78b027bd12aaafd5a2f6e2" target="_blank" rel="noopener noreferrer">Redis 缓存击穿（失效）、缓存穿透、缓存雪崩怎么解决？</a></li>
 </ul>
 </div>
@@ -342,47 +381,101 @@
         <div class="post-info-line">
             <div class="post-info-mod">
                 <span>更新于 2023-07-27&nbsp;<a class="git-hash" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/d8a07fa4ed04175d300ac3b9dd9e1ac6c2b86929" target="_blank" title="commit by weibin(xiaobinqt@163.com) d8a07fa4ed04175d300ac3b9dd9e1ac6c2b86929: update redis-break-pierce-avalanche.md" rel="noopener noreferrer">
-                                    <i class="fas fa-hashtag fa-fw"></i>d8a07fa4</a></span>
+                                    <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M440.667 182.109l7.143-40c1.313-7.355-4.342-14.109-11.813-14.109h-74.81l14.623-81.891C377.123 38.754 371.468 32 363.997 32h-40.632a12 12 0 0 0-11.813 9.891L296.175 128H197.54l14.623-81.891C213.477 38.754 207.822 32 200.35 32h-40.632a12 12 0 0 0-11.813 9.891L132.528 128H53.432a12 12 0 0 0-11.813 9.891l-7.143 40C33.163 185.246 38.818 192 46.289 192h74.81L98.242 320H19.146a12 12 0 0 0-11.813 9.891l-7.143 40C-1.123 377.246 4.532 384 12.003 384h74.81L72.19 465.891C70.877 473.246 76.532 480 84.003 480h40.632a12 12 0 0 0 11.813-9.891L151.826 384h98.634l-14.623 81.891C234.523 473.246 240.178 480 247.65 480h40.632a12 12 0 0 0 11.813-9.891L315.472 384h79.096a12 12 0 0 0 11.813-9.891l7.143-40c1.313-7.355-4.342-14.109-11.813-14.109h-74.81l22.857-128h79.096a12 12 0 0 0 11.813-9.891zM261.889 320h-98.634l22.857-128h98.634l-22.857 128z"/></svg>d8a07fa4</a></span>
             </div>
             <div class="post-info-license"></div>
         </div>
-        <div class="post-info-line">
+        <div class="post-info-line print:!tw-hidden">
             <div class="post-info-md"><span><a class="link-to-mardown" href=/redis-break-pierce-avalanche/index.md target="_blank" rel="noopener noreferrer">阅读原始文档</a>
+                    </span><span>|&nbsp;<a class="link-to-source" href=https://github.com/xiaobinqt/xiaobinqt.github.io/blob/main/content/posts/developer/redis-break-pierce-avalanche.md target="_blank" rel="noopener noreferrer">查看源代码</a>
+                    </span><span>|&nbsp;<a class="link-to-edit" href=https://github.com/xiaobinqt/xiaobinqt.github.io/edit/main/content/posts/developer/redis-break-pierce-avalanche.md target="_blank" rel="noopener noreferrer">编辑此页</a>
                     </span></div>
-            <div class="post-info-share">
-                <span><a href="#" onclick="return false;" title="分享到 Twitter" data-sharer="twitter" data-url="https://www.xiaobinqt.cn/redis-break-pierce-avalanche/" data-title="Redis 缓存击穿、缓存穿透、缓存雪崩" data-hashtags="redis"><i class="fab fa-twitter fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Facebook" data-sharer="facebook" data-url="https://www.xiaobinqt.cn/redis-break-pierce-avalanche/" data-hashtag="redis"><i class="fab fa-facebook-square fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Hacker News" data-sharer="hackernews" data-url="https://www.xiaobinqt.cn/redis-break-pierce-avalanche/" data-title="Redis 缓存击穿、缓存穿透、缓存雪崩"><i class="fab fa-hacker-news fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Line" data-sharer="line" data-url="https://www.xiaobinqt.cn/redis-break-pierce-avalanche/" data-title="Redis 缓存击穿、缓存穿透、缓存雪崩"><i data-svg-src="/lib/simple-icons/icons/line.min.svg"></i></a><a href="#" onclick="return false;" title="分享到 微博" data-sharer="weibo" data-url="https://www.xiaobinqt.cn/redis-break-pierce-avalanche/" data-title="Redis 缓存击穿、缓存穿透、缓存雪崩"><i class="fab fa-weibo fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 百度" data-sharer="baidu" data-url="https://www.xiaobinqt.cn/redis-break-pierce-avalanche/" data-title="Redis 缓存击穿、缓存穿透、缓存雪崩"><i data-svg-src="/lib/simple-icons/icons/baidu.min.svg"></i></a></span>
-            </div>
+            <div class="post-info-share"><button title="分享到 微博" data-sharer="weibo" data-url="https://www.xiaobinqt.cn/redis-break-pierce-avalanche/" data-title="Redis 缓存击穿、缓存穿透、缓存雪崩"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M407 177.6c7.6-24-13.4-46.8-37.4-41.7-22 4.8-28.8-28.1-7.1-32.8 50.1-10.9 92.3 37.1 76.5 84.8-6.8 21.2-38.8 10.8-32-10.3zM214.8 446.7C108.5 446.7 0 395.3 0 310.4c0-44.3 28-95.4 76.3-143.7C176 67 279.5 65.8 249.9 161c-4 13.1 12.3 5.7 12.3 6 79.5-33.6 140.5-16.8 114 51.4-3.7 9.4 1.1 10.9 8.3 13.1 135.7 42.3 34.8 215.2-169.7 215.2zm143.7-146.3c-5.4-55.7-78.5-94-163.4-85.7-84.8 8.6-148.8 60.3-143.4 116s78.5 94 163.4 85.7c84.8-8.6 148.8-60.3 143.4-116zM347.9 35.1c-25.9 5.6-16.8 43.7 8.3 38.3 72.3-15.2 134.8 52.8 111.7 124-7.4 24.2 29.1 37 37.4 12 31.9-99.8-55.1-195.9-157.4-174.3zm-78.5 311c-17.1 38.8-66.8 60-109.1 46.3-40.8-13.1-58-53.4-40.3-89.7 17.7-35.4 63.1-55.4 103.4-45.1 42 10.8 63.1 50.2 46 88.5zm-86.3-30c-12.9-5.4-30 .3-38 12.9-8.3 12.9-4.3 28 8.6 34 13.1 6 30.8.3 39.1-12.9 8-13.1 3.7-28.3-9.7-34zm32.6-13.4c-5.1-1.7-11.4.6-14.3 5.4-2.9 5.1-1.4 10.6 3.7 12.9 5.1 2 11.7-.3 14.6-5.4 2.8-5.2 1.1-10.9-4-12.9z"/></svg></button><button title="分享到 百度" data-sharer="baidu" data-url="https://www.xiaobinqt.cn/redis-break-pierce-avalanche/" data-title="Redis 缓存击穿、缓存穿透、缓存雪崩"><svg class="icon" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>Baidu</title><path d="M9.154 0C7.71 0 6.54 1.658 6.54 3.707c0 2.051 1.171 3.71 2.615 3.71 1.446 0 2.614-1.659 2.614-3.71C11.768 1.658 10.6 0 9.154 0zm7.025.594C14.86.58 13.347 2.589 13.2 3.927c-.187 1.745.25 3.487 2.179 3.735 1.933.25 3.175-1.806 3.422-3.364.252-1.555-.995-3.364-2.362-3.674a1.218 1.218 0 0 0-.261-.03zM3.582 5.535a2.811 2.811 0 0 0-.156.008c-2.118.19-2.428 3.24-2.428 3.24-.287 1.41.686 4.425 3.297 3.864 2.617-.561 2.262-3.68 2.183-4.362-.125-1.018-1.292-2.773-2.896-2.75zm16.534 1.753c-2.308 0-2.617 2.119-2.617 3.616 0 1.43.121 3.425 2.988 3.362 2.867-.063 2.553-3.238 2.553-3.988 0-.745-.62-2.99-2.924-2.99zm-8.264 2.478c-1.424.014-2.708.925-3.323 1.947-1.118 1.868-2.863 3.05-3.112 3.363-.25.309-3.61 2.116-2.864 5.42.746 3.301 3.365 3.237 3.365 3.237s1.93.19 4.171-.31c2.24-.495 4.17.123 4.17.123s5.233 1.748 6.665-1.616c1.43-3.364-.808-5.109-.808-5.109s-2.99-2.306-4.736-4.798c-1.072-1.665-2.348-2.268-3.528-2.257zm-2.234 3.84l1.542.024v8.197H7.758c-1.47-.291-2.055-1.292-2.13-1.462-.072-.173-.488-.976-.268-2.343.635-2.049 2.447-2.196 2.447-2.196h1.81zm3.964 2.39v3.881c.096.413.612.488.612.488h1.614v-4.343h1.689v5.782h-3.915c-1.517-.39-1.59-1.465-1.59-1.465v-4.317zm-5.458 1.147c-.66.197-.978.708-1.05.928-.076.22-.247.78-.1 1.269.294 1.095 1.248 1.144 1.248 1.144h1.37v-3.34z"/></svg></button></div>
         </div>
     </div>
 
     <div class="post-info-more">
-        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/redis/">redis</a></section>
-        <section>
-            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        <section class="post-tags"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M497.941 225.941L286.059 14.059A48 48 0 0 0 252.118 0H48C21.49 0 0 21.49 0 48v204.118a48 48 0 0 0 14.059 33.941l211.882 211.882c18.744 18.745 49.136 18.746 67.882 0l204.118-204.118c18.745-18.745 18.745-49.137 0-67.882zM112 160c-26.51 0-48-21.49-48-48s21.49-48 48-48 48 21.49 48 48-21.49 48-48 48zm513.941 133.823L421.823 497.941c-18.745 18.745-49.137 18.745-67.882 0l-.36-.36L527.64 323.522c16.999-16.999 26.36-39.6 26.36-63.64s-9.362-46.641-26.36-63.64L331.397 0h48.721a48 48 0 0 1 33.941 14.059l211.882 211.882c18.745 18.745 18.745 49.137 0 67.882z"/></svg>&nbsp;<a href="/tags/redis/">Redis</a></section>
+        <section class="print:!tw-hidden">
+            <span><button class="tw-text-fgColor-link-muted hover:tw-text-fgColor-link-muted-hover" onclick="window.history.back();">返回</button></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
         </section>
     </div>
 
-    <div class="post-nav"><a href="/go-gc/" class="prev" rel="prev" title="Go GC 垃圾回收"><i class="fas fa-angle-left fa-fw"></i>Go GC 垃圾回收</a>
-            <a href="/mysql-workbench-show-triggers/" class="next" rel="next" title="mysql workbench 查看触发器">mysql workbench 查看触发器<i class="fas fa-angle-right fa-fw"></i></a></div>
+    <div class="post-nav print:tw-hidden"><a href="/go-gc/" class="prev" rel="prev" title="Go GC 垃圾回收"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M31.7 239l136-136c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9L127.9 256l96.4 96.4c9.4 9.4 9.4 24.6 0 33.9L201.7 409c-9.4 9.4-24.6 9.4-33.9 0l-136-136c-9.5-9.4-9.5-24.6-.1-34z"/></svg>Go GC 垃圾回收</a>
+            <a href="/mysql-workbench-show-triggers/" class="next" rel="next" title="mysql workbench 查看触发器">mysql workbench 查看触发器<svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M224.3 273l-136 136c-9.4 9.4-24.6 9.4-33.9 0l-22.6-22.6c-9.4-9.4-9.4-24.6 0-33.9l96.4-96.4-96.4-96.4c-9.4-9.4-9.4-24.6 0-33.9L54.3 103c9.4-9.4 24.6-9.4 33.9 0l136 136c9.5 9.4 9.5 24.6.1 34z"/></svg></a></div>
 </div>
-<div id="comments"><div id="gitalk" class="comment"></div><noscript>
+<div id="comments" class="print:!tw-hidden tw-pt-32 tw-pb-8"><div id="gitalk" class="comment"></div><noscript>
                 Please enable JavaScript to view the comments powered by <a href="https://github.com/gitalk/gitalk"></a>Gitalk</a>.
             </noscript></div></article></div>
         </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2018 - 2024</span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        <div class="footer-container"><div class="footer-line"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M256 8C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 448c-110.532 0-200-89.451-200-200 0-110.531 89.451-200 200-200 110.532 0 200 89.451 200 200 0 110.532-89.451 200-200 200zm107.351-101.064c-9.614 9.712-45.53 41.396-104.065 41.396-82.43 0-140.484-61.425-140.484-141.567 0-79.152 60.275-139.401 139.762-139.401 55.531 0 88.738 26.62 97.593 34.779a11.965 11.965 0 0 1 1.936 15.322l-18.155 28.113c-3.841 5.95-11.966 7.282-17.499 2.921-8.595-6.776-31.814-22.538-61.708-22.538-48.303 0-77.916 35.33-77.916 80.082 0 41.589 26.888 83.692 78.277 83.692 32.657 0 56.843-19.039 65.726-27.225 5.27-4.857 13.596-4.039 17.82 1.738l19.865 27.17a11.947 11.947 0 0 1-1.152 15.518z"/></svg>2018 - 2024<span class="author">&nbsp;<a href="https://github.com/xiaobinqt" target="_blank" rel="noopener noreferrer">xiaobinqt</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span><span class="icp-splitter">&nbsp;|&nbsp;</span><br class="icp-br"/>
+                    <span class="icp">${ICP}</span></div>
             <div class="footer-line"></div>
             <div class="footer-line">
             </div>
         </div></footer></div>
 
-    <div id="fixed-buttons"><a href="#back-to-top" id="back-to-top-button" class="fixed-button" title="回到顶部">
-            <i class="fas fa-arrow-up fa-fw"></i>
-        </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
-            <i class="fas fa-comment fa-fw"></i>
-        </a>
-    </div><div class="assets"><script type="text/javascript" src="/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="/lib/algoliasearch/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/topbar/topbar.min.js"></script><script type="text/javascript" src="/lib/pjax/pjax.min.js"></script><script type="text/javascript" src="/js/theme.min.js" defer></script></div>
-
-<div class="pjax-assets"><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":1000},"comment":{"gitalk":{"admin":["xiaobinqt"],"clientID":"47b15de6c2d8a0f8d707","clientSecret":"c70556c8b3a3b38ea7c72e539ff3b37d5bc1b4f3","id":"fcb660b181489d962b44249270eaefcd","owner":"xiaobinqt","repo":"xiaobinqt.github.io","title":"Redis 缓存击穿、缓存穿透、缓存雪崩"}},"lightGallery":{"actualSize":false,"exThumbImage":"data-thumbnail","hideBarsDelay":2000,"selector":".lightgallery","speed":400,"thumbContHeight":80,"thumbWidth":80,"thumbnail":true},"search":{"algoliaAppID":"U7QBQFMJWZ","algoliaIndex":"xiaobinqt.io","algoliaSearchKey":"1679f7a929fbfff6be0d47ba33947c03","highlightTag":"em","maxResultLength":20,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"},"sharerjs":true};</script><script type="text/javascript" src="/lib/gitalk/gitalk.min.js"></script><script type="text/javascript" src="/js/gitalk.min.js" defer></script><script type="text/javascript" src="/lib/lightgallery/lightgallery.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-thumbnail.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-zoom.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><link rel="stylesheet" href="/lib/gitalk/gitalk.min.css"><link rel="stylesheet" href="/lib/lightgallery/lightgallery.min.css"></div>
+    <div id="fixed-buttons" class="print:!tw-hidden"><a href="#back-to-top" id="back-to-top-button" class="fixed-button tw-transition-opacity tw-opacity-0" title="回到顶部">
+            <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M34.9 289.5l-22.2-22.2c-9.4-9.4-9.4-24.6 0-33.9L207 39c9.4-9.4 24.6-9.4 33.9 0l194.3 194.3c9.4 9.4 9.4 24.6 0 33.9L413 289.4c-9.5 9.5-25 9.3-34.3-.4L264 168.6V456c0 13.3-10.7 24-24 24h-32c-13.3 0-24-10.7-24-24V168.6L69.2 289.1c-9.3 9.8-24.8 10-34.3.4z"/></svg>
+        </a><a href="#comments" id="view-comments" class="fixed-button" title="查看评论">
+            <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M256 32C114.6 32 0 125.1 0 240c0 49.6 21.4 95 57 130.7C44.5 421.1 2.7 466 2.2 466.5c-2.2 2.3-2.8 5.7-1.5 8.7S4.8 480 8 480c66.3 0 116-31.8 140.6-51.4 32.7 12.3 69 19.4 107.4 19.4 141.4 0 256-93.1 256-208S397.4 32 256 32z"/></svg>
+        </a></div><script type="module">
+        (async () => {
+            const supportSpeculationRules = HTMLScriptElement.supports && HTMLScriptElement.supports("speculationrules");
+            if (!supportSpeculationRules) {
+              await import("\/lib\/instant.page\/instantpage.min.js");
+            }
+        })();
+    </script><link rel="stylesheet" href="/lib/gitalk/gitalk.min.css"><link rel="stylesheet" href="/lib/lightgallery/lightgallery.min.css">
+<script>window.config={"algoliasearch.min.js":"/lib/algoliasearch/algoliasearch-lite.umd.min.js","autocomplete.min.js":"/lib/autocomplete/autocomplete.min.js","comment":{"gitalk":{"admin":["xiaobinqt"],"clientID":"47b15de6c2d8a0f8d707","clientSecret":"c70556c8b3a3b38ea7c72e539ff3b37d5bc1b4f3","id":"fcb660b181489d962b44249270eaefcd","owner":"xiaobinqt","repo":"xiaobinqt.github.io","title":"Redis 缓存击穿、缓存穿透、缓存雪崩"}},"lightGallery":{"actualSize":false,"exThumbImage":"data-thumbnail","hideBarsDelay":2000,"selector":".lightgallery","speed":400,"thumbContHeight":80,"thumbWidth":80,"thumbnail":true},"search":{"algoliaAppID":"__ALGOLIA_APP_ID__","algoliaIndex":"xiaobinqt.io","algoliaSearchKey":"__ALGOLIA_SEARCH_API_KEY__","highlightTag":"em","maxResultLength":20,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"},"sharerjs":true,"table":{"sort":true}};</script><script
+    src="/lib/tablesort/tablesort.min.js"
+    
+  ></script><script
+    src="/lib/lightgallery/lightgallery.min.js"
+    
+  ></script><script
+    src="/lib/lightgallery/lg-thumbnail.min.js"
+    
+  ></script><script
+    src="/lib/lightgallery/lg-zoom.min.js"
+    
+  ></script><script
+    src="/lib/sharer/sharer.min.js"
+    
+  ></script><script
+    src="/js/theme.min.js"
+    
+      defer
+    
+  ></script><script
+    src="/lib/gitalk/gitalk.min.js"
+    
+  ></script><script
+    src="/js/gitalk.min.js"
+    
+      defer
+    
+  ></script>
+    
+    <script type="speculationrules">
+        {
+          "prerender": [
+            {
+              "where": { "href_matches": "/*" },
+              "eagerness": "moderate"
+            }
+          ]
+        }
+    </script>
+      
 </body>
 
 </html>

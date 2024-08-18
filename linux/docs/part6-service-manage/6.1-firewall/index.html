@@ -15,9 +15,12 @@ iptables 可以通过定义规则集来控制传入、传出和转发的网络�
 iptables 的工作方式是通过配置 iptables 规则表来匹配和处理网络数据包。常见的 iptables 规则表包括 filter 表（用于过滤数据包）、nat 表（用于网络地址转换）和 mangle 表（用于特殊处理数据包）。管理员可以使用命令行界面（CLI）或脚本来配置和管理 iptables。
 尽管 iptables 是一个软件防火墙，但它在 Linux 系统中可以与硬件防火墙配合使用。在网络架构中，可以将 Linux 服务器作为边界设备放置在硬件防火墙之后，并使用 iptables 来增强安全性和网络流量控制。这种组合的优势是，硬件防火墙负责网络的第一道防线，而 iptables 在服务器本身提供了更细粒度的流量控制和策略定制能力。
 CentOS 6 默认的防火墙是 iptables。CentOS 7 默认的防火墙是 firewallD（底层使用 netfilter）。">
-<meta name="theme-color" content="#FFFFFF">
-<meta name="color-scheme" content="light dark"><meta property="og:title" content="6.1 防火墙" />
-<meta property="og:description" content="6.1 防火墙 # 6.1.1 分类 # 软件防火墙和硬件防火墙是两种常见的网络安全设备或软件，用于保护计算机系统和网络免受未授权访问、恶意攻击和网络威胁等。
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/linux/docs/part6-service-manage/6.1-firewall/">
+  <meta property="og:site_name" content="Linux 学习笔记">
+  <meta property="og:title" content="6.1 防火墙">
+  <meta property="og:description" content="6.1 防火墙 # 6.1.1 分类 # 软件防火墙和硬件防火墙是两种常见的网络安全设备或软件，用于保护计算机系统和网络免受未授权访问、恶意攻击和网络威胁等。
 软件防火墙（Software Firewall）： 软件防火墙是一种安装在计算机系统上的软件应用程序，用于监控和控制网络流量。它可以通过检查网络数据包的来源、目的地、协议和端口等信息，来判断是否允许或阻止数据包的传输。软件防火墙通常运行在操作系统的网络协议栈之上，能够保护单个计算机系统或网络中的特定主机。常见的软件防火墙包括Windows防火墙、IPTables、NetFilter等。
 硬件防火墙（Hardware Firewall）： 硬件防火墙是一种独立的物理设备，专门用于网络安全防护。它通常部署在网络的边界位置，作为网络流量的第一道防线。硬件防火墙通过硬件和专用的嵌入式软件来执行数据包过滤和访问控制。它可以监控和检测网络流量，并根据预先定义的规则和策略来允许或阻止数据包的传输。硬件防火墙通常具有更高的性能和吞吐量，并且对于整个网络中的所有主机都提供保护。常见的硬件防火墙包括 Cisco ASA、Palo Alto Networks、Fortinet 等。
 包过滤防火墙（Packet Filtering Firewall）和应用层防火墙（Application Layer Firewall）是防火墙的两种不同类型：
@@ -28,19 +31,23 @@ iptables # iptables 是一个软件防火墙，而不是硬件防火墙，提供
 iptables 可以通过定义规则集来控制传入、传出和转发的网络流量。这些规则可以基于源 IP 地址、目标 IP 地址、协议、端口号等条件进行过滤和操作。使用 iptables 可以实现诸如网络地址转换（NAT）、端口转发、数据包屏蔽、阻止 DoS（拒绝服务）攻击等功能。
 iptables 的工作方式是通过配置 iptables 规则表来匹配和处理网络数据包。常见的 iptables 规则表包括 filter 表（用于过滤数据包）、nat 表（用于网络地址转换）和 mangle 表（用于特殊处理数据包）。管理员可以使用命令行界面（CLI）或脚本来配置和管理 iptables。
 尽管 iptables 是一个软件防火墙，但它在 Linux 系统中可以与硬件防火墙配合使用。在网络架构中，可以将 Linux 服务器作为边界设备放置在硬件防火墙之后，并使用 iptables 来增强安全性和网络流量控制。这种组合的优势是，硬件防火墙负责网络的第一道防线，而 iptables 在服务器本身提供了更细粒度的流量控制和策略定制能力。
-CentOS 6 默认的防火墙是 iptables。CentOS 7 默认的防火墙是 firewallD（底层使用 netfilter）。" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://example.com/linux/docs/part6-service-manage/6.1-firewall/" /><meta property="article:section" content="docs" />
-
-<meta property="article:modified_time" content="2023-07-07T17:36:57+08:00" />
+CentOS 6 默认的防火墙是 iptables。CentOS 7 默认的防火墙是 firewallD（底层使用 netfilter）。">
+  <meta property="og:locale" content="zh">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:modified_time" content="2023-07-07T17:36:57+08:00">
 <title>6.1 防火墙 | Linux 学习笔记</title>
 <link rel="manifest" href="/linux/manifest.json">
-<link rel="icon" href="/linux/favicon.png" type="image/x-icon">
-<link rel="stylesheet" href="/linux/book.min.cad59a3be22b32d901c8b99a5bf0c00f01535383d8d0e86742e5449f598d17af.css" integrity="sha256-ytWaO&#43;IrMtkByLmaW/DADwFTU4PY0OhnQuVEn1mNF68=" crossorigin="anonymous">
-  <script defer src="/linux/flexsearch.min.js"></script>
-  <script defer src="/linux/zh.search.min.4255bb51fefe12beb719fa99814aff14a9032f6767f09d28d03df087aa2efc4f.js" integrity="sha256-QlW7Uf7&#43;Er63GfqZgUr/FKkDL2dn8J0o0D3wh6ou/E8=" crossorigin="anonymous"></script>
+<link rel="icon" href="/linux/favicon.png" >
+<link rel="canonical" href="https://example.com/linux/docs/part6-service-manage/6.1-firewall/">
+<link rel="stylesheet" href="/linux/book.min.c800dd82e49099945db6750ce1011947221e4464ea7e2ba833b653fe2dd19d1c.css" integrity="sha256-yADdguSQmZRdtnUM4QEZRyIeRGTqfiuoM7ZT/i3RnRw=" crossorigin="anonymous">
+  <script defer src="/linux/fuse.min.js"></script>
+  <script defer src="/linux/zh.search.min.0afc493c0e2806c47e6ea5c37eb3a83b7fd85c5ed030b4ef2823216a214c554a.js" integrity="sha256-CvxJPA4oBsR&#43;bqXDfrOoO3/YXF7QMLTvKCMhaiFMVUo=" crossorigin="anonymous"></script>
 
-  <script defer src="/linux/sw.min.e3338ad661715b83bfd6397040a613605d8bb26c10798773e2176216e2123560.js" integrity="sha256-4zOK1mFxW4O/1jlwQKYTYF2LsmwQeYdz4hdiFuISNWA=" crossorigin="anonymous"></script>
+  <script defer src="/linux/sw.min.06246f7b13a877707832946d0b1941d626f4349fd8e3bdfd318889981ed22d49.js" integrity="sha256-BiRvexOod3B4MpRtCxlB1ib0NJ/Y4739MYiJmB7SLUk=" crossorigin="anonymous"></script>
+
+  
+
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book
@@ -61,11 +68,12 @@ https://github.com/alex-shpak/hugo-book
 </h2>
 
 
-<div class="book-search">
+<div class="book-search hidden">
   <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
   <div class="book-search-spinner hidden"></div>
   <ul id="book-search-results"></ul>
 </div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
 
 
 
@@ -943,7 +951,7 @@ https://github.com/alex-shpak/hugo-book
 
       
       
-  <article class="markdown"><h1 id="61-防火墙">
+  <article class="markdown book-article"><h1 id="61-防火墙">
   6.1 防火墙
   <a class="anchor" href="#61-%e9%98%b2%e7%81%ab%e5%a2%99">#</a>
 </h1>
@@ -1179,9 +1187,9 @@ https://github.com/alex-shpak/hugo-book
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/8c289b4a2647a6ce517ce8b9a492340a7559ab78" title='最后修改者 weibin | July 7, 2023' target="_blank" rel="noopener">
-      <img src="/linux/svg/calendar.svg" class="book-icon" alt="Calendar" />
-      <span>July 7, 2023</span>
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/8c289b4a2647a6ce517ce8b9a492340a7559ab78" title='最后修改者 weibin | 七月 7, 2023' target="_blank" rel="noopener">
+      <img src="/linux/svg/calendar.svg" class="book-icon" alt="" />
+      <span>七月 7, 2023</span>
     </a>
   </div>
 
@@ -1189,7 +1197,7 @@ https://github.com/alex-shpak/hugo-book
 
   <div>
     <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/content/docs/part6-service-manage/6.1-firewall.md" target="_blank" rel="noopener">
-      <img src="/linux/svg/edit.svg" class="book-icon" alt="Edit" />
+      <img src="/linux/svg/edit.svg" class="book-icon" alt="" />
       <span>编辑本页</span>
     </a>
   </div>

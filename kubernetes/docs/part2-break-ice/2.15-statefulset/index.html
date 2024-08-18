@@ -9,26 +9,33 @@
 Kubernetes 定义了一个新的 API 对象 StatefulSet，专门用来管理有状态的应用。
 2.15.2 描述 StatefulSet # StatefulSet 也可以看做是 Deployment 的一个特例，它不能直接用 kubectl create 创建样板文件，它的对象描述和 Deployment 差不多，可以把 Deployment 适当修改一下，就变成了 StatefulSet 对象。以下是一个使用 Redis 的 StatefulSet 描述文件：
 apiVersion: apps/v1 kind: StatefulSet metadata: name: redis-sts spec: serviceName: redis-svc replicas: 2 selector: matchLabels: app: redis-sts template: metadata: labels: app: redis-sts spec: containers: - image: redis:5-alpine name: redis ports: - containerPort: 6379 YAML 文件里除了 kind 必须是 “StatefulSet”，在 spec 里还多出了一个 “serviceName” 字段外，其余的部分和 Deployment 是一模一样的，比如 replicas、selector、template。">
-<meta name="theme-color" content="#FFFFFF">
-<meta name="color-scheme" content="light dark"><meta property="og:title" content="2.15 StatefulSet" />
-<meta property="og:description" content="2.15 StatefulSet # 2.15.1 状态和应用 # 理论上任何应用都是有状态的，只是有的应用的状态信息不是很重要，即使不恢复状态也能够正常运行，这就是 “无状态应用”。“无状态应用” 典型的例子就是 Nginx 这样的 Web 服务器，它只是处理 HTTP 请求，本身不生产数据（日志除外），不需要特意保存状态，无论以什么状态重启都能很好地对外提供服务。
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/kubernetes/docs/part2-break-ice/2.15-statefulset/">
+  <meta property="og:site_name" content="Kubernetes 学习笔记">
+  <meta property="og:title" content="2.15 StatefulSet">
+  <meta property="og:description" content="2.15 StatefulSet # 2.15.1 状态和应用 # 理论上任何应用都是有状态的，只是有的应用的状态信息不是很重要，即使不恢复状态也能够正常运行，这就是 “无状态应用”。“无状态应用” 典型的例子就是 Nginx 这样的 Web 服务器，它只是处理 HTTP 请求，本身不生产数据（日志除外），不需要特意保存状态，无论以什么状态重启都能很好地对外提供服务。
 还有一些应用，运行状态信息很重要，如果因为重启而丢失了状态是绝对无法接受的，这样的应用是 “有状态应用”。比如 Redis、MySQL 这样的数据库，它们的 “状态” 就是在内存或者磁盘上产生的数据，是应用的核心价值所在，如果不能够把这些数据及时保存再恢复，那绝对会是灾难性的后果。
 对于 Deployment 来说，多个实例之间是无关的，启动的顺序不固定，Pod 的名字、IP 地址、域名也都是完全随机的，这正是 “无状态应用” 的特点。对于 “有状态应用”，多个实例之间可能存在依赖关系，比如 master/slave、active/passive，需要依次启动才能保证应用正常运行，外界的客户端也可能要使用固定的网络标识来访问实例，而且这些信息还必须要保证在 Pod 重启后不变。
 Kubernetes 定义了一个新的 API 对象 StatefulSet，专门用来管理有状态的应用。
 2.15.2 描述 StatefulSet # StatefulSet 也可以看做是 Deployment 的一个特例，它不能直接用 kubectl create 创建样板文件，它的对象描述和 Deployment 差不多，可以把 Deployment 适当修改一下，就变成了 StatefulSet 对象。以下是一个使用 Redis 的 StatefulSet 描述文件：
-apiVersion: apps/v1 kind: StatefulSet metadata: name: redis-sts spec: serviceName: redis-svc replicas: 2 selector: matchLabels: app: redis-sts template: metadata: labels: app: redis-sts spec: containers: - image: redis:5-alpine name: redis ports: - containerPort: 6379 YAML 文件里除了 kind 必须是 “StatefulSet”，在 spec 里还多出了一个 “serviceName” 字段外，其余的部分和 Deployment 是一模一样的，比如 replicas、selector、template。" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://example.com/kubernetes/docs/part2-break-ice/2.15-statefulset/" /><meta property="article:section" content="docs" />
-
-<meta property="article:modified_time" content="2023-06-21T11:00:52+08:00" />
+apiVersion: apps/v1 kind: StatefulSet metadata: name: redis-sts spec: serviceName: redis-svc replicas: 2 selector: matchLabels: app: redis-sts template: metadata: labels: app: redis-sts spec: containers: - image: redis:5-alpine name: redis ports: - containerPort: 6379 YAML 文件里除了 kind 必须是 “StatefulSet”，在 spec 里还多出了一个 “serviceName” 字段外，其余的部分和 Deployment 是一模一样的，比如 replicas、selector、template。">
+  <meta property="og:locale" content="zh">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:modified_time" content="2023-06-21T11:00:52+08:00">
 <title>2.15 StatefulSet | Kubernetes 学习笔记</title>
 <link rel="manifest" href="/kubernetes/manifest.json">
-<link rel="icon" href="/kubernetes/favicon.png" type="image/x-icon">
-<link rel="stylesheet" href="/kubernetes/book.min.cad59a3be22b32d901c8b99a5bf0c00f01535383d8d0e86742e5449f598d17af.css" integrity="sha256-ytWaO&#43;IrMtkByLmaW/DADwFTU4PY0OhnQuVEn1mNF68=" crossorigin="anonymous">
-  <script defer src="/kubernetes/flexsearch.min.js"></script>
-  <script defer src="/kubernetes/zh.search.min.6a49f949d6c64c82c1530df1a06dca2b9fc0405bdaedd9bb43bc1e183bad6c4e.js" integrity="sha256-akn5SdbGTILBUw3xoG3KK5/AQFva7dm7Q7weGDutbE4=" crossorigin="anonymous"></script>
+<link rel="icon" href="/kubernetes/favicon.png" >
+<link rel="canonical" href="https://example.com/kubernetes/docs/part2-break-ice/2.15-statefulset/">
+<link rel="stylesheet" href="/kubernetes/book.min.c800dd82e49099945db6750ce1011947221e4464ea7e2ba833b653fe2dd19d1c.css" integrity="sha256-yADdguSQmZRdtnUM4QEZRyIeRGTqfiuoM7ZT/i3RnRw=" crossorigin="anonymous">
+  <script defer src="/kubernetes/fuse.min.js"></script>
+  <script defer src="/kubernetes/zh.search.min.da1c52546386c902e77e37ee10f137dd864d5defad152b94b97987f9bfccfa81.js" integrity="sha256-2hxSVGOGyQLnfjfuEPE33YZNXe&#43;tFSuUuXmH&#43;b/M&#43;oE=" crossorigin="anonymous"></script>
 
-  <script defer src="/kubernetes/sw.min.448c1a1f6d77a9e91ad10af73bc5bccfa94948c630159862e4b698042cdae427.js" integrity="sha256-RIwaH213qeka0Qr3O8W8z6lJSMYwFZhi5LaYBCza5Cc=" crossorigin="anonymous"></script>
+  <script defer src="/kubernetes/sw.min.18ff75d546fc59b9d538e96815256b253062dc991f14b3caff0f35a243a406d1.js" integrity="sha256-GP911Ub8WbnVOOloFSVrJTBi3JkfFLPK/w81okOkBtE=" crossorigin="anonymous"></script>
+
+  
+
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book
@@ -49,11 +56,12 @@ https://github.com/alex-shpak/hugo-book
 </h2>
 
 
-<div class="book-search">
+<div class="book-search hidden">
   <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
   <div class="book-search-spinner hidden"></div>
   <ul id="book-search-results"></ul>
 </div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
 
 
 
@@ -559,7 +567,7 @@ https://github.com/alex-shpak/hugo-book
 
       
       
-  <article class="markdown"><h1 id="215-statefulset">
+  <article class="markdown book-article"><h1 id="215-statefulset">
   2.15 StatefulSet
   <a class="anchor" href="#215-statefulset">#</a>
 </h1>
@@ -720,9 +728,9 @@ https://github.com/alex-shpak/hugo-book
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/cab9fb8bc2ac59024fa438692794f70390f4cdea" title='最后修改者 weibin | June 21, 2023' target="_blank" rel="noopener">
-      <img src="/kubernetes/svg/calendar.svg" class="book-icon" alt="Calendar" />
-      <span>June 21, 2023</span>
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/cab9fb8bc2ac59024fa438692794f70390f4cdea" title='最后修改者 weibin | 六月 21, 2023' target="_blank" rel="noopener">
+      <img src="/kubernetes/svg/calendar.svg" class="book-icon" alt="" />
+      <span>六月 21, 2023</span>
     </a>
   </div>
 
@@ -730,7 +738,7 @@ https://github.com/alex-shpak/hugo-book
 
   <div>
     <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/content/docs/part2-break-ice/2.15-statefulset.md" target="_blank" rel="noopener">
-      <img src="/kubernetes/svg/edit.svg" class="book-icon" alt="Edit" />
+      <img src="/kubernetes/svg/edit.svg" class="book-icon" alt="" />
       <span>编辑本页</span>
     </a>
   </div>

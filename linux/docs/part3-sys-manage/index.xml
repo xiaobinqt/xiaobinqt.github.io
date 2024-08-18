@@ -4,101 +4,50 @@
     <title>第三部分 系统管理 on Linux 学习笔记</title>
     <link>https://example.com/linux/docs/part3-sys-manage/</link>
     <description>Recent content in 第三部分 系统管理 on Linux 学习笔记</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>zh</language><atom:link href="https://example.com/linux/docs/part3-sys-manage/index.xml" rel="self" type="application/rss+xml" />
+    <generator>Hugo</generator>
+    <language>zh</language>
+    <atom:link href="https://example.com/linux/docs/part3-sys-manage/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>3.1 网络</title>
       <link>https://example.com/linux/docs/part3-sys-manage/3.1-network/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
       <guid>https://example.com/linux/docs/part3-sys-manage/3.1-network/</guid>
-      <description>3.1 网络 # 3.1.1 网络状态 # net-tools &amp;amp; iproute # Centos 7 之前一般使用 net-tools，Centos 7 之后主推 iproute / iproute2。
-ifconfig # eth0 第一块网卡（网络接口)。很多时候，第一个网络接口也可能叫做下面的名字：
-eno1 板载网卡 ens33 PCI-E网卡 enp0s3 无法获取物理信息的PCI-E网卡 CentOS 7 使用了一致性网络设备命名，以上都不匹配则使用 eth0。
-网关/路由 # route -n 使用-n参数不解析主机名，因为默认每个 ip 都会反解成域名，如果解析耗时会一直等待。
-网卡物理连接情况 # 在 Centos 6 上可以直接输入mii-tool回车，但是 Centos 7 上必须要加上网络接口名。
-因为用的是虚拟机，所以会有 SIOCGMIIPHY on &amp;rsquo;eth0&amp;rsquo; failed: Operation not supported 错误
-网络接口/网卡名称修改 # 网卡命名规则受 biosdevname 和 net.ifnames 两个参数影响。
-biosdevname net.ifnames 网卡名 默认 0 1 ens33 组合1 1 0 em1 组合2 0 0 eth0 编辑/etc/default/grub文件，在 GRUB_CMDLINE_LINUX 中增加biosdevname=0 net.</description>
+      <description>3.1 网络 # 3.1.1 网络状态 # net-tools &amp;amp; iproute # Centos 7 之前一般使用 net-tools，Centos 7 之后主推 iproute / iproute2。&#xA;ifconfig # eth0 第一块网卡（网络接口)。很多时候，第一个网络接口也可能叫做下面的名字：&#xA;eno1 板载网卡 ens33 PCI-E网卡 enp0s3 无法获取物理信息的PCI-E网卡 CentOS 7 使用了一致性网络设备命名，以上都不匹配则使用 eth0。&#xA;网关/路由 # route -n 使用-n参数不解析主机名，因为默认每个 ip 都会反解成域名，如果解析耗时会一直等待。&#xA;网卡物理连接情况 # 在 Centos 6 上可以直接输入mii-tool回车，但是 Centos 7 上必须要加上网络接口名。&#xA;因为用的是虚拟机，所以会有 SIOCGMIIPHY on &amp;rsquo;eth0&amp;rsquo; failed: Operation not supported 错误&#xA;网络接口/网卡名称修改 # 网卡命名规则受 biosdevname 和 net.ifnames 两个参数影响。&#xA;biosdevname net.ifnames 网卡名 默认 0 1 ens33 组合1 1 0 em1 组合2 0 0 eth0 编辑/etc/default/grub文件，在 GRUB_CMDLINE_LINUX 中增加biosdevname=0 net.</description>
     </item>
-    
     <item>
       <title>3.2 网络故障排除</title>
       <link>https://example.com/linux/docs/part3-sys-manage/3.2-net-trouble-removal/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
       <guid>https://example.com/linux/docs/part3-sys-manage/3.2-net-trouble-removal/</guid>
-      <description>3.2 网络故障排除 # 3.2.1 ping # 测试主机之间网络的连通性。
--c 参数 # 设置完成要求回应的次数。
-3.2.2 traceroute # 3.2.3 mtr # 3.2.4 nslookup # 3.2.4 telnet # 端口是否畅通 # telnet www.baidu.com 80 # 我当前主机到对方主机的 80 端口是否畅通 3.2.5 tcpdump # tcpdump -i any -n port 80 -i 选线 # 指定网卡，可以用 -i any 表示所有网卡或是-i eth0指定网络接口/网卡的数据包。如果不指定网卡，默认 tcpdump 只会监视第一个网络接口，一般是 eth0。
--n 选项 # 不要使用域名的形式进行显示。
-port # 指定端口。
-指定主机和端口 # tcpdump -i any -n host 10.0.0.1 and port 80 tcpdump -i any -n host 10.</description>
+      <description>3.2 网络故障排除 # 3.2.1 ping # 测试主机之间网络的连通性。&#xA;-c 参数 # 设置完成要求回应的次数。&#xA;3.2.2 traceroute # 3.2.3 mtr # 3.2.4 nslookup # 3.2.4 telnet # 端口是否畅通 # telnet www.baidu.com 80 # 我当前主机到对方主机的 80 端口是否畅通 3.2.5 tcpdump # tcpdump -i any -n port 80 -i 选线 # 指定网卡，可以用 -i any 表示所有网卡或是-i eth0指定网络接口/网卡的数据包。如果不指定网卡，默认 tcpdump 只会监视第一个网络接口，一般是 eth0。&#xA;-n 选项 # 不要使用域名的形式进行显示。&#xA;port # 指定端口。&#xA;指定主机和端口 # tcpdump -i any -n host 10.0.0.1 and port 80 tcpdump -i any -n host 10.</description>
     </item>
-    
     <item>
       <title>3.3 网络服务管理</title>
       <link>https://example.com/linux/docs/part3-sys-manage/3.3-net-manage/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
       <guid>https://example.com/linux/docs/part3-sys-manage/3.3-net-manage/</guid>
-      <description> 3.3 网络服务管理 # 网络管理工具常用的有 2 套，一个是 network，另一个是 networkManger。在 Centos 6 中只有 network，在某些 Centos 7 机器中可能 2 套都存在，不要把 2 套工具都 enable，在工作中，一般只用一个禁用另外一个。
-systemctl disable NetworkManager systemctl enable NetworkManager service network status service network restart 一般在服务器上常用 network 工具。networkManager 常用在个人电脑上。
-3.3.1 设置主机名 # 临时修改主机名：hostname 临时主机名 系统重启后会被重置。
-永久修改主机名：hostnamectl 永久主机名 是对 /etc/hostname 文件的内容进行修改。
-3.3.1 service # 参考 # linux下/etc/hosts 和hostname文件的区别 </description>
+      <description> 3.3 网络服务管理 # 网络管理工具常用的有 2 套，一个是 network，另一个是 networkManger。在 Centos 6 中只有 network，在某些 Centos 7 机器中可能 2 套都存在，不要把 2 套工具都 enable，在工作中，一般只用一个禁用另外一个。&#xA;systemctl disable NetworkManager systemctl enable NetworkManager service network status service network restart 一般在服务器上常用 network 工具。networkManager 常用在个人电脑上。&#xA;3.3.1 设置主机名 # 临时修改主机名：hostname 临时主机名 系统重启后会被重置。&#xA;永久修改主机名：hostnamectl 永久主机名 是对 /etc/hostname 文件的内容进行修改。&#xA;3.3.1 service # 参考 # linux下/etc/hosts 和hostname文件的区别 </description>
     </item>
-    
     <item>
       <title>3.4 软件安装</title>
       <link>https://example.com/linux/docs/part3-sys-manage/3.4-soft-install/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
       <guid>https://example.com/linux/docs/part3-sys-manage/3.4-soft-install/</guid>
-      <description>3.4 软件安装 # 3.4.1 软件包管理器 # 包管理器是方便软件安装、卸载，解决软件依赖关系的重要工具。
-CentOS、RedHat 使用 yum 包管理器，软件安装包格式为 rpm。 Debian、Ubuntu 使用 apt 包管理器，软件安装包格式为 deb。 3.4.2 rpm 包和 rpm 命令 # 包格式 # 命令常用参数 # -q 查询软件包，-qa 查看所有。 rpm -qa -i 安装软件包
--e 卸载软件包
-问题 # 使用 rpm 时需要手动解决依赖关系，在实际应用中用的不多，常用 yum 命令安装。软件包来源不可靠。
-3.4.3 yum 仓库 # 修改 yum 源 # 阿里巴巴官方镜像站 https://developer.aliyun.com/mirror/
-经常需要安装 epel 来扩展 yum 仓库源，不常见的一些软件可以通过 epel 仓库来安装：
-yum install epel-release -y 常用选项 # install 安装软件包 remove 卸载软件包 list | grouplist 查看软件包 update 升级软件包 yum update 如果加上软件包名会去升级指定的软件，如果什么都不加会去升级所有的软件包。</description>
+      <description>3.4 软件安装 # 3.4.1 软件包管理器 # 包管理器是方便软件安装、卸载，解决软件依赖关系的重要工具。&#xA;CentOS、RedHat 使用 yum 包管理器，软件安装包格式为 rpm。 Debian、Ubuntu 使用 apt 包管理器，软件安装包格式为 deb。 3.4.2 rpm 包和 rpm 命令 # 包格式 # 命令常用参数 # -q 查询软件包，-qa 查看所有。 rpm -qa -i 安装软件包&#xA;-e 卸载软件包&#xA;问题 # 使用 rpm 时需要手动解决依赖关系，在实际应用中用的不多，常用 yum 命令安装。软件包来源不可靠。&#xA;3.4.3 yum 仓库 # 修改 yum 源 # 阿里巴巴官方镜像站 https://developer.aliyun.com/mirror/&#xA;经常需要安装 epel 来扩展 yum 仓库源，不常见的一些软件可以通过 epel 仓库来安装：&#xA;yum install epel-release -y 常用选项 # install 安装软件包 remove 卸载软件包 list | grouplist 查看软件包 update 升级软件包 yum update 如果加上软件包名会去升级指定的软件，如果什么都不加会去升级所有的软件包。</description>
     </item>
-    
     <item>
       <title>3.5 进程管理</title>
       <link>https://example.com/linux/docs/part3-sys-manage/3.5-process/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
       <guid>https://example.com/linux/docs/part3-sys-manage/3.5-process/</guid>
-      <description>3.5 进程管理 # 进程是运行中的程序，从程序开始运行到终止的整个生命周期是可管理的。
-以 C 程序为例，程序的启动是从 main 函数开始的：
-int main(int agrc,char *argv[]) 程序终止的方式并不唯一，可以分为正常终止和异常终止。正常终止也分为从 main 返回、调用 exit 等方式。异常终止分为调用 abort、接收信号等。
-3.5.1 进程查看 # ps # ps 可以查看当前系统的进程状态。
--e 选项 显示所有程序。
--f 选项 常搭配 -e 选项使用。显示 UID（有效用户ID），PPID（父进程）等信息，进程由哪个用户启动的，有时启动用户和运行用户可能不一样，比如 Nginx 由 root 启动，但是实际的运行身份是 nobody。
--L 选线 进程中的线程，LWP 轻量级进程也就是线程。
-pstree # 如果没有 pstree 命令可以自行安装。
-yum install psmisc -y top # top 可以实时动态地查看系统的整体运行情况，是一个综合了多方信息监测系统性能和运行信息的实用工具。
-top 界面主要分为两个部分，前 5 行展示的是系统的整体性能，光标下面部分是系统中每个进程的具体信息。光标所在处是用来输入操作命令的。
-系统的整体性能 # 第一行：
-top - 14:39:05 up 36 days, 21:26, 3 users, load average: 56.</description>
+      <description>3.5 进程管理 # 进程是运行中的程序，从程序开始运行到终止的整个生命周期是可管理的。&#xA;以 C 程序为例，程序的启动是从 main 函数开始的：&#xA;int main(int agrc,char *argv[]) 程序终止的方式并不唯一，可以分为正常终止和异常终止。正常终止也分为从 main 返回、调用 exit 等方式。异常终止分为调用 abort、接收信号等。&#xA;3.5.1 进程查看 # ps # ps 可以查看当前系统的进程状态。&#xA;-e 选项 显示所有程序。&#xA;-f 选项 常搭配 -e 选项使用。显示 UID（有效用户ID），PPID（父进程）等信息，进程由哪个用户启动的，有时启动用户和运行用户可能不一样，比如 Nginx 由 root 启动，但是实际的运行身份是 nobody。&#xA;-L 选线 进程中的线程，LWP 轻量级进程也就是线程。&#xA;pstree # 如果没有 pstree 命令可以自行安装。&#xA;yum install psmisc -y top # top 可以实时动态地查看系统的整体运行情况，是一个综合了多方信息监测系统性能和运行信息的实用工具。&#xA;top 界面主要分为两个部分，前 5 行展示的是系统的整体性能，光标下面部分是系统中每个进程的具体信息。光标所在处是用来输入操作命令的。&#xA;系统的整体性能 # 第一行：&#xA;top - 14:39:05 up 36 days, 21:26, 3 users, load average: 56.</description>
     </item>
-    
     <item>
       <title>3.6 内存和磁盘管理</title>
       <link>https://example.com/linux/docs/part3-sys-manage/3.6-memory-disk/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
       <guid>https://example.com/linux/docs/part3-sys-manage/3.6-memory-disk/</guid>
-      <description>3.6 内存和磁盘管理 # 3.6.1 内存和磁盘使用率查看 # 内存使用率 # free 和 top 命令效果基本无差，区别就是 free 是静态的，top 是动态的。
-free # 一般多少 G 内存用 free -m 查看，多少 T 内存用 free -g 查看。
-top # 磁盘使用率 # fdisk # 慎用。fdisk 不仅可以用来查看磁盘，还可以用来磁盘分区，在实际工作中慎用。
-查看磁盘信息可以用 fdisk -l。
-df # 用于显示磁盘分区上的可使用的磁盘空间。默认显示单位为 KB。可以利用该命令来获取硬盘被占用了多少空间，目前还剩下多少空间等信息。
-du # 也是查看使用空间的，但是与 d f命令不同的是 du 命令是对文件和目录磁盘使用的空间的查看。
-du 和 ls 的区别 # ls -lh 和 du 命令都可以查看文件，但是 du 查看的实际文件大小，ls 查看的文件大小可能包含空洞。
-afile 文件没有空洞，ls 和 du 显示的文件大小都是 40M。</description>
+      <description>3.6 内存和磁盘管理 # 3.6.1 内存和磁盘使用率查看 # 内存使用率 # free 和 top 命令效果基本无差，区别就是 free 是静态的，top 是动态的。&#xA;free # 一般多少 G 内存用 free -m 查看，多少 T 内存用 free -g 查看。&#xA;top # 磁盘使用率 # fdisk # 慎用。fdisk 不仅可以用来查看磁盘，还可以用来磁盘分区，在实际工作中慎用。&#xA;查看磁盘信息可以用 fdisk -l。&#xA;df # 用于显示磁盘分区上的可使用的磁盘空间。默认显示单位为 KB。可以利用该命令来获取硬盘被占用了多少空间，目前还剩下多少空间等信息。&#xA;du # 也是查看使用空间的，但是与 d f命令不同的是 du 命令是对文件和目录磁盘使用的空间的查看。&#xA;du 和 ls 的区别 # ls -lh 和 du 命令都可以查看文件，但是 du 查看的实际文件大小，ls 查看的文件大小可能包含空洞。&#xA;afile 文件没有空洞，ls 和 du 显示的文件大小都是 40M。</description>
     </item>
-    
   </channel>
 </rss>

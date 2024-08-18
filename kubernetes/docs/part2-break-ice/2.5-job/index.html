@@ -8,25 +8,32 @@
 2.5.2 Job # 比如用 busybox 创建一个 “echo-job”，命令就是这样的：
 export out=&#34;--dry-run=client -o yaml&#34; # 定义Shell变量 kubectl create job echo-job --image=busybox $out 会生成一个基本的 YAML 文件，保存之后做点修改，就有了一个 Job 对象：
 apiVersion: batch/v1 kind: Job metadata: name: echo-job spec: template: spec: restartPolicy: OnFailure containers: - image: busybox name: echo-job imagePullPolicy: IfNotPresent command: [ &#34;/bin/echo&#34; ] args: [ &#34;hello&#34;, &#34;world&#34; ] Job 的描述与 Pod 很像，但又有些不一样，主要的区别在 “spec” 字段里多了一个 template 字段，然后又是一个 “spec”，显得很奇怪。这主要是在 Job 对象里应用了组合模式，template 字段定义了一个 “应用模板”，里面嵌入了一个 Pod，这样 Job 就可以从这个模板来创建出 Pod。而这个 Pod 因为受 Job 的管理控制，不直接和 apiserver 打交道，也就没必要重复 apiVersion 等 “头字段”，只需要定义好关键的 spec，描述清楚容器相关的信息就可以了，可以说是一个 “无头” 的 Pod 对象。">
-<meta name="theme-color" content="#FFFFFF">
-<meta name="color-scheme" content="light dark"><meta property="og:title" content="2.5 Job" />
-<meta property="og:description" content="2.5 Job # 2.5.1 业务分类 # Kubernetes 里的有两大业务类型。一类是像 Nginx、MySQL 这样长时间运行的 “在线业务”，一旦运行起来基本上不会停，也就是永远在线。另一类是像日志分析这样短时间运行的 “离线业务”，“离线业务” 的特点是必定会退出，不会无期限地运行下去。
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/kubernetes/docs/part2-break-ice/2.5-job/">
+  <meta property="og:site_name" content="Kubernetes 学习笔记">
+  <meta property="og:title" content="2.5 Job">
+  <meta property="og:description" content="2.5 Job # 2.5.1 业务分类 # Kubernetes 里的有两大业务类型。一类是像 Nginx、MySQL 这样长时间运行的 “在线业务”，一旦运行起来基本上不会停，也就是永远在线。另一类是像日志分析这样短时间运行的 “离线业务”，“离线业务” 的特点是必定会退出，不会无期限地运行下去。
 “离线业务” 可以分为两种。一种是 “临时任务”，跑完就完事了，下次有需求再重新安排；另一种是 “定时任务”，可以按时按点周期运行，不需要过多干预。在 Kubernetes 里，“临时任务” 是 API 对象 Job，“定时任务” 是 API 对象 CronJob，使用这两个对象就能够在 Kubernetes 里调度管理任意的离线业务。
 2.5.2 Job # 比如用 busybox 创建一个 “echo-job”，命令就是这样的：
 export out=&#34;--dry-run=client -o yaml&#34; # 定义Shell变量 kubectl create job echo-job --image=busybox $out 会生成一个基本的 YAML 文件，保存之后做点修改，就有了一个 Job 对象：
-apiVersion: batch/v1 kind: Job metadata: name: echo-job spec: template: spec: restartPolicy: OnFailure containers: - image: busybox name: echo-job imagePullPolicy: IfNotPresent command: [ &#34;/bin/echo&#34; ] args: [ &#34;hello&#34;, &#34;world&#34; ] Job 的描述与 Pod 很像，但又有些不一样，主要的区别在 “spec” 字段里多了一个 template 字段，然后又是一个 “spec”，显得很奇怪。这主要是在 Job 对象里应用了组合模式，template 字段定义了一个 “应用模板”，里面嵌入了一个 Pod，这样 Job 就可以从这个模板来创建出 Pod。而这个 Pod 因为受 Job 的管理控制，不直接和 apiserver 打交道，也就没必要重复 apiVersion 等 “头字段”，只需要定义好关键的 spec，描述清楚容器相关的信息就可以了，可以说是一个 “无头” 的 Pod 对象。" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://example.com/kubernetes/docs/part2-break-ice/2.5-job/" /><meta property="article:section" content="docs" />
-
-<meta property="article:modified_time" content="2023-06-03T12:45:04+08:00" />
+apiVersion: batch/v1 kind: Job metadata: name: echo-job spec: template: spec: restartPolicy: OnFailure containers: - image: busybox name: echo-job imagePullPolicy: IfNotPresent command: [ &#34;/bin/echo&#34; ] args: [ &#34;hello&#34;, &#34;world&#34; ] Job 的描述与 Pod 很像，但又有些不一样，主要的区别在 “spec” 字段里多了一个 template 字段，然后又是一个 “spec”，显得很奇怪。这主要是在 Job 对象里应用了组合模式，template 字段定义了一个 “应用模板”，里面嵌入了一个 Pod，这样 Job 就可以从这个模板来创建出 Pod。而这个 Pod 因为受 Job 的管理控制，不直接和 apiserver 打交道，也就没必要重复 apiVersion 等 “头字段”，只需要定义好关键的 spec，描述清楚容器相关的信息就可以了，可以说是一个 “无头” 的 Pod 对象。">
+  <meta property="og:locale" content="zh">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:modified_time" content="2023-06-03T12:45:04+08:00">
 <title>2.5 Job | Kubernetes 学习笔记</title>
 <link rel="manifest" href="/kubernetes/manifest.json">
-<link rel="icon" href="/kubernetes/favicon.png" type="image/x-icon">
-<link rel="stylesheet" href="/kubernetes/book.min.cad59a3be22b32d901c8b99a5bf0c00f01535383d8d0e86742e5449f598d17af.css" integrity="sha256-ytWaO&#43;IrMtkByLmaW/DADwFTU4PY0OhnQuVEn1mNF68=" crossorigin="anonymous">
-  <script defer src="/kubernetes/flexsearch.min.js"></script>
-  <script defer src="/kubernetes/zh.search.min.6a49f949d6c64c82c1530df1a06dca2b9fc0405bdaedd9bb43bc1e183bad6c4e.js" integrity="sha256-akn5SdbGTILBUw3xoG3KK5/AQFva7dm7Q7weGDutbE4=" crossorigin="anonymous"></script>
+<link rel="icon" href="/kubernetes/favicon.png" >
+<link rel="canonical" href="https://example.com/kubernetes/docs/part2-break-ice/2.5-job/">
+<link rel="stylesheet" href="/kubernetes/book.min.c800dd82e49099945db6750ce1011947221e4464ea7e2ba833b653fe2dd19d1c.css" integrity="sha256-yADdguSQmZRdtnUM4QEZRyIeRGTqfiuoM7ZT/i3RnRw=" crossorigin="anonymous">
+  <script defer src="/kubernetes/fuse.min.js"></script>
+  <script defer src="/kubernetes/zh.search.min.da1c52546386c902e77e37ee10f137dd864d5defad152b94b97987f9bfccfa81.js" integrity="sha256-2hxSVGOGyQLnfjfuEPE33YZNXe&#43;tFSuUuXmH&#43;b/M&#43;oE=" crossorigin="anonymous"></script>
 
-  <script defer src="/kubernetes/sw.min.448c1a1f6d77a9e91ad10af73bc5bccfa94948c630159862e4b698042cdae427.js" integrity="sha256-RIwaH213qeka0Qr3O8W8z6lJSMYwFZhi5LaYBCza5Cc=" crossorigin="anonymous"></script>
+  <script defer src="/kubernetes/sw.min.18ff75d546fc59b9d538e96815256b253062dc991f14b3caff0f35a243a406d1.js" integrity="sha256-GP911Ub8WbnVOOloFSVrJTBi3JkfFLPK/w81okOkBtE=" crossorigin="anonymous"></script>
+
+  
+
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book
@@ -47,11 +54,12 @@ https://github.com/alex-shpak/hugo-book
 </h2>
 
 
-<div class="book-search">
+<div class="book-search hidden">
   <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
   <div class="book-search-spinner hidden"></div>
   <ul id="book-search-results"></ul>
 </div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
 
 
 
@@ -562,7 +570,7 @@ https://github.com/alex-shpak/hugo-book
 
       
       
-  <article class="markdown"><h1 id="25-job">
+  <article class="markdown book-article"><h1 id="25-job">
   2.5 Job
   <a class="anchor" href="#25-job">#</a>
 </h1>
@@ -707,9 +715,9 @@ https://github.com/alex-shpak/hugo-book
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/7e48ae594a1747bcfd3b0c7fb012973073d5074a" title='最后修改者 weibin | June 3, 2023' target="_blank" rel="noopener">
-      <img src="/kubernetes/svg/calendar.svg" class="book-icon" alt="Calendar" />
-      <span>June 3, 2023</span>
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/7e48ae594a1747bcfd3b0c7fb012973073d5074a" title='最后修改者 weibin | 六月 3, 2023' target="_blank" rel="noopener">
+      <img src="/kubernetes/svg/calendar.svg" class="book-icon" alt="" />
+      <span>六月 3, 2023</span>
     </a>
   </div>
 
@@ -717,7 +725,7 @@ https://github.com/alex-shpak/hugo-book
 
   <div>
     <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/content/docs/part2-break-ice/2.5-job.md" target="_blank" rel="noopener">
-      <img src="/kubernetes/svg/edit.svg" class="book-icon" alt="Edit" />
+      <img src="/kubernetes/svg/edit.svg" class="book-icon" alt="" />
       <span>编辑本页</span>
     </a>
   </div>

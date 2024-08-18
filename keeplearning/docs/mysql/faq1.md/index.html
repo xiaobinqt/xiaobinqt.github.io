@@ -12,9 +12,12 @@ redo log 是物理日志，记录的是「在某个数据页上做了什么修�
 redo log 是循环写的，空间固定会用完；binlog 是可以追加写入的。“追加写”是指 binlog 文件写到一定大小后会切换到下一个，并不会覆盖以前的日志。
 InnoDB 的 redo log 是固定大小的，比如可以配置为一组 4 个文件，每个文件的大小是 1GB，那么总共就可以记录 4GB 的操作。从头开始写，写到末尾就又回到开头循环写，如下图所示
 write pos 是当前记录的位置，一边写一边后移，写到第 3 号文件末尾后就回到 0 号文件开头。checkpoint 是当前要擦除的位置，也是往后推移并且循环的，擦除记录前要把记录更新到数据文件。擦除后“空着的部分”就是 write pos 到 3 号文件末尾，再加上 0 号文件开头到 checkpoint 的部分。">
-<meta name="theme-color" content="#FFFFFF">
-<meta name="color-scheme" content="light dark"><meta property="og:title" content="常见问题（一）" />
-<meta property="og:description" content="MySQL 常见问题（一） # 1. 出现 Unknown column 错误是在哪个阶段 # MySQL 会在分析器中判断语句是否正确，表是否存在，列是否存在等，如果没有问题再提交给优化器。
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/keeplearning/docs/mysql/faq1.md/">
+  <meta property="og:site_name" content="KeepLearning">
+  <meta property="og:title" content="常见问题（一）">
+  <meta property="og:description" content="MySQL 常见问题（一） # 1. 出现 Unknown column 错误是在哪个阶段 # MySQL 会在分析器中判断语句是否正确，表是否存在，列是否存在等，如果没有问题再提交给优化器。
 2. 为什么对权限的检查不在优化器之前做 # 有些时候，SQL 语句要操作的表不只是 SQL 字面上那些。比如有个触发器，得在执行器阶段（过程中）才能确定，优化器阶段前是无能为力的。
 客户端连接时，如果用户名密码认证通过，连接器会到权限表里面查出你拥有的权限，之后，这个连接里面的权限判断逻辑，都将依赖于此时读到的权限。一个用户成功建立连接后，即使用管理员账号对这个用户的权限做了修改，也不会影响已经存在连接的权限。修改完成后，只有再新建的连接才会使用新的权限设置。
 3. 一个查询语句的执行流程是什么 # 一条查询语句的执行过程一般是经过连接器、分析器、优化器、执行器等功能模块，最后到达存储引擎。
@@ -22,19 +25,23 @@ write pos 是当前记录的位置，一边写一边后移，写到第 3 号文�
 redo log 是物理日志，记录的是「在某个数据页上做了什么修改」；binlog 是逻辑日志，记录的是这个语句的原始逻辑，比如「给 ID=2 这一行的 c 字段加 1」。
 redo log 是循环写的，空间固定会用完；binlog 是可以追加写入的。“追加写”是指 binlog 文件写到一定大小后会切换到下一个，并不会覆盖以前的日志。
 InnoDB 的 redo log 是固定大小的，比如可以配置为一组 4 个文件，每个文件的大小是 1GB，那么总共就可以记录 4GB 的操作。从头开始写，写到末尾就又回到开头循环写，如下图所示
-write pos 是当前记录的位置，一边写一边后移，写到第 3 号文件末尾后就回到 0 号文件开头。checkpoint 是当前要擦除的位置，也是往后推移并且循环的，擦除记录前要把记录更新到数据文件。擦除后“空着的部分”就是 write pos 到 3 号文件末尾，再加上 0 号文件开头到 checkpoint 的部分。" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://example.com/keeplearning/docs/mysql/faq1.md/" /><meta property="article:section" content="docs" />
-
-<meta property="article:modified_time" content="2023-03-14T14:03:00+08:00" />
+write pos 是当前记录的位置，一边写一边后移，写到第 3 号文件末尾后就回到 0 号文件开头。checkpoint 是当前要擦除的位置，也是往后推移并且循环的，擦除记录前要把记录更新到数据文件。擦除后“空着的部分”就是 write pos 到 3 号文件末尾，再加上 0 号文件开头到 checkpoint 的部分。">
+  <meta property="og:locale" content="zh">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:modified_time" content="2023-03-14T14:03:00+08:00">
 <title>常见问题（一） | KeepLearning</title>
 <link rel="manifest" href="/keeplearning/manifest.json">
-<link rel="icon" href="/keeplearning/favicon.png" type="image/x-icon">
-<link rel="stylesheet" href="/keeplearning/book.min.cad59a3be22b32d901c8b99a5bf0c00f01535383d8d0e86742e5449f598d17af.css" integrity="sha256-ytWaO&#43;IrMtkByLmaW/DADwFTU4PY0OhnQuVEn1mNF68=" crossorigin="anonymous">
-  <script defer src="/keeplearning/flexsearch.min.js"></script>
-  <script defer src="/keeplearning/zh.search.min.0313d93a8e0ca9fc391b4d99b1463ac6bd58d183b1b3935a940f0c394fc7a769.js" integrity="sha256-AxPZOo4Mqfw5G02ZsUY6xr1Y0YOxs5NalA8MOU/Hp2k=" crossorigin="anonymous"></script>
+<link rel="icon" href="/keeplearning/favicon.png" >
+<link rel="canonical" href="https://example.com/keeplearning/docs/mysql/faq1.md/">
+<link rel="stylesheet" href="/keeplearning/book.min.c800dd82e49099945db6750ce1011947221e4464ea7e2ba833b653fe2dd19d1c.css" integrity="sha256-yADdguSQmZRdtnUM4QEZRyIeRGTqfiuoM7ZT/i3RnRw=" crossorigin="anonymous">
+  <script defer src="/keeplearning/fuse.min.js"></script>
+  <script defer src="/keeplearning/zh.search.min.6fccc1aefa97c7da4c75b2a1a67c661da4610910143e9a1de17a8e189f84520a.js" integrity="sha256-b8zBrvqXx9pMdbKhpnxmHaRhCRAUPpod4XqOGJ&#43;EUgo=" crossorigin="anonymous"></script>
 
-  <script defer src="/keeplearning/sw.min.1adfb566b92ba83fd11679d786b02cc6ef24134c579bce6902d173c28305155f.js" integrity="sha256-Gt&#43;1ZrkrqD/RFnnXhrAsxu8kE0xXm85pAtFzwoMFFV8=" crossorigin="anonymous"></script>
+  <script defer src="/keeplearning/sw.min.559fc49347ec89de6e20d5e68d8bdab142322ec9991d085fb954646f16b7984f.js" integrity="sha256-VZ/Ek0fsid5uINXmjYvasUIyLsmZHQhfuVRkbxa3mE8=" crossorigin="anonymous"></script>
+
+  
+
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book
@@ -55,11 +62,12 @@ https://github.com/alex-shpak/hugo-book
 </h2>
 
 
-<div class="book-search">
+<div class="book-search hidden">
   <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
   <div class="book-search-spinner hidden"></div>
   <ul id="book-search-results"></ul>
 </div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
 
 
 
@@ -508,7 +516,7 @@ https://github.com/alex-shpak/hugo-book
 
       
       
-  <article class="markdown"><h1 id="mysql-常见问题一">
+  <article class="markdown book-article"><h1 id="mysql-常见问题一">
   MySQL 常见问题（一）
   <a class="anchor" href="#mysql-%e5%b8%b8%e8%a7%81%e9%97%ae%e9%a2%98%e4%b8%80">#</a>
 </h1>
@@ -722,9 +730,9 @@ https://github.com/alex-shpak/hugo-book
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/4da5d52523013516c5d13c559afc3b351dd51841" title='最后修改者 weibin | March 14, 2023' target="_blank" rel="noopener">
-      <img src="/keeplearning/svg/calendar.svg" class="book-icon" alt="Calendar" />
-      <span>March 14, 2023</span>
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/4da5d52523013516c5d13c559afc3b351dd51841" title='最后修改者 weibin | 三月 14, 2023' target="_blank" rel="noopener">
+      <img src="/keeplearning/svg/calendar.svg" class="book-icon" alt="" />
+      <span>三月 14, 2023</span>
     </a>
   </div>
 
@@ -732,7 +740,7 @@ https://github.com/alex-shpak/hugo-book
 
   <div>
     <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/content/docs/mysql/faq1.md.md" target="_blank" rel="noopener">
-      <img src="/keeplearning/svg/edit.svg" class="book-icon" alt="Edit" />
+      <img src="/keeplearning/svg/edit.svg" class="book-icon" alt="" />
       <span>编辑本页</span>
     </a>
   </div>

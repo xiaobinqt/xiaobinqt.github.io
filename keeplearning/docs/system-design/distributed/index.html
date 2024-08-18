@@ -13,9 +13,12 @@ SETNX 指令和数据库的唯一索引类似，保证了只存在一个 Key 的
 EXPIRE 指令可以为一个键值对设置一个过期时间，从而避免了数据库唯一索引实现方式中释放锁失败的问题。
 Redis 的 RedLock 算法 # 使用了多个 Redis 实例来实现分布式锁，这是为了保证在发生单点故障时仍然可用。
 尝试从 N 个互相独立 Redis 实例获取锁； 计算获取锁消耗的时间，只有时间小于锁的过期时间，并且从大多数（N / 2 &#43; 1）实例上获取了锁，才认为获取锁成功； 如果获取锁失败，就到每个实例上释放锁。 Zookeeper 的有序节点 # 1. Zookeeper 抽象模型 # Zookeeper 提供了一种树形结构的命名空间，/app1/p_1 节点的父节点为 /app1。">
-<meta name="theme-color" content="#FFFFFF">
-<meta name="color-scheme" content="light dark"><meta property="og:title" content="分布式" />
-<meta property="og:description" content="分布式 # 一、分布式锁 # 在单机场景下，可以使用语言的内置锁来实现进程同步。但是在分布式场景下，需要同步的进程可能位于不同的节点上，那么就需要使用分布式锁。
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/keeplearning/docs/system-design/distributed/">
+  <meta property="og:site_name" content="KeepLearning">
+  <meta property="og:title" content="分布式">
+  <meta property="og:description" content="分布式 # 一、分布式锁 # 在单机场景下，可以使用语言的内置锁来实现进程同步。但是在分布式场景下，需要同步的进程可能位于不同的节点上，那么就需要使用分布式锁。
 阻塞锁通常使用互斥量来实现：
 互斥量为 0 表示有其它进程在使用锁，此时处于锁定状态； 互斥量为 1 表示未锁定状态。 1 和 0 可以用一个整型值表示，也可以用某个数据是否存在表示。
 数据库的唯一索引 # 获得锁时向表中插入一条记录，释放锁时删除这条记录。唯一索引可以保证该记录只被插入一次，那么就可以用这个记录是否存在来判断是否处于锁定状态。
@@ -24,19 +27,23 @@ Redis 的 RedLock 算法 # 使用了多个 Redis 实例来实现分布式锁，�
 SETNX 指令和数据库的唯一索引类似，保证了只存在一个 Key 的键值对，那么可以用一个 Key 的键值对是否存在来判断是否存于锁定状态。
 EXPIRE 指令可以为一个键值对设置一个过期时间，从而避免了数据库唯一索引实现方式中释放锁失败的问题。
 Redis 的 RedLock 算法 # 使用了多个 Redis 实例来实现分布式锁，这是为了保证在发生单点故障时仍然可用。
-尝试从 N 个互相独立 Redis 实例获取锁； 计算获取锁消耗的时间，只有时间小于锁的过期时间，并且从大多数（N / 2 &#43; 1）实例上获取了锁，才认为获取锁成功； 如果获取锁失败，就到每个实例上释放锁。 Zookeeper 的有序节点 # 1. Zookeeper 抽象模型 # Zookeeper 提供了一种树形结构的命名空间，/app1/p_1 节点的父节点为 /app1。" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://example.com/keeplearning/docs/system-design/distributed/" /><meta property="article:section" content="docs" />
-
-<meta property="article:modified_time" content="2022-12-26T11:35:58+08:00" />
+尝试从 N 个互相独立 Redis 实例获取锁； 计算获取锁消耗的时间，只有时间小于锁的过期时间，并且从大多数（N / 2 &#43; 1）实例上获取了锁，才认为获取锁成功； 如果获取锁失败，就到每个实例上释放锁。 Zookeeper 的有序节点 # 1. Zookeeper 抽象模型 # Zookeeper 提供了一种树形结构的命名空间，/app1/p_1 节点的父节点为 /app1。">
+  <meta property="og:locale" content="zh">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:modified_time" content="2022-12-26T11:35:58+08:00">
 <title>分布式 | KeepLearning</title>
 <link rel="manifest" href="/keeplearning/manifest.json">
-<link rel="icon" href="/keeplearning/favicon.png" type="image/x-icon">
-<link rel="stylesheet" href="/keeplearning/book.min.cad59a3be22b32d901c8b99a5bf0c00f01535383d8d0e86742e5449f598d17af.css" integrity="sha256-ytWaO&#43;IrMtkByLmaW/DADwFTU4PY0OhnQuVEn1mNF68=" crossorigin="anonymous">
-  <script defer src="/keeplearning/flexsearch.min.js"></script>
-  <script defer src="/keeplearning/zh.search.min.0313d93a8e0ca9fc391b4d99b1463ac6bd58d183b1b3935a940f0c394fc7a769.js" integrity="sha256-AxPZOo4Mqfw5G02ZsUY6xr1Y0YOxs5NalA8MOU/Hp2k=" crossorigin="anonymous"></script>
+<link rel="icon" href="/keeplearning/favicon.png" >
+<link rel="canonical" href="https://example.com/keeplearning/docs/system-design/distributed/">
+<link rel="stylesheet" href="/keeplearning/book.min.c800dd82e49099945db6750ce1011947221e4464ea7e2ba833b653fe2dd19d1c.css" integrity="sha256-yADdguSQmZRdtnUM4QEZRyIeRGTqfiuoM7ZT/i3RnRw=" crossorigin="anonymous">
+  <script defer src="/keeplearning/fuse.min.js"></script>
+  <script defer src="/keeplearning/zh.search.min.6fccc1aefa97c7da4c75b2a1a67c661da4610910143e9a1de17a8e189f84520a.js" integrity="sha256-b8zBrvqXx9pMdbKhpnxmHaRhCRAUPpod4XqOGJ&#43;EUgo=" crossorigin="anonymous"></script>
 
-  <script defer src="/keeplearning/sw.min.1adfb566b92ba83fd11679d786b02cc6ef24134c579bce6902d173c28305155f.js" integrity="sha256-Gt&#43;1ZrkrqD/RFnnXhrAsxu8kE0xXm85pAtFzwoMFFV8=" crossorigin="anonymous"></script>
+  <script defer src="/keeplearning/sw.min.559fc49347ec89de6e20d5e68d8bdab142322ec9991d085fb954646f16b7984f.js" integrity="sha256-VZ/Ek0fsid5uINXmjYvasUIyLsmZHQhfuVRkbxa3mE8=" crossorigin="anonymous"></script>
+
+  
+
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book
@@ -57,11 +64,12 @@ https://github.com/alex-shpak/hugo-book
 </h2>
 
 
-<div class="book-search">
+<div class="book-search hidden">
   <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
   <div class="book-search-spinner hidden"></div>
   <ul id="book-search-results"></ul>
 </div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
 
 
 
@@ -530,7 +538,7 @@ https://github.com/alex-shpak/hugo-book
 
       
       
-  <article class="markdown"><h1 id="分布式">
+  <article class="markdown book-article"><h1 id="分布式">
   分布式
   <a class="anchor" href="#%e5%88%86%e5%b8%83%e5%bc%8f">#</a>
 </h1>
@@ -898,9 +906,9 @@ https://github.com/alex-shpak/hugo-book
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/9caaeca2cfea2b23cc8f97741c37ea0009f1a382" title='最后修改者 weibin | December 26, 2022' target="_blank" rel="noopener">
-      <img src="/keeplearning/svg/calendar.svg" class="book-icon" alt="Calendar" />
-      <span>December 26, 2022</span>
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/9caaeca2cfea2b23cc8f97741c37ea0009f1a382" title='最后修改者 weibin | 十二月 26, 2022' target="_blank" rel="noopener">
+      <img src="/keeplearning/svg/calendar.svg" class="book-icon" alt="" />
+      <span>十二月 26, 2022</span>
     </a>
   </div>
 
@@ -908,7 +916,7 @@ https://github.com/alex-shpak/hugo-book
 
   <div>
     <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/content/docs/system-design/distributed.md" target="_blank" rel="noopener">
-      <img src="/keeplearning/svg/edit.svg" class="book-icon" alt="Edit" />
+      <img src="/keeplearning/svg/edit.svg" class="book-icon" alt="" />
       <span>编辑本页</span>
     </a>
   </div>

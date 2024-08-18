@@ -7,24 +7,31 @@
 对于这种 “不稳定” 的后端服务问题，业内的解决方案是 “负载均衡”，典型的应用有 LVS、Nginx 等，它们在前端与后端之间加入了一个 “中间层”，屏蔽后端的变化，为前端提供一个稳定的服务。Service 的工作原理和 LVS、Nginx 差不多，Kubernetes 会给它分配一个静态 IP 地址，然后它再去自动管理、维护后面动态变化的 Pod 集合，当客户端访问 Service，它就根据某种策略，把流量转发给后面的某个 Pod。
 LVS 即 Linux Virtual Server，是由章文嵩发起的一个开源项目，后来被集成进 Linux 内核。
 Service 使用了 iptables 技术，每个节点上的 kube-proxy 组件自动维护 iptables 规则，客户不再关心 Pod 的具体地址，只要访问 Service 的固定 IP 地址，Service 就会根据 iptables 规则转发请求给它管理的多个 Pod，是典型的负载均衡架构。">
-<meta name="theme-color" content="#FFFFFF">
-<meta name="color-scheme" content="light dark"><meta property="og:title" content="2.11 Service" />
-<meta property="og:description" content="2.11 Service # 2.11.1 什么是 Service # Service 是集群内部的负载均衡机制，用来解决服务发现的关键问题。在 Kubernetes 集群里 Pod 的生命周期是比较 “短暂” 的，虽然 Deployment 和 DaemonSet 可以维持 Pod 总体数量的稳定，但在运行过程中，难免会有 Pod 销毁又重建，这就会导致 Pod 集合处于动态的变化之中。这种 “动态稳定” 对于现在流行的微服务架构来说是非常致命的，如果后台 Pod 的 IP 地址老是变来变去，客户端该怎么访问呢？
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/kubernetes/docs/part2-break-ice/2.11-service/">
+  <meta property="og:site_name" content="Kubernetes 学习笔记">
+  <meta property="og:title" content="2.11 Service">
+  <meta property="og:description" content="2.11 Service # 2.11.1 什么是 Service # Service 是集群内部的负载均衡机制，用来解决服务发现的关键问题。在 Kubernetes 集群里 Pod 的生命周期是比较 “短暂” 的，虽然 Deployment 和 DaemonSet 可以维持 Pod 总体数量的稳定，但在运行过程中，难免会有 Pod 销毁又重建，这就会导致 Pod 集合处于动态的变化之中。这种 “动态稳定” 对于现在流行的微服务架构来说是非常致命的，如果后台 Pod 的 IP 地址老是变来变去，客户端该怎么访问呢？
 对于这种 “不稳定” 的后端服务问题，业内的解决方案是 “负载均衡”，典型的应用有 LVS、Nginx 等，它们在前端与后端之间加入了一个 “中间层”，屏蔽后端的变化，为前端提供一个稳定的服务。Service 的工作原理和 LVS、Nginx 差不多，Kubernetes 会给它分配一个静态 IP 地址，然后它再去自动管理、维护后面动态变化的 Pod 集合，当客户端访问 Service，它就根据某种策略，把流量转发给后面的某个 Pod。
 LVS 即 Linux Virtual Server，是由章文嵩发起的一个开源项目，后来被集成进 Linux 内核。
-Service 使用了 iptables 技术，每个节点上的 kube-proxy 组件自动维护 iptables 规则，客户不再关心 Pod 的具体地址，只要访问 Service 的固定 IP 地址，Service 就会根据 iptables 规则转发请求给它管理的多个 Pod，是典型的负载均衡架构。" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://example.com/kubernetes/docs/part2-break-ice/2.11-service/" /><meta property="article:section" content="docs" />
-
-<meta property="article:modified_time" content="2023-06-08T20:58:17+08:00" />
+Service 使用了 iptables 技术，每个节点上的 kube-proxy 组件自动维护 iptables 规则，客户不再关心 Pod 的具体地址，只要访问 Service 的固定 IP 地址，Service 就会根据 iptables 规则转发请求给它管理的多个 Pod，是典型的负载均衡架构。">
+  <meta property="og:locale" content="zh">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:modified_time" content="2023-06-08T20:58:17+08:00">
 <title>2.11 Service | Kubernetes 学习笔记</title>
 <link rel="manifest" href="/kubernetes/manifest.json">
-<link rel="icon" href="/kubernetes/favicon.png" type="image/x-icon">
-<link rel="stylesheet" href="/kubernetes/book.min.cad59a3be22b32d901c8b99a5bf0c00f01535383d8d0e86742e5449f598d17af.css" integrity="sha256-ytWaO&#43;IrMtkByLmaW/DADwFTU4PY0OhnQuVEn1mNF68=" crossorigin="anonymous">
-  <script defer src="/kubernetes/flexsearch.min.js"></script>
-  <script defer src="/kubernetes/zh.search.min.6a49f949d6c64c82c1530df1a06dca2b9fc0405bdaedd9bb43bc1e183bad6c4e.js" integrity="sha256-akn5SdbGTILBUw3xoG3KK5/AQFva7dm7Q7weGDutbE4=" crossorigin="anonymous"></script>
+<link rel="icon" href="/kubernetes/favicon.png" >
+<link rel="canonical" href="https://example.com/kubernetes/docs/part2-break-ice/2.11-service/">
+<link rel="stylesheet" href="/kubernetes/book.min.c800dd82e49099945db6750ce1011947221e4464ea7e2ba833b653fe2dd19d1c.css" integrity="sha256-yADdguSQmZRdtnUM4QEZRyIeRGTqfiuoM7ZT/i3RnRw=" crossorigin="anonymous">
+  <script defer src="/kubernetes/fuse.min.js"></script>
+  <script defer src="/kubernetes/zh.search.min.da1c52546386c902e77e37ee10f137dd864d5defad152b94b97987f9bfccfa81.js" integrity="sha256-2hxSVGOGyQLnfjfuEPE33YZNXe&#43;tFSuUuXmH&#43;b/M&#43;oE=" crossorigin="anonymous"></script>
 
-  <script defer src="/kubernetes/sw.min.448c1a1f6d77a9e91ad10af73bc5bccfa94948c630159862e4b698042cdae427.js" integrity="sha256-RIwaH213qeka0Qr3O8W8z6lJSMYwFZhi5LaYBCza5Cc=" crossorigin="anonymous"></script>
+  <script defer src="/kubernetes/sw.min.18ff75d546fc59b9d538e96815256b253062dc991f14b3caff0f35a243a406d1.js" integrity="sha256-GP911Ub8WbnVOOloFSVrJTBi3JkfFLPK/w81okOkBtE=" crossorigin="anonymous"></script>
+
+  
+
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book
@@ -45,11 +52,12 @@ https://github.com/alex-shpak/hugo-book
 </h2>
 
 
-<div class="book-search">
+<div class="book-search hidden">
   <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
   <div class="book-search-spinner hidden"></div>
   <ul id="book-search-results"></ul>
 </div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
 
 
 
@@ -564,7 +572,7 @@ https://github.com/alex-shpak/hugo-book
 
       
       
-  <article class="markdown"><h1 id="211-service">
+  <article class="markdown book-article"><h1 id="211-service">
   2.11 Service
   <a class="anchor" href="#211-service">#</a>
 </h1>
@@ -782,9 +790,9 @@ https://github.com/alex-shpak/hugo-book
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/8c49de71ca3feb6b7c26a2c5957a21bda3821946" title='最后修改者 weibin | June 8, 2023' target="_blank" rel="noopener">
-      <img src="/kubernetes/svg/calendar.svg" class="book-icon" alt="Calendar" />
-      <span>June 8, 2023</span>
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/8c49de71ca3feb6b7c26a2c5957a21bda3821946" title='最后修改者 weibin | 六月 8, 2023' target="_blank" rel="noopener">
+      <img src="/kubernetes/svg/calendar.svg" class="book-icon" alt="" />
+      <span>六月 8, 2023</span>
     </a>
   </div>
 
@@ -792,7 +800,7 @@ https://github.com/alex-shpak/hugo-book
 
   <div>
     <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/content/docs/part2-break-ice/2.11-service.md" target="_blank" rel="noopener">
-      <img src="/kubernetes/svg/edit.svg" class="book-icon" alt="Edit" />
+      <img src="/kubernetes/svg/edit.svg" class="book-icon" alt="" />
       <span>编辑本页</span>
     </a>
   </div>

@@ -10,27 +10,34 @@
 2.18.2 使用名字空间 # 名字空间也是一种 API 对象，使用命令 kubectl api-resources 可以看到它的简称是 “ns”，命令 kubectl create 不需要额外的参数，可以很容易地创建一个名字空间，比如：
 kubectl create ns test-ns kubectl get ns Kubernetes 初始化集群的时会预设 4 个名字空间：default、kube-system、kube-public、kube-node-lease。default 是用户对象默认的名字空间，kube-system 是系统组件所在的名字空间。
 想要把一个对象放入特定的名字空间，需要在它的 metadata 里添加一个 namespace 字段，比如要在 “test-ns” 名字空间里创建一个简单的 Nginx Pod，就要这样写：">
-<meta name="theme-color" content="#FFFFFF">
-<meta name="color-scheme" content="light dark"><meta property="og:title" content="2.18 集群管理" />
-<meta property="og:description" content="2.18 集群管理 # 2.18.1 名字空间 # Kubernetes 的名字空间并不是一个实体对象，只是一个逻辑上的概念。它可以把集群切分成一个个彼此独立的区域，然后把对象放到这些区域里，就实现了类似容器技术里 namespace 的隔离效果，应用只能在自己的名字空间里分配资源和运行，不会干扰到其他名字空间里的应用。
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/kubernetes/docs/part2-break-ice/2.18-cluster-management/">
+  <meta property="og:site_name" content="Kubernetes 学习笔记">
+  <meta property="og:title" content="2.18 集群管理">
+  <meta property="og:description" content="2.18 集群管理 # 2.18.1 名字空间 # Kubernetes 的名字空间并不是一个实体对象，只是一个逻辑上的概念。它可以把集群切分成一个个彼此独立的区域，然后把对象放到这些区域里，就实现了类似容器技术里 namespace 的隔离效果，应用只能在自己的名字空间里分配资源和运行，不会干扰到其他名字空间里的应用。
 在 Master/Node 架构里引入名字空间，是因为集群很大、计算资源充足，会有非常多的用户在 Kubernetes 里创建各式各样的应用，可能会有百万数量级别的 Pod，这就使得资源争抢和命名冲突的概率大大增加了，情形和单机 Linux 系统里是非常相似的。
 比如，现在有一个 Kubernetes 集群，前端组、后端组、测试组都在使用它。这个时候就很容易命名冲突，比如后端组先创建了一个 Pod 叫 Web，这个名字就被 “占用” 了，之后前端组和测试组就只能绞尽脑汁再新起一个不冲突的名字。资源争抢也容易出现，比如，测试组不小心部署了有 Bug 的应用，在节点上把资源都给 “吃” 完了，就会导致其他组的同事根本无法工作。
 当多团队、多项目共用 Kubernetes 的时候，就需要把集群给适当地 “局部化”，为每一类用户创建出只属于它自己的 “工作空间”。
 2.18.2 使用名字空间 # 名字空间也是一种 API 对象，使用命令 kubectl api-resources 可以看到它的简称是 “ns”，命令 kubectl create 不需要额外的参数，可以很容易地创建一个名字空间，比如：
 kubectl create ns test-ns kubectl get ns Kubernetes 初始化集群的时会预设 4 个名字空间：default、kube-system、kube-public、kube-node-lease。default 是用户对象默认的名字空间，kube-system 是系统组件所在的名字空间。
-想要把一个对象放入特定的名字空间，需要在它的 metadata 里添加一个 namespace 字段，比如要在 “test-ns” 名字空间里创建一个简单的 Nginx Pod，就要这样写：" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://example.com/kubernetes/docs/part2-break-ice/2.18-cluster-management/" /><meta property="article:section" content="docs" />
-
-<meta property="article:modified_time" content="2023-06-25T22:42:37+08:00" />
+想要把一个对象放入特定的名字空间，需要在它的 metadata 里添加一个 namespace 字段，比如要在 “test-ns” 名字空间里创建一个简单的 Nginx Pod，就要这样写：">
+  <meta property="og:locale" content="zh">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:modified_time" content="2023-06-25T22:42:37+08:00">
 <title>2.18 集群管理 | Kubernetes 学习笔记</title>
 <link rel="manifest" href="/kubernetes/manifest.json">
-<link rel="icon" href="/kubernetes/favicon.png" type="image/x-icon">
-<link rel="stylesheet" href="/kubernetes/book.min.cad59a3be22b32d901c8b99a5bf0c00f01535383d8d0e86742e5449f598d17af.css" integrity="sha256-ytWaO&#43;IrMtkByLmaW/DADwFTU4PY0OhnQuVEn1mNF68=" crossorigin="anonymous">
-  <script defer src="/kubernetes/flexsearch.min.js"></script>
-  <script defer src="/kubernetes/zh.search.min.6a49f949d6c64c82c1530df1a06dca2b9fc0405bdaedd9bb43bc1e183bad6c4e.js" integrity="sha256-akn5SdbGTILBUw3xoG3KK5/AQFva7dm7Q7weGDutbE4=" crossorigin="anonymous"></script>
+<link rel="icon" href="/kubernetes/favicon.png" >
+<link rel="canonical" href="https://example.com/kubernetes/docs/part2-break-ice/2.18-cluster-management/">
+<link rel="stylesheet" href="/kubernetes/book.min.c800dd82e49099945db6750ce1011947221e4464ea7e2ba833b653fe2dd19d1c.css" integrity="sha256-yADdguSQmZRdtnUM4QEZRyIeRGTqfiuoM7ZT/i3RnRw=" crossorigin="anonymous">
+  <script defer src="/kubernetes/fuse.min.js"></script>
+  <script defer src="/kubernetes/zh.search.min.da1c52546386c902e77e37ee10f137dd864d5defad152b94b97987f9bfccfa81.js" integrity="sha256-2hxSVGOGyQLnfjfuEPE33YZNXe&#43;tFSuUuXmH&#43;b/M&#43;oE=" crossorigin="anonymous"></script>
 
-  <script defer src="/kubernetes/sw.min.448c1a1f6d77a9e91ad10af73bc5bccfa94948c630159862e4b698042cdae427.js" integrity="sha256-RIwaH213qeka0Qr3O8W8z6lJSMYwFZhi5LaYBCza5Cc=" crossorigin="anonymous"></script>
+  <script defer src="/kubernetes/sw.min.18ff75d546fc59b9d538e96815256b253062dc991f14b3caff0f35a243a406d1.js" integrity="sha256-GP911Ub8WbnVOOloFSVrJTBi3JkfFLPK/w81okOkBtE=" crossorigin="anonymous"></script>
+
+  
+
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book
@@ -51,11 +58,12 @@ https://github.com/alex-shpak/hugo-book
 </h2>
 
 
-<div class="book-search">
+<div class="book-search hidden">
   <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
   <div class="book-search-spinner hidden"></div>
   <ul id="book-search-results"></ul>
 </div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
 
 
 
@@ -562,7 +570,7 @@ https://github.com/alex-shpak/hugo-book
 
       
       
-  <article class="markdown"><h1 id="218-集群管理">
+  <article class="markdown book-article"><h1 id="218-集群管理">
   2.18 集群管理
   <a class="anchor" href="#218-%e9%9b%86%e7%be%a4%e7%ae%a1%e7%90%86">#</a>
 </h1>
@@ -754,9 +762,9 @@ https://github.com/alex-shpak/hugo-book
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/807e02c9250a2b8da9ff363dc6c22709de0402d7" title='最后修改者 weibin | June 25, 2023' target="_blank" rel="noopener">
-      <img src="/kubernetes/svg/calendar.svg" class="book-icon" alt="Calendar" />
-      <span>June 25, 2023</span>
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/807e02c9250a2b8da9ff363dc6c22709de0402d7" title='最后修改者 weibin | 六月 25, 2023' target="_blank" rel="noopener">
+      <img src="/kubernetes/svg/calendar.svg" class="book-icon" alt="" />
+      <span>六月 25, 2023</span>
     </a>
   </div>
 
@@ -764,7 +772,7 @@ https://github.com/alex-shpak/hugo-book
 
   <div>
     <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/content/docs/part2-break-ice/2.18-cluster-management.md" target="_blank" rel="noopener">
-      <img src="/kubernetes/svg/edit.svg" class="book-icon" alt="Edit" />
+      <img src="/kubernetes/svg/edit.svg" class="book-icon" alt="" />
       <span>编辑本页</span>
     </a>
   </div>

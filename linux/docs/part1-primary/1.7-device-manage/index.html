@@ -15,9 +15,12 @@
 电梯总是保持一个方向运行，直到该方向没有请求为止，然后改变运行方向。
 电梯算法（扫描算法）和电梯的运行过程类似，总是按一个方向来进行磁盘调度，直到该方向上没有未完成的磁盘请求，然后改变方向。
 因为考虑了移动方向，因此所有的磁盘请求都会被满足，解决了 SSTF 的饥饿问题。">
-<meta name="theme-color" content="#FFFFFF">
-<meta name="color-scheme" content="light dark"><meta property="og:title" content="1.7 设备管理" />
-<meta property="og:description" content="1.7 设备管理 # 1.7.1 磁盘结构 # 盘面（Platter）：一个磁盘有多个盘面； 磁道（Track）：盘面上的圆形带状区域，一个盘面可以有多个磁道； 扇区（Track Sector）：磁道上的一个弧段，一个磁道可以有多个扇区，它是最小的物理储存单位，目前主要有 512 bytes 与 4 K 两种大小； 磁头（Head）：与盘面非常接近，能够将盘面上的磁场转换为电信号（读），或者将电信号转换为盘面的磁场（写）； 制动手臂（Actuator arm）：用于在磁道之间移动磁头； 主轴（Spindle）：使整个盘面转动。 1.7.2 磁盘调度算法 # 读写一个磁盘块的时间的影响因素有：
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/linux/docs/part1-primary/1.7-device-manage/">
+  <meta property="og:site_name" content="Linux 学习笔记">
+  <meta property="og:title" content="1.7 设备管理">
+  <meta property="og:description" content="1.7 设备管理 # 1.7.1 磁盘结构 # 盘面（Platter）：一个磁盘有多个盘面； 磁道（Track）：盘面上的圆形带状区域，一个盘面可以有多个磁道； 扇区（Track Sector）：磁道上的一个弧段，一个磁道可以有多个扇区，它是最小的物理储存单位，目前主要有 512 bytes 与 4 K 两种大小； 磁头（Head）：与盘面非常接近，能够将盘面上的磁场转换为电信号（读），或者将电信号转换为盘面的磁场（写）； 制动手臂（Actuator arm）：用于在磁道之间移动磁头； 主轴（Spindle）：使整个盘面转动。 1.7.2 磁盘调度算法 # 读写一个磁盘块的时间的影响因素有：
 旋转时间（主轴转动盘面，使得磁头移动到适当的扇区上） 寻道时间（制动手臂移动，使得磁头移动到适当的磁道上） 实际的数据传输时间 其中，寻道时间最长，因此磁盘调度的主要目标是使磁盘的平均寻道时间最短。
 1. 先来先服务 # FCFS, First Come First Served
 按照磁盘请求的顺序进行调度。
@@ -28,19 +31,23 @@
 3. 电梯算法 # SCAN
 电梯总是保持一个方向运行，直到该方向没有请求为止，然后改变运行方向。
 电梯算法（扫描算法）和电梯的运行过程类似，总是按一个方向来进行磁盘调度，直到该方向上没有未完成的磁盘请求，然后改变方向。
-因为考虑了移动方向，因此所有的磁盘请求都会被满足，解决了 SSTF 的饥饿问题。" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://example.com/linux/docs/part1-primary/1.7-device-manage/" /><meta property="article:section" content="docs" />
-
-<meta property="article:modified_time" content="2023-03-14T10:05:56+08:00" />
+因为考虑了移动方向，因此所有的磁盘请求都会被满足，解决了 SSTF 的饥饿问题。">
+  <meta property="og:locale" content="zh">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:modified_time" content="2023-03-14T10:05:56+08:00">
 <title>1.7 设备管理 | Linux 学习笔记</title>
 <link rel="manifest" href="/linux/manifest.json">
-<link rel="icon" href="/linux/favicon.png" type="image/x-icon">
-<link rel="stylesheet" href="/linux/book.min.cad59a3be22b32d901c8b99a5bf0c00f01535383d8d0e86742e5449f598d17af.css" integrity="sha256-ytWaO&#43;IrMtkByLmaW/DADwFTU4PY0OhnQuVEn1mNF68=" crossorigin="anonymous">
-  <script defer src="/linux/flexsearch.min.js"></script>
-  <script defer src="/linux/zh.search.min.4255bb51fefe12beb719fa99814aff14a9032f6767f09d28d03df087aa2efc4f.js" integrity="sha256-QlW7Uf7&#43;Er63GfqZgUr/FKkDL2dn8J0o0D3wh6ou/E8=" crossorigin="anonymous"></script>
+<link rel="icon" href="/linux/favicon.png" >
+<link rel="canonical" href="https://example.com/linux/docs/part1-primary/1.7-device-manage/">
+<link rel="stylesheet" href="/linux/book.min.c800dd82e49099945db6750ce1011947221e4464ea7e2ba833b653fe2dd19d1c.css" integrity="sha256-yADdguSQmZRdtnUM4QEZRyIeRGTqfiuoM7ZT/i3RnRw=" crossorigin="anonymous">
+  <script defer src="/linux/fuse.min.js"></script>
+  <script defer src="/linux/zh.search.min.0afc493c0e2806c47e6ea5c37eb3a83b7fd85c5ed030b4ef2823216a214c554a.js" integrity="sha256-CvxJPA4oBsR&#43;bqXDfrOoO3/YXF7QMLTvKCMhaiFMVUo=" crossorigin="anonymous"></script>
 
-  <script defer src="/linux/sw.min.e3338ad661715b83bfd6397040a613605d8bb26c10798773e2176216e2123560.js" integrity="sha256-4zOK1mFxW4O/1jlwQKYTYF2LsmwQeYdz4hdiFuISNWA=" crossorigin="anonymous"></script>
+  <script defer src="/linux/sw.min.06246f7b13a877707832946d0b1941d626f4349fd8e3bdfd318889981ed22d49.js" integrity="sha256-BiRvexOod3B4MpRtCxlB1ib0NJ/Y4739MYiJmB7SLUk=" crossorigin="anonymous"></script>
+
+  
+
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book
@@ -61,11 +68,12 @@ https://github.com/alex-shpak/hugo-book
 </h2>
 
 
-<div class="book-search">
+<div class="book-search hidden">
   <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
   <div class="book-search-spinner hidden"></div>
   <ul id="book-search-results"></ul>
 </div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
 
 
 
@@ -938,7 +946,7 @@ https://github.com/alex-shpak/hugo-book
 
       
       
-  <article class="markdown"><h1 id="17-设备管理">
+  <article class="markdown book-article"><h1 id="17-设备管理">
   1.7 设备管理
   <a class="anchor" href="#17-%e8%ae%be%e5%a4%87%e7%ae%a1%e7%90%86">#</a>
 </h1>
@@ -1005,9 +1013,9 @@ https://github.com/alex-shpak/hugo-book
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/b0cc6c190723e17328db57a4e1d41d8d2dec5880" title='最后修改者 weibin | March 14, 2023' target="_blank" rel="noopener">
-      <img src="/linux/svg/calendar.svg" class="book-icon" alt="Calendar" />
-      <span>March 14, 2023</span>
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/b0cc6c190723e17328db57a4e1d41d8d2dec5880" title='最后修改者 weibin | 三月 14, 2023' target="_blank" rel="noopener">
+      <img src="/linux/svg/calendar.svg" class="book-icon" alt="" />
+      <span>三月 14, 2023</span>
     </a>
   </div>
 
@@ -1015,7 +1023,7 @@ https://github.com/alex-shpak/hugo-book
 
   <div>
     <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/content/docs/part1-primary/1.7-device-manage.md" target="_blank" rel="noopener">
-      <img src="/linux/svg/edit.svg" class="book-icon" alt="Edit" />
+      <img src="/linux/svg/edit.svg" class="book-icon" alt="" />
       <span>编辑本页</span>
     </a>
   </div>

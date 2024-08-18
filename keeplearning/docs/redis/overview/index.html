@@ -8,25 +8,32 @@
 Redis 支持很多特性，例如将内存中的数据持久化到硬盘中，使用复制来扩展读性能，使用分片来扩展写性能。
 二、数据类型 # 数据类型 可以存储的值 操作 STRING 字符串、整数或者浮点数 对整个字符串或者字符串的其中一部分执行操作 对整数和浮点数执行自增或者自减操作 LIST 列表 从两端压入或者弹出元素 对单个或者多个元素进行修剪， 只保留一个范围内的元素 SET 无序集合 添加、获取、移除单个元素 检查一个元素是否存在于集合中 计算交集、并集、差集 从集合里面随机获取元素 HASH 包含键值对的无序散列表 添加、获取、移除单个键值对 获取所有键值对 检查某个键是否存在 ZSET 有序集合 添加、获取、删除元素 根据分值范围或者成员来获取元素 计算一个键的排名 What Redis data structures look like
 STRING # &gt; set hello world OK &gt; get hello &#34;world&#34; &gt; del hello (integer) 1 &gt; get hello (nil) LIST # &gt; rpush list-key item (integer) 1 &gt; rpush list-key item2 (integer) 2 &gt; rpush list-key item (integer) 3 &gt; lrange list-key 0 -1 1) &#34;item&#34; 2) &#34;item2&#34; 3) &#34;item&#34; &gt; lindex list-key 1 &#34;item2&#34; &gt; lpop list-key &#34;item&#34; &gt; lrange list-key 0 -1 1) &#34;item2&#34; 2) &#34;item&#34; SET # &gt; sadd set-key item (integer) 1 &gt; sadd set-key item2 (integer) 1 &gt; sadd set-key item3 (integer) 1 &gt; sadd set-key item (integer) 0 &gt; smembers set-key 1) &#34;item&#34; 2) &#34;item2&#34; 3) &#34;item3&#34; &gt; sismember set-key item4 (integer) 0 &gt; sismember set-key item (integer) 1 &gt; srem set-key item2 (integer) 1 &gt; srem set-key item2 (integer) 0 &gt; smembers set-key 1) &#34;item&#34; 2) &#34;item3&#34; HASH # &gt; hset hash-key sub-key1 value1 (integer) 1 &gt; hset hash-key sub-key2 value2 (integer) 1 &gt; hset hash-key sub-key1 value1 (integer) 0 &gt; hgetall hash-key 1) &#34;sub-key1&#34; 2) &#34;value1&#34; 3) &#34;sub-key2&#34; 4) &#34;value2&#34; &gt; hdel hash-key sub-key2 (integer) 1 &gt; hdel hash-key sub-key2 (integer) 0 &gt; hget hash-key sub-key1 &#34;value1&#34; &gt; hgetall hash-key 1) &#34;sub-key1&#34; 2) &#34;value1&#34; ZSET # &gt; zadd zset-key 728 member1 (integer) 1 &gt; zadd zset-key 982 member0 (integer) 1 &gt; zadd zset-key 982 member0 (integer) 0 &gt; zrange zset-key 0 -1 withscores 1) &#34;member1&#34; 2) &#34;728&#34; 3) &#34;member0&#34; 4) &#34;982&#34; &gt; zrangebyscore zset-key 0 800 withscores 1) &#34;member1&#34; 2) &#34;728&#34; &gt; zrem zset-key member1 (integer) 1 &gt; zrem zset-key member1 (integer) 0 &gt; zrange zset-key 0 -1 withscores 1) &#34;member0&#34; 2) &#34;982&#34; 三、数据结构 # 字典 # dictht 是一个散列表结构，使用拉链法解决哈希冲突。">
-<meta name="theme-color" content="#FFFFFF">
-<meta name="color-scheme" content="light dark"><meta property="og:title" content="总览" />
-<meta property="og:description" content="总览 # 一、概述 # Redis 是速度非常快的非关系型（NoSQL）内存键值数据库，可以存储键和五种不同类型的值之间的映射。
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/keeplearning/docs/redis/overview/">
+  <meta property="og:site_name" content="KeepLearning">
+  <meta property="og:title" content="总览">
+  <meta property="og:description" content="总览 # 一、概述 # Redis 是速度非常快的非关系型（NoSQL）内存键值数据库，可以存储键和五种不同类型的值之间的映射。
 键的类型只能为字符串，值支持五种数据类型：字符串、列表、集合、散列表、有序集合。
 Redis 支持很多特性，例如将内存中的数据持久化到硬盘中，使用复制来扩展读性能，使用分片来扩展写性能。
 二、数据类型 # 数据类型 可以存储的值 操作 STRING 字符串、整数或者浮点数 对整个字符串或者字符串的其中一部分执行操作 对整数和浮点数执行自增或者自减操作 LIST 列表 从两端压入或者弹出元素 对单个或者多个元素进行修剪， 只保留一个范围内的元素 SET 无序集合 添加、获取、移除单个元素 检查一个元素是否存在于集合中 计算交集、并集、差集 从集合里面随机获取元素 HASH 包含键值对的无序散列表 添加、获取、移除单个键值对 获取所有键值对 检查某个键是否存在 ZSET 有序集合 添加、获取、删除元素 根据分值范围或者成员来获取元素 计算一个键的排名 What Redis data structures look like
-STRING # &gt; set hello world OK &gt; get hello &#34;world&#34; &gt; del hello (integer) 1 &gt; get hello (nil) LIST # &gt; rpush list-key item (integer) 1 &gt; rpush list-key item2 (integer) 2 &gt; rpush list-key item (integer) 3 &gt; lrange list-key 0 -1 1) &#34;item&#34; 2) &#34;item2&#34; 3) &#34;item&#34; &gt; lindex list-key 1 &#34;item2&#34; &gt; lpop list-key &#34;item&#34; &gt; lrange list-key 0 -1 1) &#34;item2&#34; 2) &#34;item&#34; SET # &gt; sadd set-key item (integer) 1 &gt; sadd set-key item2 (integer) 1 &gt; sadd set-key item3 (integer) 1 &gt; sadd set-key item (integer) 0 &gt; smembers set-key 1) &#34;item&#34; 2) &#34;item2&#34; 3) &#34;item3&#34; &gt; sismember set-key item4 (integer) 0 &gt; sismember set-key item (integer) 1 &gt; srem set-key item2 (integer) 1 &gt; srem set-key item2 (integer) 0 &gt; smembers set-key 1) &#34;item&#34; 2) &#34;item3&#34; HASH # &gt; hset hash-key sub-key1 value1 (integer) 1 &gt; hset hash-key sub-key2 value2 (integer) 1 &gt; hset hash-key sub-key1 value1 (integer) 0 &gt; hgetall hash-key 1) &#34;sub-key1&#34; 2) &#34;value1&#34; 3) &#34;sub-key2&#34; 4) &#34;value2&#34; &gt; hdel hash-key sub-key2 (integer) 1 &gt; hdel hash-key sub-key2 (integer) 0 &gt; hget hash-key sub-key1 &#34;value1&#34; &gt; hgetall hash-key 1) &#34;sub-key1&#34; 2) &#34;value1&#34; ZSET # &gt; zadd zset-key 728 member1 (integer) 1 &gt; zadd zset-key 982 member0 (integer) 1 &gt; zadd zset-key 982 member0 (integer) 0 &gt; zrange zset-key 0 -1 withscores 1) &#34;member1&#34; 2) &#34;728&#34; 3) &#34;member0&#34; 4) &#34;982&#34; &gt; zrangebyscore zset-key 0 800 withscores 1) &#34;member1&#34; 2) &#34;728&#34; &gt; zrem zset-key member1 (integer) 1 &gt; zrem zset-key member1 (integer) 0 &gt; zrange zset-key 0 -1 withscores 1) &#34;member0&#34; 2) &#34;982&#34; 三、数据结构 # 字典 # dictht 是一个散列表结构，使用拉链法解决哈希冲突。" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://example.com/keeplearning/docs/redis/overview/" /><meta property="article:section" content="docs" />
-
-<meta property="article:modified_time" content="2023-03-14T14:55:50+08:00" />
+STRING # &gt; set hello world OK &gt; get hello &#34;world&#34; &gt; del hello (integer) 1 &gt; get hello (nil) LIST # &gt; rpush list-key item (integer) 1 &gt; rpush list-key item2 (integer) 2 &gt; rpush list-key item (integer) 3 &gt; lrange list-key 0 -1 1) &#34;item&#34; 2) &#34;item2&#34; 3) &#34;item&#34; &gt; lindex list-key 1 &#34;item2&#34; &gt; lpop list-key &#34;item&#34; &gt; lrange list-key 0 -1 1) &#34;item2&#34; 2) &#34;item&#34; SET # &gt; sadd set-key item (integer) 1 &gt; sadd set-key item2 (integer) 1 &gt; sadd set-key item3 (integer) 1 &gt; sadd set-key item (integer) 0 &gt; smembers set-key 1) &#34;item&#34; 2) &#34;item2&#34; 3) &#34;item3&#34; &gt; sismember set-key item4 (integer) 0 &gt; sismember set-key item (integer) 1 &gt; srem set-key item2 (integer) 1 &gt; srem set-key item2 (integer) 0 &gt; smembers set-key 1) &#34;item&#34; 2) &#34;item3&#34; HASH # &gt; hset hash-key sub-key1 value1 (integer) 1 &gt; hset hash-key sub-key2 value2 (integer) 1 &gt; hset hash-key sub-key1 value1 (integer) 0 &gt; hgetall hash-key 1) &#34;sub-key1&#34; 2) &#34;value1&#34; 3) &#34;sub-key2&#34; 4) &#34;value2&#34; &gt; hdel hash-key sub-key2 (integer) 1 &gt; hdel hash-key sub-key2 (integer) 0 &gt; hget hash-key sub-key1 &#34;value1&#34; &gt; hgetall hash-key 1) &#34;sub-key1&#34; 2) &#34;value1&#34; ZSET # &gt; zadd zset-key 728 member1 (integer) 1 &gt; zadd zset-key 982 member0 (integer) 1 &gt; zadd zset-key 982 member0 (integer) 0 &gt; zrange zset-key 0 -1 withscores 1) &#34;member1&#34; 2) &#34;728&#34; 3) &#34;member0&#34; 4) &#34;982&#34; &gt; zrangebyscore zset-key 0 800 withscores 1) &#34;member1&#34; 2) &#34;728&#34; &gt; zrem zset-key member1 (integer) 1 &gt; zrem zset-key member1 (integer) 0 &gt; zrange zset-key 0 -1 withscores 1) &#34;member0&#34; 2) &#34;982&#34; 三、数据结构 # 字典 # dictht 是一个散列表结构，使用拉链法解决哈希冲突。">
+  <meta property="og:locale" content="zh">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:modified_time" content="2023-03-14T14:55:50+08:00">
 <title>总览 | KeepLearning</title>
 <link rel="manifest" href="/keeplearning/manifest.json">
-<link rel="icon" href="/keeplearning/favicon.png" type="image/x-icon">
-<link rel="stylesheet" href="/keeplearning/book.min.cad59a3be22b32d901c8b99a5bf0c00f01535383d8d0e86742e5449f598d17af.css" integrity="sha256-ytWaO&#43;IrMtkByLmaW/DADwFTU4PY0OhnQuVEn1mNF68=" crossorigin="anonymous">
-  <script defer src="/keeplearning/flexsearch.min.js"></script>
-  <script defer src="/keeplearning/zh.search.min.0313d93a8e0ca9fc391b4d99b1463ac6bd58d183b1b3935a940f0c394fc7a769.js" integrity="sha256-AxPZOo4Mqfw5G02ZsUY6xr1Y0YOxs5NalA8MOU/Hp2k=" crossorigin="anonymous"></script>
+<link rel="icon" href="/keeplearning/favicon.png" >
+<link rel="canonical" href="https://example.com/keeplearning/docs/redis/overview/">
+<link rel="stylesheet" href="/keeplearning/book.min.c800dd82e49099945db6750ce1011947221e4464ea7e2ba833b653fe2dd19d1c.css" integrity="sha256-yADdguSQmZRdtnUM4QEZRyIeRGTqfiuoM7ZT/i3RnRw=" crossorigin="anonymous">
+  <script defer src="/keeplearning/fuse.min.js"></script>
+  <script defer src="/keeplearning/zh.search.min.6fccc1aefa97c7da4c75b2a1a67c661da4610910143e9a1de17a8e189f84520a.js" integrity="sha256-b8zBrvqXx9pMdbKhpnxmHaRhCRAUPpod4XqOGJ&#43;EUgo=" crossorigin="anonymous"></script>
 
-  <script defer src="/keeplearning/sw.min.1adfb566b92ba83fd11679d786b02cc6ef24134c579bce6902d173c28305155f.js" integrity="sha256-Gt&#43;1ZrkrqD/RFnnXhrAsxu8kE0xXm85pAtFzwoMFFV8=" crossorigin="anonymous"></script>
+  <script defer src="/keeplearning/sw.min.559fc49347ec89de6e20d5e68d8bdab142322ec9991d085fb954646f16b7984f.js" integrity="sha256-VZ/Ek0fsid5uINXmjYvasUIyLsmZHQhfuVRkbxa3mE8=" crossorigin="anonymous"></script>
+
+  
+
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book
@@ -47,11 +54,12 @@ https://github.com/alex-shpak/hugo-book
 </h2>
 
 
-<div class="book-search">
+<div class="book-search hidden">
   <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
   <div class="book-search-spinner hidden"></div>
   <ul id="book-search-results"></ul>
 </div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
 
 
 
@@ -544,7 +552,7 @@ https://github.com/alex-shpak/hugo-book
 
       
       
-  <article class="markdown"><h1 id="总览">
+  <article class="markdown book-article"><h1 id="总览">
   总览
   <a class="anchor" href="#%e6%80%bb%e8%a7%88">#</a>
 </h1>
@@ -1181,9 +1189,9 @@ https://github.com/alex-shpak/hugo-book
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/94d6bae966f5fed474bcb11ef77c791d051b2a67" title='最后修改者 weibin | March 14, 2023' target="_blank" rel="noopener">
-      <img src="/keeplearning/svg/calendar.svg" class="book-icon" alt="Calendar" />
-      <span>March 14, 2023</span>
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/94d6bae966f5fed474bcb11ef77c791d051b2a67" title='最后修改者 weibin | 三月 14, 2023' target="_blank" rel="noopener">
+      <img src="/keeplearning/svg/calendar.svg" class="book-icon" alt="" />
+      <span>三月 14, 2023</span>
     </a>
   </div>
 
@@ -1191,7 +1199,7 @@ https://github.com/alex-shpak/hugo-book
 
   <div>
     <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/content/docs/redis/overview.md" target="_blank" rel="noopener">
-      <img src="/keeplearning/svg/edit.svg" class="book-icon" alt="Edit" />
+      <img src="/keeplearning/svg/edit.svg" class="book-icon" alt="" />
       <span>编辑本页</span>
     </a>
   </div>

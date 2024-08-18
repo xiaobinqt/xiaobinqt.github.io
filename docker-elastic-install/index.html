@@ -1,114 +1,178 @@
+
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="robots" content="noodp" />
-    <title class="pjax-title">Docker 单机安装使用 Elasticsearch - xiaobinqt 博客 - 技术改变生活</title><meta name="Description" content="xiaobinqt,Elasticsearch"><meta property="og:title" content="Docker 单机安装使用 Elasticsearch" />
-<meta property="og:description" content="xiaobinqt,Elasticsearch" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://www.xiaobinqt.cn/docker-elastic-install/" /><meta property="og:image" content="https://www.xiaobinqt.cn/logo.png"/><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2023-09-12T00:00:00+00:00" />
-<meta property="article:modified_time" content="2023-09-14T11:22:15+08:00" />
+    <meta name="robots" content="noodp" /><title>Docker 单机安装使用 Elasticsearch - xiaobinqt 博客 - 技术改变生活</title><meta name="Description" content="xiaobinqt,Elasticsearch"><meta property="og:url" content="https://www.xiaobinqt.cn/docker-elastic-install/">
+  <meta property="og:site_name" content="xiaobinqt 博客 - 技术改变生活">
+  <meta property="og:title" content="Docker 单机安装使用 Elasticsearch">
+  <meta property="og:description" content="xiaobinqt,Elasticsearch">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2023-09-12T00:00:00+00:00">
+    <meta property="article:modified_time" content="2023-09-14T11:22:15+08:00">
+    <meta property="article:tag" content="Elasticsearch">
+    <meta property="og:image" content="https://www.xiaobinqt.cn/images/avatar.webp">
 
-<meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image" content="https://www.xiaobinqt.cn/logo.png"/>
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://www.xiaobinqt.cn/images/avatar.webp">
+  <meta name="twitter:title" content="Docker 单机安装使用 Elasticsearch">
+  <meta name="twitter:description" content="xiaobinqt,Elasticsearch">
+<meta name="application-name" content="DoIt">
+<meta name="apple-mobile-web-app-title" content="DoIt">
 
-<meta name="twitter:title" content="Docker 单机安装使用 Elasticsearch"/>
-<meta name="twitter:description" content="xiaobinqt,Elasticsearch"/>
-<meta name="application-name" content="xiaobinqt">
-<meta name="apple-mobile-web-app-title" content="xiaobinqt">
-
-<meta name="theme-color" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c">
-<link rel="stylesheet" href="//at.alicdn.com/t/font_3267767_dz25dtwdgdc.css"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+<meta name="theme-color" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://www.xiaobinqt.cn/docker-elastic-install/" /><link rel="prev" href="https://www.xiaobinqt.cn/bretton-woods-system/" /><link rel="next" href="https://www.xiaobinqt.cn/escape-heap/" /><link rel="stylesheet" href="/lib/md5/md5.min.js"><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/fontawesome-free/all.min.css">
-        <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/animate/animate.min.css">
-        <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><meta name="google-site-verification" content="hFkClWMTOtPBuE0lQaXNiNb707E7P6O2CwexZoSm3VQ" /><meta name="msvalidate.01" content="A961D393878F86E04112E1198500FDBD" /><meta name="baidu-site-verification" content="code-cMh5ORsrP2" /><script type="application/ld+json">
-    {
-        "@context": "http://schema.org",
-        "@type": "BlogPosting",
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<link rel="canonical" href="https://www.xiaobinqt.cn/docker-elastic-install/" /><link rel="prev" href="https://www.xiaobinqt.cn/bretton-woods-system/" /><link rel="next" href="https://www.xiaobinqt.cn/escape-heap/" />
+<link rel="stylesheet" href="/css/main.min.css"><link rel="stylesheet" href="/css/style.min.css"><meta name="google-site-verification" content="hFkClWMTOtPBuE0lQaXNiNb707E7P6O2CwexZoSm3VQ" /><meta name="msvalidate.01" content="A961D393878F86E04112E1198500FDBD" /><meta name="baidu-site-verification" content="code-cMh5ORsrP2" /><script type="application/ld+json">{"@context": "https://schema.org","@type": "BlogPosting",
         "headline": "Docker 单机安装使用 Elasticsearch",
         "inLanguage": "zh-CN",
         "mainEntityOfPage": {
             "@type": "WebPage",
-            "@id": "https:\/\/www.xiaobinqt.cn\/docker-elastic-install\/"
-        },"image": ["https:\/\/www.xiaobinqt.cn\/images\/home.png"],"genre": "posts","keywords": "elasticsearch","wordcount":  3120 ,
-        "url": "https:\/\/www.xiaobinqt.cn\/docker-elastic-install\/","datePublished": "2023-09-12T00:00:00+00:00","dateModified": "2023-09-14T11:22:15+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+            "@id": "https://www.xiaobinqt.cn/docker-elastic-install/"
+        },"image": ["https://www.xiaobinqt.cn/images/Apple-Devices-Preview.png"],"genre": "posts","keywords":["elasticsearch"],"wordcount":  2975 ,
+        "url": "https://www.xiaobinqt.cn/docker-elastic-install/","datePublished": "2023-09-12T00:00:00+00:00","dateModified": "2023-09-14T11:22:15+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "xxxx","logo": {
                     "@type": "ImageObject",
-                    "url": "https:\/\/www.xiaobinqt.cn\/images\/avatar.png",
-                    "width":  528 ,
-                    "height":  560 
+                    "url": "https://www.xiaobinqt.cn/images/avatar.webp",
+                    "width":  400 ,
+                    "height":  400 
                 }},"author": {
                 "@type": "Person",
-                "name": "xiaobinqt"
+                "name": "xiaobinqt",
+                "url": "https://github.com/xiaobinqt"
             },"description": "xiaobinqt,Elasticsearch"
-    }
-    </script></head>
+    }</script></head>
 
-<body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">
-        function setTheme(theme) {document.body.setAttribute('theme', theme); document.documentElement.style.setProperty('color-scheme', theme === 'light' ? 'light' : 'dark');}
+
+<body data-instant-intensity="viewport" ><script type="text/javascript">
+        function setTheme(theme) {
+          document.body.setAttribute('theme', theme); 
+          document.documentElement.className = theme;
+          document.documentElement.style.setProperty('color-scheme', theme === 'light' ? 'light' : 'dark');
+          if (theme === 'light') {
+            document.documentElement.classList.remove('tw-dark')
+          } else {
+            document.documentElement.classList.add('tw-dark')
+          }
+          window.theme = theme;   
+          window.isDark = window.theme !== 'light' 
+        }
         function saveTheme(theme) {window.localStorage && localStorage.setItem('theme', theme);}
         function getMeta(metaName) {const metas = document.getElementsByTagName('meta'); for (let i = 0; i < metas.length; i++) if (metas[i].getAttribute('name') === metaName) return metas[i]; return '';}
-        if (window.localStorage && localStorage.getItem('theme')) {let theme = localStorage.getItem('theme');theme === 'light' || theme === 'dark' || theme === 'black' ? setTheme(theme) : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? setTheme('dark') : setTheme('light')); } else { if ('auto' === 'light' || 'auto' === 'dark' || 'auto' === 'black') setTheme('auto'), saveTheme('auto'); else saveTheme('auto'), window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? setTheme('dark') : setTheme('light');}
-        let metaColors = {'light': '#f8f8f8','dark': '#252627','black': '#000000'}
+        if (window.localStorage && localStorage.getItem('theme')) {
+            let theme = localStorage.getItem('theme');
+            if (theme === 'light' || theme === 'dark') {
+            setTheme(theme);
+            } else {
+                if ((window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    setTheme('dark');
+                } else {
+                    setTheme('light');
+                }
+            }
+         } else { 
+            if ('auto' === 'light' || 'auto' === 'dark') 
+                setTheme('auto'), saveTheme('auto'); 
+            else saveTheme('auto'), window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? setTheme('dark') : setTheme('light');
+        }
+        let metaColors = {'light': '#f8f8f8','dark': '#161b22'}
         getMeta('theme-color').content = metaColors[document.body.getAttribute('theme')];
+        window.switchThemeEventSet = new Set()
     </script>
     <div id="back-to-top"></div>
-    <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div id="mask"></div><div class="wrapper"><header class="desktop print:!tw-hidden" id="header-desktop">
     <div class="header-wrapper">
         <div class="header-title">
-            <a href="/" title="xiaobinqt 博客 - 技术改变生活"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>萧十一郎</a>
+            <a href="/" title="xiaobinqt 博客 - 技术改变生活"><span class="tw-mr-1"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M402.3 344.9l32-32c5-5 13.7-1.5 13.7 5.7V464c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h273.5c7.1 0 10.7 8.6 5.7 13.7l-32 32c-1.5 1.5-3.5 2.3-5.7 2.3H48v352h352V350.5c0-2.1.8-4.1 2.3-5.6zm156.6-201.8L296.3 405.7l-90.4 10c-26.2 2.9-48.5-19.2-45.6-45.6l10-90.4L432.9 17.1c22.9-22.9 59.9-22.9 82.7 0l43.2 43.2c22.9 22.9 22.9 60 .1 82.8zM460.1 174L402 115.9 216.2 301.8l-7.3 65.3 65.3-7.3L460.1 174zm64.8-79.7l-43.2-43.2c-4.1-4.1-10.8-4.1-14.8 0L436 82l58.1 58.1 30.9-30.9c4-4.2 4-10.8-.1-14.9z"/></svg></span>萧十一郎</a>
         </div>
         <div class="menu">
-            <div class="menu-inner"><a class="menu-item" href="/posts/" > 所有文章 </a><a class="menu-item" href="/tags/" > 标签 </a><a class="menu-item" href="/categories/" > 分类 </a><a class="menu-item" href="/series/" > 系列 </a><a class="menu-item" href="/showcase/" > 小册 </a><a class="menu-item" href="/keeplearning/"  rel="noopener noreferrer" target="_blank"> KeepLearning </a><a class="menu-item" href="/leetcode/"  rel="noopener noreferrer" target="_blank"> LeetCode </a><a class="menu-item" href="/links/" > 友链 </a><a class="menu-item" href="/about/" > 关于 </a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" rel="noopener noreferrer" target="_blank" ><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
-                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
-                        <a href="#" onclick="return false;" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
-                            <i class="fas fa-search fa-fw"></i>
-                        </a>
-                        <a href="#" onclick="return false;" class="search-button search-clear" id="search-clear-desktop" title="清空">
-                            <i class="fas fa-times-circle fa-fw"></i>
-                        </a>
-                        <span class="search-button search-loading" id="search-loading-desktop">
-                            <i class="fas fa-spinner fa-fw fa-spin"></i>
-                        </span>
-                    </span><a href="#" onclick="return false;" class="menu-item theme-switch" title="切换主题">
-                    <i class="fas fa-adjust fa-fw"></i>
-                </a></div>
+            <div class="menu-inner"><a class="menu-item"
+                    href="/posts/" > 所有文章 </a><a class="menu-item"
+                    href="/tags/" > 标签 </a><a class="menu-item"
+                    href="/categories/" > 分类 </a><a class="menu-item"
+                    href="/series/" > 系列 </a><a class="menu-item"
+                    href="/showcase/" > 小册 </a><a class="menu-item"
+                    href="/keeplearning/-open-blank-target" > KeepLearning </a><a class="menu-item"
+                    href="/leetcode/-open-blank-target" > LeetCode </a><a class="menu-item"
+                    href="/links/" > 友链 </a><a class="menu-item"
+                    href="/about/" > 关于 </a><a class="menu-item"
+                    href="https://github.com/xiaobinqt"  title="GitHub" 
+                    rel="noopener noreferrer" target="_blank" ><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                    <input type="text"
+                        placeholder="搜索文章标题或内容..."
+                        id="search-input-desktop">
+                    <button class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                        <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg>
+                    </button>
+                    <button class="search-button search-clear" id="search-clear-desktop" title="清空">
+                        <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm121.6 313.1c4.7 4.7 4.7 12.3 0 17L338 377.6c-4.7 4.7-12.3 4.7-17 0L256 312l-65.1 65.6c-4.7 4.7-12.3 4.7-17 0L134.4 338c-4.7-4.7-4.7-12.3 0-17l65.6-65-65.6-65.1c-4.7-4.7-4.7-12.3 0-17l39.6-39.6c4.7-4.7 12.3-4.7 17 0l65 65.7 65.1-65.6c4.7-4.7 12.3-4.7 17 0l39.6 39.6c4.7 4.7 4.7 12.3 0 17L312 256l65.6 65.1z"/></svg>
+                    </button>
+                    <span class="search-button search-loading tw-animate-spin" id="search-loading-desktop">
+                        <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M304 48c0 26.51-21.49 48-48 48s-48-21.49-48-48 21.49-48 48-48 48 21.49 48 48zm-48 368c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zm208-208c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zM96 256c0-26.51-21.49-48-48-48S0 229.49 0 256s21.49 48 48 48 48-21.49 48-48zm12.922 99.078c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.491-48-48-48zm294.156 0c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.49-48-48-48zM108.922 60.922c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.491-48-48-48z"/></svg>
+                    </span>
+                </span><button class="menu-item theme-select" aria-label="切换主题">
+                    <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M8 256c0 136.966 111.033 248 248 248s248-111.034 248-248S392.966 8 256 8 8 119.033 8 256zm248 184V72c101.705 0 184 82.311 184 184 0 101.705-82.311 184-184 184z"/></svg>
+                    <select class="color-theme-select" id="theme-select-desktop" aria-label="切换主题">
+                        <option value="light">浅色</option>
+                        <option value="dark">深色</option>
+                        <option value="auto">跟随系统</option>
+                    </select>
+                </button></div>
         </div>
     </div>
-</header><header class="mobile" id="header-mobile">
+</header><header class="mobile print:!tw-hidden" id="header-mobile">
     <div class="header-container">
         <div class="header-wrapper">
             <div class="header-title">
-                <a href="/" title="xiaobinqt 博客 - 技术改变生活"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>萧十一郎</a>
+                <a href="/" title="xiaobinqt 博客 - 技术改变生活"><span class="tw-mr-1"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M402.3 344.9l32-32c5-5 13.7-1.5 13.7 5.7V464c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h273.5c7.1 0 10.7 8.6 5.7 13.7l-32 32c-1.5 1.5-3.5 2.3-5.7 2.3H48v352h352V350.5c0-2.1.8-4.1 2.3-5.6zm156.6-201.8L296.3 405.7l-90.4 10c-26.2 2.9-48.5-19.2-45.6-45.6l10-90.4L432.9 17.1c22.9-22.9 59.9-22.9 82.7 0l43.2 43.2c22.9 22.9 22.9 60 .1 82.8zM460.1 174L402 115.9 216.2 301.8l-7.3 65.3 65.3-7.3L460.1 174zm64.8-79.7l-43.2-43.2c-4.1-4.1-10.8-4.1-14.8 0L436 82l58.1 58.1 30.9-30.9c4-4.2 4-10.8-.1-14.9z"/></svg></span>萧十一郎</a>
             </div>
             <div class="menu-toggle" id="menu-toggle-mobile">
                 <span></span><span></span><span></span>
             </div>
         </div>
         <div class="menu" id="menu-mobile"><div class="search-wrapper">
-                    <div class="search mobile" id="search-mobile">
-                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
-                        <a href="#" onclick="return false;" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
-                            <i class="fas fa-search fa-fw"></i>
-                        </a>
-                        <a href="#" onclick="return false;" class="search-button search-clear" id="search-clear-mobile" title="清空">
-                            <i class="fas fa-times-circle fa-fw"></i>
-                        </a>
-                        <span class="search-button search-loading" id="search-loading-mobile">
-                            <i class="fas fa-spinner fa-fw fa-spin"></i>
-                        </span>
-                    </div>
-                    <a href="#" onclick="return false;" class="search-cancel" id="search-cancel-mobile">
-                        取消
-                    </a>
-                </div><a class="menu-item" href="/posts/" title="" >所有文章</a><a class="menu-item" href="/tags/" title="" >标签</a><a class="menu-item" href="/categories/" title="" >分类</a><a class="menu-item" href="/series/" title="" >系列</a><a class="menu-item" href="/showcase/" title="" >小册</a><a class="menu-item" href="/keeplearning/" title=""  rel="noopener noreferrer" target="_blank">KeepLearning</a><a class="menu-item" href="/leetcode/" title=""  rel="noopener noreferrer" target="_blank">LeetCode</a><a class="menu-item" href="/links/" title="" >友链</a><a class="menu-item" href="/about/" title="" >关于</a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" rel="noopener noreferrer" target="_blank" ><i class='fab fa-github fa-fw'></i></a><a href="#" onclick="return false;" class="menu-item theme-switch" title="切换主题">
-                <i class="fas fa-adjust fa-fw"></i>
-            </a></div>
+                <div class="search mobile" id="search-mobile">
+                    <input type="text"
+                        placeholder="搜索文章标题或内容..."
+                        id="search-input-mobile">
+                    <button class="search-button search-toggle tw-h-10" id="search-toggle-mobile" title="搜索">
+                        <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg>
+                    </button>
+                    <button class="search-button search-clear" id="search-clear-mobile" title="清空">
+                        <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm121.6 313.1c4.7 4.7 4.7 12.3 0 17L338 377.6c-4.7 4.7-12.3 4.7-17 0L256 312l-65.1 65.6c-4.7 4.7-12.3 4.7-17 0L134.4 338c-4.7-4.7-4.7-12.3 0-17l65.6-65-65.6-65.1c-4.7-4.7-4.7-12.3 0-17l39.6-39.6c4.7-4.7 12.3-4.7 17 0l65 65.7 65.1-65.6c4.7-4.7 12.3-4.7 17 0l39.6 39.6c4.7 4.7 4.7 12.3 0 17L312 256l65.6 65.1z"/></svg>
+                    </button>
+                    <span class="search-button search-loading tw-animate-spin" id="search-loading-mobile">
+                        <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M304 48c0 26.51-21.49 48-48 48s-48-21.49-48-48 21.49-48 48-48 48 21.49 48 48zm-48 368c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zm208-208c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zM96 256c0-26.51-21.49-48-48-48S0 229.49 0 256s21.49 48 48 48 48-21.49 48-48zm12.922 99.078c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.491-48-48-48zm294.156 0c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.49-48-48-48zM108.922 60.922c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.491-48-48-48z"/></svg>
+                    </span>
+                </div>
+                <button class="search-cancel" id="search-cancel-mobile">
+                    取消
+                </button>
+            </div><a class="menu-item" href="/posts/" title="" >所有文章</a><a class="menu-item" href="/tags/" title="" >标签</a><a class="menu-item" href="/categories/" title="" >分类</a><a class="menu-item" href="/series/" title="" >系列</a><a class="menu-item" href="/showcase/" title="" >小册</a><a class="menu-item" href="/keeplearning/-open-blank-target" title="" >KeepLearning</a><a class="menu-item" href="/leetcode/-open-blank-target" title="" >LeetCode</a><a class="menu-item" href="/links/" title="" >友链</a><a class="menu-item" href="/about/" title="" >关于</a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" 
+                rel="noopener noreferrer" target="_blank" ><i class='fab fa-github fa-fw'></i></a><button class="menu-item theme-select tw-w-full" aria-label="切换主题">
+                <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M8 256c0 136.966 111.033 248 248 248s248-111.034 248-248S392.966 8 256 8 8 119.033 8 256zm248 184V72c101.705 0 184 82.311 184 184 0 101.705-82.311 184-184 184z"/></svg>
+                <select class="color-theme-select" id="theme-select-mobile" aria-label="切换主题">
+                    <option value="light">浅色</option>
+                    <option value="dark">深色</option>
+                    <option value="auto">跟随系统</option>
+                </select>
+            </button></div>
     </div>
 </header>
 <div class="search-dropdown desktop">
@@ -116,9 +180,8 @@
 </div>
 <div class="search-dropdown mobile">
     <div id="search-dropdown-mobile"></div>
-</div>
-<main class="main">
-            <div class="container"><div class="toc" id="toc-auto">
+</div><main class="main">
+            <div class="container"><div class="toc print:!tw-hidden" id="toc-auto">
         <h2 class="toc-title">目录</h2>
         <div class="toc-content" id="toc-content-auto"><nav id="TableOfContents">
   <ul>
@@ -146,15 +209,21 @@
     <li><a href="#参考">参考</a></li>
   </ul>
 </nav></div>
-    </div><script>document.getElementsByTagName("main")[0].setAttribute("pageStyle", "normal")</script><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Docker 单机安装使用 Elasticsearch</h1><div class="post-meta">
-            <div class="post-meta-line"><span class="post-author"><i class="author fas fa-user-circle fa-fw"></i><a href="/" title="Author" rel=" author" class="author">xiaobinqt</a>
-                </span>&nbsp;<span class="post-category">收录于 </span>&nbsp;<span class="post-category">类别 <a href="/categories/%E5%BC%80%E5%8F%91%E8%80%85%E6%89%8B%E5%86%8C/"><i class="far fa-folder fa-fw"></i>开发者手册</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2023-09-12">2023-09-12</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2023-09-14">2023-09-14</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 3120 字&nbsp;
-                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 7 分钟&nbsp;</div>
-        </div><div class="details toc" id="toc-static"  kept="">
+    </div><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single print:!tw-w-full print:!tw-max-w-none print:!tw-m-0 print:!tw-p-0"><h1 class="single-title">Docker 单机安装使用 Elasticsearch</h1><div class="post-meta">
+            <div class="post-meta-line">
+                <span class="post-author"><img class="tw-inline-block tw-max-h-4 tw-rounded-full tw-translate-y-[-2px] tw-mr-1"  src="/images/avatar.webp" srcset="/images/avatar_hu11269060449570882715.webp 16w, /images/avatar_hu2515534640531409486.webp 24w, /images/avatar_hu9855092516384270799.webp 32w"  alt="xiaobinqt avatar" height="16" width="16"><a href="https://github.com/xiaobinqt" title="Author" target="_blank" rel="noopener noreferrer author" class="author">xiaobinqt</a>
+                </span>&nbsp;<span class="post-category">收录于 </span>&nbsp;<span class="post-category">类别 <a href="/categories/%E5%BC%80%E5%8F%91%E8%80%85%E6%89%8B%E5%86%8C/"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M464 128H272l-54.63-54.63c-6-6-14.14-9.37-22.63-9.37H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V176c0-26.51-21.49-48-48-48zm0 272H48V112h140.12l54.63 54.63c6 6 14.14 9.37 22.63 9.37H464v224z"/></svg>开发者手册</a></span></div>
+            <div class="post-meta-line"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M148 288h-40c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12zm108-12v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm-96 96v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm-96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm192 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm96-260v352c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h48V12c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h128V12c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h48c26.5 0 48 21.5 48 48zm-48 346V160H48v298c0 3.3 2.7 6 6 6h340c3.3 0 6-2.7 6-6z"/></svg>&nbsp;<time datetime="2023-09-12">2023-09-12</time>&nbsp;<svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M402.3 344.9l32-32c5-5 13.7-1.5 13.7 5.7V464c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h273.5c7.1 0 10.7 8.6 5.7 13.7l-32 32c-1.5 1.5-3.5 2.3-5.7 2.3H48v352h352V350.5c0-2.1.8-4.1 2.3-5.6zm156.6-201.8L296.3 405.7l-90.4 10c-26.2 2.9-48.5-19.2-45.6-45.6l10-90.4L432.9 17.1c22.9-22.9 59.9-22.9 82.7 0l43.2 43.2c22.9 22.9 22.9 60 .1 82.8zM460.1 174L402 115.9 216.2 301.8l-7.3 65.3 65.3-7.3L460.1 174zm64.8-79.7l-43.2-43.2c-4.1-4.1-10.8-4.1-14.8 0L436 82l58.1 58.1 30.9-30.9c4-4.2 4-10.8-.1-14.9z"/></svg>&nbsp;<time datetime="2023-09-14">2023-09-14</time>&nbsp;<svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;约 2975 字&nbsp;<svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm0 448c-110.5 0-200-89.5-200-200S145.5 56 256 56s200 89.5 200 200-89.5 200-200 200zm61.8-104.4l-84.9-61.7c-3.1-2.3-4.9-5.9-4.9-9.7V116c0-6.6 5.4-12 12-12h32c6.6 0 12 5.4 12 12v141.7l66.8 48.6c5.4 3.9 6.5 11.4 2.6 16.8L334.6 349c-3.9 5.3-11.4 6.5-16.8 2.6z"/></svg>&nbsp;预计阅读 6 分钟&nbsp;</div>
+        </div><div class="details toc print:!tw-block" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
                     <span>目录</span>
-                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                    <span class="details-icon"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M224.3 273l-136 136c-9.4 9.4-24.6 9.4-33.9 0l-22.6-22.6c-9.4-9.4-9.4-24.6 0-33.9l96.4-96.4-96.4-96.4c-9.4-9.4-9.4-24.6 0-33.9L54.3 103c9.4-9.4 24.6-9.4 33.9 0l136 136c9.5 9.4 9.5 24.6.1 34z"/></svg></span>
                 </div>
                 <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
   <ul>
@@ -187,38 +256,113 @@
 <!-- https://xiaobinqt.github.io -->
 <!-- https://www.xiaobinqt.cn -->
 <h2 id="安装-es" class="headerLink">
-    <a href="#%e5%ae%89%e8%a3%85-es" class="header-mark"></a>安装 ES</h2><p>当前 <code>ElasticSearch</code> 已经到了 <code>8.0+</code>，新版本都有很多新特性，性能和功能都有大幅提升，建议使用较高版本，这里采用 <code>7.12.1</code> 版本 👼</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/f7745775638b42829fd11821d4406420.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/f7745775638b42829fd11821d4406420.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/f7745775638b42829fd11821d4406420.png" data-sub-html="<h2>es 版本</h2>">
-        <img
-            class="lazyload"
-            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/f7745775638b42829fd11821d4406420.png"
-            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/f7745775638b42829fd11821d4406420.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/f7745775638b42829fd11821d4406420.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/f7745775638b42829fd11821d4406420.png 2x"
-            data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/f7745775638b42829fd11821d4406420.png">
-    </a><figcaption class="image-caption">es 版本</figcaption>
-    </figure></p>
+    <a href="#%e5%ae%89%e8%a3%85-es" class="header-mark" aria-label="Header mark for '安装 ES'"></a>1 安装 ES</h2><p>当前 <code>ElasticSearch</code> 已经到了 <code>8.0+</code>，新版本都有很多新特性，性能和功能都有大幅提升，建议使用较高版本，这里采用 <code>7.12.1</code> 版本 &#x1f47c;</p>
+<p><figure><a class="lightgallery" href="/f7745775638b42829fd11821d4406420_8713520493808034845.png" title="" data-thumbnail="/f7745775638b42829fd11821d4406420_8713520493808034845.png" data-sub-html="<h2>es 版本</h2>"><img  loading="lazy" src="/f7745775638b42829fd11821d4406420_8713520493808034845.png" srcset="/f7745775638b42829fd11821d4406420_8713520493808034845_hu7917549759926672114.webp 800w, /f7745775638b42829fd11821d4406420_8713520493808034845_hu2249223698652611469.webp 1200w, /f7745775638b42829fd11821d4406420_8713520493808034845_hu6571377711297506644.webp 1600w"   height="689" width="1277"></a><figcaption class="image-caption">es 版本</figcaption>
+</figure></p>
 <p>安装 <code>ElasticSearch</code> 脚本如下:</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">docker run -d \
+<div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
+  <div class="
+    code-block-title 
+    
+    tw-flex 
+    tw-flex-row 
+    tw-justify-between 
+    tw-w-full tw-bg-bgColor-secondary
+    ">      
+    <button 
+      class="
+        tw-select-none 
+        tw-mx-2 
+        tw-block
+        group-[.is-open]:tw-rotate-90
+        tw-transition-[transform] 
+        tw-duration-500 
+        tw-ease-in-out
+        print:!tw-hidden"
+      disabled
+      aria-hidden="true"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"/></svg></button>
+
+    <div class="code-block-title-bar tw-w-full">
+      <p class="tw-select-none !tw-my-1">text</p>
+    </div>
+    <div class="tw-flex">
+      <button 
+        class="
+          line-number-button
+          tw-select-none 
+          tw-mx-2 
+          tw-hidden 
+          group-[.is-open]:tw-block 
+          group-[.show-line-numbers]:tw-text-fgColor-link 
+          print:!tw-hidden" 
+        title="Toggle line numbers"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M61.77 401l17.5-20.15a19.92 19.92 0 0 0 5.07-14.19v-3.31C84.34 356 80.5 352 73 352H16a8 8 0 0 0-8 8v16a8 8 0 0 0 8 8h22.83a157.41 157.41 0 0 0-11 12.31l-5.61 7c-4 5.07-5.25 10.13-2.8 14.88l1.05 1.93c3 5.76 6.29 7.88 12.25 7.88h4.73c10.33 0 15.94 2.44 15.94 9.09 0 4.72-4.2 8.22-14.36 8.22a41.54 41.54 0 0 1-15.47-3.12c-6.49-3.88-11.74-3.5-15.6 3.12l-5.59 9.31c-3.72 6.13-3.19 11.72 2.63 15.94 7.71 4.69 20.38 9.44 37 9.44 34.16 0 48.5-22.75 48.5-44.12-.03-14.38-9.12-29.76-28.73-34.88zM496 224H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zm0-160H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16V80a16 16 0 0 0-16-16zm0 320H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zM16 160h64a8 8 0 0 0 8-8v-16a8 8 0 0 0-8-8H64V40a8 8 0 0 0-8-8H32a8 8 0 0 0-7.14 4.42l-8 16A8 8 0 0 0 24 64h8v64H16a8 8 0 0 0-8 8v16a8 8 0 0 0 8 8zm-3.91 160H80a8 8 0 0 0 8-8v-16a8 8 0 0 0-8-8H41.32c3.29-10.29 48.34-18.68 48.34-56.44 0-29.06-25-39.56-44.47-39.56-21.36 0-33.8 10-40.46 18.75-4.37 5.59-3 10.84 2.8 15.37l8.58 6.88c5.61 4.56 11 2.47 16.12-2.44a13.44 13.44 0 0 1 9.46-3.84c3.33 0 9.28 1.56 9.28 8.75C51 248.19 0 257.31 0 304.59v4C0 316 5.08 320 12.09 320z"/></svg></button>
+
+      <button 
+        class="
+          wrap-code-button
+          tw-select-none 
+          tw-mx-2 
+          tw-hidden 
+          group-[.is-open]:tw-block 
+          group-[.is-wrap]:tw-text-fgColor-link 
+          print:!tw-hidden" 
+        title="Toggle code wrap"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"/></svg></button>
+      
+      <button 
+        class="
+          copy-code-button
+          tw-select-none
+          tw-mx-2 
+          tw-hidden
+          group-[.is-open]:tw-block
+          hover:tw-text-fgColor-link 
+          print:!tw-hidden"
+        title="Copy code">
+          <span class="copy-icon tw-block"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M433.941 65.941l-51.882-51.882A48 48 0 0 0 348.118 0H176c-26.51 0-48 21.49-48 48v48H48c-26.51 0-48 21.49-48 48v320c0 26.51 21.49 48 48 48h224c26.51 0 48-21.49 48-48v-48h80c26.51 0 48-21.49 48-48V99.882a48 48 0 0 0-14.059-33.941zM266 464H54a6 6 0 0 1-6-6V150a6 6 0 0 1 6-6h74v224c0 26.51 21.49 48 48 48h96v42a6 6 0 0 1-6 6zm128-96H182a6 6 0 0 1-6-6V54a6 6 0 0 1 6-6h106v88c0 13.255 10.745 24 24 24h88v202a6 6 0 0 1-6 6zm6-256h-64V48h9.632c1.591 0 3.117.632 4.243 1.757l48.368 48.368a6 6 0 0 1 1.757 4.243V112z"/></svg></span>
+          <span class="check-icon tw-hidden"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z"/></svg></span>
+      </button>
+        
+      <button 
+        class="
+          tw-select-none 
+          tw-mx-2 
+          tw-block 
+          group-[.is-open]:tw-hidden 
+          print:!tw-hidden" 
+        disabled
+        aria-hidden="true"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M328 256c0 39.8-32.2 72-72 72s-72-32.2-72-72 32.2-72 72-72 72 32.2 72 72zm104-72c-39.8 0-72 32.2-72 72s32.2 72 72 72 72-32.2 72-72-32.2-72-72-72zm-352 0c-39.8 0-72 32.2-72 72s32.2 72 72 72 72-32.2 72-72-32.2-72-72-72z"/></svg></button>
+    </div>
+  </div>
+  <pre style="counter-reset: codeblock;" class="tw-block tw-m-0 tw-p-0"><code 
+    id="codeblock-id-1" 
+    class="
+      chroma 
+      !tw-block 
+      tw-p-0
+      tw-m-0
+      tw-transition-[max-height] 
+      tw-duration-500 
+      tw-ease-in-out 
+      group-[.is-closed]:!tw-max-h-0 
+      group-[.is-wrap]:tw-text-wrap
+      tw-overflow-y-hidden
+      tw-overflow-x-auto
+      tw-scrollbar-thin
+      "><span class="line"><span class="cl">docker run -d \
 </span></span><span class="line"><span class="cl">--name elasticsearch \
 </span></span><span class="line"><span class="cl">    -e &#34;discovery.type=single-node&#34; \
 </span></span><span class="line"><span class="cl">    --privileged \
 </span></span><span class="line"><span class="cl">    -p 9200:9200 \
 </span></span><span class="line"><span class="cl">    -p 9300:9300 \
-</span></span><span class="line"><span class="cl">elasticsearch:7.12.1
-</span></span></code></pre></td></tr></table>
+</span></span><span class="line"><span class="cl">elasticsearch:7.12.1</span></span></code></pre>
 </div>
-</div><p>常用命令说明：</p>
+<p>常用命令说明：</p>
 <ul>
 <li><code>-e &quot;cluster.name=es-docker-cluster&quot;</code>：设置集群名称</li>
 <li><code>-e &quot;http.host=0.0.0.0&quot;</code>：监听的地址，可以外网访问</li>
@@ -230,105 +374,227 @@
 <li><code>--privileged</code>：授予逻辑卷访问权</li>
 <li><code>-p 9200:9200</code>：端口映射配置</li>
 </ul>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ca407aeb5d044916b27673149b45ec26.png" title="安装 es" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ca407aeb5d044916b27673149b45ec26.png" data-sub-html="<h2>docker 安装 es</h2><p>安装 es</p>">
-        <img
-            class="lazyload"
-            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ca407aeb5d044916b27673149b45ec26.png"
-            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ca407aeb5d044916b27673149b45ec26.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ca407aeb5d044916b27673149b45ec26.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ca407aeb5d044916b27673149b45ec26.png 2x"
-            data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ca407aeb5d044916b27673149b45ec26.png">
-    </a><figcaption class="image-caption">docker 安装 es</figcaption>
-    </figure></p>
+<p><figure><a class="lightgallery" href="/ca407aeb5d044916b27673149b45ec26_5465815889436041663.png" title="安装 es" data-thumbnail="/ca407aeb5d044916b27673149b45ec26_5465815889436041663.png" data-sub-html="<h2>docker 安装 es</h2><p>安装 es</p>"><img  loading="lazy" src="/ca407aeb5d044916b27673149b45ec26_5465815889436041663.png" srcset="/ca407aeb5d044916b27673149b45ec26_5465815889436041663_hu13774198555453411503.webp 800w, /ca407aeb5d044916b27673149b45ec26_5465815889436041663_hu12349197567968738131.webp 1200w, /ca407aeb5d044916b27673149b45ec26_5465815889436041663_hu1812636816280759626.webp 1600w"  alt="安装 es" height="432" width="752"></a><figcaption class="image-caption">docker 安装 es</figcaption>
+</figure></p>
 <p>安装完成后，在浏览器中输入：<code>http://172.27.46.132/:9200/</code> 即可看到 <code>elasticsearch</code> 的响应结果：</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/a8b3f2fe7d164cb7a02bf8491bbc05cf.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/a8b3f2fe7d164cb7a02bf8491bbc05cf.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/a8b3f2fe7d164cb7a02bf8491bbc05cf.png" data-sub-html="<h2>es 响应结果</h2>">
-        <img
-            class="lazyload"
-            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/a8b3f2fe7d164cb7a02bf8491bbc05cf.png"
-            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/a8b3f2fe7d164cb7a02bf8491bbc05cf.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/a8b3f2fe7d164cb7a02bf8491bbc05cf.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/a8b3f2fe7d164cb7a02bf8491bbc05cf.png 2x"
-            data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/a8b3f2fe7d164cb7a02bf8491bbc05cf.png">
-    </a><figcaption class="image-caption">es 响应结果</figcaption>
-    </figure></p>
+<p><figure><a class="lightgallery" href="/a8b3f2fe7d164cb7a02bf8491bbc05cf_14034882350613057062.png" title="" data-thumbnail="/a8b3f2fe7d164cb7a02bf8491bbc05cf_14034882350613057062.png" data-sub-html="<h2>es 响应结果</h2>"><img  loading="lazy" src="/a8b3f2fe7d164cb7a02bf8491bbc05cf_14034882350613057062.png" srcset="/a8b3f2fe7d164cb7a02bf8491bbc05cf_14034882350613057062_hu4954047084947654332.webp 800w, /a8b3f2fe7d164cb7a02bf8491bbc05cf_14034882350613057062_hu17460586091249386544.webp 1200w, /a8b3f2fe7d164cb7a02bf8491bbc05cf_14034882350613057062_hu13703725586602017937.webp 1600w"   height="383" width="548"></a><figcaption class="image-caption">es 响应结果</figcaption>
+</figure></p>
 <h2 id="kibana" class="headerLink">
-    <a href="#kibana" class="header-mark"></a>Kibana</h2><p>我们可以基于 <code>http</code> 请求操作 <code>ElasticSearch</code>，但基于 <code>http</code> 操作比较麻烦，可以采用 <code>Kibana</code> 实现可视化操作。</p>
+    <a href="#kibana" class="header-mark" aria-label="Header mark for 'Kibana'"></a>2 Kibana</h2><p>我们可以基于 <code>http</code> 请求操作 <code>ElasticSearch</code>，但基于 <code>http</code> 操作比较麻烦，可以采用 <code>Kibana</code> 实现可视化操作。</p>
 <p><code>Kibana</code> 是一个免费且开放的用户界面，能够对 <code>Elasticsearch</code> 数据进行可视化，并在 <code>Elastic Stack</code> 中进行导航，可以进行各种操作，从跟踪查询负载，到理解请求如何流经的整个应用，都能轻松完成。<code>Kibana</code> 让能够自由地选择如何呈现自己的数据。</p>
 <h3 id="kibana-安装" class="headerLink">
-    <a href="#kibana-%e5%ae%89%e8%a3%85" class="header-mark"></a>Kibana 安装</h3><p>使用 <code>Docker</code> 安装 <code>Kibana</code> 非常简单，但是执行命令需要注意 <code>Kibana</code> 操作的 <code>ElasticSearch</code> 地址，因为 <code>Kibana</code> 是需要连接 <code>ElasticSearch</code> 进行操作的，所以需要 es 和 <code>Kibana</code> 在同一网段，安装 <code>Kibana</code> 命令如下:</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">docker run -d \
+    <a href="#kibana-%e5%ae%89%e8%a3%85" class="header-mark" aria-label="Header mark for 'Kibana 安装'"></a>2.1 Kibana 安装</h3><p>使用 <code>Docker</code> 安装 <code>Kibana</code> 非常简单，但是执行命令需要注意 <code>Kibana</code> 操作的 <code>ElasticSearch</code> 地址，因为 <code>Kibana</code> 是需要连接 <code>ElasticSearch</code> 进行操作的，所以需要 es 和 <code>Kibana</code> 在同一网段，安装 <code>Kibana</code> 命令如下:</p>
+<div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
+  <div class="
+    code-block-title 
+    
+    tw-flex 
+    tw-flex-row 
+    tw-justify-between 
+    tw-w-full tw-bg-bgColor-secondary
+    ">      
+    <button 
+      class="
+        tw-select-none 
+        tw-mx-2 
+        tw-block
+        group-[.is-open]:tw-rotate-90
+        tw-transition-[transform] 
+        tw-duration-500 
+        tw-ease-in-out
+        print:!tw-hidden"
+      disabled
+      aria-hidden="true"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"/></svg></button>
+
+    <div class="code-block-title-bar tw-w-full">
+      <p class="tw-select-none !tw-my-1">text</p>
+    </div>
+    <div class="tw-flex">
+      <button 
+        class="
+          line-number-button
+          tw-select-none 
+          tw-mx-2 
+          tw-hidden 
+          group-[.is-open]:tw-block 
+          group-[.show-line-numbers]:tw-text-fgColor-link 
+          print:!tw-hidden" 
+        title="Toggle line numbers"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M61.77 401l17.5-20.15a19.92 19.92 0 0 0 5.07-14.19v-3.31C84.34 356 80.5 352 73 352H16a8 8 0 0 0-8 8v16a8 8 0 0 0 8 8h22.83a157.41 157.41 0 0 0-11 12.31l-5.61 7c-4 5.07-5.25 10.13-2.8 14.88l1.05 1.93c3 5.76 6.29 7.88 12.25 7.88h4.73c10.33 0 15.94 2.44 15.94 9.09 0 4.72-4.2 8.22-14.36 8.22a41.54 41.54 0 0 1-15.47-3.12c-6.49-3.88-11.74-3.5-15.6 3.12l-5.59 9.31c-3.72 6.13-3.19 11.72 2.63 15.94 7.71 4.69 20.38 9.44 37 9.44 34.16 0 48.5-22.75 48.5-44.12-.03-14.38-9.12-29.76-28.73-34.88zM496 224H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zm0-160H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16V80a16 16 0 0 0-16-16zm0 320H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zM16 160h64a8 8 0 0 0 8-8v-16a8 8 0 0 0-8-8H64V40a8 8 0 0 0-8-8H32a8 8 0 0 0-7.14 4.42l-8 16A8 8 0 0 0 24 64h8v64H16a8 8 0 0 0-8 8v16a8 8 0 0 0 8 8zm-3.91 160H80a8 8 0 0 0 8-8v-16a8 8 0 0 0-8-8H41.32c3.29-10.29 48.34-18.68 48.34-56.44 0-29.06-25-39.56-44.47-39.56-21.36 0-33.8 10-40.46 18.75-4.37 5.59-3 10.84 2.8 15.37l8.58 6.88c5.61 4.56 11 2.47 16.12-2.44a13.44 13.44 0 0 1 9.46-3.84c3.33 0 9.28 1.56 9.28 8.75C51 248.19 0 257.31 0 304.59v4C0 316 5.08 320 12.09 320z"/></svg></button>
+
+      <button 
+        class="
+          wrap-code-button
+          tw-select-none 
+          tw-mx-2 
+          tw-hidden 
+          group-[.is-open]:tw-block 
+          group-[.is-wrap]:tw-text-fgColor-link 
+          print:!tw-hidden" 
+        title="Toggle code wrap"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"/></svg></button>
+      
+      <button 
+        class="
+          copy-code-button
+          tw-select-none
+          tw-mx-2 
+          tw-hidden
+          group-[.is-open]:tw-block
+          hover:tw-text-fgColor-link 
+          print:!tw-hidden"
+        title="Copy code">
+          <span class="copy-icon tw-block"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M433.941 65.941l-51.882-51.882A48 48 0 0 0 348.118 0H176c-26.51 0-48 21.49-48 48v48H48c-26.51 0-48 21.49-48 48v320c0 26.51 21.49 48 48 48h224c26.51 0 48-21.49 48-48v-48h80c26.51 0 48-21.49 48-48V99.882a48 48 0 0 0-14.059-33.941zM266 464H54a6 6 0 0 1-6-6V150a6 6 0 0 1 6-6h74v224c0 26.51 21.49 48 48 48h96v42a6 6 0 0 1-6 6zm128-96H182a6 6 0 0 1-6-6V54a6 6 0 0 1 6-6h106v88c0 13.255 10.745 24 24 24h88v202a6 6 0 0 1-6 6zm6-256h-64V48h9.632c1.591 0 3.117.632 4.243 1.757l48.368 48.368a6 6 0 0 1 1.757 4.243V112z"/></svg></span>
+          <span class="check-icon tw-hidden"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z"/></svg></span>
+      </button>
+        
+      <button 
+        class="
+          tw-select-none 
+          tw-mx-2 
+          tw-block 
+          group-[.is-open]:tw-hidden 
+          print:!tw-hidden" 
+        disabled
+        aria-hidden="true"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M328 256c0 39.8-32.2 72-72 72s-72-32.2-72-72 32.2-72 72-72 72 32.2 72 72zm104-72c-39.8 0-72 32.2-72 72s32.2 72 72 72 72-32.2 72-72-32.2-72-72-72zm-352 0c-39.8 0-72 32.2-72 72s32.2 72 72 72 72-32.2 72-72-32.2-72-72-72z"/></svg></button>
+    </div>
+  </div>
+  <pre style="counter-reset: codeblock;" class="tw-block tw-m-0 tw-p-0"><code 
+    id="codeblock-id-2" 
+    class="
+      chroma 
+      !tw-block 
+      tw-p-0
+      tw-m-0
+      tw-transition-[max-height] 
+      tw-duration-500 
+      tw-ease-in-out 
+      group-[.is-closed]:!tw-max-h-0 
+      group-[.is-wrap]:tw-text-wrap
+      tw-overflow-y-hidden
+      tw-overflow-x-auto
+      tw-scrollbar-thin
+      "><span class="line"><span class="cl">docker run -d \
 </span></span><span class="line"><span class="cl">--name kibana \
 </span></span><span class="line"><span class="cl">-e ELASTICSEARCH_HOSTS=http://172.27.46.132:9200 \
 </span></span><span class="line"><span class="cl">-p 5601:5601  \
-</span></span><span class="line"><span class="cl">kibana:7.12.1
-</span></span></code></pre></td></tr></table>
+</span></span><span class="line"><span class="cl">kibana:7.12.1</span></span></code></pre>
 </div>
-</div><p>命令说明：</p>
+<p>命令说明：</p>
 <ul>
 <li><code>-e ELASTICSEARCH_HOSTS=http://172.27.46.132:9200&quot;</code>：设置 <code>elasticsearch</code> 的地址，因为 <code>kibana</code> 已经与<code>elasticsearch</code>在一个网络，因此可以用容器名直接访问 <code>elasticsearch</code>，也可以写 IP 地址实现访问。</li>
 <li><code>-p 5601:5601</code>：端口映射配置</li>
 </ul>
 <p>安装的时候如果没有镜像，会下载镜像，效果如下：</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/8348436b33284bba88bb2efa43b298f1.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/8348436b33284bba88bb2efa43b298f1.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/8348436b33284bba88bb2efa43b298f1.png" data-sub-html="<h2>安装 Kibana</h2>">
-        <img
-            class="lazyload"
-            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/8348436b33284bba88bb2efa43b298f1.png"
-            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/8348436b33284bba88bb2efa43b298f1.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/8348436b33284bba88bb2efa43b298f1.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/8348436b33284bba88bb2efa43b298f1.png 2x"
-            data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/8348436b33284bba88bb2efa43b298f1.png">
-    </a><figcaption class="image-caption">安装 Kibana</figcaption>
-    </figure></p>
+<p><figure><a class="lightgallery" href="/8348436b33284bba88bb2efa43b298f1_17199339649296732392.png" title="" data-thumbnail="/8348436b33284bba88bb2efa43b298f1_17199339649296732392.png" data-sub-html="<h2>安装 Kibana</h2>"><img  loading="lazy" src="/8348436b33284bba88bb2efa43b298f1_17199339649296732392.png" srcset="/8348436b33284bba88bb2efa43b298f1_17199339649296732392_hu14774584497838288134.webp 800w, /8348436b33284bba88bb2efa43b298f1_17199339649296732392_hu7431965557074038077.webp 1200w, /8348436b33284bba88bb2efa43b298f1_17199339649296732392_hu14713617404450783749.webp 1600w"   height="175" width="632"></a><figcaption class="image-caption">安装 Kibana</figcaption>
+</figure></p>
 <p>安装成功后，可以访问 <code>http://172.27.46.132:5601/</code> 效果如下：</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/53c75f9beec0482ba216e08af2e4d035.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/53c75f9beec0482ba216e08af2e4d035.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/53c75f9beec0482ba216e08af2e4d035.png" data-sub-html="<h2>Kibana 效果</h2>">
-        <img
-            class="lazyload"
-            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/53c75f9beec0482ba216e08af2e4d035.png"
-            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/53c75f9beec0482ba216e08af2e4d035.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/53c75f9beec0482ba216e08af2e4d035.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/53c75f9beec0482ba216e08af2e4d035.png 2x"
-            data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/53c75f9beec0482ba216e08af2e4d035.png">
-    </a><figcaption class="image-caption">Kibana 效果</figcaption>
-    </figure></p>
+<p><figure><a class="lightgallery" href="/53c75f9beec0482ba216e08af2e4d035_4798147386982601583.png" title="" data-thumbnail="/53c75f9beec0482ba216e08af2e4d035_4798147386982601583.png" data-sub-html="<h2>Kibana 效果</h2>"><img  loading="lazy" src="/53c75f9beec0482ba216e08af2e4d035_4798147386982601583.png" srcset="/53c75f9beec0482ba216e08af2e4d035_4798147386982601583_hu16805502114611279137.webp 800w, /53c75f9beec0482ba216e08af2e4d035_4798147386982601583_hu17058184236325154541.webp 1200w, /53c75f9beec0482ba216e08af2e4d035_4798147386982601583_hu1377156692098403938.webp 1600w"   height="799" width="1244"></a><figcaption class="image-caption">Kibana 效果</figcaption>
+</figure></p>
 <p>可以点击 <code>Add data</code>，添加示例数据，如下图，随意选一个即可，不选其实也是可以的。</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/f74d72b57b544c6485d15de34417f89f.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/f74d72b57b544c6485d15de34417f89f.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/f74d72b57b544c6485d15de34417f89f.png" data-sub-html="<h2>添加数据</h2>">
-        <img
-            class="lazyload"
-            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/f74d72b57b544c6485d15de34417f89f.png"
-            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/f74d72b57b544c6485d15de34417f89f.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/f74d72b57b544c6485d15de34417f89f.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/f74d72b57b544c6485d15de34417f89f.png 2x"
-            data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/f74d72b57b544c6485d15de34417f89f.png">
-    </a><figcaption class="image-caption">添加数据</figcaption>
-    </figure></p>
+<p><figure><a class="lightgallery" href="/f74d72b57b544c6485d15de34417f89f_13526834783892560966.png" title="" data-thumbnail="/f74d72b57b544c6485d15de34417f89f_13526834783892560966.png" data-sub-html="<h2>添加数据</h2>"><img  loading="lazy" src="/f74d72b57b544c6485d15de34417f89f_13526834783892560966.png" srcset="/f74d72b57b544c6485d15de34417f89f_13526834783892560966_hu9708874816716440317.webp 800w, /f74d72b57b544c6485d15de34417f89f_13526834783892560966_hu5964857882071689246.webp 1200w, /f74d72b57b544c6485d15de34417f89f_13526834783892560966_hu4604321817080853399.webp 1600w"   height="772" width="1605"></a><figcaption class="image-caption">添加数据</figcaption>
+</figure></p>
 <h3 id="kibana-中文配置" class="headerLink">
-    <a href="#kibana-%e4%b8%ad%e6%96%87%e9%85%8d%e7%bd%ae" class="header-mark"></a>Kibana 中文配置</h3><p><code>Kibana</code> 支持中文配置，可以把 <code>Kibana</code> 配置成中文版，切换中文操作如下:</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">#进入容器
+    <a href="#kibana-%e4%b8%ad%e6%96%87%e9%85%8d%e7%bd%ae" class="header-mark" aria-label="Header mark for 'Kibana 中文配置'"></a>2.2 Kibana 中文配置</h3><p><code>Kibana</code> 支持中文配置，可以把 <code>Kibana</code> 配置成中文版，切换中文操作如下:</p>
+<div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
+  <div class="
+    code-block-title 
+    
+    tw-flex 
+    tw-flex-row 
+    tw-justify-between 
+    tw-w-full tw-bg-bgColor-secondary
+    ">      
+    <button 
+      class="
+        tw-select-none 
+        tw-mx-2 
+        tw-block
+        group-[.is-open]:tw-rotate-90
+        tw-transition-[transform] 
+        tw-duration-500 
+        tw-ease-in-out
+        print:!tw-hidden"
+      disabled
+      aria-hidden="true"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"/></svg></button>
+
+    <div class="code-block-title-bar tw-w-full">
+      <p class="tw-select-none !tw-my-1">text</p>
+    </div>
+    <div class="tw-flex">
+      <button 
+        class="
+          line-number-button
+          tw-select-none 
+          tw-mx-2 
+          tw-hidden 
+          group-[.is-open]:tw-block 
+          group-[.show-line-numbers]:tw-text-fgColor-link 
+          print:!tw-hidden" 
+        title="Toggle line numbers"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M61.77 401l17.5-20.15a19.92 19.92 0 0 0 5.07-14.19v-3.31C84.34 356 80.5 352 73 352H16a8 8 0 0 0-8 8v16a8 8 0 0 0 8 8h22.83a157.41 157.41 0 0 0-11 12.31l-5.61 7c-4 5.07-5.25 10.13-2.8 14.88l1.05 1.93c3 5.76 6.29 7.88 12.25 7.88h4.73c10.33 0 15.94 2.44 15.94 9.09 0 4.72-4.2 8.22-14.36 8.22a41.54 41.54 0 0 1-15.47-3.12c-6.49-3.88-11.74-3.5-15.6 3.12l-5.59 9.31c-3.72 6.13-3.19 11.72 2.63 15.94 7.71 4.69 20.38 9.44 37 9.44 34.16 0 48.5-22.75 48.5-44.12-.03-14.38-9.12-29.76-28.73-34.88zM496 224H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zm0-160H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16V80a16 16 0 0 0-16-16zm0 320H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zM16 160h64a8 8 0 0 0 8-8v-16a8 8 0 0 0-8-8H64V40a8 8 0 0 0-8-8H32a8 8 0 0 0-7.14 4.42l-8 16A8 8 0 0 0 24 64h8v64H16a8 8 0 0 0-8 8v16a8 8 0 0 0 8 8zm-3.91 160H80a8 8 0 0 0 8-8v-16a8 8 0 0 0-8-8H41.32c3.29-10.29 48.34-18.68 48.34-56.44 0-29.06-25-39.56-44.47-39.56-21.36 0-33.8 10-40.46 18.75-4.37 5.59-3 10.84 2.8 15.37l8.58 6.88c5.61 4.56 11 2.47 16.12-2.44a13.44 13.44 0 0 1 9.46-3.84c3.33 0 9.28 1.56 9.28 8.75C51 248.19 0 257.31 0 304.59v4C0 316 5.08 320 12.09 320z"/></svg></button>
+
+      <button 
+        class="
+          wrap-code-button
+          tw-select-none 
+          tw-mx-2 
+          tw-hidden 
+          group-[.is-open]:tw-block 
+          group-[.is-wrap]:tw-text-fgColor-link 
+          print:!tw-hidden" 
+        title="Toggle code wrap"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"/></svg></button>
+      
+      <button 
+        class="
+          copy-code-button
+          tw-select-none
+          tw-mx-2 
+          tw-hidden
+          group-[.is-open]:tw-block
+          hover:tw-text-fgColor-link 
+          print:!tw-hidden"
+        title="Copy code">
+          <span class="copy-icon tw-block"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M433.941 65.941l-51.882-51.882A48 48 0 0 0 348.118 0H176c-26.51 0-48 21.49-48 48v48H48c-26.51 0-48 21.49-48 48v320c0 26.51 21.49 48 48 48h224c26.51 0 48-21.49 48-48v-48h80c26.51 0 48-21.49 48-48V99.882a48 48 0 0 0-14.059-33.941zM266 464H54a6 6 0 0 1-6-6V150a6 6 0 0 1 6-6h74v224c0 26.51 21.49 48 48 48h96v42a6 6 0 0 1-6 6zm128-96H182a6 6 0 0 1-6-6V54a6 6 0 0 1 6-6h106v88c0 13.255 10.745 24 24 24h88v202a6 6 0 0 1-6 6zm6-256h-64V48h9.632c1.591 0 3.117.632 4.243 1.757l48.368 48.368a6 6 0 0 1 1.757 4.243V112z"/></svg></span>
+          <span class="check-icon tw-hidden"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z"/></svg></span>
+      </button>
+        
+      <button 
+        class="
+          tw-select-none 
+          tw-mx-2 
+          tw-block 
+          group-[.is-open]:tw-hidden 
+          print:!tw-hidden" 
+        disabled
+        aria-hidden="true"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M328 256c0 39.8-32.2 72-72 72s-72-32.2-72-72 32.2-72 72-72 72 32.2 72 72zm104-72c-39.8 0-72 32.2-72 72s32.2 72 72 72 72-32.2 72-72-32.2-72-72-72zm-352 0c-39.8 0-72 32.2-72 72s32.2 72 72 72 72-32.2 72-72-32.2-72-72-72z"/></svg></button>
+    </div>
+  </div>
+  <pre style="counter-reset: codeblock;" class="tw-block tw-m-0 tw-p-0"><code 
+    id="codeblock-id-3" 
+    class="
+      chroma 
+      !tw-block 
+      tw-p-0
+      tw-m-0
+      tw-transition-[max-height] 
+      tw-duration-500 
+      tw-ease-in-out 
+      group-[.is-closed]:!tw-max-h-0 
+      group-[.is-wrap]:tw-text-wrap
+      tw-overflow-y-hidden
+      tw-overflow-x-auto
+      tw-scrollbar-thin
+      "><span class="line"><span class="cl">#进入容器
 </span></span><span class="line"><span class="cl">docker exec -it kibana /bin/bash
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">#进入配置文件目录
@@ -344,85 +610,133 @@
 </span></span><span class="line"><span class="cl">exit
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">#并重启容器
-</span></span><span class="line"><span class="cl">docker restart kibana
-</span></span></code></pre></td></tr></table>
+</span></span><span class="line"><span class="cl">docker restart kibana</span></span></code></pre>
 </div>
-</div><p>等待 <code>Kibana</code> 容器启动，再次访问 <code>http://172.27.46.132:5601/</code> 效果如下：</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/43ffacffaff84394a12e7e741bcc8f65.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/43ffacffaff84394a12e7e741bcc8f65.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/43ffacffaff84394a12e7e741bcc8f65.png" data-sub-html="<h2>中文效果</h2>">
-        <img
-            class="lazyload"
-            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/43ffacffaff84394a12e7e741bcc8f65.png"
-            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/43ffacffaff84394a12e7e741bcc8f65.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/43ffacffaff84394a12e7e741bcc8f65.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/43ffacffaff84394a12e7e741bcc8f65.png 2x"
-            data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/43ffacffaff84394a12e7e741bcc8f65.png">
-    </a><figcaption class="image-caption">中文效果</figcaption>
-    </figure></p>
+<p>等待 <code>Kibana</code> 容器启动，再次访问 <code>http://172.27.46.132:5601/</code> 效果如下：</p>
+<p><figure><a class="lightgallery" href="/43ffacffaff84394a12e7e741bcc8f65_7272519169793837351.png" title="" data-thumbnail="/43ffacffaff84394a12e7e741bcc8f65_7272519169793837351.png" data-sub-html="<h2>中文效果</h2>"><img  loading="lazy" src="/43ffacffaff84394a12e7e741bcc8f65_7272519169793837351.png" srcset="/43ffacffaff84394a12e7e741bcc8f65_7272519169793837351_hu783291762838288284.webp 800w, /43ffacffaff84394a12e7e741bcc8f65_7272519169793837351_hu5390644066247334492.webp 1200w, /43ffacffaff84394a12e7e741bcc8f65_7272519169793837351_hu2159983563284099654.webp 1600w"   height="778" width="1586"></a><figcaption class="image-caption">中文效果</figcaption>
+</figure></p>
 <h2 id="ik-分词器安装" class="headerLink">
-    <a href="#ik-%e5%88%86%e8%af%8d%e5%99%a8%e5%ae%89%e8%a3%85" class="header-mark"></a>IK 分词器安装</h2><p>打开 <code>Kibana</code>，点击开发工具，操作如下：</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ef521d29bf764703adabe06108c6ef9f.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ef521d29bf764703adabe06108c6ef9f.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ef521d29bf764703adabe06108c6ef9f.png" data-sub-html="<h2>开发工具</h2>">
-        <img
-            class="lazyload"
-            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ef521d29bf764703adabe06108c6ef9f.png"
-            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ef521d29bf764703adabe06108c6ef9f.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ef521d29bf764703adabe06108c6ef9f.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ef521d29bf764703adabe06108c6ef9f.png 2x"
-            data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ef521d29bf764703adabe06108c6ef9f.png">
-    </a><figcaption class="image-caption">开发工具</figcaption>
-    </figure></p>
+    <a href="#ik-%e5%88%86%e8%af%8d%e5%99%a8%e5%ae%89%e8%a3%85" class="header-mark" aria-label="Header mark for 'IK 分词器安装'"></a>3 IK 分词器安装</h2><p>打开 <code>Kibana</code>，点击开发工具，操作如下：</p>
+<p><figure><a class="lightgallery" href="/ef521d29bf764703adabe06108c6ef9f_4266122610100444318.png" title="" data-thumbnail="/ef521d29bf764703adabe06108c6ef9f_4266122610100444318.png" data-sub-html="<h2>开发工具</h2>"><img  loading="lazy" src="/ef521d29bf764703adabe06108c6ef9f_4266122610100444318.png" srcset="/ef521d29bf764703adabe06108c6ef9f_4266122610100444318_hu15649424546744873385.webp 800w, /ef521d29bf764703adabe06108c6ef9f_4266122610100444318_hu16713249915769101988.webp 1200w, /ef521d29bf764703adabe06108c6ef9f_4266122610100444318_hu7620467982630729587.webp 1600w"   height="396" width="1615"></a><figcaption class="image-caption">开发工具</figcaption>
+</figure></p>
 <p>在左边输入如下内容，用于查询分词：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">GET _analyze
+<div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
+  <div class="
+    code-block-title 
+    
+    tw-flex 
+    tw-flex-row 
+    tw-justify-between 
+    tw-w-full tw-bg-bgColor-secondary
+    ">      
+    <button 
+      class="
+        tw-select-none 
+        tw-mx-2 
+        tw-block
+        group-[.is-open]:tw-rotate-90
+        tw-transition-[transform] 
+        tw-duration-500 
+        tw-ease-in-out
+        print:!tw-hidden"
+      disabled
+      aria-hidden="true"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"/></svg></button>
+
+    <div class="code-block-title-bar tw-w-full">
+      <p class="tw-select-none !tw-my-1">text</p>
+    </div>
+    <div class="tw-flex">
+      <button 
+        class="
+          line-number-button
+          tw-select-none 
+          tw-mx-2 
+          tw-hidden 
+          group-[.is-open]:tw-block 
+          group-[.show-line-numbers]:tw-text-fgColor-link 
+          print:!tw-hidden" 
+        title="Toggle line numbers"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M61.77 401l17.5-20.15a19.92 19.92 0 0 0 5.07-14.19v-3.31C84.34 356 80.5 352 73 352H16a8 8 0 0 0-8 8v16a8 8 0 0 0 8 8h22.83a157.41 157.41 0 0 0-11 12.31l-5.61 7c-4 5.07-5.25 10.13-2.8 14.88l1.05 1.93c3 5.76 6.29 7.88 12.25 7.88h4.73c10.33 0 15.94 2.44 15.94 9.09 0 4.72-4.2 8.22-14.36 8.22a41.54 41.54 0 0 1-15.47-3.12c-6.49-3.88-11.74-3.5-15.6 3.12l-5.59 9.31c-3.72 6.13-3.19 11.72 2.63 15.94 7.71 4.69 20.38 9.44 37 9.44 34.16 0 48.5-22.75 48.5-44.12-.03-14.38-9.12-29.76-28.73-34.88zM496 224H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zm0-160H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16V80a16 16 0 0 0-16-16zm0 320H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zM16 160h64a8 8 0 0 0 8-8v-16a8 8 0 0 0-8-8H64V40a8 8 0 0 0-8-8H32a8 8 0 0 0-7.14 4.42l-8 16A8 8 0 0 0 24 64h8v64H16a8 8 0 0 0-8 8v16a8 8 0 0 0 8 8zm-3.91 160H80a8 8 0 0 0 8-8v-16a8 8 0 0 0-8-8H41.32c3.29-10.29 48.34-18.68 48.34-56.44 0-29.06-25-39.56-44.47-39.56-21.36 0-33.8 10-40.46 18.75-4.37 5.59-3 10.84 2.8 15.37l8.58 6.88c5.61 4.56 11 2.47 16.12-2.44a13.44 13.44 0 0 1 9.46-3.84c3.33 0 9.28 1.56 9.28 8.75C51 248.19 0 257.31 0 304.59v4C0 316 5.08 320 12.09 320z"/></svg></button>
+
+      <button 
+        class="
+          wrap-code-button
+          tw-select-none 
+          tw-mx-2 
+          tw-hidden 
+          group-[.is-open]:tw-block 
+          group-[.is-wrap]:tw-text-fgColor-link 
+          print:!tw-hidden" 
+        title="Toggle code wrap"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"/></svg></button>
+      
+      <button 
+        class="
+          copy-code-button
+          tw-select-none
+          tw-mx-2 
+          tw-hidden
+          group-[.is-open]:tw-block
+          hover:tw-text-fgColor-link 
+          print:!tw-hidden"
+        title="Copy code">
+          <span class="copy-icon tw-block"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M433.941 65.941l-51.882-51.882A48 48 0 0 0 348.118 0H176c-26.51 0-48 21.49-48 48v48H48c-26.51 0-48 21.49-48 48v320c0 26.51 21.49 48 48 48h224c26.51 0 48-21.49 48-48v-48h80c26.51 0 48-21.49 48-48V99.882a48 48 0 0 0-14.059-33.941zM266 464H54a6 6 0 0 1-6-6V150a6 6 0 0 1 6-6h74v224c0 26.51 21.49 48 48 48h96v42a6 6 0 0 1-6 6zm128-96H182a6 6 0 0 1-6-6V54a6 6 0 0 1 6-6h106v88c0 13.255 10.745 24 24 24h88v202a6 6 0 0 1-6 6zm6-256h-64V48h9.632c1.591 0 3.117.632 4.243 1.757l48.368 48.368a6 6 0 0 1 1.757 4.243V112z"/></svg></span>
+          <span class="check-icon tw-hidden"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z"/></svg></span>
+      </button>
+        
+      <button 
+        class="
+          tw-select-none 
+          tw-mx-2 
+          tw-block 
+          group-[.is-open]:tw-hidden 
+          print:!tw-hidden" 
+        disabled
+        aria-hidden="true"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M328 256c0 39.8-32.2 72-72 72s-72-32.2-72-72 32.2-72 72-72 72 32.2 72 72zm104-72c-39.8 0-72 32.2-72 72s32.2 72 72 72 72-32.2 72-72-32.2-72-72-72zm-352 0c-39.8 0-72 32.2-72 72s32.2 72 72 72 72-32.2 72-72-32.2-72-72-72z"/></svg></button>
+    </div>
+  </div>
+  <pre style="counter-reset: codeblock;" class="tw-block tw-m-0 tw-p-0"><code 
+    id="codeblock-id-4" 
+    class="
+      chroma 
+      !tw-block 
+      tw-p-0
+      tw-m-0
+      tw-transition-[max-height] 
+      tw-duration-500 
+      tw-ease-in-out 
+      group-[.is-closed]:!tw-max-h-0 
+      group-[.is-wrap]:tw-text-wrap
+      tw-overflow-y-hidden
+      tw-overflow-x-auto
+      tw-scrollbar-thin
+      "><span class="line"><span class="cl">GET _analyze
 </span></span><span class="line"><span class="cl">{
 </span></span><span class="line"><span class="cl">  &#34;analyzer&#34;: &#34;standard&#34;,
 </span></span><span class="line"><span class="cl">  &#34;text&#34;: &#34;php 是世界上最好的语言&#34;
-</span></span><span class="line"><span class="cl">}
-</span></span></code></pre></td></tr></table>
+</span></span><span class="line"><span class="cl">}</span></span></code></pre>
 </div>
-</div><p>效果如下：</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/a8c86a3f5c8640108a32551ace6b8cad.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/a8c86a3f5c8640108a32551ace6b8cad.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/a8c86a3f5c8640108a32551ace6b8cad.png" data-sub-html="<h2>分词效果</h2>">
-        <img
-            class="lazyload"
-            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/a8c86a3f5c8640108a32551ace6b8cad.png"
-            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/a8c86a3f5c8640108a32551ace6b8cad.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/a8c86a3f5c8640108a32551ace6b8cad.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/a8c86a3f5c8640108a32551ace6b8cad.png 2x"
-            data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/a8c86a3f5c8640108a32551ace6b8cad.png">
-    </a><figcaption class="image-caption">分词效果</figcaption>
-    </figure></p>
+<p>效果如下：</p>
+<p><figure><a class="lightgallery" href="/a8c86a3f5c8640108a32551ace6b8cad_14657664198208611640.png" title="" data-thumbnail="/a8c86a3f5c8640108a32551ace6b8cad_14657664198208611640.png" data-sub-html="<h2>分词效果</h2>"><img  loading="lazy" src="/a8c86a3f5c8640108a32551ace6b8cad_14657664198208611640.png" srcset="/a8c86a3f5c8640108a32551ace6b8cad_14657664198208611640_hu14354101703574217091.webp 800w, /a8c86a3f5c8640108a32551ace6b8cad_14657664198208611640_hu8796055102075884894.webp 1200w, /a8c86a3f5c8640108a32551ace6b8cad_14657664198208611640_hu12475684848866246459.webp 1600w"   height="1003" width="1580"></a><figcaption class="image-caption">分词效果</figcaption>
+</figure></p>
 <p>使用 <code>standard</code> 对 <code>php 是世界上最好的语言</code> 进行分词。</p>
 <p><code>分词</code>：提取一句话或者一篇文章中的词语。</p>
 <p>我们在使用 <code>ElasticSearch</code> 的时候，默认用 <code>standard</code> 分词器，但 <code>standard</code> 分词器使用的是按空格分词，这种分词操作方法不符合中文分词标准，我们需要额外安装中文分词器。</p>
 <h3 id="ik-分词器" class="headerLink">
-    <a href="#ik-%e5%88%86%e8%af%8d%e5%99%a8" class="header-mark"></a>IK 分词器</h3><p><code>IK Analyzer</code> 是一个开源的，基于 java 语言开发的轻量级的中文分词工具包。可以直接在 <code>ElasticSearch</code> 中集成 IK 分词器，<code>IK</code> 分词器集成<code>ElasticSearch</code>下载地址：<a href="https://github.com/medcl/elasticsearch-analysis-ik/releases" target="_blank" rel="noopener noreferrer">elasticsearch-analysis-ik/releases</a>。IK 可以跟 es 的版本一致，我们 es 的版本是 7.12.1，IK 的版本也是用 7.12.1。</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/89e1dba4c7fd481ba7183f764a9cb18f.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/89e1dba4c7fd481ba7183f764a9cb18f.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/89e1dba4c7fd481ba7183f764a9cb18f.png" data-sub-html="<h2>IK 分词器</h2>">
-        <img
-            class="lazyload"
-            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/89e1dba4c7fd481ba7183f764a9cb18f.png"
-            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/89e1dba4c7fd481ba7183f764a9cb18f.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/89e1dba4c7fd481ba7183f764a9cb18f.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/89e1dba4c7fd481ba7183f764a9cb18f.png 2x"
-            data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/89e1dba4c7fd481ba7183f764a9cb18f.png">
-    </a><figcaption class="image-caption">IK 分词器</figcaption>
-    </figure></p>
+    <a href="#ik-%e5%88%86%e8%af%8d%e5%99%a8" class="header-mark" aria-label="Header mark for 'IK 分词器'"></a>3.1 IK 分词器</h3><p><code>IK Analyzer</code> 是一个开源的，基于 java 语言开发的轻量级的中文分词工具包。可以直接在 <code>ElasticSearch</code> 中集成 IK 分词器，<code>IK</code> 分词器集成<code>ElasticSearch</code>下载地址：<a href="https://github.com/medcl/elasticsearch-analysis-ik/releases" target="_blank" rel="noopener noreferrer">elasticsearch-analysis-ik/releases</a>。IK 可以跟 es 的版本一致，我们 es 的版本是 7.12.1，IK 的版本也是用 7.12.1。</p>
+<p><figure><a class="lightgallery" href="/89e1dba4c7fd481ba7183f764a9cb18f_12166726215893632356.png" title="" data-thumbnail="/89e1dba4c7fd481ba7183f764a9cb18f_12166726215893632356.png" data-sub-html="<h2>IK 分词器</h2>"><img  loading="lazy" src="/89e1dba4c7fd481ba7183f764a9cb18f_12166726215893632356.png" srcset="/89e1dba4c7fd481ba7183f764a9cb18f_12166726215893632356_hu4704945642082530246.webp 800w, /89e1dba4c7fd481ba7183f764a9cb18f_12166726215893632356_hu8831601513374715960.webp 1200w, /89e1dba4c7fd481ba7183f764a9cb18f_12166726215893632356_hu15987130651597698183.webp 1600w"   height="706" width="1532"></a><figcaption class="image-caption">IK 分词器</figcaption>
+</figure></p>
 <h3 id="ik-分词器配置" class="headerLink">
-    <a href="#ik-%e5%88%86%e8%af%8d%e5%99%a8%e9%85%8d%e7%bd%ae" class="header-mark"></a>IK 分词器配置</h3><p>下载安装包 <a href="https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v7.12.1/elasticsearch-analysis-ik-7.12.1.zip" target="_blank" rel="noopener noreferrer">elasticsearch-analysis-ik/releases/tag/v7.12.1</a> 后，，需要将 <code>elasticsearch-analysis-ik-7.12.1.zip</code> 拷贝到 <code>elasticSearch</code> 容器里的的 <code>/usr/share/elasticsearch/plugins</code> 目录中解压即可。</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ee221bb0e9424881b5ea8a687fa5d7bf.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ee221bb0e9424881b5ea8a687fa5d7bf.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ee221bb0e9424881b5ea8a687fa5d7bf.png" data-sub-html="<h2>cp elasticsearch-analysis-ik-7.12.1.zip</h2>">
-        <img
-            class="lazyload"
-            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ee221bb0e9424881b5ea8a687fa5d7bf.png"
-            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ee221bb0e9424881b5ea8a687fa5d7bf.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ee221bb0e9424881b5ea8a687fa5d7bf.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ee221bb0e9424881b5ea8a687fa5d7bf.png 2x"
-            data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ee221bb0e9424881b5ea8a687fa5d7bf.png">
-    </a><figcaption class="image-caption">cp elasticsearch-analysis-ik-7.12.1.zip</figcaption>
-    </figure></p>
+    <a href="#ik-%e5%88%86%e8%af%8d%e5%99%a8%e9%85%8d%e7%bd%ae" class="header-mark" aria-label="Header mark for 'IK 分词器配置'"></a>3.2 IK 分词器配置</h3><p>下载安装包 <a href="https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v7.12.1/elasticsearch-analysis-ik-7.12.1.zip" target="_blank" rel="noopener noreferrer">elasticsearch-analysis-ik/releases/tag/v7.12.1</a> 后，，需要将 <code>elasticsearch-analysis-ik-7.12.1.zip</code> 拷贝到 <code>elasticSearch</code> 容器里的的 <code>/usr/share/elasticsearch/plugins</code> 目录中解压即可。</p>
+<p><figure><a class="lightgallery" href="/ee221bb0e9424881b5ea8a687fa5d7bf_13049372829568516051.png" title="" data-thumbnail="/ee221bb0e9424881b5ea8a687fa5d7bf_13049372829568516051.png" data-sub-html="<h2>cp elasticsearch-analysis-ik-7.12.1.zip</h2>"><img  loading="lazy" src="/ee221bb0e9424881b5ea8a687fa5d7bf_13049372829568516051.png" srcset="/ee221bb0e9424881b5ea8a687fa5d7bf_13049372829568516051_hu2331893272470932147.webp 800w, /ee221bb0e9424881b5ea8a687fa5d7bf_13049372829568516051_hu12572328450376382513.webp 1200w, /ee221bb0e9424881b5ea8a687fa5d7bf_13049372829568516051_hu11245793827024311076.webp 1600w"   height="791" width="1438"></a><figcaption class="image-caption">cp elasticsearch-analysis-ik-7.12.1.zip</figcaption>
+</figure></p>
 <p>解压文件成功后，然后<strong>重启</strong> es 容器。</p>
 <h3 id="分词测试" class="headerLink">
-    <a href="#%e5%88%86%e8%af%8d%e6%b5%8b%e8%af%95" class="header-mark"></a>分词测试</h3><p><code>IK</code>分词器包含两种模式：</p>
+    <a href="#%e5%88%86%e8%af%8d%e6%b5%8b%e8%af%95" class="header-mark" aria-label="Header mark for '分词测试'"></a>3.3 分词测试</h3><p><code>IK</code>分词器包含两种模式：</p>
 <ul>
 <li>
 <p><code>ik_smart</code>：最少切分</p>
@@ -432,262 +746,350 @@
 </li>
 </ul>
 <p>前面使用默认的<code>standard</code>分词器，对中文分词非常难用，安装IK分词器后，我们可以使用IK分词器测试，测试代码如下：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">GET _analyze
+<div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
+  <div class="
+    code-block-title 
+    
+    tw-flex 
+    tw-flex-row 
+    tw-justify-between 
+    tw-w-full tw-bg-bgColor-secondary
+    ">      
+    <button 
+      class="
+        tw-select-none 
+        tw-mx-2 
+        tw-block
+        group-[.is-open]:tw-rotate-90
+        tw-transition-[transform] 
+        tw-duration-500 
+        tw-ease-in-out
+        print:!tw-hidden"
+      disabled
+      aria-hidden="true"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"/></svg></button>
+
+    <div class="code-block-title-bar tw-w-full">
+      <p class="tw-select-none !tw-my-1">text</p>
+    </div>
+    <div class="tw-flex">
+      <button 
+        class="
+          line-number-button
+          tw-select-none 
+          tw-mx-2 
+          tw-hidden 
+          group-[.is-open]:tw-block 
+          group-[.show-line-numbers]:tw-text-fgColor-link 
+          print:!tw-hidden" 
+        title="Toggle line numbers"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M61.77 401l17.5-20.15a19.92 19.92 0 0 0 5.07-14.19v-3.31C84.34 356 80.5 352 73 352H16a8 8 0 0 0-8 8v16a8 8 0 0 0 8 8h22.83a157.41 157.41 0 0 0-11 12.31l-5.61 7c-4 5.07-5.25 10.13-2.8 14.88l1.05 1.93c3 5.76 6.29 7.88 12.25 7.88h4.73c10.33 0 15.94 2.44 15.94 9.09 0 4.72-4.2 8.22-14.36 8.22a41.54 41.54 0 0 1-15.47-3.12c-6.49-3.88-11.74-3.5-15.6 3.12l-5.59 9.31c-3.72 6.13-3.19 11.72 2.63 15.94 7.71 4.69 20.38 9.44 37 9.44 34.16 0 48.5-22.75 48.5-44.12-.03-14.38-9.12-29.76-28.73-34.88zM496 224H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zm0-160H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16V80a16 16 0 0 0-16-16zm0 320H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zM16 160h64a8 8 0 0 0 8-8v-16a8 8 0 0 0-8-8H64V40a8 8 0 0 0-8-8H32a8 8 0 0 0-7.14 4.42l-8 16A8 8 0 0 0 24 64h8v64H16a8 8 0 0 0-8 8v16a8 8 0 0 0 8 8zm-3.91 160H80a8 8 0 0 0 8-8v-16a8 8 0 0 0-8-8H41.32c3.29-10.29 48.34-18.68 48.34-56.44 0-29.06-25-39.56-44.47-39.56-21.36 0-33.8 10-40.46 18.75-4.37 5.59-3 10.84 2.8 15.37l8.58 6.88c5.61 4.56 11 2.47 16.12-2.44a13.44 13.44 0 0 1 9.46-3.84c3.33 0 9.28 1.56 9.28 8.75C51 248.19 0 257.31 0 304.59v4C0 316 5.08 320 12.09 320z"/></svg></button>
+
+      <button 
+        class="
+          wrap-code-button
+          tw-select-none 
+          tw-mx-2 
+          tw-hidden 
+          group-[.is-open]:tw-block 
+          group-[.is-wrap]:tw-text-fgColor-link 
+          print:!tw-hidden" 
+        title="Toggle code wrap"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"/></svg></button>
+      
+      <button 
+        class="
+          copy-code-button
+          tw-select-none
+          tw-mx-2 
+          tw-hidden
+          group-[.is-open]:tw-block
+          hover:tw-text-fgColor-link 
+          print:!tw-hidden"
+        title="Copy code">
+          <span class="copy-icon tw-block"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M433.941 65.941l-51.882-51.882A48 48 0 0 0 348.118 0H176c-26.51 0-48 21.49-48 48v48H48c-26.51 0-48 21.49-48 48v320c0 26.51 21.49 48 48 48h224c26.51 0 48-21.49 48-48v-48h80c26.51 0 48-21.49 48-48V99.882a48 48 0 0 0-14.059-33.941zM266 464H54a6 6 0 0 1-6-6V150a6 6 0 0 1 6-6h74v224c0 26.51 21.49 48 48 48h96v42a6 6 0 0 1-6 6zm128-96H182a6 6 0 0 1-6-6V54a6 6 0 0 1 6-6h106v88c0 13.255 10.745 24 24 24h88v202a6 6 0 0 1-6 6zm6-256h-64V48h9.632c1.591 0 3.117.632 4.243 1.757l48.368 48.368a6 6 0 0 1 1.757 4.243V112z"/></svg></span>
+          <span class="check-icon tw-hidden"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z"/></svg></span>
+      </button>
+        
+      <button 
+        class="
+          tw-select-none 
+          tw-mx-2 
+          tw-block 
+          group-[.is-open]:tw-hidden 
+          print:!tw-hidden" 
+        disabled
+        aria-hidden="true"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M328 256c0 39.8-32.2 72-72 72s-72-32.2-72-72 32.2-72 72-72 72 32.2 72 72zm104-72c-39.8 0-72 32.2-72 72s32.2 72 72 72 72-32.2 72-72-32.2-72-72-72zm-352 0c-39.8 0-72 32.2-72 72s32.2 72 72 72 72-32.2 72-72-32.2-72-72-72z"/></svg></button>
+    </div>
+  </div>
+  <pre style="counter-reset: codeblock;" class="tw-block tw-m-0 tw-p-0"><code 
+    id="codeblock-id-5" 
+    class="
+      chroma 
+      !tw-block 
+      tw-p-0
+      tw-m-0
+      tw-transition-[max-height] 
+      tw-duration-500 
+      tw-ease-in-out 
+      group-[.is-closed]:!tw-max-h-0 
+      group-[.is-wrap]:tw-text-wrap
+      tw-overflow-y-hidden
+      tw-overflow-x-auto
+      tw-scrollbar-thin
+      "><span class="line"><span class="cl">GET _analyze
 </span></span><span class="line"><span class="cl">{
 </span></span><span class="line"><span class="cl">  &#34;analyzer&#34;: &#34;ik_max_word&#34;,
 </span></span><span class="line"><span class="cl">  &#34;text&#34;: &#34;php 是世界上最好的语言&#34;
-</span></span><span class="line"><span class="cl">}
-</span></span></code></pre></td></tr></table>
+</span></span><span class="line"><span class="cl">}</span></span></code></pre>
 </div>
-</div><p>测试效果如下：</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/689f9549af6440e999bf83865dedbe54.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/689f9549af6440e999bf83865dedbe54.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/689f9549af6440e999bf83865dedbe54.png" data-sub-html="<h2>效果</h2>">
-        <img
-            class="lazyload"
-            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/689f9549af6440e999bf83865dedbe54.png"
-            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/689f9549af6440e999bf83865dedbe54.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/689f9549af6440e999bf83865dedbe54.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/689f9549af6440e999bf83865dedbe54.png 2x"
-            data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/689f9549af6440e999bf83865dedbe54.png">
-    </a><figcaption class="image-caption">效果</figcaption>
-    </figure></p>
+<p>测试效果如下：</p>
+<p><figure><a class="lightgallery" href="/689f9549af6440e999bf83865dedbe54_4045781514922114479.png" title="" data-thumbnail="/689f9549af6440e999bf83865dedbe54_4045781514922114479.png" data-sub-html="<h2>效果</h2>"><img  loading="lazy" src="/689f9549af6440e999bf83865dedbe54_4045781514922114479.png" srcset="/689f9549af6440e999bf83865dedbe54_4045781514922114479_hu15108370309099012739.webp 800w, /689f9549af6440e999bf83865dedbe54_4045781514922114479_hu2802716967141538778.webp 1200w, /689f9549af6440e999bf83865dedbe54_4045781514922114479_hu14960810211415120105.webp 1600w"   height="1002" width="1485"></a><figcaption class="image-caption">效果</figcaption>
+</figure></p>
 <p>可以发现对中文的分词效果是比较不错的，但也存在一些不足，比如 <code>最好的</code> 我们希望它是一个词，而 <code>上</code>我们希望它不被识别一个词，这种需求可以同过自定义词典解决。</p>
 <h2 id="ik-自定义词典" class="headerLink">
-    <a href="#ik-%e8%87%aa%e5%ae%9a%e4%b9%89%e8%af%8d%e5%85%b8" class="header-mark"></a>IK 自定义词典</h2><p>IK 分词器支持自定义词典，包括自定义分词，也包含自定义停用分词，操作起来非常简单。接下来实现一下自定义词典和停用词典。</p>
+    <a href="#ik-%e8%87%aa%e5%ae%9a%e4%b9%89%e8%af%8d%e5%85%b8" class="header-mark" aria-label="Header mark for 'IK 自定义词典'"></a>4 IK 自定义词典</h2><p>IK 分词器支持自定义词典，包括自定义分词，也包含自定义停用分词，操作起来非常简单。接下来实现一下自定义词典和停用词典。</p>
 <h3 id="自定义词典" class="headerLink">
-    <a href="#%e8%87%aa%e5%ae%9a%e4%b9%89%e8%af%8d%e5%85%b8" class="header-mark"></a>自定义词典</h3><p>自定义词典，需要先创建自己的词典，再引用自己的词典即可。</p>
+    <a href="#%e8%87%aa%e5%ae%9a%e4%b9%89%e8%af%8d%e5%85%b8" class="header-mark" aria-label="Header mark for '自定义词典'"></a>4.1 自定义词典</h3><p>自定义词典，需要先创建自己的词典，再引用自己的词典即可。</p>
 <ol>
 <li>创建词典</li>
 </ol>
 <p>在 es 容器目录 <code>/usr/share/elasticsearch/plugins/ik/config</code> 中创建自己的词典，例如叫 <code>custome.dic</code>，在文件中添加自定义的词语，操作如下：</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/432e98e286cb4c3587caa0c35f2d6446.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/432e98e286cb4c3587caa0c35f2d6446.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/432e98e286cb4c3587caa0c35f2d6446.png" data-sub-html="<h2>创建词典</h2>">
-        <img
-            class="lazyload"
-            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/432e98e286cb4c3587caa0c35f2d6446.png"
-            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/432e98e286cb4c3587caa0c35f2d6446.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/432e98e286cb4c3587caa0c35f2d6446.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/432e98e286cb4c3587caa0c35f2d6446.png 2x"
-            data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/432e98e286cb4c3587caa0c35f2d6446.png">
-    </a><figcaption class="image-caption">创建词典</figcaption>
-    </figure></p>
+<p><figure><a class="lightgallery" href="/432e98e286cb4c3587caa0c35f2d6446_17743727073455060644.png" title="" data-thumbnail="/432e98e286cb4c3587caa0c35f2d6446_17743727073455060644.png" data-sub-html="<h2>创建词典</h2>"><img  loading="lazy" src="/432e98e286cb4c3587caa0c35f2d6446_17743727073455060644.png" srcset="/432e98e286cb4c3587caa0c35f2d6446_17743727073455060644_hu1565629750084528349.webp 800w, /432e98e286cb4c3587caa0c35f2d6446_17743727073455060644_hu8478507408331683075.webp 1200w, /432e98e286cb4c3587caa0c35f2d6446_17743727073455060644_hu3354512173080070177.webp 1600w"   height="231" width="497"></a><figcaption class="image-caption">创建词典</figcaption>
+</figure></p>
 <p>我们把自定义的词典 <code>最好的</code> 添加到了 <code>custome.dic</code> 中了，这就是创建词典，如果有多个自定义词，需要换行加入，这里一定要注意中文分词设置编码格式为 <code>UTF-8</code>。</p>
 <ol start="2">
 <li>引用词典</li>
 </ol>
 <p>修改 <code>config/IKAnalyzer.cfg.xml</code> 引用自己创建的 <code>custome.dic</code> 词典，配置如下:</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ef379f05c79646f4b61bc964dfe17b07.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ef379f05c79646f4b61bc964dfe17b07.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ef379f05c79646f4b61bc964dfe17b07.png" data-sub-html="<h2>引用自定义字典</h2>">
-        <img
-            class="lazyload"
-            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ef379f05c79646f4b61bc964dfe17b07.png"
-            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ef379f05c79646f4b61bc964dfe17b07.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ef379f05c79646f4b61bc964dfe17b07.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ef379f05c79646f4b61bc964dfe17b07.png 2x"
-            data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/ef379f05c79646f4b61bc964dfe17b07.png">
-    </a><figcaption class="image-caption">引用自定义字典</figcaption>
-    </figure></p>
+<p><figure><a class="lightgallery" href="/ef379f05c79646f4b61bc964dfe17b07_16147091782693208000.png" title="" data-thumbnail="/ef379f05c79646f4b61bc964dfe17b07_16147091782693208000.png" data-sub-html="<h2>引用自定义字典</h2>"><img  loading="lazy" src="/ef379f05c79646f4b61bc964dfe17b07_16147091782693208000.png" srcset="/ef379f05c79646f4b61bc964dfe17b07_16147091782693208000_hu15180184249489481254.webp 800w, /ef379f05c79646f4b61bc964dfe17b07_16147091782693208000_hu13590689621889453599.webp 1200w, /ef379f05c79646f4b61bc964dfe17b07_16147091782693208000_hu8673576374183784812.webp 1600w"   height="295" width="701"></a><figcaption class="image-caption">引用自定义字典</figcaption>
+</figure></p>
 <p>再使用 <code>Kibana</code> 效果如下：</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/71f95f67e34c4723b8923d3113b4951c.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/71f95f67e34c4723b8923d3113b4951c.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/71f95f67e34c4723b8923d3113b4951c.png" data-sub-html="<h2>效果</h2>">
-        <img
-            class="lazyload"
-            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/71f95f67e34c4723b8923d3113b4951c.png"
-            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/71f95f67e34c4723b8923d3113b4951c.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/71f95f67e34c4723b8923d3113b4951c.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/71f95f67e34c4723b8923d3113b4951c.png 2x"
-            data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/71f95f67e34c4723b8923d3113b4951c.png">
-    </a><figcaption class="image-caption">效果</figcaption>
-    </figure></p>
+<p><figure><a class="lightgallery" href="/71f95f67e34c4723b8923d3113b4951c_10985394265884121375.png" title="" data-thumbnail="/71f95f67e34c4723b8923d3113b4951c_10985394265884121375.png" data-sub-html="<h2>效果</h2>"><img  loading="lazy" src="/71f95f67e34c4723b8923d3113b4951c_10985394265884121375.png" srcset="/71f95f67e34c4723b8923d3113b4951c_10985394265884121375_hu11510762115620683653.webp 800w, /71f95f67e34c4723b8923d3113b4951c_10985394265884121375_hu17495171650032030416.webp 1200w, /71f95f67e34c4723b8923d3113b4951c_10985394265884121375_hu1400780180824295794.webp 1600w"   height="992" width="1332"></a><figcaption class="image-caption">效果</figcaption>
+</figure></p>
 <h3 id="自定义停用词汇" class="headerLink">
-    <a href="#%e8%87%aa%e5%ae%9a%e4%b9%89%e5%81%9c%e7%94%a8%e8%af%8d%e6%b1%87" class="header-mark"></a>自定义停用词汇</h3><p>自定义停用词典和自定义词典一样，需要先创建自己的词典，再引用自己的词典即可。</p>
+    <a href="#%e8%87%aa%e5%ae%9a%e4%b9%89%e5%81%9c%e7%94%a8%e8%af%8d%e6%b1%87" class="header-mark" aria-label="Header mark for '自定义停用词汇'"></a>4.2 自定义停用词汇</h3><p>自定义停用词典和自定义词典一样，需要先创建自己的词典，再引用自己的词典即可。</p>
 <ol>
 <li>创建词典</li>
 </ol>
 <p>在 <code>config</code> 中创建自己的停用词典，例如叫 <code>stop.dic</code>，在文件中添加自定义的停用词语，操作如下：</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/a389717b1b254a4199b0a08b334afd16.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/a389717b1b254a4199b0a08b334afd16.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/a389717b1b254a4199b0a08b334afd16.png" data-sub-html="<h2>停用词汇</h2>">
-        <img
-            class="lazyload"
-            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/a389717b1b254a4199b0a08b334afd16.png"
-            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/a389717b1b254a4199b0a08b334afd16.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/a389717b1b254a4199b0a08b334afd16.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/a389717b1b254a4199b0a08b334afd16.png 2x"
-            data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/a389717b1b254a4199b0a08b334afd16.png">
-    </a><figcaption class="image-caption">停用词汇</figcaption>
-    </figure></p>
+<p><figure><a class="lightgallery" href="/a389717b1b254a4199b0a08b334afd16_5452211580489866161.png" title="" data-thumbnail="/a389717b1b254a4199b0a08b334afd16_5452211580489866161.png" data-sub-html="<h2>停用词汇</h2>"><img  loading="lazy" src="/a389717b1b254a4199b0a08b334afd16_5452211580489866161.png" srcset="/a389717b1b254a4199b0a08b334afd16_5452211580489866161_hu5617699296712855714.webp 800w, /a389717b1b254a4199b0a08b334afd16_5452211580489866161_hu16101002964654895932.webp 1200w, /a389717b1b254a4199b0a08b334afd16_5452211580489866161_hu9044663976673313669.webp 1600w"   height="337" width="1259"></a><figcaption class="image-caption">停用词汇</figcaption>
+</figure></p>
 <ol start="2">
 <li>引用词典</li>
 </ol>
 <p>修改 <code>config/IKAnalyzer.cfg.xml</code> 引用自己创建的 <code>stop.dic</code> 停用词典，配置如下:</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/cc6cc42963ec4eed8da6f875c9220807.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/cc6cc42963ec4eed8da6f875c9220807.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/cc6cc42963ec4eed8da6f875c9220807.png" data-sub-html="<h2>停用词典配置</h2>">
-        <img
-            class="lazyload"
-            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/cc6cc42963ec4eed8da6f875c9220807.png"
-            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/cc6cc42963ec4eed8da6f875c9220807.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/cc6cc42963ec4eed8da6f875c9220807.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/cc6cc42963ec4eed8da6f875c9220807.png 2x"
-            data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/cc6cc42963ec4eed8da6f875c9220807.png">
-    </a><figcaption class="image-caption">停用词典配置</figcaption>
-    </figure></p>
+<p><figure><a class="lightgallery" href="/cc6cc42963ec4eed8da6f875c9220807_15564044595776193629.png" title="" data-thumbnail="/cc6cc42963ec4eed8da6f875c9220807_15564044595776193629.png" data-sub-html="<h2>停用词典配置</h2>"><img  loading="lazy" src="/cc6cc42963ec4eed8da6f875c9220807_15564044595776193629.png" srcset="/cc6cc42963ec4eed8da6f875c9220807_15564044595776193629_hu553168870993566715.webp 800w, /cc6cc42963ec4eed8da6f875c9220807_15564044595776193629_hu18234947840308092004.webp 1200w, /cc6cc42963ec4eed8da6f875c9220807_15564044595776193629_hu12088109553090546565.webp 1600w"   height="359" width="749"></a><figcaption class="image-caption">停用词典配置</figcaption>
+</figure></p>
 <p>修改完成后，重启 <code>elasticsearch</code> 容器。</p>
 <p>再使用 <code>Kibana</code> 测试效果如下：</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/9bdadba012d049e4a9c34f2d3163b190.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/9bdadba012d049e4a9c34f2d3163b190.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/9bdadba012d049e4a9c34f2d3163b190.png" data-sub-html="<h2>停用分词效果</h2>">
-        <img
-            class="lazyload"
-            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/9bdadba012d049e4a9c34f2d3163b190.png"
-            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/9bdadba012d049e4a9c34f2d3163b190.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/9bdadba012d049e4a9c34f2d3163b190.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/9bdadba012d049e4a9c34f2d3163b190.png 2x"
-            data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230912/9bdadba012d049e4a9c34f2d3163b190.png">
-    </a><figcaption class="image-caption">停用分词效果</figcaption>
-    </figure></p>
+<p><figure><a class="lightgallery" href="/9bdadba012d049e4a9c34f2d3163b190_3527224288361553911.png" title="" data-thumbnail="/9bdadba012d049e4a9c34f2d3163b190_3527224288361553911.png" data-sub-html="<h2>停用分词效果</h2>"><img  loading="lazy" src="/9bdadba012d049e4a9c34f2d3163b190_3527224288361553911.png" srcset="/9bdadba012d049e4a9c34f2d3163b190_3527224288361553911_hu6215261496096409120.webp 800w, /9bdadba012d049e4a9c34f2d3163b190_3527224288361553911_hu15773775611272021212.webp 1200w, /9bdadba012d049e4a9c34f2d3163b190_3527224288361553911_hu1998131205876057249.webp 1600w"   height="858" width="1330"></a><figcaption class="image-caption">停用分词效果</figcaption>
+</figure></p>
 <p>可以发现，不再有 <code>世界</code>，<code>的</code>，<code>是</code>，<code>上</code>，<code>语言</code> 的分词了，说明停用分词也生效了。</p>
 <h2 id="一个例子" class="headerLink">
-    <a href="#%e4%b8%80%e4%b8%aa%e4%be%8b%e5%ad%90" class="header-mark"></a>一个例子</h2><p>现在有个需求是向 mysql 中插入文章，但是同时需要向 es 中写入文章，通过 es 来分词，优化搜索，通过 es 搜索时，可以返回 mysql 中对应的 id。</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span><span class="lnt">8
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="o">`</span><span class="n">article</span><span class="o">`</span><span class="w">
+    <a href="#%e4%b8%80%e4%b8%aa%e4%be%8b%e5%ad%90" class="header-mark" aria-label="Header mark for '一个例子'"></a>5 一个例子</h2><p>现在有个需求是向 mysql 中插入文章，但是同时需要向 es 中写入文章，通过 es 来分词，优化搜索，通过 es 搜索时，可以返回 mysql 中对应的 id。</p>
+<div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
+  <div class="
+    code-block-title 
+    
+    tw-flex 
+    tw-flex-row 
+    tw-justify-between 
+    tw-w-full tw-bg-bgColor-secondary
+    ">      
+    <button 
+      class="
+        tw-select-none 
+        tw-mx-2 
+        tw-block
+        group-[.is-open]:tw-rotate-90
+        tw-transition-[transform] 
+        tw-duration-500 
+        tw-ease-in-out
+        print:!tw-hidden"
+      disabled
+      aria-hidden="true"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"/></svg></button>
+
+    <div class="code-block-title-bar tw-w-full">
+      <p class="tw-select-none !tw-my-1">sql</p>
+    </div>
+    <div class="tw-flex">
+      <button 
+        class="
+          line-number-button
+          tw-select-none 
+          tw-mx-2 
+          tw-hidden 
+          group-[.is-open]:tw-block 
+          group-[.show-line-numbers]:tw-text-fgColor-link 
+          print:!tw-hidden" 
+        title="Toggle line numbers"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M61.77 401l17.5-20.15a19.92 19.92 0 0 0 5.07-14.19v-3.31C84.34 356 80.5 352 73 352H16a8 8 0 0 0-8 8v16a8 8 0 0 0 8 8h22.83a157.41 157.41 0 0 0-11 12.31l-5.61 7c-4 5.07-5.25 10.13-2.8 14.88l1.05 1.93c3 5.76 6.29 7.88 12.25 7.88h4.73c10.33 0 15.94 2.44 15.94 9.09 0 4.72-4.2 8.22-14.36 8.22a41.54 41.54 0 0 1-15.47-3.12c-6.49-3.88-11.74-3.5-15.6 3.12l-5.59 9.31c-3.72 6.13-3.19 11.72 2.63 15.94 7.71 4.69 20.38 9.44 37 9.44 34.16 0 48.5-22.75 48.5-44.12-.03-14.38-9.12-29.76-28.73-34.88zM496 224H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zm0-160H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16V80a16 16 0 0 0-16-16zm0 320H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zM16 160h64a8 8 0 0 0 8-8v-16a8 8 0 0 0-8-8H64V40a8 8 0 0 0-8-8H32a8 8 0 0 0-7.14 4.42l-8 16A8 8 0 0 0 24 64h8v64H16a8 8 0 0 0-8 8v16a8 8 0 0 0 8 8zm-3.91 160H80a8 8 0 0 0 8-8v-16a8 8 0 0 0-8-8H41.32c3.29-10.29 48.34-18.68 48.34-56.44 0-29.06-25-39.56-44.47-39.56-21.36 0-33.8 10-40.46 18.75-4.37 5.59-3 10.84 2.8 15.37l8.58 6.88c5.61 4.56 11 2.47 16.12-2.44a13.44 13.44 0 0 1 9.46-3.84c3.33 0 9.28 1.56 9.28 8.75C51 248.19 0 257.31 0 304.59v4C0 316 5.08 320 12.09 320z"/></svg></button>
+
+      <button 
+        class="
+          wrap-code-button
+          tw-select-none 
+          tw-mx-2 
+          tw-hidden 
+          group-[.is-open]:tw-block 
+          group-[.is-wrap]:tw-text-fgColor-link 
+          print:!tw-hidden" 
+        title="Toggle code wrap"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"/></svg></button>
+      
+      <button 
+        class="
+          copy-code-button
+          tw-select-none
+          tw-mx-2 
+          tw-hidden
+          group-[.is-open]:tw-block
+          hover:tw-text-fgColor-link 
+          print:!tw-hidden"
+        title="Copy code">
+          <span class="copy-icon tw-block"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M433.941 65.941l-51.882-51.882A48 48 0 0 0 348.118 0H176c-26.51 0-48 21.49-48 48v48H48c-26.51 0-48 21.49-48 48v320c0 26.51 21.49 48 48 48h224c26.51 0 48-21.49 48-48v-48h80c26.51 0 48-21.49 48-48V99.882a48 48 0 0 0-14.059-33.941zM266 464H54a6 6 0 0 1-6-6V150a6 6 0 0 1 6-6h74v224c0 26.51 21.49 48 48 48h96v42a6 6 0 0 1-6 6zm128-96H182a6 6 0 0 1-6-6V54a6 6 0 0 1 6-6h106v88c0 13.255 10.745 24 24 24h88v202a6 6 0 0 1-6 6zm6-256h-64V48h9.632c1.591 0 3.117.632 4.243 1.757l48.368 48.368a6 6 0 0 1 1.757 4.243V112z"/></svg></span>
+          <span class="check-icon tw-hidden"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z"/></svg></span>
+      </button>
+        
+      <button 
+        class="
+          tw-select-none 
+          tw-mx-2 
+          tw-block 
+          group-[.is-open]:tw-hidden 
+          print:!tw-hidden" 
+        disabled
+        aria-hidden="true"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M328 256c0 39.8-32.2 72-72 72s-72-32.2-72-72 32.2-72 72-72 72 32.2 72 72zm104-72c-39.8 0-72 32.2-72 72s32.2 72 72 72 72-32.2 72-72-32.2-72-72-72zm-352 0c-39.8 0-72 32.2-72 72s32.2 72 72 72 72-32.2 72-72-32.2-72-72-72z"/></svg></button>
+    </div>
+  </div>
+  <pre style="counter-reset: codeblock;" class="tw-block tw-m-0 tw-p-0"><code 
+    id="codeblock-id-1" 
+    class="
+      chroma 
+      !tw-block 
+      tw-p-0
+      tw-m-0
+      tw-transition-[max-height] 
+      tw-duration-500 
+      tw-ease-in-out 
+      group-[.is-closed]:!tw-max-h-0 
+      group-[.is-wrap]:tw-text-wrap
+      tw-overflow-y-hidden
+      tw-overflow-x-auto
+      tw-scrollbar-thin
+      "><span class="line"><span class="cl"><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="o">`</span><span class="n">article</span><span class="o">`</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">(</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">`</span><span class="n">id</span><span class="o">`</span><span class="w">          </span><span class="nb">int</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="w"> </span><span class="n">unsigned</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="n">AUTO_INCREMENT</span><span class="w"> </span><span class="k">primary</span><span class="w"> </span><span class="k">key</span><span class="p">,</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">`</span><span class="n">title</span><span class="o">`</span><span class="w">       </span><span class="nb">varchar</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">comment</span><span class="w"> </span><span class="s1">&#39;文章标题&#39;</span><span class="p">,</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">`</span><span class="n">content</span><span class="o">`</span><span class="w">     </span><span class="nb">text</span><span class="w"> </span><span class="k">COMMENT</span><span class="w"> </span><span class="s1">&#39;文章内容&#39;</span><span class="p">,</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">`</span><span class="n">create_time</span><span class="o">`</span><span class="w"> </span><span class="k">timestamp</span><span class="w">    </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="k">CURRENT_TIMESTAMP</span><span class="p">,</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">`</span><span class="n">update_time</span><span class="o">`</span><span class="w"> </span><span class="k">timestamp</span><span class="w">    </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="k">CURRENT_TIMESTAMP</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">UPDATE</span><span class="w"> </span><span class="k">CURRENT_TIMESTAMP</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">)</span><span class="w"> </span><span class="n">ENGINE</span><span class="o">=</span><span class="n">InnoDB</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="n">CHARSET</span><span class="o">=</span><span class="n">utf8mb4</span><span class="w"> </span><span class="k">COMMENT</span><span class="o">=</span><span class="s1">&#39;文章表&#39;</span><span class="p">;</span><span class="w">
-</span></span></span></code></pre></td></tr></table>
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">)</span><span class="w"> </span><span class="n">ENGINE</span><span class="o">=</span><span class="n">InnoDB</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="n">CHARSET</span><span class="o">=</span><span class="n">utf8mb4</span><span class="w"> </span><span class="k">COMMENT</span><span class="o">=</span><span class="s1">&#39;文章表&#39;</span><span class="p">;</span></span></span></code></pre>
 </div>
-</div><p>golang 代码：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">  1
-</span><span class="lnt">  2
-</span><span class="lnt">  3
-</span><span class="lnt">  4
-</span><span class="lnt">  5
-</span><span class="lnt">  6
-</span><span class="lnt">  7
-</span><span class="lnt">  8
-</span><span class="lnt">  9
-</span><span class="lnt"> 10
-</span><span class="lnt"> 11
-</span><span class="lnt"> 12
-</span><span class="lnt"> 13
-</span><span class="lnt"> 14
-</span><span class="lnt"> 15
-</span><span class="lnt"> 16
-</span><span class="lnt"> 17
-</span><span class="lnt"> 18
-</span><span class="lnt"> 19
-</span><span class="lnt"> 20
-</span><span class="lnt"> 21
-</span><span class="lnt"> 22
-</span><span class="lnt"> 23
-</span><span class="lnt"> 24
-</span><span class="lnt"> 25
-</span><span class="lnt"> 26
-</span><span class="lnt"> 27
-</span><span class="lnt"> 28
-</span><span class="lnt"> 29
-</span><span class="lnt"> 30
-</span><span class="lnt"> 31
-</span><span class="lnt"> 32
-</span><span class="lnt"> 33
-</span><span class="lnt"> 34
-</span><span class="lnt"> 35
-</span><span class="lnt"> 36
-</span><span class="lnt"> 37
-</span><span class="lnt"> 38
-</span><span class="lnt"> 39
-</span><span class="lnt"> 40
-</span><span class="lnt"> 41
-</span><span class="lnt"> 42
-</span><span class="lnt"> 43
-</span><span class="lnt"> 44
-</span><span class="lnt"> 45
-</span><span class="lnt"> 46
-</span><span class="lnt"> 47
-</span><span class="lnt"> 48
-</span><span class="lnt"> 49
-</span><span class="lnt"> 50
-</span><span class="lnt"> 51
-</span><span class="lnt"> 52
-</span><span class="lnt"> 53
-</span><span class="lnt"> 54
-</span><span class="lnt"> 55
-</span><span class="lnt"> 56
-</span><span class="lnt"> 57
-</span><span class="lnt"> 58
-</span><span class="lnt"> 59
-</span><span class="lnt"> 60
-</span><span class="lnt"> 61
-</span><span class="lnt"> 62
-</span><span class="lnt"> 63
-</span><span class="lnt"> 64
-</span><span class="lnt"> 65
-</span><span class="lnt"> 66
-</span><span class="lnt"> 67
-</span><span class="lnt"> 68
-</span><span class="lnt"> 69
-</span><span class="lnt"> 70
-</span><span class="lnt"> 71
-</span><span class="lnt"> 72
-</span><span class="lnt"> 73
-</span><span class="lnt"> 74
-</span><span class="lnt"> 75
-</span><span class="lnt"> 76
-</span><span class="lnt"> 77
-</span><span class="lnt"> 78
-</span><span class="lnt"> 79
-</span><span class="lnt"> 80
-</span><span class="lnt"> 81
-</span><span class="lnt"> 82
-</span><span class="lnt"> 83
-</span><span class="lnt"> 84
-</span><span class="lnt"> 85
-</span><span class="lnt"> 86
-</span><span class="lnt"> 87
-</span><span class="lnt"> 88
-</span><span class="lnt"> 89
-</span><span class="lnt"> 90
-</span><span class="lnt"> 91
-</span><span class="lnt"> 92
-</span><span class="lnt"> 93
-</span><span class="lnt"> 94
-</span><span class="lnt"> 95
-</span><span class="lnt"> 96
-</span><span class="lnt"> 97
-</span><span class="lnt"> 98
-</span><span class="lnt"> 99
-</span><span class="lnt">100
-</span><span class="lnt">101
-</span><span class="lnt">102
-</span><span class="lnt">103
-</span><span class="lnt">104
-</span><span class="lnt">105
-</span><span class="lnt">106
-</span><span class="lnt">107
-</span><span class="lnt">108
-</span><span class="lnt">109
-</span><span class="lnt">110
-</span><span class="lnt">111
-</span><span class="lnt">112
-</span><span class="lnt">113
-</span><span class="lnt">114
-</span><span class="lnt">115
-</span><span class="lnt">116
-</span><span class="lnt">117
-</span><span class="lnt">118
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+<p>golang 代码：</p>
+<div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
+  <div class="
+    code-block-title 
+    
+    tw-flex 
+    tw-flex-row 
+    tw-justify-between 
+    tw-w-full tw-bg-bgColor-secondary
+    ">      
+    <button 
+      class="
+        tw-select-none 
+        tw-mx-2 
+        tw-block
+        group-[.is-open]:tw-rotate-90
+        tw-transition-[transform] 
+        tw-duration-500 
+        tw-ease-in-out
+        print:!tw-hidden"
+      disabled
+      aria-hidden="true"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"/></svg></button>
+
+    <div class="code-block-title-bar tw-w-full">
+      <p class="tw-select-none !tw-my-1">go</p>
+    </div>
+    <div class="tw-flex">
+      <button 
+        class="
+          line-number-button
+          tw-select-none 
+          tw-mx-2 
+          tw-hidden 
+          group-[.is-open]:tw-block 
+          group-[.show-line-numbers]:tw-text-fgColor-link 
+          print:!tw-hidden" 
+        title="Toggle line numbers"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M61.77 401l17.5-20.15a19.92 19.92 0 0 0 5.07-14.19v-3.31C84.34 356 80.5 352 73 352H16a8 8 0 0 0-8 8v16a8 8 0 0 0 8 8h22.83a157.41 157.41 0 0 0-11 12.31l-5.61 7c-4 5.07-5.25 10.13-2.8 14.88l1.05 1.93c3 5.76 6.29 7.88 12.25 7.88h4.73c10.33 0 15.94 2.44 15.94 9.09 0 4.72-4.2 8.22-14.36 8.22a41.54 41.54 0 0 1-15.47-3.12c-6.49-3.88-11.74-3.5-15.6 3.12l-5.59 9.31c-3.72 6.13-3.19 11.72 2.63 15.94 7.71 4.69 20.38 9.44 37 9.44 34.16 0 48.5-22.75 48.5-44.12-.03-14.38-9.12-29.76-28.73-34.88zM496 224H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zm0-160H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16V80a16 16 0 0 0-16-16zm0 320H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zM16 160h64a8 8 0 0 0 8-8v-16a8 8 0 0 0-8-8H64V40a8 8 0 0 0-8-8H32a8 8 0 0 0-7.14 4.42l-8 16A8 8 0 0 0 24 64h8v64H16a8 8 0 0 0-8 8v16a8 8 0 0 0 8 8zm-3.91 160H80a8 8 0 0 0 8-8v-16a8 8 0 0 0-8-8H41.32c3.29-10.29 48.34-18.68 48.34-56.44 0-29.06-25-39.56-44.47-39.56-21.36 0-33.8 10-40.46 18.75-4.37 5.59-3 10.84 2.8 15.37l8.58 6.88c5.61 4.56 11 2.47 16.12-2.44a13.44 13.44 0 0 1 9.46-3.84c3.33 0 9.28 1.56 9.28 8.75C51 248.19 0 257.31 0 304.59v4C0 316 5.08 320 12.09 320z"/></svg></button>
+
+      <button 
+        class="
+          wrap-code-button
+          tw-select-none 
+          tw-mx-2 
+          tw-hidden 
+          group-[.is-open]:tw-block 
+          group-[.is-wrap]:tw-text-fgColor-link 
+          print:!tw-hidden" 
+        title="Toggle code wrap"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"/></svg></button>
+      
+      <button 
+        class="
+          copy-code-button
+          tw-select-none
+          tw-mx-2 
+          tw-hidden
+          group-[.is-open]:tw-block
+          hover:tw-text-fgColor-link 
+          print:!tw-hidden"
+        title="Copy code">
+          <span class="copy-icon tw-block"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M433.941 65.941l-51.882-51.882A48 48 0 0 0 348.118 0H176c-26.51 0-48 21.49-48 48v48H48c-26.51 0-48 21.49-48 48v320c0 26.51 21.49 48 48 48h224c26.51 0 48-21.49 48-48v-48h80c26.51 0 48-21.49 48-48V99.882a48 48 0 0 0-14.059-33.941zM266 464H54a6 6 0 0 1-6-6V150a6 6 0 0 1 6-6h74v224c0 26.51 21.49 48 48 48h96v42a6 6 0 0 1-6 6zm128-96H182a6 6 0 0 1-6-6V54a6 6 0 0 1 6-6h106v88c0 13.255 10.745 24 24 24h88v202a6 6 0 0 1-6 6zm6-256h-64V48h9.632c1.591 0 3.117.632 4.243 1.757l48.368 48.368a6 6 0 0 1 1.757 4.243V112z"/></svg></span>
+          <span class="check-icon tw-hidden"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z"/></svg></span>
+      </button>
+        
+      <button 
+        class="
+          tw-select-none 
+          tw-mx-2 
+          tw-block 
+          group-[.is-open]:tw-hidden 
+          print:!tw-hidden" 
+        disabled
+        aria-hidden="true"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M328 256c0 39.8-32.2 72-72 72s-72-32.2-72-72 32.2-72 72-72 72 32.2 72 72zm104-72c-39.8 0-72 32.2-72 72s32.2 72 72 72 72-32.2 72-72-32.2-72-72-72zm-352 0c-39.8 0-72 32.2-72 72s32.2 72 72 72 72-32.2 72-72-32.2-72-72-72z"/></svg></button>
+    </div>
+  </div>
+  <pre style="counter-reset: codeblock;" class="tw-block tw-m-0 tw-p-0"><code 
+    id="codeblock-id-2" 
+    class="
+      chroma 
+      !tw-block 
+      tw-p-0
+      tw-m-0
+      tw-transition-[max-height] 
+      tw-duration-500 
+      tw-ease-in-out 
+      group-[.is-closed]:!tw-max-h-0 
+      group-[.is-wrap]:tw-text-wrap
+      tw-overflow-y-hidden
+      tw-overflow-x-auto
+      tw-scrollbar-thin
+      "><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
 </span></span><span class="line"><span class="cl">	<span class="s">&#34;context&#34;</span>
@@ -804,41 +1206,19 @@
 </span></span><span class="line"><span class="cl">		<span class="nx">mysqlID</span> <span class="o">:=</span> <span class="nx">source</span><span class="p">[</span><span class="s">&#34;mysql_id&#34;</span><span class="p">].(</span><span class="kt">float64</span><span class="p">)</span> <span class="c1">// 从 Elasticsearch 中获取 MySQL ID
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;标题: %s内容: %sMySQL ID: %d&#34;</span><span class="p">,</span> <span class="nx">title</span><span class="p">,</span> <span class="nx">content</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nx">mysqlID</span><span class="p">))</span>
 </span></span><span class="line"><span class="cl">	<span class="p">}</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></td></tr></table>
+</span></span><span class="line"><span class="cl"><span class="p">}</span></span></span></code></pre>
 </div>
-</div><p>通过 kibana 查看到 es 现在有 2 条数据：</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230913/3212ca90f6c04a96884c59ca17524f8b.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230913/3212ca90f6c04a96884c59ca17524f8b.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230913/3212ca90f6c04a96884c59ca17524f8b.png" data-sub-html="<h2>结果数据</h2>">
-        <img
-            class="lazyload"
-            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230913/3212ca90f6c04a96884c59ca17524f8b.png"
-            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230913/3212ca90f6c04a96884c59ca17524f8b.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230913/3212ca90f6c04a96884c59ca17524f8b.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230913/3212ca90f6c04a96884c59ca17524f8b.png 2x"
-            data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230913/3212ca90f6c04a96884c59ca17524f8b.png">
-    </a><figcaption class="image-caption">结果数据</figcaption>
-    </figure></p>
+<p>通过 kibana 查看到 es 现在有 2 条数据：</p>
+<p><figure><a class="lightgallery" href="/3212ca90f6c04a96884c59ca17524f8b_14387938174802989836.png" title="" data-thumbnail="/3212ca90f6c04a96884c59ca17524f8b_14387938174802989836.png" data-sub-html="<h2>结果数据</h2>"><img  loading="lazy" src="/3212ca90f6c04a96884c59ca17524f8b_14387938174802989836.png" srcset="/3212ca90f6c04a96884c59ca17524f8b_14387938174802989836_hu13007868429245251899.webp 800w, /3212ca90f6c04a96884c59ca17524f8b_14387938174802989836_hu7479059011573423426.webp 1200w, /3212ca90f6c04a96884c59ca17524f8b_14387938174802989836_hu13495253253238497008.webp 1600w"   height="888" width="1709"></a><figcaption class="image-caption">结果数据</figcaption>
+</figure></p>
 <p>在 kibana 中通过查询接口搜索 content 内容包含 “绕” 的，展示效果如下：</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230913/cd4487b3e4fd4c2f8e6e5bd830561b3e.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230913/cd4487b3e4fd4c2f8e6e5bd830561b3e.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230913/cd4487b3e4fd4c2f8e6e5bd830561b3e.png" data-sub-html="<h2>搜索结构</h2>">
-        <img
-            class="lazyload"
-            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230913/cd4487b3e4fd4c2f8e6e5bd830561b3e.png"
-            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230913/cd4487b3e4fd4c2f8e6e5bd830561b3e.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230913/cd4487b3e4fd4c2f8e6e5bd830561b3e.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230913/cd4487b3e4fd4c2f8e6e5bd830561b3e.png 2x"
-            data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230913/cd4487b3e4fd4c2f8e6e5bd830561b3e.png">
-    </a><figcaption class="image-caption">搜索结构</figcaption>
-    </figure></p>
+<p><figure><a class="lightgallery" href="/cd4487b3e4fd4c2f8e6e5bd830561b3e_4611222363281865207.png" title="" data-thumbnail="/cd4487b3e4fd4c2f8e6e5bd830561b3e_4611222363281865207.png" data-sub-html="<h2>搜索结构</h2>"><img  loading="lazy" src="/cd4487b3e4fd4c2f8e6e5bd830561b3e_4611222363281865207.png" srcset="/cd4487b3e4fd4c2f8e6e5bd830561b3e_4611222363281865207_hu5508397489279000754.webp 800w, /cd4487b3e4fd4c2f8e6e5bd830561b3e_4611222363281865207_hu12633575528497245073.webp 1200w, /cd4487b3e4fd4c2f8e6e5bd830561b3e_4611222363281865207_hu14058946356464589627.webp 1600w"   height="709" width="1920"></a><figcaption class="image-caption">搜索结构</figcaption>
+</figure></p>
 <p>查询 content 含有 “11111” <strong>或</strong> title 中含有 “悯” 的数据结果如下：</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230913/2ef161f48f494c5aa4d4b50d46860ad7.png" title="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230913/2ef161f48f494c5aa4d4b50d46860ad7.png" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230913/2ef161f48f494c5aa4d4b50d46860ad7.png" data-sub-html="<h2>查询结果</h2>">
-        <img
-            class="lazyload"
-            data-src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230913/2ef161f48f494c5aa4d4b50d46860ad7.png"
-            data-srcset="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230913/2ef161f48f494c5aa4d4b50d46860ad7.png, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230913/2ef161f48f494c5aa4d4b50d46860ad7.png 1.5x, https://cdn.xiaobinqt.cn/xiaobinqt.io/20230913/2ef161f48f494c5aa4d4b50d46860ad7.png 2x"
-            data-sizes="auto"
-            alt="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230913/2ef161f48f494c5aa4d4b50d46860ad7.png">
-    </a><figcaption class="image-caption">查询结果</figcaption>
-    </figure></p>
+<p><figure><a class="lightgallery" href="/2ef161f48f494c5aa4d4b50d46860ad7_7475763698095342812.png" title="" data-thumbnail="/2ef161f48f494c5aa4d4b50d46860ad7_7475763698095342812.png" data-sub-html="<h2>查询结果</h2>"><img  loading="lazy" src="/2ef161f48f494c5aa4d4b50d46860ad7_7475763698095342812.png" srcset="/2ef161f48f494c5aa4d4b50d46860ad7_7475763698095342812_hu16457231718047092853.webp 800w, /2ef161f48f494c5aa4d4b50d46860ad7_7475763698095342812_hu1597577366316989159.webp 1200w, /2ef161f48f494c5aa4d4b50d46860ad7_7475763698095342812_hu7299538992275481079.webp 1600w"   height="768" width="1614"></a><figcaption class="image-caption">查询结果</figcaption>
+</figure></p>
 <h2 id="参考" class="headerLink">
-    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ul>
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark" aria-label="Header mark for '参考'"></a>6 参考</h2><ul>
 <li><a href="https://zhuanlan.zhihu.com/p/458011982" target="_blank" rel="noopener noreferrer">Elastic Search 入门</a></li>
 <li><a href="https://juejin.cn/post/6936487066272432142" target="_blank" rel="noopener noreferrer">Elasticsearch 中 must, filter, should, must_not, constant_score 的区别</a></li>
 </ul>
@@ -849,47 +1229,101 @@
         <div class="post-info-line">
             <div class="post-info-mod">
                 <span>更新于 2023-09-14&nbsp;<a class="git-hash" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/587dcdd28a6de8fe24051c23db21b10fa6370ca0" target="_blank" title="commit by weibin(xiaobinqt@163.com) 587dcdd28a6de8fe24051c23db21b10fa6370ca0: update docker-elastic-install.md" rel="noopener noreferrer">
-                                    <i class="fas fa-hashtag fa-fw"></i>587dcdd2</a></span>
+                                    <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M440.667 182.109l7.143-40c1.313-7.355-4.342-14.109-11.813-14.109h-74.81l14.623-81.891C377.123 38.754 371.468 32 363.997 32h-40.632a12 12 0 0 0-11.813 9.891L296.175 128H197.54l14.623-81.891C213.477 38.754 207.822 32 200.35 32h-40.632a12 12 0 0 0-11.813 9.891L132.528 128H53.432a12 12 0 0 0-11.813 9.891l-7.143 40C33.163 185.246 38.818 192 46.289 192h74.81L98.242 320H19.146a12 12 0 0 0-11.813 9.891l-7.143 40C-1.123 377.246 4.532 384 12.003 384h74.81L72.19 465.891C70.877 473.246 76.532 480 84.003 480h40.632a12 12 0 0 0 11.813-9.891L151.826 384h98.634l-14.623 81.891C234.523 473.246 240.178 480 247.65 480h40.632a12 12 0 0 0 11.813-9.891L315.472 384h79.096a12 12 0 0 0 11.813-9.891l7.143-40c1.313-7.355-4.342-14.109-11.813-14.109h-74.81l22.857-128h79.096a12 12 0 0 0 11.813-9.891zM261.889 320h-98.634l22.857-128h98.634l-22.857 128z"/></svg>587dcdd2</a></span>
             </div>
             <div class="post-info-license"></div>
         </div>
-        <div class="post-info-line">
+        <div class="post-info-line print:!tw-hidden">
             <div class="post-info-md"><span><a class="link-to-mardown" href=/docker-elastic-install/index.md target="_blank" rel="noopener noreferrer">阅读原始文档</a>
+                    </span><span>|&nbsp;<a class="link-to-source" href=https://github.com/xiaobinqt/xiaobinqt.github.io/blob/main/content/posts/developer/docker-elastic-install.md target="_blank" rel="noopener noreferrer">查看源代码</a>
+                    </span><span>|&nbsp;<a class="link-to-edit" href=https://github.com/xiaobinqt/xiaobinqt.github.io/edit/main/content/posts/developer/docker-elastic-install.md target="_blank" rel="noopener noreferrer">编辑此页</a>
                     </span></div>
-            <div class="post-info-share">
-                <span><a href="#" onclick="return false;" title="分享到 Twitter" data-sharer="twitter" data-url="https://www.xiaobinqt.cn/docker-elastic-install/" data-title="Docker 单机安装使用 Elasticsearch" data-hashtags="elasticsearch"><i class="fab fa-twitter fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Facebook" data-sharer="facebook" data-url="https://www.xiaobinqt.cn/docker-elastic-install/" data-hashtag="elasticsearch"><i class="fab fa-facebook-square fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Hacker News" data-sharer="hackernews" data-url="https://www.xiaobinqt.cn/docker-elastic-install/" data-title="Docker 单机安装使用 Elasticsearch"><i class="fab fa-hacker-news fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 Line" data-sharer="line" data-url="https://www.xiaobinqt.cn/docker-elastic-install/" data-title="Docker 单机安装使用 Elasticsearch"><i data-svg-src="/lib/simple-icons/icons/line.min.svg"></i></a><a href="#" onclick="return false;" title="分享到 微博" data-sharer="weibo" data-url="https://www.xiaobinqt.cn/docker-elastic-install/" data-title="Docker 单机安装使用 Elasticsearch"><i class="fab fa-weibo fa-fw"></i></a><a href="#" onclick="return false;" title="分享到 百度" data-sharer="baidu" data-url="https://www.xiaobinqt.cn/docker-elastic-install/" data-title="Docker 单机安装使用 Elasticsearch"><i data-svg-src="/lib/simple-icons/icons/baidu.min.svg"></i></a></span>
-            </div>
+            <div class="post-info-share"><button title="分享到 微博" data-sharer="weibo" data-url="https://www.xiaobinqt.cn/docker-elastic-install/" data-title="Docker 单机安装使用 Elasticsearch"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M407 177.6c7.6-24-13.4-46.8-37.4-41.7-22 4.8-28.8-28.1-7.1-32.8 50.1-10.9 92.3 37.1 76.5 84.8-6.8 21.2-38.8 10.8-32-10.3zM214.8 446.7C108.5 446.7 0 395.3 0 310.4c0-44.3 28-95.4 76.3-143.7C176 67 279.5 65.8 249.9 161c-4 13.1 12.3 5.7 12.3 6 79.5-33.6 140.5-16.8 114 51.4-3.7 9.4 1.1 10.9 8.3 13.1 135.7 42.3 34.8 215.2-169.7 215.2zm143.7-146.3c-5.4-55.7-78.5-94-163.4-85.7-84.8 8.6-148.8 60.3-143.4 116s78.5 94 163.4 85.7c84.8-8.6 148.8-60.3 143.4-116zM347.9 35.1c-25.9 5.6-16.8 43.7 8.3 38.3 72.3-15.2 134.8 52.8 111.7 124-7.4 24.2 29.1 37 37.4 12 31.9-99.8-55.1-195.9-157.4-174.3zm-78.5 311c-17.1 38.8-66.8 60-109.1 46.3-40.8-13.1-58-53.4-40.3-89.7 17.7-35.4 63.1-55.4 103.4-45.1 42 10.8 63.1 50.2 46 88.5zm-86.3-30c-12.9-5.4-30 .3-38 12.9-8.3 12.9-4.3 28 8.6 34 13.1 6 30.8.3 39.1-12.9 8-13.1 3.7-28.3-9.7-34zm32.6-13.4c-5.1-1.7-11.4.6-14.3 5.4-2.9 5.1-1.4 10.6 3.7 12.9 5.1 2 11.7-.3 14.6-5.4 2.8-5.2 1.1-10.9-4-12.9z"/></svg></button><button title="分享到 百度" data-sharer="baidu" data-url="https://www.xiaobinqt.cn/docker-elastic-install/" data-title="Docker 单机安装使用 Elasticsearch"><svg class="icon" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>Baidu</title><path d="M9.154 0C7.71 0 6.54 1.658 6.54 3.707c0 2.051 1.171 3.71 2.615 3.71 1.446 0 2.614-1.659 2.614-3.71C11.768 1.658 10.6 0 9.154 0zm7.025.594C14.86.58 13.347 2.589 13.2 3.927c-.187 1.745.25 3.487 2.179 3.735 1.933.25 3.175-1.806 3.422-3.364.252-1.555-.995-3.364-2.362-3.674a1.218 1.218 0 0 0-.261-.03zM3.582 5.535a2.811 2.811 0 0 0-.156.008c-2.118.19-2.428 3.24-2.428 3.24-.287 1.41.686 4.425 3.297 3.864 2.617-.561 2.262-3.68 2.183-4.362-.125-1.018-1.292-2.773-2.896-2.75zm16.534 1.753c-2.308 0-2.617 2.119-2.617 3.616 0 1.43.121 3.425 2.988 3.362 2.867-.063 2.553-3.238 2.553-3.988 0-.745-.62-2.99-2.924-2.99zm-8.264 2.478c-1.424.014-2.708.925-3.323 1.947-1.118 1.868-2.863 3.05-3.112 3.363-.25.309-3.61 2.116-2.864 5.42.746 3.301 3.365 3.237 3.365 3.237s1.93.19 4.171-.31c2.24-.495 4.17.123 4.17.123s5.233 1.748 6.665-1.616c1.43-3.364-.808-5.109-.808-5.109s-2.99-2.306-4.736-4.798c-1.072-1.665-2.348-2.268-3.528-2.257zm-2.234 3.84l1.542.024v8.197H7.758c-1.47-.291-2.055-1.292-2.13-1.462-.072-.173-.488-.976-.268-2.343.635-2.049 2.447-2.196 2.447-2.196h1.81zm3.964 2.39v3.881c.096.413.612.488.612.488h1.614v-4.343h1.689v5.782h-3.915c-1.517-.39-1.59-1.465-1.59-1.465v-4.317zm-5.458 1.147c-.66.197-.978.708-1.05.928-.076.22-.247.78-.1 1.269.294 1.095 1.248 1.144 1.248 1.144h1.37v-3.34z"/></svg></button></div>
         </div>
     </div>
 
     <div class="post-info-more">
-        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/elasticsearch/">elasticsearch</a></section>
-        <section>
-            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        <section class="post-tags"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M497.941 225.941L286.059 14.059A48 48 0 0 0 252.118 0H48C21.49 0 0 21.49 0 48v204.118a48 48 0 0 0 14.059 33.941l211.882 211.882c18.744 18.745 49.136 18.746 67.882 0l204.118-204.118c18.745-18.745 18.745-49.137 0-67.882zM112 160c-26.51 0-48-21.49-48-48s21.49-48 48-48 48 21.49 48 48-21.49 48-48 48zm513.941 133.823L421.823 497.941c-18.745 18.745-49.137 18.745-67.882 0l-.36-.36L527.64 323.522c16.999-16.999 26.36-39.6 26.36-63.64s-9.362-46.641-26.36-63.64L331.397 0h48.721a48 48 0 0 1 33.941 14.059l211.882 211.882c18.745 18.745 18.745 49.137 0 67.882z"/></svg>&nbsp;<a href="/tags/elasticsearch/">Elasticsearch</a></section>
+        <section class="print:!tw-hidden">
+            <span><button class="tw-text-fgColor-link-muted hover:tw-text-fgColor-link-muted-hover" onclick="window.history.back();">返回</button></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
         </section>
     </div>
 
-    <div class="post-nav"><a href="/bretton-woods-system/" class="prev" rel="prev" title="布雷顿森林体系"><i class="fas fa-angle-left fa-fw"></i>布雷顿森林体系</a>
-            <a href="/escape-heap/" class="next" rel="next" title="Golang 内存逃逸">Golang 内存逃逸<i class="fas fa-angle-right fa-fw"></i></a></div>
+    <div class="post-nav print:tw-hidden"><a href="/bretton-woods-system/" class="prev" rel="prev" title="布雷顿森林体系"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M31.7 239l136-136c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9L127.9 256l96.4 96.4c9.4 9.4 9.4 24.6 0 33.9L201.7 409c-9.4 9.4-24.6 9.4-33.9 0l-136-136c-9.5-9.4-9.5-24.6-.1-34z"/></svg>布雷顿森林体系</a>
+            <a href="/escape-heap/" class="next" rel="next" title="Golang 内存逃逸">Golang 内存逃逸<svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M224.3 273l-136 136c-9.4 9.4-24.6 9.4-33.9 0l-22.6-22.6c-9.4-9.4-9.4-24.6 0-33.9l96.4-96.4-96.4-96.4c-9.4-9.4-9.4-24.6 0-33.9L54.3 103c9.4-9.4 24.6-9.4 33.9 0l136 136c9.5 9.4 9.5 24.6.1 34z"/></svg></a></div>
 </div>
-<div id="comments"><div id="gitalk" class="comment"></div><noscript>
+<div id="comments" class="print:!tw-hidden tw-pt-32 tw-pb-8"><div id="gitalk" class="comment"></div><noscript>
                 Please enable JavaScript to view the comments powered by <a href="https://github.com/gitalk/gitalk"></a>Gitalk</a>.
             </noscript></div></article></div>
         </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2018 - 2024</span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        <div class="footer-container"><div class="footer-line"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M256 8C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 448c-110.532 0-200-89.451-200-200 0-110.531 89.451-200 200-200 110.532 0 200 89.451 200 200 0 110.532-89.451 200-200 200zm107.351-101.064c-9.614 9.712-45.53 41.396-104.065 41.396-82.43 0-140.484-61.425-140.484-141.567 0-79.152 60.275-139.401 139.762-139.401 55.531 0 88.738 26.62 97.593 34.779a11.965 11.965 0 0 1 1.936 15.322l-18.155 28.113c-3.841 5.95-11.966 7.282-17.499 2.921-8.595-6.776-31.814-22.538-61.708-22.538-48.303 0-77.916 35.33-77.916 80.082 0 41.589 26.888 83.692 78.277 83.692 32.657 0 56.843-19.039 65.726-27.225 5.27-4.857 13.596-4.039 17.82 1.738l19.865 27.17a11.947 11.947 0 0 1-1.152 15.518z"/></svg>2018 - 2024<span class="author">&nbsp;<a href="https://github.com/xiaobinqt" target="_blank" rel="noopener noreferrer">xiaobinqt</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span><span class="icp-splitter">&nbsp;|&nbsp;</span><br class="icp-br"/>
+                    <span class="icp">${ICP}</span></div>
             <div class="footer-line"></div>
             <div class="footer-line">
             </div>
         </div></footer></div>
 
-    <div id="fixed-buttons"><a href="#back-to-top" id="back-to-top-button" class="fixed-button" title="回到顶部">
-            <i class="fas fa-arrow-up fa-fw"></i>
-        </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
-            <i class="fas fa-comment fa-fw"></i>
-        </a>
-    </div><div class="assets"><script type="text/javascript" src="/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="/lib/algoliasearch/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/topbar/topbar.min.js"></script><script type="text/javascript" src="/lib/pjax/pjax.min.js"></script><script type="text/javascript" src="/js/theme.min.js" defer></script></div>
-
-<div class="pjax-assets"><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":1000},"comment":{"gitalk":{"admin":["xiaobinqt"],"clientID":"47b15de6c2d8a0f8d707","clientSecret":"c70556c8b3a3b38ea7c72e539ff3b37d5bc1b4f3","id":"d7dc2563d244a9e7915b285e56780b64","owner":"xiaobinqt","repo":"xiaobinqt.github.io","title":"Docker 单机安装使用 Elasticsearch"}},"lightGallery":{"actualSize":false,"exThumbImage":"data-thumbnail","hideBarsDelay":2000,"selector":".lightgallery","speed":400,"thumbContHeight":80,"thumbWidth":80,"thumbnail":true},"search":{"algoliaAppID":"U7QBQFMJWZ","algoliaIndex":"xiaobinqt.io","algoliaSearchKey":"1679f7a929fbfff6be0d47ba33947c03","highlightTag":"em","maxResultLength":20,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"},"sharerjs":true};</script><script type="text/javascript" src="/lib/gitalk/gitalk.min.js"></script><script type="text/javascript" src="/js/gitalk.min.js" defer></script><script type="text/javascript" src="/lib/lightgallery/lightgallery.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-thumbnail.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-zoom.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><link rel="stylesheet" href="/lib/gitalk/gitalk.min.css"><link rel="stylesheet" href="/lib/lightgallery/lightgallery.min.css"></div>
+    <div id="fixed-buttons" class="print:!tw-hidden"><a href="#back-to-top" id="back-to-top-button" class="fixed-button tw-transition-opacity tw-opacity-0" title="回到顶部">
+            <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M34.9 289.5l-22.2-22.2c-9.4-9.4-9.4-24.6 0-33.9L207 39c9.4-9.4 24.6-9.4 33.9 0l194.3 194.3c9.4 9.4 9.4 24.6 0 33.9L413 289.4c-9.5 9.5-25 9.3-34.3-.4L264 168.6V456c0 13.3-10.7 24-24 24h-32c-13.3 0-24-10.7-24-24V168.6L69.2 289.1c-9.3 9.8-24.8 10-34.3.4z"/></svg>
+        </a><a href="#comments" id="view-comments" class="fixed-button" title="查看评论">
+            <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M256 32C114.6 32 0 125.1 0 240c0 49.6 21.4 95 57 130.7C44.5 421.1 2.7 466 2.2 466.5c-2.2 2.3-2.8 5.7-1.5 8.7S4.8 480 8 480c66.3 0 116-31.8 140.6-51.4 32.7 12.3 69 19.4 107.4 19.4 141.4 0 256-93.1 256-208S397.4 32 256 32z"/></svg>
+        </a></div><script type="module">
+        (async () => {
+            const supportSpeculationRules = HTMLScriptElement.supports && HTMLScriptElement.supports("speculationrules");
+            if (!supportSpeculationRules) {
+              await import("\/lib\/instant.page\/instantpage.min.js");
+            }
+        })();
+    </script><link rel="stylesheet" href="/lib/gitalk/gitalk.min.css"><link rel="stylesheet" href="/lib/lightgallery/lightgallery.min.css">
+<script>window.config={"algoliasearch.min.js":"/lib/algoliasearch/algoliasearch-lite.umd.min.js","autocomplete.min.js":"/lib/autocomplete/autocomplete.min.js","comment":{"gitalk":{"admin":["xiaobinqt"],"clientID":"47b15de6c2d8a0f8d707","clientSecret":"c70556c8b3a3b38ea7c72e539ff3b37d5bc1b4f3","id":"d7dc2563d244a9e7915b285e56780b64","owner":"xiaobinqt","repo":"xiaobinqt.github.io","title":"Docker 单机安装使用 Elasticsearch"}},"lightGallery":{"actualSize":false,"exThumbImage":"data-thumbnail","hideBarsDelay":2000,"selector":".lightgallery","speed":400,"thumbContHeight":80,"thumbWidth":80,"thumbnail":true},"search":{"algoliaAppID":"__ALGOLIA_APP_ID__","algoliaIndex":"xiaobinqt.io","algoliaSearchKey":"__ALGOLIA_SEARCH_API_KEY__","highlightTag":"em","maxResultLength":20,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"},"sharerjs":true,"table":{"sort":true}};</script><script
+    src="/lib/tablesort/tablesort.min.js"
+    
+  ></script><script
+    src="/lib/lightgallery/lightgallery.min.js"
+    
+  ></script><script
+    src="/lib/lightgallery/lg-thumbnail.min.js"
+    
+  ></script><script
+    src="/lib/lightgallery/lg-zoom.min.js"
+    
+  ></script><script
+    src="/lib/sharer/sharer.min.js"
+    
+  ></script><script
+    src="/js/theme.min.js"
+    
+      defer
+    
+  ></script><script
+    src="/lib/gitalk/gitalk.min.js"
+    
+  ></script><script
+    src="/js/gitalk.min.js"
+    
+      defer
+    
+  ></script>
+    
+    <script type="speculationrules">
+        {
+          "prerender": [
+            {
+              "where": { "href_matches": "/*" },
+              "eagerness": "moderate"
+            }
+          ]
+        }
+    </script>
+      
 </body>
 
 </html>

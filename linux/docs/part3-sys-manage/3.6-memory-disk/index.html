@@ -11,28 +11,35 @@ df # 用于显示磁盘分区上的可使用的磁盘空间。默认显示单位
 du # 也是查看使用空间的，但是与 d f命令不同的是 du 命令是对文件和目录磁盘使用的空间的查看。
 du 和 ls 的区别 # ls -lh 和 du 命令都可以查看文件，但是 du 查看的实际文件大小，ls 查看的文件大小可能包含空洞。
 afile 文件没有空洞，ls 和 du 显示的文件大小都是 40M。">
-<meta name="theme-color" content="#FFFFFF">
-<meta name="color-scheme" content="light dark"><meta property="og:title" content="3.6 内存和磁盘管理" />
-<meta property="og:description" content="3.6 内存和磁盘管理 # 3.6.1 内存和磁盘使用率查看 # 内存使用率 # free 和 top 命令效果基本无差，区别就是 free 是静态的，top 是动态的。
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/linux/docs/part3-sys-manage/3.6-memory-disk/">
+  <meta property="og:site_name" content="Linux 学习笔记">
+  <meta property="og:title" content="3.6 内存和磁盘管理">
+  <meta property="og:description" content="3.6 内存和磁盘管理 # 3.6.1 内存和磁盘使用率查看 # 内存使用率 # free 和 top 命令效果基本无差，区别就是 free 是静态的，top 是动态的。
 free # 一般多少 G 内存用 free -m 查看，多少 T 内存用 free -g 查看。
 top # 磁盘使用率 # fdisk # 慎用。fdisk 不仅可以用来查看磁盘，还可以用来磁盘分区，在实际工作中慎用。
 查看磁盘信息可以用 fdisk -l。
 df # 用于显示磁盘分区上的可使用的磁盘空间。默认显示单位为 KB。可以利用该命令来获取硬盘被占用了多少空间，目前还剩下多少空间等信息。
 du # 也是查看使用空间的，但是与 d f命令不同的是 du 命令是对文件和目录磁盘使用的空间的查看。
 du 和 ls 的区别 # ls -lh 和 du 命令都可以查看文件，但是 du 查看的实际文件大小，ls 查看的文件大小可能包含空洞。
-afile 文件没有空洞，ls 和 du 显示的文件大小都是 40M。" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://example.com/linux/docs/part3-sys-manage/3.6-memory-disk/" /><meta property="article:section" content="docs" />
-
-<meta property="article:modified_time" content="2023-02-22T17:16:36+08:00" />
+afile 文件没有空洞，ls 和 du 显示的文件大小都是 40M。">
+  <meta property="og:locale" content="zh">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:modified_time" content="2023-02-22T17:16:36+08:00">
 <title>3.6 内存和磁盘管理 | Linux 学习笔记</title>
 <link rel="manifest" href="/linux/manifest.json">
-<link rel="icon" href="/linux/favicon.png" type="image/x-icon">
-<link rel="stylesheet" href="/linux/book.min.cad59a3be22b32d901c8b99a5bf0c00f01535383d8d0e86742e5449f598d17af.css" integrity="sha256-ytWaO&#43;IrMtkByLmaW/DADwFTU4PY0OhnQuVEn1mNF68=" crossorigin="anonymous">
-  <script defer src="/linux/flexsearch.min.js"></script>
-  <script defer src="/linux/zh.search.min.4255bb51fefe12beb719fa99814aff14a9032f6767f09d28d03df087aa2efc4f.js" integrity="sha256-QlW7Uf7&#43;Er63GfqZgUr/FKkDL2dn8J0o0D3wh6ou/E8=" crossorigin="anonymous"></script>
+<link rel="icon" href="/linux/favicon.png" >
+<link rel="canonical" href="https://example.com/linux/docs/part3-sys-manage/3.6-memory-disk/">
+<link rel="stylesheet" href="/linux/book.min.c800dd82e49099945db6750ce1011947221e4464ea7e2ba833b653fe2dd19d1c.css" integrity="sha256-yADdguSQmZRdtnUM4QEZRyIeRGTqfiuoM7ZT/i3RnRw=" crossorigin="anonymous">
+  <script defer src="/linux/fuse.min.js"></script>
+  <script defer src="/linux/zh.search.min.0afc493c0e2806c47e6ea5c37eb3a83b7fd85c5ed030b4ef2823216a214c554a.js" integrity="sha256-CvxJPA4oBsR&#43;bqXDfrOoO3/YXF7QMLTvKCMhaiFMVUo=" crossorigin="anonymous"></script>
 
-  <script defer src="/linux/sw.min.e3338ad661715b83bfd6397040a613605d8bb26c10798773e2176216e2123560.js" integrity="sha256-4zOK1mFxW4O/1jlwQKYTYF2LsmwQeYdz4hdiFuISNWA=" crossorigin="anonymous"></script>
+  <script defer src="/linux/sw.min.06246f7b13a877707832946d0b1941d626f4349fd8e3bdfd318889981ed22d49.js" integrity="sha256-BiRvexOod3B4MpRtCxlB1ib0NJ/Y4739MYiJmB7SLUk=" crossorigin="anonymous"></script>
+
+  
+
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book
@@ -53,11 +60,12 @@ https://github.com/alex-shpak/hugo-book
 </h2>
 
 
-<div class="book-search">
+<div class="book-search hidden">
   <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
   <div class="book-search-spinner hidden"></div>
   <ul id="book-search-results"></ul>
 </div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
 
 
 
@@ -946,7 +954,7 @@ https://github.com/alex-shpak/hugo-book
 
       
       
-  <article class="markdown"><h1 id="36-内存和磁盘管理">
+  <article class="markdown book-article"><h1 id="36-内存和磁盘管理">
   3.6 内存和磁盘管理
   <a class="anchor" href="#36-%e5%86%85%e5%ad%98%e5%92%8c%e7%a3%81%e7%9b%98%e7%ae%a1%e7%90%86">#</a>
 </h1>
@@ -1095,9 +1103,9 @@ https://github.com/alex-shpak/hugo-book
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/8f10bff18148186f3d97f4712cf884bcd380d6b9" title='最后修改者 weibin | February 22, 2023' target="_blank" rel="noopener">
-      <img src="/linux/svg/calendar.svg" class="book-icon" alt="Calendar" />
-      <span>February 22, 2023</span>
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/8f10bff18148186f3d97f4712cf884bcd380d6b9" title='最后修改者 weibin | 二月 22, 2023' target="_blank" rel="noopener">
+      <img src="/linux/svg/calendar.svg" class="book-icon" alt="" />
+      <span>二月 22, 2023</span>
     </a>
   </div>
 
@@ -1105,7 +1113,7 @@ https://github.com/alex-shpak/hugo-book
 
   <div>
     <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/content/docs/part3-sys-manage/3.6-memory-disk.md" target="_blank" rel="noopener">
-      <img src="/linux/svg/edit.svg" class="book-icon" alt="Edit" />
+      <img src="/linux/svg/edit.svg" class="book-icon" alt="" />
       <span>编辑本页</span>
     </a>
   </div>

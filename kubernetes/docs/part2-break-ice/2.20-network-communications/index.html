@@ -12,9 +12,12 @@ Pod 里的所有容器共享这个 IP 地址。
 Pod 直接可以基于 IP 地址直接访问另一个 Pod，不需要做麻烦的网络地址转换（NAT）。
 这种网络让 Pod 摆脱了主机的硬限制，是一个 “平坦” 的网络模型，通信也非常简单。因为 Pod 都具有独立的 IP 地址，相当于一台虚拟机，而且直连互通，也就可以很容易地实施域名解析、负载均衡、服务发现等工作，对应用的管理和迁移都非常友好。
 2.20.2 什么是 CNI # CNI（Container Networking Interface）为网络插件定义了一系列通用接口，开发者只要遵循这个规范就可以接入 Kubernetes，为 Pod 创建虚拟网卡、分配 IP 地址、设置路由规则，最后就能够实现 “IP-per-pod” 网络模型。依据实现技术的不同，CNI 插件可以大致上分成 “Overlay” “Route” 和 “Underlay” 三种。">
-<meta name="theme-color" content="#FFFFFF">
-<meta name="color-scheme" content="light dark"><meta property="og:title" content="2.20 网络通信" />
-<meta property="og:description" content="2.20 网络通信 # 2.20.1 网络模型 # Docker 有三种常见的网络模式： null、host 和 bridge。下图，描述了 Docker 里最常用的 bridge 网络模式：
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/kubernetes/docs/part2-break-ice/2.20-network-communications/">
+  <meta property="og:site_name" content="Kubernetes 学习笔记">
+  <meta property="og:title" content="2.20 网络通信">
+  <meta property="og:description" content="2.20 网络通信 # 2.20.1 网络模型 # Docker 有三种常见的网络模式： null、host 和 bridge。下图，描述了 Docker 里最常用的 bridge 网络模式：
 Docker 会创建一个名字叫 “docker0” 的网桥，默认是私有网段 “172.17.0.0/16”。每个容器都会创建一个虚拟网卡对（veth pair），两个虚拟网卡分别 “插” 在容器和网桥上，这样容器之间就可以互联互通了。Docker 的网络方案简单有效，但只局限在单机环境里工作，跨主机通信非常困难（需要做端口映射和网络地址转换）。
 Kubernetes 的网络模型 “IP-per-pod”，能够很好地适应集群系统的网络需求，它有下面的这 4 点基本假设：
 集群里的每个 Pod 都会有唯一的一个 IP 地址。
@@ -22,19 +25,23 @@ Pod 里的所有容器共享这个 IP 地址。
 集群里的所有 Pod 都属于同一个网段。
 Pod 直接可以基于 IP 地址直接访问另一个 Pod，不需要做麻烦的网络地址转换（NAT）。
 这种网络让 Pod 摆脱了主机的硬限制，是一个 “平坦” 的网络模型，通信也非常简单。因为 Pod 都具有独立的 IP 地址，相当于一台虚拟机，而且直连互通，也就可以很容易地实施域名解析、负载均衡、服务发现等工作，对应用的管理和迁移都非常友好。
-2.20.2 什么是 CNI # CNI（Container Networking Interface）为网络插件定义了一系列通用接口，开发者只要遵循这个规范就可以接入 Kubernetes，为 Pod 创建虚拟网卡、分配 IP 地址、设置路由规则，最后就能够实现 “IP-per-pod” 网络模型。依据实现技术的不同，CNI 插件可以大致上分成 “Overlay” “Route” 和 “Underlay” 三种。" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://example.com/kubernetes/docs/part2-break-ice/2.20-network-communications/" /><meta property="article:section" content="docs" />
-
-<meta property="article:modified_time" content="2023-06-28T16:48:34+08:00" />
+2.20.2 什么是 CNI # CNI（Container Networking Interface）为网络插件定义了一系列通用接口，开发者只要遵循这个规范就可以接入 Kubernetes，为 Pod 创建虚拟网卡、分配 IP 地址、设置路由规则，最后就能够实现 “IP-per-pod” 网络模型。依据实现技术的不同，CNI 插件可以大致上分成 “Overlay” “Route” 和 “Underlay” 三种。">
+  <meta property="og:locale" content="zh">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:modified_time" content="2023-06-28T16:48:34+08:00">
 <title>2.20 网络通信 | Kubernetes 学习笔记</title>
 <link rel="manifest" href="/kubernetes/manifest.json">
-<link rel="icon" href="/kubernetes/favicon.png" type="image/x-icon">
-<link rel="stylesheet" href="/kubernetes/book.min.cad59a3be22b32d901c8b99a5bf0c00f01535383d8d0e86742e5449f598d17af.css" integrity="sha256-ytWaO&#43;IrMtkByLmaW/DADwFTU4PY0OhnQuVEn1mNF68=" crossorigin="anonymous">
-  <script defer src="/kubernetes/flexsearch.min.js"></script>
-  <script defer src="/kubernetes/zh.search.min.6a49f949d6c64c82c1530df1a06dca2b9fc0405bdaedd9bb43bc1e183bad6c4e.js" integrity="sha256-akn5SdbGTILBUw3xoG3KK5/AQFva7dm7Q7weGDutbE4=" crossorigin="anonymous"></script>
+<link rel="icon" href="/kubernetes/favicon.png" >
+<link rel="canonical" href="https://example.com/kubernetes/docs/part2-break-ice/2.20-network-communications/">
+<link rel="stylesheet" href="/kubernetes/book.min.c800dd82e49099945db6750ce1011947221e4464ea7e2ba833b653fe2dd19d1c.css" integrity="sha256-yADdguSQmZRdtnUM4QEZRyIeRGTqfiuoM7ZT/i3RnRw=" crossorigin="anonymous">
+  <script defer src="/kubernetes/fuse.min.js"></script>
+  <script defer src="/kubernetes/zh.search.min.da1c52546386c902e77e37ee10f137dd864d5defad152b94b97987f9bfccfa81.js" integrity="sha256-2hxSVGOGyQLnfjfuEPE33YZNXe&#43;tFSuUuXmH&#43;b/M&#43;oE=" crossorigin="anonymous"></script>
 
-  <script defer src="/kubernetes/sw.min.448c1a1f6d77a9e91ad10af73bc5bccfa94948c630159862e4b698042cdae427.js" integrity="sha256-RIwaH213qeka0Qr3O8W8z6lJSMYwFZhi5LaYBCza5Cc=" crossorigin="anonymous"></script>
+  <script defer src="/kubernetes/sw.min.18ff75d546fc59b9d538e96815256b253062dc991f14b3caff0f35a243a406d1.js" integrity="sha256-GP911Ub8WbnVOOloFSVrJTBi3JkfFLPK/w81okOkBtE=" crossorigin="anonymous"></script>
+
+  
+
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book
@@ -55,11 +62,12 @@ https://github.com/alex-shpak/hugo-book
 </h2>
 
 
-<div class="book-search">
+<div class="book-search hidden">
   <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
   <div class="book-search-spinner hidden"></div>
   <ul id="book-search-results"></ul>
 </div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
 
 
 
@@ -569,7 +577,7 @@ https://github.com/alex-shpak/hugo-book
 
       
       
-  <article class="markdown"><h1 id="220-网络通信">
+  <article class="markdown book-article"><h1 id="220-网络通信">
   2.20 网络通信
   <a class="anchor" href="#220-%e7%bd%91%e7%bb%9c%e9%80%9a%e4%bf%a1">#</a>
 </h1>
@@ -681,9 +689,9 @@ https://github.com/alex-shpak/hugo-book
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/4c54ae03ccd80c1eb92c8c89a95ffe8c26962014" title='最后修改者 weibin | June 28, 2023' target="_blank" rel="noopener">
-      <img src="/kubernetes/svg/calendar.svg" class="book-icon" alt="Calendar" />
-      <span>June 28, 2023</span>
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/4c54ae03ccd80c1eb92c8c89a95ffe8c26962014" title='最后修改者 weibin | 六月 28, 2023' target="_blank" rel="noopener">
+      <img src="/kubernetes/svg/calendar.svg" class="book-icon" alt="" />
+      <span>六月 28, 2023</span>
     </a>
   </div>
 
@@ -691,7 +699,7 @@ https://github.com/alex-shpak/hugo-book
 
   <div>
     <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/content/docs/part2-break-ice/2.20-network-communications.md" target="_blank" rel="noopener">
-      <img src="/kubernetes/svg/edit.svg" class="book-icon" alt="Edit" />
+      <img src="/kubernetes/svg/edit.svg" class="book-icon" alt="" />
       <span>编辑本页</span>
     </a>
   </div>

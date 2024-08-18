@@ -11,28 +11,35 @@ Docker 会检查是否有重复的层，如果本地已经存在就不会重复�
 名字表明了应用的身份，比如 busybox、Alpine、Nginx、Redis 等等。
 标签（tag）可以理解成是为了区分不同版本的应用而做的额外标记，任何字符串都可以，比如 3.15 是纯数字的版本号、jammy 是项目代号、1.21-alpine 是版本号加操作系统名等等。其中有一个比较特殊的标签叫 “latest”，它是默认的标签，如果只提供名字没有附带标签，那么就会使用这个默认的 “latest” 标签。
 通常来说，镜像标签的格式是应用的版本号加上操作系统。版本号基本上都是主版本号 &#43; 次版本号 &#43; 补丁号的形式，有的还会在正式发布前出 rc 版（候选版本，release candidate）。而操作系统的情况略微复杂，因为各个 Linux 发行版的命名方式 “花样” 太多。Alpine、CentOS 的命名比较简单明了，就是数字的版本号，像 alpine3.15 ，而 Ubuntu、Debian 则采用了代号的形式。比如 Ubuntu 18.04 是 bionic，Ubuntu 20.04 是 focal，Debian 9 是 stretch，Debian 10 是 buster，Debian 11 是 bullseye。另外，有的标签还会加上 slim、fat，来进一步表示这个镜像的内容是经过精简的，还是包含了较多的辅助工具。通常 slim 镜像会比较小，运行效率高，而 fat 镜像会比较大，适合用来开发调试。">
-<meta name="theme-color" content="#FFFFFF">
-<meta name="color-scheme" content="light dark"><meta property="og:title" content="1.4 镜像" />
-<meta property="og:description" content="1.4 镜像 # 1.4.1 什么是镜像 # 镜像和常见的 tar、rpm、deb 等安装包一样，都打包了应用程序，但最大的不同点在于它里面不仅有基本的可执行文件，还有应用运行时的整个系统环境。这就让镜像具有了非常好的跨平台便携性和兼容性，能够让开发者在一个系统上开发（例如 Ubuntu），然后打包成镜像，再去另一个系统上运行（例如 CentOS），完全不需要考虑环境依赖的问题，是一种更高级的应用打包方式。
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/kubernetes/docs/part1-primary/1.4-image/">
+  <meta property="og:site_name" content="Kubernetes 学习笔记">
+  <meta property="og:title" content="1.4 镜像">
+  <meta property="og:description" content="1.4 镜像 # 1.4.1 什么是镜像 # 镜像和常见的 tar、rpm、deb 等安装包一样，都打包了应用程序，但最大的不同点在于它里面不仅有基本的可执行文件，还有应用运行时的整个系统环境。这就让镜像具有了非常好的跨平台便携性和兼容性，能够让开发者在一个系统上开发（例如 Ubuntu），然后打包成镜像，再去另一个系统上运行（例如 CentOS），完全不需要考虑环境依赖的问题，是一种更高级的应用打包方式。
 1.4.2 镜像的内部机制 # 容器镜像内部并不是一个平坦的结构，而是由许多的镜像层组成的，每层都是只读不可修改的一组文件，相同的层可以在镜像之间共享，然后多个层像搭积木一样堆叠起来，再使用一种叫 “Union FS 联合文件系统” 的技术把它们合并在一起，就形成了容器最终看到的文件系统。
 Docker 会检查是否有重复的层，如果本地已经存在就不会重复下载，如果层被其他镜像共享就不会删除，这样就可以节约磁盘和网络成本。
 1.4.3 容器化应用 # “容器化的应用” 或 “应用的容器化”，就是指应用程序不再直接和操作系统打交道，而是封装成镜像，再交给容器环境去运行。镜像就是静态的应用容器，容器就是动态的应用镜像，两者互相依存，互相转化，密不可分。
 1.4.4 镜像的命名规则 # 镜像的完整名字由两个部分组成，名字和标签，中间用:连接起来。
 名字表明了应用的身份，比如 busybox、Alpine、Nginx、Redis 等等。
 标签（tag）可以理解成是为了区分不同版本的应用而做的额外标记，任何字符串都可以，比如 3.15 是纯数字的版本号、jammy 是项目代号、1.21-alpine 是版本号加操作系统名等等。其中有一个比较特殊的标签叫 “latest”，它是默认的标签，如果只提供名字没有附带标签，那么就会使用这个默认的 “latest” 标签。
-通常来说，镜像标签的格式是应用的版本号加上操作系统。版本号基本上都是主版本号 &#43; 次版本号 &#43; 补丁号的形式，有的还会在正式发布前出 rc 版（候选版本，release candidate）。而操作系统的情况略微复杂，因为各个 Linux 发行版的命名方式 “花样” 太多。Alpine、CentOS 的命名比较简单明了，就是数字的版本号，像 alpine3.15 ，而 Ubuntu、Debian 则采用了代号的形式。比如 Ubuntu 18.04 是 bionic，Ubuntu 20.04 是 focal，Debian 9 是 stretch，Debian 10 是 buster，Debian 11 是 bullseye。另外，有的标签还会加上 slim、fat，来进一步表示这个镜像的内容是经过精简的，还是包含了较多的辅助工具。通常 slim 镜像会比较小，运行效率高，而 fat 镜像会比较大，适合用来开发调试。" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://example.com/kubernetes/docs/part1-primary/1.4-image/" /><meta property="article:section" content="docs" />
-
-<meta property="article:modified_time" content="2023-05-10T21:03:13+08:00" />
+通常来说，镜像标签的格式是应用的版本号加上操作系统。版本号基本上都是主版本号 &#43; 次版本号 &#43; 补丁号的形式，有的还会在正式发布前出 rc 版（候选版本，release candidate）。而操作系统的情况略微复杂，因为各个 Linux 发行版的命名方式 “花样” 太多。Alpine、CentOS 的命名比较简单明了，就是数字的版本号，像 alpine3.15 ，而 Ubuntu、Debian 则采用了代号的形式。比如 Ubuntu 18.04 是 bionic，Ubuntu 20.04 是 focal，Debian 9 是 stretch，Debian 10 是 buster，Debian 11 是 bullseye。另外，有的标签还会加上 slim、fat，来进一步表示这个镜像的内容是经过精简的，还是包含了较多的辅助工具。通常 slim 镜像会比较小，运行效率高，而 fat 镜像会比较大，适合用来开发调试。">
+  <meta property="og:locale" content="zh">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:modified_time" content="2023-05-10T21:03:13+08:00">
 <title>1.4 镜像 | Kubernetes 学习笔记</title>
 <link rel="manifest" href="/kubernetes/manifest.json">
-<link rel="icon" href="/kubernetes/favicon.png" type="image/x-icon">
-<link rel="stylesheet" href="/kubernetes/book.min.cad59a3be22b32d901c8b99a5bf0c00f01535383d8d0e86742e5449f598d17af.css" integrity="sha256-ytWaO&#43;IrMtkByLmaW/DADwFTU4PY0OhnQuVEn1mNF68=" crossorigin="anonymous">
-  <script defer src="/kubernetes/flexsearch.min.js"></script>
-  <script defer src="/kubernetes/zh.search.min.6a49f949d6c64c82c1530df1a06dca2b9fc0405bdaedd9bb43bc1e183bad6c4e.js" integrity="sha256-akn5SdbGTILBUw3xoG3KK5/AQFva7dm7Q7weGDutbE4=" crossorigin="anonymous"></script>
+<link rel="icon" href="/kubernetes/favicon.png" >
+<link rel="canonical" href="https://example.com/kubernetes/docs/part1-primary/1.4-image/">
+<link rel="stylesheet" href="/kubernetes/book.min.c800dd82e49099945db6750ce1011947221e4464ea7e2ba833b653fe2dd19d1c.css" integrity="sha256-yADdguSQmZRdtnUM4QEZRyIeRGTqfiuoM7ZT/i3RnRw=" crossorigin="anonymous">
+  <script defer src="/kubernetes/fuse.min.js"></script>
+  <script defer src="/kubernetes/zh.search.min.da1c52546386c902e77e37ee10f137dd864d5defad152b94b97987f9bfccfa81.js" integrity="sha256-2hxSVGOGyQLnfjfuEPE33YZNXe&#43;tFSuUuXmH&#43;b/M&#43;oE=" crossorigin="anonymous"></script>
 
-  <script defer src="/kubernetes/sw.min.448c1a1f6d77a9e91ad10af73bc5bccfa94948c630159862e4b698042cdae427.js" integrity="sha256-RIwaH213qeka0Qr3O8W8z6lJSMYwFZhi5LaYBCza5Cc=" crossorigin="anonymous"></script>
+  <script defer src="/kubernetes/sw.min.18ff75d546fc59b9d538e96815256b253062dc991f14b3caff0f35a243a406d1.js" integrity="sha256-GP911Ub8WbnVOOloFSVrJTBi3JkfFLPK/w81okOkBtE=" crossorigin="anonymous"></script>
+
+  
+
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book
@@ -53,11 +60,12 @@ https://github.com/alex-shpak/hugo-book
 </h2>
 
 
-<div class="book-search">
+<div class="book-search hidden">
   <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
   <div class="book-search-spinner hidden"></div>
   <ul id="book-search-results"></ul>
 </div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
 
 
 
@@ -570,7 +578,7 @@ https://github.com/alex-shpak/hugo-book
 
       
       
-  <article class="markdown"><h1 id="14-镜像">
+  <article class="markdown book-article"><h1 id="14-镜像">
   1.4 镜像
   <a class="anchor" href="#14-%e9%95%9c%e5%83%8f">#</a>
 </h1>
@@ -673,9 +681,9 @@ slim、fat，来进一步表示这个镜像的内容是经过精简的，还是�
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/588af67154ef12e3022849c58823939a4fc62e79" title='最后修改者 weibin | May 10, 2023' target="_blank" rel="noopener">
-      <img src="/kubernetes/svg/calendar.svg" class="book-icon" alt="Calendar" />
-      <span>May 10, 2023</span>
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/588af67154ef12e3022849c58823939a4fc62e79" title='最后修改者 weibin | 五月 10, 2023' target="_blank" rel="noopener">
+      <img src="/kubernetes/svg/calendar.svg" class="book-icon" alt="" />
+      <span>五月 10, 2023</span>
     </a>
   </div>
 
@@ -683,7 +691,7 @@ slim、fat，来进一步表示这个镜像的内容是经过精简的，还是�
 
   <div>
     <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/content/docs/part1-primary/1.4-image.md" target="_blank" rel="noopener">
-      <img src="/kubernetes/svg/edit.svg" class="book-icon" alt="Edit" />
+      <img src="/kubernetes/svg/edit.svg" class="book-icon" alt="" />
       <span>编辑本页</span>
     </a>
   </div>
