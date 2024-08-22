@@ -5,11 +5,13 @@
 
 [//]: # (https://www.xiaobinqt.cn)
 
-## win10 安装
+## 安装
+
+### win10 安装
 
 在 windows 下安装可以参考这篇文章[mongodb-window-install](https://www.runoob.com/mongodb/mongodb-window-install.html)。
 
-### 小坑
+#### 小坑
 
 我使用的是 windows 10 企业版，在安装时出现了个问题，如下：
 
@@ -17,7 +19,7 @@
 
 我是在网上找了大半天没有找到解决的办法，都是写文章作者可用，但是我一直不生效，我觉得的必须要用管理员权限安装导致的。后来我直接忽略了，用管理员权限运行。
 
-### 运行服务端
+#### 运行服务端
 
 用管理员 power shell 运行 具体命令可以参看[文档](https://www.runoob.com/mongodb/mongodb-window-install.html)
 
@@ -29,7 +31,7 @@
 
 ![运行 mongodb 服务 02](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230325/1d84e81628134fb581b5e63eb1959d20.png '运行 mongodb 服务 02')
 
-### 运行客户端
+#### 运行客户端
 
 ```shell
  .\mongo.exe
@@ -37,7 +39,15 @@
 
 ![客户端连接](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230325/066bb62ff99a4ac28b22a0decda8bd21.png '客户端连接')
 
-## Navicat Premium
+### docker 安装
+
+可以参考 [Docker 安装 MongoDB](https://www.runoob.com/docker/docker-install-mongodb.html)。
+
+arm 架构可以用镜像 [arm64v8/mongo](https://hub.docker.com/r/arm64v8/mongo/)。
+
+## 可视化工具
+
+### Navicat Premium
 
 navicat premium 是一个数据库管理工具，可以支持 mysql，mongodb，oracle 等几乎所有的数据库。
 
@@ -46,6 +56,12 @@ navicat premium 是一个数据库管理工具，可以支持 mysql，mongodb，
 ![navicat premuim 使用](https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/d47621d94a1e4f68abe30d8fb35e02a0.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'navicat premuim 使用')
 
 windows 安转教程可以参考[navicat premium15破解教程](http://www.downcc.com/soft/430673.html)
+
+### mongodb compass
+
+[compass 下载地址](https://www.mongodb.com/try/download/compass)
+
+![mongodb compass](https://cdn.xiaobinqt.cn/xiaobinqt.io/20240822/f57ad6d1121047f3b76b81786dae730a.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'mongodb compass')
 
 ## 概念解析
 
@@ -72,7 +88,7 @@ windows 安转教程可以参考[navicat premium15破解教程](http://www.downc
 
 ## 常用命令
 
-| CMD                                            | 说明                                                     | 
+| CMD                                            | 说明                                                     |
 |------------------------------------------------|--------------------------------------------------------|
 | `db.help()`                                    | 查看命令帮助                                                 |
 | `show dbs`                                     | 查看所有数据库                                                |
@@ -88,16 +104,16 @@ windows 安转教程可以参考[navicat premium15破解教程](http://www.downc
 | `db.cloneDatabase("127.0.0.1")`                | 将指定机器上的数据库的数据克隆到当前数据库                                  |
 | `db.repairDatabase()`                          | 修复当前数据库                                                |
 | `show collections`/`show tables`               | 查看已有集合                                                 |
-| `db.yourColl.help()`                           | 查看帮助                                                   | 
-| `db.yourColl.count()`                          | 查询当前集合的数据条数                                            | 
-| `db.yourColl.dataSize()`                       | 查看数据空间大小                                               | 
-| `db.yourColl.getDB()`                          | 得到当前聚集集合所在的 db                                         | 
-| `db.yourColl.stats()`                          | 得到当前集合的状态                                              | 
-| `db.yourColl.totalSize()`                      | 得到集合总大小                                                | 
-| `db.yourColl.storageSize()`                    | 聚集集合储存空间大小                                             | 
-| `db.yourColl.getShardVersion()`                | Shard版本信息                                              | 
-| `db.userInfo.renameCollection("users")`        | 集合重命名。示例为：将 userInfo 重命名为 users                        | 
-| `db.yourColl.drop()`                           | 删除当前集合                                                 | 
+| `db.yourColl.help()`                           | 查看帮助                                                   |
+| `db.yourColl.count()`                          | 查询当前集合的数据条数                                            |
+| `db.yourColl.dataSize()`                       | 查看数据空间大小                                               |
+| `db.yourColl.getDB()`                          | 得到当前聚集集合所在的 db                                         |
+| `db.yourColl.stats()`                          | 得到当前集合的状态                                              |
+| `db.yourColl.totalSize()`                      | 得到集合总大小                                                |
+| `db.yourColl.storageSize()`                    | 聚集集合储存空间大小                                             |
+| `db.yourColl.getShardVersion()`                | Shard版本信息                                              |
+| `db.userInfo.renameCollection("users")`        | 集合重命名。示例为：将 userInfo 重命名为 users                        |
+| `db.yourColl.drop()`                           | 删除当前集合                                                 |
 
 > `yourColl` 表示集合名
 
@@ -284,9 +300,9 @@ db.collection.update(
      writeConcern: <document>
    }
 )
-  
+
 # 示例
-db.col.update({'title':'MongoDB 教程'},{$set:{'title':'MongoDB'}})  
+db.col.update({'title':'MongoDB 教程'},{$set:{'title':'MongoDB'}})
 ```
 
 参数说明：
