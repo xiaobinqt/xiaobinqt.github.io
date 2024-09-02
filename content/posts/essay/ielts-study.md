@@ -10,8 +10,6 @@ date: 2024-08-25
 
 lastmod: 2024-08-25
 
-draft: true
-
 author: "xiaobinqt"
 description: "xiaobinqt,"
 
@@ -39,6 +37,7 @@ header:
   number:
     enable: false
 
+draft: true
 ---
 
 <!-- author： xiaobinqt -->
@@ -85,6 +84,12 @@ header:
 
 ## 每日总结
 
+### September 2,2024
+
+I think it is difficult for me to balance the work and the english study. I have got off the work recently about 10pm and I and no energy to study anymore. The dream is fantastic and the reality is miserable.
+
+Today, I only study the words and the duolinguo application, I did not practice reading, listening as well as speaking. I fell very sad and have a sense of guilty.
+
 ### 2024-08-26
 
 1. 背了单词和多邻国。单词方面，需要在注重效率的同时，提到数量。
@@ -92,6 +97,8 @@ header:
 ![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20240827/d048604937e44445beb9ae370c4876d5.png?imageView2/0/q/75%7cwatermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15)
 
 今天公司聚餐，晚 10 点才结束，到家都晚 11 点了。明天可以早点起，暂定 7 点 45 起，这样早上的时间可以多点，之前都是 8 点 10 分起，慢慢地调整下周内的早起时间，晚上也早点睡。这样早上应该会多出来 20 分钟 - 30 分钟左右。
+
+## 周总结
 
 
 
