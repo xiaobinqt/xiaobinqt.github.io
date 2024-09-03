@@ -84,6 +84,10 @@ draft: true
 
 ## 每日总结
 
+### September 3,2024
+
+Current work is not really friendly done by people, every day is tired and have no time to do other things like study and reading books. After I off work, my mood is bad, and the urge to quit immediately.
+
 ### September 2,2024
 
 I think it is difficult for me to balance the work and the english study. I have got off the work recently about 10pm and I and no energy to study anymore. The dream is fantastic and the reality is miserable.
