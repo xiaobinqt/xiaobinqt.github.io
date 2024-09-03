@@ -353,7 +353,7 @@
 <p>而多路复用就是完全异步化，这减少了整体的往返时间（RTT），<strong>解决了 HTTP 队头阻塞问题，也规避了 TCP 慢启动带来的影响</strong>。</p>
 <p><strong>HPACK 压缩头部</strong>，采用了静态表、动态表和哈夫曼编码，在客户端和服务器都维护请求头的列表，所以只需要增量和压缩过的头部信息，服务端拿到之后组装一下就能得到完整的头部信息。</p>
 <p>如下图：</p>
-<p><img class="tw-inline" loading="lazy" src="/cb9ba3000eeb44088bc1004792f9a172_5788479349238354860.png" srcset="/cb9ba3000eeb44088bc1004792f9a172_5788479349238354860_hu5779954631113205244.webp 800w, /cb9ba3000eeb44088bc1004792f9a172_5788479349238354860_hu12979619661414406073.webp 1200w, /cb9ba3000eeb44088bc1004792f9a172_5788479349238354860_hu10615566354305371545.webp 1600w"   height="1080" width="1920"></p>
+<p><img class="tw-inline" loading="lazy" src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20240825/cb9ba3000eeb44088bc1004792f9a172.png"     ></p>
 <p><strong>服务端主动推送数据</strong>，这个其实就是减少了请求的次数，比如客户端请求 1.html，我把 1.html 需要的 js 和 css 也一块送过去，省的之后客户端再请求我要 js ，我要这个 css。</p>
 <p>HTTP/2 的整体演进都是往性能优化的角度发展，因为此时的性能是痛点。但是 HTTP/1.1 这个历史包袱太重了，所以 HTTP/2 到现在也只有大致一半的网站使用它。</p>
 <h3 id="http-3-时代" class="headerLink">
@@ -363,11 +363,11 @@
 <p>问题就出在 TCP 身上，这时 Google 就把目光瞄向了 UDP。</p>
 <p>UDP 是无连接的，不管什么顺序，也不管什么丢包，而 TCP 太保守了，因此 Google 就研究出了 QUIC 协议。</p>
 <p>QUIC 层来实现自己的丢包重传和拥塞控制，出于安全的考虑现在会使用 HTTPS ，所以需要多次握手。</p>
-<p><img class="tw-inline" loading="lazy" src="/ec644cbdd7e14da3bec7c7fe1693413f_16931904806580742354.png" srcset="/ec644cbdd7e14da3bec7c7fe1693413f_16931904806580742354_hu10392540851329293428.webp 800w, /ec644cbdd7e14da3bec7c7fe1693413f_16931904806580742354_hu18249437515446153297.webp 1200w, /ec644cbdd7e14da3bec7c7fe1693413f_16931904806580742354_hu2451921272920215643.webp 1600w"   height="1266" width="900"></p>
+<p><img class="tw-inline" loading="lazy" src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20240825/ec644cbdd7e14da3bec7c7fe1693413f.png"     ></p>
 <p>在移动互联网时代握手的消耗会放大，于是 QUIC 引入了个叫 Connection ID 来标识一个链接，切换网络之后可以复用这个连接，达到 0 RTT 就能开始传输。</p>
 <p>上图是在已经和服务端握过手之后的，由于网络切换等原因才有 0 RTT ，<strong>也就是 Connection ID 在之前生成过了</strong>。</p>
 <p>如果是第一次建连还是需要多次握手的，可以来看一下<strong>简化</strong>的握手对比图。</p>
-<p><img class="tw-inline" loading="lazy" src="/e6c3f3f02cbb43468426ddad008933fd_14283815586089054592.png" srcset="/e6c3f3f02cbb43468426ddad008933fd_14283815586089054592_hu13467459044457701192.webp 800w, /e6c3f3f02cbb43468426ddad008933fd_14283815586089054592_hu510769628083822762.webp 1200w, /e6c3f3f02cbb43468426ddad008933fd_14283815586089054592_hu10557129039304357598.webp 1600w"   height="516" width="1021"></p>
+<p><img class="tw-inline" loading="lazy" src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20240825/e6c3f3f02cbb43468426ddad008933fd.png"     ></p>
 <p>所以所谓的 0RTT 是在之前已经建连的情况下。</p>
 <p>还有 HTTP/2 提到的 HPACK，这个是依赖 TCP 的可靠、有序传输的，于是 QUIC 得搞了个 QPACK，也采用了静态表、动态表和哈夫曼编码。它丰富了 HTTP/2 的静态表，从 61 项加到了 98 项。</p>
 <p>这个动态表，是用来存储未包含在静态表中的头部项，假设动态表还未收到，后面来解头部的时候肯定要被阻塞的。</p>
@@ -473,7 +473,7 @@
 <li>**服务器发送开始使用加密（Change Cipher Spec） + 服务器完成（Server Finished）</li>
 </ol>
 <p>同理，服务器也是一样发送（Change Cipher Spec），代表后续要用加密数据传输了，且发送握手摘要 给客户端验证，一切正常的话， RSA TLS 握手就结束了。</p>
-<p><figure><a class="lightgallery" href="/37ef6be6dee7413d9fbb05342daa0dc5_1652199827644838636.png" title="" data-thumbnail="/37ef6be6dee7413d9fbb05342daa0dc5_1652199827644838636.png" data-sub-html="<h2>验证</h2>"><img  loading="lazy" src="/37ef6be6dee7413d9fbb05342daa0dc5_1652199827644838636.png" srcset="/37ef6be6dee7413d9fbb05342daa0dc5_1652199827644838636_hu10362714991238721073.webp 800w, /37ef6be6dee7413d9fbb05342daa0dc5_1652199827644838636_hu3460371236733792059.webp 1200w, /37ef6be6dee7413d9fbb05342daa0dc5_1652199827644838636_hu15928403934515026239.webp 1600w"   height="2760" width="1870"></a><figcaption class="image-caption">验证</figcaption>
+<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20240825/37ef6be6dee7413d9fbb05342daa0dc5.png" title="" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20240825/37ef6be6dee7413d9fbb05342daa0dc5.png" data-sub-html="<h2>验证</h2>"><img  loading="lazy" src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20240825/37ef6be6dee7413d9fbb05342daa0dc5.png"     ></a><figcaption class="image-caption">验证</figcaption>
 </figure></p>
 <h4 id="https-ecdhe-算法握手流程" class="headerLink">
     <a href="#https-ecdhe-%e7%ae%97%e6%b3%95%e6%8f%a1%e6%89%8b%e6%b5%81%e7%a8%8b" class="header-mark" aria-label="Header mark for 'HTTPS ECDHE 算法握手流程'"></a>3.1.2 HTTPS ECDHE 算法握手流程</h4><p>同样也需要四次握手，大致步骤和 RSA 是一致的，主要区别在第二步：</p>
