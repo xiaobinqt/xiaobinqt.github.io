@@ -2,6 +2,8 @@
 title: "{{ replace .Name "-" " " | title }}"
 subtitle: ""
 
+weight:
+
 init_date: "{{ .Date }}"
 
 date: {{ .Date | time.Format "2006-01-02" }}
