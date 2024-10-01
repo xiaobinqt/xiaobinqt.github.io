@@ -10,6 +10,10 @@ lightgallery: true
 
 math:
 enable: true
+
+header:
+  number:
+    enable: false
 ---
 
 <br><br><br>
