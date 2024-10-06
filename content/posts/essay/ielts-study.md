@@ -84,6 +84,120 @@ draft: true
 
 ## 每日总结
 
+### October 1,2024
+
+英语中使用月份时，通常不需要在月份前加定冠词“the”。所以说 “in January” 而不是 “in the January” 是因为月份本身已经是特定的时间概念，不需要进一步用定冠词来限定。
+
+在某些语言中，可能需要加定冠词来指代具体的事物或时间，但英语中月份不需要冠词，除非在特定上下文中。例如：
+
+- 常见表达：I will travel in January.
+- 特殊上下文： The January of 2020 was unusually cold.
+
+在第二种情况中，定冠词 “the” 用来强调某个具体年份的特定一月，但在**一般情况下月份前不需要定冠词**。
+
+---
+
+“**In the summer**” 中使用定冠词 “the” 是因为 “summer”（夏天）是一个季节，而季节通常被视为特定的时间段。定冠词 “the” 用来指代某个明确的、特定的季节，而不是泛指。
+
+相比之下，月份如 “January” 是不需要定冠词的，因为它本身已经是明确的、独立的时间单位。
+
+总结：
+
+- **月份（如 January）** 通常不加定冠词，因为它们已经具体化。
+    - 例子：**in January**（在一月）
+
+- **季节（如 summer）** 则需要加定冠词，因为它们是较大、较抽象的时间段，需要借助定冠词来明确指代。
+    - 例子：**in the summer**（在夏天）
+
+在某些情况下，如果我们要表达一个季节中的某个不特定时间，可能会省略 “the”，例如 “summer is hot” (夏天是炎热的)。
+
+---
+
+在英语中，地名通常不需要定冠词。像 "California" 这样的州名或国家名已经足够明确，不需要冠词来进一步限定。所以我们说 "**in California**" 而不是 "**in the California**"。
+
+但是，有些地理名称确实需要定冠词，这是因为它们表示特定的、复数的、或者更具描述性的地理概念。例如：
+
+1. **国家名或地区名**
+    - **不需要定冠词的国家或州名**: 这些名称通常是专有名词，已经特定且明确。
+        - 例子：**in California**, **in Japan**, **in France**
+
+    - **需要定冠词的国家名**: 一些国家的名称包含描述性的词语或者复数形式，强调国家的特定地理或政治特点，因此使用定冠词。
+        - 例子：**in the United States**, **in the Netherlands**, **in the Philippines**
+
+2. **自然地理特征**
+    - 需要定冠词的地理特征包括河流、山脉、海洋等，因为它们往往代表一类或多个事物。
+        - 例子：**in the Alps**, **in the Pacific Ocean**, **on the Nile**
+
+总结：
+
+- 对于大多数单一的国家或州名，不需要定冠词，例如 "**in California**"。
+- 对于一些带有描述性、复数形式或特殊名称的地理名词，定冠词 "the" 是必要的，例如 "**in the United States**"。
+
+---
+
+我们说“**in Africa**”而不是“**in the Africa**”的原因与使用国家和州名的原则类似。非洲作为一个大陆的名称已经是明确的，不需要加定冠词来进一步限定它。
+
+以下是关键点：
+
+1. **大陆和大洲名称**：像 “Africa” 这样的大陆名称是专有名词，表示的是一个独特且特定的地理实体，因此不需要使用定冠词。其他大洲的名称也是如此：
+    - **in Europe**
+    - **in Asia**
+    - **in South America**
+
+2. **地理特征的定冠词使用**：对于复数形式或带有描述性特征的地理名词，通常会使用定冠词“the”，因为它们代表的是某类特定的事物，而不是唯一的地理实体。例如：
+    - **in the Sahara Desert**（在撒哈拉沙漠）
+    - **in the Himalayas**（在喜马拉雅山脉）
+    - **in the Arctic**（在北极）
+
+3. **特殊地理名词**：某些国家或地区名称包含复数形式或描述性词语，因此需要定冠词，比如：
+    - **in the United States**
+    - **in the Netherlands**
+
+总结来说，像“**Africa**”这样的大陆或大洲名称已经是独特的，不需要使用定冠词，而一些包含复数或更具描述性的名称则需要加上定冠词。
+
+---
+
+1. **My right eye hurts.**
+
+在这里，**hurts** 是动词 **hurt** 的第三人称单数形式，因为主语是“**my right eye**”，这是一个单数名词。在英语中，当主语是第三人称单数（如 "he," "she," "it," 或 "my right eye"），动词需要加 **-s** 来保持主谓一致。类似的例子有：
+
+- **He runs**.
+- **The cat sleeps**.
+
+因此，“**My right eye hurts**” 是正确的，因为 "eye" 是单数，动词需要加 **-s**。
+
+2. **Does my right eye hurt?**
+
+在这个句子里，**does** 是助动词。当助动词（如 **do/does**）出现在疑问句中，主要动词 **hurt** 保持原形，不加 **-s**。这是因为 **does** 已经承载了第三人称单数的语法特征，主动词不需要再变化。类似的例子有：
+
+- **Does he run?** (动词 **run** 保持原形)
+- **Does the cat sleep?**
+
+因此，**Does my right eye hurt?** 是正确的，因为助动词 **does** 已经反映了第三人称单数，动词 **hurt** 保持原形。
+
+总结：
+
+- **My right eye hurts.**：主语是单数，因此动词加 **-s**。
+- **Does my right eye hurt?**：助动词 **does** 已经反映第三人称单数，动词 **hurt** 不需要再加 **-s**。
+
+----
+
+在句子 **They does not use Chinese at work.** 中使用 "**does**" 是错误的，因为 **they** 是复数主语，而 **does** 是第三人称单数的助动词。对于复数主语 **they**，助动词应该是 **do**。
+
+正确的句子应该是：**They do not use Chinese at work.**
+
+这里的规则是：
+
+- **Does** 适用于第三人称单数（he, she, it 或单数名词）。
+- **Do** 适用于第一人称（I, we）和复数主语（you, they）。
+
+因此，**they** 作为复数主语时，助动词要用 **do**。类似的例子有：
+
+- **He does not like coffee.** (第三人称单数)
+- **They do not like coffee.** (复数)
+
+总结：**They do not use Chinese at work** 是正确的表达，使用 **do** 是因为 **they** 是复数主语。
+
 ### September 3,2024
 
 Current work is not really friendly done by people, every day is tired and have no time to do other things like study and reading books. After I off work, my mood is bad, and the urge to quit immediately.
@@ -102,8 +216,15 @@ Today, I only study the words and the duolinguo application, I did not practice 
 
 今天公司聚餐，晚 10 点才结束，到家都晚 11 点了。明天可以早点起，暂定 7 点 45 起，这样早上的时间可以多点，之前都是 8 点 10 分起，慢慢地调整下周内的早起时间，晚上也早点睡。这样早上应该会多出来 20 分钟 - 30 分钟左右。
 
-## 周总结
+## 每周总结
 
+## 听力
+
+## 阅读
+
+## 口语
+
+## 写作
 
 
 
