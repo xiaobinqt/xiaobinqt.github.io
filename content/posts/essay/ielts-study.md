@@ -84,6 +84,49 @@ draft: true
 
 ## 每日总结
 
+### October 7,2024
+
+"**Last resort**" 是一个常用的短语，意思是 "**最后的手段**" 或 "**最后的选择**"。它通常指在所有其他选择或解决方案都失败后，唯一剩下的办法或选项。
+
+当人们说某件事情是 "**last resort**"，通常意味着他们不愿意或不希望采取这种方式，但如果别无选择，他们最终还是会这么做。
+
+1. **Using force should be the last resort.**
+    - 使用武力应该是最后的手段。
+
+2. **If we can't find a solution, we'll have to go to court as a last resort.**
+    - 如果我们找不到解决办法，我们将不得不诉诸法院，作为最后的选择。
+
+这个短语传达了某种无奈感，表示在其他途径都行不通的情况下，不得不采取这种方法。
+
+---
+
+"**The subject came up**" 是一个常见的英语表达，意思是 "**话题被提起了**" 或 "**这个话题出现了**"。它通常用于表示某个特定话题在对话、讨论或会议中自然而然地出现或被提及。
+
+- **came up**：这是短语动词 **come up** 的过去式，表示某件事情或话题突然出现在对话或讨论中。
+- **the subject**：指具体讨论的主题或话题。
+
+1. **The subject came up during the meeting.**
+    - 会议中提到了这个话题。
+
+2. **I didn’t plan to talk about it, but the subject came up.**
+    - 我没打算谈论它，但话题自然就提起来了。
+
+总结来说，"the subject came up" 表示某个话题在特定情境下被提到或讨论。
+
+---
+
+在英语中，**"Do you busy on Sunday?"** 是不正确的，因为 **"busy"** 是一个形容词，而助动词 **"do"** 通常用于动词的疑问句。在这种情况下，你需要使用动词 **"be"** 来搭配形容词 **"busy"**，表示某人处于忙碌的状态。
+
+正确的句子应该是：
+
+**"Are you busy on Sunday?"**
+
+- **"Are"** 是动词 **"be"** 的形式，适用于第二人称单数和复数（you）。
+- **"busy"** 是形容词，表示“忙碌”。
+- **"on Sunday"** 是时间状语，表示发生的时间。
+
+当你想用形容词（如 "busy"）来描述某人的状态时，应该用 **"be"**（am, is, are），而不是 **"do"**，因为 **"do"** 是用于动词的助动词。
+
 ### October 1,2024
 
 英语中使用月份时，通常不需要在月份前加定冠词“the”。所以说 “in January” 而不是 “in the January” 是因为月份本身已经是特定的时间概念，不需要进一步用定冠词来限定。
@@ -216,8 +259,6 @@ Today, I only study the words and the duolinguo application, I did not practice 
 
 今天公司聚餐，晚 10 点才结束，到家都晚 11 点了。明天可以早点起，暂定 7 点 45 起，这样早上的时间可以多点，之前都是 8 点 10 分起，慢慢地调整下周内的早起时间，晚上也早点睡。这样早上应该会多出来 20 分钟 - 30 分钟左右。
 
-## 每周总结
-
 ## 听力
 
 ## 阅读
@@ -225,6 +266,8 @@ Today, I only study the words and the duolinguo application, I did not practice 
 ## 口语
 
 ## 写作
+
+## 每周总结
 
 
 
