@@ -39,6 +39,10 @@ math: true
 <!-- https://xiaobinqt.github.io -->
 <!-- https://www.xiaobinqt.cn -->
 
+python urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3' 问题解决。
+
+<!--more-->
+
 我在用 python 3.9 执行脚本时出现一个 warning 的错误，如下：
 
 ```python
