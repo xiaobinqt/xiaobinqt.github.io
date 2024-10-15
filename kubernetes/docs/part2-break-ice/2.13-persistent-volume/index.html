@@ -3,17 +3,25 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="2.13 PersistentVolume # Pod 里的容器是由镜像产生的，而镜像文件本身是只读的，进程要读写磁盘只能用一个临时的存储空间，一旦 Pod 销毁，临时存储也就会立即回收释放，数据也就丢失了。
+<meta name="description" content="
+  2.13 PersistentVolume
+  #
+
+Pod 里的容器是由镜像产生的，而镜像文件本身是只读的，进程要读写磁盘只能用一个临时的存储空间，一旦 Pod 销毁，临时存储也就会立即回收释放，数据也就丢失了。
 Kubernetes 的 Volume 对数据存储已经给出了一个很好的抽象，它只是定义了有这么一个 “存储卷”，而这个 “存储卷” 是什么类型、有多大容量、怎么存储，可以自由发挥。Pod 不需要关心那些专业、复杂的细节，只要设置好 volumeMounts，就可以把 Volume 加载进容器里使用。所以，由 Volume 的概念，延伸出了 PersistentVolume 对象，它专门用来表示持久存储设备，但隐藏了存储的底层实现，使用者只需要知道它能安全可靠地保管数据就可以了（由于 PersistentVolume 这个词很长，一般把它简称为 PV）。
 作为存储的抽象，PV 实际上就是一些存储设备、文件系统，比如 Ceph、GlusterFS、NFS，甚至是本地磁盘，管理它们已经超出了 Kubernetes 的能力范围，所以，一般会由系统管理员单独维护，然后再在 Kubernetes 里创建对应的 PV。PV 属于集群的系统资源，是和 Node 平级的一种对象，Pod 对它没有管理权，只有使用权。
-2.13.1 PersistentVolumeClaim/StorageClass # 由于不同存储设备的差异实在是太大了：有的速度快，有的速度慢；有的可以共享读写，有的只能独占读写；有的容量小，只有几百 MB，有的容量大到 TB、PB 级别等，这么多种存储设备，只用一个 PV 对象来管理不符合 “单一职责” 的原则，让 Pod 直接去选择 PV 也不灵活。所以 Kubernetes 就又增加了两个新对象，PersistentVolumeClaim 和 StorageClass，这种 “中间层” 的思想，把存储卷的分配管理过程再次细化。
+
+  2.13.1 PersistentVolumeClaim/StorageClass
+  #
+
+由于不同存储设备的差异实在是太大了：有的速度快，有的速度慢；有的可以共享读写，有的只能独占读写；有的容量小，只有几百 MB，有的容量大到 TB、PB 级别等，这么多种存储设备，只用一个 PV 对象来管理不符合 “单一职责” 的原则，让 Pod 直接去选择 PV 也不灵活。所以 Kubernetes 就又增加了两个新对象，PersistentVolumeClaim 和 StorageClass，这种 “中间层” 的思想，把存储卷的分配管理过程再次细化。
 PersistentVolumeClaim，简称 PVC，用来向 Kubernetes 申请存储资源。PVC 是给 Pod 使用的对象，它相当于是 Pod 的代理，代表 Pod 向系统申请 PV。一旦资源申请成功，Kubernetes 就会把 PV 和 PVC 关联在一起，这个动作叫做 “绑定”（bind）。">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/kubernetes/docs/part2-break-ice/2.13-persistent-volume/">
   <meta property="og:site_name" content="Kubernetes 学习笔记">
   <meta property="og:title" content="2.13 PersistentVolume">
-  <meta property="og:description" content="2.13 PersistentVolume # Pod 里的容器是由镜像产生的，而镜像文件本身是只读的，进程要读写磁盘只能用一个临时的存储空间，一旦 Pod 销毁，临时存储也就会立即回收释放，数据也就丢失了。
+  <meta property="og:description" content=" 2.13 PersistentVolume # Pod 里的容器是由镜像产生的，而镜像文件本身是只读的，进程要读写磁盘只能用一个临时的存储空间，一旦 Pod 销毁，临时存储也就会立即回收释放，数据也就丢失了。
 Kubernetes 的 Volume 对数据存储已经给出了一个很好的抽象，它只是定义了有这么一个 “存储卷”，而这个 “存储卷” 是什么类型、有多大容量、怎么存储，可以自由发挥。Pod 不需要关心那些专业、复杂的细节，只要设置好 volumeMounts，就可以把 Volume 加载进容器里使用。所以，由 Volume 的概念，延伸出了 PersistentVolume 对象，它专门用来表示持久存储设备，但隐藏了存储的底层实现，使用者只需要知道它能安全可靠地保管数据就可以了（由于 PersistentVolume 这个词很长，一般把它简称为 PV）。
 作为存储的抽象，PV 实际上就是一些存储设备、文件系统，比如 Ceph、GlusterFS、NFS，甚至是本地磁盘，管理它们已经超出了 Kubernetes 的能力范围，所以，一般会由系统管理员单独维护，然后再在 Kubernetes 里创建对应的 PV。PV 属于集群的系统资源，是和 Node 平级的一种对象，Pod 对它没有管理权，只有使用权。
 2.13.1 PersistentVolumeClaim/StorageClass # 由于不同存储设备的差异实在是太大了：有的速度快，有的速度慢；有的可以共享读写，有的只能独占读写；有的容量小，只有几百 MB，有的容量大到 TB、PB 级别等，这么多种存储设备，只用一个 PV 对象来管理不符合 “单一职责” 的原则，让 Pod 直接去选择 PV 也不灵活。所以 Kubernetes 就又增加了两个新对象，PersistentVolumeClaim 和 StorageClass，这种 “中间层” 的思想，把存储卷的分配管理过程再次细化。
@@ -31,9 +39,6 @@ PersistentVolumeClaim，简称 PVC，用来向 Kubernetes 申请存储资源。P
   <script defer src="/kubernetes/zh.search.min.da1c52546386c902e77e37ee10f137dd864d5defad152b94b97987f9bfccfa81.js" integrity="sha256-2hxSVGOGyQLnfjfuEPE33YZNXe&#43;tFSuUuXmH&#43;b/M&#43;oE=" crossorigin="anonymous"></script>
 
   <script defer src="/kubernetes/sw.min.18ff75d546fc59b9d538e96815256b253062dc991f14b3caff0f35a243a406d1.js" integrity="sha256-GP911Ub8WbnVOOloFSVrJTBi3JkfFLPK/w81okOkBtE=" crossorigin="anonymous"></script>
-
-  
-
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book

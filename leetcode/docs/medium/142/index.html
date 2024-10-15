@@ -3,13 +3,106 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="142. 环形链表 II # 题目地址 # 力扣 LeetCode 解题思路 # 具体实现 # Go package main import &#34;fmt&#34; type ListNode struct { Val int Next *ListNode } func detectCycle(head *ListNode) *ListNode { if head == nil { return head } low, fast := head, head // 因为快指针走 2 步，不要判断 next 是否为 nil for fast != nil &amp;&amp; fast.Next != nil { low = low.Next fast = fast.Next.Next // 注意这里 fast 是走 2 步 if fast == low { for low !">
+<meta name="description" content="
+  142. 环形链表 II
+  #
+
+
+  题目地址
+  #
+
+
+
+  力扣
+
+  LeetCode
+
+
+  解题思路
+  #
+
+
+  具体实现
+  #
+
+
+
+
+
+
+  Go
+  package main
+
+import &#34;fmt&#34;
+
+type ListNode struct {
+	Val  int
+	Next *ListNode
+}
+
+func detectCycle(head *ListNode) *ListNode {
+	if head == nil {
+		return head
+	}
+
+	low, fast := head, head
+
+	// 因为快指针走 2 步，不要判断 next 是否为 nil
+	for fast != nil &amp;&amp; fast.Next != nil {
+		low = low.Next
+		fast = fast.Next.Next // 注意这里 fast 是走 2 步
+		if fast == low {
+			for low != head {
+				low = low.Next
+				head = head.Next
+			}
+			return head
+		}
+	}
+
+	return nil
+}
+
+func main() {
+	index2 := &amp;ListNode{
+		Val:  101,
+		Next: nil,
+	}
+	index := &amp;ListNode{
+		Val:  100,
+		Next: index2,
+	}
+	index.Next.Next = &amp;ListNode{
+		Val:  4,
+		Next: index,
+	}
+	fmt.Println(detectCycle(&amp;ListNode{
+		Val: 1,
+		Next: &amp;ListNode{
+			Val: 2,
+			Next: &amp;ListNode{
+				Val:  3,
+				Next: index,
+			},
+		},
+	}))
+}
+
+
+
+  参考
+  #
+
+
+
+  把环形链表讲清楚！ 如何判断环形链表？如何找到环形链表的入口？
+">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/leetcode/docs/medium/142/">
   <meta property="og:site_name" content="LeetCode">
   <meta property="og:title" content="142. 环形链表 II">
-  <meta property="og:description" content="142. 环形链表 II # 题目地址 # 力扣 LeetCode 解题思路 # 具体实现 # Go package main import &#34;fmt&#34; type ListNode struct { Val int Next *ListNode } func detectCycle(head *ListNode) *ListNode { if head == nil { return head } low, fast := head, head // 因为快指针走 2 步，不要判断 next 是否为 nil for fast != nil &amp;&amp; fast.Next != nil { low = low.Next fast = fast.Next.Next // 注意这里 fast 是走 2 步 if fast == low { for low !">
+  <meta property="og:description" content=" 142. 环形链表 II # 题目地址 # 力扣 LeetCode 解题思路 # 具体实现 # Go package main import &#34;fmt&#34; type ListNode struct { Val int Next *ListNode } func detectCycle(head *ListNode) *ListNode { if head == nil { return head } low, fast := head, head // 因为快指针走 2 步，不要判断 next 是否为 nil for fast != nil &amp;&amp; fast.Next != nil { low = low.Next fast = fast.Next.Next // 注意这里 fast 是走 2 步 if fast == low { for low != head { low = low.Next head = head.Next } return head } } return nil } func main() { index2 := &amp;ListNode{ Val: 101, Next: nil, } index := &amp;ListNode{ Val: 100, Next: index2, } index.Next.Next = &amp;ListNode{ Val: 4, Next: index, } fmt.Println(detectCycle(&amp;ListNode{ Val: 1, Next: &amp;ListNode{ Val: 2, Next: &amp;ListNode{ Val: 3, Next: index, }, }, })) } 参考 # 把环形链表讲清楚！ 如何判断环形链表？如何找到环形链表的入口？ ">
   <meta property="og:locale" content="zh">
   <meta property="og:type" content="article">
     <meta property="article:section" content="docs">
@@ -23,9 +116,6 @@
   <script defer src="/leetcode/zh.search.min.f9cd73d20daebe0f064076c741a93203473f9497ee32d434a8774e691eea3972.js" integrity="sha256-&#43;c1z0g2uvg8GQHbHQakyA0c/lJfuMtQ0qHdOaR7qOXI=" crossorigin="anonymous"></script>
 
   <script defer src="/leetcode/sw.min.c814046bee19bfa0279b71972af9d15919d290341d7ecdfe781d2e1113df9ad1.js" integrity="sha256-yBQEa&#43;4Zv6Anm3GXKvnRWRnSkDQdfs3&#43;eB0uERPfmtE=" crossorigin="anonymous"></script>
-
-  
-
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book

@@ -3,8 +3,16 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="2.16 滚动更新 # 在实际生产环境中，只是把应用发布到集群里是远远不够的，要让应用稳定可靠地运行，还需要有持续的运维工作。比如 Deployment 的 “应用伸缩” 功能就是一种常见的运维操作，在 Kubernetes 里，使用命令 kubectl scale，可以轻松调整 Deployment 下属的 Pod 数量。除了 “应用伸缩”，其他的运维操作比如应用更新、版本回退等工作也是日常运维中经常会遇到的问题。
-2.16.1 应用版本 # 版本更新实际做起来是一个相当棘手的事。因为系统已经上线运行，必须要保证不间断地对外提供服务。尤其在特殊时候可能需要开发、测试、运维、监控、网络等各个部门的一大堆人来协同工作，费时又费力。
+<meta name="description" content="
+  2.16 滚动更新
+  #
+
+在实际生产环境中，只是把应用发布到集群里是远远不够的，要让应用稳定可靠地运行，还需要有持续的运维工作。比如 Deployment 的 “应用伸缩” 功能就是一种常见的运维操作，在 Kubernetes 里，使用命令 kubectl scale，可以轻松调整 Deployment 下属的 Pod 数量。除了 “应用伸缩”，其他的运维操作比如应用更新、版本回退等工作也是日常运维中经常会遇到的问题。
+
+  2.16.1 应用版本
+  #
+
+版本更新实际做起来是一个相当棘手的事。因为系统已经上线运行，必须要保证不间断地对外提供服务。尤其在特殊时候可能需要开发、测试、运维、监控、网络等各个部门的一大堆人来协同工作，费时又费力。
 在 Kubernetes 里，版本更新使用的不是 API 对象，而是两个命令：kubectl apply 和 kubectl rollout，需要搭配部署应用所需要的 Deployment、DaemonSet 等 YAML 文件。
 在 Kubernetes 里应用都是以 Pod 的形式运行的，而 Pod 通常又会被 Deployment 等对象来管理，所以应用的 “版本更新” 实际上更新的是整个 Pod。Pod 是由 YAML 描述文件来确定的，是 Deployment 等对象里的字段 template。所以，在 Kubernetes 里应用的版本变化就是 template 里 Pod 的变化，哪怕 template 里只变动了一个字段，那也会形成一个新的版本，也算是版本变化。但在 template 里的内容太多了，拿这么长的字符串来当做 “版本号” 不太现实，所以 Kubernetes 就使用了 “摘要” 功能，用摘要算法计算 template 的 Hash 值作为 “版本号”。">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
@@ -12,7 +20,7 @@
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/kubernetes/docs/part2-break-ice/2.16-rolling-update/">
   <meta property="og:site_name" content="Kubernetes 学习笔记">
   <meta property="og:title" content="2.16 滚动更新">
-  <meta property="og:description" content="2.16 滚动更新 # 在实际生产环境中，只是把应用发布到集群里是远远不够的，要让应用稳定可靠地运行，还需要有持续的运维工作。比如 Deployment 的 “应用伸缩” 功能就是一种常见的运维操作，在 Kubernetes 里，使用命令 kubectl scale，可以轻松调整 Deployment 下属的 Pod 数量。除了 “应用伸缩”，其他的运维操作比如应用更新、版本回退等工作也是日常运维中经常会遇到的问题。
+  <meta property="og:description" content=" 2.16 滚动更新 # 在实际生产环境中，只是把应用发布到集群里是远远不够的，要让应用稳定可靠地运行，还需要有持续的运维工作。比如 Deployment 的 “应用伸缩” 功能就是一种常见的运维操作，在 Kubernetes 里，使用命令 kubectl scale，可以轻松调整 Deployment 下属的 Pod 数量。除了 “应用伸缩”，其他的运维操作比如应用更新、版本回退等工作也是日常运维中经常会遇到的问题。
 2.16.1 应用版本 # 版本更新实际做起来是一个相当棘手的事。因为系统已经上线运行，必须要保证不间断地对外提供服务。尤其在特殊时候可能需要开发、测试、运维、监控、网络等各个部门的一大堆人来协同工作，费时又费力。
 在 Kubernetes 里，版本更新使用的不是 API 对象，而是两个命令：kubectl apply 和 kubectl rollout，需要搭配部署应用所需要的 Deployment、DaemonSet 等 YAML 文件。
 在 Kubernetes 里应用都是以 Pod 的形式运行的，而 Pod 通常又会被 Deployment 等对象来管理，所以应用的 “版本更新” 实际上更新的是整个 Pod。Pod 是由 YAML 描述文件来确定的，是 Deployment 等对象里的字段 template。所以，在 Kubernetes 里应用的版本变化就是 template 里 Pod 的变化，哪怕 template 里只变动了一个字段，那也会形成一个新的版本，也算是版本变化。但在 template 里的内容太多了，拿这么长的字符串来当做 “版本号” 不太现实，所以 Kubernetes 就使用了 “摘要” 功能，用摘要算法计算 template 的 Hash 值作为 “版本号”。">
@@ -29,9 +37,6 @@
   <script defer src="/kubernetes/zh.search.min.da1c52546386c902e77e37ee10f137dd864d5defad152b94b97987f9bfccfa81.js" integrity="sha256-2hxSVGOGyQLnfjfuEPE33YZNXe&#43;tFSuUuXmH&#43;b/M&#43;oE=" crossorigin="anonymous"></script>
 
   <script defer src="/kubernetes/sw.min.18ff75d546fc59b9d538e96815256b253062dc991f14b3caff0f35a243a406d1.js" integrity="sha256-GP911Ub8WbnVOOloFSVrJTBi3JkfFLPK/w81okOkBtE=" crossorigin="anonymous"></script>
-
-  
-
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book

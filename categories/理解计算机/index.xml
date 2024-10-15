@@ -10,7 +10,11 @@
     <pubDate>Sun, 27 Mar 2022 00:00:00 &#43;0000</pubDate><author>
         <name>作者</name>
     </author><guid>https://www.xiaobinqt.cn/net-protocol-glance/</guid>
-    <description><![CDATA[1 概述 1.1 五层模型互联网的实现，分成好几层。每一层都有自己的功能，就像建筑物一样，每一层都靠下一层支持。 用户接触到的，只是最上面的一层，根本没]]></description>
+    <description><![CDATA[<h2 id="概述" class="headerLink">
+    <a href="#%e6%a6%82%e8%bf%b0" class="header-mark"></a>1 概述</h2><h3 id="五层模型" class="headerLink">
+    <a href="#%e4%ba%94%e5%b1%82%e6%a8%a1%e5%9e%8b" class="header-mark"></a>1.1 五层模型</h3><p>互联网的实现，分成好几层。每一层都有自己的功能，就像建筑物一样，每一层都靠下一层支持。</p>
+<p>用户接触到的，只是最上面的一层，根本没有感觉到下面的层。理解互联网，需要从最下层开始，自下而上理解每一层的功能。</p>
+<p>如何分层，有不同的模型，有的模型分七层，有的分四层。把互联网分成五层，比较容易解释。</p>]]></description>
 </item><item>
     <title>TCP和UDP连接管理</title>
     <link>https://www.xiaobinqt.cn/tcp-handshark/</link>
@@ -19,7 +23,58 @@
     </author><guid>https://www.xiaobinqt.cn/tcp-handshark/</guid>
     <description><![CDATA[<div class="featured-image">
                 <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221118/54f90c85427d4f59b34831801d5770bb.png" referrerpolicy="no-referrer">
-            </div>TCP 协议和 UDP 协议都是工作在传输层，是为了在程序之间传递数据，数据可以是多种形式，比如视频，文本，图片等。对于 TCP 协议和 UDP 协议来说，都是一堆二进制]]></description>
+            </div><p>TCP 协议和 UDP 协议都是工作在传输层，是为了在程序之间传递数据，数据可以是多种形式，比如视频，文本，图片等。对于 TCP 协议和 UDP 协议来说，都是一堆二进制数，只是 TCP 基于连接，而 UDP 基于非连接。</p>
+<h2 id="名词解释" class="headerLink">
+    <a href="#%e5%90%8d%e8%af%8d%e8%a7%a3%e9%87%8a" class="header-mark"></a>1 名词解释</h2>
+<div class="table-wrapper">
+  <table>
+    <thead>
+        <tr>
+            <th style="text-align: left">名词</th>
+            <th style="text-align: left">解释</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="text-align: left">SYN</td>
+            <td style="text-align: left">同步序号，用于建立连接过程，在连接请求中，SYN=1 和 ACK=0 表示该数据段没有使用捎带的确认域，而连接应答捎带一个确认，即 SYN=1 和 ACK=1</td>
+        </tr>
+        <tr>
+            <td style="text-align: left">FIN</td>
+            <td style="text-align: left">finish 标志，用于释放连接，为 1 时表示发送方已经没有数据发送了，即关闭本方数据流</td>
+        </tr>
+        <tr>
+            <td style="text-align: left">ACK</td>
+            <td style="text-align: left">确认序号标志，为 1 时表示确认号有效，为 0 表示报文中不含确认信息，忽略确认号字段</td>
+        </tr>
+        <tr>
+            <td style="text-align: left">PSH</td>
+            <td style="text-align: left">push 标志，为 1 表示是带有 push 标志的数据，指示接收方在接收到该报文段以后，应尽快将这个报文段交给应用程序，而不是在缓冲区排队</td>
+        </tr>
+        <tr>
+            <td style="text-align: left">RST</td>
+            <td style="text-align: left">重置连接标志，用于重置由于主机崩溃或其他原因而出现错误的连接。或者用于拒绝非法的报文段和拒绝连接请求</td>
+        </tr>
+        <tr>
+            <td style="text-align: left">序列号 seq</td>
+            <td style="text-align: left">占 4 个字节，用来标记数据段的顺序，TCP 把连接中发送的所有数据字节都编上一个序号，第一个字节的编号由本地随机产生；给字节编上序号后，就给每一个报文段指派一个序号；序列号 seq 就是这个报文段中的第一个字节的数据编号</td>
+        </tr>
+        <tr>
+            <td style="text-align: left">确认号 ack</td>
+            <td style="text-align: left">占 4 个字节，期待收到对方下一个报文段的第一个数据字节的序号；序列号表示报文段携带数据的第一个字节的编号；而确认号指的是期望接收到下一个字节的编号；因此当前报文段最后一个字节的编号 +1 （<code>ACK</code>会占一个序号）即为确认号</td>
+        </tr>
+    </tbody>
+  </table>
+</div>
+<div class="details admonition info open">
+    <div class="details-summary admonition-title">
+        <span class="icon"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M256 8C119.043 8 8 119.083 8 256c0 136.997 111.043 248 248 248s248-111.003 248-248C504 119.083 392.957 8 256 8zm0 110c23.196 0 42 18.804 42 42s-18.804 42-42 42-42-18.804-42-42 18.804-42 42-42zm56 254c0 6.627-5.373 12-12 12h-88c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h12v-64h-12c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h64c6.627 0 12 5.373 12 12v100h12c6.627 0 12 5.373 12 12v24z"/></svg></span>Info<span class="details-icon"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M224.3 273l-136 136c-9.4 9.4-24.6 9.4-33.9 0l-22.6-22.6c-9.4-9.4-9.4-24.6 0-33.9l96.4-96.4-96.4-96.4c-9.4-9.4-9.4-24.6 0-33.9L54.3 103c9.4-9.4 24.6-9.4 33.9 0l136 136c9.5 9.4 9.5 24.6.1 34z"/></svg></span>
+    </div>
+    <div class="details-content">
+        <div class="admonition-content"><code>ACK</code>、<code>SYN</code> 和 <code>FIN</code> 这些大写的单词表示标志位，其值要么是 1，要么是 0；<code>ack</code>、<code>seq</code> 小写的单词表示序号。</div></div></div>
+<p><code>ACK</code> 是可能与 <code>SYN</code>，<code>FIN</code> 等同时使用的。比如 <code>SYN</code>和<code>ACK</code>可能同时为 1，它表示的就是建立连接之后的响应搜索 如果只是单个的一个<code>SYN</code>，它表示的只是建立连接。</p>]]></description>
 </item><item>
     <title>http入门笔记</title>
     <link>https://www.xiaobinqt.cn/http-glance/</link>
@@ -33,6 +88,8 @@
     <pubDate>Tue, 27 Oct 2020 00:00:00 &#43;0000</pubDate><author>
         <name>xiaobinqt</name>
     </author><guid>https://www.xiaobinqt.cn/what-is-https/</guid>
-    <description><![CDATA[为什么有 HTTPS？因为 HTTP 不安全！ 现在的互联网已经不再是 “田园时代”，“黑暗森林” 已经到来。上网的记录会被轻易截获，网站是否真实也无法验证，]]></description>
+    <description><![CDATA[<p>为什么有 HTTPS？<strong>因为 HTTP 不安全！</strong> 现在的互联网已经不再是 “田园时代”，“黑暗森林”
+已经到来。上网的记录会被轻易截获，网站是否真实也无法验证，黑客可以伪装成银行网站，盗取真实姓名、密码、银行卡等敏感信息，威胁人身安全和财产安全。</p>
+<p>上网的时候必须步步为营、处处小心，否则就会被不知道埋伏在哪里的黑客所“猎杀”。</p>]]></description>
 </item></channel>
 </rss>

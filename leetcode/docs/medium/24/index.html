@@ -3,27 +3,159 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="24. 两两交换链表中的节点 # 题目地址 # 力扣 LeetCode 解题思路 # 参考 https://leetcode.cn/problems/swap-nodes-in-pairs/solutions/444474/liang-liang-jiao-huan-lian-biao-zhong-de-jie-di-91/
-递归法 # 可以通过递归的方式实现两两交换链表中的节点。递归的终止条件是链表中没有节点，或者链表中只有一个节点，此时无法进行交换。
+<meta name="description" content="
+  24. 两两交换链表中的节点
+  #
+
+
+  题目地址
+  #
+
+
+
+  力扣
+
+  LeetCode
+
+
+  解题思路
+  #
+
+参考 
+  https://leetcode.cn/problems/swap-nodes-in-pairs/solutions/444474/liang-liang-jiao-huan-lian-biao-zhong-de-jie-di-91/
+
+  递归法
+  #
+
+可以通过递归的方式实现两两交换链表中的节点。递归的终止条件是链表中没有节点，或者链表中只有一个节点，此时无法进行交换。
 如果链表中至少有两个节点，则在两两交换链表中的节点之后，原始链表的头节点变成新的链表的第二个节点，原始链表的第二个节点变成新的链表的头节点。链表中的其余节点的两两交换可以递归地实现。在对链表中的其余节点递归地两两交换之后，更新节点之间的指针关系，即可完成整个链表的两两交换。
 用head表示原始链表的头节点，新的链表的第二个节点，用newHead表示新的链表的头节点，原始链表的第二个节点，则原始链表中的其余节点的头节点是newHead.next。令head.next = swapPairs(newHead.next)，表示将其余节点进行两两交换，交换后的新的头节点为head的下一个节点。然后令newHead.next = head，即完成了所有节点的交换。最后返回新的链表的头节点newHead。
 ⚠️好吧，再理解一下，关于递归，我只关注我这一层要干什么，返回什么，至于我的下一层（规模减 1），我不管，我就是一个甩手掌柜🙈。
 我其实只需要关心第一层，也就是节点1和节点2的交换，把节点2的next指向节点1，节点2的next给下一层也就是递归函数。而我最后返回的应该是头结点，其实也就是原始节点的节点2。
-迭代法 # TODO
-具体实现 # Go迭代 package main import ( &#34;fmt&#34; ) type ListNode struct { Val int Next *ListNode } func swapPairs(head *ListNode) *ListNode { if head == nil { return head } dummy := &amp;ListNode{ Val: 0, Next: head, } curr := dummy // 如果是链表长度是奇数那就没有必要交换，只有偶数才需要交换，所以这里的判断条件是 &amp;&amp; // 这里不能用一个临时参数，因为链表指针后的值会变化 for curr.">
+
+  迭代法
+  #
+
+TODO
+
+  具体实现
+  #
+
+
+
+
+
+
+  Go迭代
+  package main
+
+import (
+	&#34;fmt&#34;
+)
+
+type ListNode struct {
+	Val  int
+	Next *ListNode
+}
+
+func swapPairs(head *ListNode) *ListNode {
+	if head == nil {
+		return head
+	}
+
+	dummy := &amp;ListNode{
+		Val:  0,
+		Next: head,
+	}
+
+	curr := dummy
+	// 如果是链表长度是奇数那就没有必要交换，只有偶数才需要交换，所以这里的判断条件是 &amp;&amp;
+	// 这里不能用一个临时参数，因为链表指针后的值会变化
+	for curr.Next != nil &amp;&amp; curr.Next.Next != nil {
+		tmp := curr.Next
+		tmp1 := curr.Next.Next.Next
+
+		curr.Next = curr.Next.Next
+		curr.Next.Next = tmp
+		curr.Next.Next.Next = tmp1
+
+		// 这里也可以直接写成 curr = tmp
+		curr = curr.Next.Next
+	}
+
+	return dummy.Next
+}
+
+func main() {
+	x := swapPairs(&amp;ListNode{
+		Val: 1,
+		Next: &amp;ListNode{
+			Val: 2,
+			Next: &amp;ListNode{
+				Val: 3,
+				Next: &amp;ListNode{
+					Val:  4,
+					Next: nil,
+				},
+			},
+		},
+	})
+	fmt.Println(x)
+}
+
+  Go递归
+  package main
+
+import (
+	&#34;fmt&#34;
+)
+
+type ListNode struct {
+	Val  int
+	Next *ListNode
+}
+
+func swapPairs(head *ListNode) *ListNode {
+	if head == nil || head.Next == nil {
+		return head
+	}
+
+	newHead := head.Next
+	head.Next = swapPairs(head.Next.Next)
+	newHead.Next = head
+	return newHead
+}
+
+func main() {
+	x := swapPairs(&amp;ListNode{
+		Val: 1,
+		Next: &amp;ListNode{
+			Val: 2,
+			Next: &amp;ListNode{
+				Val: 3,
+				Next: &amp;ListNode{
+					Val:  4,
+					Next: nil,
+				},
+			},
+		},
+	})
+	fmt.Println(x)
+}
+">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/leetcode/docs/medium/24/">
   <meta property="og:site_name" content="LeetCode">
   <meta property="og:title" content="24. 两两交换链表中的节点">
-  <meta property="og:description" content="24. 两两交换链表中的节点 # 题目地址 # 力扣 LeetCode 解题思路 # 参考 https://leetcode.cn/problems/swap-nodes-in-pairs/solutions/444474/liang-liang-jiao-huan-lian-biao-zhong-de-jie-di-91/
+  <meta property="og:description" content=" 24. 两两交换链表中的节点 # 题目地址 # 力扣 LeetCode 解题思路 # 参考 https://leetcode.cn/problems/swap-nodes-in-pairs/solutions/444474/liang-liang-jiao-huan-lian-biao-zhong-de-jie-di-91/
 递归法 # 可以通过递归的方式实现两两交换链表中的节点。递归的终止条件是链表中没有节点，或者链表中只有一个节点，此时无法进行交换。
 如果链表中至少有两个节点，则在两两交换链表中的节点之后，原始链表的头节点变成新的链表的第二个节点，原始链表的第二个节点变成新的链表的头节点。链表中的其余节点的两两交换可以递归地实现。在对链表中的其余节点递归地两两交换之后，更新节点之间的指针关系，即可完成整个链表的两两交换。
 用head表示原始链表的头节点，新的链表的第二个节点，用newHead表示新的链表的头节点，原始链表的第二个节点，则原始链表中的其余节点的头节点是newHead.next。令head.next = swapPairs(newHead.next)，表示将其余节点进行两两交换，交换后的新的头节点为head的下一个节点。然后令newHead.next = head，即完成了所有节点的交换。最后返回新的链表的头节点newHead。
 ⚠️好吧，再理解一下，关于递归，我只关注我这一层要干什么，返回什么，至于我的下一层（规模减 1），我不管，我就是一个甩手掌柜🙈。
 我其实只需要关心第一层，也就是节点1和节点2的交换，把节点2的next指向节点1，节点2的next给下一层也就是递归函数。而我最后返回的应该是头结点，其实也就是原始节点的节点2。
 迭代法 # TODO
-具体实现 # Go迭代 package main import ( &#34;fmt&#34; ) type ListNode struct { Val int Next *ListNode } func swapPairs(head *ListNode) *ListNode { if head == nil { return head } dummy := &amp;ListNode{ Val: 0, Next: head, } curr := dummy // 如果是链表长度是奇数那就没有必要交换，只有偶数才需要交换，所以这里的判断条件是 &amp;&amp; // 这里不能用一个临时参数，因为链表指针后的值会变化 for curr.">
+具体实现 # Go迭代 package main import ( &#34;fmt&#34; ) type ListNode struct { Val int Next *ListNode } func swapPairs(head *ListNode) *ListNode { if head == nil { return head } dummy := &amp;ListNode{ Val: 0, Next: head, } curr := dummy // 如果是链表长度是奇数那就没有必要交换，只有偶数才需要交换，所以这里的判断条件是 &amp;&amp; // 这里不能用一个临时参数，因为链表指针后的值会变化 for curr.Next != nil &amp;&amp; curr.Next.Next != nil { tmp := curr.Next tmp1 := curr.Next.Next.Next curr.Next = curr.Next.Next curr.Next.Next = tmp curr.Next.Next.Next = tmp1 // 这里也可以直接写成 curr = tmp curr = curr.Next.Next } return dummy.Next } func main() { x := swapPairs(&amp;ListNode{ Val: 1, Next: &amp;ListNode{ Val: 2, Next: &amp;ListNode{ Val: 3, Next: &amp;ListNode{ Val: 4, Next: nil, }, }, }, }) fmt.Println(x) } Go递归 package main import ( &#34;fmt&#34; ) type ListNode struct { Val int Next *ListNode } func swapPairs(head *ListNode) *ListNode { if head == nil || head.Next == nil { return head } newHead := head.Next head.Next = swapPairs(head.Next.Next) newHead.Next = head return newHead } func main() { x := swapPairs(&amp;ListNode{ Val: 1, Next: &amp;ListNode{ Val: 2, Next: &amp;ListNode{ Val: 3, Next: &amp;ListNode{ Val: 4, Next: nil, }, }, }, }) fmt.Println(x) } ">
   <meta property="og:locale" content="zh">
   <meta property="og:type" content="article">
     <meta property="article:section" content="docs">
@@ -37,9 +169,6 @@
   <script defer src="/leetcode/zh.search.min.f9cd73d20daebe0f064076c741a93203473f9497ee32d434a8774e691eea3972.js" integrity="sha256-&#43;c1z0g2uvg8GQHbHQakyA0c/lJfuMtQ0qHdOaR7qOXI=" crossorigin="anonymous"></script>
 
   <script defer src="/leetcode/sw.min.c814046bee19bfa0279b71972af9d15919d290341d7ecdfe781d2e1113df9ad1.js" integrity="sha256-yBQEa&#43;4Zv6Anm3GXKvnRWRnSkDQdfs3&#43;eB0uERPfmtE=" crossorigin="anonymous"></script>
-
-  
-
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book

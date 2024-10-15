@@ -3,21 +3,40 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="2.10 DaemonSet # DaemonSet 会在 Kubernetes 集群的每个节点上都运行一个 Pod，就好像是 Linux 系统里的 “守护进程”（Daemon）一样。
+<meta name="description" content="
+  2.10 DaemonSet
+  #
+
+DaemonSet 会在 Kubernetes 集群的每个节点上都运行一个 Pod，就好像是 Linux 系统里的 “守护进程”（Daemon）一样。
 DaemonSet 和 Deployment 有很大区别，Deployment 能够创建任意多个的 Pod 实例，并且维护这些 Pod 的正常运行，保证应用始终处于可用状态。但是，Deployment 并不关心这些 Pod 会在集群的哪些节点上运行，在它看来，Pod 的运行环境与功能是无关的，只要 Pod 的数量足够，应用程序应该会正常工作。但是对一些业务比较特殊服务，它们不是完全独立于系统运行的，而是与主机存在 “绑定” 关系，必须要依附于节点才能产生价值，比如：
+
+
 网络应用（如 kube-proxy），必须每个节点都运行一个 Pod，否则节点就无法加入 Kubernetes 网络。
+
+
 监控应用（如 Prometheus），必须每个节点都有一个 Pod 用来监控节点的状态，实时上报信息。
+
+
 日志应用（如 Fluentd），必须在每个节点上运行一个 Pod，才能够搜集容器运行时产生的日志数据。
+
+
 安全应用，每个节点都要有一个 Pod 来执行安全审计、入侵检查、漏洞扫描等工作。
+
+
 以上这些业务如果用 Deployment 来部署就不太合适了，因为 Deployment 所管理的 Pod 数量是固定的，而且可能会在集群里 “漂移”，但，实际的需求却是要在集群里的每个节点上都运行 Pod，也就是说 Pod 的数量与节点数量保持同步。
 DaemonSet，它在形式上和 Deployment 类似，都是管理控制 Pod，但管理调度策略却不同。DaemonSet 的目标是在集群的每个节点上运行且仅运行一个 Pod。
-2.10.1 描述 DaemonSet # kubectl 不提供自动创建 DaemonSet YAML 样板的功能，不过可以在 Kubernetes 的官网 https://kubernetes.">
+
+  2.10.1 描述 DaemonSet
+  #
+
+kubectl 不提供自动创建 DaemonSet YAML 样板的功能，不过可以在 Kubernetes 的官网
+  https://kubernetes.io/zh/docs/concepts/workloads/controllers/daemonset/上找到 DaemonSet 的 YAML 示例，以下是一个 DaemonSet 的 YAML 描述：">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/kubernetes/docs/part2-break-ice/2.10-daemonset/">
   <meta property="og:site_name" content="Kubernetes 学习笔记">
   <meta property="og:title" content="2.10 DaemonSet">
-  <meta property="og:description" content="2.10 DaemonSet # DaemonSet 会在 Kubernetes 集群的每个节点上都运行一个 Pod，就好像是 Linux 系统里的 “守护进程”（Daemon）一样。
+  <meta property="og:description" content=" 2.10 DaemonSet # DaemonSet 会在 Kubernetes 集群的每个节点上都运行一个 Pod，就好像是 Linux 系统里的 “守护进程”（Daemon）一样。
 DaemonSet 和 Deployment 有很大区别，Deployment 能够创建任意多个的 Pod 实例，并且维护这些 Pod 的正常运行，保证应用始终处于可用状态。但是，Deployment 并不关心这些 Pod 会在集群的哪些节点上运行，在它看来，Pod 的运行环境与功能是无关的，只要 Pod 的数量足够，应用程序应该会正常工作。但是对一些业务比较特殊服务，它们不是完全独立于系统运行的，而是与主机存在 “绑定” 关系，必须要依附于节点才能产生价值，比如：
 网络应用（如 kube-proxy），必须每个节点都运行一个 Pod，否则节点就无法加入 Kubernetes 网络。
 监控应用（如 Prometheus），必须每个节点都有一个 Pod 用来监控节点的状态，实时上报信息。
@@ -25,7 +44,7 @@ DaemonSet 和 Deployment 有很大区别，Deployment 能够创建任意多个�
 安全应用，每个节点都要有一个 Pod 来执行安全审计、入侵检查、漏洞扫描等工作。
 以上这些业务如果用 Deployment 来部署就不太合适了，因为 Deployment 所管理的 Pod 数量是固定的，而且可能会在集群里 “漂移”，但，实际的需求却是要在集群里的每个节点上都运行 Pod，也就是说 Pod 的数量与节点数量保持同步。
 DaemonSet，它在形式上和 Deployment 类似，都是管理控制 Pod，但管理调度策略却不同。DaemonSet 的目标是在集群的每个节点上运行且仅运行一个 Pod。
-2.10.1 描述 DaemonSet # kubectl 不提供自动创建 DaemonSet YAML 样板的功能，不过可以在 Kubernetes 的官网 https://kubernetes.">
+2.10.1 描述 DaemonSet # kubectl 不提供自动创建 DaemonSet YAML 样板的功能，不过可以在 Kubernetes 的官网 https://kubernetes.io/zh/docs/concepts/workloads/controllers/daemonset/上找到 DaemonSet 的 YAML 示例，以下是一个 DaemonSet 的 YAML 描述：">
   <meta property="og:locale" content="zh">
   <meta property="og:type" content="article">
     <meta property="article:section" content="docs">
@@ -39,9 +58,6 @@ DaemonSet，它在形式上和 Deployment 类似，都是管理控制 Pod，但�
   <script defer src="/kubernetes/zh.search.min.da1c52546386c902e77e37ee10f137dd864d5defad152b94b97987f9bfccfa81.js" integrity="sha256-2hxSVGOGyQLnfjfuEPE33YZNXe&#43;tFSuUuXmH&#43;b/M&#43;oE=" crossorigin="anonymous"></script>
 
   <script defer src="/kubernetes/sw.min.18ff75d546fc59b9d538e96815256b253062dc991f14b3caff0f35a243a406d1.js" integrity="sha256-GP911Ub8WbnVOOloFSVrJTBi3JkfFLPK/w81okOkBtE=" crossorigin="anonymous"></script>
-
-  
-
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book

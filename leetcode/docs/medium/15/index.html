@@ -3,13 +3,93 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="15. 三数之和 # 题目地址 # 力扣 LeetCode 解题思路 # 具体实现 # Go package main import ( &#34;fmt&#34; &#34;sort&#34; ) func threeSum(nums []int) [][]int { sort.Ints(nums) res := [][]int{} // 找出 a &#43; b &#43; c = 0 // a = nums[i], b = nums[left], c = nums[right] for i := 0; i &lt; len(nums)-2; i&#43;&#43; { // 排序之后如果第一个元素已经大于零，那么无论如何组合都不可能凑成三元组，直接返回结果就可以了 n1 := nums[i] if n1 &gt; 0 { return res } // 去重 a if i &gt; 0 &amp;&amp; n1 == nums[i-1] { continue } left, right := i&#43;1, len(nums)-1 for left &lt; right { n2, n3 := nums[left], nums[right] if n1&#43;n2&#43;n3 == 0 { res = append(res, []int{n1, n2, n3}) // 去重逻辑应该放在找到一个三元组之后，对 b 和 c 去重 for left &lt; right &amp;&amp; nums[left] == n2 { left&#43;&#43; } for left &lt; right &amp;&amp; nums[right] == n3 { right-- } } else if n1&#43;n2&#43;n3 &lt; 0 { left&#43;&#43; } else { right-- } } } return res } func main() { ret := threeSum([]int{-1, 0, 1, 2, -1, -4}) fmt.">
+<meta name="description" content="
+  15. 三数之和
+  #
+
+
+  题目地址
+  #
+
+
+
+  力扣
+
+  LeetCode
+
+
+  解题思路
+  #
+
+
+  具体实现
+  #
+
+
+
+
+
+
+  Go
+  package main
+
+import (
+	&#34;fmt&#34;
+	&#34;sort&#34;
+)
+
+func threeSum(nums []int) [][]int {
+	sort.Ints(nums)
+	res := [][]int{}
+	// 找出 a &#43; b &#43; c = 0
+	// a = nums[i], b = nums[left], c = nums[right]
+	for i := 0; i &lt; len(nums)-2; i&#43;&#43; {
+		// 排序之后如果第一个元素已经大于零，那么无论如何组合都不可能凑成三元组，直接返回结果就可以了
+		n1 := nums[i]
+		if n1 &gt; 0 {
+			return res
+		}
+
+		// 去重 a
+		if i &gt; 0 &amp;&amp; n1 == nums[i-1] {
+			continue
+		}
+
+		left, right := i&#43;1, len(nums)-1
+
+		for left &lt; right {
+			n2, n3 := nums[left], nums[right]
+			if n1&#43;n2&#43;n3 == 0 {
+				res = append(res, []int{n1, n2, n3})
+				// 去重逻辑应该放在找到一个三元组之后，对 b 和 c 去重
+				for left &lt; right &amp;&amp; nums[left] == n2 {
+					left&#43;&#43;
+				}
+				for left &lt; right &amp;&amp; nums[right] == n3 {
+					right--
+				}
+			} else if n1&#43;n2&#43;n3 &lt; 0 {
+				left&#43;&#43;
+			} else {
+				right--
+			}
+		}
+	}
+
+	return res
+}
+
+func main() {
+	ret := threeSum([]int{-1, 0, 1, 2, -1, -4})
+	fmt.Println(ret)
+}
+">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/leetcode/docs/medium/15/">
   <meta property="og:site_name" content="LeetCode">
   <meta property="og:title" content="15. 三数之和">
-  <meta property="og:description" content="15. 三数之和 # 题目地址 # 力扣 LeetCode 解题思路 # 具体实现 # Go package main import ( &#34;fmt&#34; &#34;sort&#34; ) func threeSum(nums []int) [][]int { sort.Ints(nums) res := [][]int{} // 找出 a &#43; b &#43; c = 0 // a = nums[i], b = nums[left], c = nums[right] for i := 0; i &lt; len(nums)-2; i&#43;&#43; { // 排序之后如果第一个元素已经大于零，那么无论如何组合都不可能凑成三元组，直接返回结果就可以了 n1 := nums[i] if n1 &gt; 0 { return res } // 去重 a if i &gt; 0 &amp;&amp; n1 == nums[i-1] { continue } left, right := i&#43;1, len(nums)-1 for left &lt; right { n2, n3 := nums[left], nums[right] if n1&#43;n2&#43;n3 == 0 { res = append(res, []int{n1, n2, n3}) // 去重逻辑应该放在找到一个三元组之后，对 b 和 c 去重 for left &lt; right &amp;&amp; nums[left] == n2 { left&#43;&#43; } for left &lt; right &amp;&amp; nums[right] == n3 { right-- } } else if n1&#43;n2&#43;n3 &lt; 0 { left&#43;&#43; } else { right-- } } } return res } func main() { ret := threeSum([]int{-1, 0, 1, 2, -1, -4}) fmt.">
+  <meta property="og:description" content=" 15. 三数之和 # 题目地址 # 力扣 LeetCode 解题思路 # 具体实现 # Go package main import ( &#34;fmt&#34; &#34;sort&#34; ) func threeSum(nums []int) [][]int { sort.Ints(nums) res := [][]int{} // 找出 a &#43; b &#43; c = 0 // a = nums[i], b = nums[left], c = nums[right] for i := 0; i &lt; len(nums)-2; i&#43;&#43; { // 排序之后如果第一个元素已经大于零，那么无论如何组合都不可能凑成三元组，直接返回结果就可以了 n1 := nums[i] if n1 &gt; 0 { return res } // 去重 a if i &gt; 0 &amp;&amp; n1 == nums[i-1] { continue } left, right := i&#43;1, len(nums)-1 for left &lt; right { n2, n3 := nums[left], nums[right] if n1&#43;n2&#43;n3 == 0 { res = append(res, []int{n1, n2, n3}) // 去重逻辑应该放在找到一个三元组之后，对 b 和 c 去重 for left &lt; right &amp;&amp; nums[left] == n2 { left&#43;&#43; } for left &lt; right &amp;&amp; nums[right] == n3 { right-- } } else if n1&#43;n2&#43;n3 &lt; 0 { left&#43;&#43; } else { right-- } } } return res } func main() { ret := threeSum([]int{-1, 0, 1, 2, -1, -4}) fmt.Println(ret) } ">
   <meta property="og:locale" content="zh">
   <meta property="og:type" content="article">
     <meta property="article:section" content="docs">
@@ -23,9 +103,6 @@
   <script defer src="/leetcode/zh.search.min.f9cd73d20daebe0f064076c741a93203473f9497ee32d434a8774e691eea3972.js" integrity="sha256-&#43;c1z0g2uvg8GQHbHQakyA0c/lJfuMtQ0qHdOaR7qOXI=" crossorigin="anonymous"></script>
 
   <script defer src="/leetcode/sw.min.c814046bee19bfa0279b71972af9d15919d290341d7ecdfe781d2e1113df9ad1.js" integrity="sha256-yBQEa&#43;4Zv6Anm3GXKvnRWRnSkDQdfs3&#43;eB0uERPfmtE=" crossorigin="anonymous"></script>
-
-  
-
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book

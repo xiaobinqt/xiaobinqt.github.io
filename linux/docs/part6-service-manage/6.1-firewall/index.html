@@ -3,24 +3,47 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="6.1 防火墙 # 6.1.1 分类 # 软件防火墙和硬件防火墙是两种常见的网络安全设备或软件，用于保护计算机系统和网络免受未授权访问、恶意攻击和网络威胁等。
-软件防火墙（Software Firewall）： 软件防火墙是一种安装在计算机系统上的软件应用程序，用于监控和控制网络流量。它可以通过检查网络数据包的来源、目的地、协议和端口等信息，来判断是否允许或阻止数据包的传输。软件防火墙通常运行在操作系统的网络协议栈之上，能够保护单个计算机系统或网络中的特定主机。常见的软件防火墙包括Windows防火墙、IPTables、NetFilter等。
-硬件防火墙（Hardware Firewall）： 硬件防火墙是一种独立的物理设备，专门用于网络安全防护。它通常部署在网络的边界位置，作为网络流量的第一道防线。硬件防火墙通过硬件和专用的嵌入式软件来执行数据包过滤和访问控制。它可以监控和检测网络流量，并根据预先定义的规则和策略来允许或阻止数据包的传输。硬件防火墙通常具有更高的性能和吞吐量，并且对于整个网络中的所有主机都提供保护。常见的硬件防火墙包括 Cisco ASA、Palo Alto Networks、Fortinet 等。
+<meta name="description" content="
+  6.1 防火墙
+  #
+
+
+  6.1.1 分类
+  #
+
+软件防火墙和硬件防火墙是两种常见的网络安全设备或软件，用于保护计算机系统和网络免受未授权访问、恶意攻击和网络威胁等。
+
+软件防火墙（Software Firewall）：
+
+软件防火墙是一种安装在计算机系统上的软件应用程序，用于监控和控制网络流量。它可以通过检查网络数据包的来源、目的地、协议和端口等信息，来判断是否允许或阻止数据包的传输。软件防火墙通常运行在操作系统的网络协议栈之上，能够保护单个计算机系统或网络中的特定主机。常见的软件防火墙包括Windows防火墙、IPTables、NetFilter等。
+
+硬件防火墙（Hardware Firewall）：
+
+硬件防火墙是一种独立的物理设备，专门用于网络安全防护。它通常部署在网络的边界位置，作为网络流量的第一道防线。硬件防火墙通过硬件和专用的嵌入式软件来执行数据包过滤和访问控制。它可以监控和检测网络流量，并根据预先定义的规则和策略来允许或阻止数据包的传输。硬件防火墙通常具有更高的性能和吞吐量，并且对于整个网络中的所有主机都提供保护。常见的硬件防火墙包括 Cisco ASA、Palo Alto Networks、Fortinet 等。
 包过滤防火墙（Packet Filtering Firewall）和应用层防火墙（Application Layer Firewall）是防火墙的两种不同类型：
-包过滤防火墙： 包过滤防火墙是一种基于网络数据包的源地址、目的地址、端口号和协议等信息进行过滤和控制的防火墙。它工作在网络协议栈的较低层，可以根据预定义的规则，对数据包进行简单的检查和处理。包过滤防火墙通常比较高效，并且适用于处理大量数据包的情况。但它的检查范围相对较窄，仅能检查和过滤网络层（IP层）和传输层（TCP/UDP层）的信息。
-应用层防火墙： 应用层防火墙是一种工作在网络协议栈较高层的防火墙，它能够检查和过滤网络流量中的应用层数据，如 HTTP、FTP、SMTP 等协议的内容。应用层防火墙能够深入检查数据包的有效载荷，根据应用层协议的特征和规则来判断和阻止恶意行为。它提供了更高级的安全功能，如访问控制、应用程序识别、反病毒扫描、入侵检测等。然而，相对于包过滤防火墙，应用层防火墙的处理开销较大，对性能有一定的影响。
+
+包过滤防火墙：
+
+包过滤防火墙是一种基于网络数据包的源地址、目的地址、端口号和协议等信息进行过滤和控制的防火墙。它工作在网络协议栈的较低层，可以根据预定义的规则，对数据包进行简单的检查和处理。包过滤防火墙通常比较高效，并且适用于处理大量数据包的情况。但它的检查范围相对较窄，仅能检查和过滤网络层（IP层）和传输层（TCP/UDP层）的信息。
+
+应用层防火墙：
+
+应用层防火墙是一种工作在网络协议栈较高层的防火墙，它能够检查和过滤网络流量中的应用层数据，如 HTTP、FTP、SMTP 等协议的内容。应用层防火墙能够深入检查数据包的有效载荷，根据应用层协议的特征和规则来判断和阻止恶意行为。它提供了更高级的安全功能，如访问控制、应用程序识别、反病毒扫描、入侵检测等。然而，相对于包过滤防火墙，应用层防火墙的处理开销较大，对性能有一定的影响。
 综上，软件防火墙和硬件防火墙是不同类型的防火墙设备或软件，而包过滤防火墙和应用层防火墙是防火墙的两种不同功能和层次的分类。它们的选择和使用取决于网络环境、安全需求和性能要求。
-iptables # iptables 是一个软件防火墙，而不是硬件防火墙，提供了对 Linux 内核网络层的访问控制和数据包过滤的功能。
+
+  iptables
+  #
+
+iptables 是一个软件防火墙，而不是硬件防火墙，提供了对 Linux 内核网络层的访问控制和数据包过滤的功能。
 iptables 可以通过定义规则集来控制传入、传出和转发的网络流量。这些规则可以基于源 IP 地址、目标 IP 地址、协议、端口号等条件进行过滤和操作。使用 iptables 可以实现诸如网络地址转换（NAT）、端口转发、数据包屏蔽、阻止 DoS（拒绝服务）攻击等功能。
 iptables 的工作方式是通过配置 iptables 规则表来匹配和处理网络数据包。常见的 iptables 规则表包括 filter 表（用于过滤数据包）、nat 表（用于网络地址转换）和 mangle 表（用于特殊处理数据包）。管理员可以使用命令行界面（CLI）或脚本来配置和管理 iptables。
-尽管 iptables 是一个软件防火墙，但它在 Linux 系统中可以与硬件防火墙配合使用。在网络架构中，可以将 Linux 服务器作为边界设备放置在硬件防火墙之后，并使用 iptables 来增强安全性和网络流量控制。这种组合的优势是，硬件防火墙负责网络的第一道防线，而 iptables 在服务器本身提供了更细粒度的流量控制和策略定制能力。
-CentOS 6 默认的防火墙是 iptables。CentOS 7 默认的防火墙是 firewallD（底层使用 netfilter）。">
+尽管 iptables 是一个软件防火墙，但它在 Linux 系统中可以与硬件防火墙配合使用。在网络架构中，可以将 Linux 服务器作为边界设备放置在硬件防火墙之后，并使用 iptables 来增强安全性和网络流量控制。这种组合的优势是，硬件防火墙负责网络的第一道防线，而 iptables 在服务器本身提供了更细粒度的流量控制和策略定制能力。">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/linux/docs/part6-service-manage/6.1-firewall/">
   <meta property="og:site_name" content="Linux 学习笔记">
   <meta property="og:title" content="6.1 防火墙">
-  <meta property="og:description" content="6.1 防火墙 # 6.1.1 分类 # 软件防火墙和硬件防火墙是两种常见的网络安全设备或软件，用于保护计算机系统和网络免受未授权访问、恶意攻击和网络威胁等。
+  <meta property="og:description" content=" 6.1 防火墙 # 6.1.1 分类 # 软件防火墙和硬件防火墙是两种常见的网络安全设备或软件，用于保护计算机系统和网络免受未授权访问、恶意攻击和网络威胁等。
 软件防火墙（Software Firewall）： 软件防火墙是一种安装在计算机系统上的软件应用程序，用于监控和控制网络流量。它可以通过检查网络数据包的来源、目的地、协议和端口等信息，来判断是否允许或阻止数据包的传输。软件防火墙通常运行在操作系统的网络协议栈之上，能够保护单个计算机系统或网络中的特定主机。常见的软件防火墙包括Windows防火墙、IPTables、NetFilter等。
 硬件防火墙（Hardware Firewall）： 硬件防火墙是一种独立的物理设备，专门用于网络安全防护。它通常部署在网络的边界位置，作为网络流量的第一道防线。硬件防火墙通过硬件和专用的嵌入式软件来执行数据包过滤和访问控制。它可以监控和检测网络流量，并根据预先定义的规则和策略来允许或阻止数据包的传输。硬件防火墙通常具有更高的性能和吞吐量，并且对于整个网络中的所有主机都提供保护。常见的硬件防火墙包括 Cisco ASA、Palo Alto Networks、Fortinet 等。
 包过滤防火墙（Packet Filtering Firewall）和应用层防火墙（Application Layer Firewall）是防火墙的两种不同类型：
@@ -30,8 +53,7 @@ CentOS 6 默认的防火墙是 iptables。CentOS 7 默认的防火墙是 firewal
 iptables # iptables 是一个软件防火墙，而不是硬件防火墙，提供了对 Linux 内核网络层的访问控制和数据包过滤的功能。
 iptables 可以通过定义规则集来控制传入、传出和转发的网络流量。这些规则可以基于源 IP 地址、目标 IP 地址、协议、端口号等条件进行过滤和操作。使用 iptables 可以实现诸如网络地址转换（NAT）、端口转发、数据包屏蔽、阻止 DoS（拒绝服务）攻击等功能。
 iptables 的工作方式是通过配置 iptables 规则表来匹配和处理网络数据包。常见的 iptables 规则表包括 filter 表（用于过滤数据包）、nat 表（用于网络地址转换）和 mangle 表（用于特殊处理数据包）。管理员可以使用命令行界面（CLI）或脚本来配置和管理 iptables。
-尽管 iptables 是一个软件防火墙，但它在 Linux 系统中可以与硬件防火墙配合使用。在网络架构中，可以将 Linux 服务器作为边界设备放置在硬件防火墙之后，并使用 iptables 来增强安全性和网络流量控制。这种组合的优势是，硬件防火墙负责网络的第一道防线，而 iptables 在服务器本身提供了更细粒度的流量控制和策略定制能力。
-CentOS 6 默认的防火墙是 iptables。CentOS 7 默认的防火墙是 firewallD（底层使用 netfilter）。">
+尽管 iptables 是一个软件防火墙，但它在 Linux 系统中可以与硬件防火墙配合使用。在网络架构中，可以将 Linux 服务器作为边界设备放置在硬件防火墙之后，并使用 iptables 来增强安全性和网络流量控制。这种组合的优势是，硬件防火墙负责网络的第一道防线，而 iptables 在服务器本身提供了更细粒度的流量控制和策略定制能力。">
   <meta property="og:locale" content="zh">
   <meta property="og:type" content="article">
     <meta property="article:section" content="docs">
@@ -45,9 +67,6 @@ CentOS 6 默认的防火墙是 iptables。CentOS 7 默认的防火墙是 firewal
   <script defer src="/linux/zh.search.min.0afc493c0e2806c47e6ea5c37eb3a83b7fd85c5ed030b4ef2823216a214c554a.js" integrity="sha256-CvxJPA4oBsR&#43;bqXDfrOoO3/YXF7QMLTvKCMhaiFMVUo=" crossorigin="anonymous"></script>
 
   <script defer src="/linux/sw.min.06246f7b13a877707832946d0b1941d626f4349fd8e3bdfd318889981ed22d49.js" integrity="sha256-BiRvexOod3B4MpRtCxlB1ib0NJ/Y4739MYiJmB7SLUk=" crossorigin="anonymous"></script>
-
-  
-
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book
@@ -1004,50 +1023,50 @@ https://github.com/alex-shpak/hugo-book
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>iptables -t filter 命令 规则链 规则
 </span></span></code></pre></div><p>常见的命令有：</p>
 <table>
-<thead>
-<tr>
-<th>命令</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>-L</td>
-<td>用于列出当前 iptables 规则集的信息，包括不同表中的规则和链的状态</td>
-</tr>
-<tr>
-<td>-A</td>
-<td>用于向指定链（如 INPUT、OUTPUT、FORWARD）添加规则，插入到最后。<code>-A</code> 后面通常跟着链名和规则的具体内容</td>
-</tr>
-<tr>
-<td>-I</td>
-<td>用于在指定链中插入规则，在最开始插入。<code>-I</code> 后面通常跟着链名、位置和规则的具体内容。</td>
-</tr>
-<tr>
-<td>-D</td>
-<td>用于删除指定链中的规则。<code>-D</code> 后面通常跟着链名和要删除的规则的具体内容。</td>
-</tr>
-<tr>
-<td>-F</td>
-<td>用于清除指定链中的所有规则，将链重置为空。<code>-F</code> 后面通常跟着链名，如果不加链名就是清楚所有自定义规则。</td>
-</tr>
-<tr>
-<td>-P</td>
-<td>用于设置指定链的默认策略。<code>-P</code> 后面通常跟着链名和策略（ACCEPT、DROP、REJECT 等）。</td>
-</tr>
-<tr>
-<td>-N</td>
-<td>用于创建一个新的用户定义链，以便将规则归类和组织。<code>-N</code> 后面通常跟着链名。</td>
-</tr>
-<tr>
-<td>-X</td>
-<td>用于删除一个用户定义链，如果该链不再需要。<code>-X</code> 后面通常跟着链名。</td>
-</tr>
-<tr>
-<td>-E</td>
-<td>用于对用户定义链进行重命名。<code>-E</code> 后面通常跟着原始链名和新链名。</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">命令</th>
+          <th style="text-align: left">说明</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">-L</td>
+          <td style="text-align: left">用于列出当前 iptables 规则集的信息，包括不同表中的规则和链的状态</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">-A</td>
+          <td style="text-align: left">用于向指定链（如 INPUT、OUTPUT、FORWARD）添加规则，插入到最后。<code>-A</code> 后面通常跟着链名和规则的具体内容</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">-I</td>
+          <td style="text-align: left">用于在指定链中插入规则，在最开始插入。<code>-I</code> 后面通常跟着链名、位置和规则的具体内容。</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">-D</td>
+          <td style="text-align: left">用于删除指定链中的规则。<code>-D</code> 后面通常跟着链名和要删除的规则的具体内容。</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">-F</td>
+          <td style="text-align: left">用于清除指定链中的所有规则，将链重置为空。<code>-F</code> 后面通常跟着链名，如果不加链名就是清楚所有自定义规则。</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">-P</td>
+          <td style="text-align: left">用于设置指定链的默认策略。<code>-P</code> 后面通常跟着链名和策略（ACCEPT、DROP、REJECT 等）。</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">-N</td>
+          <td style="text-align: left">用于创建一个新的用户定义链，以便将规则归类和组织。<code>-N</code> 后面通常跟着链名。</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">-X</td>
+          <td style="text-align: left">用于删除一个用户定义链，如果该链不再需要。<code>-X</code> 后面通常跟着链名。</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">-E</td>
+          <td style="text-align: left">用于对用户定义链进行重命名。<code>-E</code> 后面通常跟着原始链名和新链名。</td>
+      </tr>
+  </tbody>
 </table>
 <p><code>iptables -vnL</code> 命令是省略了 filter 表的命令。命令将显示所有表的规则列表，包括详细信息和禁用反向解析。</p>
 <p>具体选项的含义如下：</p>

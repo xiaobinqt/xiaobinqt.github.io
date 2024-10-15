@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="zh-CN">
 
@@ -232,17 +230,18 @@
     <li><a href="#参考">参考</a></li>
   </ul>
 </nav></div>
-    </div><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single print:!tw-w-full print:!tw-max-w-none print:!tw-m-0 print:!tw-p-0"><h1 class="single-title">Redis 缓存击穿、缓存穿透、缓存雪崩</h1><div class="post-meta">
+    </div><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single print:!tw-w-full print:!tw-max-w-none print:!tw-m-0 print:!tw-p-0"><h1 class="single-title" data-pagefind-meta="date:2022-04-13" data-pagefind-body>Redis 缓存击穿、缓存穿透、缓存雪崩</h1><div class="post-meta">
             <div class="post-meta-line">
-                <span class="post-author"><img class="tw-inline-block tw-max-h-4 tw-rounded-full tw-translate-y-[-2px] tw-mr-1"  src="/images/avatar.webp" srcset="/images/avatar_hu11269060449570882715.webp 16w, /images/avatar_hu2515534640531409486.webp 24w, /images/avatar_hu9855092516384270799.webp 32w"  alt="xiaobinqt avatar" height="16" width="16"><a href="https://github.com/xiaobinqt" title="Author" target="_blank" rel="noopener noreferrer author" class="author">xiaobinqt</a>
+                <span class="post-author"><img class="tw-inline-block tw-max-h-4 tw-rounded-full tw-translate-y-[-2px] tw-mr-1"  src=/images/avatar.webp srcset="/images/avatar_hu11269060449570882715.webp 16w, /images/avatar_hu2515534640531409486.webp 24w, /images/avatar_hu9855092516384270799.webp 32w"  alt="xiaobinqt avatar" height="16" width="16"><a href="https://github.com/xiaobinqt" title="Author" target="_blank" rel="noopener noreferrer author" class="author">xiaobinqt</a>
                 </span>&nbsp;<span class="post-category">收录于 </span>&nbsp;<span class="post-category">类别 <a href="/categories/%E5%BC%80%E5%8F%91%E8%80%85%E6%89%8B%E5%86%8C/"><svg class="icon"
     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M464 128H272l-54.63-54.63c-6-6-14.14-9.37-22.63-9.37H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V176c0-26.51-21.49-48-48-48zm0 272H48V112h140.12l54.63 54.63c6 6 14.14 9.37 22.63 9.37H464v224z"/></svg>开发者手册</a></span>&nbsp;<span class="post-category">和</span>&nbsp;<span class="post-series">系列 <a href="/series/reproduce/"><svg class="icon"
     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M464 32H48C21.49 32 0 53.49 0 80v352c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V80c0-26.51-21.49-48-48-48zm-6 400H54a6 6 0 0 1-6-6V86a6 6 0 0 1 6-6h404a6 6 0 0 1 6 6v340a6 6 0 0 1-6 6zm-42-92v24c0 6.627-5.373 12-12 12H204c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h200c6.627 0 12 5.373 12 12zm0-96v24c0 6.627-5.373 12-12 12H204c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h200c6.627 0 12 5.373 12 12zm0-96v24c0 6.627-5.373 12-12 12H204c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h200c6.627 0 12 5.373 12 12zm-252 12c0 19.882-16.118 36-36 36s-36-16.118-36-36 16.118-36 36-36 36 16.118 36 36zm0 96c0 19.882-16.118 36-36 36s-36-16.118-36-36 16.118-36 36-36 36 16.118 36 36zm0 96c0 19.882-16.118 36-36 36s-36-16.118-36-36 16.118-36 36-36 36 16.118 36 36z"/></svg>转载</a></span></div>
             <div class="post-meta-line"><svg class="icon"
     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M148 288h-40c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12zm108-12v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm-96 96v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm-96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm192 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm96-260v352c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h48V12c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h128V12c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h48c26.5 0 48 21.5 48 48zm-48 346V160H48v298c0 3.3 2.7 6 6 6h340c3.3 0 6-2.7 6-6z"/></svg>&nbsp;<time datetime="2022-04-13">2022-04-13</time>&nbsp;<svg class="icon"
     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M402.3 344.9l32-32c5-5 13.7-1.5 13.7 5.7V464c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h273.5c7.1 0 10.7 8.6 5.7 13.7l-32 32c-1.5 1.5-3.5 2.3-5.7 2.3H48v352h352V350.5c0-2.1.8-4.1 2.3-5.6zm156.6-201.8L296.3 405.7l-90.4 10c-26.2 2.9-48.5-19.2-45.6-45.6l10-90.4L432.9 17.1c22.9-22.9 59.9-22.9 82.7 0l43.2 43.2c22.9 22.9 22.9 60 .1 82.8zM460.1 174L402 115.9 216.2 301.8l-7.3 65.3 65.3-7.3L460.1 174zm64.8-79.7l-43.2-43.2c-4.1-4.1-10.8-4.1-14.8 0L436 82l58.1 58.1 30.9-30.9c4-4.2 4-10.8-.1-14.9z"/></svg>&nbsp;<time datetime="2023-07-27">2023-07-27</time>&nbsp;<svg class="icon"
-    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;约 2303 字&nbsp;<svg class="icon"
-    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm0 448c-110.5 0-200-89.5-200-200S145.5 56 256 56s200 89.5 200 200-89.5 200-200 200zm61.8-104.4l-84.9-61.7c-3.1-2.3-4.9-5.9-4.9-9.7V116c0-6.6 5.4-12 12-12h32c6.6 0 12 5.4 12 12v141.7l66.8 48.6c5.4 3.9 6.5 11.4 2.6 16.8L334.6 349c-3.9 5.3-11.4 6.5-16.8 2.6z"/></svg>&nbsp;预计阅读 5 分钟&nbsp;</div>
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;约 2303 字&nbsp;
+                    <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm0 448c-110.5 0-200-89.5-200-200S145.5 56 256 56s200 89.5 200 200-89.5 200-200 200zm61.8-104.4l-84.9-61.7c-3.1-2.3-4.9-5.9-4.9-9.7V116c0-6.6 5.4-12 12-12h32c6.6 0 12 5.4 12 12v141.7l66.8 48.6c5.4 3.9 6.5 11.4 2.6 16.8L334.6 349c-3.9 5.3-11.4 6.5-16.8 2.6z"/></svg>&nbsp;预计阅读 11 分钟&nbsp;</div>
         </div><div class="details toc print:!tw-block" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
                     <span>目录</span>
@@ -292,35 +291,35 @@
     <li><a href="#参考">参考</a></li>
   </ul>
 </nav></div>
-            </div><div class="content" id="content"><h2 id="缓存击穿" class="headerLink">
-    <a href="#%e7%bc%93%e5%ad%98%e5%87%bb%e7%a9%bf" class="header-mark" aria-label="Header mark for '缓存击穿'"></a>1 缓存击穿</h2><p>高并发流量，访问的这个数据是热点数据，请求的数据在 DB 中存在，但是 Redis 存的那一份已经过期，后端需要从 DB 从加载数据并写到 Redis。</p>
+            </div><div class="content" id="content" data-pagefind-body><h2 id="缓存击穿" class="headerLink">
+    <a href="#%e7%bc%93%e5%ad%98%e5%87%bb%e7%a9%bf" class="header-mark"></a>1 缓存击穿</h2><p>高并发流量，访问的这个数据是热点数据，请求的数据在 DB 中存在，但是 Redis 存的那一份已经过期，后端需要从 DB 从加载数据并写到 Redis。</p>
 <p>总结起来就是：单一热点数据、高并发、数据失效。</p>
-<p><figure><a class="lightgallery" href="/10c8c8557c8b41ea967c82617bef1814_9641744110265768403.png" title="缓存击穿" data-thumbnail="/10c8c8557c8b41ea967c82617bef1814_9641744110265768403.png" data-sub-html="<h2>缓存击穿</h2><p>缓存击穿</p>"><img  loading="lazy" src="/10c8c8557c8b41ea967c82617bef1814_9641744110265768403.png" srcset="/10c8c8557c8b41ea967c82617bef1814_9641744110265768403_hu11537864452636906095.webp 800w, /10c8c8557c8b41ea967c82617bef1814_9641744110265768403_hu1278765708233988348.webp 1200w, /10c8c8557c8b41ea967c82617bef1814_9641744110265768403_hu15736551144651494971.webp 1600w"  alt="缓存击穿" height="1004" width="1080"></a><figcaption class="image-caption">缓存击穿</figcaption>
+<p><figure><a class="lightgallery" href="/10c8c8557c8b41ea967c82617bef1814_9641744110265768403.png" title="缓存击穿" data-thumbnail="/10c8c8557c8b41ea967c82617bef1814_9641744110265768403.png" data-sub-html="<h2>缓存击穿</h2><p>缓存击穿</p>"><img  loading="lazy" src=/10c8c8557c8b41ea967c82617bef1814_9641744110265768403.png srcset="/10c8c8557c8b41ea967c82617bef1814_9641744110265768403_hu11537864452636906095.webp 800w, /10c8c8557c8b41ea967c82617bef1814_9641744110265768403_hu1278765708233988348.webp 1200w, /10c8c8557c8b41ea967c82617bef1814_9641744110265768403_hu15736551144651494971.webp 1600w"  alt="缓存击穿" height="1004" width="1080"></a><figcaption class="image-caption">缓存击穿</figcaption>
 </figure></p>
 <h3 id="解决方案" class="headerLink">
-    <a href="#%e8%a7%a3%e5%86%b3%e6%96%b9%e6%a1%88" class="header-mark" aria-label="Header mark for '解决方案'"></a>1.1 解决方案</h3><h4 id="过期时间heavy_plus_sign随机值" class="headerLink">
-    <a href="#%e8%bf%87%e6%9c%9f%e6%97%b6%e9%97%b4heavy_plus_sign%e9%9a%8f%e6%9c%ba%e5%80%bc" class="header-mark" aria-label="Header mark for '过期时间&amp;#x2795;随机值'"></a>1.1.1 过期时间&#x2795;随机值</h4><p>对于热点数据，我们不设置过期时间，这样就可以把请求都放在缓存中处理，充分把 Redis 高吞吐量性能利用起来。或者过期时间再加一个随机值。</p>
+    <a href="#%e8%a7%a3%e5%86%b3%e6%96%b9%e6%a1%88" class="header-mark"></a>1.1 解决方案</h3><h4 id="过期时间heavy_plus_sign随机值" class="headerLink">
+    <a href="#%e8%bf%87%e6%9c%9f%e6%97%b6%e9%97%b4heavy_plus_sign%e9%9a%8f%e6%9c%ba%e5%80%bc" class="header-mark"></a>1.1.1 过期时间&#x2795;随机值</h4><p>对于热点数据，我们不设置过期时间，这样就可以把请求都放在缓存中处理，充分把 Redis 高吞吐量性能利用起来。或者过期时间再加一个随机值。</p>
 <p>设计缓存的过期时间时，使用公式：<strong>过期时间 = baes 时间 + 随机时间</strong>。</p>
 <p>即相同业务数据写缓存时，在基础过期时间之上，再加一个随机的过期时间，让数据在未来一段时间内慢慢过期，避免瞬时全部过期，对 DB 造成过大压力。</p>
 <h4 id="预热" class="headerLink">
-    <a href="#%e9%a2%84%e7%83%ad" class="header-mark" aria-label="Header mark for '预热'"></a>1.1.2 预热</h4><p>预先把热门数据提前存入 Redis 中，并设热门数据的过期时间超大值。</p>
+    <a href="#%e9%a2%84%e7%83%ad" class="header-mark"></a>1.1.2 预热</h4><p>预先把热门数据提前存入 Redis 中，并设热门数据的过期时间超大值。</p>
 <h4 id="使用锁" class="headerLink">
-    <a href="#%e4%bd%bf%e7%94%a8%e9%94%81" class="header-mark" aria-label="Header mark for '使用锁'"></a>1.1.3 使用锁</h4><p>当发现缓存失效的时候，不是立即从数据库加载数据。</p>
+    <a href="#%e4%bd%bf%e7%94%a8%e9%94%81" class="header-mark"></a>1.1.3 使用锁</h4><p>当发现缓存失效的时候，不是立即从数据库加载数据。</p>
 <p>而是先获取分布式锁，获取锁成功才执行数据库查询和写数据到缓存的操作，获取锁失败，则说明当前有线程在执行数据库查询操作，当前线程睡眠一段时间再重试。这样只让一个请求去数据库读取数据。</p>
 <h2 id="缓存穿透" class="headerLink">
-    <a href="#%e7%bc%93%e5%ad%98%e7%a9%bf%e9%80%8f" class="header-mark" aria-label="Header mark for '缓存穿透'"></a>2 缓存穿透</h2><p>数据库本就没有这个数据，请求直奔数据库，缓存系统形同虚设。</p>
+    <a href="#%e7%bc%93%e5%ad%98%e7%a9%bf%e9%80%8f" class="header-mark"></a>2 缓存穿透</h2><p>数据库本就没有这个数据，请求直奔数据库，缓存系统形同虚设。</p>
 <p>大量请求的 key 根本<font color="red"><strong>不存在于缓存中也不存在数据库</strong></font>，导致请求直接到了数据库上，根本没有经过缓存这一层，对数据库造成压力而影响正常服务。</p>
-<p><figure><a class="lightgallery" href="/19352698c9c047d4a635c3e561b8293b_2799895058453699920.png" title="缓存穿透" data-thumbnail="/19352698c9c047d4a635c3e561b8293b_2799895058453699920.png" data-sub-html="<h2>缓存穿透</h2><p>缓存穿透</p>"><img  loading="lazy" src="/19352698c9c047d4a635c3e561b8293b_2799895058453699920.png" srcset="/19352698c9c047d4a635c3e561b8293b_2799895058453699920_hu635653981261058946.webp 800w, /19352698c9c047d4a635c3e561b8293b_2799895058453699920_hu3040083290050781970.webp 1200w, /19352698c9c047d4a635c3e561b8293b_2799895058453699920_hu9426098114309062230.webp 1600w"  alt="缓存穿透" height="1070" width="692"></a><figcaption class="image-caption">缓存穿透</figcaption>
+<p><figure><a class="lightgallery" href="/19352698c9c047d4a635c3e561b8293b_2799895058453699920.png" title="缓存穿透" data-thumbnail="/19352698c9c047d4a635c3e561b8293b_2799895058453699920.png" data-sub-html="<h2>缓存穿透</h2><p>缓存穿透</p>"><img  loading="lazy" src=/19352698c9c047d4a635c3e561b8293b_2799895058453699920.png srcset="/19352698c9c047d4a635c3e561b8293b_2799895058453699920_hu635653981261058946.webp 800w, /19352698c9c047d4a635c3e561b8293b_2799895058453699920_hu3040083290050781970.webp 1200w, /19352698c9c047d4a635c3e561b8293b_2799895058453699920_hu9426098114309062230.webp 1600w"  alt="缓存穿透" height="1070" width="692"></a><figcaption class="image-caption">缓存穿透</figcaption>
 </figure></p>
 <h3 id="解决方案-1" class="headerLink">
-    <a href="#%e8%a7%a3%e5%86%b3%e6%96%b9%e6%a1%88-1" class="header-mark" aria-label="Header mark for '解决方案'"></a>2.1 解决方案</h3><p>最基本的首先就是做好参数校验，一些不合法的参数请求直接抛出异常信息返回给客户端。</p>
+    <a href="#%e8%a7%a3%e5%86%b3%e6%96%b9%e6%a1%88-1" class="header-mark"></a>2.1 解决方案</h3><p>最基本的首先就是做好参数校验，一些不合法的参数请求直接抛出异常信息返回给客户端。</p>
 <h4 id="缓存无效的-key" class="headerLink">
-    <a href="#%e7%bc%93%e5%ad%98%e6%97%a0%e6%95%88%e7%9a%84-key" class="header-mark" aria-label="Header mark for '缓存无效的 key'"></a>2.1.1 缓存无效的 key</h4><p>如果<strong>缓存和数据库都查不到</strong>
+    <a href="#%e7%bc%93%e5%ad%98%e6%97%a0%e6%95%88%e7%9a%84-key" class="header-mark"></a>2.1.1 缓存无效的 key</h4><p>如果<strong>缓存和数据库都查不到</strong>
 某个 key 的数据就写一个到 Redis 中去并设置过期时间。这种方式可以解决请求的 key 变化不频繁的情况，如果黑客恶意攻击，每次构建不同的请求 key，会导致 Redis 中缓存大量无效的 key 。这种方案并不能从根本上解决此问题。如果非要用这种方式来解决穿透问题的话，应该尽量将无效的 key 的过期时间设置短一点比如 1 分钟。</p>
 <h4 id="布隆过滤器" class="headerLink">
-    <a href="#%e5%b8%83%e9%9a%86%e8%bf%87%e6%bb%a4%e5%99%a8" class="header-mark" aria-label="Header mark for '布隆过滤器'"></a>2.1.2 布隆过滤器</h4><p>布隆过滤器是一个非常神奇的数据结构，通过它我们可以非常方便地<strong>判断一个给定数据是否存在于海量数据中</strong>。我们需要的仅仅就是判断 key 是否合法。</p>
+    <a href="#%e5%b8%83%e9%9a%86%e8%bf%87%e6%bb%a4%e5%99%a8" class="header-mark"></a>2.1.2 布隆过滤器</h4><p>布隆过滤器是一个非常神奇的数据结构，通过它我们可以非常方便地<strong>判断一个给定数据是否存在于海量数据中</strong>。我们需要的仅仅就是判断 key 是否合法。</p>
 <p>具体是这样做的：把所有可能存在的请求的值都存放在布隆过滤器中，当用户请求过来，先判断用户发来的请求的值是否存在于布隆过滤器中。不存在的话，直接返回请求参数错误信息给客户端，存在的话再走其他的判断流程。</p>
-<p><figure><a class="lightgallery" href="/c81922434bf5420c94e349e07980054b_12835169665026046972.png" title="布隆过滤器" data-thumbnail="/c81922434bf5420c94e349e07980054b_12835169665026046972.png" data-sub-html="<h2>布隆过滤器</h2><p>布隆过滤器</p>"><img  loading="lazy" src="/c81922434bf5420c94e349e07980054b_12835169665026046972.png" srcset="/c81922434bf5420c94e349e07980054b_12835169665026046972_hu9351168702886058976.webp 800w, /c81922434bf5420c94e349e07980054b_12835169665026046972_hu16026703174959639716.webp 1200w, /c81922434bf5420c94e349e07980054b_12835169665026046972_hu10995250180808678687.webp 1600w"  alt="布隆过滤器" height="758" width="626"></a><figcaption class="image-caption">布隆过滤器</figcaption>
+<p><figure><a class="lightgallery" href="/c81922434bf5420c94e349e07980054b_12835169665026046972.png" title="布隆过滤器" data-thumbnail="/c81922434bf5420c94e349e07980054b_12835169665026046972.png" data-sub-html="<h2>布隆过滤器</h2><p>布隆过滤器</p>"><img  loading="lazy" src=/c81922434bf5420c94e349e07980054b_12835169665026046972.png srcset="/c81922434bf5420c94e349e07980054b_12835169665026046972_hu9351168702886058976.webp 800w, /c81922434bf5420c94e349e07980054b_12835169665026046972_hu16026703174959639716.webp 1200w, /c81922434bf5420c94e349e07980054b_12835169665026046972_hu10995250180808678687.webp 1600w"  alt="布隆过滤器" height="758" width="626"></a><figcaption class="image-caption">布隆过滤器</figcaption>
 </figure></p>
 <p>需要注意的是布隆过滤器可能会存在误判的情况。</p>
 <p><strong>布隆过滤器说某个元素存在，小概率会误判。布隆过滤器说某个元素不在，这个元素一定不在</strong>。</p>
@@ -336,42 +335,42 @@
 </ol>
 <p>然而，一定会出现这样一种情况：不同的字符串可能哈希出来的位置相同。我们可以适当增加位数组大小或者调整我们的哈希函数来降低概率。</p>
 <h2 id="缓存雪崩" class="headerLink">
-    <a href="#%e7%bc%93%e5%ad%98%e9%9b%aa%e5%b4%a9" class="header-mark" aria-label="Header mark for '缓存雪崩'"></a>3 缓存雪崩</h2><p>缓存在同一时间大面积的失效，后面的请求都直接落到了数据库上，造成数据库短时间内承受大量请求。或是有一些被大量访问数据（热点缓存）在某一时刻大面积失效，导致对应的请求直接落到了数据库上。</p>
+    <a href="#%e7%bc%93%e5%ad%98%e9%9b%aa%e5%b4%a9" class="header-mark"></a>3 缓存雪崩</h2><p>缓存在同一时间大面积的失效，后面的请求都直接落到了数据库上，造成数据库短时间内承受大量请求。或是有一些被大量访问数据（热点缓存）在某一时刻大面积失效，导致对应的请求直接落到了数据库上。</p>
 <p>而出现该原因主要有两种：</p>
 <ul>
 <li>大量热点数据同时过期，导致大量请求需要查询数据库并写到缓存。</li>
 <li>Redis 故障宕机，缓存系统异常。</li>
 </ul>
 <h3 id="缓存大量数据同时过期" class="headerLink">
-    <a href="#%e7%bc%93%e5%ad%98%e5%a4%a7%e9%87%8f%e6%95%b0%e6%8d%ae%e5%90%8c%e6%97%b6%e8%bf%87%e6%9c%9f" class="header-mark" aria-label="Header mark for '缓存大量数据同时过期'"></a>3.1 缓存大量数据同时过期</h3><p>数据保存在缓存系统并设置了过期时间，但是由于在同时一刻，大量数据同时过期。系统就把请求全部打到数据库获取数据，并发量大的话就会导致数据库压力激增。</p>
+    <a href="#%e7%bc%93%e5%ad%98%e5%a4%a7%e9%87%8f%e6%95%b0%e6%8d%ae%e5%90%8c%e6%97%b6%e8%bf%87%e6%9c%9f" class="header-mark"></a>3.1 缓存大量数据同时过期</h3><p>数据保存在缓存系统并设置了过期时间，但是由于在同时一刻，大量数据同时过期。系统就把请求全部打到数据库获取数据，并发量大的话就会导致数据库压力激增。</p>
 <p><font color="red"><strong>缓存雪崩是发生在大量数据同时失效的场景，而缓存击穿是在某个热点数据失效的场景，这是他们最大的区别</strong>
 </font>。</p>
-<p><figure><a class="lightgallery" href="/12a33b5773ef4e36be2c71a94b93df11_1368679492002761918.png" title="缓存大量数据同时过期" data-thumbnail="/12a33b5773ef4e36be2c71a94b93df11_1368679492002761918.png" data-sub-html="<h2>缓存大量数据同时过期</h2><p>缓存大量数据同时过期</p>"><img  loading="lazy" src="/12a33b5773ef4e36be2c71a94b93df11_1368679492002761918.png" srcset="/12a33b5773ef4e36be2c71a94b93df11_1368679492002761918_hu368425256648297207.webp 800w, /12a33b5773ef4e36be2c71a94b93df11_1368679492002761918_hu4402664830697396758.webp 1200w, /12a33b5773ef4e36be2c71a94b93df11_1368679492002761918_hu16892593111748229496.webp 1600w"  alt="缓存大量数据同时过期" height="851" width="614"></a><figcaption class="image-caption">缓存大量数据同时过期</figcaption>
+<p><figure><a class="lightgallery" href="/12a33b5773ef4e36be2c71a94b93df11_1368679492002761918.png" title="缓存大量数据同时过期" data-thumbnail="/12a33b5773ef4e36be2c71a94b93df11_1368679492002761918.png" data-sub-html="<h2>缓存大量数据同时过期</h2><p>缓存大量数据同时过期</p>"><img  loading="lazy" src=/12a33b5773ef4e36be2c71a94b93df11_1368679492002761918.png srcset="/12a33b5773ef4e36be2c71a94b93df11_1368679492002761918_hu368425256648297207.webp 800w, /12a33b5773ef4e36be2c71a94b93df11_1368679492002761918_hu4402664830697396758.webp 1200w, /12a33b5773ef4e36be2c71a94b93df11_1368679492002761918_hu16892593111748229496.webp 1600w"  alt="缓存大量数据同时过期" height="851" width="614"></a><figcaption class="image-caption">缓存大量数据同时过期</figcaption>
 </figure></p>
 <h4 id="过期时间添加随机值" class="headerLink">
-    <a href="#%e8%bf%87%e6%9c%9f%e6%97%b6%e9%97%b4%e6%b7%bb%e5%8a%a0%e9%9a%8f%e6%9c%ba%e5%80%bc" class="header-mark" aria-label="Header mark for '过期时间添加随机值'"></a>3.1.1 过期时间添加随机值</h4><p>要避免给大量的数据设置一样的过期时间，过期时间 = baes 时间+ 随机时间（较小的随机数，比如随机增加 1~5 分钟）。</p>
+    <a href="#%e8%bf%87%e6%9c%9f%e6%97%b6%e9%97%b4%e6%b7%bb%e5%8a%a0%e9%9a%8f%e6%9c%ba%e5%80%bc" class="header-mark"></a>3.1.1 过期时间添加随机值</h4><p>要避免给大量的数据设置一样的过期时间，过期时间 = baes 时间+ 随机时间（较小的随机数，比如随机增加 1~5 分钟）。</p>
 <p>这样一来，就不会导致同一时刻热点数据全部失效，同时过期时间差别也不会太大，既保证了相近时间失效，又能满足业务需求。</p>
 <h4 id="接口限流" class="headerLink">
-    <a href="#%e6%8e%a5%e5%8f%a3%e9%99%90%e6%b5%81" class="header-mark" aria-label="Header mark for '接口限流'"></a>3.1.2 接口限流</h4><p>当访问的不是核心数据的时候，在查询的方法上加上接口限流保护。比如设置 10000 req/s。如果访问的是核心数据接口，缓存不存在允许从数据库中查询并设置到缓存中。这样的话，只有部分请求会发送到数据库，减少了压力。</p>
+    <a href="#%e6%8e%a5%e5%8f%a3%e9%99%90%e6%b5%81" class="header-mark"></a>3.1.2 接口限流</h4><p>当访问的不是核心数据的时候，在查询的方法上加上接口限流保护。比如设置 10000 req/s。如果访问的是核心数据接口，缓存不存在允许从数据库中查询并设置到缓存中。这样的话，只有部分请求会发送到数据库，减少了压力。</p>
 <p><strong>限流，就是指，我们在业务系统的请求入口前端控制每秒进入系统的请求数，避免过多的请求被发送到数据库</strong>。</p>
-<p><figure><a class="lightgallery" href="/340401972fac48f391fa6906a9444eac_1573906051014200624.png" title="限流" data-thumbnail="/340401972fac48f391fa6906a9444eac_1573906051014200624.png" data-sub-html="<h2>限流</h2><p>限流</p>"><img  loading="lazy" src="/340401972fac48f391fa6906a9444eac_1573906051014200624.png" srcset="/340401972fac48f391fa6906a9444eac_1573906051014200624_hu13523653521085272089.webp 800w, /340401972fac48f391fa6906a9444eac_1573906051014200624_hu1948172932993891564.webp 1200w, /340401972fac48f391fa6906a9444eac_1573906051014200624_hu16289545717475520840.webp 1600w"  alt="限流" height="758" width="525"></a><figcaption class="image-caption">限流</figcaption>
+<p><figure><a class="lightgallery" href="/340401972fac48f391fa6906a9444eac_1573906051014200624.png" title="限流" data-thumbnail="/340401972fac48f391fa6906a9444eac_1573906051014200624.png" data-sub-html="<h2>限流</h2><p>限流</p>"><img  loading="lazy" src=/340401972fac48f391fa6906a9444eac_1573906051014200624.png srcset="/340401972fac48f391fa6906a9444eac_1573906051014200624_hu13523653521085272089.webp 800w, /340401972fac48f391fa6906a9444eac_1573906051014200624_hu1948172932993891564.webp 1200w, /340401972fac48f391fa6906a9444eac_1573906051014200624_hu16289545717475520840.webp 1600w"  alt="限流" height="758" width="525"></a><figcaption class="image-caption">限流</figcaption>
 </figure></p>
 <h3 id="redis-故障" class="headerLink">
-    <a href="#redis-%e6%95%85%e9%9a%9c" class="header-mark" aria-label="Header mark for 'Redis 故障'"></a>3.2 Redis 故障</h3><p>一旦 Redis 故障或宕机，会导致大量请求打到数据库，从而发生缓存雪崩。对于 Redis 故障，主要有以下两种解决方案。</p>
+    <a href="#redis-%e6%95%85%e9%9a%9c" class="header-mark"></a>3.2 Redis 故障</h3><p>一旦 Redis 故障或宕机，会导致大量请求打到数据库，从而发生缓存雪崩。对于 Redis 故障，主要有以下两种解决方案。</p>
 <h4 id="服务熔断和限流" class="headerLink">
-    <a href="#%e6%9c%8d%e5%8a%a1%e7%86%94%e6%96%ad%e5%92%8c%e9%99%90%e6%b5%81" class="header-mark" aria-label="Header mark for '服务熔断和限流'"></a>3.2.1 服务熔断和限流</h4><p>在业务系统中，针对高并发的使用服务熔断来有损提供服务从而保证系统的可用性。</p>
+    <a href="#%e6%9c%8d%e5%8a%a1%e7%86%94%e6%96%ad%e5%92%8c%e9%99%90%e6%b5%81" class="header-mark"></a>3.2.1 服务熔断和限流</h4><p>在业务系统中，针对高并发的使用服务熔断来有损提供服务从而保证系统的可用性。</p>
 <p>服务熔断就是当从缓存获取数据发现异常，则直接返回错误数据给前端，防止所有流量打到数据库导致宕机。</p>
 <p>服务熔断和限流属于在发生了缓存雪崩，如何<strong>降低雪崩对数据库造成的影响</strong>的方案。</p>
 <h4 id="高可用缓存集群" class="headerLink">
-    <a href="#%e9%ab%98%e5%8f%af%e7%94%a8%e7%bc%93%e5%ad%98%e9%9b%86%e7%be%a4" class="header-mark" aria-label="Header mark for '高可用缓存集群'"></a>3.2.2 高可用缓存集群</h4><p>缓存系统一定要构建一套 Redis 高可用集群，比如 <a href="" rel="">Redis 哨兵集群 TODO</a> 或者 <a href="" rel="">Redis Cluster 集群 TODO</a>，如果 Redis 的主节点故障宕机了，从节点还可以切换成为主节点，继续提供缓存服务，避免了由于缓存实例宕机而导致的缓存雪崩问题。</p>
+    <a href="#%e9%ab%98%e5%8f%af%e7%94%a8%e7%bc%93%e5%ad%98%e9%9b%86%e7%be%a4" class="header-mark"></a>3.2.2 高可用缓存集群</h4><p>缓存系统一定要构建一套 Redis 高可用集群，比如 <a href="" rel="">Redis 哨兵集群 TODO</a> 或者 <a href="" rel="">Redis Cluster 集群 TODO</a>，如果 Redis 的主节点故障宕机了，从节点还可以切换成为主节点，继续提供缓存服务，避免了由于缓存实例宕机而导致的缓存雪崩问题。</p>
 <h2 id="总结" class="headerLink">
-    <a href="#%e6%80%bb%e7%bb%93" class="header-mark" aria-label="Header mark for '总结'"></a>4 总结</h2><ul>
+    <a href="#%e6%80%bb%e7%bb%93" class="header-mark"></a>4 总结</h2><ul>
 <li>缓存穿透指的是数据库本就没有这个数据，请求直奔数据库，缓存系统形同虚设。</li>
 <li>缓存击穿（失效）指的是数据库有数据，缓存本应该也有数据，但是缓存过期了，Redis 这层流量防护屏障被击穿了，请求直奔数据库。</li>
 <li>缓存雪崩指的是大量的热点数据无法在 Redis 缓存中处理（大面积热点数据缓存失效、Redis 宕机），流量全部打到数据库，导致数据库极大压力。</li>
 </ul>
 <h2 id="参考" class="headerLink">
-    <a href="#%e5%8f%82%e8%80%83" class="header-mark" aria-label="Header mark for '参考'"></a>5 参考</h2><ul>
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>5 参考</h2><ul>
 <li><a href="https://mp.weixin.qq.com/s?__biz=Mzg5NDY2MDk4Mw==&amp;mid=2247488270&amp;idx=1&amp;sn=03674abcaa78b027bd12aaafd5a2f6e2" target="_blank" rel="noopener noreferrer">Redis 缓存击穿（失效）、缓存穿透、缓存雪崩怎么解决？</a></li>
 </ul>
 </div>

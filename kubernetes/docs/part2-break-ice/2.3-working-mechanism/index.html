@@ -3,25 +3,38 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="2.3 工作机制 # 2.3.1 基本架构 # Kubernetes 采用了 “控制面 / 数据面”（Control Plane / Data Plane）架构，集群里的计算机被称为 “节点”（Node），可以是物理机也可以是虚拟机，少量的节点用作控制面来执行集群的管理维护工作，其他的大部分节点都被划归数据面，用来跑业务应用。
+<meta name="description" content="
+  2.3 工作机制
+  #
+
+
+
+  2.3.1 基本架构
+  #
+
+Kubernetes 采用了 “控制面 / 数据面”（Control Plane / Data Plane）架构，集群里的计算机被称为 “节点”（Node），可以是物理机也可以是虚拟机，少量的节点用作控制面来执行集群的管理维护工作，其他的大部分节点都被划归数据面，用来跑业务应用。
 控制面的节点在 Kubernetes 里叫做 Master Node，一般简称为 Master，它是整个集群里最重要的部分，可以说是 Kubernetes 的大脑和心脏。数据面的节点叫做 Worker Node，一般就简称为 Worker 或者 Node，相当于 Kubernetes 的手和脚，在 Master 的指挥下干活。Node 的数量非常多，构成了一个资源池，Kubernetes 就在这个池里分配资源，调度应用。因为资源被 “池化”了，所以管理也就变得比较简单，可以在集群中任意添加或者删除节点。
 Master 和 Node 的划分不是绝对的。当集群的规模较小，工作负载较少的时候，Master 也可以承担 Node 的工作，就像 minikube 环境，它就只有一个节点，这个节点既是 Master 又是 Node。
+
 在下面这张架构图中，可以看到有一个 kubectl，它是 Kubernetes 的客户端工具，用来操作 Kubernetes，但它位于集群之外，理论上不属于集群。
-2.3.2 节点内部结构 # Kubernetes 的节点内部具有非常复杂的结构，由很多的模块构成的，这些模块又可以分成组件（Component）和插件（Addon）两类。
-组件实现了 Kubernetes 的核心功能特性，没有这些组件 Kubernetes 就无法启动，而插件则是 Kubernetes 的一些附加功能，属于 “锦上添花”，不安装也不会影响 Kubernetes 的正常运行。
-组件 # Master 有 4 个组件，分别是 apiserver、etcd、scheduler、controller-manager。">
+
+
+  2.3.2 节点内部结构
+  #
+
+Kubernetes 的节点内部具有非常复杂的结构，由很多的模块构成的，这些模块又可以分成组件（Component）和插件（Addon）两类。
+组件实现了 Kubernetes 的核心功能特性，没有这些组件 Kubernetes 就无法启动，而插件则是 Kubernetes 的一些附加功能，属于 “锦上添花”，不安装也不会影响 Kubernetes 的正常运行。">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/kubernetes/docs/part2-break-ice/2.3-working-mechanism/">
   <meta property="og:site_name" content="Kubernetes 学习笔记">
   <meta property="og:title" content="2.3 工作机制">
-  <meta property="og:description" content="2.3 工作机制 # 2.3.1 基本架构 # Kubernetes 采用了 “控制面 / 数据面”（Control Plane / Data Plane）架构，集群里的计算机被称为 “节点”（Node），可以是物理机也可以是虚拟机，少量的节点用作控制面来执行集群的管理维护工作，其他的大部分节点都被划归数据面，用来跑业务应用。
+  <meta property="og:description" content=" 2.3 工作机制 # 2.3.1 基本架构 # Kubernetes 采用了 “控制面 / 数据面”（Control Plane / Data Plane）架构，集群里的计算机被称为 “节点”（Node），可以是物理机也可以是虚拟机，少量的节点用作控制面来执行集群的管理维护工作，其他的大部分节点都被划归数据面，用来跑业务应用。
 控制面的节点在 Kubernetes 里叫做 Master Node，一般简称为 Master，它是整个集群里最重要的部分，可以说是 Kubernetes 的大脑和心脏。数据面的节点叫做 Worker Node，一般就简称为 Worker 或者 Node，相当于 Kubernetes 的手和脚，在 Master 的指挥下干活。Node 的数量非常多，构成了一个资源池，Kubernetes 就在这个池里分配资源，调度应用。因为资源被 “池化”了，所以管理也就变得比较简单，可以在集群中任意添加或者删除节点。
 Master 和 Node 的划分不是绝对的。当集群的规模较小，工作负载较少的时候，Master 也可以承担 Node 的工作，就像 minikube 环境，它就只有一个节点，这个节点既是 Master 又是 Node。
 在下面这张架构图中，可以看到有一个 kubectl，它是 Kubernetes 的客户端工具，用来操作 Kubernetes，但它位于集群之外，理论上不属于集群。
 2.3.2 节点内部结构 # Kubernetes 的节点内部具有非常复杂的结构，由很多的模块构成的，这些模块又可以分成组件（Component）和插件（Addon）两类。
-组件实现了 Kubernetes 的核心功能特性，没有这些组件 Kubernetes 就无法启动，而插件则是 Kubernetes 的一些附加功能，属于 “锦上添花”，不安装也不会影响 Kubernetes 的正常运行。
-组件 # Master 有 4 个组件，分别是 apiserver、etcd、scheduler、controller-manager。">
+组件实现了 Kubernetes 的核心功能特性，没有这些组件 Kubernetes 就无法启动，而插件则是 Kubernetes 的一些附加功能，属于 “锦上添花”，不安装也不会影响 Kubernetes 的正常运行。">
   <meta property="og:locale" content="zh">
   <meta property="og:type" content="article">
     <meta property="article:section" content="docs">
@@ -35,9 +48,6 @@ Master 和 Node 的划分不是绝对的。当集群的规模较小，工作负�
   <script defer src="/kubernetes/zh.search.min.da1c52546386c902e77e37ee10f137dd864d5defad152b94b97987f9bfccfa81.js" integrity="sha256-2hxSVGOGyQLnfjfuEPE33YZNXe&#43;tFSuUuXmH&#43;b/M&#43;oE=" crossorigin="anonymous"></script>
 
   <script defer src="/kubernetes/sw.min.18ff75d546fc59b9d538e96815256b253062dc991f14b3caff0f35a243a406d1.js" integrity="sha256-GP911Ub8WbnVOOloFSVrJTBi3JkfFLPK/w81okOkBtE=" crossorigin="anonymous"></script>
-
-  
-
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book

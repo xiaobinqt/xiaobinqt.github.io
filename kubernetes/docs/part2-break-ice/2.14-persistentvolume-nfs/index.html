@@ -3,19 +3,29 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="2.14 网络共享存储 # 由于 Kubernetes 里的 Pod 经常会在集群里 “漂移”，要想让存储卷真正能被 Pod 任意挂载，就不能限定在本地磁盘，而是要改成网络存储，这样 Pod 无论在哪里运行，只要知道 IP 地址或者域名，就可以通过网络通信访问存储设备。
+<meta name="description" content="
+  2.14 网络共享存储
+  #
+
+由于 Kubernetes 里的 Pod 经常会在集群里 “漂移”，要想让存储卷真正能被 Pod 任意挂载，就不能限定在本地磁盘，而是要改成网络存储，这样 Pod 无论在哪里运行，只要知道 IP 地址或者域名，就可以通过网络通信访问存储设备。
 在网络存储中有比较简单的 NFS 系统（Network File System），可以通过 NFS 理解在 Kubernetes 里使用网络存储，以及静态存储卷和动态存储卷的概念。
-2.14.1 安装 NFS 服务器 # NFS 采用的是 Client/Server 架构，需要选定一台主机作为 Server，安装 NFS 服务端；其他要使用存储的主机作为 Client，安装 NFS 客户端工具。
+
+  2.14.1 安装 NFS 服务器
+  #
+
+NFS 采用的是 Client/Server 架构，需要选定一台主机作为 Server，安装 NFS 服务端；其他要使用存储的主机作为 Client，安装 NFS 客户端工具。
 可以在 Kubernetes 集群里增添一台名字叫 Storage 的服务器，在上面安装 NFS，实现网络存储、共享网盘的功能。这台 Storage 只是一个逻辑概念，在实际安装部署的时候完全可以把它合并到集群里的某台主机里。
 在 Ubuntu/Debian 系统里安装 NFS 服务端很容易，使用 apt 即可：
-sudo apt -y install nfs-kernel-server 安装好之后，需要给 NFS 指定一个存储位置，也就是网络共享目录。一般来说，应该建立一个专门的 /data 目录，这里使用了临时目录 /tmp/nfs：
-mkdir -p /tmp/nfs 接下来需要配置 NFS 访问共享目录，修改 /etc/exports，指定目录名、允许访问的网段，还有权限等参数。把下面这行加上就行，注意目录名和 IP 地址要改成和自己的环境一致：">
+sudo apt -y install nfs-kernel-server
+安装好之后，需要给 NFS 指定一个存储位置，也就是网络共享目录。一般来说，应该建立一个专门的 /data 目录，这里使用了临时目录 /tmp/nfs：
+mkdir -p /tmp/nfs
+接下来需要配置 NFS 访问共享目录，修改 /etc/exports，指定目录名、允许访问的网段，还有权限等参数。把下面这行加上就行，注意目录名和 IP 地址要改成和自己的环境一致：">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/kubernetes/docs/part2-break-ice/2.14-persistentvolume-nfs/">
   <meta property="og:site_name" content="Kubernetes 学习笔记">
   <meta property="og:title" content="2.14 网络共享存储">
-  <meta property="og:description" content="2.14 网络共享存储 # 由于 Kubernetes 里的 Pod 经常会在集群里 “漂移”，要想让存储卷真正能被 Pod 任意挂载，就不能限定在本地磁盘，而是要改成网络存储，这样 Pod 无论在哪里运行，只要知道 IP 地址或者域名，就可以通过网络通信访问存储设备。
+  <meta property="og:description" content=" 2.14 网络共享存储 # 由于 Kubernetes 里的 Pod 经常会在集群里 “漂移”，要想让存储卷真正能被 Pod 任意挂载，就不能限定在本地磁盘，而是要改成网络存储，这样 Pod 无论在哪里运行，只要知道 IP 地址或者域名，就可以通过网络通信访问存储设备。
 在网络存储中有比较简单的 NFS 系统（Network File System），可以通过 NFS 理解在 Kubernetes 里使用网络存储，以及静态存储卷和动态存储卷的概念。
 2.14.1 安装 NFS 服务器 # NFS 采用的是 Client/Server 架构，需要选定一台主机作为 Server，安装 NFS 服务端；其他要使用存储的主机作为 Client，安装 NFS 客户端工具。
 可以在 Kubernetes 集群里增添一台名字叫 Storage 的服务器，在上面安装 NFS，实现网络存储、共享网盘的功能。这台 Storage 只是一个逻辑概念，在实际安装部署的时候完全可以把它合并到集群里的某台主机里。
@@ -35,9 +45,6 @@ mkdir -p /tmp/nfs 接下来需要配置 NFS 访问共享目录，修改 /etc/exp
   <script defer src="/kubernetes/zh.search.min.da1c52546386c902e77e37ee10f137dd864d5defad152b94b97987f9bfccfa81.js" integrity="sha256-2hxSVGOGyQLnfjfuEPE33YZNXe&#43;tFSuUuXmH&#43;b/M&#43;oE=" crossorigin="anonymous"></script>
 
   <script defer src="/kubernetes/sw.min.18ff75d546fc59b9d538e96815256b253062dc991f14b3caff0f35a243a406d1.js" integrity="sha256-GP911Ub8WbnVOOloFSVrJTBi3JkfFLPK/w81okOkBtE=" crossorigin="anonymous"></script>
-
-  
-
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book
