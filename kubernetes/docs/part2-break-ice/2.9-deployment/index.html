@@ -3,17 +3,50 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="2.9 Deployment # 在线业务远不是单纯启动一个 Pod 这么简单，还有多实例、高可用、版本更新等许多复杂的操作。比如多实例需求，为了提高系统的服务能力，应对突发的流量和压力，需要创建多个应用的副本，还要即时监控它们的状态。如果只使用 Pod，但有人不小心用 kubectl delete 误删了 Pod，又或者 Pod 运行的节点发生了断电故障，那么 Pod 就会在集群里彻底消失，Pod 容器里运行的服务也会消息，这样就会导致业务出现异常。
+<meta name="description" content="
+  2.9 Deployment
+  #
+
+在线业务远不是单纯启动一个 Pod 这么简单，还有多实例、高可用、版本更新等许多复杂的操作。比如多实例需求，为了提高系统的服务能力，应对突发的流量和压力，需要创建多个应用的副本，还要即时监控它们的状态。如果只使用 Pod，但有人不小心用 kubectl delete 误删了 Pod，又或者 Pod 运行的节点发生了断电故障，那么 Pod 就会在集群里彻底消失，Pod 容器里运行的服务也会消息，这样就会导致业务出现异常。
 处理这种问题的思路就是 “单一职责” 和 “对象组合”。既然 Pod 管理不了自己，那么就再创建一个新的对象，由它来管理 Pod，采用 “对象套对象” 的形式。这个用来管理 Pod，实现在线业务应用的新 API 对象，就是 Deployment。
-2.9.1 创建 # Deployment 的简称是 deploy，它的 apiVersion 是 apps/v1，kind 是 Deployment。
+
+  2.9.1 创建
+  #
+
+Deployment 的简称是 deploy，它的 apiVersion 是 apps/v1，kind 是 Deployment。
 Deployment 的 YAML 描述大致如下：
-apiVersion: apps/v1 kind: Deployment metadata: labels: app: ngx-dep name: ngx-dep spec: replicas: 2 selector: matchLabels: app: ngx-dep template: metadata: labels: app: ngx-dep spec: containers: - image: nginx:alpine name: nginx replicas 字段 # replicas 字段的含义比较简单明了，就是 “副本数量” 的意思，也就是说，指定要在 Kubernetes 集群里运行多少个 Pod 实例。有了这个字段，就相当于为 Kubernetes 明确了应用部署的 “期望状态”，Deployment 对象就可以扮演运维监控人员的角色，自动地在集群里调整 Pod 的数量。">
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: ngx-dep
+  name: ngx-dep
+
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ngx-dep
+
+  template:
+    metadata:
+      labels:
+        app: ngx-dep
+    spec:
+      containers:
+        - image: nginx:alpine
+          name: nginx
+
+  replicas 字段
+  #
+
+replicas 字段的含义比较简单明了，就是 “副本数量” 的意思，也就是说，指定要在 Kubernetes 集群里运行多少个 Pod 实例。有了这个字段，就相当于为 Kubernetes 明确了应用部署的 “期望状态”，Deployment 对象就可以扮演运维监控人员的角色，自动地在集群里调整 Pod 的数量。">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/kubernetes/docs/part2-break-ice/2.9-deployment/">
   <meta property="og:site_name" content="Kubernetes 学习笔记">
   <meta property="og:title" content="2.9 Deployment">
-  <meta property="og:description" content="2.9 Deployment # 在线业务远不是单纯启动一个 Pod 这么简单，还有多实例、高可用、版本更新等许多复杂的操作。比如多实例需求，为了提高系统的服务能力，应对突发的流量和压力，需要创建多个应用的副本，还要即时监控它们的状态。如果只使用 Pod，但有人不小心用 kubectl delete 误删了 Pod，又或者 Pod 运行的节点发生了断电故障，那么 Pod 就会在集群里彻底消失，Pod 容器里运行的服务也会消息，这样就会导致业务出现异常。
+  <meta property="og:description" content=" 2.9 Deployment # 在线业务远不是单纯启动一个 Pod 这么简单，还有多实例、高可用、版本更新等许多复杂的操作。比如多实例需求，为了提高系统的服务能力，应对突发的流量和压力，需要创建多个应用的副本，还要即时监控它们的状态。如果只使用 Pod，但有人不小心用 kubectl delete 误删了 Pod，又或者 Pod 运行的节点发生了断电故障，那么 Pod 就会在集群里彻底消失，Pod 容器里运行的服务也会消息，这样就会导致业务出现异常。
 处理这种问题的思路就是 “单一职责” 和 “对象组合”。既然 Pod 管理不了自己，那么就再创建一个新的对象，由它来管理 Pod，采用 “对象套对象” 的形式。这个用来管理 Pod，实现在线业务应用的新 API 对象，就是 Deployment。
 2.9.1 创建 # Deployment 的简称是 deploy，它的 apiVersion 是 apps/v1，kind 是 Deployment。
 Deployment 的 YAML 描述大致如下：
@@ -31,9 +64,6 @@ apiVersion: apps/v1 kind: Deployment metadata: labels: app: ngx-dep name: ngx-de
   <script defer src="/kubernetes/zh.search.min.da1c52546386c902e77e37ee10f137dd864d5defad152b94b97987f9bfccfa81.js" integrity="sha256-2hxSVGOGyQLnfjfuEPE33YZNXe&#43;tFSuUuXmH&#43;b/M&#43;oE=" crossorigin="anonymous"></script>
 
   <script defer src="/kubernetes/sw.min.18ff75d546fc59b9d538e96815256b253062dc991f14b3caff0f35a243a406d1.js" integrity="sha256-GP911Ub8WbnVOOloFSVrJTBi3JkfFLPK/w81okOkBtE=" crossorigin="anonymous"></script>
-
-  
-
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book

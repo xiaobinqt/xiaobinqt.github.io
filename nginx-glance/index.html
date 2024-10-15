@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="zh-CN">
 
@@ -14,7 +12,7 @@
   <meta property="og:type" content="article">
     <meta property="article:section" content="posts">
     <meta property="article:published_time" content="2021-05-06T00:00:00+00:00">
-    <meta property="article:modified_time" content="2022-11-16T22:09:43+08:00">
+    <meta property="article:modified_time" content="2024-10-15T14:02:49+08:00">
     <meta property="article:tag" content="Nginx">
     <meta property="og:image" content="https://www.xiaobinqt.cn/images/avatar.webp">
       <meta property="og:see_also" content="https://www.xiaobinqt.cn/docker-network/">
@@ -43,8 +41,8 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https://www.xiaobinqt.cn/nginx-glance/"
-        },"image": ["https://www.xiaobinqt.cn/images/Apple-Devices-Preview.png"],"genre": "posts","keywords":["nginx"],"wordcount":  12401 ,
-        "url": "https://www.xiaobinqt.cn/nginx-glance/","datePublished": "2021-05-06T00:00:00+00:00","dateModified": "2022-11-16T22:09:43+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+        },"image": ["https://www.xiaobinqt.cn/images/Apple-Devices-Preview.png"],"genre": "posts","keywords":["nginx"],"wordcount":  12393 ,
+        "url": "https://www.xiaobinqt.cn/nginx-glance/","datePublished": "2021-05-06T00:00:00+00:00","dateModified": "2024-10-15T14:02:49+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
             "@type": "Organization",
             "name": "xxxx","logo": {
                     "@type": "ImageObject",
@@ -289,24 +287,28 @@
       </ul>
     </li>
     <li><a href="#配置开启-gzip-压缩">配置开启 gzip 压缩</a></li>
-    <li><a href="#nginx-架构">Nginx 架构</a></li>
-    <li><a href="#进程结构">进程结构</a></li>
-    <li><a href="#配置文件重载原理">配置文件重载原理</a></li>
-    <li><a href="#nginx-模块化管理机制">Nginx 模块化管理机制</a></li>
+    <li><a href="#nginx-架构">Nginx 架构</a>
+      <ul>
+        <li><a href="#进程结构">进程结构</a></li>
+        <li><a href="#配置文件重载原理">配置文件重载原理</a></li>
+        <li><a href="#nginx-模块化管理机制">Nginx 模块化管理机制</a></li>
+      </ul>
+    </li>
     <li><a href="#参考">参考</a></li>
   </ul>
 </nav></div>
-    </div><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single print:!tw-w-full print:!tw-max-w-none print:!tw-m-0 print:!tw-p-0"><h1 class="single-title">Nginx 笔记，体系化带你全面认识 Nginx</h1><div class="post-meta">
+    </div><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single print:!tw-w-full print:!tw-max-w-none print:!tw-m-0 print:!tw-p-0"><h1 class="single-title" data-pagefind-meta="date:2021-05-06" data-pagefind-body>Nginx 笔记，体系化带你全面认识 Nginx</h1><div class="post-meta">
             <div class="post-meta-line">
-                <span class="post-author"><img class="tw-inline-block tw-max-h-4 tw-rounded-full tw-translate-y-[-2px] tw-mr-1"  src="/images/avatar.webp" srcset="/images/avatar_hu11269060449570882715.webp 16w, /images/avatar_hu2515534640531409486.webp 24w, /images/avatar_hu9855092516384270799.webp 32w"  alt="xiaobinqt avatar" height="16" width="16"><a href="https://github.com/xiaobinqt" title="Author" target="_blank" rel="noopener noreferrer author" class="author">xiaobinqt</a>
+                <span class="post-author"><img class="tw-inline-block tw-max-h-4 tw-rounded-full tw-translate-y-[-2px] tw-mr-1"  src=/images/avatar.webp srcset="/images/avatar_hu11269060449570882715.webp 16w, /images/avatar_hu2515534640531409486.webp 24w, /images/avatar_hu9855092516384270799.webp 32w"  alt="xiaobinqt avatar" height="16" width="16"><a href="https://github.com/xiaobinqt" title="Author" target="_blank" rel="noopener noreferrer author" class="author">xiaobinqt</a>
                 </span>&nbsp;<span class="post-category">收录于 </span>&nbsp;<span class="post-category">类别 <a href="/categories/%E5%BC%80%E5%8F%91%E8%80%85%E6%89%8B%E5%86%8C/"><svg class="icon"
     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M464 128H272l-54.63-54.63c-6-6-14.14-9.37-22.63-9.37H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V176c0-26.51-21.49-48-48-48zm0 272H48V112h140.12l54.63 54.63c6 6 14.14 9.37 22.63 9.37H464v224z"/></svg>开发者手册</a></span>&nbsp;<span class="post-category">和</span>&nbsp;<span class="post-series">系列 <a href="/series/reproduce/"><svg class="icon"
     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M464 32H48C21.49 32 0 53.49 0 80v352c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V80c0-26.51-21.49-48-48-48zm-6 400H54a6 6 0 0 1-6-6V86a6 6 0 0 1 6-6h404a6 6 0 0 1 6 6v340a6 6 0 0 1-6 6zm-42-92v24c0 6.627-5.373 12-12 12H204c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h200c6.627 0 12 5.373 12 12zm0-96v24c0 6.627-5.373 12-12 12H204c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h200c6.627 0 12 5.373 12 12zm0-96v24c0 6.627-5.373 12-12 12H204c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h200c6.627 0 12 5.373 12 12zm-252 12c0 19.882-16.118 36-36 36s-36-16.118-36-36 16.118-36 36-36 36 16.118 36 36zm0 96c0 19.882-16.118 36-36 36s-36-16.118-36-36 16.118-36 36-36 36 16.118 36 36zm0 96c0 19.882-16.118 36-36 36s-36-16.118-36-36 16.118-36 36-36 36 16.118 36 36z"/></svg>转载</a></span></div>
             <div class="post-meta-line"><svg class="icon"
     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M148 288h-40c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12zm108-12v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm-96 96v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm-96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm192 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm96-260v352c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h48V12c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h128V12c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h48c26.5 0 48 21.5 48 48zm-48 346V160H48v298c0 3.3 2.7 6 6 6h340c3.3 0 6-2.7 6-6z"/></svg>&nbsp;<time datetime="2021-05-06">2021-05-06</time>&nbsp;<svg class="icon"
-    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M402.3 344.9l32-32c5-5 13.7-1.5 13.7 5.7V464c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h273.5c7.1 0 10.7 8.6 5.7 13.7l-32 32c-1.5 1.5-3.5 2.3-5.7 2.3H48v352h352V350.5c0-2.1.8-4.1 2.3-5.6zm156.6-201.8L296.3 405.7l-90.4 10c-26.2 2.9-48.5-19.2-45.6-45.6l10-90.4L432.9 17.1c22.9-22.9 59.9-22.9 82.7 0l43.2 43.2c22.9 22.9 22.9 60 .1 82.8zM460.1 174L402 115.9 216.2 301.8l-7.3 65.3 65.3-7.3L460.1 174zm64.8-79.7l-43.2-43.2c-4.1-4.1-10.8-4.1-14.8 0L436 82l58.1 58.1 30.9-30.9c4-4.2 4-10.8-.1-14.9z"/></svg>&nbsp;<time datetime="2022-11-16">2022-11-16</time>&nbsp;<svg class="icon"
-    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;约 12401 字&nbsp;<svg class="icon"
-    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm0 448c-110.5 0-200-89.5-200-200S145.5 56 256 56s200 89.5 200 200-89.5 200-200 200zm61.8-104.4l-84.9-61.7c-3.1-2.3-4.9-5.9-4.9-9.7V116c0-6.6 5.4-12 12-12h32c6.6 0 12 5.4 12 12v141.7l66.8 48.6c5.4 3.9 6.5 11.4 2.6 16.8L334.6 349c-3.9 5.3-11.4 6.5-16.8 2.6z"/></svg>&nbsp;预计阅读 25 分钟&nbsp;</div>
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M402.3 344.9l32-32c5-5 13.7-1.5 13.7 5.7V464c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h273.5c7.1 0 10.7 8.6 5.7 13.7l-32 32c-1.5 1.5-3.5 2.3-5.7 2.3H48v352h352V350.5c0-2.1.8-4.1 2.3-5.6zm156.6-201.8L296.3 405.7l-90.4 10c-26.2 2.9-48.5-19.2-45.6-45.6l10-90.4L432.9 17.1c22.9-22.9 59.9-22.9 82.7 0l43.2 43.2c22.9 22.9 22.9 60 .1 82.8zM460.1 174L402 115.9 216.2 301.8l-7.3 65.3 65.3-7.3L460.1 174zm64.8-79.7l-43.2-43.2c-4.1-4.1-10.8-4.1-14.8 0L436 82l58.1 58.1 30.9-30.9c4-4.2 4-10.8-.1-14.9z"/></svg>&nbsp;<time datetime="2024-10-15">2024-10-15</time>&nbsp;<svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;约 12393 字&nbsp;
+                    <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm0 448c-110.5 0-200-89.5-200-200S145.5 56 256 56s200 89.5 200 200-89.5 200-200 200zm61.8-104.4l-84.9-61.7c-3.1-2.3-4.9-5.9-4.9-9.7V116c0-6.6 5.4-12 12-12h32c6.6 0 12 5.4 12 12v141.7l66.8 48.6c5.4 3.9 6.5 11.4 2.6 16.8L334.6 349c-3.9 5.3-11.4 6.5-16.8 2.6z"/></svg>&nbsp;预计阅读 55 分钟&nbsp;</div>
         </div><div class="details toc print:!tw-block" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
                     <span>目录</span>
@@ -412,22 +414,25 @@
       </ul>
     </li>
     <li><a href="#配置开启-gzip-压缩">配置开启 gzip 压缩</a></li>
-    <li><a href="#nginx-架构">Nginx 架构</a></li>
-    <li><a href="#进程结构">进程结构</a></li>
-    <li><a href="#配置文件重载原理">配置文件重载原理</a></li>
-    <li><a href="#nginx-模块化管理机制">Nginx 模块化管理机制</a></li>
+    <li><a href="#nginx-架构">Nginx 架构</a>
+      <ul>
+        <li><a href="#进程结构">进程结构</a></li>
+        <li><a href="#配置文件重载原理">配置文件重载原理</a></li>
+        <li><a href="#nginx-模块化管理机制">Nginx 模块化管理机制</a></li>
+      </ul>
+    </li>
     <li><a href="#参考">参考</a></li>
   </ul>
 </nav></div>
-            </div><div class="content" id="content"><!-- author： xiaobinqt -->
+            </div><div class="content" id="content" data-pagefind-body><!-- author： xiaobinqt -->
 <!-- email： xiaobinqt@163.com -->
 <!-- https://xiaobinqt.github.io -->
 <!-- https://www.xiaobinqt.cn -->
 <h2 id="nginx-概述" class="headerLink">
-    <a href="#nginx-%e6%a6%82%e8%bf%b0" class="header-mark" aria-label="Header mark for 'Nginx 概述'"></a>1 Nginx 概述</h2><p><code>Nginx</code>  是开源、高性能、高可靠的 <code>Web</code>  和反向代理服务器，而且支持热部署，几乎可以做到 <code>7 * 24</code> 小时不间断运行，即使运行几个月也不需要重新启动，还能在不间断服务的情况下对软件版本进行热更新。性能是 <code>Nginx</code>
+    <a href="#nginx-%e6%a6%82%e8%bf%b0" class="header-mark"></a>1 Nginx 概述</h2><p><code>Nginx</code>  是开源、高性能、高可靠的 <code>Web</code>  和反向代理服务器，而且支持热部署，几乎可以做到 <code>7 * 24</code> 小时不间断运行，即使运行几个月也不需要重新启动，还能在不间断服务的情况下对软件版本进行热更新。性能是 <code>Nginx</code>
 最重要的考量，其占用内存少、并发能力强、能支持高达 5w 个并发连接数，最重要的是， <code>Nginx</code>  是免费的并可以商业化，配置使用也比较简单。</p>
 <h2 id="nginx-特点" class="headerLink">
-    <a href="#nginx-%e7%89%b9%e7%82%b9" class="header-mark" aria-label="Header mark for 'Nginx 特点'"></a>2 Nginx 特点</h2><ul>
+    <a href="#nginx-%e7%89%b9%e7%82%b9" class="header-mark"></a>2 Nginx 特点</h2><ul>
 <li>高并发、高性能；</li>
 <li>模块化架构使得它的扩展性非常好；</li>
 <li>异步非阻塞的事件驱动模型这点和 <code>Node.js</code>  相似；</li>
@@ -436,7 +441,7 @@
 <li>完全开源，生态繁荣；</li>
 </ul>
 <h2 id="nginx-作用" class="headerLink">
-    <a href="#nginx-%e4%bd%9c%e7%94%a8" class="header-mark" aria-label="Header mark for 'Nginx 作用'"></a>3 Nginx 作用</h2><p>Nginx 的最重要的几个使用场景：</p>
+    <a href="#nginx-%e4%bd%9c%e7%94%a8" class="header-mark"></a>3 Nginx 作用</h2><p>Nginx 的最重要的几个使用场景：</p>
 <ol>
 <li>静态资源服务，通过本地文件系统提供服务；</li>
 <li>反向代理服务，延伸出包括缓存、负载均衡等；</li>
@@ -446,9 +451,9 @@
 也可以实现，但 <code>Nginx</code>  和 <code>Node.js</code>  并不冲突，都有自己擅长的领域。</p>
 <p><code>Nginx</code>  擅长于底层服务器端资源的处理（静态资源处理转发、反向代理，负载均衡等）， <code>Node.js</code> 更擅长上层具体业务逻辑的处理，两者可以完美组合。</p>
 <p>用一张图表示：</p>
-<p><img class="tw-inline" loading="lazy" src="/070a90dae22c4693858f367bc60934b2~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_1110328709105818636.png" srcset="/070a90dae22c4693858f367bc60934b2~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_1110328709105818636_hu5035632953315422335.webp 800w, /070a90dae22c4693858f367bc60934b2~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_1110328709105818636_hu5654037404334295686.webp 1200w, /070a90dae22c4693858f367bc60934b2~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_1110328709105818636_hu6420351497146331222.webp 1600w"  alt="未命名文件.png" height="438" width="1050"></p>
+<p><img class="tw-inline" loading="lazy" src=/172d1b5300c041d98582848e951d11ca_3920117329264495730.png srcset="/172d1b5300c041d98582848e951d11ca_3920117329264495730_hu16868441652279351363.webp 800w, /172d1b5300c041d98582848e951d11ca_3920117329264495730_hu17361447405141257666.webp 1200w, /172d1b5300c041d98582848e951d11ca_3920117329264495730_hu4302619709920012853.webp 1600w"   height="438" width="1050"></p>
 <h2 id="nginx-安装" class="headerLink">
-    <a href="#nginx-%e5%ae%89%e8%a3%85" class="header-mark" aria-label="Header mark for 'Nginx 安装'"></a>4 Nginx 安装</h2><p>本文演示的是 <code>Linux</code>  <code>centOS 7.x</code>  的操作系统上安装 <code>Nginx</code>  ，至于在其它操作系统上进行安装可以网上自行搜索，都非常简单的。</p>
+    <a href="#nginx-%e5%ae%89%e8%a3%85" class="header-mark"></a>4 Nginx 安装</h2><p>本文演示的是 <code>Linux</code>  <code>centOS 7.x</code>  的操作系统上安装 <code>Nginx</code>  ，至于在其它操作系统上进行安装可以网上自行搜索，都非常简单的。</p>
 <p>使用 <code>yum</code>  安装 <code>Nginx</code>  ：</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
@@ -674,7 +679,7 @@
 <li><code>/usr/share/nginx/html/</code>  静态文件都放在这个文件夹，也可以根据你自己的习惯放在其他地方；</li>
 </ol>
 <h2 id="nginx-常用命令" class="headerLink">
-    <a href="#nginx-%e5%b8%b8%e7%94%a8%e5%91%bd%e4%bb%a4" class="header-mark" aria-label="Header mark for 'Nginx 常用命令'"></a>5 Nginx 常用命令</h2><p><code>systemctl</code>  系统命令：</p>
+    <a href="#nginx-%e5%b8%b8%e7%94%a8%e5%91%bd%e4%bb%a4" class="header-mark"></a>5 Nginx 常用命令</h2><p><code>systemctl</code>  系统命令：</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
     code-block-title 
@@ -792,8 +797,7 @@
 </span></span><span class="line"><span class="cl"><span class="n">ps</span> <span class="o">-</span><span class="n">ef</span> <span class="o">|</span> <span class="n">grep</span> <span class="n">nginx</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1"># 杀死Nginx进程</span>
-</span></span><span class="line"><span class="cl"><span class="n">kill</span> <span class="o">-</span><span class="mi">9</span> <span class="n">pid</span> <span class="c1"># 根据上面查看到的Nginx进程号，杀死Nginx进程，-9 表示强制结束进程</span>
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl"><span class="n">kill</span> <span class="o">-</span><span class="mi">9</span> <span class="n">pid</span> <span class="c1"># 根据上面查看到的Nginx进程号，杀死Nginx进程，-9 表示强制结束进程</span></span></span></code></pre>
 </div>
 <p><code>Nginx</code>  应用程序命令：</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
@@ -895,12 +899,11 @@
 </span></span><span class="line"><span class="cl"><span class="n">nginx</span> <span class="o">-</span><span class="n">s</span> <span class="n">stop</span>    <span class="c1"># 快速关闭</span>
 </span></span><span class="line"><span class="cl"><span class="n">nginx</span> <span class="o">-</span><span class="n">s</span> <span class="n">quit</span>    <span class="c1"># 等待工作进程处理完成后关闭</span>
 </span></span><span class="line"><span class="cl"><span class="n">nginx</span> <span class="o">-</span><span class="n">T</span>         <span class="c1"># 查看当前 Nginx 最终的配置</span>
-</span></span><span class="line"><span class="cl"><span class="n">nginx</span> <span class="o">-</span><span class="n">t</span>         <span class="c1"># 检查配置是否有问题</span>
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl"><span class="n">nginx</span> <span class="o">-</span><span class="n">t</span>         <span class="c1"># 检查配置是否有问题</span></span></span></code></pre>
 </div>
 <h2 id="nginx-核心配置" class="headerLink">
-    <a href="#nginx-%e6%a0%b8%e5%bf%83%e9%85%8d%e7%bd%ae" class="header-mark" aria-label="Header mark for 'Nginx 核心配置'"></a>6 Nginx 核心配置</h2><h3 id="配置文件结构" class="headerLink">
-    <a href="#%e9%85%8d%e7%bd%ae%e6%96%87%e4%bb%b6%e7%bb%93%e6%9e%84" class="header-mark" aria-label="Header mark for '配置文件结构'"></a>6.1 配置文件结构</h3><p><code>Nginx</code>  的典型配置示例：</p>
+    <a href="#nginx-%e6%a0%b8%e5%bf%83%e9%85%8d%e7%bd%ae" class="header-mark"></a>6 Nginx 核心配置</h2><h3 id="配置文件结构" class="headerLink">
+    <a href="#%e9%85%8d%e7%bd%ae%e6%96%87%e4%bb%b6%e7%bb%93%e6%9e%84" class="header-mark"></a>6.1 配置文件结构</h3><p><code>Nginx</code> 的典型配置示例：</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
     code-block-title 
@@ -1009,7 +1012,7 @@
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1"># http段配置信息</span>
 </span></span><span class="line"><span class="cl"><span class="c1"># 配置使用最频繁的部分，代理、缓存、日志定义等绝大多数功能和第三方模块的配置都在这里设置</span>
-</span></span><span class="line"><span class="cl"><span class="n">http</span> <span class="p">{</span> 
+</span></span><span class="line"><span class="cl"><span class="n">http</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">    <span class="c1"># 设置日志模式</span>
 </span></span><span class="line"><span class="cl">    <span class="n">log_format</span>  <span class="n">main</span>  <span class="s1">&#39;$remote_addr - $remote_user [$time_local] &#34;$request&#34; &#39;</span>
 </span></span><span class="line"><span class="cl">                      <span class="s1">&#39;$status $body_bytes_sent &#34;$http_referer&#34; &#39;</span>
@@ -1027,12 +1030,12 @@
 </span></span><span class="line"><span class="cl">    <span class="n">default_type</span>        <span class="n">application</span><span class="o">/</span><span class="n">octet</span><span class="o">-</span><span class="n">stream</span><span class="p">;</span>   <span class="c1"># 默认文件类型</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="n">include</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">conf</span><span class="o">.</span><span class="n">d</span><span class="o">/*.</span><span class="n">conf</span><span class="p">;</span>   <span class="c1"># 加载子配置项</span>
-</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="c1"># server段配置信息</span>
 </span></span><span class="line"><span class="cl">    <span class="n">server</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">    <span class="n">listen</span>       <span class="mi">80</span><span class="p">;</span>       <span class="c1"># 配置监听的端口</span>
 </span></span><span class="line"><span class="cl">    <span class="n">server_name</span>  <span class="n">localhost</span><span class="p">;</span>    <span class="c1"># 配置的域名</span>
-</span></span><span class="line"><span class="cl">      
+</span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="c1"># location段配置信息</span>
 </span></span><span class="line"><span class="cl">    <span class="n">location</span> <span class="o">/</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">    <span class="n">root</span>   <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">html</span><span class="p">;</span>  <span class="c1"># 网站根目录</span>
@@ -1040,7 +1043,7 @@
 </span></span><span class="line"><span class="cl">    <span class="n">deny</span> <span class="mf">172.168</span><span class="o">.</span><span class="mf">22.11</span><span class="p">;</span>   <span class="c1"># 禁止访问的ip地址，可以为all</span>
 </span></span><span class="line"><span class="cl">    <span class="n">allow</span> <span class="mf">172.168</span><span class="o">.</span><span class="mf">33.44</span><span class="err">；</span><span class="c1"># 允许访问的ip地址，可以为all</span>
 </span></span><span class="line"><span class="cl">    <span class="p">}</span>
-</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="n">error_page</span> <span class="mi">500</span> <span class="mi">502</span> <span class="mi">503</span> <span class="mi">504</span> <span class="o">/</span><span class="mi">50</span><span class="n">x</span><span class="o">.</span><span class="n">html</span><span class="p">;</span>  <span class="c1"># 默认50x对应的访问页面</span>
 </span></span><span class="line"><span class="cl">    <span class="n">error_page</span> <span class="mi">400</span> <span class="mi">404</span> <span class="n">error</span><span class="o">.</span><span class="n">html</span><span class="p">;</span>   <span class="c1"># 同上</span>
 </span></span><span class="line"><span class="cl">    <span class="p">}</span>
@@ -1055,10 +1058,10 @@
 <li><code>upstream</code>  配置后端服务器具体地址，负载均衡配置不可或缺的部分；</li>
 </ul>
 <p>用一张图清晰的展示它的层级结构：</p>
-<p><img class="tw-inline" loading="lazy" src="/87fffe0360aa4f34adb6258a955aad38~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_13614357396364304616.png" srcset="/87fffe0360aa4f34adb6258a955aad38~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_13614357396364304616_hu1603649959048318253.webp 800w, /87fffe0360aa4f34adb6258a955aad38~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_13614357396364304616_hu16472674863857027580.webp 1200w, /87fffe0360aa4f34adb6258a955aad38~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_13614357396364304616_hu3901228975493794868.webp 1600w"  alt="未命名文件 (4).png" height="409" width="176"></p>
+<p><img class="tw-inline" loading="lazy" src=/9a4425c620d74524813d87eae8886b67_10077157047743416578.png srcset="/9a4425c620d74524813d87eae8886b67_10077157047743416578_hu17166672506912681761.webp 800w, /9a4425c620d74524813d87eae8886b67_10077157047743416578_hu3312226319686745642.webp 1200w, /9a4425c620d74524813d87eae8886b67_10077157047743416578_hu17029079161189267131.webp 1600w"   height="409" width="176"></p>
 <h3 id="配置文件-main-段核心参数" class="headerLink">
-    <a href="#%e9%85%8d%e7%bd%ae%e6%96%87%e4%bb%b6-main-%e6%ae%b5%e6%a0%b8%e5%bf%83%e5%8f%82%e6%95%b0" class="header-mark" aria-label="Header mark for '配置文件 main 段核心参数'"></a>6.2 配置文件 main 段核心参数</h3><h4 id="user" class="headerLink">
-    <a href="#user" class="header-mark" aria-label="Header mark for 'user'"></a>6.2.1 user</h4><p>指定运行 <code>Nginx</code>  的 <code>woker</code>  子进程的属主和属组，其中组可以不指定。</p>
+    <a href="#%e9%85%8d%e7%bd%ae%e6%96%87%e4%bb%b6-main-%e6%ae%b5%e6%a0%b8%e5%bf%83%e5%8f%82%e6%95%b0" class="header-mark"></a>6.2 配置文件 main 段核心参数</h3><h4 id="user" class="headerLink">
+    <a href="#user" class="header-mark"></a>6.2.1 user</h4><p>指定运行 <code>Nginx</code>  的 <code>woker</code>  子进程的属主和属组，其中组可以不指定。</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
     code-block-title 
@@ -1155,11 +1158,10 @@
       tw-scrollbar-thin
       "><span class="line"><span class="cl">user USERNAME [GROUP]
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">user nginx lion; # 用户是nginx;组是lion
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl">user nginx lion; # 用户是nginx;组是lion</span></span></code></pre>
 </div>
 <h4 id="pid" class="headerLink">
-    <a href="#pid" class="header-mark" aria-label="Header mark for 'pid'"></a>6.2.2 pid</h4><p>指定运行 <code>Nginx</code> <code>master</code>  主进程的 <code>pid</code>  文件存放路径。</p>
+    <a href="#pid" class="header-mark"></a>6.2.2 pid</h4><p>指定运行 <code>Nginx</code> <code>master</code>  主进程的 <code>pid</code>  文件存放路径。</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
     code-block-title 
@@ -1254,11 +1256,10 @@
       tw-overflow-y-hidden
       tw-overflow-x-auto
       tw-scrollbar-thin
-      "><span class="line"><span class="cl">pid /opt/nginx/logs/nginx.pid # master主进程的的pid存放在nginx.pid的文件
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+      "><span class="line"><span class="cl">pid /opt/nginx/logs/nginx.pid # master主进程的的pid存放在nginx.pid的文件</span></span></code></pre>
 </div>
 <h4 id="worker_rlimit_nofile_number" class="headerLink">
-    <a href="#worker_rlimit_nofile_number" class="header-mark" aria-label="Header mark for 'worker_rlimit_nofile_number'"></a>6.2.3 worker_rlimit_nofile_number</h4><p>指定 <code>worker</code>  子进程可以打开的最大文件句柄数。</p>
+    <a href="#worker_rlimit_nofile_number" class="header-mark"></a>6.2.3 worker_rlimit_nofile_number</h4><p>指定 <code>worker</code>  子进程可以打开的最大文件句柄数。</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
     code-block-title 
@@ -1353,11 +1354,10 @@
       tw-overflow-y-hidden
       tw-overflow-x-auto
       tw-scrollbar-thin
-      "><span class="line"><span class="cl">worker_rlimit_nofile 20480; # 可以理解成每个worker子进程的最大连接数量。
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+      "><span class="line"><span class="cl">worker_rlimit_nofile 20480; # 可以理解成每个worker子进程的最大连接数量。</span></span></code></pre>
 </div>
 <h4 id="worker_rlimit_core" class="headerLink">
-    <a href="#worker_rlimit_core" class="header-mark" aria-label="Header mark for 'worker_rlimit_core'"></a>6.2.4 worker_rlimit_core</h4><p>指定 <code>worker</code>  子进程异常终止后的 <code>core</code>  文件，用于记录分析问题。</p>
+    <a href="#worker_rlimit_core" class="header-mark"></a>6.2.4 worker_rlimit_core</h4><p>指定 <code>worker</code>  子进程异常终止后的 <code>core</code>  文件，用于记录分析问题。</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
     code-block-title 
@@ -1453,11 +1453,10 @@
       tw-overflow-x-auto
       tw-scrollbar-thin
       "><span class="line"><span class="cl">worker_rlimit_core 50M; # 存放大小限制
-</span></span><span class="line"><span class="cl">working_directory /opt/nginx/tmp; # 存放目录
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl">working_directory /opt/nginx/tmp; # 存放目录</span></span></code></pre>
 </div>
 <h4 id="worker_processes_number" class="headerLink">
-    <a href="#worker_processes_number" class="header-mark" aria-label="Header mark for 'worker_processes_number'"></a>6.2.5 worker_processes_number</h4><p>指定 <code>Nginx</code>  启动的 <code>worker</code>  子进程数量。</p>
+    <a href="#worker_processes_number" class="header-mark"></a>6.2.5 worker_processes_number</h4><p>指定 <code>Nginx</code>  启动的 <code>worker</code>  子进程数量。</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
     code-block-title 
@@ -1553,11 +1552,10 @@
       tw-overflow-x-auto
       tw-scrollbar-thin
       "><span class="line"><span class="cl">worker_processes 4; # 指定具体子进程数量
-</span></span><span class="line"><span class="cl">worker_processes auto; # 与当前cpu物理核心数一致
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl">worker_processes auto; # 与当前cpu物理核心数一致</span></span></code></pre>
 </div>
 <h4 id="worker_cpu_affinity" class="headerLink">
-    <a href="#worker_cpu_affinity" class="header-mark" aria-label="Header mark for 'worker_cpu_affinity'"></a>6.2.6 worker_cpu_affinity</h4><p>将每个 <code>worker</code>  子进程与我们的 <code>cpu</code>  物理核心绑定。</p>
+    <a href="#worker_cpu_affinity" class="header-mark"></a>6.2.6 worker_cpu_affinity</h4><p>将每个 <code>worker</code>  子进程与我们的 <code>cpu</code>  物理核心绑定。</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
     code-block-title 
@@ -1652,13 +1650,12 @@
       tw-overflow-y-hidden
       tw-overflow-x-auto
       tw-scrollbar-thin
-      "><span class="line"><span class="cl">worker_cpu_affinity 0001 0010 0100 1000; # 4个物理核心，4个worker子进程
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+      "><span class="line"><span class="cl">worker_cpu_affinity 0001 0010 0100 1000; # 4个物理核心，4个worker子进程</span></span></code></pre>
 </div>
-<p><img class="tw-inline" loading="lazy" src="/e3c23de61deb4c6391fe70e561f18aa3~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_5126969682193251215.png" srcset="/e3c23de61deb4c6391fe70e561f18aa3~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_5126969682193251215_hu6720598750734449538.webp 800w, /e3c23de61deb4c6391fe70e561f18aa3~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_5126969682193251215_hu14394581271255211700.webp 1200w, /e3c23de61deb4c6391fe70e561f18aa3~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_5126969682193251215_hu8818931938604877408.webp 1600w"  alt="未命名文件 (1).png" height="451" width="614"></p>
+<p><img class="tw-inline" loading="lazy" src=/22fefd50c9c642bbbcc7aeb333533221_7022112373197307778.png srcset="/22fefd50c9c642bbbcc7aeb333533221_7022112373197307778_hu14847237223546598754.webp 800w, /22fefd50c9c642bbbcc7aeb333533221_7022112373197307778_hu4615372950699136625.webp 1200w, /22fefd50c9c642bbbcc7aeb333533221_7022112373197307778_hu5648028856823157892.webp 1600w"   height="451" width="614"></p>
 <p>将每个 <code>worker</code>  子进程与特定 <code>CPU</code>  物理核心绑定，优势在于，避免同一个 <code>worker</code>  子进程在不同的 <code>CPU</code>  核心上切换，缓存失效，降低性能。但其并不能真正的避免进程切换。</p>
 <h4 id="worker_priority" class="headerLink">
-    <a href="#worker_priority" class="header-mark" aria-label="Header mark for 'worker_priority'"></a>6.2.7 worker_priority</h4><p>指定 <code>worker</code>  子进程的 <code>nice</code>  值，以调整运行 <code>Nginx</code>  的优先级，通常设定为负值，以优先调用 <code>Nginx</code>  。</p>
+    <a href="#worker_priority" class="header-mark"></a>6.2.7 worker_priority</h4><p>指定 <code>worker</code>  子进程的 <code>nice</code>  值，以调整运行 <code>Nginx</code>  的优先级，通常设定为负值，以优先调用 <code>Nginx</code>  。</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
     code-block-title 
@@ -1753,13 +1750,12 @@
       tw-overflow-y-hidden
       tw-overflow-x-auto
       tw-scrollbar-thin
-      "><span class="line"><span class="cl">worker_priority -10; # 120-10=110，110就是最终的优先级
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+      "><span class="line"><span class="cl">worker_priority -10; # 120-10=110，110就是最终的优先级</span></span></code></pre>
 </div>
 <p><code>Linux</code>  默认进程的优先级值是120，值越小越优先； <code>nice</code>   定范围为 <code>-20</code>  到 <code>+19</code>  。</p>
-\[备注\]<p> 应用的默认优先级值是120加上 <code>nice</code>  值等于它最终的值，这个值越小，优先级越高。</p>
+<p>[备注] 应用的默认优先级值是120加上 <code>nice</code>  值等于它最终的值，这个值越小，优先级越高。</p>
 <h4 id="worker_shutdown_timeout" class="headerLink">
-    <a href="#worker_shutdown_timeout" class="header-mark" aria-label="Header mark for 'worker_shutdown_timeout'"></a>6.2.8 worker_shutdown_timeout</h4><p>指定 <code>worker</code>  子进程优雅退出时的超时时间。</p>
+    <a href="#worker_shutdown_timeout" class="header-mark"></a>6.2.8 worker_shutdown_timeout</h4><p>指定 <code>worker</code>  子进程优雅退出时的超时时间。</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
     code-block-title 
@@ -1854,11 +1850,10 @@
       tw-overflow-y-hidden
       tw-overflow-x-auto
       tw-scrollbar-thin
-      "><span class="line"><span class="cl">worker_shutdown_timeout 5s;
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+      "><span class="line"><span class="cl">worker_shutdown_timeout 5s;</span></span></code></pre>
 </div>
 <h4 id="timer_resolution" class="headerLink">
-    <a href="#timer_resolution" class="header-mark" aria-label="Header mark for 'timer_resolution'"></a>6.2.9 timer_resolution</h4><p><code>worker</code>  子进程内部使用的计时器精度，调整时间间隔越大，系统调用越少，有利于性能提升；反之，系统调用越多，性能下降。</p>
+    <a href="#timer_resolution" class="header-mark"></a>6.2.9 timer_resolution</h4><p><code>worker</code>  子进程内部使用的计时器精度，调整时间间隔越大，系统调用越少，有利于性能提升；反之，系统调用越多，性能下降。</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
     code-block-title 
@@ -1953,12 +1948,11 @@
       tw-overflow-y-hidden
       tw-overflow-x-auto
       tw-scrollbar-thin
-      "><span class="line"><span class="cl">timer_resolution 100ms;
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+      "><span class="line"><span class="cl">timer_resolution 100ms;</span></span></code></pre>
 </div>
 <p>在 <code>Linux</code>  系统中，用户需要获取计时器时需要向操作系统内核发送请求，有请求就必然会有开销，因此这个间隔越大开销就越小。</p>
 <h4 id="daemon" class="headerLink">
-    <a href="#daemon" class="header-mark" aria-label="Header mark for 'daemon'"></a>6.2.10 daemon</h4><p>指定 <code>Nginx</code>  的运行方式，前台还是后台，前台用于调试，后台用于生产。</p>
+    <a href="#daemon" class="header-mark"></a>6.2.10 daemon</h4><p>指定 <code>Nginx</code>  的运行方式，前台还是后台，前台用于调试，后台用于生产。</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
     code-block-title 
@@ -2053,12 +2047,11 @@
       tw-overflow-y-hidden
       tw-overflow-x-auto
       tw-scrollbar-thin
-      "><span class="line"><span class="cl">daemon off; # 默认是on，后台运行模式
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+      "><span class="line"><span class="cl">daemon off; # 默认是on，后台运行模式</span></span></code></pre>
 </div>
 <h3 id="配置文件-events-段核心参数" class="headerLink">
-    <a href="#%e9%85%8d%e7%bd%ae%e6%96%87%e4%bb%b6-events-%e6%ae%b5%e6%a0%b8%e5%bf%83%e5%8f%82%e6%95%b0" class="header-mark" aria-label="Header mark for '配置文件 events 段核心参数'"></a>6.3 配置文件 events 段核心参数</h3><h4 id="use" class="headerLink">
-    <a href="#use" class="header-mark" aria-label="Header mark for 'use'"></a>6.3.1 use</h4><p><code>Nginx</code>  使用何种事件驱动模型。</p>
+    <a href="#%e9%85%8d%e7%bd%ae%e6%96%87%e4%bb%b6-events-%e6%ae%b5%e6%a0%b8%e5%bf%83%e5%8f%82%e6%95%b0" class="header-mark"></a>6.3 配置文件 events 段核心参数</h3><h4 id="use" class="headerLink">
+    <a href="#use" class="header-mark"></a>6.3.1 use</h4><p><code>Nginx</code>  使用何种事件驱动模型。</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
     code-block-title 
@@ -2155,11 +2148,10 @@
       tw-scrollbar-thin
       "><span class="line"><span class="cl">use method; # 不推荐配置它，让nginx自己选择
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">method 可选值为：select、poll、kqueue、epoll、/dev/poll、eventport
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl">method 可选值为：select、poll、kqueue、epoll、/dev/poll、eventport</span></span></code></pre>
 </div>
 <h4 id="worker_connections" class="headerLink">
-    <a href="#worker_connections" class="header-mark" aria-label="Header mark for 'worker_connections'"></a>6.3.2 worker_connections</h4><p><code>worker</code> 子进程能够处理的最大并发连接数。</p>
+    <a href="#worker_connections" class="header-mark"></a>6.3.2 worker_connections</h4><p><code>worker</code> 子进程能够处理的最大并发连接数。</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
     code-block-title 
@@ -2254,11 +2246,10 @@
       tw-overflow-y-hidden
       tw-overflow-x-auto
       tw-scrollbar-thin
-      "><span class="line"><span class="cl">worker_connections 1024 # 每个子进程的最大连接数为1024
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+      "><span class="line"><span class="cl">worker_connections 1024 # 每个子进程的最大连接数为1024</span></span></code></pre>
 </div>
 <h4 id="accept_mutex" class="headerLink">
-    <a href="#accept_mutex" class="header-mark" aria-label="Header mark for 'accept_mutex'"></a>6.3.3 accept_mutex</h4><p>是否打开负载均衡互斥锁。</p>
+    <a href="#accept_mutex" class="header-mark"></a>6.3.3 accept_mutex</h4><p>是否打开负载均衡互斥锁。</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
     code-block-title 
@@ -2353,11 +2344,10 @@
       tw-overflow-y-hidden
       tw-overflow-x-auto
       tw-scrollbar-thin
-      "><span class="line"><span class="cl">accept_mutex on # 默认是off关闭的，这里推荐打开
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+      "><span class="line"><span class="cl">accept_mutex on # 默认是off关闭的，这里推荐打开</span></span></code></pre>
 </div>
 <h3 id="server_name-指令" class="headerLink">
-    <a href="#server_name-%e6%8c%87%e4%bb%a4" class="header-mark" aria-label="Header mark for 'server_name 指令'"></a>6.4 server_name 指令</h3><p>指定虚拟主机域名。</p>
+    <a href="#server_name-%e6%8c%87%e4%bb%a4" class="header-mark"></a>6.4 server_name 指令</h3><p>指定虚拟主机域名。</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
     code-block-title 
@@ -2455,8 +2445,7 @@
       "><span class="line"><span class="cl">server_name name1 name2 name3
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"># 示例：
-</span></span><span class="line"><span class="cl">server_name www.nginx.com;
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl">server_name www.nginx.com;</span></span></code></pre>
 </div>
 <p>域名匹配的四种写法：</p>
 <ul>
@@ -2568,10 +2557,9 @@
 </span></span><span class="line"><span class="cl">121.42.11.34 www.nginx-test.org
 </span></span><span class="line"><span class="cl">121.42.11.34 doc.nginx-test.com
 </span></span><span class="line"><span class="cl">121.42.11.34 www.nginx-test.cn
-</span></span><span class="line"><span class="cl">121.42.11.34 fe.nginx-test.club
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl">121.42.11.34 fe.nginx-test.club</span></span></code></pre>
 </div>
-\[注意\]<p> 这里使用的是虚拟域名进行测试，因此需要配置本地 <code>DNS</code>  解析，如果使用阿里云上购买的域名，则需要在阿里云上设置好域名解析。</p>
+<p>[注意] 这里使用的是虚拟域名进行测试，因此需要配置本地 <code>DNS</code>  解析，如果使用阿里云上购买的域名，则需要在阿里云上设置好域名解析。</p>
 <p>2、配置阿里云 <code>Nginx</code>  ，<code>vim /etc/nginx/nginx.conf</code></p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
@@ -2707,8 +2695,7 @@
 </span></span><span class="line"><span class="cl">location / {
 </span></span><span class="line"><span class="cl">index index.html;
 </span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl">}</span></span></code></pre>
 </div>
 <p>3、访问分析</p>
 <ul>
@@ -2720,7 +2707,7 @@
 <li>当访问 <code>fe.nginx-test.club</code>  时，会进行“正则匹配”；</li>
 </ul>
 <h3 id="root" class="headerLink">
-    <a href="#root" class="header-mark" aria-label="Header mark for 'root'"></a>6.5 root</h3><p>指定静态资源目录位置，它可以写在 <code>http</code>  、 <code>server</code>  、 <code>location</code>  等配置中。</p>
+    <a href="#root" class="header-mark"></a>6.5 root</h3><p>指定静态资源目录位置，它可以写在 <code>http</code>  、 <code>server</code>  、 <code>location</code>  等配置中。</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
     code-block-title 
@@ -2822,12 +2809,11 @@
 </span></span><span class="line"><span class="cl">root /opt/nginx/static;
 </span></span><span class="line"><span class="cl">}
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">当用户访问 www.test.com/image/1.png 时，实际在服务器找的路径是 /opt/nginx/static/image/1.png
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl">当用户访问 www.test.com/image/1.png 时，实际在服务器找的路径是 /opt/nginx/static/image/1.png</span></span></code></pre>
 </div>
-\[注意\]<p> <code>root</code>  会将定义路径与 <code>URI</code>  叠加， <code>alias</code>  则只取定义路径。</p>
+<p>[注意] <code>root</code>  会将定义路径与 <code>URI</code>  叠加， <code>alias</code>  则只取定义路径。</p>
 <h3 id="alias" class="headerLink">
-    <a href="#alias" class="header-mark" aria-label="Header mark for 'alias'"></a>6.6 alias</h3><p>它也是指定静态资源目录位置，它只能写在 <code>location</code>  中。</p>
+    <a href="#alias" class="header-mark"></a>6.6 alias</h3><p>它也是指定静态资源目录位置，它只能写在 <code>location</code>  中。</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
     code-block-title 
@@ -2926,12 +2912,11 @@
 </span></span><span class="line"><span class="cl">alias /opt/nginx/static/image/;
 </span></span><span class="line"><span class="cl">}
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">当用户访问 www.test.com/image/1.png 时，实际在服务器找的路径是 /opt/nginx/static/image/1.png
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl">当用户访问 www.test.com/image/1.png 时，实际在服务器找的路径是 /opt/nginx/static/image/1.png</span></span></code></pre>
 </div>
-\[注意\]<p> 使用 alias 末尾一定要添加 <code>/</code>  ，并且它只能位于 <code>location</code>  中。</p>
+<p>[注意] 使用 alias 末尾一定要添加 <code>/</code>  ，并且它只能位于 <code>location</code>  中。</p>
 <h3 id="location" class="headerLink">
-    <a href="#location" class="header-mark" aria-label="Header mark for 'location'"></a>6.7 location</h3><p>配置路径。</p>
+    <a href="#location" class="header-mark"></a>6.7 location</h3><p>配置路径。</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
     code-block-title 
@@ -3028,8 +3013,7 @@
       tw-scrollbar-thin
       "><span class="line"><span class="cl">location [ = | ~ | ~* | ^~ ] uri {
 </span></span><span class="line"><span class="cl">...
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl">}</span></span></code></pre>
 </div>
 <p>匹配规则：</p>
 <ul>
@@ -3137,28 +3121,27 @@
       "><span class="line"><span class="cl">server {
 </span></span><span class="line"><span class="cl">  listen80;
 </span></span><span class="line"><span class="cl">  server_namewww.nginx-test.com;
-</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">  # 只有当访问 www.nginx-test.com/match_all/ 时才会匹配到/usr/share/nginx/html/match_all/index.html
 </span></span><span class="line"><span class="cl">  location = /match_all/ {
 </span></span><span class="line"><span class="cl">      root/usr/share/nginx/html
 </span></span><span class="line"><span class="cl">      index index.html
 </span></span><span class="line"><span class="cl">  }
-</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">  # 当访问 www.nginx-test.com/1.jpg 等路径时会去 /usr/share/nginx/images/1.jpg 找对应的资源
 </span></span><span class="line"><span class="cl">  location ~ \.(jpeg|jpg|png|svg)$ {
 </span></span><span class="line"><span class="cl">  root /usr/share/nginx/images;
 </span></span><span class="line"><span class="cl">  }
-</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">  # 当访问 www.nginx-test.com/bbs/ 时会匹配上 /usr/share/nginx/html/bbs/index.html
 </span></span><span class="line"><span class="cl">  location ^~ /bbs/ {
 </span></span><span class="line"><span class="cl">  root /usr/share/nginx/html;
 </span></span><span class="line"><span class="cl">    index index.html index.htm;
 </span></span><span class="line"><span class="cl">  }
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl">}</span></span></code></pre>
 </div>
 <h4 id="location-中的反斜线" class="headerLink">
-    <a href="#location-%e4%b8%ad%e7%9a%84%e5%8f%8d%e6%96%9c%e7%ba%bf" class="header-mark" aria-label="Header mark for 'location 中的反斜线'"></a>6.7.1 location 中的反斜线</h4><div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
+    <a href="#location-%e4%b8%ad%e7%9a%84%e5%8f%8d%e6%96%9c%e7%ba%bf" class="header-mark"></a>6.7.1 location 中的反斜线</h4><div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
     code-block-title 
     
@@ -3258,8 +3241,7 @@
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">location /test/ {
 </span></span><span class="line"><span class="cl">...
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl">}</span></span></code></pre>
 </div>
 <ul>
 <li>不带 <code>/</code>  当访问 <code>www.nginx-test.com/test</code>  时， <code>Nginx</code>  先找是否有 <code>test</code>  目录，如果有则找 <code>test</code>  目录下的 <code>index.html</code>  ；如果没有 <code>test</code>
@@ -3268,7 +3250,7 @@
 ，如果没有它也不会去找是否存在 <code>test</code>  文件。</li>
 </ul>
 <h4 id="return" class="headerLink">
-    <a href="#return" class="header-mark" aria-label="Header mark for 'return'"></a>6.7.2 return</h4><p>停止处理请求，直接返回响应码或重定向到其他 <code>URL</code>  ；执行 <code>return</code>  指令后， <code>location</code>  中后续指令将不会被执行。</p>
+    <a href="#return" class="header-mark"></a>6.7.2 return</h4><p>停止处理请求，直接返回响应码或重定向到其他 <code>URL</code>  ；执行 <code>return</code>  指令后， <code>location</code>  中后续指令将不会被执行。</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
     code-block-title 
@@ -3382,11 +3364,10 @@
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">location / {
 </span></span><span class="line"><span class="cl">return https://www.baidu.com ; # 返回重定向地址
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl">}</span></span></code></pre>
 </div>
 <h3 id="rewrite" class="headerLink">
-    <a href="#rewrite" class="header-mark" aria-label="Header mark for 'rewrite'"></a>6.8 rewrite</h3><p>根据指定正则表达式匹配规则，重写 <code>URL</code>  。</p>
+    <a href="#rewrite" class="header-mark"></a>6.8 rewrite</h3><p>根据指定正则表达式匹配规则，重写 <code>URL</code>  。</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
     code-block-title 
@@ -3485,8 +3466,7 @@
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">上下文：server、location、if
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">示例：rewirte /images/(.*\.jpg)$ /pic/$1; # $1是前面括号(.*\.jpg)的反向引用
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl">示例：rewirte /images/(.*\.jpg)$ /pic/$1; # $1是前面括号(.*\.jpg)的反向引用</span></span></code></pre>
 </div>
 <p><code>flag</code>  可选值的含义：</p>
 <ul>
@@ -3596,20 +3576,19 @@
 </span></span><span class="line"><span class="cl">  location /search {
 </span></span><span class="line"><span class="cl">  rewrite ^/(.*) https://www.baidu.com redirect;
 </span></span><span class="line"><span class="cl">  }
-</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">  location /images {
 </span></span><span class="line"><span class="cl">  rewrite /images/(.*) /pics/$1;
 </span></span><span class="line"><span class="cl">  }
-</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">  location /pics {
 </span></span><span class="line"><span class="cl">  rewrite /pics/(.*) /photos/$1;
 </span></span><span class="line"><span class="cl">  }
-</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">  location /photos {
-</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">  }
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl">}</span></span></code></pre>
 </div>
 <p>按照这个配置我们来分析：</p>
 <ul>
@@ -3618,7 +3597,7 @@
 为 <code>fe.lion.club/photos/1.jpg</code>  ，找到 <code>/photos</code>  的 <code>location</code>  后，去 <code>html/photos</code>  目录下寻找 <code>1.jpg</code>  静态资源。</li>
 </ul>
 <h3 id="if-指令" class="headerLink">
-    <a href="#if-%e6%8c%87%e4%bb%a4" class="header-mark" aria-label="Header mark for 'if 指令'"></a>6.9 if 指令</h3><div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
+    <a href="#if-%e6%8c%87%e4%bb%a4" class="header-mark"></a>6.9 if 指令</h3><div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
     code-block-title 
     
@@ -3719,8 +3698,7 @@
 </span></span><span class="line"><span class="cl">示例：
 </span></span><span class="line"><span class="cl">if($http_user_agent ~ Chrome){
 </span></span><span class="line"><span class="cl">  rewrite /(.*)/browser/$1 break;
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl">}</span></span></code></pre>
 </div>
 <p><code>condition</code>  判断条件：</p>
 <ul>
@@ -3833,18 +3811,17 @@
 </span></span><span class="line"><span class="cl">  listen 8080;
 </span></span><span class="line"><span class="cl">  server_name localhost;
 </span></span><span class="line"><span class="cl">  root html;
-</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">  location / {
 </span></span><span class="line"><span class="cl">  if ( $uri = &#34;/images/&#34; ){
 </span></span><span class="line"><span class="cl">    rewrite (.*) /pics/ break;
 </span></span><span class="line"><span class="cl">    }
 </span></span><span class="line"><span class="cl">  }
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl">}</span></span></code></pre>
 </div>
 <p>当访问 <code>localhost:8080/images/</code>  时，会进入 <code>if</code>  判断里面执行 <code>rewrite</code>  命令。</p>
 <h3 id="autoindex" class="headerLink">
-    <a href="#autoindex" class="header-mark" aria-label="Header mark for 'autoindex'"></a>6.10 autoindex</h3><p>用户请求以 <code>/</code>  结尾时，列出目录结构，可以用于快速搭建静态资源下载网站。</p>
+    <a href="#autoindex" class="header-mark"></a>6.10 autoindex</h3><p>用户请求以 <code>/</code>  结尾时，列出目录结构，可以用于快速搭建静态资源下载网站。</p>
 <p><code>autoindex.conf</code>  配置信息：</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
@@ -3943,141 +3920,143 @@
       "><span class="line"><span class="cl"><span class="n">server</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">  <span class="n">listen</span> <span class="mi">80</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">  <span class="n">server_name</span> <span class="n">fe</span><span class="o">.</span><span class="n">lion</span><span class="o">-</span><span class="n">test</span><span class="o">.</span><span class="n">club</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">  <span class="n">location</span> <span class="o">/</span><span class="n">download</span><span class="o">/</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">    <span class="n">root</span> <span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">source</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="n">autoindex</span> <span class="n">on</span><span class="p">;</span> <span class="c1"># 打开 autoindex，，可选参数有 on | off</span>
 </span></span><span class="line"><span class="cl">    <span class="n">autoindex_exact_size</span> <span class="n">on</span><span class="p">;</span> <span class="c1"># 修改为off，以KB、MB、GB显示文件大小，默认为on，以bytes显示出⽂件的确切⼤⼩</span>
 </span></span><span class="line"><span class="cl">    <span class="n">autoindex_format</span> <span class="n">html</span><span class="p">;</span> <span class="c1"># 以html的方式进行格式化，可选参数有 html | json | xml</span>
 </span></span><span class="line"><span class="cl">    <span class="n">autoindex_localtime</span> <span class="n">off</span><span class="p">;</span> <span class="c1"># 显示的⽂件时间为⽂件的服务器时间。默认为off，显示的⽂件时间为GMT时间</span>
 </span></span><span class="line"><span class="cl">  <span class="p">}</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl"><span class="p">}</span></span></span></code></pre>
 </div>
 <p>当访问 <code>fe.lion.com/download/</code>  时，会把服务器 <code>/opt/source/download/</code>  路径下的文件展示出来，如下图所示：</p>
-<p><img class="tw-inline" loading="lazy" src="/38aa834307654ae08ebf5aa72507daf7~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_3059897098474231878.png" srcset="/38aa834307654ae08ebf5aa72507daf7~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_3059897098474231878_hu11355946721451515472.webp 800w, /38aa834307654ae08ebf5aa72507daf7~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_3059897098474231878_hu15108260866761928720.webp 1200w, /38aa834307654ae08ebf5aa72507daf7~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_3059897098474231878_hu9536073340324185385.webp 1600w"  alt="image.png" height="170" width="762"></p>
+<p><img class="tw-inline" loading="lazy" src=/670dff405db5490aa4a5b8450d0bb680_14128261609861260591.png srcset="/670dff405db5490aa4a5b8450d0bb680_14128261609861260591_hu16574625967085499275.webp 800w, /670dff405db5490aa4a5b8450d0bb680_14128261609861260591_hu7084756771946177675.webp 1200w, /670dff405db5490aa4a5b8450d0bb680_14128261609861260591_hu7166225983359242448.webp 1600w"   height="170" width="762"></p>
 <h3 id="变量" class="headerLink">
-    <a href="#%e5%8f%98%e9%87%8f" class="header-mark" aria-label="Header mark for '变量'"></a>6.11 变量</h3><p><code>Nginx</code>  提供给使用者的变量非常多，但是终究是一个完整的请求过程所产生数据， <code>Nginx</code>  将这些数据以变量的形式提供给使用者。</p>
+    <a href="#%e5%8f%98%e9%87%8f" class="header-mark"></a>6.11 变量</h3><p><code>Nginx</code>  提供给使用者的变量非常多，但是终究是一个完整的请求过程所产生数据， <code>Nginx</code>  将这些数据以变量的形式提供给使用者。</p>
 <p>下面列举些项目中常用的变量：</p>
-<table>
-<thead>
-<tr>
-<th>变量名</th>
-<th>含义</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>remote_addr</code></td>
-<td>客户端 <code>IP</code>  地址</td>
-</tr>
-<tr>
-<td><code>remote_port</code></td>
-<td>客户端端口</td>
-</tr>
-<tr>
-<td><code>server_addr</code></td>
-<td>服务端 <code>IP</code>  地址</td>
-</tr>
-<tr>
-<td><code>server_port</code></td>
-<td>服务端端口</td>
-</tr>
-<tr>
-<td><code>server_protocol</code></td>
-<td>服务端协议</td>
-</tr>
-<tr>
-<td><code>binary_remote_addr</code></td>
-<td>二进制格式的客户端 <code>IP</code>  地址</td>
-</tr>
-<tr>
-<td><code>connection</code></td>
-<td><code>TCP</code>  连接的序号，递增</td>
-</tr>
-<tr>
-<td><code>connection_request</code></td>
-<td><code>TCP</code>  连接当前的请求数量</td>
-</tr>
-<tr>
-<td><code>uri</code></td>
-<td>请求的URL，不包含参数</td>
-</tr>
-<tr>
-<td><code>request_uri</code></td>
-<td>请求的URL，包含参数</td>
-</tr>
-<tr>
-<td><code>scheme</code></td>
-<td>协议名， <code>http</code>  或 <code>https</code></td>
-</tr>
-<tr>
-<td><code>request_method</code></td>
-<td>请求方法</td>
-</tr>
-<tr>
-<td><code>request_length</code></td>
-<td>全部请求的长度，包含请求行、请求头、请求体</td>
-</tr>
-<tr>
-<td><code>args</code></td>
-<td>全部参数字符串</td>
-</tr>
-<tr>
-<td><code>arg_参数名</code></td>
-<td>获取特定参数值</td>
-</tr>
-<tr>
-<td><code>is_args</code></td>
-<td><code>URL</code>  中是否有参数，有的话返回 <code>?</code>  ，否则返回空</td>
-</tr>
-<tr>
-<td><code>query_string</code></td>
-<td>与 <code>args</code>  相同</td>
-</tr>
-<tr>
-<td><code>host</code></td>
-<td>请求信息中的 <code>Host</code>  ，如果请求中没有 <code>Host</code>   行，则在请求头中找，最后使用 <code>nginx</code>  中设置的 <code>server_name</code>  。</td>
-</tr>
-<tr>
-<td><code>http_user_agent</code></td>
-<td>用户浏览器</td>
-</tr>
-<tr>
-<td><code>http_referer</code></td>
-<td>从哪些链接过来的请求</td>
-</tr>
-<tr>
-<td><code>http_via</code></td>
-<td>每经过一层代理服务器，都会添加相应的信息</td>
-</tr>
-<tr>
-<td><code>http_cookie</code></td>
-<td>获取用户 <code>cookie</code></td>
-</tr>
-<tr>
-<td><code>request_time</code></td>
-<td>处理请求已消耗的时间</td>
-</tr>
-<tr>
-<td><code>https</code></td>
-<td>是否开启了 <code>https</code>  ，是则返回 <code>on</code>  ，否则返回空</td>
-</tr>
-<tr>
-<td><code>request_filename</code></td>
-<td>磁盘文件系统待访问文件的完整路径</td>
-</tr>
-<tr>
-<td><code>document_root</code></td>
-<td>由 <code>URI</code>  和 <code>root/alias</code>  规则生成的文件夹路径</td>
-</tr>
-<tr>
-<td><code>limit_rate</code></td>
-<td>返回响应时的速度上限值</td>
-</tr>
-</tbody>
-</table>
+
+<div class="table-wrapper">
+  <table>
+    <thead>
+        <tr>
+            <th style="text-align: left">变量名</th>
+            <th style="text-align: left">含义</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="text-align: left"><code>remote_addr</code></td>
+            <td style="text-align: left">客户端 <code>IP</code>  地址</td>
+        </tr>
+        <tr>
+            <td style="text-align: left"><code>remote_port</code></td>
+            <td style="text-align: left">客户端端口</td>
+        </tr>
+        <tr>
+            <td style="text-align: left"><code>server_addr</code></td>
+            <td style="text-align: left">服务端 <code>IP</code>  地址</td>
+        </tr>
+        <tr>
+            <td style="text-align: left"><code>server_port</code></td>
+            <td style="text-align: left">服务端端口</td>
+        </tr>
+        <tr>
+            <td style="text-align: left"><code>server_protocol</code></td>
+            <td style="text-align: left">服务端协议</td>
+        </tr>
+        <tr>
+            <td style="text-align: left"><code>binary_remote_addr</code></td>
+            <td style="text-align: left">二进制格式的客户端 <code>IP</code>  地址</td>
+        </tr>
+        <tr>
+            <td style="text-align: left"><code>connection</code></td>
+            <td style="text-align: left"><code>TCP</code>  连接的序号，递增</td>
+        </tr>
+        <tr>
+            <td style="text-align: left"><code>connection_request</code></td>
+            <td style="text-align: left"><code>TCP</code>  连接当前的请求数量</td>
+        </tr>
+        <tr>
+            <td style="text-align: left"><code>uri</code></td>
+            <td style="text-align: left">请求的URL，不包含参数</td>
+        </tr>
+        <tr>
+            <td style="text-align: left"><code>request_uri</code></td>
+            <td style="text-align: left">请求的URL，包含参数</td>
+        </tr>
+        <tr>
+            <td style="text-align: left"><code>scheme</code></td>
+            <td style="text-align: left">协议名， <code>http</code>  或 <code>https</code></td>
+        </tr>
+        <tr>
+            <td style="text-align: left"><code>request_method</code></td>
+            <td style="text-align: left">请求方法</td>
+        </tr>
+        <tr>
+            <td style="text-align: left"><code>request_length</code></td>
+            <td style="text-align: left">全部请求的长度，包含请求行、请求头、请求体</td>
+        </tr>
+        <tr>
+            <td style="text-align: left"><code>args</code></td>
+            <td style="text-align: left">全部参数字符串</td>
+        </tr>
+        <tr>
+            <td style="text-align: left"><code>arg_参数名</code></td>
+            <td style="text-align: left">获取特定参数值</td>
+        </tr>
+        <tr>
+            <td style="text-align: left"><code>is_args</code></td>
+            <td style="text-align: left"><code>URL</code>  中是否有参数，有的话返回 <code>?</code>  ，否则返回空</td>
+        </tr>
+        <tr>
+            <td style="text-align: left"><code>query_string</code></td>
+            <td style="text-align: left">与 <code>args</code>  相同</td>
+        </tr>
+        <tr>
+            <td style="text-align: left"><code>host</code></td>
+            <td style="text-align: left">请求信息中的 <code>Host</code>  ，如果请求中没有 <code>Host</code>   行，则在请求头中找，最后使用 <code>nginx</code>  中设置的 <code>server_name</code>  。</td>
+        </tr>
+        <tr>
+            <td style="text-align: left"><code>http_user_agent</code></td>
+            <td style="text-align: left">用户浏览器</td>
+        </tr>
+        <tr>
+            <td style="text-align: left"><code>http_referer</code></td>
+            <td style="text-align: left">从哪些链接过来的请求</td>
+        </tr>
+        <tr>
+            <td style="text-align: left"><code>http_via</code></td>
+            <td style="text-align: left">每经过一层代理服务器，都会添加相应的信息</td>
+        </tr>
+        <tr>
+            <td style="text-align: left"><code>http_cookie</code></td>
+            <td style="text-align: left">获取用户 <code>cookie</code></td>
+        </tr>
+        <tr>
+            <td style="text-align: left"><code>request_time</code></td>
+            <td style="text-align: left">处理请求已消耗的时间</td>
+        </tr>
+        <tr>
+            <td style="text-align: left"><code>https</code></td>
+            <td style="text-align: left">是否开启了 <code>https</code>  ，是则返回 <code>on</code>  ，否则返回空</td>
+        </tr>
+        <tr>
+            <td style="text-align: left"><code>request_filename</code></td>
+            <td style="text-align: left">磁盘文件系统待访问文件的完整路径</td>
+        </tr>
+        <tr>
+            <td style="text-align: left"><code>document_root</code></td>
+            <td style="text-align: left">由 <code>URI</code>  和 <code>root/alias</code>  规则生成的文件夹路径</td>
+        </tr>
+        <tr>
+            <td style="text-align: left"><code>limit_rate</code></td>
+            <td style="text-align: left">返回响应时的速度上限值</td>
+        </tr>
+    </tbody>
+  </table>
+</div>
 <p>实例演示 <code>var.conf</code>  ：</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
@@ -4205,8 +4184,7 @@
 </span></span><span class="line"><span class="cl"><span class="n">document_root</span><span class="p">:</span> <span class="o">$</span><span class="n">document_root</span>
 </span></span><span class="line"><span class="cl"><span class="s2">&#34;;</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl"><span class="p">}</span></span></span></code></pre>
 </div>
 <p>当我们访问 <code>http://var.lion-test.club:8081/test?pid=121414&amp;cid=sadasd</code>   时，由于 <code>Nginx</code>  中写了 <code>return</code>  方法，因此 <code>chrome</code>
 浏览器会默认为我们下载一个文件，下面展示的就是下载的文件内容：</p>
@@ -4322,32 +4300,31 @@
 </span></span><span class="line"><span class="cl"><span class="n">query_string</span><span class="p">:</span> <span class="n">pid</span><span class="o">=</span><span class="mi">121414</span><span class="o">&amp;</span><span class="n">cid</span><span class="o">=</span><span class="n">sadasd</span>
 </span></span><span class="line"><span class="cl"><span class="n">host</span><span class="p">:</span> <span class="k">var</span><span class="o">.</span><span class="n">lion</span><span class="o">-</span><span class="n">test</span><span class="o">.</span><span class="n">club</span>
 </span></span><span class="line"><span class="cl"><span class="n">http_user_agent</span><span class="p">:</span> <span class="n">Mozilla</span><span class="o">/</span><span class="mf">5.0</span> <span class="p">(</span><span class="n">Macintosh</span><span class="p">;</span> <span class="n">Intel</span> <span class="n">Mac</span> <span class="ne">OS</span> <span class="n">X</span> <span class="mi">10</span><span class="n">_14_0</span><span class="p">)</span> <span class="n">AppleWebKit</span><span class="o">/</span><span class="mf">537.36</span> <span class="p">(</span><span class="n">KHTML</span><span class="p">,</span> <span class="n">like</span> <span class="n">Gecko</span><span class="p">)</span> <span class="n">Chrome</span><span class="o">/</span><span class="mf">88.0</span><span class="o">.</span><span class="mf">4324.182</span> <span class="n">Safari</span><span class="o">/</span><span class="mf">537.36</span>
-</span></span><span class="line"><span class="cl"><span class="n">http_referer</span><span class="p">:</span> 
-</span></span><span class="line"><span class="cl"><span class="n">http_via</span><span class="p">:</span> 
+</span></span><span class="line"><span class="cl"><span class="n">http_referer</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl"><span class="n">http_via</span><span class="p">:</span>
 </span></span><span class="line"><span class="cl"><span class="n">request_time</span><span class="p">:</span> <span class="mf">0.000</span>
-</span></span><span class="line"><span class="cl"><span class="n">https</span><span class="p">:</span> 
+</span></span><span class="line"><span class="cl"><span class="n">https</span><span class="p">:</span>
 </span></span><span class="line"><span class="cl"><span class="n">request_filename</span><span class="p">:</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">html</span><span class="o">/</span><span class="n">test</span><span class="o">/</span>
-</span></span><span class="line"><span class="cl"><span class="n">document_root</span><span class="p">:</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">html</span>
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl"><span class="n">document_root</span><span class="p">:</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">html</span></span></span></code></pre>
 </div>
 <p><code>Nginx</code>  的配置还有非常多，以上只是罗列了一些常用的配置，在实际项目中还是要学会查阅文档。</p>
 <h2 id="nginx-应用核心概念" class="headerLink">
-    <a href="#nginx-%e5%ba%94%e7%94%a8%e6%a0%b8%e5%bf%83%e6%a6%82%e5%bf%b5" class="header-mark" aria-label="Header mark for 'Nginx 应用核心概念'"></a>7 Nginx 应用核心概念</h2><p>代理是在服务器和客户端之间假设的一层服务器，代理将接收客户端的请求并将它转发给服务器，然后将服务端的响应转发给客户端。</p>
+    <a href="#nginx-%e5%ba%94%e7%94%a8%e6%a0%b8%e5%bf%83%e6%a6%82%e5%bf%b5" class="header-mark"></a>7 Nginx 应用核心概念</h2><p>代理是在服务器和客户端之间假设的一层服务器，代理将接收客户端的请求并将它转发给服务器，然后将服务端的响应转发给客户端。</p>
 <p>不管是正向代理还是反向代理，实现的都是上面的功能。</p>
-<p><img class="tw-inline" loading="lazy" src="/8232e3b1d3854ee2bdc743ad1f656414~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_17620150098902048189.png" srcset="/8232e3b1d3854ee2bdc743ad1f656414~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_17620150098902048189_hu12338860383307993074.webp 800w, /8232e3b1d3854ee2bdc743ad1f656414~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_17620150098902048189_hu13351233593396772599.webp 1200w, /8232e3b1d3854ee2bdc743ad1f656414~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_17620150098902048189_hu18413706269262903805.webp 1600w"  alt="image.png" height="1026" width="1060"></p>
+<p><img class="tw-inline" loading="lazy" src=/c2b200fcc9a541d6bf024100cb9e74e6_5360271401430867961.png srcset="/c2b200fcc9a541d6bf024100cb9e74e6_5360271401430867961_hu10070283204022733184.webp 800w, /c2b200fcc9a541d6bf024100cb9e74e6_5360271401430867961_hu5339495143520813271.webp 1200w, /c2b200fcc9a541d6bf024100cb9e74e6_5360271401430867961_hu16598248022076017552.webp 1600w"   height="1026" width="1060"></p>
 <h3 id="正向代理" class="headerLink">
-    <a href="#%e6%ad%a3%e5%90%91%e4%bb%a3%e7%90%86" class="header-mark" aria-label="Header mark for '正向代理'"></a>7.1 正向代理</h3><blockquote>
-<p>正向代理，意思是一个位于客户端和原始服务器(origin server)之间的服务器，为了从原始服务器取得内容，客户端向代理发送一个请求并指定目标(原始服务器)，然后代理向原始服务器转交请求并将获得的内容返回给客户端。</p>
-</blockquote>
-<p>正向代理是为我们服务的，即为客户端服务的，客户端可以根据正向代理访问到它本身无法访问到的服务器资源。</p>
+    <a href="#%e6%ad%a3%e5%90%91%e4%bb%a3%e7%90%86" class="header-mark"></a>7.1 正向代理</h3><blockquote>
+  <p>正向代理，意思是一个位于客户端和原始服务器(origin server)之间的服务器，为了从原始服务器取得内容，客户端向代理发送一个请求并指定目标(原始服务器)，然后代理向原始服务器转交请求并将获得的内容返回给客户端。</p>
+
+</blockquote><p>正向代理是为我们服务的，即为客户端服务的，客户端可以根据正向代理访问到它本身无法访问到的服务器资源。</p>
 <p>正向代理对我们是透明的，对服务端是非透明的，即服务端并不知道自己收到的是来自代理的访问还是来自真实客户端的访问。</p>
 <h3 id="反向代理" class="headerLink">
-    <a href="#%e5%8f%8d%e5%90%91%e4%bb%a3%e7%90%86" class="header-mark" aria-label="Header mark for '反向代理'"></a>7.2 反向代理</h3><blockquote>
-<ul>
+    <a href="#%e5%8f%8d%e5%90%91%e4%bb%a3%e7%90%86" class="header-mark"></a>7.2 反向代理</h3><blockquote>
+  <ul>
 <li>反向代理*（Reverse Proxy）方式是指以代理服务器来接受internet上的连接请求，然后将请求转发给内部网络上的服务器，并将从服务器上得到的结果返回给internet上请求连接的客户端，此时代理服务器对外就表现为一个反向代理服务器。</li>
 </ul>
-</blockquote>
-<p>反向代理是为服务端服务的，反向代理可以帮助服务器接收来自客户端的请求，帮助服务器做请求转发，负载均衡等。</p>
+
+</blockquote><p>反向代理是为服务端服务的，反向代理可以帮助服务器接收来自客户端的请求，帮助服务器做请求转发，负载均衡等。</p>
 <p>反向代理对服务端是透明的，对我们是非透明的，即我们并不知道自己访问的是代理服务器，而服务器知道反向代理在为他服务。</p>
 <p>反向代理的优势：</p>
 <ul>
@@ -4357,19 +4334,19 @@
 </ul>
 <p>那么“动静分离”是什么？负载均衡又是什么？</p>
 <h3 id="动静分离" class="headerLink">
-    <a href="#%e5%8a%a8%e9%9d%99%e5%88%86%e7%a6%bb" class="header-mark" aria-label="Header mark for '动静分离'"></a>7.3 动静分离</h3><p>动静分离是指在 <code>web</code>  服务器架构中，将静态页面与动态页面或者静态内容接口和动态内容接口分开不同系统访问的架构设计方法，进而提示整个服务的访问性和可维护性。</p>
-<p><img class="tw-inline" loading="lazy" src="/96c9221f098542ba8222565298c4038e~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_10040952336529209911.png" srcset="/96c9221f098542ba8222565298c4038e~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_10040952336529209911_hu5936157517823228610.webp 800w, /96c9221f098542ba8222565298c4038e~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_10040952336529209911_hu13027579513630749642.webp 1200w, /96c9221f098542ba8222565298c4038e~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_10040952336529209911_hu6733607305263664782.webp 1600w"  alt="未命名文件.png" height="478" width="1050"></p>
+    <a href="#%e5%8a%a8%e9%9d%99%e5%88%86%e7%a6%bb" class="header-mark"></a>7.3 动静分离</h3><p>动静分离是指在 <code>web</code>  服务器架构中，将静态页面与动态页面或者静态内容接口和动态内容接口分开不同系统访问的架构设计方法，进而提示整个服务的访问性和可维护性。</p>
+<p><img class="tw-inline" loading="lazy" src=/d62adb774aad4403afc4197d298f8d41_5966132788835645568.png srcset="/d62adb774aad4403afc4197d298f8d41_5966132788835645568_hu10213616905848157033.webp 800w, /d62adb774aad4403afc4197d298f8d41_5966132788835645568_hu10030667968411825454.webp 1200w, /d62adb774aad4403afc4197d298f8d41_5966132788835645568_hu11408795603990191896.webp 1600w"   height="478" width="1050"></p>
 <p>一般来说，都需要将动态资源和静态资源分开，由于 <code>Nginx</code>  的高并发和静态资源缓存等特性，经常将静态资源部署在 <code>Nginx</code>
 上。如果请求的是静态资源，直接到静态资源目录获取资源，如果是动态资源的请求，则利用反向代理的原理，把请求转发给对应后台应用去处理，从而实现动静分离。</p>
 <p>使用前后端分离后，可以很大程度提升静态资源的访问速度，即使动态服务不可用，静态资源的访问也不会受到影响。</p>
 <h3 id="负载均衡" class="headerLink">
-    <a href="#%e8%b4%9f%e8%bd%bd%e5%9d%87%e8%a1%a1" class="header-mark" aria-label="Header mark for '负载均衡'"></a>7.4 负载均衡</h3><p>一般情况下，客户端发送多个请求到服务器，服务器处理请求，其中一部分可能要操作一些资源比如数据库、静态资源等，服务器处理完毕后，再将结果返回给客户端。</p>
+    <a href="#%e8%b4%9f%e8%bd%bd%e5%9d%87%e8%a1%a1" class="header-mark"></a>7.4 负载均衡</h3><p>一般情况下，客户端发送多个请求到服务器，服务器处理请求，其中一部分可能要操作一些资源比如数据库、静态资源等，服务器处理完毕后，再将结果返回给客户端。</p>
 <p>这种模式对于早期的系统来说，功能要求不复杂，且并发请求相对较少的情况下还能胜任，成本也低。随着信息数量不断增长，访问量和数据量飞速增长，以及系统业务复杂度持续增加，这种做法已无法满足要求，并发量特别大时，服务器容易崩。</p>
 <p>很明显这是由于服务器性能的瓶颈造成的问题，除了堆机器之外，最重要的做法就是负载均衡。</p>
 <p>请求爆发式增长的情况下，单个机器性能再强劲也无法满足要求了，这个时候集群的概念产生了，单个服务器解决不了的问题，可以使用多个服务器，然后将请求分发到各个服务器上，将负载分发到不同的服务器，这就是负载均衡，核心是「分摊压力」。 <code>Nginx</code>
 实现负载均衡，一般来说指的是将请求转发给服务器集群。</p>
-<p>举个具体的例子，晚高峰乘坐地铁的时候，入站口经常会有地铁工作人员大喇叭“请走 <code>B</code>  口， <code>B</code>  口人少车空&hellip;.”，这个工作人员的作用就是负载均衡。<br>
-<img class="tw-inline" loading="lazy" src="/5f79f698d1fc497db14c971ea417f456~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_6054045562452095817.png" srcset="/5f79f698d1fc497db14c971ea417f456~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_6054045562452095817_hu3880241269072470913.webp 800w, /5f79f698d1fc497db14c971ea417f456~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_6054045562452095817_hu12481209053516362427.webp 1200w, /5f79f698d1fc497db14c971ea417f456~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_6054045562452095817_hu7542890516980851178.webp 1600w"  alt="未命名文件 (3).png" height="438" width="772"></p>
+<p>举个具体的例子，晚高峰乘坐地铁的时候，入站口经常会有地铁工作人员大喇叭“请走 <code>B</code>  口， <code>B</code>  口人少车空&hellip;.”，这个工作人员的作用就是负载均衡。</p>
+<p><img class="tw-inline" loading="lazy" src=/632fa6b56353413b9f881afa77585263_16837372429899454316.png srcset="/632fa6b56353413b9f881afa77585263_16837372429899454316_hu172905906049442858.webp 800w, /632fa6b56353413b9f881afa77585263_16837372429899454316_hu9143955040665606118.webp 1200w, /632fa6b56353413b9f881afa77585263_16837372429899454316_hu7075978067102579227.webp 1600w"   height="438" width="772"></p>
 <p><code>Nginx</code>  实现负载均衡的策略：</p>
 <ul>
 <li>轮询策略：默认情况下采用的策略，将所有客户端请求轮询分配给服务端。这种策略是可以正常工作的，但是如果其中某一台服务器压力太大，出现延迟，会影响所有分配在这台服务器下的用户。</li>
@@ -4378,10 +4355,10 @@
 <li>客户端 <code>ip</code>  绑定策略：来自同一个 <code>ip</code>  的请求永远只分配一台服务器，有效解决了动态网页存在的 <code>session</code>  共享问题。</li>
 </ul>
 <h2 id="nginx-实战配置" class="headerLink">
-    <a href="#nginx-%e5%ae%9e%e6%88%98%e9%85%8d%e7%bd%ae" class="header-mark" aria-label="Header mark for 'Nginx 实战配置'"></a>8 Nginx 实战配置</h2><p>在配置反向代理和负载均衡等等功能之前，有两个核心模块是我们必须要掌握的，这两个模块应该说是 <code>Nginx</code>  应用配置中的核心，它们分别是： <code>upstream</code>  、<code>proxy_pass</code>  。</p>
+    <a href="#nginx-%e5%ae%9e%e6%88%98%e9%85%8d%e7%bd%ae" class="header-mark"></a>8 Nginx 实战配置</h2><p>在配置反向代理和负载均衡等等功能之前，有两个核心模块是我们必须要掌握的，这两个模块应该说是 <code>Nginx</code>  应用配置中的核心，它们分别是： <code>upstream</code>  、<code>proxy_pass</code>  。</p>
 <h3 id="upstream" class="headerLink">
-    <a href="#upstream" class="header-mark" aria-label="Header mark for 'upstream'"></a>8.1 upstream</h3><p>用于定义上游服务器（指的就是后台提供的应用服务器）的相关信息。</p>
-<p><img class="tw-inline" loading="lazy" src="/a8e5089117234f529180c8720922c2fc~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_15168892546790427403.png" srcset="/a8e5089117234f529180c8720922c2fc~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_15168892546790427403_hu12078643022713080521.webp 800w, /a8e5089117234f529180c8720922c2fc~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_15168892546790427403_hu16544992330630888596.webp 1200w, /a8e5089117234f529180c8720922c2fc~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_15168892546790427403_hu8856144138438589763.webp 1600w"  alt="未命名文件 (2).png" height="655" width="1050"></p>
+    <a href="#upstream" class="header-mark"></a>8.1 upstream</h3><p>用于定义上游服务器（指的就是后台提供的应用服务器）的相关信息。</p>
+<p><img class="tw-inline" loading="lazy" src=/e1c99cb5497f496293f0dbdd24419130_16187616382829448394.png srcset="/e1c99cb5497f496293f0dbdd24419130_16187616382829448394_hu13093912782229155262.webp 800w, /e1c99cb5497f496293f0dbdd24419130_16187616382829448394_hu12158243845604743522.webp 1200w, /e1c99cb5497f496293f0dbdd24419130_16187616382829448394_hu8386668127484443546.webp 1600w"   height="655" width="1050"></p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
     code-block-title 
@@ -4485,8 +4462,7 @@
 </span></span><span class="line"><span class="cl">示例：
 </span></span><span class="line"><span class="cl">upstream back_end_server{
 </span></span><span class="line"><span class="cl">  server 192.168.100.33:8081
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl">}</span></span></code></pre>
 </div>
 <p>在 <code>upstream</code>  内可使用的指令：</p>
 <ul>
@@ -4502,7 +4478,7 @@
 <li><code>random</code>  随机负载均衡算法；</li>
 </ul>
 <h4 id="server" class="headerLink">
-    <a href="#server" class="header-mark" aria-label="Header mark for 'server'"></a>8.1.1 server</h4><p>定义上游服务器地址。</p>
+    <a href="#server" class="header-mark"></a>8.1.1 server</h4><p>定义上游服务器地址。</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
     code-block-title 
@@ -4599,8 +4575,7 @@
       tw-scrollbar-thin
       "><span class="line"><span class="cl">语法：server address [parameters]
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">上下文：upstream
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl">上下文：upstream</span></span></code></pre>
 </div>
 <p><code>parameters</code>  可选值：</p>
 <ul>
@@ -4612,7 +4587,7 @@
 <li><code>down</code>  标记服务器长期不可用，离线维护；</li>
 </ul>
 <h4 id="keepalive" class="headerLink">
-    <a href="#keepalive" class="header-mark" aria-label="Header mark for 'keepalive'"></a>8.1.2 keepalive</h4><p>限制每个 <code>worker</code>  子进程与上游服务器空闲长连接的最大数量。</p>
+    <a href="#keepalive" class="header-mark"></a>8.1.2 keepalive</h4><p>限制每个 <code>worker</code>  子进程与上游服务器空闲长连接的最大数量。</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
     code-block-title 
@@ -4711,11 +4686,10 @@
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">上下文：upstream
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">示例：keepalive 16;
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl">示例：keepalive 16;</span></span></code></pre>
 </div>
 <h4 id="keepalive_requests" class="headerLink">
-    <a href="#keepalive_requests" class="header-mark" aria-label="Header mark for 'keepalive_requests'"></a>8.1.3 keepalive_requests</h4><p>单个长连接可以处理的最多 <code>HTTP</code>  请求个数。</p>
+    <a href="#keepalive_requests" class="header-mark"></a>8.1.3 keepalive_requests</h4><p>单个长连接可以处理的最多 <code>HTTP</code>  请求个数。</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
     code-block-title 
@@ -4814,11 +4788,10 @@
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">默认值：keepalive_requests 100;
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">上下文：upstream
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl">上下文：upstream</span></span></code></pre>
 </div>
 <h4 id="keepalive_timeout" class="headerLink">
-    <a href="#keepalive_timeout" class="header-mark" aria-label="Header mark for 'keepalive_timeout'"></a>8.1.4 keepalive_timeout</h4><p>空闲长连接的最长保持时间。</p>
+    <a href="#keepalive_timeout" class="header-mark"></a>8.1.4 keepalive_timeout</h4><p>空闲长连接的最长保持时间。</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
     code-block-title 
@@ -4917,11 +4890,10 @@
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">默认值：keepalive_timeout 60s;
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">上下文：upstream
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl">上下文：upstream</span></span></code></pre>
 </div>
 <h4 id="配置实例" class="headerLink">
-    <a href="#%e9%85%8d%e7%bd%ae%e5%ae%9e%e4%be%8b" class="header-mark" aria-label="Header mark for '配置实例'"></a>8.1.5 配置实例</h4><div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
+    <a href="#%e9%85%8d%e7%bd%ae%e5%ae%9e%e4%be%8b" class="header-mark"></a>8.1.5 配置实例</h4><div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
     code-block-title 
     
@@ -5020,11 +4992,10 @@
 </span></span><span class="line"><span class="cl">  keepalive 32;
 </span></span><span class="line"><span class="cl">  keepalive_requests 50;
 </span></span><span class="line"><span class="cl">  keepalive_timeout 30s;
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl">}</span></span></code></pre>
 </div>
 <h3 id="proxy_pass" class="headerLink">
-    <a href="#proxy_pass" class="header-mark" aria-label="Header mark for 'proxy_pass'"></a>8.2 proxy_pass</h3><p>用于配置代理服务器。</p>
+    <a href="#proxy_pass" class="header-mark"></a>8.2 proxy_pass</h3><p>用于配置代理服务器。</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
     code-block-title 
@@ -5125,8 +5096,7 @@
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">示例：
 </span></span><span class="line"><span class="cl">proxy_pass http://127.0.0.1:8081
-</span></span><span class="line"><span class="cl">proxy_pass http://127.0.0.1:8081/proxy
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl">proxy_pass http://127.0.0.1:8081/proxy</span></span></code></pre>
 </div>
 <p><code>URL</code>  参数原则</p>
 <ol>
@@ -5241,8 +5211,7 @@
       tw-scrollbar-thin
       "><span class="line"><span class="cl">location /bbs/{
 </span></span><span class="line"><span class="cl">  proxy_pass http://127.0.0.1:8080;
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl">}</span></span></code></pre>
 </div>
 <p>分析：</p>
 <ol>
@@ -5347,8 +5316,7 @@
       tw-scrollbar-thin
       "><span class="line"><span class="cl">location /bbs/{
 </span></span><span class="line"><span class="cl">  proxy_pass http://127.0.0.1:8080/;
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl">}</span></span></code></pre>
 </div>
 <p>分析：</p>
 <ol>
@@ -5358,7 +5326,7 @@
 </ol>
 <p>并没有拼接上 <code>/bbs</code>  ，这点和 <code>root</code>  与 <code>alias</code>  之间的区别是保持一致的。</p>
 <h3 id="配置反向代理" class="headerLink">
-    <a href="#%e9%85%8d%e7%bd%ae%e5%8f%8d%e5%90%91%e4%bb%a3%e7%90%86" class="header-mark" aria-label="Header mark for '配置反向代理'"></a>8.3 配置反向代理</h3><p>这里为了演示更加接近实际，作者准备了两台云服务器，它们的公网 <code>IP</code>  分别是： <code>121.42.11.34</code>  与 <code>121.5.180.193</code>  。</p>
+    <a href="#%e9%85%8d%e7%bd%ae%e5%8f%8d%e5%90%91%e4%bb%a3%e7%90%86" class="header-mark"></a>8.3 配置反向代理</h3><p>这里为了演示更加接近实际，作者准备了两台云服务器，它们的公网 <code>IP</code>  分别是： <code>121.42.11.34</code>  与 <code>121.5.180.193</code>  。</p>
 <p>我们把 <code>121.42.11.34</code>  服务器作为上游服务器，做如下配置：</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
@@ -5458,7 +5426,7 @@
 </span></span><span class="line"><span class="cl">server{
 </span></span><span class="line"><span class="cl">  listen 8080;
 </span></span><span class="line"><span class="cl">  server_name localhost;
-</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">  location /proxy/ {
 </span></span><span class="line"><span class="cl">    root /usr/share/nginx/html/proxy;
 </span></span><span class="line"><span class="cl">    index index.html;
@@ -5466,8 +5434,7 @@
 </span></span><span class="line"><span class="cl">}
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"># /usr/share/nginx/html/proxy/index.html
-</span></span><span class="line"><span class="cl">&lt;h1&gt; 121.42.11.34 proxy html &lt;/h1&gt;
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl">&lt;h1&gt; 121.42.11.34 proxy html &lt;/h1&gt;</span></span></code></pre>
 </div>
 <p>配置完成后重启 <code>Nginx</code>  服务器 <code>nginx -s reload</code>  。</p>
 <p>把 <code>121.5.180.193</code>  服务器作为代理服务器，做如下配置：</p>
@@ -5579,8 +5546,7 @@
 </span></span><span class="line"><span class="cl">  location /proxy {
 </span></span><span class="line"><span class="cl">  proxy_pass http://back_end/proxy;
 </span></span><span class="line"><span class="cl">  }
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl">}</span></span></code></pre>
 </div>
 <p>本地机器要访问 <code>proxy.lion.club</code>  域名，因此需要配置本地 <code>hosts</code>  ，通过命令：<code>vim /etc/hosts</code>  进入配置文件，添加如下内容：</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
@@ -5677,10 +5643,9 @@
       tw-overflow-y-hidden
       tw-overflow-x-auto
       tw-scrollbar-thin
-      "><span class="line"><span class="cl">121.5.180.193 proxy.lion.club
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+      "><span class="line"><span class="cl">121.5.180.193 proxy.lion.club</span></span></code></pre>
 </div>
-<p><img class="tw-inline" loading="lazy" src="/076bebbb8f6b49be972c4264a5dc0aff~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_11278246461701880011.png" srcset="/076bebbb8f6b49be972c4264a5dc0aff~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_11278246461701880011_hu2130282100673496954.webp 800w, /076bebbb8f6b49be972c4264a5dc0aff~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_11278246461701880011_hu14468843133533283.webp 1200w, /076bebbb8f6b49be972c4264a5dc0aff~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_11278246461701880011_hu12779093731571548130.webp 1600w"  alt="image.png" height="184" width="1006"></p>
+<p><img class="tw-inline" loading="lazy" src=/38cbc7ed632a40b9970123863f8957b1_11908704662058873241.png srcset="/38cbc7ed632a40b9970123863f8957b1_11908704662058873241_hu6912037599703783909.webp 800w, /38cbc7ed632a40b9970123863f8957b1_11908704662058873241_hu14941439161973173368.webp 1200w, /38cbc7ed632a40b9970123863f8957b1_11908704662058873241_hu11257660560336462335.webp 1600w"   height="184" width="1006"></p>
 <p>分析：</p>
 <ol>
 <li>当访问 <code>proxy.lion.club/proxy</code>  时通过 <code>upstream</code>  的配置找到 <code>121.42.11.34:8080</code>  ；</li>
@@ -5689,7 +5654,7 @@
 <li>通过 <code>server</code>  找到 <code>/usr/share/nginx/html/proxy/index.html</code>  资源，最终展示出来。</li>
 </ol>
 <h3 id="配置负载均衡" class="headerLink">
-    <a href="#%e9%85%8d%e7%bd%ae%e8%b4%9f%e8%bd%bd%e5%9d%87%e8%a1%a1" class="header-mark" aria-label="Header mark for '配置负载均衡'"></a>8.4 配置负载均衡</h3><p>配置负载均衡主要是要使用 <code>upstream</code>  指令。</p>
+    <a href="#%e9%85%8d%e7%bd%ae%e8%b4%9f%e8%bd%bd%e5%9d%87%e8%a1%a1" class="header-mark"></a>8.4 配置负载均衡</h3><p>配置负载均衡主要是要使用 <code>upstream</code>  指令。</p>
 <p>我们把 <code>121.42.11.34</code>  服务器作为上游服务器，做如下配置（ <code>/etc/nginx/conf.d/balance.conf</code>  ）：</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
@@ -5804,8 +5769,7 @@
 </span></span><span class="line"><span class="cl">  location / {
 </span></span><span class="line"><span class="cl">  return 200 &#39;return 8040 \n&#39;;
 </span></span><span class="line"><span class="cl">  }
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl">}</span></span></code></pre>
 </div>
 <p>配置完成后：</p>
 <ol>
@@ -5917,12 +5881,11 @@
 </span></span><span class="line"><span class="cl">server {
 </span></span><span class="line"><span class="cl">  listen 80;
 </span></span><span class="line"><span class="cl">  server_name balance.lion.club;
-</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">  location /balance/ {
 </span></span><span class="line"><span class="cl">  proxy_pass http://demo_server;
 </span></span><span class="line"><span class="cl">  }
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl">}</span></span></code></pre>
 </div>
 <p>配置完成后重启 <code>Nginx</code>  服务器。并且在需要访问的客户端配置好 <code>ip</code>  和域名的映射关系。</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
@@ -6021,15 +5984,14 @@
       tw-scrollbar-thin
       "><span class="line"><span class="cl"># /etc/hosts
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">121.5.180.193 balance.lion.club
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl">121.5.180.193 balance.lion.club</span></span></code></pre>
 </div>
 <p>在客户端机器执行 <code>curl http://balance.lion.club/balance/</code>  命令：</p>
-<p><img class="tw-inline" loading="lazy" src="/a140f1a03cb94a498a7bdb035c41660b~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_17588758787010182573.png" srcset="/a140f1a03cb94a498a7bdb035c41660b~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_17588758787010182573_hu14998640972832802576.webp 800w, /a140f1a03cb94a498a7bdb035c41660b~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_17588758787010182573_hu1426897561317489494.webp 1200w, /a140f1a03cb94a498a7bdb035c41660b~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_17588758787010182573_hu2468185395875294238.webp 1600w"  alt="image.png" height="222" width="673"></p>
+<p><img class="tw-inline" loading="lazy" src=/79987452bf5b40d3a66c2d3efa7be255_17705279178744629895.png srcset="/79987452bf5b40d3a66c2d3efa7be255_17705279178744629895_hu14949026419569288741.webp 800w, /79987452bf5b40d3a66c2d3efa7be255_17705279178744629895_hu13522078105230748900.webp 1200w, /79987452bf5b40d3a66c2d3efa7be255_17705279178744629895_hu11747254204972261197.webp 1600w"   height="222" width="673"></p>
 <p>不难看出，负载均衡的配置已经生效了，每次给我们分发的上游服务器都不一样。就是通过简单的轮询策略进行上游服务器分发。</p>
 <p>接下来，我们再来了解下 <code>Nginx</code>  的其它分发策略。</p>
 <h3 id="hash-算法" class="headerLink">
-    <a href="#hash-%e7%ae%97%e6%b3%95" class="header-mark" aria-label="Header mark for 'hash 算法'"></a>8.5 hash 算法</h3><p>通过制定关键字作为 <code>hash key</code>  ，基于 <code>hash</code>  算法映射到特定的上游服务器中。关键字可以包含有变量、字符串。</p>
+    <a href="#hash-%e7%ae%97%e6%b3%95" class="header-mark"></a>8.5 hash 算法</h3><p>通过制定关键字作为 <code>hash key</code>  ，基于 <code>hash</code>  算法映射到特定的上游服务器中。关键字可以包含有变量、字符串。</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
     code-block-title 
@@ -6134,16 +6096,15 @@
 </span></span><span class="line"><span class="cl">server {
 </span></span><span class="line"><span class="cl">  listen 80;
 </span></span><span class="line"><span class="cl">  server_name balance.lion.club;
-</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">  location /balance/ {
 </span></span><span class="line"><span class="cl">  proxy_pass http://demo_server;
 </span></span><span class="line"><span class="cl">  }
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl">}</span></span></code></pre>
 </div>
 <p><code>hash $request_uri</code>  表示使用 <code>request_uri</code>  变量作为 <code>hash</code>  的 <code>key</code>  值，只要访问的 <code>URI</code>  保持不变，就会一直分发给同一台服务器。</p>
 <h3 id="ip_hash" class="headerLink">
-    <a href="#ip_hash" class="header-mark" aria-label="Header mark for 'ip_hash'"></a>8.6 ip_hash</h3><p>根据客户端的请求 <code>ip</code>  进行判断，只要 <code>ip</code>  地址不变就永远分配到同一台主机。它可以有效解决后台服务器 <code>session</code>  保持的问题。</p>
+    <a href="#ip_hash" class="header-mark"></a>8.6 ip_hash</h3><p>根据客户端的请求 <code>ip</code>  进行判断，只要 <code>ip</code>  地址不变就永远分配到同一台主机。它可以有效解决后台服务器 <code>session</code>  保持的问题。</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
     code-block-title 
@@ -6248,15 +6209,14 @@
 </span></span><span class="line"><span class="cl">server {
 </span></span><span class="line"><span class="cl">  listen 80;
 </span></span><span class="line"><span class="cl">  server_name balance.lion.club;
-</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">  location /balance/ {
 </span></span><span class="line"><span class="cl">  proxy_pass http://demo_server;
 </span></span><span class="line"><span class="cl">  }
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl">}</span></span></code></pre>
 </div>
 <h3 id="最少连接数算法" class="headerLink">
-    <a href="#%e6%9c%80%e5%b0%91%e8%bf%9e%e6%8e%a5%e6%95%b0%e7%ae%97%e6%b3%95" class="header-mark" aria-label="Header mark for '最少连接数算法'"></a>8.7 最少连接数算法</h3><p>各个 <code>worker</code>  子进程通过读取共享内存的数据，来获取后端服务器的信息。来挑选一台当前已建立连接数最少的服务器进行分配请求。</p>
+    <a href="#%e6%9c%80%e5%b0%91%e8%bf%9e%e6%8e%a5%e6%95%b0%e7%ae%97%e6%b3%95" class="header-mark"></a>8.7 最少连接数算法</h3><p>各个 <code>worker</code>  子进程通过读取共享内存的数据，来获取后端服务器的信息。来挑选一台当前已建立连接数最少的服务器进行分配请求。</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
     code-block-title 
@@ -6353,8 +6313,7 @@
       tw-scrollbar-thin
       "><span class="line"><span class="cl">语法：least_conn;
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">上下文：upstream;
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl">上下文：upstream;</span></span></code></pre>
 </div>
 <p>示例：</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
@@ -6462,18 +6421,17 @@
 </span></span><span class="line"><span class="cl">server {
 </span></span><span class="line"><span class="cl">  listen 80;
 </span></span><span class="line"><span class="cl">  server_name balance.lion.club;
-</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">  location /balance/ {
 </span></span><span class="line"><span class="cl">  proxy_pass http://demo_server;
 </span></span><span class="line"><span class="cl">  }
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl">}</span></span></code></pre>
 </div>
 <p>最后你会发现，负载均衡的配置其实一点都不复杂。</p>
 <h2 id="配置缓存" class="headerLink">
-    <a href="#%e9%85%8d%e7%bd%ae%e7%bc%93%e5%ad%98" class="header-mark" aria-label="Header mark for '配置缓存'"></a>9 配置缓存</h2><p>缓存可以非常有效的提升性能，因此不论是客户端（浏览器），还是代理服务器（ <code>Nginx</code>  ），乃至上游服务器都多少会涉及到缓存。可见缓存在每个环节都是非常重要的。下面让我们来学习 <code>Nginx</code>  中如何设置缓存策略。</p>
+    <a href="#%e9%85%8d%e7%bd%ae%e7%bc%93%e5%ad%98" class="header-mark"></a>9 配置缓存</h2><p>缓存可以非常有效的提升性能，因此不论是客户端（浏览器），还是代理服务器（ <code>Nginx</code>  ），乃至上游服务器都多少会涉及到缓存。可见缓存在每个环节都是非常重要的。下面让我们来学习 <code>Nginx</code>  中如何设置缓存策略。</p>
 <h3 id="proxy_cache" class="headerLink">
-    <a href="#proxy_cache" class="header-mark" aria-label="Header mark for 'proxy_cache'"></a>9.1 proxy_cache</h3><p>存储一些之前被访问过、而且可能将要被再次访问的资源，使用户可以直接从代理服务器获得，从而减少上游服务器的压力，加快整个访问速度。</p>
+    <a href="#proxy_cache" class="header-mark"></a>9.1 proxy_cache</h3><p>存储一些之前被访问过、而且可能将要被再次访问的资源，使用户可以直接从代理服务器获得，从而减少上游服务器的压力，加快整个访问速度。</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
     code-block-title 
@@ -6572,11 +6530,10 @@
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">默认值：proxy_cache off;
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">上下文：http、server、location
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl">上下文：http、server、location</span></span></code></pre>
 </div>
 <h3 id="proxy_cache_path" class="headerLink">
-    <a href="#proxy_cache_path" class="header-mark" aria-label="Header mark for 'proxy_cache_path'"></a>9.2 proxy_cache_path</h3><p>设置缓存文件的存放路径。</p>
+    <a href="#proxy_cache_path" class="header-mark"></a>9.2 proxy_cache_path</h3><p>设置缓存文件的存放路径。</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
     code-block-title 
@@ -6675,8 +6632,7 @@
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">默认值：proxy_cache_path off
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">上下文：http
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl">上下文：http</span></span></code></pre>
 </div>
 <p>参数含义：</p>
 <ul>
@@ -6686,7 +6642,7 @@
 <li><code>inactive</code>  在指定时间内没有被访问，缓存会被清理，默认10分钟；</li>
 </ul>
 <h3 id="proxy_cache_key" class="headerLink">
-    <a href="#proxy_cache_key" class="header-mark" aria-label="Header mark for 'proxy_cache_key'"></a>9.3 proxy_cache_key</h3><p>设置缓存文件的 <code>key</code>  。</p>
+    <a href="#proxy_cache_key" class="header-mark"></a>9.3 proxy_cache_key</h3><p>设置缓存文件的 <code>key</code>  。</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
     code-block-title 
@@ -6785,11 +6741,10 @@
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">默认值：proxy_cache_key $scheme$proxy_host$request_uri;
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">上下文：http、server、location
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl">上下文：http、server、location</span></span></code></pre>
 </div>
 <h3 id="proxy_cache_valid" class="headerLink">
-    <a href="#proxy_cache_valid" class="header-mark" aria-label="Header mark for 'proxy_cache_valid'"></a>9.4 proxy_cache_valid</h3><p>配置什么状态码可以被缓存，以及缓存时长。</p>
+    <a href="#proxy_cache_valid" class="header-mark"></a>9.4 proxy_cache_valid</h3><p>配置什么状态码可以被缓存，以及缓存时长。</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
     code-block-title 
@@ -6888,11 +6843,10 @@
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">上下文：http、server、location
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">配置示例：proxy_cache_valid 200 304 2m;; # 说明对于状态为200和304的缓存文件的缓存时间是2分钟
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl">配置示例：proxy_cache_valid 200 304 2m;; # 说明对于状态为200和304的缓存文件的缓存时间是2分钟</span></span></code></pre>
 </div>
 <h3 id="proxy_no_cache" class="headerLink">
-    <a href="#proxy_no_cache" class="header-mark" aria-label="Header mark for 'proxy_no_cache'"></a>9.5 proxy_no_cache</h3><p>定义相应保存到缓存的条件，如果字符串参数的至少一个值不为空且不等于“ 0”，则将不保存该响应到缓存。</p>
+    <a href="#proxy_no_cache" class="header-mark"></a>9.5 proxy_no_cache</h3><p>定义相应保存到缓存的条件，如果字符串参数的至少一个值不为空且不等于“ 0”，则将不保存该响应到缓存。</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
     code-block-title 
@@ -6991,11 +6945,10 @@
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">上下文：http、server、location
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">示例：proxy_no_cache $http_pragma    $http_authorization;
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl">示例：proxy_no_cache $http_pragma    $http_authorization;</span></span></code></pre>
 </div>
 <h3 id="proxy_cache_bypass" class="headerLink">
-    <a href="#proxy_cache_bypass" class="header-mark" aria-label="Header mark for 'proxy_cache_bypass'"></a>9.6 proxy_cache_bypass</h3><p>定义条件，在该条件下将不会从缓存中获取响应。</p>
+    <a href="#proxy_cache_bypass" class="header-mark"></a>9.6 proxy_cache_bypass</h3><p>定义条件，在该条件下将不会从缓存中获取响应。</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
     code-block-title 
@@ -7094,11 +7047,10 @@
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">上下文：http、server、location
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">示例：proxy_cache_bypass $http_pragma    $http_authorization;
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl">示例：proxy_cache_bypass $http_pragma    $http_authorization;</span></span></code></pre>
 </div>
 <h3 id="upstream_cache_status-变量" class="headerLink">
-    <a href="#upstream_cache_status-%e5%8f%98%e9%87%8f" class="header-mark" aria-label="Header mark for 'upstream_cache_status 变量'"></a>9.7 upstream_cache_status 变量</h3><p>它存储了缓存是否命中的信息，会设置在响应头信息中，在调试中非常有用。</p>
+    <a href="#upstream_cache_status-%e5%8f%98%e9%87%8f" class="header-mark"></a>9.7 upstream_cache_status 变量</h3><p>它存储了缓存是否命中的信息，会设置在响应头信息中，在调试中非常有用。</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
     code-block-title 
@@ -7199,11 +7151,10 @@
 </span></span><span class="line"><span class="cl">STALE: 命中了陈旧缓存
 </span></span><span class="line"><span class="cl">REVALIDDATED: Nginx验证陈旧缓存依然有效
 </span></span><span class="line"><span class="cl">UPDATING: 内容陈旧，但正在更新
-</span></span><span class="line"><span class="cl">BYPASS: X响应从原始服务器获取
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl">BYPASS: X响应从原始服务器获取</span></span></code></pre>
 </div>
 <h3 id="配置实例-1" class="headerLink">
-    <a href="#%e9%85%8d%e7%bd%ae%e5%ae%9e%e4%be%8b-1" class="header-mark" aria-label="Header mark for '配置实例'"></a>9.8 配置实例</h3><p>我们把 <code>121.42.11.34</code>  服务器作为上游服务器，做如下配置（ <code>/etc/nginx/conf.d/cache.conf</code>  ）：</p>
+    <a href="#%e9%85%8d%e7%bd%ae%e5%ae%9e%e4%be%8b-1" class="header-mark"></a>9.8 配置实例</h3><p>我们把 <code>121.42.11.34</code>  服务器作为上游服务器，做如下配置（ <code>/etc/nginx/conf.d/cache.conf</code>  ）：</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
     code-block-title 
@@ -7312,8 +7263,7 @@
 </span></span><span class="line"><span class="cl">  location / {
 </span></span><span class="line"><span class="cl">  index index.html;
 </span></span><span class="line"><span class="cl">  }
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl">}</span></span></code></pre>
 </div>
 <p>把 <code>121.5.180.193</code>  服务器作为代理服务器，做如下配置（ <code>/etc/nginx/conf.d/cache.conf</code>  ）：</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
@@ -7427,8 +7377,7 @@
 </span></span><span class="line"><span class="cl">    add_header Nginx-Cache-Status $upstream_cache_status # 把缓存状态设置为头部信息，响应给客户端
 </span></span><span class="line"><span class="cl">    proxy_pass http://cache_server; # 代理转发
 </span></span><span class="line"><span class="cl">  }
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl">}</span></span></code></pre>
 </div>
 <p>缓存就是这样配置，我们可以在 <code>/etc/nginx/cache_temp</code>  路径下找到相应的缓存文件。</p>
 <p><strong>对于一些实时性要求非常高的页面或数据来说，就不应该去设置缓存，下面来看看如何配置不缓存的内容。</strong></p>
@@ -7535,7 +7484,7 @@
 </span></span><span class="line"><span class="cl">  if ($request_uri ~ \.(txt|text)$) {
 </span></span><span class="line"><span class="cl">  set $cache_name &#34;no cache&#34;
 </span></span><span class="line"><span class="cl">  }
-</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">  location / {
 </span></span><span class="line"><span class="cl">    proxy_no_cache $cache_name; # 判断该变量是否有值，如果有值则不进行缓存，如果没有值则进行缓存
 </span></span><span class="line"><span class="cl">    proxy_cache cache_zone; # 设置缓存内存
@@ -7544,13 +7493,12 @@
 </span></span><span class="line"><span class="cl">    add_header Nginx-Cache-Status $upstream_cache_status # 把缓存状态设置为头部信息，响应给客户端
 </span></span><span class="line"><span class="cl">    proxy_pass http://cache_server; # 代理转发
 </span></span><span class="line"><span class="cl">  }
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl">}</span></span></code></pre>
 </div>
 <h2 id="https" class="headerLink">
-    <a href="#https" class="header-mark" aria-label="Header mark for 'HTTPS'"></a>10 HTTPS</h2><p>在学习如何配置 <code>HTTPS</code>  之前，我们先来简单回顾下 <code>HTTPS</code>  的工作流程是怎么样的？它是如何进行加密保证安全的？</p>
+    <a href="#https" class="header-mark"></a>10 HTTPS</h2><p>在学习如何配置 <code>HTTPS</code>  之前，我们先来简单回顾下 <code>HTTPS</code>  的工作流程是怎么样的？它是如何进行加密保证安全的？</p>
 <h3 id="https-工作流程" class="headerLink">
-    <a href="#https-%e5%b7%a5%e4%bd%9c%e6%b5%81%e7%a8%8b" class="header-mark" aria-label="Header mark for 'HTTPS 工作流程'"></a>10.1 HTTPS 工作流程</h3><ol>
+    <a href="#https-%e5%b7%a5%e4%bd%9c%e6%b5%81%e7%a8%8b" class="header-mark"></a>10.1 HTTPS 工作流程</h3><ol>
 <li>客户端（浏览器）访问 <code>https://www.baidu.com</code>  百度网站；</li>
 <li>百度服务器返回 <code>HTTPS</code>  使用的 <code>CA</code>  证书；</li>
 <li>浏览器验证 <code>CA</code>  证书是否为合法证书；</li>
@@ -7564,7 +7512,7 @@
 <p><a href="https://juejin.cn/post/6844904148601667598#heading-37" target="_blank" rel="noopener noreferrer">关于HTTPS更多知识，可以查看作者的另外一篇文章《学习 HTTP 协议》</a>
 。</p>
 <h3 id="配置证书" class="headerLink">
-    <a href="#%e9%85%8d%e7%bd%ae%e8%af%81%e4%b9%a6" class="header-mark" aria-label="Header mark for '配置证书'"></a>10.2 配置证书</h3><p>下载证书的压缩文件，里面有个 <code>Nginx</code>   文件夹，把 <code>xxx.crt</code>  和 <code>xxx.key</code>  文件拷贝到服务器目录，再进行如下配置：</p>
+    <a href="#%e9%85%8d%e7%bd%ae%e8%af%81%e4%b9%a6" class="header-mark"></a>10.2 配置证书</h3><p>下载证书的压缩文件，里面有个 <code>Nginx</code>   文件夹，把 <code>xxx.crt</code>  和 <code>xxx.key</code>  文件拷贝到服务器目录，再进行如下配置：</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
     code-block-title 
@@ -7666,21 +7614,20 @@
 </span></span><span class="line"><span class="cl">  ssl_certificate_key /etc/nginx/https/lion.club.key;      # 私钥地址
 </span></span><span class="line"><span class="cl">  ssl_session_timeout 10m;
 </span></span><span class="line"><span class="cl">  ssl_protocols TLSv1 TLSv1.1 TLSv1.2; # 支持ssl协议版本，默认为后三个，主流版本是[TLSv1.2]
-</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">  location / {
 </span></span><span class="line"><span class="cl">    root         /usr/share/nginx/html;
 </span></span><span class="line"><span class="cl">    index        index.html index.htm;
 </span></span><span class="line"><span class="cl">  }
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl">}</span></span></code></pre>
 </div>
 <p>如此配置后就能正常访问 <code>HTTPS</code>  版的网站了。</p>
 <h2 id="配置跨域-cors" class="headerLink">
-    <a href="#%e9%85%8d%e7%bd%ae%e8%b7%a8%e5%9f%9f-cors" class="header-mark" aria-label="Header mark for '配置跨域 CORS'"></a>11 配置跨域 CORS</h2><p>先简单回顾下跨域究竟是怎么回事。</p>
+    <a href="#%e9%85%8d%e7%bd%ae%e8%b7%a8%e5%9f%9f-cors" class="header-mark"></a>11 配置跨域 CORS</h2><p>先简单回顾下跨域究竟是怎么回事。</p>
 <h3 id="跨域的定义" class="headerLink">
-    <a href="#%e8%b7%a8%e5%9f%9f%e7%9a%84%e5%ae%9a%e4%b9%89" class="header-mark" aria-label="Header mark for '跨域的定义'"></a>11.1 跨域的定义</h3><p>同源策略限制了从同一个源加载的文档或脚本如何与来自另一个源的资源进行交互。这是一个用于隔离潜在恶意文件的重要安全机制。通常不允许不同源间的读操作。</p>
+    <a href="#%e8%b7%a8%e5%9f%9f%e7%9a%84%e5%ae%9a%e4%b9%89" class="header-mark"></a>11.1 跨域的定义</h3><p>同源策略限制了从同一个源加载的文档或脚本如何与来自另一个源的资源进行交互。这是一个用于隔离潜在恶意文件的重要安全机制。通常不允许不同源间的读操作。</p>
 <h3 id="同源的定义" class="headerLink">
-    <a href="#%e5%90%8c%e6%ba%90%e7%9a%84%e5%ae%9a%e4%b9%89" class="header-mark" aria-label="Header mark for '同源的定义'"></a>11.2 同源的定义</h3><p>如果两个页面的协议，端口（如果有指定）和域名都相同，则两个页面具有相同的源。</p>
+    <a href="#%e5%90%8c%e6%ba%90%e7%9a%84%e5%ae%9a%e4%b9%89" class="header-mark"></a>11.2 同源的定义</h3><p>如果两个页面的协议，端口（如果有指定）和域名都相同，则两个页面具有相同的源。</p>
 <p>下面给出了与 URL  <code>http://store.company.com/dir/page.html</code>  的源进行对比的示例:</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
@@ -7779,8 +7726,7 @@
       "><span class="line"><span class="cl">http://store.company.com/dir2/other.html 同源
 </span></span><span class="line"><span class="cl">https://store.company.com/secure.html 不同源，协议不同
 </span></span><span class="line"><span class="cl">http://store.company.com:81/dir/etc.html 不同源，端口不同
-</span></span><span class="line"><span class="cl">http://news.company.com/dir/other.html 不同源，主机不同
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl">http://news.company.com/dir/other.html 不同源，主机不同</span></span></code></pre>
 </div>
 <p>不同源会有如下限制：</p>
 <ul>
@@ -7789,7 +7735,7 @@
 <li>网络层面，同源策略限制了通过 <code>XMLHttpRequest</code>  等方式将站点的数据发送给不同源的站点。</li>
 </ul>
 <h3 id="nginx-解决跨域的原理" class="headerLink">
-    <a href="#nginx-%e8%a7%a3%e5%86%b3%e8%b7%a8%e5%9f%9f%e7%9a%84%e5%8e%9f%e7%90%86" class="header-mark" aria-label="Header mark for 'Nginx 解决跨域的原理'"></a>11.3 Nginx 解决跨域的原理</h3><p>例如：</p>
+    <a href="#nginx-%e8%a7%a3%e5%86%b3%e8%b7%a8%e5%9f%9f%e7%9a%84%e5%8e%9f%e7%90%86" class="header-mark"></a>11.3 Nginx 解决跨域的原理</h3><p>例如：</p>
 <ul>
 <li>前端 <code>server</code>  的域名为： <code>fe.server.com</code></li>
 <li>后端服务的域名为： <code>dev.server.com</code></li>
@@ -7897,18 +7843,17 @@
 </span></span><span class="line"><span class="cl">location / {
 </span></span><span class="line"><span class="cl">proxy_pass dev.server.com;
 </span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">}
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl">}</span></span></code></pre>
 </div>
 <p>这样可以完美绕过浏览器的同源策略： <code>fe.server.com</code>  访问 <code>Nginx</code>  的 <code>fe.server.com</code>  属于同源访问，而 <code>Nginx</code>  对服务端转发的请求不会触发浏览器的同源策略。</p>
 <h2 id="配置开启-gzip-压缩" class="headerLink">
-    <a href="#%e9%85%8d%e7%bd%ae%e5%bc%80%e5%90%af-gzip-%e5%8e%8b%e7%bc%a9" class="header-mark" aria-label="Header mark for '配置开启 gzip 压缩'"></a>12 配置开启 gzip 压缩</h2><p><code>GZIP</code>  是规定的三种标准 <code>HTTP</code>  压缩格式之一。目前绝大多数的网站都在使用 <code>GZIP</code>  传输 <code>HTML</code>  、<code>CSS</code>  、 <code>JavaScript</code>  等资源文件。</p>
+    <a href="#%e9%85%8d%e7%bd%ae%e5%bc%80%e5%90%af-gzip-%e5%8e%8b%e7%bc%a9" class="header-mark"></a>12 配置开启 gzip 压缩</h2><p><code>GZIP</code>  是规定的三种标准 <code>HTTP</code>  压缩格式之一。目前绝大多数的网站都在使用 <code>GZIP</code>  传输 <code>HTML</code>  、<code>CSS</code>  、 <code>JavaScript</code>  等资源文件。</p>
 <p>对于文本文件， <code>GZiP</code>  的效果非常明显，开启后传输所需流量大约会降至 <code>1/4~1/3</code>  。</p>
 <p>并不是每个浏览器都支持 <code>gzip</code>  的，如何知道客户端是否支持 <code>gzip</code>  呢，请求头中的 <code>Accept-Encoding</code>  来标识对压缩的支持。</p>
-<p><img class="tw-inline" loading="lazy" src="/3052179d3b724b2b9cd2334b3263280c~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_1414298712023811177.png" srcset="/3052179d3b724b2b9cd2334b3263280c~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_1414298712023811177_hu3572508408712026727.webp 800w, /3052179d3b724b2b9cd2334b3263280c~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_1414298712023811177_hu3972557124258223004.webp 1200w, /3052179d3b724b2b9cd2334b3263280c~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_1414298712023811177_hu1609721624624608186.webp 1600w"  alt="image.png" height="130" width="339"></p>
+<p><img class="tw-inline" loading="lazy" src=/768639cc7fda46aa874ed6194d2c879c_15734339552757212258.png srcset="/768639cc7fda46aa874ed6194d2c879c_15734339552757212258_hu15393649472125712373.webp 800w, /768639cc7fda46aa874ed6194d2c879c_15734339552757212258_hu17804005920902047131.webp 1200w, /768639cc7fda46aa874ed6194d2c879c_15734339552757212258_hu728618455395844762.webp 1600w"   height="130" width="339"></p>
 <p>启用 <code>gzip</code>  同时需要客户端和服务端的支持，如果客户端支持 <code>gzip</code>  的解析，那么只要服务端能够返回 <code>gzip</code>  的文件就可以启用 <code>gzip</code>  了,我们可以通过 <code>Nginx</code>  的配置来让服务端支持 <code>gzip</code>
 。下面的 <code>respone</code>  中 <code>content-encoding:gzip</code>  ，指服务端开启了 <code>gzip</code>  的压缩方式。</p>
-<p><img class="tw-inline" loading="lazy" src="/d6c44208107243bab7cf0b15c89a6722~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_14206317690613423018.png" srcset="/d6c44208107243bab7cf0b15c89a6722~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_14206317690613423018_hu13614443390244589199.webp 800w, /d6c44208107243bab7cf0b15c89a6722~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_14206317690613423018_hu13111802539203337940.webp 1200w, /d6c44208107243bab7cf0b15c89a6722~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_14206317690613423018_hu7428967453375728999.webp 1600w"  alt="image.png" height="219" width="381"></p>
+<p><img class="tw-inline" loading="lazy" src=/144bdefc71924c3788b9e8a6bb30cadb_14452660910121554467.png srcset="/144bdefc71924c3788b9e8a6bb30cadb_14452660910121554467_hu17775851929879713549.webp 800w, /144bdefc71924c3788b9e8a6bb30cadb_14452660910121554467_hu3789147901408283109.webp 1200w, /144bdefc71924c3788b9e8a6bb30cadb_14452660910121554467_hu13740327814780468292.webp 1600w"   height="219" width="381"></p>
 <p>在  <code>/etc/nginx/conf.d/</code>    文件夹中新建配置文件  <code>gzip.conf</code>  ：</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
@@ -8005,7 +7950,7 @@
       tw-overflow-x-auto
       tw-scrollbar-thin
       "><span class="line"><span class="cl"><span class="c1"># # 默认off，是否开启gzip</span>
-</span></span><span class="line"><span class="cl"><span class="n">gzip</span> <span class="n">on</span><span class="p">;</span> 
+</span></span><span class="line"><span class="cl"><span class="n">gzip</span> <span class="n">on</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl"><span class="c1"># 要采用 gzip 压缩的 MIME 文件类型，其中 text/html 被系统强制启用；</span>
 </span></span><span class="line"><span class="cl"><span class="n">gzip_types</span> <span class="n">text</span><span class="o">/</span><span class="n">plain</span> <span class="n">text</span><span class="o">/</span><span class="n">css</span> <span class="n">application</span><span class="o">/</span><span class="n">json</span> <span class="n">application</span><span class="o">/</span><span class="n">x</span><span class="o">-</span><span class="n">javascript</span> <span class="n">text</span><span class="o">/</span><span class="n">xml</span> <span class="n">application</span><span class="o">/</span><span class="n">xml</span> <span class="n">application</span><span class="o">/</span><span class="n">xml</span><span class="o">+</span><span class="n">rss</span> <span class="n">text</span><span class="o">/</span><span class="n">javascript</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
@@ -8030,15 +7975,14 @@
 </span></span><span class="line"><span class="cl"><span class="c1"># gzip_min_length 1k;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1"># 默认 1.1，启用 gzip 所需的 HTTP 最低版本；</span>
-</span></span><span class="line"><span class="cl"><span class="n">gzip_http_version</span> <span class="mf">1.1</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">  </span></span></code></pre>
+</span></span><span class="line"><span class="cl"><span class="n">gzip_http_version</span> <span class="mf">1.1</span><span class="p">;</span></span></span></code></pre>
 </div>
 <p>其实也可以通过前端构建工具例如 <code>webpack</code>  、<code>rollup</code>  等在打生产包时就做好 <code>Gzip</code>  压缩，然后放到 <code>Nginx</code>  服务器中，这样可以减少服务器的开销，加快访问速度。</p>
 <p>关于 <code>Nginx</code>  的实际应用就学习到这里，相信通过掌握了 <code>Nginx</code>  核心配置以及实战配置，之后再遇到什么需求，我们也能轻松应对。接下来，让我们再深入一点学习下 <code>Nginx</code>  的架构。</p>
 <h2 id="nginx-架构" class="headerLink">
-    <a href="#nginx-%e6%9e%b6%e6%9e%84" class="header-mark" aria-label="Header mark for 'Nginx 架构'"></a>13 Nginx 架构</h2><h2 id="进程结构" class="headerLink">
-    <a href="#%e8%bf%9b%e7%a8%8b%e7%bb%93%e6%9e%84" class="header-mark" aria-label="Header mark for '进程结构'"></a>14 进程结构</h2><p>多进程结构 <code>Nginx</code>  的进程模型图：</p>
-<p><img class="tw-inline" loading="lazy" src="/1be5d62fb185454d825a56bf03e7dcd5~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_15606491266278384196.png" srcset="/1be5d62fb185454d825a56bf03e7dcd5~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_15606491266278384196_hu5170313748926033418.webp 800w, /1be5d62fb185454d825a56bf03e7dcd5~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_15606491266278384196_hu17533647769580675684.webp 1200w, /1be5d62fb185454d825a56bf03e7dcd5~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_15606491266278384196_hu672572981096499280.webp 1600w"  alt="未命名文件.png" height="379" width="995"></p>
+    <a href="#nginx-%e6%9e%b6%e6%9e%84" class="header-mark"></a>13 Nginx 架构</h2><h3 id="进程结构" class="headerLink">
+    <a href="#%e8%bf%9b%e7%a8%8b%e7%bb%93%e6%9e%84" class="header-mark"></a>13.1 进程结构</h3><p>多进程结构 <code>Nginx</code>  的进程模型图：</p>
+<p><img class="tw-inline" loading="lazy" src=/b14954122ceb485eadf9197e9c988614_5513383007209453850.png srcset="/b14954122ceb485eadf9197e9c988614_5513383007209453850_hu421314986835792738.webp 800w, /b14954122ceb485eadf9197e9c988614_5513383007209453850_hu6568636589090679940.webp 1200w, /b14954122ceb485eadf9197e9c988614_5513383007209453850_hu11491148524415948690.webp 1600w"   height="379" width="995"></p>
 <p>多进程中的 <code>Nginx</code>  进程架构如下图所示，会有一个父进程（ <code>Master Process</code>  ），它会有很多子进程（ <code>Child Processes</code>  ）。</p>
 <ul>
 <li><code>Master Process</code>  用来管理子进程的，其本身并不真正处理用户请求。
@@ -8049,8 +7993,8 @@
 </li>
 <li>子进程间是通过共享内存的方式进行通信的。</li>
 </ul>
-<h2 id="配置文件重载原理" class="headerLink">
-    <a href="#%e9%85%8d%e7%bd%ae%e6%96%87%e4%bb%b6%e9%87%8d%e8%bd%bd%e5%8e%9f%e7%90%86" class="header-mark" aria-label="Header mark for '配置文件重载原理'"></a>15 配置文件重载原理</h2><p><code>reload</code>  重载配置文件的流程：</p>
+<h3 id="配置文件重载原理" class="headerLink">
+    <a href="#%e9%85%8d%e7%bd%ae%e6%96%87%e4%bb%b6%e9%87%8d%e8%bd%bd%e5%8e%9f%e7%90%86" class="header-mark"></a>13.2 配置文件重载原理</h3><p><code>reload</code>  重载配置文件的流程：</p>
 <ol>
 <li>向 <code>master</code>  进程发送 <code>HUP</code>  信号（ <code>reload</code>  命令）；</li>
 <li><code>master</code>  进程检查配置语法是否正确；</li>
@@ -8060,11 +8004,11 @@
 <li>老的 <code>worker</code>  进程关闭监听句柄，处理完当前连接后关闭进程；</li>
 <li>整个过程 <code>Nginx</code>  始终处于平稳运行中，实现了平滑升级，用户无感知；</li>
 </ol>
-<h2 id="nginx-模块化管理机制" class="headerLink">
-    <a href="#nginx-%e6%a8%a1%e5%9d%97%e5%8c%96%e7%ae%a1%e7%90%86%e6%9c%ba%e5%88%b6" class="header-mark" aria-label="Header mark for 'Nginx 模块化管理机制'"></a>16 Nginx 模块化管理机制</h2><p><code>Nginx</code>  的内部结构是由核心部分和一系列的功能模块所组成。这样划分是为了使得每个模块的功能相对简单，便于开发，同时也便于对系统进行功能扩展。<code>Nginx</code>  的模块是互相独立的,低耦合高内聚。</p>
-<p><img class="tw-inline" loading="lazy" src="/7c0d0801228d409b8fc202df83a2233d~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_8295606069507907555.png" srcset="/7c0d0801228d409b8fc202df83a2233d~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_8295606069507907555_hu9828030028979249930.webp 800w, /7c0d0801228d409b8fc202df83a2233d~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_8295606069507907555_hu5821656773919094185.webp 1200w, /7c0d0801228d409b8fc202df83a2233d~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0_8295606069507907555_hu3162743138414757821.webp 1600w"  alt="image.png" height="765" width="1101"></p>
+<h3 id="nginx-模块化管理机制" class="headerLink">
+    <a href="#nginx-%e6%a8%a1%e5%9d%97%e5%8c%96%e7%ae%a1%e7%90%86%e6%9c%ba%e5%88%b6" class="header-mark"></a>13.3 Nginx 模块化管理机制</h3><p><code>Nginx</code>  的内部结构是由核心部分和一系列的功能模块所组成。这样划分是为了使得每个模块的功能相对简单，便于开发，同时也便于对系统进行功能扩展。<code>Nginx</code>  的模块是互相独立的,低耦合高内聚。</p>
+<p><img class="tw-inline" loading="lazy" src=/5494052cc4f14f53b47a1dbcd10fc215_13768862354199563302.png srcset="/5494052cc4f14f53b47a1dbcd10fc215_13768862354199563302_hu14296495287123908063.webp 800w, /5494052cc4f14f53b47a1dbcd10fc215_13768862354199563302_hu15577478988410029221.webp 1200w, /5494052cc4f14f53b47a1dbcd10fc215_13768862354199563302_hu13642904565223545809.webp 1600w"   height="765" width="1101"></p>
 <h2 id="参考" class="headerLink">
-    <a href="#%e5%8f%82%e8%80%83" class="header-mark" aria-label="Header mark for '参考'"></a>17 参考</h2><ul>
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>14 参考</h2><ul>
 <li><a href="https://juejin.cn/post/6942607113118023710" target="_blank" rel="noopener noreferrer">万字总结，体系化带你全面认识 Nginx ！</a></li>
 </ul>
 </div>
@@ -8073,9 +8017,9 @@
     <div class="post-info">
         <div class="post-info-line">
             <div class="post-info-mod">
-                <span>更新于 2022-11-16&nbsp;<a class="git-hash" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/2f85c5930e1aca01b8044536a940879b4088c05f" target="_blank" title="commit by weibin(xiaobinqt@163.com) 2f85c5930e1aca01b8044536a940879b4088c05f: categorize into series" rel="noopener noreferrer">
+                <span>更新于 2024-10-15&nbsp;<a class="git-hash" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/77ed99e1ea0ccd28c27b14dc64fa323bec462013" target="_blank" title="commit by weibin(xiaobinqt@163.com) 77ed99e1ea0ccd28c27b14dc64fa323bec462013: update developer articles" rel="noopener noreferrer">
                                     <svg class="icon"
-    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M440.667 182.109l7.143-40c1.313-7.355-4.342-14.109-11.813-14.109h-74.81l14.623-81.891C377.123 38.754 371.468 32 363.997 32h-40.632a12 12 0 0 0-11.813 9.891L296.175 128H197.54l14.623-81.891C213.477 38.754 207.822 32 200.35 32h-40.632a12 12 0 0 0-11.813 9.891L132.528 128H53.432a12 12 0 0 0-11.813 9.891l-7.143 40C33.163 185.246 38.818 192 46.289 192h74.81L98.242 320H19.146a12 12 0 0 0-11.813 9.891l-7.143 40C-1.123 377.246 4.532 384 12.003 384h74.81L72.19 465.891C70.877 473.246 76.532 480 84.003 480h40.632a12 12 0 0 0 11.813-9.891L151.826 384h98.634l-14.623 81.891C234.523 473.246 240.178 480 247.65 480h40.632a12 12 0 0 0 11.813-9.891L315.472 384h79.096a12 12 0 0 0 11.813-9.891l7.143-40c1.313-7.355-4.342-14.109-11.813-14.109h-74.81l22.857-128h79.096a12 12 0 0 0 11.813-9.891zM261.889 320h-98.634l22.857-128h98.634l-22.857 128z"/></svg>2f85c593</a></span>
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M440.667 182.109l7.143-40c1.313-7.355-4.342-14.109-11.813-14.109h-74.81l14.623-81.891C377.123 38.754 371.468 32 363.997 32h-40.632a12 12 0 0 0-11.813 9.891L296.175 128H197.54l14.623-81.891C213.477 38.754 207.822 32 200.35 32h-40.632a12 12 0 0 0-11.813 9.891L132.528 128H53.432a12 12 0 0 0-11.813 9.891l-7.143 40C33.163 185.246 38.818 192 46.289 192h74.81L98.242 320H19.146a12 12 0 0 0-11.813 9.891l-7.143 40C-1.123 377.246 4.532 384 12.003 384h74.81L72.19 465.891C70.877 473.246 76.532 480 84.003 480h40.632a12 12 0 0 0 11.813-9.891L151.826 384h98.634l-14.623 81.891C234.523 473.246 240.178 480 247.65 480h40.632a12 12 0 0 0 11.813-9.891L315.472 384h79.096a12 12 0 0 0 11.813-9.891l7.143-40c1.313-7.355-4.342-14.109-11.813-14.109h-74.81l22.857-128h79.096a12 12 0 0 0 11.813-9.891zM261.889 320h-98.634l22.857-128h98.634l-22.857 128z"/></svg>77ed99e1</a></span>
             </div>
             <div class="post-info-license"></div>
         </div>

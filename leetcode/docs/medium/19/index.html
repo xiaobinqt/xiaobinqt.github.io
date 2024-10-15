@@ -3,17 +3,173 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="19. 删除链表的倒数第 N 个结点 # 题目地址 # 力扣 LeetCode 解题思路 # 常规法 # 先计算链表长度，比如是 length。那么删除倒数第 n 个节点，也就是删除顺数第 length-n&#43;1 个节点，设为 s，直接从 1 找到第 s-1 个也就是 s 的上一个节点（其实也就是 length-n），直接把 s-1 删除即可。
-双指针法 # TODO
-具体实现 # Go常规法 package main import &#34;fmt&#34; type ListNode struct { Val int Next *ListNode } func removeNthFromEnd(head *ListNode, n int) *ListNode { if head == nil { return head } length := 0 tmpc := head for tmpc !">
+<meta name="description" content="
+  19. 删除链表的倒数第 N 个结点
+  #
+
+
+  题目地址
+  #
+
+
+
+  力扣
+
+  LeetCode
+
+
+  解题思路
+  #
+
+
+  常规法
+  #
+
+先计算链表长度，比如是 length。那么删除倒数第 n 个节点，也就是删除顺数第 length-n&#43;1 个节点，设为 s，直接从 1 找到第 s-1 个也就是 s 的上一个节点（其实也就是 length-n），直接把 s-1 删除即可。
+
+  双指针法
+  #
+
+TODO
+
+  具体实现
+  #
+
+
+
+
+
+
+  Go常规法
+  package main
+
+import &#34;fmt&#34;
+
+type ListNode struct {
+	Val  int
+	Next *ListNode
+}
+
+func removeNthFromEnd(head *ListNode, n int) *ListNode {
+	if head == nil {
+		return head
+	}
+
+	length := 0
+	tmpc := head
+	for tmpc != nil {
+		//fmt.Println(tmpc.Val)
+		length&#43;&#43;
+		tmpc = tmpc.Next
+	}
+
+	// 需要有虚拟头结点是因为，可能删除的是最后的节点，也就是头结点，用虚拟头结点可以统一处理
+	dummy := &amp;ListNode{
+		Val:  0,
+		Next: head,
+	}
+
+	cur := dummy
+	// 注意这里 i 是从 1 开始
+	for i := 1; i &lt; length-n&#43;1; i&#43;&#43; {
+		cur = cur.Next
+	}
+	cur.Next = cur.Next.Next
+	return dummy.Next
+}
+
+func main() {
+	ret := removeNthFromEnd(&amp;ListNode{
+		Val: 1,
+		Next: &amp;ListNode{
+			Val: 2,
+			Next: &amp;ListNode{
+				Val: 3,
+				Next: &amp;ListNode{
+					Val: 4,
+					Next: &amp;ListNode{
+						Val:  5,
+						Next: nil,
+					},
+				},
+			},
+		},
+	}, 2)
+	fmt.Println(ret)
+}
+
+  Go双指针
+  package main
+
+import &#34;fmt&#34;
+
+type ListNode struct {
+	Val  int
+	Next *ListNode
+}
+
+func removeNthFromEnd(head *ListNode, n int) *ListNode {
+	if head == nil {
+		return head
+	}
+
+	dummy := &amp;ListNode{
+		Next: head,
+	}
+
+	fast, low := dummy, dummy
+	// fast 先移动 n 步
+	for n != 0 &amp;&amp; fast != nil {
+		fast = fast.Next
+		n--
+	}
+	// fast 再移动一步，这样当 fast 为 nil 时，low 在 n 的上一位
+	fast = fast.Next
+	for fast != nil {
+		fast = fast.Next
+		low = low.Next
+	}
+	low.Next = low.Next.Next
+	return dummy.Next
+}
+
+func main() {
+	ret := removeNthFromEnd(&amp;ListNode{
+		Val: 1,
+		Next: &amp;ListNode{
+			Val: 2,
+			Next: &amp;ListNode{
+				Val: 3,
+				Next: &amp;ListNode{
+					Val: 4,
+					Next: &amp;ListNode{
+						Val:  5,
+						Next: nil,
+					},
+				},
+			},
+		},
+	}, 2)
+	fmt.Println(ret)
+}
+
+
+
+  参考
+  #
+
+
+
+  19.删除链表的倒数第N个节点
+">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/leetcode/docs/medium/19/">
   <meta property="og:site_name" content="LeetCode">
   <meta property="og:title" content="19. 删除链表的倒数第 N 个结点">
-  <meta property="og:description" content="19. 删除链表的倒数第 N 个结点 # 题目地址 # 力扣 LeetCode 解题思路 # 常规法 # 先计算链表长度，比如是 length。那么删除倒数第 n 个节点，也就是删除顺数第 length-n&#43;1 个节点，设为 s，直接从 1 找到第 s-1 个也就是 s 的上一个节点（其实也就是 length-n），直接把 s-1 删除即可。
+  <meta property="og:description" content=" 19. 删除链表的倒数第 N 个结点 # 题目地址 # 力扣 LeetCode 解题思路 # 常规法 # 先计算链表长度，比如是 length。那么删除倒数第 n 个节点，也就是删除顺数第 length-n&#43;1 个节点，设为 s，直接从 1 找到第 s-1 个也就是 s 的上一个节点（其实也就是 length-n），直接把 s-1 删除即可。
 双指针法 # TODO
-具体实现 # Go常规法 package main import &#34;fmt&#34; type ListNode struct { Val int Next *ListNode } func removeNthFromEnd(head *ListNode, n int) *ListNode { if head == nil { return head } length := 0 tmpc := head for tmpc !">
+具体实现 # Go常规法 package main import &#34;fmt&#34; type ListNode struct { Val int Next *ListNode } func removeNthFromEnd(head *ListNode, n int) *ListNode { if head == nil { return head } length := 0 tmpc := head for tmpc != nil { //fmt.Println(tmpc.Val) length&#43;&#43; tmpc = tmpc.Next } // 需要有虚拟头结点是因为，可能删除的是最后的节点，也就是头结点，用虚拟头结点可以统一处理 dummy := &amp;ListNode{ Val: 0, Next: head, } cur := dummy // 注意这里 i 是从 1 开始 for i := 1; i &lt; length-n&#43;1; i&#43;&#43; { cur = cur.Next } cur.Next = cur.Next.Next return dummy.Next } func main() { ret := removeNthFromEnd(&amp;ListNode{ Val: 1, Next: &amp;ListNode{ Val: 2, Next: &amp;ListNode{ Val: 3, Next: &amp;ListNode{ Val: 4, Next: &amp;ListNode{ Val: 5, Next: nil, }, }, }, }, }, 2) fmt.Println(ret) } Go双指针 package main import &#34;fmt&#34; type ListNode struct { Val int Next *ListNode } func removeNthFromEnd(head *ListNode, n int) *ListNode { if head == nil { return head } dummy := &amp;ListNode{ Next: head, } fast, low := dummy, dummy // fast 先移动 n 步 for n != 0 &amp;&amp; fast != nil { fast = fast.Next n-- } // fast 再移动一步，这样当 fast 为 nil 时，low 在 n 的上一位 fast = fast.Next for fast != nil { fast = fast.Next low = low.Next } low.Next = low.Next.Next return dummy.Next } func main() { ret := removeNthFromEnd(&amp;ListNode{ Val: 1, Next: &amp;ListNode{ Val: 2, Next: &amp;ListNode{ Val: 3, Next: &amp;ListNode{ Val: 4, Next: &amp;ListNode{ Val: 5, Next: nil, }, }, }, }, }, 2) fmt.Println(ret) } 参考 # 19.删除链表的倒数第N个节点 ">
   <meta property="og:locale" content="zh">
   <meta property="og:type" content="article">
     <meta property="article:section" content="docs">
@@ -27,9 +183,6 @@
   <script defer src="/leetcode/zh.search.min.f9cd73d20daebe0f064076c741a93203473f9497ee32d434a8774e691eea3972.js" integrity="sha256-&#43;c1z0g2uvg8GQHbHQakyA0c/lJfuMtQ0qHdOaR7qOXI=" crossorigin="anonymous"></script>
 
   <script defer src="/leetcode/sw.min.c814046bee19bfa0279b71972af9d15919d290341d7ecdfe781d2e1113df9ad1.js" integrity="sha256-yBQEa&#43;4Zv6Anm3GXKvnRWRnSkDQdfs3&#43;eB0uERPfmtE=" crossorigin="anonymous"></script>
-
-  
-
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book

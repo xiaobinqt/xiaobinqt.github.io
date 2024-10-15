@@ -6,6 +6,10 @@
 <!-- https://xiaobinqt.github.io -->
 <!-- https://www.xiaobinqt.cn -->
 
+学习资料，持续更新。
+
+<!--more-->
+
 ## 基础
 
 - [free programming books](https://github.com/EbookFoundation/free-programming-books/blob/main/books/free-programming-books-zh.md) - 免费的编程书籍

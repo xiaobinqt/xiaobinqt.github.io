@@ -3,23 +3,125 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="977. 有序数组的平方 # 题目地址 # 力扣 LeetCode 解题思路 # 暴力法 # 可以直接先计算平方，然后再利用库函数排序。
-双指针法 # 可以参考
-有序数组的平方 B 站-有序数组的平方 数组其实是有序的，只不过负数平方之后可能成为最大数了。那么数组平方的最大值就在数组的两端，不是最左边就是最右边，不可能是中间。此时可以考虑双指针法了，i指向起始位置，j指向终止位置。定义一个新数组 result，和 A 数组一样的大小，让k指向 result 数组终止位置，也就是说让 k 从大（右）到小（左）填充。
+<meta name="description" content="
+  977. 有序数组的平方
+  #
+
+
+  题目地址
+  #
+
+
+
+  力扣
+
+  LeetCode
+
+
+  解题思路
+  #
+
+
+  暴力法
+  #
+
+可以直接先计算平方，然后再利用库函数排序。
+
+  双指针法
+  #
+
+可以参考
+
+
+  有序数组的平方
+
+  B 站-有序数组的平方
+
+数组其实是有序的，只不过负数平方之后可能成为最大数了。那么数组平方的最大值就在数组的两端，不是最左边就是最右边，不可能是中间。此时可以考虑双指针法了，i指向起始位置，j指向终止位置。定义一个新数组 result，和 A 数组一样的大小，让k指向 result 数组终止位置，也就是说让 k 从大（右）到小（左）填充。
 如果A[i] * A[i] &lt; A[j] * A[j] 那么result[k--] = A[j] * A[j] 。
 如果A[i] * A[i] &gt;= A[j] * A[j]那么result[k--] = A[i] * A[i]。
-具体实现 # Go双指针 package main import &#34;fmt&#34; func sortedSquares(nums []int) []int { if len(nums) == 0 { return []int{} } var ( result = make([]int, len(nums)) i, j = 0, len(nums) - 1 k = len(nums) - 1 // 能访问到最后一个值 ) // 这里之所以要 &lt;= 是因为，如果仅仅是 &lt; 那么当 = 时会退出， // 这样就会漏掉了一个元素 for i &lt;= j { if nums[i]*nums[i] &gt; nums[j]*nums[j] { result[k] = nums[i] * nums[i] k-- i&#43;&#43; } else { result[k] = nums[j] * nums[j] k-- j-- } } return result } func main() { fmt.">
+
+  具体实现
+  #
+
+
+
+
+
+
+  Go双指针
+  package main
+
+import &#34;fmt&#34;
+
+func sortedSquares(nums []int) []int {
+	if len(nums) == 0 {
+		return []int{}
+	}
+
+	var (
+		result = make([]int, len(nums))
+		i, j   = 0, len(nums) - 1
+		k      = len(nums) - 1 // 能访问到最后一个值
+	)
+
+	// 这里之所以要 &lt;= 是因为，如果仅仅是 &lt; 那么当 = 时会退出，
+	// 这样就会漏掉了一个元素
+	for i &lt;= j {
+		if nums[i]*nums[i] &gt; nums[j]*nums[j] {
+			result[k] = nums[i] * nums[i]
+			k--
+			i&#43;&#43;
+		} else {
+			result[k] = nums[j] * nums[j]
+			k--
+			j--
+		}
+	}
+
+	return result
+}
+
+func main() {
+	fmt.Println(sortedSquares([]int{-4, -1, 0, 3, 10}))
+}
+
+  Go暴力法
+  package main
+
+import (
+	&#34;fmt&#34;
+	&#34;sort&#34;
+)
+
+func sortedSquares(nums []int) []int {
+	if len(nums) == 0 {
+		return []int{}
+	}
+
+	for index, item := range nums {
+		nums[index] = item * item
+	}
+
+	sort.Ints(nums)
+	return nums
+}
+
+func main() {
+	fmt.Println(sortedSquares([]int{-4, -1, 0, 3, 10}))
+}
+">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/leetcode/docs/easy/977/">
   <meta property="og:site_name" content="LeetCode">
   <meta property="og:title" content="977. 有序数组的平方">
-  <meta property="og:description" content="977. 有序数组的平方 # 题目地址 # 力扣 LeetCode 解题思路 # 暴力法 # 可以直接先计算平方，然后再利用库函数排序。
+  <meta property="og:description" content=" 977. 有序数组的平方 # 题目地址 # 力扣 LeetCode 解题思路 # 暴力法 # 可以直接先计算平方，然后再利用库函数排序。
 双指针法 # 可以参考
 有序数组的平方 B 站-有序数组的平方 数组其实是有序的，只不过负数平方之后可能成为最大数了。那么数组平方的最大值就在数组的两端，不是最左边就是最右边，不可能是中间。此时可以考虑双指针法了，i指向起始位置，j指向终止位置。定义一个新数组 result，和 A 数组一样的大小，让k指向 result 数组终止位置，也就是说让 k 从大（右）到小（左）填充。
 如果A[i] * A[i] &lt; A[j] * A[j] 那么result[k--] = A[j] * A[j] 。
 如果A[i] * A[i] &gt;= A[j] * A[j]那么result[k--] = A[i] * A[i]。
-具体实现 # Go双指针 package main import &#34;fmt&#34; func sortedSquares(nums []int) []int { if len(nums) == 0 { return []int{} } var ( result = make([]int, len(nums)) i, j = 0, len(nums) - 1 k = len(nums) - 1 // 能访问到最后一个值 ) // 这里之所以要 &lt;= 是因为，如果仅仅是 &lt; 那么当 = 时会退出， // 这样就会漏掉了一个元素 for i &lt;= j { if nums[i]*nums[i] &gt; nums[j]*nums[j] { result[k] = nums[i] * nums[i] k-- i&#43;&#43; } else { result[k] = nums[j] * nums[j] k-- j-- } } return result } func main() { fmt.">
+具体实现 # Go双指针 package main import &#34;fmt&#34; func sortedSquares(nums []int) []int { if len(nums) == 0 { return []int{} } var ( result = make([]int, len(nums)) i, j = 0, len(nums) - 1 k = len(nums) - 1 // 能访问到最后一个值 ) // 这里之所以要 &lt;= 是因为，如果仅仅是 &lt; 那么当 = 时会退出， // 这样就会漏掉了一个元素 for i &lt;= j { if nums[i]*nums[i] &gt; nums[j]*nums[j] { result[k] = nums[i] * nums[i] k-- i&#43;&#43; } else { result[k] = nums[j] * nums[j] k-- j-- } } return result } func main() { fmt.Println(sortedSquares([]int{-4, -1, 0, 3, 10})) } Go暴力法 package main import ( &#34;fmt&#34; &#34;sort&#34; ) func sortedSquares(nums []int) []int { if len(nums) == 0 { return []int{} } for index, item := range nums { nums[index] = item * item } sort.Ints(nums) return nums } func main() { fmt.Println(sortedSquares([]int{-4, -1, 0, 3, 10})) } ">
   <meta property="og:locale" content="zh">
   <meta property="og:type" content="article">
     <meta property="article:section" content="docs">
@@ -33,9 +135,6 @@
   <script defer src="/leetcode/zh.search.min.f9cd73d20daebe0f064076c741a93203473f9497ee32d434a8774e691eea3972.js" integrity="sha256-&#43;c1z0g2uvg8GQHbHQakyA0c/lJfuMtQ0qHdOaR7qOXI=" crossorigin="anonymous"></script>
 
   <script defer src="/leetcode/sw.min.c814046bee19bfa0279b71972af9d15919d290341d7ecdfe781d2e1113df9ad1.js" integrity="sha256-yBQEa&#43;4Zv6Anm3GXKvnRWRnSkDQdfs3&#43;eB0uERPfmtE=" crossorigin="anonymous"></script>
-
-  
-
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book

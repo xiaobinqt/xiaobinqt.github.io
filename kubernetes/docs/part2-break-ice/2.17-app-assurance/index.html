@@ -3,25 +3,56 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="2.17 应用保障 # 2.17.1 容器资源配额 # 创建容器有三大隔离技术：namespace、cgroup、chroot。其中的 namespace 实现了独立的进程空间，chroot 实现了独立的文件系统，cgroup 的作用是管控 CPU、内存，保证容器不会无节制地占用基础资源，进而影响到系统里的其他应用。
+<meta name="description" content="
+  2.17 应用保障
+  #
+
+
+  2.17.1 容器资源配额
+  #
+
+创建容器有三大隔离技术：namespace、cgroup、chroot。其中的 namespace 实现了独立的进程空间，chroot 实现了独立的文件系统，cgroup 的作用是管控 CPU、内存，保证容器不会无节制地占用基础资源，进而影响到系统里的其他应用。
 因为 CPU、内存与存储卷有明显的不同，它是直接 “内置” 在系统里的，不像硬盘那样需要 “外挂”，所以申请和管理的过程会简单很多。Kubernetes 在管控容器使用 CPU 和内存的做法是，只要在 Pod 容器的描述部分添加一个新字段 resources 就可以了，它就相当于申请资源的 Claim。
 以下是一个 YAML 描述示例：
-apiVersion: v1 kind: Pod metadata: name: ngx-pod-resources spec: containers: - image: nginx:alpine name: ngx resources: requests: cpu: 10m memory: 100Mi limits: cpu: 20m memory: 200Mi requests 意思是容器要申请的资源，也就是说要求 Kubernetes 在创建 Pod 的时候必须分配这里列出的资源，否则容器就无法运行。
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ngx-pod-resources
+
+spec:
+  containers:
+    - image: nginx:alpine
+      name: ngx
+
+      resources:
+        requests:
+          cpu: 10m
+          memory: 100Mi
+        limits:
+          cpu: 20m
+          memory: 200Mi
+
+
+requests 意思是容器要申请的资源，也就是说要求 Kubernetes 在创建 Pod 的时候必须分配这里列出的资源，否则容器就无法运行。
+
+
 limits 意思是容器使用资源的上限，不能超过设定值，否则就有可能被强制停止运行。
+
+
 内存的写法和磁盘容量一样，使用 Ki、Mi、Gi 来表示 KB、MB、GB，比如 512Ki、100Mi、0.5Gi 等。
-因为 CPU 因为在计算机中数量有限，非常宝贵，所以 Kubernetes 允许容器精细分割 CPU，既可以 1 个、2 个地完整使用 CPU，也可以用小数 0.">
+因为 CPU 因为在计算机中数量有限，非常宝贵，所以 Kubernetes 允许容器精细分割 CPU，既可以 1 个、2 个地完整使用 CPU，也可以用小数 0.1、0.2 的方式来部分使用 CPU。这其实是效仿了 UNIX “时间片” 的用法，意思是进程最多可以占用多少 CPU 时间。CPU 时间也不能无限分割，Kubernetes 里 CPU 的最小使用单位是 0.001，为了方便表示用了一个特别的单位 m，就是 “milli” “毫” 的意思，比如说 500m 就相当于 0.5。">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/kubernetes/docs/part2-break-ice/2.17-app-assurance/">
   <meta property="og:site_name" content="Kubernetes 学习笔记">
   <meta property="og:title" content="2.17 应用保障">
-  <meta property="og:description" content="2.17 应用保障 # 2.17.1 容器资源配额 # 创建容器有三大隔离技术：namespace、cgroup、chroot。其中的 namespace 实现了独立的进程空间，chroot 实现了独立的文件系统，cgroup 的作用是管控 CPU、内存，保证容器不会无节制地占用基础资源，进而影响到系统里的其他应用。
+  <meta property="og:description" content=" 2.17 应用保障 # 2.17.1 容器资源配额 # 创建容器有三大隔离技术：namespace、cgroup、chroot。其中的 namespace 实现了独立的进程空间，chroot 实现了独立的文件系统，cgroup 的作用是管控 CPU、内存，保证容器不会无节制地占用基础资源，进而影响到系统里的其他应用。
 因为 CPU、内存与存储卷有明显的不同，它是直接 “内置” 在系统里的，不像硬盘那样需要 “外挂”，所以申请和管理的过程会简单很多。Kubernetes 在管控容器使用 CPU 和内存的做法是，只要在 Pod 容器的描述部分添加一个新字段 resources 就可以了，它就相当于申请资源的 Claim。
 以下是一个 YAML 描述示例：
 apiVersion: v1 kind: Pod metadata: name: ngx-pod-resources spec: containers: - image: nginx:alpine name: ngx resources: requests: cpu: 10m memory: 100Mi limits: cpu: 20m memory: 200Mi requests 意思是容器要申请的资源，也就是说要求 Kubernetes 在创建 Pod 的时候必须分配这里列出的资源，否则容器就无法运行。
 limits 意思是容器使用资源的上限，不能超过设定值，否则就有可能被强制停止运行。
 内存的写法和磁盘容量一样，使用 Ki、Mi、Gi 来表示 KB、MB、GB，比如 512Ki、100Mi、0.5Gi 等。
-因为 CPU 因为在计算机中数量有限，非常宝贵，所以 Kubernetes 允许容器精细分割 CPU，既可以 1 个、2 个地完整使用 CPU，也可以用小数 0.">
+因为 CPU 因为在计算机中数量有限，非常宝贵，所以 Kubernetes 允许容器精细分割 CPU，既可以 1 个、2 个地完整使用 CPU，也可以用小数 0.1、0.2 的方式来部分使用 CPU。这其实是效仿了 UNIX “时间片” 的用法，意思是进程最多可以占用多少 CPU 时间。CPU 时间也不能无限分割，Kubernetes 里 CPU 的最小使用单位是 0.001，为了方便表示用了一个特别的单位 m，就是 “milli” “毫” 的意思，比如说 500m 就相当于 0.5。">
   <meta property="og:locale" content="zh">
   <meta property="og:type" content="article">
     <meta property="article:section" content="docs">
@@ -35,9 +66,6 @@ limits 意思是容器使用资源的上限，不能超过设定值，否则就�
   <script defer src="/kubernetes/zh.search.min.da1c52546386c902e77e37ee10f137dd864d5defad152b94b97987f9bfccfa81.js" integrity="sha256-2hxSVGOGyQLnfjfuEPE33YZNXe&#43;tFSuUuXmH&#43;b/M&#43;oE=" crossorigin="anonymous"></script>
 
   <script defer src="/kubernetes/sw.min.18ff75d546fc59b9d538e96815256b253062dc991f14b3caff0f35a243a406d1.js" integrity="sha256-GP911Ub8WbnVOOloFSVrJTBi3JkfFLPK/w81okOkBtE=" crossorigin="anonymous"></script>
-
-  
-
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book

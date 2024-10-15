@@ -3,21 +3,55 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="2.2 minikube # minikube 是一个 “迷你” 版本的 Kubernetes，自从 2016 年发布以来一直在积极地开发维护，紧跟 Kubernetes 的版本更新，同时也兼容较旧的版本（最多可以到之前的 6 个小版本）。
+<meta name="description" content="
+  2.2 minikube
+  #
+
+minikube 是一个 “迷你” 版本的 Kubernetes，自从 2016 年发布以来一直在积极地开发维护，紧跟 Kubernetes 的版本更新，同时也兼容较旧的版本（最多可以到之前的 6 个小版本）。
 minikube 最大特点就是 “小而美”，可执行文件仅有不到 100MB，运行镜像也不过 1GB。minikube 集成了 Kubernetes 的绝大多数功能特性，不仅有核心的容器编排功能，还有丰富的插件，例如 Dashboard、GPU、Ingress、Istio、Kong、Registry 等。
-2.2.1 安装 Docker # 我的系统是 debian 11，本文所有的操作都是在 debian 11 的环境下进行。
-Docker 的安装可以参考官网 Install Docker Engine on Debian，其他系统的安装方式都可以在官网找到。debian 11 的安装步骤大致如下。
-apt-get remove docker docker-engine docker.io containerd runc # 卸载旧版本 apt-get update apt-get install \ ca-certificates \ curl \ gnupg \ lsb-release mkdir -p /etc/apt/keyrings curl -fsSL https://download.">
+
+  2.2.1 安装 Docker
+  #
+
+我的系统是 debian 11，本文所有的操作都是在 debian 11 的环境下进行。
+
+Docker 的安装可以参考官网 
+  Install Docker Engine on Debian，其他系统的安装方式都可以在官网找到。debian 11 的安装步骤大致如下。
+apt-get remove docker docker-engine docker.io containerd runc # 卸载旧版本
+
+apt-get update
+
+apt-get install \
+  ca-certificates \
+  curl \
+  gnupg \
+  lsb-release
+
+mkdir -p /etc/apt/keyrings
+
+curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+
+echo \
+  &#34;deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian \
+  $(lsb_release -cs) stable&#34; | tee /etc/apt/sources.list.d/docker.list &gt;/dev/null
+
+apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin
+
+  2.2.2 安装 minikube
+  #
+
+可以去官网 
+  https://minikube.sigs.k8s.io/docs/start/ 下载对应的版本。">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/kubernetes/docs/part2-break-ice/2.2-minikube/">
   <meta property="og:site_name" content="Kubernetes 学习笔记">
   <meta property="og:title" content="2.2 minikube">
-  <meta property="og:description" content="2.2 minikube # minikube 是一个 “迷你” 版本的 Kubernetes，自从 2016 年发布以来一直在积极地开发维护，紧跟 Kubernetes 的版本更新，同时也兼容较旧的版本（最多可以到之前的 6 个小版本）。
+  <meta property="og:description" content=" 2.2 minikube # minikube 是一个 “迷你” 版本的 Kubernetes，自从 2016 年发布以来一直在积极地开发维护，紧跟 Kubernetes 的版本更新，同时也兼容较旧的版本（最多可以到之前的 6 个小版本）。
 minikube 最大特点就是 “小而美”，可执行文件仅有不到 100MB，运行镜像也不过 1GB。minikube 集成了 Kubernetes 的绝大多数功能特性，不仅有核心的容器编排功能，还有丰富的插件，例如 Dashboard、GPU、Ingress、Istio、Kong、Registry 等。
 2.2.1 安装 Docker # 我的系统是 debian 11，本文所有的操作都是在 debian 11 的环境下进行。
 Docker 的安装可以参考官网 Install Docker Engine on Debian，其他系统的安装方式都可以在官网找到。debian 11 的安装步骤大致如下。
-apt-get remove docker docker-engine docker.io containerd runc # 卸载旧版本 apt-get update apt-get install \ ca-certificates \ curl \ gnupg \ lsb-release mkdir -p /etc/apt/keyrings curl -fsSL https://download.">
+apt-get remove docker docker-engine docker.io containerd runc # 卸载旧版本 apt-get update apt-get install \ ca-certificates \ curl \ gnupg \ lsb-release mkdir -p /etc/apt/keyrings curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg echo \ &#34;deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian \ $(lsb_release -cs) stable&#34; | tee /etc/apt/sources.list.d/docker.list &gt;/dev/null apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin 2.2.2 安装 minikube # 可以去官网 https://minikube.sigs.k8s.io/docs/start/ 下载对应的版本。">
   <meta property="og:locale" content="zh">
   <meta property="og:type" content="article">
     <meta property="article:section" content="docs">
@@ -31,9 +65,6 @@ apt-get remove docker docker-engine docker.io containerd runc # 卸载旧版本 
   <script defer src="/kubernetes/zh.search.min.da1c52546386c902e77e37ee10f137dd864d5defad152b94b97987f9bfccfa81.js" integrity="sha256-2hxSVGOGyQLnfjfuEPE33YZNXe&#43;tFSuUuXmH&#43;b/M&#43;oE=" crossorigin="anonymous"></script>
 
   <script defer src="/kubernetes/sw.min.18ff75d546fc59b9d538e96815256b253062dc991f14b3caff0f35a243a406d1.js" integrity="sha256-GP911Ub8WbnVOOloFSVrJTBi3JkfFLPK/w81okOkBtE=" crossorigin="anonymous"></script>
-
-  
-
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book

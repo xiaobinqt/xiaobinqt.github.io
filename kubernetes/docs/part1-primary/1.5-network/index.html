@@ -3,25 +3,51 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="1.5 网络互通 # 1.5.1 容器网络 # 在 Docker 网络中，有三个比较核心的概念，分别是：沙盒（Sandbox）、网络（Network）、端点（Endpoint）。
+<meta name="description" content="
+  1.5 网络互通
+  #
+
+
+  1.5.1 容器网络
+  #
+
+在 Docker 网络中，有三个比较核心的概念，分别是：沙盒（Sandbox）、网络（Network）、端点（Endpoint）。
+
+
 沙盒提供了容器的虚拟网络栈，也就是端口套接字、IP 路由表、防火墙等内容。实现隔离容器网络与宿主机网络，形成了完全独立的容器网络环境。
+
+
 网络可以理解为 Docker 内部的虚拟子网，网络内的参与者相互可见并能够进行通讯。Docker 的这种虚拟网络也是与宿主机网络存在隔离关系的，其目的主要是形成容器间的安全通讯环境。
+
+
 端点是位于容器或网络隔离墙之上的 “洞”，其主要目的是形成一个可以控制的突破封闭的网络环境的出入口。当容器的端点与网络的端点形成配对后，就如同在这两者之间搭建了桥梁，便能够进行数据传输了。
+
+
 这三者形成了 Docker 网络的核心模型，也就是容器网络模型（Container Network Model）。
-1.5.2 网络驱动 # Docker 官方提供了五种基础的 Docker 网络驱动：Bridge Driver、Host Driver、Overlay Driver、MacLan Driver、None Driver，并基于这些网络驱动又衍生了一些其他的网络驱动，如 IPvlan。
-Bridge # Bridge（桥接）网络是默认的网络驱动程序，它提供了容器之间的基本网络通信功能。Docker 桥接网络通过在主机上创建一个虚拟网桥并将容器连接到该网桥来实现容器之间的通信。
+
+
+  1.5.2 网络驱动
+  #
+
+Docker 官方提供了五种基础的 Docker 网络驱动：Bridge Driver、Host Driver、Overlay Driver、MacLan Driver、None Driver，并基于这些网络驱动又衍生了一些其他的网络驱动，如 IPvlan。
+
+  Bridge
+  #
+
+Bridge（桥接）网络是默认的网络驱动程序，它提供了容器之间的基本网络通信功能。Docker 桥接网络通过在主机上创建一个虚拟网桥并将容器连接到该网桥来实现容器之间的通信。
+
 当创建一个桥接网络时，Docker 会在主机上创建一个虚拟网桥（默认为 docker0），并为该网桥分配一个 IP 地址172.17.0.1。每个容器连接到这个桥接网络时，都会分配一个唯一的 B 类私 IP 地址，如172.17.0.2，并通过网络地址转换（NAT）实现与主机和其他容器之间的通信。
 端口号映射需要使用 bridge 模式，并且在 docker run 启动容器时使用 -p 参数，用:分隔本机端口和容器端口。
 使用 Docker 桥接网络有以下特点：
-默认网络驱动程序：桥接网络是 Docker 的默认网络驱动程序，因此当创建容器时，如果没有显式指定网络驱动程序，则会自动使用桥接网络。
-内部网络隔离：每个桥接网络都有自己的 IP 地址范围（默认为172.17.0.0/16），容器之间在网络上是相互隔离的，它们可以使用相同的 IP 地址范围而不会发生冲突。
-网络地址转换（NAT）：通过桥接网络，容器可以与主机和其他容器进行通信。桥接网络使用网络地址转换（NAT）将容器的私有 IP 地址转换为主机的公共 IP 地址。">
+
+
+默认网络驱动程序：桥接网络是 Docker 的默认网络驱动程序，因此当创建容器时，如果没有显式指定网络驱动程序，则会自动使用桥接网络。">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/kubernetes/docs/part1-primary/1.5-network/">
   <meta property="og:site_name" content="Kubernetes 学习笔记">
   <meta property="og:title" content="1.5 网络互通">
-  <meta property="og:description" content="1.5 网络互通 # 1.5.1 容器网络 # 在 Docker 网络中，有三个比较核心的概念，分别是：沙盒（Sandbox）、网络（Network）、端点（Endpoint）。
+  <meta property="og:description" content=" 1.5 网络互通 # 1.5.1 容器网络 # 在 Docker 网络中，有三个比较核心的概念，分别是：沙盒（Sandbox）、网络（Network）、端点（Endpoint）。
 沙盒提供了容器的虚拟网络栈，也就是端口套接字、IP 路由表、防火墙等内容。实现隔离容器网络与宿主机网络，形成了完全独立的容器网络环境。
 网络可以理解为 Docker 内部的虚拟子网，网络内的参与者相互可见并能够进行通讯。Docker 的这种虚拟网络也是与宿主机网络存在隔离关系的，其目的主要是形成容器间的安全通讯环境。
 端点是位于容器或网络隔离墙之上的 “洞”，其主要目的是形成一个可以控制的突破封闭的网络环境的出入口。当容器的端点与网络的端点形成配对后，就如同在这两者之间搭建了桥梁，便能够进行数据传输了。
@@ -31,9 +57,7 @@ Bridge # Bridge（桥接）网络是默认的网络驱动程序，它提供了�
 当创建一个桥接网络时，Docker 会在主机上创建一个虚拟网桥（默认为 docker0），并为该网桥分配一个 IP 地址172.17.0.1。每个容器连接到这个桥接网络时，都会分配一个唯一的 B 类私 IP 地址，如172.17.0.2，并通过网络地址转换（NAT）实现与主机和其他容器之间的通信。
 端口号映射需要使用 bridge 模式，并且在 docker run 启动容器时使用 -p 参数，用:分隔本机端口和容器端口。
 使用 Docker 桥接网络有以下特点：
-默认网络驱动程序：桥接网络是 Docker 的默认网络驱动程序，因此当创建容器时，如果没有显式指定网络驱动程序，则会自动使用桥接网络。
-内部网络隔离：每个桥接网络都有自己的 IP 地址范围（默认为172.17.0.0/16），容器之间在网络上是相互隔离的，它们可以使用相同的 IP 地址范围而不会发生冲突。
-网络地址转换（NAT）：通过桥接网络，容器可以与主机和其他容器进行通信。桥接网络使用网络地址转换（NAT）将容器的私有 IP 地址转换为主机的公共 IP 地址。">
+默认网络驱动程序：桥接网络是 Docker 的默认网络驱动程序，因此当创建容器时，如果没有显式指定网络驱动程序，则会自动使用桥接网络。">
   <meta property="og:locale" content="zh">
   <meta property="og:type" content="article">
     <meta property="article:section" content="docs">
@@ -47,9 +71,6 @@ Bridge # Bridge（桥接）网络是默认的网络驱动程序，它提供了�
   <script defer src="/kubernetes/zh.search.min.da1c52546386c902e77e37ee10f137dd864d5defad152b94b97987f9bfccfa81.js" integrity="sha256-2hxSVGOGyQLnfjfuEPE33YZNXe&#43;tFSuUuXmH&#43;b/M&#43;oE=" crossorigin="anonymous"></script>
 
   <script defer src="/kubernetes/sw.min.18ff75d546fc59b9d538e96815256b253062dc991f14b3caff0f35a243a406d1.js" integrity="sha256-GP911Ub8WbnVOOloFSVrJTBi3JkfFLPK/w81okOkBtE=" crossorigin="anonymous"></script>
-
-  
-
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book

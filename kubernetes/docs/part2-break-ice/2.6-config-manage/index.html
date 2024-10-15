@@ -3,21 +3,43 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="2.6 配置管理 # 服务中的配置信息，从数据安全的角度来看可以分成两类：一类是明文配置，可以任意查询修改，比如服务端口、运行参数、文件路径等等。另一类则是机密配置，由于涉及敏感信息需要保密，不能随便查看，比如密码、密钥、证书等等。这两类配置信息本质上都是字符串，只是由于安全性的原因，在存放和使用方面有些差异。
+<meta name="description" content="
+  2.6 配置管理
+  #
+
+服务中的配置信息，从数据安全的角度来看可以分成两类：一类是明文配置，可以任意查询修改，比如服务端口、运行参数、文件路径等等。另一类则是机密配置，由于涉及敏感信息需要保密，不能随便查看，比如密码、密钥、证书等等。这两类配置信息本质上都是字符串，只是由于安全性的原因，在存放和使用方面有些差异。
 Kubernetes 中的 ConfigMap API 用来保存明文配置，Secret API 用来保存秘密配置。
-2.6.1 ConfigMap # export out=&#34;--dry-run=client -o yaml&#34; # 定义Shell变量 kubectl create cm info --from-literal=k=v $out ConfigMap 里的数据都是 Key-Value 结构，所以 --from-literal 参数使用 k=v 的形式生成数据。ConfigMap 的 YAML 描述大概如下：
-apiVersion: v1 kind: ConfigMap metadata: name: info data: count: &#39;10&#39; debug: &#39;on&#39; path: &#39;/etc/systemd&#39; greeting: | say hello to kubernetes. 由上图可知，现在 ConfigMap 的 Key-Value 信息就已经存入了 etcd 数据库，后续就可以被其他 API 对象使用。
-2.6.2 Secret # Secret 和 ConfigMap 的结构和用法很类似，不过 Secret 对象又细分出很多类，比如：">
+
+  2.6.1 ConfigMap
+  #
+
+export out=&#34;--dry-run=client -o yaml&#34; # 定义Shell变量
+kubectl create cm info --from-literal=k=v $out
+
+ConfigMap 里的数据都是 Key-Value 结构，所以 --from-literal 参数使用 k=v 的形式生成数据。ConfigMap 的 YAML 描述大概如下：
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: info
+
+data:
+  count: &#39;10&#39;
+  debug: &#39;on&#39;
+  path: &#39;/etc/systemd&#39;
+  greeting: |
+    say hello to kubernetes.    
+
+由上图可知，现在 ConfigMap 的 Key-Value 信息就已经存入了 etcd 数据库，后续就可以被其他 API 对象使用。">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/kubernetes/docs/part2-break-ice/2.6-config-manage/">
   <meta property="og:site_name" content="Kubernetes 学习笔记">
   <meta property="og:title" content="2.6 配置管理">
-  <meta property="og:description" content="2.6 配置管理 # 服务中的配置信息，从数据安全的角度来看可以分成两类：一类是明文配置，可以任意查询修改，比如服务端口、运行参数、文件路径等等。另一类则是机密配置，由于涉及敏感信息需要保密，不能随便查看，比如密码、密钥、证书等等。这两类配置信息本质上都是字符串，只是由于安全性的原因，在存放和使用方面有些差异。
+  <meta property="og:description" content=" 2.6 配置管理 # 服务中的配置信息，从数据安全的角度来看可以分成两类：一类是明文配置，可以任意查询修改，比如服务端口、运行参数、文件路径等等。另一类则是机密配置，由于涉及敏感信息需要保密，不能随便查看，比如密码、密钥、证书等等。这两类配置信息本质上都是字符串，只是由于安全性的原因，在存放和使用方面有些差异。
 Kubernetes 中的 ConfigMap API 用来保存明文配置，Secret API 用来保存秘密配置。
 2.6.1 ConfigMap # export out=&#34;--dry-run=client -o yaml&#34; # 定义Shell变量 kubectl create cm info --from-literal=k=v $out ConfigMap 里的数据都是 Key-Value 结构，所以 --from-literal 参数使用 k=v 的形式生成数据。ConfigMap 的 YAML 描述大概如下：
-apiVersion: v1 kind: ConfigMap metadata: name: info data: count: &#39;10&#39; debug: &#39;on&#39; path: &#39;/etc/systemd&#39; greeting: | say hello to kubernetes. 由上图可知，现在 ConfigMap 的 Key-Value 信息就已经存入了 etcd 数据库，后续就可以被其他 API 对象使用。
-2.6.2 Secret # Secret 和 ConfigMap 的结构和用法很类似，不过 Secret 对象又细分出很多类，比如：">
+apiVersion: v1 kind: ConfigMap metadata: name: info data: count: &#39;10&#39; debug: &#39;on&#39; path: &#39;/etc/systemd&#39; greeting: | say hello to kubernetes. 由上图可知，现在 ConfigMap 的 Key-Value 信息就已经存入了 etcd 数据库，后续就可以被其他 API 对象使用。">
   <meta property="og:locale" content="zh">
   <meta property="og:type" content="article">
     <meta property="article:section" content="docs">
@@ -31,9 +53,6 @@ apiVersion: v1 kind: ConfigMap metadata: name: info data: count: &#39;10&#39; de
   <script defer src="/kubernetes/zh.search.min.da1c52546386c902e77e37ee10f137dd864d5defad152b94b97987f9bfccfa81.js" integrity="sha256-2hxSVGOGyQLnfjfuEPE33YZNXe&#43;tFSuUuXmH&#43;b/M&#43;oE=" crossorigin="anonymous"></script>
 
   <script defer src="/kubernetes/sw.min.18ff75d546fc59b9d538e96815256b253062dc991f14b3caff0f35a243a406d1.js" integrity="sha256-GP911Ub8WbnVOOloFSVrJTBi3JkfFLPK/w81okOkBtE=" crossorigin="anonymous"></script>
-
-  
-
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book

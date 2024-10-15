@@ -3,27 +3,65 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="1.8 Socket # 1.8.1 I/O 模型 # 一个输入操作通常包括两个阶段：
-等待数据准备好 从内核向进程复制数据 对于一个套接字上的输入操作，第一步通常涉及等待数据从网络中到达。当所等待数据到达时，它被复制到内核中的某个缓冲区。第二步就是把数据从内核缓冲区复制到应用进程缓冲区。
+<meta name="description" content="
+  1.8 Socket
+  #
+
+
+  1.8.1 I/O 模型
+  #
+
+一个输入操作通常包括两个阶段：
+
+等待数据准备好
+从内核向进程复制数据
+
+对于一个套接字上的输入操作，第一步通常涉及等待数据从网络中到达。当所等待数据到达时，它被复制到内核中的某个缓冲区。第二步就是把数据从内核缓冲区复制到应用进程缓冲区。
 Unix 有五种 I/O 模型：
-阻塞式 I/O 非阻塞式 I/O I/O 复用（select 和 poll） 信号驱动式 I/O（SIGIO） 异步 I/O（AIO） 阻塞式 I/O # 请求数据时，若没有数据准备好，应用进程被阻塞，直到数据从内核缓冲区复制到应用进程缓冲区中才返回。
+
+阻塞式 I/O
+非阻塞式 I/O
+I/O 复用（select 和 poll）
+信号驱动式 I/O（SIGIO）
+异步 I/O（AIO）
+
+
+  阻塞式 I/O
+  #
+
+请求数据时，若没有数据准备好，应用进程被阻塞，直到数据从内核缓冲区复制到应用进程缓冲区中才返回。
 应该注意到，在阻塞的过程中，其它应用进程还可以执行，因此阻塞不意味着整个操作系统都被阻塞。因为其它应用进程还可以执行，所以不消耗 CPU 时间，这种模型的 CPU 利用率会比较高。
 下图中，recvfrom() 用于接收 Socket 传来的数据，并复制到应用进程的缓冲区 buf 中。这里把 recvfrom() 当成系统调用。
-ssize_t recvfrom(int sockfd, void *buf, size_t len, int flags, struct sockaddr *src_addr, socklen_t *addrlen); 非阻塞式 I/O # 应用进程执行系统调用之后，内核返回一个错误码。应用进程可以继续执行，但是需要不断的执行系统调用来获知 I/O 是否完成，这种方式称为轮询（polling）。
-由于 CPU 要处理更多的系统调用，因此这种模型的 CPU 利用率比较低。">
+ssize_t recvfrom(int sockfd, void *buf, size_t len, int flags, struct sockaddr *src_addr, socklen_t *addrlen);
+
+  
+
+  非阻塞式 I/O
+  #
+
+应用进程执行系统调用之后，内核返回一个错误码。应用进程可以继续执行，但是需要不断的执行系统调用来获知 I/O 是否完成，这种方式称为轮询（polling）。
+由于 CPU 要处理更多的系统调用，因此这种模型的 CPU 利用率比较低。
+
+  
+
+  I/O 复用
+  #
+
+使用 select 或者 poll 等待数据，并且可以等待多个套接字中的任何一个变为可读。这一过程会被阻塞，当某一个套接字可读时返回，之后再使用 recvfrom 把数据从内核复制到进程中。">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/http/docs/part1-overview/1.8-socket/">
   <meta property="og:site_name" content="HTTP 协议学习笔记">
   <meta property="og:title" content="1.8 Socket">
-  <meta property="og:description" content="1.8 Socket # 1.8.1 I/O 模型 # 一个输入操作通常包括两个阶段：
+  <meta property="og:description" content=" 1.8 Socket # 1.8.1 I/O 模型 # 一个输入操作通常包括两个阶段：
 等待数据准备好 从内核向进程复制数据 对于一个套接字上的输入操作，第一步通常涉及等待数据从网络中到达。当所等待数据到达时，它被复制到内核中的某个缓冲区。第二步就是把数据从内核缓冲区复制到应用进程缓冲区。
 Unix 有五种 I/O 模型：
 阻塞式 I/O 非阻塞式 I/O I/O 复用（select 和 poll） 信号驱动式 I/O（SIGIO） 异步 I/O（AIO） 阻塞式 I/O # 请求数据时，若没有数据准备好，应用进程被阻塞，直到数据从内核缓冲区复制到应用进程缓冲区中才返回。
 应该注意到，在阻塞的过程中，其它应用进程还可以执行，因此阻塞不意味着整个操作系统都被阻塞。因为其它应用进程还可以执行，所以不消耗 CPU 时间，这种模型的 CPU 利用率会比较高。
 下图中，recvfrom() 用于接收 Socket 传来的数据，并复制到应用进程的缓冲区 buf 中。这里把 recvfrom() 当成系统调用。
 ssize_t recvfrom(int sockfd, void *buf, size_t len, int flags, struct sockaddr *src_addr, socklen_t *addrlen); 非阻塞式 I/O # 应用进程执行系统调用之后，内核返回一个错误码。应用进程可以继续执行，但是需要不断的执行系统调用来获知 I/O 是否完成，这种方式称为轮询（polling）。
-由于 CPU 要处理更多的系统调用，因此这种模型的 CPU 利用率比较低。">
+由于 CPU 要处理更多的系统调用，因此这种模型的 CPU 利用率比较低。
+I/O 复用 # 使用 select 或者 poll 等待数据，并且可以等待多个套接字中的任何一个变为可读。这一过程会被阻塞，当某一个套接字可读时返回，之后再使用 recvfrom 把数据从内核复制到进程中。">
   <meta property="og:locale" content="zh">
   <meta property="og:type" content="article">
     <meta property="article:section" content="docs">
@@ -37,9 +75,6 @@ ssize_t recvfrom(int sockfd, void *buf, size_t len, int flags, struct sockaddr *
   <script defer src="/http/zh.search.min.f9f2f3302a4b57cf76d2121622538f10c28f78b3ecf6c5745eff2905c7aca156.js" integrity="sha256-&#43;fLzMCpLV8920hIWIlOPEMKPeLPs9sV0Xv8pBcesoVY=" crossorigin="anonymous"></script>
 
   <script defer src="/http/sw.min.9c2899688c7eda021eaf848ecb15bf0131bffb6b338096110fdb0e7027cfec8b.js" integrity="sha256-nCiZaIx&#43;2gIer4SOyxW/ATG/&#43;2szgJYRD9sOcCfP7Is=" crossorigin="anonymous"></script>
-
-  
-
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book

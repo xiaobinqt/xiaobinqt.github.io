@@ -3,13 +3,109 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="23. 合并 K 个升序链表 # 题目地址 # 力扣 LeetCode 解题思路 # 具体实现 # Go package main import ( &#34;fmt&#34; ) type ListNode struct { Val int Next *ListNode } func mergeKLists(lists []*ListNode) *ListNode { if len(lists) == 0 { return nil } n := len(lists) return merge(lists, 0, n-1) } func merge(lists []*ListNode, left, right int) *ListNode { if left == right { return lists[left] } mid := left &#43; (right-left)/2 l1 := merge(lists, left, mid) l2 := merge(lists, mid&#43;1, right) return mergeTwoLists(l1, l2) } func mergeTwoLists(l1 *ListNode, l2 *ListNode) *ListNode { if l1 == nil { return l2 } if l2 == nil { return l1 } if l1.">
+<meta name="description" content="
+  23. 合并 K 个升序链表
+  #
+
+
+  题目地址
+  #
+
+
+
+  力扣
+
+  LeetCode
+
+
+  解题思路
+  #
+
+
+  具体实现
+  #
+
+
+
+
+
+
+  Go
+  package main
+
+import (
+	&#34;fmt&#34;
+)
+
+type ListNode struct {
+	Val  int
+	Next *ListNode
+}
+
+func mergeKLists(lists []*ListNode) *ListNode {
+	if len(lists) == 0 {
+		return nil
+	}
+	n := len(lists)
+	return merge(lists, 0, n-1)
+}
+
+func merge(lists []*ListNode, left, right int) *ListNode {
+	if left == right {
+		return lists[left]
+	}
+	mid := left &#43; (right-left)/2
+	l1 := merge(lists, left, mid)
+	l2 := merge(lists, mid&#43;1, right)
+	return mergeTwoLists(l1, l2)
+}
+
+func mergeTwoLists(l1 *ListNode, l2 *ListNode) *ListNode {
+	if l1 == nil {
+		return l2
+	}
+	if l2 == nil {
+		return l1
+	}
+	if l1.Val &lt; l2.Val {
+		l1.Next = mergeTwoLists(l1.Next, l2)
+		return l1
+	} else {
+		l2.Next = mergeTwoLists(l1, l2.Next)
+		return l2
+	}
+}
+
+func main() {
+	list1 := &amp;ListNode{Val: 1, Next: &amp;ListNode{Val: 4, Next: &amp;ListNode{Val: 5}}}
+	list2 := &amp;ListNode{Val: 1, Next: &amp;ListNode{Val: 3, Next: &amp;ListNode{Val: 4}}}
+	list3 := &amp;ListNode{Val: 2, Next: &amp;ListNode{Val: 6}}
+
+	lists := []*ListNode{list1, list2, list3}
+
+	result := mergeKLists(lists)
+
+	for result != nil {
+		fmt.Printf(&#34;%d &#34;, result.Val)
+		result = result.Next
+	}
+}
+
+
+
+  参考
+  #
+
+
+
+  合并K个升序链表-解题思路
+">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/leetcode/docs/hard/23/">
   <meta property="og:site_name" content="LeetCode">
   <meta property="og:title" content="23. 合并 K 个升序链表">
-  <meta property="og:description" content="23. 合并 K 个升序链表 # 题目地址 # 力扣 LeetCode 解题思路 # 具体实现 # Go package main import ( &#34;fmt&#34; ) type ListNode struct { Val int Next *ListNode } func mergeKLists(lists []*ListNode) *ListNode { if len(lists) == 0 { return nil } n := len(lists) return merge(lists, 0, n-1) } func merge(lists []*ListNode, left, right int) *ListNode { if left == right { return lists[left] } mid := left &#43; (right-left)/2 l1 := merge(lists, left, mid) l2 := merge(lists, mid&#43;1, right) return mergeTwoLists(l1, l2) } func mergeTwoLists(l1 *ListNode, l2 *ListNode) *ListNode { if l1 == nil { return l2 } if l2 == nil { return l1 } if l1.">
+  <meta property="og:description" content=" 23. 合并 K 个升序链表 # 题目地址 # 力扣 LeetCode 解题思路 # 具体实现 # Go package main import ( &#34;fmt&#34; ) type ListNode struct { Val int Next *ListNode } func mergeKLists(lists []*ListNode) *ListNode { if len(lists) == 0 { return nil } n := len(lists) return merge(lists, 0, n-1) } func merge(lists []*ListNode, left, right int) *ListNode { if left == right { return lists[left] } mid := left &#43; (right-left)/2 l1 := merge(lists, left, mid) l2 := merge(lists, mid&#43;1, right) return mergeTwoLists(l1, l2) } func mergeTwoLists(l1 *ListNode, l2 *ListNode) *ListNode { if l1 == nil { return l2 } if l2 == nil { return l1 } if l1.Val &lt; l2.Val { l1.Next = mergeTwoLists(l1.Next, l2) return l1 } else { l2.Next = mergeTwoLists(l1, l2.Next) return l2 } } func main() { list1 := &amp;ListNode{Val: 1, Next: &amp;ListNode{Val: 4, Next: &amp;ListNode{Val: 5}}} list2 := &amp;ListNode{Val: 1, Next: &amp;ListNode{Val: 3, Next: &amp;ListNode{Val: 4}}} list3 := &amp;ListNode{Val: 2, Next: &amp;ListNode{Val: 6}} lists := []*ListNode{list1, list2, list3} result := mergeKLists(lists) for result != nil { fmt.Printf(&#34;%d &#34;, result.Val) result = result.Next } } 参考 # 合并K个升序链表-解题思路 ">
   <meta property="og:locale" content="zh">
   <meta property="og:type" content="article">
     <meta property="article:section" content="docs">
@@ -23,9 +119,6 @@
   <script defer src="/leetcode/zh.search.min.f9cd73d20daebe0f064076c741a93203473f9497ee32d434a8774e691eea3972.js" integrity="sha256-&#43;c1z0g2uvg8GQHbHQakyA0c/lJfuMtQ0qHdOaR7qOXI=" crossorigin="anonymous"></script>
 
   <script defer src="/leetcode/sw.min.c814046bee19bfa0279b71972af9d15919d290341d7ecdfe781d2e1113df9ad1.js" integrity="sha256-yBQEa&#43;4Zv6Anm3GXKvnRWRnSkDQdfs3&#43;eB0uERPfmtE=" crossorigin="anonymous"></script>
-
-  
-
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book

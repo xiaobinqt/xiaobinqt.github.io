@@ -3,13 +3,136 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="25. K 个一组翻转链表 # 题目地址 # 力扣 LeetCode 解题思路 # 具体实现 # Go package main import &#34;fmt&#34; type ListNode struct { Val int Next *ListNode } func reverseKGroup(head *ListNode, k int) *ListNode { // 反转链表 reverse := func(head *ListNode) *ListNode { if head == nil { return nil } var ( prev, curr, next *ListNode ) curr = head for curr != nil { next = curr.Next curr.Next = prev prev = curr curr = next } return prev } dummy := &amp;ListNode{} var ( prev, end *ListNode ) dummy.">
+<meta name="description" content="
+  25. K 个一组翻转链表
+  #
+
+
+  题目地址
+  #
+
+
+
+  力扣
+
+  LeetCode
+
+
+  解题思路
+  #
+
+
+  具体实现
+  #
+
+
+
+
+
+
+  Go
+  package main
+
+import &#34;fmt&#34;
+
+type ListNode struct {
+	Val  int
+	Next *ListNode
+}
+
+func reverseKGroup(head *ListNode, k int) *ListNode {
+	// 反转链表
+	reverse := func(head *ListNode) *ListNode {
+		if head == nil {
+			return nil
+		}
+
+		var (
+			prev, curr, next *ListNode
+		)
+		curr = head
+		for curr != nil {
+			next = curr.Next
+			curr.Next = prev
+
+			prev = curr
+			curr = next
+		}
+
+		return prev
+	}
+
+	dummy := &amp;ListNode{}
+	var (
+		prev, end *ListNode
+	)
+
+	dummy.Next = head
+	prev = dummy
+	end = dummy
+
+	for end.Next != nil {
+		// 把 end 往后移动 k 个位置
+		for i := 0; i &lt; k &amp;&amp; end != nil; i&#43;&#43; {
+			end = end.Next
+		}
+		if end == nil {
+			break
+		}
+
+		start := prev.Next
+		next := end.Next
+		end.Next = nil
+
+		prev.Next = reverse(start)
+		start.Next = next
+
+		prev = start
+		end = start
+
+	}
+
+	return dummy.Next
+}
+
+func main() {
+	ret := reverseKGroup(&amp;ListNode{
+		Val: 1,
+		Next: &amp;ListNode{
+			Val: 2,
+			Next: &amp;ListNode{
+				Val: 3,
+				Next: &amp;ListNode{
+					Val: 4,
+					Next: &amp;ListNode{
+						Val:  5,
+						Next: nil,
+					},
+				},
+			},
+		},
+	}, 2)
+
+	fmt.Println(ret)
+}
+
+
+
+  参考
+  #
+
+
+
+  链表中的节点每k个一组翻转
+
+  图解 K 个一组翻转链表
+">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/leetcode/docs/hard/25/">
   <meta property="og:site_name" content="LeetCode">
   <meta property="og:title" content="25. K 个一组翻转链表">
-  <meta property="og:description" content="25. K 个一组翻转链表 # 题目地址 # 力扣 LeetCode 解题思路 # 具体实现 # Go package main import &#34;fmt&#34; type ListNode struct { Val int Next *ListNode } func reverseKGroup(head *ListNode, k int) *ListNode { // 反转链表 reverse := func(head *ListNode) *ListNode { if head == nil { return nil } var ( prev, curr, next *ListNode ) curr = head for curr != nil { next = curr.Next curr.Next = prev prev = curr curr = next } return prev } dummy := &amp;ListNode{} var ( prev, end *ListNode ) dummy.">
+  <meta property="og:description" content=" 25. K 个一组翻转链表 # 题目地址 # 力扣 LeetCode 解题思路 # 具体实现 # Go package main import &#34;fmt&#34; type ListNode struct { Val int Next *ListNode } func reverseKGroup(head *ListNode, k int) *ListNode { // 反转链表 reverse := func(head *ListNode) *ListNode { if head == nil { return nil } var ( prev, curr, next *ListNode ) curr = head for curr != nil { next = curr.Next curr.Next = prev prev = curr curr = next } return prev } dummy := &amp;ListNode{} var ( prev, end *ListNode ) dummy.Next = head prev = dummy end = dummy for end.Next != nil { // 把 end 往后移动 k 个位置 for i := 0; i &lt; k &amp;&amp; end != nil; i&#43;&#43; { end = end.Next } if end == nil { break } start := prev.Next next := end.Next end.Next = nil prev.Next = reverse(start) start.Next = next prev = start end = start } return dummy.Next } func main() { ret := reverseKGroup(&amp;ListNode{ Val: 1, Next: &amp;ListNode{ Val: 2, Next: &amp;ListNode{ Val: 3, Next: &amp;ListNode{ Val: 4, Next: &amp;ListNode{ Val: 5, Next: nil, }, }, }, }, }, 2) fmt.Println(ret) } 参考 # 链表中的节点每k个一组翻转 图解 K 个一组翻转链表 ">
   <meta property="og:locale" content="zh">
   <meta property="og:type" content="article">
     <meta property="article:section" content="docs">
@@ -23,9 +146,6 @@
   <script defer src="/leetcode/zh.search.min.f9cd73d20daebe0f064076c741a93203473f9497ee32d434a8774e691eea3972.js" integrity="sha256-&#43;c1z0g2uvg8GQHbHQakyA0c/lJfuMtQ0qHdOaR7qOXI=" crossorigin="anonymous"></script>
 
   <script defer src="/leetcode/sw.min.c814046bee19bfa0279b71972af9d15919d290341d7ecdfe781d2e1113df9ad1.js" integrity="sha256-yBQEa&#43;4Zv6Anm3GXKvnRWRnSkDQdfs3&#43;eB0uERPfmtE=" crossorigin="anonymous"></script>
-
-  
-
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book

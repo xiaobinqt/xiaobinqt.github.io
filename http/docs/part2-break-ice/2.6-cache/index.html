@@ -3,26 +3,62 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="2.6 Cache # 2.6.1 服务端缓存控制 # 服务器标记资源有效期使用的头字段是 “Cache-Control”，里面的值 “max-age=30” 就是资源的有效时间，相当于告诉浏览器，“这个页面只能缓存 30 秒，之后就算是过期，不能用。”
-除了 “Cache-Control&rsquo;”，服务器也可以用 “Expires” 字段来标记资源的有效期，它的形式和 Cookie 的差不多，同样属于 “过时” 的属性，优先级低于 “Cache-Control&rsquo;”。 还有一个历史遗留字段 “Pragma:no-cache”，它相当于 “Cache-Control: no-cache”，除非为了兼容HTTP/1.0 否则不建议使用。
-这里的 max-age 是 “生存时间”（又叫“新鲜度” “缓存寿命”，类似 TTL，Time-To-Live），时间的计算起点是响应报文的创建时刻（即 Date 字段，也就是离开服务器的时刻），而不是客户端收到报文的时刻，也就是说包含了在链路传输过程中所有节点所停留的时间。
+<meta name="description" content="
+  2.6 Cache
+  #
+
+
+  2.6.1 服务端缓存控制
+  #
+
+服务器标记资源有效期使用的头字段是 “Cache-Control”，里面的值 “max-age=30” 就是资源的有效时间，相当于告诉浏览器，“这个页面只能缓存
+30 秒，之后就算是过期，不能用。”
+
+除了 “Cache-Control&rsquo;”，服务器也可以用 “Expires” 字段来标记资源的有效期，它的形式和 Cookie 的差不多，同样属于 “过时”
+的属性，优先级低于 “Cache-Control&rsquo;”。 还有一个历史遗留字段 “Pragma:no-cache”，它相当于 “Cache-Control:
+no-cache”，除非为了兼容HTTP/1.0 否则不建议使用。
+
+这里的 max-age 是 “生存时间”（又叫“新鲜度” “缓存寿命”，类似 TTL，Time-To-Live），时间的计算起点是响应报文的创建时刻（即 Date
+字段，也就是离开服务器的时刻），而不是客户端收到报文的时刻，也就是说包含了在链路传输过程中所有节点所停留的时间。
 “max-age” 是 HTTP 缓存控制最常用的属性，此外在响应报文里还可以用其他的属性来更精确地指示浏览器应该如何使用缓存：
+
+
 no-store：不允许缓存，用于某些变化非常频繁的数据，例如秒杀页面；
+
+
 no-cache：它的字面含义容易与 no-store 搞混，实际的意思并不是不允许缓存，而是可以缓存，但在使用之前必须要去服务器验证是否过期，是否有最新的版本；
+
+
 must-revalidate：又是一个和 no-cache 相似的词，它的意思是如果缓存不过期就可以继续使用，但过期了如果还想用就必须去服务器验证。
+
+
 可以拿生鲜速递来举例说明一下：
+
+
 no-store：买来的西瓜不允许放进冰箱，要么立刻吃，要么立刻扔掉；
+
+
 no-cache：可以放进冰箱，但吃之前必须问超市有没有更新鲜的，有就吃超市里的；
+
+
 must-revalidate：可以放进冰箱，保鲜期内可以吃，过期了就要问超市让不让吃。
-2.6.2 客户端缓存控制 # 其实不止服务器可以发 “Cache-Control” 头，浏览器也可以发 “Cache-Control”，也就是说请求 - 应答的双方都可以用这个字段进行缓存控制，互相协商缓存的使用策略。
-当点 “刷新” 按钮的时候，浏览器会在请求头里加一个 “Cache-Control: max-age=0”。因为 max-age 是 “生存时间”，max-age=0 的意思就是拿到最新的数据，而本地缓存里的数据至少保存了几秒钟，所以浏览器就不会使用缓存，而是向服务器发请求。服务器看到 max-age=0，也就会用一个最新生成的报文回应浏览器。
-浏览器用 “Cache-Control” 做缓存控制只能是刷新数据，不能很好地利用缓存数据，又因为缓存会失效，使用前还必须要去服务器验证是否是最新版。所以 HTTP 协议就定义了一系列 “If” 开头的 “条件请求” 字段，专门用来检查验证资源是否过期，验证的责任交给服务器，浏览器只需 “坐享其成”。">
+
+
+
+
+  2.6.2 客户端缓存控制
+  #
+
+其实不止服务器可以发 “Cache-Control” 头，浏览器也可以发 “Cache-Control”，也就是说请求 - 应答的双方都可以用这个字段进行缓存控制，互相协商缓存的使用策略。
+当点 “刷新” 按钮的时候，浏览器会在请求头里加一个 “Cache-Control: max-age=0”。因为 max-age 是 “生存时间”，max-age=0
+的意思就是拿到最新的数据，而本地缓存里的数据至少保存了几秒钟，所以浏览器就不会使用缓存，而是向服务器发请求。服务器看到
+max-age=0，也就会用一个最新生成的报文回应浏览器。">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/http/docs/part2-break-ice/2.6-cache/">
   <meta property="og:site_name" content="HTTP 协议学习笔记">
   <meta property="og:title" content="2.6 Cache">
-  <meta property="og:description" content="2.6 Cache # 2.6.1 服务端缓存控制 # 服务器标记资源有效期使用的头字段是 “Cache-Control”，里面的值 “max-age=30” 就是资源的有效时间，相当于告诉浏览器，“这个页面只能缓存 30 秒，之后就算是过期，不能用。”
+  <meta property="og:description" content=" 2.6 Cache # 2.6.1 服务端缓存控制 # 服务器标记资源有效期使用的头字段是 “Cache-Control”，里面的值 “max-age=30” 就是资源的有效时间，相当于告诉浏览器，“这个页面只能缓存 30 秒，之后就算是过期，不能用。”
 除了 “Cache-Control’”，服务器也可以用 “Expires” 字段来标记资源的有效期，它的形式和 Cookie 的差不多，同样属于 “过时” 的属性，优先级低于 “Cache-Control’”。 还有一个历史遗留字段 “Pragma:no-cache”，它相当于 “Cache-Control: no-cache”，除非为了兼容HTTP/1.0 否则不建议使用。
 这里的 max-age 是 “生存时间”（又叫“新鲜度” “缓存寿命”，类似 TTL，Time-To-Live），时间的计算起点是响应报文的创建时刻（即 Date 字段，也就是离开服务器的时刻），而不是客户端收到报文的时刻，也就是说包含了在链路传输过程中所有节点所停留的时间。
 “max-age” 是 HTTP 缓存控制最常用的属性，此外在响应报文里还可以用其他的属性来更精确地指示浏览器应该如何使用缓存：
@@ -34,8 +70,7 @@ no-store：买来的西瓜不允许放进冰箱，要么立刻吃，要么立刻
 no-cache：可以放进冰箱，但吃之前必须问超市有没有更新鲜的，有就吃超市里的；
 must-revalidate：可以放进冰箱，保鲜期内可以吃，过期了就要问超市让不让吃。
 2.6.2 客户端缓存控制 # 其实不止服务器可以发 “Cache-Control” 头，浏览器也可以发 “Cache-Control”，也就是说请求 - 应答的双方都可以用这个字段进行缓存控制，互相协商缓存的使用策略。
-当点 “刷新” 按钮的时候，浏览器会在请求头里加一个 “Cache-Control: max-age=0”。因为 max-age 是 “生存时间”，max-age=0 的意思就是拿到最新的数据，而本地缓存里的数据至少保存了几秒钟，所以浏览器就不会使用缓存，而是向服务器发请求。服务器看到 max-age=0，也就会用一个最新生成的报文回应浏览器。
-浏览器用 “Cache-Control” 做缓存控制只能是刷新数据，不能很好地利用缓存数据，又因为缓存会失效，使用前还必须要去服务器验证是否是最新版。所以 HTTP 协议就定义了一系列 “If” 开头的 “条件请求” 字段，专门用来检查验证资源是否过期，验证的责任交给服务器，浏览器只需 “坐享其成”。">
+当点 “刷新” 按钮的时候，浏览器会在请求头里加一个 “Cache-Control: max-age=0”。因为 max-age 是 “生存时间”，max-age=0 的意思就是拿到最新的数据，而本地缓存里的数据至少保存了几秒钟，所以浏览器就不会使用缓存，而是向服务器发请求。服务器看到 max-age=0，也就会用一个最新生成的报文回应浏览器。">
   <meta property="og:locale" content="zh">
   <meta property="og:type" content="article">
     <meta property="article:section" content="docs">
@@ -49,9 +84,6 @@ must-revalidate：可以放进冰箱，保鲜期内可以吃，过期了就要�
   <script defer src="/http/zh.search.min.f9f2f3302a4b57cf76d2121622538f10c28f78b3ecf6c5745eff2905c7aca156.js" integrity="sha256-&#43;fLzMCpLV8920hIWIlOPEMKPeLPs9sV0Xv8pBcesoVY=" crossorigin="anonymous"></script>
 
   <script defer src="/http/sw.min.9c2899688c7eda021eaf848ecb15bf0131bffb6b338096110fdb0e7027cfec8b.js" integrity="sha256-nCiZaIx&#43;2gIer4SOyxW/ATG/&#43;2szgJYRD9sOcCfP7Is=" crossorigin="anonymous"></script>
-
-  
-
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book

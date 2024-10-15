@@ -3,17 +3,206 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="总览 # 一、概述 # Redis 是速度非常快的非关系型（NoSQL）内存键值数据库，可以存储键和五种不同类型的值之间的映射。
+<meta name="description" content="
+  总览
+  #
+
+
+  一、概述
+  #
+
+Redis 是速度非常快的非关系型（NoSQL）内存键值数据库，可以存储键和五种不同类型的值之间的映射。
 键的类型只能为字符串，值支持五种数据类型：字符串、列表、集合、散列表、有序集合。
 Redis 支持很多特性，例如将内存中的数据持久化到硬盘中，使用复制来扩展读性能，使用分片来扩展写性能。
-二、数据类型 # 数据类型 可以存储的值 操作 STRING 字符串、整数或者浮点数 对整个字符串或者字符串的其中一部分执行操作 对整数和浮点数执行自增或者自减操作 LIST 列表 从两端压入或者弹出元素 对单个或者多个元素进行修剪， 只保留一个范围内的元素 SET 无序集合 添加、获取、移除单个元素 检查一个元素是否存在于集合中 计算交集、并集、差集 从集合里面随机获取元素 HASH 包含键值对的无序散列表 添加、获取、移除单个键值对 获取所有键值对 检查某个键是否存在 ZSET 有序集合 添加、获取、删除元素 根据分值范围或者成员来获取元素 计算一个键的排名 What Redis data structures look like
-STRING # &gt; set hello world OK &gt; get hello &#34;world&#34; &gt; del hello (integer) 1 &gt; get hello (nil) LIST # &gt; rpush list-key item (integer) 1 &gt; rpush list-key item2 (integer) 2 &gt; rpush list-key item (integer) 3 &gt; lrange list-key 0 -1 1) &#34;item&#34; 2) &#34;item2&#34; 3) &#34;item&#34; &gt; lindex list-key 1 &#34;item2&#34; &gt; lpop list-key &#34;item&#34; &gt; lrange list-key 0 -1 1) &#34;item2&#34; 2) &#34;item&#34; SET # &gt; sadd set-key item (integer) 1 &gt; sadd set-key item2 (integer) 1 &gt; sadd set-key item3 (integer) 1 &gt; sadd set-key item (integer) 0 &gt; smembers set-key 1) &#34;item&#34; 2) &#34;item2&#34; 3) &#34;item3&#34; &gt; sismember set-key item4 (integer) 0 &gt; sismember set-key item (integer) 1 &gt; srem set-key item2 (integer) 1 &gt; srem set-key item2 (integer) 0 &gt; smembers set-key 1) &#34;item&#34; 2) &#34;item3&#34; HASH # &gt; hset hash-key sub-key1 value1 (integer) 1 &gt; hset hash-key sub-key2 value2 (integer) 1 &gt; hset hash-key sub-key1 value1 (integer) 0 &gt; hgetall hash-key 1) &#34;sub-key1&#34; 2) &#34;value1&#34; 3) &#34;sub-key2&#34; 4) &#34;value2&#34; &gt; hdel hash-key sub-key2 (integer) 1 &gt; hdel hash-key sub-key2 (integer) 0 &gt; hget hash-key sub-key1 &#34;value1&#34; &gt; hgetall hash-key 1) &#34;sub-key1&#34; 2) &#34;value1&#34; ZSET # &gt; zadd zset-key 728 member1 (integer) 1 &gt; zadd zset-key 982 member0 (integer) 1 &gt; zadd zset-key 982 member0 (integer) 0 &gt; zrange zset-key 0 -1 withscores 1) &#34;member1&#34; 2) &#34;728&#34; 3) &#34;member0&#34; 4) &#34;982&#34; &gt; zrangebyscore zset-key 0 800 withscores 1) &#34;member1&#34; 2) &#34;728&#34; &gt; zrem zset-key member1 (integer) 1 &gt; zrem zset-key member1 (integer) 0 &gt; zrange zset-key 0 -1 withscores 1) &#34;member0&#34; 2) &#34;982&#34; 三、数据结构 # 字典 # dictht 是一个散列表结构，使用拉链法解决哈希冲突。">
+
+  二、数据类型
+  #
+
+
+  
+      
+          数据类型
+          可以存储的值
+          操作
+      
+  
+  
+      
+          STRING
+          字符串、整数或者浮点数
+          对整个字符串或者字符串的其中一部分执行操作  对整数和浮点数执行自增或者自减操作
+      
+      
+          LIST
+          列表
+          从两端压入或者弹出元素  对单个或者多个元素进行修剪， 只保留一个范围内的元素
+      
+      
+          SET
+          无序集合
+          添加、获取、移除单个元素 检查一个元素是否存在于集合中 计算交集、并集、差集 从集合里面随机获取元素
+      
+      
+          HASH
+          包含键值对的无序散列表
+          添加、获取、移除单个键值对 获取所有键值对 检查某个键是否存在
+      
+      
+          ZSET
+          有序集合
+          添加、获取、删除元素 根据分值范围或者成员来获取元素 计算一个键的排名
+      
+  
+
+
+
+  What Redis data structures look like
+
+
+  STRING
+  #
+
+  
+&gt; set hello world
+OK
+&gt; get hello
+&#34;world&#34;
+&gt; del hello
+(integer) 1
+&gt; get hello
+(nil)
+
+  LIST
+  #
+
+  
+&gt; rpush list-key item
+(integer) 1
+&gt; rpush list-key item2
+(integer) 2
+&gt; rpush list-key item
+(integer) 3
+
+&gt; lrange list-key 0 -1
+1) &#34;item&#34;
+2) &#34;item2&#34;
+3) &#34;item&#34;
+
+&gt; lindex list-key 1
+&#34;item2&#34;
+
+&gt; lpop list-key
+&#34;item&#34;
+
+&gt; lrange list-key 0 -1
+1) &#34;item2&#34;
+2) &#34;item&#34;
+
+  SET
+  #
+
+  
+&gt; sadd set-key item
+(integer) 1
+&gt; sadd set-key item2
+(integer) 1
+&gt; sadd set-key item3
+(integer) 1
+&gt; sadd set-key item
+(integer) 0
+
+&gt; smembers set-key
+1) &#34;item&#34;
+2) &#34;item2&#34;
+3) &#34;item3&#34;
+
+&gt; sismember set-key item4
+(integer) 0
+&gt; sismember set-key item
+(integer) 1
+
+&gt; srem set-key item2
+(integer) 1
+&gt; srem set-key item2
+(integer) 0
+
+&gt; smembers set-key
+1) &#34;item&#34;
+2) &#34;item3&#34;
+
+  HASH
+  #
+
+  
+&gt; hset hash-key sub-key1 value1
+(integer) 1
+&gt; hset hash-key sub-key2 value2
+(integer) 1
+&gt; hset hash-key sub-key1 value1
+(integer) 0
+
+&gt; hgetall hash-key
+1) &#34;sub-key1&#34;
+2) &#34;value1&#34;
+3) &#34;sub-key2&#34;
+4) &#34;value2&#34;
+
+&gt; hdel hash-key sub-key2
+(integer) 1
+&gt; hdel hash-key sub-key2
+(integer) 0
+
+&gt; hget hash-key sub-key1
+&#34;value1&#34;
+
+&gt; hgetall hash-key
+1) &#34;sub-key1&#34;
+2) &#34;value1&#34;
+
+  ZSET
+  #
+
+  
+&gt; zadd zset-key 728 member1
+(integer) 1
+&gt; zadd zset-key 982 member0
+(integer) 1
+&gt; zadd zset-key 982 member0
+(integer) 0
+
+&gt; zrange zset-key 0 -1 withscores
+1) &#34;member1&#34;
+2) &#34;728&#34;
+3) &#34;member0&#34;
+4) &#34;982&#34;
+
+&gt; zrangebyscore zset-key 0 800 withscores
+1) &#34;member1&#34;
+2) &#34;728&#34;
+
+&gt; zrem zset-key member1
+(integer) 1
+&gt; zrem zset-key member1
+(integer) 0
+
+&gt; zrange zset-key 0 -1 withscores
+1) &#34;member0&#34;
+2) &#34;982&#34;
+
+  三、数据结构
+  #
+
+
+  字典
+  #
+
+dictht 是一个散列表结构，使用拉链法解决哈希冲突。">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/keeplearning/docs/redis/overview/">
   <meta property="og:site_name" content="KeepLearning">
   <meta property="og:title" content="总览">
-  <meta property="og:description" content="总览 # 一、概述 # Redis 是速度非常快的非关系型（NoSQL）内存键值数据库，可以存储键和五种不同类型的值之间的映射。
+  <meta property="og:description" content=" 总览 # 一、概述 # Redis 是速度非常快的非关系型（NoSQL）内存键值数据库，可以存储键和五种不同类型的值之间的映射。
 键的类型只能为字符串，值支持五种数据类型：字符串、列表、集合、散列表、有序集合。
 Redis 支持很多特性，例如将内存中的数据持久化到硬盘中，使用复制来扩展读性能，使用分片来扩展写性能。
 二、数据类型 # 数据类型 可以存储的值 操作 STRING 字符串、整数或者浮点数 对整个字符串或者字符串的其中一部分执行操作 对整数和浮点数执行自增或者自减操作 LIST 列表 从两端压入或者弹出元素 对单个或者多个元素进行修剪， 只保留一个范围内的元素 SET 无序集合 添加、获取、移除单个元素 检查一个元素是否存在于集合中 计算交集、并集、差集 从集合里面随机获取元素 HASH 包含键值对的无序散列表 添加、获取、移除单个键值对 获取所有键值对 检查某个键是否存在 ZSET 有序集合 添加、获取、删除元素 根据分值范围或者成员来获取元素 计算一个键的排名 What Redis data structures look like
@@ -31,9 +220,6 @@ STRING # &gt; set hello world OK &gt; get hello &#34;world&#34; &gt; del hello (
   <script defer src="/keeplearning/zh.search.min.6fccc1aefa97c7da4c75b2a1a67c661da4610910143e9a1de17a8e189f84520a.js" integrity="sha256-b8zBrvqXx9pMdbKhpnxmHaRhCRAUPpod4XqOGJ&#43;EUgo=" crossorigin="anonymous"></script>
 
   <script defer src="/keeplearning/sw.min.559fc49347ec89de6e20d5e68d8bdab142322ec9991d085fb954646f16b7984f.js" integrity="sha256-VZ/Ek0fsid5uINXmjYvasUIyLsmZHQhfuVRkbxa3mE8=" crossorigin="anonymous"></script>
-
-  
-
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book
@@ -568,40 +754,40 @@ https://github.com/alex-shpak/hugo-book
   <a class="anchor" href="#%e4%ba%8c%e6%95%b0%e6%8d%ae%e7%b1%bb%e5%9e%8b">#</a>
 </h2>
 <table>
-<thead>
-<tr>
-<th>数据类型</th>
-<th>可以存储的值</th>
-<th>操作</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>STRING</td>
-<td>字符串、整数或者浮点数</td>
-<td>对整个字符串或者字符串的其中一部分执行操作 </br> 对整数和浮点数执行自增或者自减操作</td>
-</tr>
-<tr>
-<td>LIST</td>
-<td>列表</td>
-<td>从两端压入或者弹出元素 </br> 对单个或者多个元素进行修剪，</br> 只保留一个范围内的元素</td>
-</tr>
-<tr>
-<td>SET</td>
-<td>无序集合</td>
-<td>添加、获取、移除单个元素</br> 检查一个元素是否存在于集合中</br> 计算交集、并集、差集</br> 从集合里面随机获取元素</td>
-</tr>
-<tr>
-<td>HASH</td>
-<td>包含键值对的无序散列表</td>
-<td>添加、获取、移除单个键值对</br> 获取所有键值对</br> 检查某个键是否存在</td>
-</tr>
-<tr>
-<td>ZSET</td>
-<td>有序集合</td>
-<td>添加、获取、删除元素</br> 根据分值范围或者成员来获取元素</br> 计算一个键的排名</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">数据类型</th>
+          <th style="text-align: left">可以存储的值</th>
+          <th style="text-align: left">操作</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">STRING</td>
+          <td style="text-align: left">字符串、整数或者浮点数</td>
+          <td style="text-align: left">对整个字符串或者字符串的其中一部分执行操作 </br> 对整数和浮点数执行自增或者自减操作</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">LIST</td>
+          <td style="text-align: left">列表</td>
+          <td style="text-align: left">从两端压入或者弹出元素 </br> 对单个或者多个元素进行修剪，</br> 只保留一个范围内的元素</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">SET</td>
+          <td style="text-align: left">无序集合</td>
+          <td style="text-align: left">添加、获取、移除单个元素</br> 检查一个元素是否存在于集合中</br> 计算交集、并集、差集</br> 从集合里面随机获取元素</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">HASH</td>
+          <td style="text-align: left">包含键值对的无序散列表</td>
+          <td style="text-align: left">添加、获取、移除单个键值对</br> 获取所有键值对</br> 检查某个键是否存在</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">ZSET</td>
+          <td style="text-align: left">有序集合</td>
+          <td style="text-align: left">添加、获取、删除元素</br> 根据分值范围或者成员来获取元素</br> 计算一个键的排名</td>
+      </tr>
+  </tbody>
 </table>
 <blockquote>
 <p>
@@ -935,38 +1121,38 @@ https://github.com/alex-shpak/hugo-book
 <p>可以设置内存最大使用量，当内存使用量超出时，会施行数据淘汰策略。</p>
 <p>Redis 具体有 6 种淘汰策略：</p>
 <table>
-<thead>
-<tr>
-<th>策略</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>volatile-lru</td>
-<td>从已设置过期时间的数据集中挑选最近最少使用的数据淘汰</td>
-</tr>
-<tr>
-<td>volatile-ttl</td>
-<td>从已设置过期时间的数据集中挑选将要过期的数据淘汰</td>
-</tr>
-<tr>
-<td>volatile-random</td>
-<td>从已设置过期时间的数据集中任意选择数据淘汰</td>
-</tr>
-<tr>
-<td>allkeys-lru</td>
-<td>从所有数据集中挑选最近最少使用的数据淘汰</td>
-</tr>
-<tr>
-<td>allkeys-random</td>
-<td>从所有数据集中任意选择数据进行淘汰</td>
-</tr>
-<tr>
-<td>noeviction</td>
-<td>禁止驱逐数据</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">策略</th>
+          <th style="text-align: left">描述</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">volatile-lru</td>
+          <td style="text-align: left">从已设置过期时间的数据集中挑选最近最少使用的数据淘汰</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">volatile-ttl</td>
+          <td style="text-align: left">从已设置过期时间的数据集中挑选将要过期的数据淘汰</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">volatile-random</td>
+          <td style="text-align: left">从已设置过期时间的数据集中任意选择数据淘汰</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">allkeys-lru</td>
+          <td style="text-align: left">从所有数据集中挑选最近最少使用的数据淘汰</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">allkeys-random</td>
+          <td style="text-align: left">从所有数据集中任意选择数据进行淘汰</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">noeviction</td>
+          <td style="text-align: left">禁止驱逐数据</td>
+      </tr>
+  </tbody>
 </table>
 <p>作为内存数据库，出于对性能和内存消耗的考虑，Redis 的淘汰算法实际实现上并非针对所有 key，而是抽样一小部分并且从中选出被淘汰的 key。</p>
 <p>使用 Redis 缓存数据时，为了提高缓存命中率，需要保证缓存数据都是热点数据。可以将内存最大使用量设置为热点数据占用的内存量，然后启用 allkeys-lru 淘汰策略，将最近最少使用的数据淘汰。</p>
@@ -991,26 +1177,26 @@ https://github.com/alex-shpak/hugo-book
 <p>将写命令添加到 AOF 文件（Append Only File）的末尾。</p>
 <p>使用 AOF 持久化需要设置同步选项，从而确保写命令同步到磁盘文件上的时机。这是因为对文件进行写入并不会马上将内容同步到磁盘上，而是先存储到缓冲区，然后由操作系统决定什么时候同步到磁盘。有以下同步选项：</p>
 <table>
-<thead>
-<tr>
-<th>选项</th>
-<th>同步频率</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>always</td>
-<td>每个写命令都同步</td>
-</tr>
-<tr>
-<td>everysec</td>
-<td>每秒同步一次</td>
-</tr>
-<tr>
-<td>no</td>
-<td>让操作系统来决定何时同步</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">选项</th>
+          <th style="text-align: left">同步频率</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">always</td>
+          <td style="text-align: left">每个写命令都同步</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">everysec</td>
+          <td style="text-align: left">每秒同步一次</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">no</td>
+          <td style="text-align: left">让操作系统来决定何时同步</td>
+      </tr>
+  </tbody>
 </table>
 <ul>
 <li>always 选项会严重减低服务器的性能；</li>

@@ -3,19 +3,140 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="206. 反转链表 # 题目地址 # 力扣 LeetCode 类似/相同题目： 剑指 Offer 24. 反转链表
-解题思路 # 迭代法 # TODO
-递归法 # TODO
-具体实现 # Go迭代 package main type ListNode struct { Val int Next *ListNode } func reverseList(head *ListNode) *ListNode { if head == nil { return nil } var ( prev, next *ListNode curr = head ) for curr != nil { next = curr.Next curr.Next = prev // 下一个 prev = curr curr = next } return prev } func main() { reverseList(&amp;ListNode{ Val: 1, Next: &amp;ListNode{Val: 2, Next: &amp;ListNode{Val: 3, Next: &amp;ListNode{Val: 4, Next: &amp;ListNode{Val: 5}}}}}) } Go递归 package main import ( &#34;fmt&#34; ) type ListNode struct { Val int Next *ListNode } func reverseList(head *ListNode) *ListNode { // head == null：当第一次输入为 nil 的时候直接返回 nil，不进行递归操作。 // head.">
+<meta name="description" content="
+  206. 反转链表
+  #
+
+
+  题目地址
+  #
+
+
+
+  力扣
+
+  LeetCode
+
+类似/相同题目：
+  剑指 Offer 24. 反转链表
+
+  解题思路
+  #
+
+
+  迭代法
+  #
+
+TODO
+
+  递归法
+  #
+
+TODO
+
+  具体实现
+  #
+
+
+
+
+
+
+  Go迭代
+  package main
+
+type ListNode struct {
+	Val  int
+	Next *ListNode
+}
+
+func reverseList(head *ListNode) *ListNode {
+	if head == nil {
+		return nil
+	}
+
+	var (
+		prev, next *ListNode
+		curr       = head
+	)
+
+	for curr != nil {
+		next = curr.Next
+		curr.Next = prev
+		// 下一个
+		prev = curr
+		curr = next
+	}
+
+	return prev
+}
+
+func main() {
+	reverseList(&amp;ListNode{
+		Val: 1, Next: &amp;ListNode{Val: 2, Next: &amp;ListNode{Val: 3, Next: &amp;ListNode{Val: 4, Next: &amp;ListNode{Val: 5}}}}})
+}
+
+  Go递归
+  package main
+
+import (
+	&#34;fmt&#34;
+)
+
+type ListNode struct {
+	Val  int
+	Next *ListNode
+}
+
+func reverseList(head *ListNode) *ListNode {
+	// head == null：当第一次输入为 nil 的时候直接返回 nil，不进行递归操作。
+	// head.next == null：返回链表的最后一个节点
+	if head == nil || head.Next == nil {
+		return head
+	}
+
+	newHead := reverseList(head.Next)
+	head.Next.Next = head
+	head.Next = nil
+
+	return newHead
+}
+
+func main() {
+	x := reverseList(&amp;ListNode{
+		Val: 1,
+		Next: &amp;ListNode{
+			Val: 2,
+			Next: &amp;ListNode{
+				Val: 3,
+				Next: &amp;ListNode{
+					Val:  4,
+					Next: nil,
+				},
+			},
+		},
+	})
+	fmt.Println(x)
+}
+
+
+
+  参考
+  #
+
+
+
+  反转链表递归（动画演示、手写 Java 代码、详细注释、LeetCode 高频算法题）
+">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/leetcode/docs/easy/206/">
   <meta property="og:site_name" content="LeetCode">
   <meta property="og:title" content="206. 反转链表">
-  <meta property="og:description" content="206. 反转链表 # 题目地址 # 力扣 LeetCode 类似/相同题目： 剑指 Offer 24. 反转链表
+  <meta property="og:description" content=" 206. 反转链表 # 题目地址 # 力扣 LeetCode 类似/相同题目： 剑指 Offer 24. 反转链表
 解题思路 # 迭代法 # TODO
 递归法 # TODO
-具体实现 # Go迭代 package main type ListNode struct { Val int Next *ListNode } func reverseList(head *ListNode) *ListNode { if head == nil { return nil } var ( prev, next *ListNode curr = head ) for curr != nil { next = curr.Next curr.Next = prev // 下一个 prev = curr curr = next } return prev } func main() { reverseList(&amp;ListNode{ Val: 1, Next: &amp;ListNode{Val: 2, Next: &amp;ListNode{Val: 3, Next: &amp;ListNode{Val: 4, Next: &amp;ListNode{Val: 5}}}}}) } Go递归 package main import ( &#34;fmt&#34; ) type ListNode struct { Val int Next *ListNode } func reverseList(head *ListNode) *ListNode { // head == null：当第一次输入为 nil 的时候直接返回 nil，不进行递归操作。 // head.">
+具体实现 # Go迭代 package main type ListNode struct { Val int Next *ListNode } func reverseList(head *ListNode) *ListNode { if head == nil { return nil } var ( prev, next *ListNode curr = head ) for curr != nil { next = curr.Next curr.Next = prev // 下一个 prev = curr curr = next } return prev } func main() { reverseList(&amp;ListNode{ Val: 1, Next: &amp;ListNode{Val: 2, Next: &amp;ListNode{Val: 3, Next: &amp;ListNode{Val: 4, Next: &amp;ListNode{Val: 5}}}}}) } Go递归 package main import ( &#34;fmt&#34; ) type ListNode struct { Val int Next *ListNode } func reverseList(head *ListNode) *ListNode { // head == null：当第一次输入为 nil 的时候直接返回 nil，不进行递归操作。 // head.next == null：返回链表的最后一个节点 if head == nil || head.Next == nil { return head } newHead := reverseList(head.Next) head.Next.Next = head head.Next = nil return newHead } func main() { x := reverseList(&amp;ListNode{ Val: 1, Next: &amp;ListNode{ Val: 2, Next: &amp;ListNode{ Val: 3, Next: &amp;ListNode{ Val: 4, Next: nil, }, }, }, }) fmt.Println(x) } 参考 # 反转链表递归（动画演示、手写 Java 代码、详细注释、LeetCode 高频算法题） ">
   <meta property="og:locale" content="zh">
   <meta property="og:type" content="article">
     <meta property="article:section" content="docs">
@@ -29,9 +150,6 @@
   <script defer src="/leetcode/zh.search.min.f9cd73d20daebe0f064076c741a93203473f9497ee32d434a8774e691eea3972.js" integrity="sha256-&#43;c1z0g2uvg8GQHbHQakyA0c/lJfuMtQ0qHdOaR7qOXI=" crossorigin="anonymous"></script>
 
   <script defer src="/leetcode/sw.min.c814046bee19bfa0279b71972af9d15919d290341d7ecdfe781d2e1113df9ad1.js" integrity="sha256-yBQEa&#43;4Zv6Anm3GXKvnRWRnSkDQdfs3&#43;eB0uERPfmtE=" crossorigin="anonymous"></script>
-
-  
-
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book

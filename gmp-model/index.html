@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="zh-CN">
 
@@ -230,18 +228,19 @@
     <li><a href="#参考">参考</a></li>
   </ul>
 </nav></div>
-    </div><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single print:!tw-w-full print:!tw-max-w-none print:!tw-m-0 print:!tw-p-0"><h1 class="single-title">Go GMP 调度模型</h1><div class="post-meta">
+    </div><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single print:!tw-w-full print:!tw-max-w-none print:!tw-m-0 print:!tw-p-0"><h1 class="single-title" data-pagefind-meta="date:2022-03-16" data-pagefind-body>Go GMP 调度模型</h1><div class="post-meta">
             <div class="post-meta-line">
-                <span class="post-author"><img class="tw-inline-block tw-max-h-4 tw-rounded-full tw-translate-y-[-2px] tw-mr-1"  src="/images/avatar.webp" srcset="/images/avatar_hu11269060449570882715.webp 16w, /images/avatar_hu2515534640531409486.webp 24w, /images/avatar_hu9855092516384270799.webp 32w"  alt="xiaobinqt avatar" height="16" width="16"><a href="https://github.com/xiaobinqt" title="Author" target="_blank" rel="noopener noreferrer author" class="author">xiaobinqt</a>
+                <span class="post-author"><img class="tw-inline-block tw-max-h-4 tw-rounded-full tw-translate-y-[-2px] tw-mr-1"  src=/images/avatar.webp srcset="/images/avatar_hu11269060449570882715.webp 16w, /images/avatar_hu2515534640531409486.webp 24w, /images/avatar_hu9855092516384270799.webp 32w"  alt="xiaobinqt avatar" height="16" width="16"><a href="https://github.com/xiaobinqt" title="Author" target="_blank" rel="noopener noreferrer author" class="author">xiaobinqt</a>
                 </span>&nbsp;<span class="post-category">收录于 </span>&nbsp;<span class="post-category">类别 <a href="/categories/golang/"><svg class="icon"
     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M464 128H272l-54.63-54.63c-6-6-14.14-9.37-22.63-9.37H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V176c0-26.51-21.49-48-48-48zm0 272H48V112h140.12l54.63 54.63c6 6 14.14 9.37 22.63 9.37H464v224z"/></svg>Golang</a></span>&nbsp;<span class="post-category">和</span>&nbsp;<span class="post-series">系列 <a href="/series/reproduce/"><svg class="icon"
     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M464 32H48C21.49 32 0 53.49 0 80v352c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V80c0-26.51-21.49-48-48-48zm-6 400H54a6 6 0 0 1-6-6V86a6 6 0 0 1 6-6h404a6 6 0 0 1 6 6v340a6 6 0 0 1-6 6zm-42-92v24c0 6.627-5.373 12-12 12H204c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h200c6.627 0 12 5.373 12 12zm0-96v24c0 6.627-5.373 12-12 12H204c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h200c6.627 0 12 5.373 12 12zm0-96v24c0 6.627-5.373 12-12 12H204c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h200c6.627 0 12 5.373 12 12zm-252 12c0 19.882-16.118 36-36 36s-36-16.118-36-36 16.118-36 36-36 36 16.118 36 36zm0 96c0 19.882-16.118 36-36 36s-36-16.118-36-36 16.118-36 36-36 36 16.118 36 36zm0 96c0 19.882-16.118 36-36 36s-36-16.118-36-36 16.118-36 36-36 36 16.118 36 36z"/></svg>转载</a></span></div>
             <div class="post-meta-line"><svg class="icon"
     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M148 288h-40c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12zm108-12v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm-96 96v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm-96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm192 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm96-260v352c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h48V12c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h128V12c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h48c26.5 0 48 21.5 48 48zm-48 346V160H48v298c0 3.3 2.7 6 6 6h340c3.3 0 6-2.7 6-6z"/></svg>&nbsp;<time datetime="2022-03-16">2022-03-16</time>&nbsp;<svg class="icon"
     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M402.3 344.9l32-32c5-5 13.7-1.5 13.7 5.7V464c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h273.5c7.1 0 10.7 8.6 5.7 13.7l-32 32c-1.5 1.5-3.5 2.3-5.7 2.3H48v352h352V350.5c0-2.1.8-4.1 2.3-5.6zm156.6-201.8L296.3 405.7l-90.4 10c-26.2 2.9-48.5-19.2-45.6-45.6l10-90.4L432.9 17.1c22.9-22.9 59.9-22.9 82.7 0l43.2 43.2c22.9 22.9 22.9 60 .1 82.8zM460.1 174L402 115.9 216.2 301.8l-7.3 65.3 65.3-7.3L460.1 174zm64.8-79.7l-43.2-43.2c-4.1-4.1-10.8-4.1-14.8 0L436 82l58.1 58.1 30.9-30.9c4-4.2 4-10.8-.1-14.9z"/></svg>&nbsp;<time datetime="2023-10-10">2023-10-10</time>&nbsp;<svg class="icon"
-    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;约 6415 字&nbsp;<svg class="icon"
-    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm0 448c-110.5 0-200-89.5-200-200S145.5 56 256 56s200 89.5 200 200-89.5 200-200 200zm61.8-104.4l-84.9-61.7c-3.1-2.3-4.9-5.9-4.9-9.7V116c0-6.6 5.4-12 12-12h32c6.6 0 12 5.4 12 12v141.7l66.8 48.6c5.4 3.9 6.5 11.4 2.6 16.8L334.6 349c-3.9 5.3-11.4 6.5-16.8 2.6z"/></svg>&nbsp;预计阅读 13 分钟&nbsp;</div>
-        </div><div class="featured-image"><img  loading="eager" src="/555f4905eb1c4615b9702ead116731d1_1986444681621383617.png" srcset="/555f4905eb1c4615b9702ead116731d1_1986444681621383617_hu6623490366258227218.webp 800w, /555f4905eb1c4615b9702ead116731d1_1986444681621383617_hu15868834382189328041.webp 1200w, /555f4905eb1c4615b9702ead116731d1_1986444681621383617_hu9616904262322730970.webp 1600w"  alt="golang GMP 模型,go 数学模型,GMP,进程,线程,协程,goroutine,go 调度器,golang调度器,go协程调度模型" height="865" width="1702"></div><div class="details toc print:!tw-block" id="toc-static"  kept="">
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;约 6415 字&nbsp;
+                    <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm0 448c-110.5 0-200-89.5-200-200S145.5 56 256 56s200 89.5 200 200-89.5 200-200 200zm61.8-104.4l-84.9-61.7c-3.1-2.3-4.9-5.9-4.9-9.7V116c0-6.6 5.4-12 12-12h32c6.6 0 12 5.4 12 12v141.7l66.8 48.6c5.4 3.9 6.5 11.4 2.6 16.8L334.6 349c-3.9 5.3-11.4 6.5-16.8 2.6z"/></svg>&nbsp;预计阅读 29 分钟&nbsp;</div>
+        </div><div class="featured-image"><img  loading="eager" src=/555f4905eb1c4615b9702ead116731d1_1986444681621383617.png srcset="/555f4905eb1c4615b9702ead116731d1_1986444681621383617_hu6623490366258227218.webp 800w, /555f4905eb1c4615b9702ead116731d1_1986444681621383617_hu15868834382189328041.webp 1200w, /555f4905eb1c4615b9702ead116731d1_1986444681621383617_hu9616904262322730970.webp 1600w"  alt="golang GMP 模型,go 数学模型,GMP,进程,线程,协程,goroutine,go 调度器,golang调度器,go协程调度模型" height="865" width="1702"></div><div class="details toc print:!tw-block" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
                     <span>目录</span>
                     <span class="details-icon"><svg class="icon"
@@ -286,32 +285,32 @@
     <li><a href="#参考">参考</a></li>
   </ul>
 </nav></div>
-            </div><div class="content" id="content"><h2 id="进程线程协程的区别" class="headerLink">
-    <a href="#%e8%bf%9b%e7%a8%8b%e7%ba%bf%e7%a8%8b%e5%8d%8f%e7%a8%8b%e7%9a%84%e5%8c%ba%e5%88%ab" class="header-mark" aria-label="Header mark for '进程、线程、协程的区别'"></a>1 进程、线程、协程的区别</h2><p><strong>进程</strong>：进程是操作系统为应用程序分配资源的最小单元。每个进程有独立的内存空间和状态。</p>
+            </div><div class="content" id="content" data-pagefind-body><h2 id="进程线程协程的区别" class="headerLink">
+    <a href="#%e8%bf%9b%e7%a8%8b%e7%ba%bf%e7%a8%8b%e5%8d%8f%e7%a8%8b%e7%9a%84%e5%8c%ba%e5%88%ab" class="header-mark"></a>1 进程、线程、协程的区别</h2><p><strong>进程</strong>：进程是操作系统为应用程序分配资源的最小单元。每个进程有独立的内存空间和状态。</p>
 <p><strong>线程</strong>：线程是进程中的一个独立执行单元。在 Go 中，一个进程可以启动多个线程，以并行执行任务。</p>
 <p><strong>协程</strong>：协程是 Go 语言中的一种轻量级的并发技术。它是<strong>用户态的，不需要操作系统的支持</strong>，可以在单个线程中启动多个协程，并行执行任务。协程共享同一个线程的资源，但拥有自己的栈和寄存器。</p>
 <p>总的来说，进程和线程是操作系统级别的并发技术，用于在多核处理器上利用资源；而协程是 Go 语言提供的一种高效、轻量级的并发技术，用于实现程序内部的并发任务。</p>
 <h3 id="进程" class="headerLink">
-    <a href="#%e8%bf%9b%e7%a8%8b" class="header-mark" aria-label="Header mark for '进程'"></a>1.1 进程</h3><p>进程是操作系统对一个正在运行的程序的一种抽象，<strong>进程是资源分配的最小单位</strong>，每一个进程都有一个自己的地址空间。</p>
-<p><figure><a class="lightgallery" href="/c0032558db4249a0a8ce4d6473327d38_4018225297678683480.png" title="进程在操作系统中的抽象表现" data-thumbnail="/c0032558db4249a0a8ce4d6473327d38_4018225297678683480.png" data-sub-html="<h2>进程在操作系统中的抽象表现</h2><p>进程在操作系统中的抽象表现</p>"><img  loading="lazy" src="/c0032558db4249a0a8ce4d6473327d38_4018225297678683480.png" srcset="/c0032558db4249a0a8ce4d6473327d38_4018225297678683480_hu17510552934498328029.webp 800w, /c0032558db4249a0a8ce4d6473327d38_4018225297678683480_hu16806161073286800967.webp 1200w, /c0032558db4249a0a8ce4d6473327d38_4018225297678683480_hu17921472997151647264.webp 1600w"  alt="进程在操作系统中的抽象表现" height="389" width="706"></a><figcaption class="image-caption">进程在操作系统中的抽象表现</figcaption>
+    <a href="#%e8%bf%9b%e7%a8%8b" class="header-mark"></a>1.1 进程</h3><p>进程是操作系统对一个正在运行的程序的一种抽象，<strong>进程是资源分配的最小单位</strong>，每一个进程都有一个自己的地址空间。</p>
+<p><figure><a class="lightgallery" href="/c0032558db4249a0a8ce4d6473327d38_4018225297678683480.png" title="进程在操作系统中的抽象表现" data-thumbnail="/c0032558db4249a0a8ce4d6473327d38_4018225297678683480.png" data-sub-html="<h2>进程在操作系统中的抽象表现</h2><p>进程在操作系统中的抽象表现</p>"><img  loading="lazy" src=/c0032558db4249a0a8ce4d6473327d38_4018225297678683480.png srcset="/c0032558db4249a0a8ce4d6473327d38_4018225297678683480_hu17510552934498328029.webp 800w, /c0032558db4249a0a8ce4d6473327d38_4018225297678683480_hu16806161073286800967.webp 1200w, /c0032558db4249a0a8ce4d6473327d38_4018225297678683480_hu17921472997151647264.webp 1600w"  alt="进程在操作系统中的抽象表现" height="389" width="706"></a><figcaption class="image-caption">进程在操作系统中的抽象表现</figcaption>
 </figure></p>
 <p>通俗的说，<strong>进程就是一个正在执行的程序</strong>。</p>
-<p><figure><a class="lightgallery" href="/19ae7497830b4301831fe13d24a30f5f_17153103595062790727.png" title="Windows任务管理器" data-thumbnail="/19ae7497830b4301831fe13d24a30f5f_17153103595062790727.png" data-sub-html="<h2>Windows任务管理器</h2><p>Windows任务管理器</p>"><img  loading="lazy" src="/19ae7497830b4301831fe13d24a30f5f_17153103595062790727.png" srcset="/19ae7497830b4301831fe13d24a30f5f_17153103595062790727_hu10996933197251775906.webp 800w, /19ae7497830b4301831fe13d24a30f5f_17153103595062790727_hu3382411637126220561.webp 1200w, /19ae7497830b4301831fe13d24a30f5f_17153103595062790727_hu1707670720453705919.webp 1600w"  alt="Windows任务管理器" height="591" width="818"></a><figcaption class="image-caption">Windows任务管理器</figcaption>
+<p><figure><a class="lightgallery" href="/19ae7497830b4301831fe13d24a30f5f_17153103595062790727.png" title="Windows任务管理器" data-thumbnail="/19ae7497830b4301831fe13d24a30f5f_17153103595062790727.png" data-sub-html="<h2>Windows任务管理器</h2><p>Windows任务管理器</p>"><img  loading="lazy" src=/19ae7497830b4301831fe13d24a30f5f_17153103595062790727.png srcset="/19ae7497830b4301831fe13d24a30f5f_17153103595062790727_hu10996933197251775906.webp 800w, /19ae7497830b4301831fe13d24a30f5f_17153103595062790727_hu3382411637126220561.webp 1200w, /19ae7497830b4301831fe13d24a30f5f_17153103595062790727_hu1707670720453705919.webp 1600w"  alt="Windows任务管理器" height="591" width="818"></a><figcaption class="image-caption">Windows任务管理器</figcaption>
 </figure></p>
 <p>进程存在的意义是为了<strong>合理压榨 CPU 的性能和分配运行的时间片，让 CPU 不能 “闲着“</strong>。</p>
 <p>在计算机中，其计算核心是 CPU，负责所有计算相关的工作和资源。单个 CPU 一次只能运行一个任务。如果一个进程跑着，就把唯一一个 CPU 给完全占住，那是非常不合理的。</p>
 <p>如果总是在运行一个进程上的任务，就会出现一个现象，就是任务不一定总是在执行 “计算型” 的任务，会有很大可能是在执行网络调用阻塞了，那么 CPU 岂不就浪费了？</p>
-<p><figure><a class="lightgallery" href="/a406c795e40e4b7395a0228b299dd6bd_17002943679739605349.png" title="进程上下文切换" data-thumbnail="/a406c795e40e4b7395a0228b299dd6bd_17002943679739605349.png" data-sub-html="<h2>进程上下文切换</h2><p>进程上下文切换</p>"><img  loading="lazy" src="/a406c795e40e4b7395a0228b299dd6bd_17002943679739605349.png" srcset="/a406c795e40e4b7395a0228b299dd6bd_17002943679739605349_hu10843076143364583964.webp 800w, /a406c795e40e4b7395a0228b299dd6bd_17002943679739605349_hu10437255644824543335.webp 1200w, /a406c795e40e4b7395a0228b299dd6bd_17002943679739605349_hu8307128433382560420.webp 1600w"  alt="进程上下文切换" height="437" width="978"></a><figcaption class="image-caption">进程上下文切换</figcaption>
+<p><figure><a class="lightgallery" href="/a406c795e40e4b7395a0228b299dd6bd_17002943679739605349.png" title="进程上下文切换" data-thumbnail="/a406c795e40e4b7395a0228b299dd6bd_17002943679739605349.png" data-sub-html="<h2>进程上下文切换</h2><p>进程上下文切换</p>"><img  loading="lazy" src=/a406c795e40e4b7395a0228b299dd6bd_17002943679739605349.png srcset="/a406c795e40e4b7395a0228b299dd6bd_17002943679739605349_hu10843076143364583964.webp 800w, /a406c795e40e4b7395a0228b299dd6bd_17002943679739605349_hu10437255644824543335.webp 1200w, /a406c795e40e4b7395a0228b299dd6bd_17002943679739605349_hu8307128433382560420.webp 1600w"  alt="进程上下文切换" height="437" width="978"></a><figcaption class="image-caption">进程上下文切换</figcaption>
 </figure></p>
 <p>所以出现了多进程，多个 CPU，多个进程。多进程就是指计算机系统可以同时执行多个进程，从一个进程到另外一个进程的转换是由操作系统内核管理的，一般是同时运行多个软件。</p>
 <h3 id="线程" class="headerLink">
-    <a href="#%e7%ba%bf%e7%a8%8b" class="header-mark" aria-label="Header mark for '线程'"></a>1.2 线程</h3><p>有了多进程，在操作系统上可以同时运行多个进程。那么为什么有了进程，还要线程呢？这是因为：</p>
+    <a href="#%e7%ba%bf%e7%a8%8b" class="header-mark"></a>1.2 线程</h3><p>有了多进程，在操作系统上可以同时运行多个进程。那么为什么有了进程，还要线程呢？这是因为：</p>
 <ul>
 <li>进程间的信息难以共享数据，父子进程并未共享内存，需要通过进程间通信（IPC），在进程间进行信息交换，性能开销较大。</li>
 <li>创建进程（一般是调用 <code>fork</code> 方法）的性能开销较大。</li>
 </ul>
 <p>所以大家又把目光转向了进程内，能不能在进程里做点什么呢？</p>
-<figure><a class="lightgallery" href="/9462880ac1eb4cdeb5288716a15bac4d_6106946306897482285.png" title="" data-thumbnail="/9462880ac1eb4cdeb5288716a15bac4d_6106946306897482285.png" data-sub-html="<h2>进程由多个线程组成</h2>"><img  loading="lazy" src="/9462880ac1eb4cdeb5288716a15bac4d_6106946306897482285.png" srcset="/9462880ac1eb4cdeb5288716a15bac4d_6106946306897482285_hu6491607508831269313.webp 800w, /9462880ac1eb4cdeb5288716a15bac4d_6106946306897482285_hu17045546351724586736.webp 1200w, /9462880ac1eb4cdeb5288716a15bac4d_6106946306897482285_hu17768953858419797095.webp 1600w"   height="441" width="600"></a><figcaption class="image-caption">进程由多个线程组成</figcaption>
+<figure><a class="lightgallery" href="/9462880ac1eb4cdeb5288716a15bac4d_6106946306897482285.png" title="" data-thumbnail="/9462880ac1eb4cdeb5288716a15bac4d_6106946306897482285.png" data-sub-html="<h2>进程由多个线程组成</h2>"><img  loading="lazy" src=/9462880ac1eb4cdeb5288716a15bac4d_6106946306897482285.png srcset="/9462880ac1eb4cdeb5288716a15bac4d_6106946306897482285_hu6491607508831269313.webp 800w, /9462880ac1eb4cdeb5288716a15bac4d_6106946306897482285_hu17045546351724586736.webp 1200w, /9462880ac1eb4cdeb5288716a15bac4d_6106946306897482285_hu17768953858419797095.webp 1600w"   height="441" width="600"></a><figcaption class="image-caption">进程由多个线程组成</figcaption>
     </figure>
 <p>一个进程可以由多个称为线程的执行单元组成。每个线程都运行在进程的上下文中，共享着同样的代码和全局数据。</p>
 <p>多个进程，就可以有更多的线程。<strong>多线程比多进程之间更容易共享数据，在上下文切换中线程一般比进程更高效</strong>。这是因为，</p>
@@ -320,7 +319,7 @@
 <li>创建线程比创建进程要快 10 倍甚至更多。 线程都是同一个进程下自家的孩子，像是内存页、页表等就不需要了。</li>
 </ul>
 <h3 id="协程" class="headerLink">
-    <a href="#%e5%8d%8f%e7%a8%8b" class="header-mark" aria-label="Header mark for '协程'"></a>1.3 协程</h3><p>协程（Co-routine）是用户态的线程。通常创建协程时，会从进程的堆中分配一段内存作为协程的栈。</p>
+    <a href="#%e5%8d%8f%e7%a8%8b" class="header-mark"></a>1.3 协程</h3><p>协程（Co-routine）是用户态的线程。通常创建协程时，会从进程的堆中分配一段内存作为协程的栈。</p>
 <p>线程的栈有 8MB，而协程栈的大小通常只有 KB 级别，而 Go 语言的协程更夸张，只有 2-4KB，非常的轻巧。</p>
 <p>协程有以下优势&#x1f44b;：</p>
 <ul>
@@ -338,7 +337,7 @@
 </li>
 </ul>
 <h2 id="goroutine-是什么" class="headerLink">
-    <a href="#goroutine-%e6%98%af%e4%bb%80%e4%b9%88" class="header-mark" aria-label="Header mark for 'goroutine 是什么'"></a>2 goroutine 是什么</h2><p>Goroutine 是一个由 Go 运行时管理的轻量级线程，我们称为 “协程”。</p>
+    <a href="#goroutine-%e6%98%af%e4%bb%80%e4%b9%88" class="header-mark"></a>2 goroutine 是什么</h2><p>Goroutine 是一个由 Go 运行时管理的轻量级线程，我们称为 “协程”。</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
     code-block-title 
@@ -449,14 +448,14 @@
 <p>Go 运行时系统并没有内核调度器的中断能力，内核调度器会发起抢占式调度将长期运行的线程中断并让出 CPU 资源，让其他线程获得执行机会。</p>
 </div></div></div>
 <h2 id="调度器的由来" class="headerLink">
-    <a href="#%e8%b0%83%e5%ba%a6%e5%99%a8%e7%9a%84%e7%94%b1%e6%9d%a5" class="header-mark" aria-label="Header mark for '调度器的由来'"></a>3 调度器的由来</h2><p>在多进程/多线程的操作系统中，解决了早期的单进程操作系统进程阻塞的问题，因为一个进程阻塞 CPU 可以立刻切换到其他进程中去执行，而且调度 CPU 的算法可以保证在运行的进程都可以被分配到 CPU 的运行时间片，这样从宏观来看，似乎多个进程是在同时被运行。</p>
+    <a href="#%e8%b0%83%e5%ba%a6%e5%99%a8%e7%9a%84%e7%94%b1%e6%9d%a5" class="header-mark"></a>3 调度器的由来</h2><p>在多进程/多线程的操作系统中，解决了早期的单进程操作系统进程阻塞的问题，因为一个进程阻塞 CPU 可以立刻切换到其他进程中去执行，而且调度 CPU 的算法可以保证在运行的进程都可以被分配到 CPU 的运行时间片，这样从宏观来看，似乎多个进程是在同时被运行。</p>
 <p>但新的问题就出现了，进程拥有太多的资源，进程的创建、切换、销毁，都会占用很长的时间。CPU 虽然利用起来了，但如果进程过多，CPU 有很大的一部分都被用来进行进程调度。为了能提高 CPU 的利用率，这里就需要用到调度。</p>
 <p>CPU 调度切换的是进程和线程，CPU 对进程和线程的态度是一样的，虽然线程看起来很好，但实际上多线程开发设计会变得很复杂，要考虑很多同步竞争的问题，比如锁、竞争冲突等。</p>
 <p>一个线程其实分为 “内核态“ 线程和 “用户态” 线程。一个 “用户态线程” 必须要绑定一个 “内核态线程”，但是 CPU 并不知道有 “用户态线程” 的存在，CPU 只知道它运行的是一个 “内核态线程”。这里我们可以把内核线程依然叫<strong>线程</strong>，用户线程叫<strong>协程</strong>。既然一个协程可以绑定一个线程，那么能不能多个协程绑定在一个或者多个线程上呢！</p>
 <h2 id="协程和线程的映射" class="headerLink">
-    <a href="#%e5%8d%8f%e7%a8%8b%e5%92%8c%e7%ba%bf%e7%a8%8b%e7%9a%84%e6%98%a0%e5%b0%84" class="header-mark" aria-label="Header mark for '协程和线程的映射'"></a>4 协程和线程的映射</h2><h3 id="n1-关系" class="headerLink">
-    <a href="#n1-%e5%85%b3%e7%b3%bb" class="header-mark" aria-label="Header mark for 'N:1 关系'"></a>4.1 N:1 关系</h3><p>N 个协程绑定 1 个线程。</p>
-<figure><a class="lightgallery" href="/32ca2352460442e1b75aed52373558a0_9371821841336646268.png" title="" data-thumbnail="/32ca2352460442e1b75aed52373558a0_9371821841336646268.png" data-sub-html="<h2>N:1</h2>"><img  loading="lazy" src="/32ca2352460442e1b75aed52373558a0_9371821841336646268.png" srcset="/32ca2352460442e1b75aed52373558a0_9371821841336646268_hu12880644874589154139.webp 800w, /32ca2352460442e1b75aed52373558a0_9371821841336646268_hu1129128214629845642.webp 1200w, /32ca2352460442e1b75aed52373558a0_9371821841336646268_hu4442035227100642624.webp 1600w"   height="1092" width="600"></a><figcaption class="image-caption">N:1</figcaption>
+    <a href="#%e5%8d%8f%e7%a8%8b%e5%92%8c%e7%ba%bf%e7%a8%8b%e7%9a%84%e6%98%a0%e5%b0%84" class="header-mark"></a>4 协程和线程的映射</h2><h3 id="n1-关系" class="headerLink">
+    <a href="#n1-%e5%85%b3%e7%b3%bb" class="header-mark"></a>4.1 N:1 关系</h3><p>N 个协程绑定 1 个线程。</p>
+<figure><a class="lightgallery" href="/32ca2352460442e1b75aed52373558a0_9371821841336646268.png" title="" data-thumbnail="/32ca2352460442e1b75aed52373558a0_9371821841336646268.png" data-sub-html="<h2>N:1</h2>"><img  loading="lazy" src=/32ca2352460442e1b75aed52373558a0_9371821841336646268.png srcset="/32ca2352460442e1b75aed52373558a0_9371821841336646268_hu12880644874589154139.webp 800w, /32ca2352460442e1b75aed52373558a0_9371821841336646268_hu1129128214629845642.webp 1200w, /32ca2352460442e1b75aed52373558a0_9371821841336646268_hu4442035227100642624.webp 1600w"   height="1092" width="600"></a><figcaption class="image-caption">N:1</figcaption>
     </figure>
 <p><strong>优点</strong>：</p>
 <p>协程在用户态线程即完成切换，不会陷入到内核态，这种切换非常的轻量快速。但也有很大的缺点，1 个进程的所有协程都绑定在 1 个线程上。</p>
@@ -466,15 +465,15 @@
 <li>一旦某协程阻塞，造成线程阻塞，本进程的其他协程都无法执行了，根本就没有并发的能力了。</li>
 </ul>
 <h3 id="11-关系" class="headerLink">
-    <a href="#11-%e5%85%b3%e7%b3%bb" class="header-mark" aria-label="Header mark for '1:1 关系'"></a>4.2 1:1 关系</h3><p>1 个协程绑定 1 个线程，协程的调度都由 CPU 完成了，不存在<code>N:1</code>的缺点，但是协程的创建、删除和切换的代价都由 CPU 完成，略显昂贵。</p>
-<figure><a class="lightgallery" href="/48726c7c54854150a7088dba1bc78860_13807473732276271365.png" title="" data-thumbnail="/48726c7c54854150a7088dba1bc78860_13807473732276271365.png" data-sub-html="<h2>1:1</h2>"><img  loading="lazy" src="/48726c7c54854150a7088dba1bc78860_13807473732276271365.png" srcset="/48726c7c54854150a7088dba1bc78860_13807473732276271365_hu8068918974870167718.webp 800w, /48726c7c54854150a7088dba1bc78860_13807473732276271365_hu7377745270912094848.webp 1200w, /48726c7c54854150a7088dba1bc78860_13807473732276271365_hu12909184877771909104.webp 1600w"   height="1112" width="600"></a><figcaption class="image-caption">1:1</figcaption>
+    <a href="#11-%e5%85%b3%e7%b3%bb" class="header-mark"></a>4.2 1:1 关系</h3><p>1 个协程绑定 1 个线程，协程的调度都由 CPU 完成了，不存在<code>N:1</code>的缺点，但是协程的创建、删除和切换的代价都由 CPU 完成，略显昂贵。</p>
+<figure><a class="lightgallery" href="/48726c7c54854150a7088dba1bc78860_13807473732276271365.png" title="" data-thumbnail="/48726c7c54854150a7088dba1bc78860_13807473732276271365.png" data-sub-html="<h2>1:1</h2>"><img  loading="lazy" src=/48726c7c54854150a7088dba1bc78860_13807473732276271365.png srcset="/48726c7c54854150a7088dba1bc78860_13807473732276271365_hu8068918974870167718.webp 800w, /48726c7c54854150a7088dba1bc78860_13807473732276271365_hu7377745270912094848.webp 1200w, /48726c7c54854150a7088dba1bc78860_13807473732276271365_hu12909184877771909104.webp 1600w"   height="1112" width="600"></a><figcaption class="image-caption">1:1</figcaption>
     </figure>
 <h3 id="mn-关系" class="headerLink">
-    <a href="#mn-%e5%85%b3%e7%b3%bb" class="header-mark" aria-label="Header mark for 'M:N 关系'"></a>4.3 M:N 关系</h3><p>M 个协程绑定 N 个线程，是<code>N:1</code>和<code>1:1</code>类型的结合，克服了以上 2 种模型的缺点，但实现复杂。</p>
-<figure><a class="lightgallery" href="/042a666564f44407a0efe47b5ffeaa7d_9815012870900982499.png" title="" data-thumbnail="/042a666564f44407a0efe47b5ffeaa7d_9815012870900982499.png" data-sub-html="<h2>M:N</h2>"><img  loading="lazy" src="/042a666564f44407a0efe47b5ffeaa7d_9815012870900982499.png" srcset="/042a666564f44407a0efe47b5ffeaa7d_9815012870900982499_hu15519253966633816444.webp 800w, /042a666564f44407a0efe47b5ffeaa7d_9815012870900982499_hu7582594047397472354.webp 1200w, /042a666564f44407a0efe47b5ffeaa7d_9815012870900982499_hu7955178385303536841.webp 1600w"   height="1112" width="600"></a><figcaption class="image-caption">M:N</figcaption>
+    <a href="#mn-%e5%85%b3%e7%b3%bb" class="header-mark"></a>4.3 M:N 关系</h3><p>M 个协程绑定 N 个线程，是<code>N:1</code>和<code>1:1</code>类型的结合，克服了以上 2 种模型的缺点，但实现复杂。</p>
+<figure><a class="lightgallery" href="/042a666564f44407a0efe47b5ffeaa7d_9815012870900982499.png" title="" data-thumbnail="/042a666564f44407a0efe47b5ffeaa7d_9815012870900982499.png" data-sub-html="<h2>M:N</h2>"><img  loading="lazy" src=/042a666564f44407a0efe47b5ffeaa7d_9815012870900982499.png srcset="/042a666564f44407a0efe47b5ffeaa7d_9815012870900982499_hu15519253966633816444.webp 800w, /042a666564f44407a0efe47b5ffeaa7d_9815012870900982499_hu7582594047397472354.webp 1200w, /042a666564f44407a0efe47b5ffeaa7d_9815012870900982499_hu7955178385303536841.webp 1600w"   height="1112" width="600"></a><figcaption class="image-caption">M:N</figcaption>
     </figure>
 <h2 id="go-的调度" class="headerLink">
-    <a href="#go-%e7%9a%84%e8%b0%83%e5%ba%a6" class="header-mark" aria-label="Header mark for 'Go 的调度'"></a>5 Go 的调度</h2><p><strong>用户态的 Goroutine，操作系统看不到它</strong>
+    <a href="#go-%e7%9a%84%e8%b0%83%e5%ba%a6" class="header-mark"></a>5 Go 的调度</h2><p><strong>用户态的 Goroutine，操作系统看不到它</strong>
 ，必然需要有某个东西去管理他，才能更好的运作起来。这就是 Go 语言中的调度，也就是 GMP 模型。</p>
 <p>Go scheduler<code> /ˈskedʒuːlər/</code> 的主要功能是针对在处理器上运行的 OS 线程分发可运行的 Goroutine，而我们一提到调度器，就离不开三个经常被提到的缩写，他们分别是：</p>
 <ul>
@@ -490,14 +489,14 @@
 </ul>
 <p>M 与 P 的数量没有绝对关系，一个 M 阻塞，P 就会去创建或者切换另一个 M，所以，<strong>即使 P 的默认数量是 1，也有可能会创建很多个 M 出来</strong>。</p>
 <p>这三者交互实际来源于 Go 的<code>M:N</code>调度模型，也就是 <strong>M 必须与 P 进行绑定</strong>，然后不断地在 M 上循环寻找可运行的 G 来执行相应的任务。</p>
-<p><figure><a class="lightgallery" href="/849f150e61d6472ea2099f1097c581fa_2534572517982240235.png" title="GMP调度" data-thumbnail="/849f150e61d6472ea2099f1097c581fa_2534572517982240235.png" data-sub-html="<h2>GMP调度</h2><p>GMP调度</p>"><img  loading="lazy" src="/849f150e61d6472ea2099f1097c581fa_2534572517982240235.png" srcset="/849f150e61d6472ea2099f1097c581fa_2534572517982240235_hu9480012763734131119.webp 800w, /849f150e61d6472ea2099f1097c581fa_2534572517982240235_hu1670012640765978710.webp 1200w, /849f150e61d6472ea2099f1097c581fa_2534572517982240235_hu2553406797148907547.webp 1600w"  alt="GMP调度" height="563" width="750"></a><figcaption class="image-caption">GMP调度</figcaption>
+<p><figure><a class="lightgallery" href="/849f150e61d6472ea2099f1097c581fa_2534572517982240235.png" title="GMP调度" data-thumbnail="/849f150e61d6472ea2099f1097c581fa_2534572517982240235.png" data-sub-html="<h2>GMP调度</h2><p>GMP调度</p>"><img  loading="lazy" src=/849f150e61d6472ea2099f1097c581fa_2534572517982240235.png srcset="/849f150e61d6472ea2099f1097c581fa_2534572517982240235_hu9480012763734131119.webp 800w, /849f150e61d6472ea2099f1097c581fa_2534572517982240235_hu1670012640765978710.webp 1200w, /849f150e61d6472ea2099f1097c581fa_2534572517982240235_hu2553406797148907547.webp 1600w"  alt="GMP调度" height="563" width="750"></a><figcaption class="image-caption">GMP调度</figcaption>
 </figure></p>
 <h3 id="p和m何时被创建" class="headerLink">
-    <a href="#p%e5%92%8cm%e4%bd%95%e6%97%b6%e8%a2%ab%e5%88%9b%e5%bb%ba" class="header-mark" aria-label="Header mark for 'P和M何时被创建'"></a>5.1 P和M何时被创建</h3><p><strong>P 何时创建</strong>：在确定了 P 的最大数量 n 后，运行时系统会根据这个数量创建 n 个 P。</p>
+    <a href="#p%e5%92%8cm%e4%bd%95%e6%97%b6%e8%a2%ab%e5%88%9b%e5%bb%ba" class="header-mark"></a>5.1 P和M何时被创建</h3><p><strong>P 何时创建</strong>：在确定了 P 的最大数量 n 后，运行时系统会根据这个数量创建 n 个 P。</p>
 <p><strong>M 何时创建</strong>
 ：没有足够的 M 来关联 P 并运行其中的可运行的 G。比如所有的 M 此时都阻塞住了，而 P 中还有很多就绪任务，就会去寻找空闲的 M，而没有空闲的，runtime 运行时就会去创建新的 M。当 M 有空闲就会被回收或是睡眠。</p>
 <h2 id="调度流程" class="headerLink">
-    <a href="#%e8%b0%83%e5%ba%a6%e6%b5%81%e7%a8%8b" class="header-mark" aria-label="Header mark for '调度流程'"></a>6 调度流程</h2><p><figure><a class="lightgallery" href="/945c94520e1b40c5adb516f58a0c2f30_10371211246150749108.png" title="调度流程" data-thumbnail="/945c94520e1b40c5adb516f58a0c2f30_10371211246150749108.png" data-sub-html="<h2>调度流程</h2><p>调度流程</p>"><img  loading="lazy" src="/945c94520e1b40c5adb516f58a0c2f30_10371211246150749108.png" srcset="/945c94520e1b40c5adb516f58a0c2f30_10371211246150749108_hu11421209216795929692.webp 800w, /945c94520e1b40c5adb516f58a0c2f30_10371211246150749108_hu8980112803870927212.webp 1200w, /945c94520e1b40c5adb516f58a0c2f30_10371211246150749108_hu11708471852755219068.webp 1600w"  alt="调度流程" height="1080" width="1920"></a><figcaption class="image-caption">调度流程</figcaption>
+    <a href="#%e8%b0%83%e5%ba%a6%e6%b5%81%e7%a8%8b" class="header-mark"></a>6 调度流程</h2><p><figure><a class="lightgallery" href="/945c94520e1b40c5adb516f58a0c2f30_10371211246150749108.png" title="调度流程" data-thumbnail="/945c94520e1b40c5adb516f58a0c2f30_10371211246150749108.png" data-sub-html="<h2>调度流程</h2><p>调度流程</p>"><img  loading="lazy" src=/945c94520e1b40c5adb516f58a0c2f30_10371211246150749108.png srcset="/945c94520e1b40c5adb516f58a0c2f30_10371211246150749108_hu11421209216795929692.webp 800w, /945c94520e1b40c5adb516f58a0c2f30_10371211246150749108_hu8980112803870927212.webp 1200w, /945c94520e1b40c5adb516f58a0c2f30_10371211246150749108_hu11708471852755219068.webp 1600w"  alt="调度流程" height="1080" width="1920"></a><figcaption class="image-caption">调度流程</figcaption>
 </figure></p>
 <ol>
 <li>
@@ -522,7 +521,7 @@
 <p>在描述中有提到全局和本地这两类队列，其实在功能上来讲都是用于存放正在等待运行的 G，但是不同点在于，<strong>本地队列有数量限制，不允许超过 256 个</strong>。</p>
 <p>并且在新建 G 时，会优先选择 P 的本地队列，如果本地队列满了，则将 P 的本地队列的一半的 G 移动到全局队列。 可以理解为调度资源的共享和再平衡。</p>
 <h2 id="m0和g0" class="headerLink">
-    <a href="#m0%e5%92%8cg0" class="header-mark" aria-label="Header mark for 'M0和G0'"></a>7 M0和G0</h2><p><code>M0</code>是启动程序后编号为 0 的主线程，这个 M 对应的实例会在全局变量<code>runtime.m0</code>中，<code>M0</code>负责执行初始化操作和启动第一个 G， 在之后<code>M0</code>就和其他的 M 一样。</p>
+    <a href="#m0%e5%92%8cg0" class="header-mark"></a>7 M0和G0</h2><p><code>M0</code>是启动程序后编号为 0 的主线程，这个 M 对应的实例会在全局变量<code>runtime.m0</code>中，<code>M0</code>负责执行初始化操作和启动第一个 G， 在之后<code>M0</code>就和其他的 M 一样。</p>
 <p><code>G0</code>是每次启动一个 M 都会第一个创建的 gourtine，<code>G0</code>仅用于负责调度 G，<code>G0</code>不指向任何可执行的函数, 每个 M 都会有一个自己的<code>G0</code>。</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
@@ -637,14 +636,14 @@
 </ol>
 <p>调度器的生命周期几乎占满了一个 Go 程序的一生，<code>runtime.main</code>的 goroutine 执行之前都是为调度器做准备工作，<code>runtime.main</code>的 goroutine 运行，才是调度器的真正开始，直到<code>runtime.main</code>结束而结束。</p>
 <h2 id="窃取行为" class="headerLink">
-    <a href="#%e7%aa%83%e5%8f%96%e8%a1%8c%e4%b8%ba" class="header-mark" aria-label="Header mark for '窃取行为'"></a>8 窃取行为</h2><p>当创建新的 G 或者 G 变成可运行状态时，它会被推送加入到当前 P 的本地队列中。当 P 执行 G 完毕后，P 会将 G 从本地队列中弹出，同时会检查当前本地队列是否为空，如果为空不会立刻销毁线程，而是会随机的从其他 P 的本地队列中尝试
+    <a href="#%e7%aa%83%e5%8f%96%e8%a1%8c%e4%b8%ba" class="header-mark"></a>8 窃取行为</h2><p>当创建新的 G 或者 G 变成可运行状态时，它会被推送加入到当前 P 的本地队列中。当 P 执行 G 完毕后，P 会将 G 从本地队列中弹出，同时会检查当前本地队列是否为空，如果为空不会立刻销毁线程，而是会随机的从其他 P 的本地队列中尝试
 <strong>窃取一半</strong>可运行的 G 到自己的名下。</p>
-<figure><a class="lightgallery" href="/a378474165e94b908f8fc7b44812cc4c_5420608419055875862.png" title="" data-thumbnail="/a378474165e94b908f8fc7b44812cc4c_5420608419055875862.png" data-sub-html="<h2>窃取行为</h2>"><img  loading="lazy" src="/a378474165e94b908f8fc7b44812cc4c_5420608419055875862.png" srcset="/a378474165e94b908f8fc7b44812cc4c_5420608419055875862_hu1868602533207068311.webp 800w, /a378474165e94b908f8fc7b44812cc4c_5420608419055875862_hu2979597367750570179.webp 1200w, /a378474165e94b908f8fc7b44812cc4c_5420608419055875862_hu12061864015147674019.webp 1600w"   height="619" width="800"></a><figcaption class="image-caption">窃取行为</figcaption>
+<figure><a class="lightgallery" href="/a378474165e94b908f8fc7b44812cc4c_5420608419055875862.png" title="" data-thumbnail="/a378474165e94b908f8fc7b44812cc4c_5420608419055875862.png" data-sub-html="<h2>窃取行为</h2>"><img  loading="lazy" src=/a378474165e94b908f8fc7b44812cc4c_5420608419055875862.png srcset="/a378474165e94b908f8fc7b44812cc4c_5420608419055875862_hu1868602533207068311.webp 800w, /a378474165e94b908f8fc7b44812cc4c_5420608419055875862_hu2979597367750570179.webp 1200w, /a378474165e94b908f8fc7b44812cc4c_5420608419055875862_hu12061864015147674019.webp 1600w"   height="619" width="800"></a><figcaption class="image-caption">窃取行为</figcaption>
     </figure>
 <p>上图中&#x1f446;，P2 在本地队列中找不到可以运行的 G，它会执行 <code>work-stealing</code> 调度算法，随机选择其它的处理器 P1，并从 P1 的本地队列中窃取了三个 G 到它自己的本地队列中去。至此，P1、P2 都拥有了可运行的 G，P1 多余的 G 也不会被浪费，调度资源将会更加平均的在多个处理器中流转。</p>
 <h2 id="限制条件" class="headerLink">
-    <a href="#%e9%99%90%e5%88%b6%e6%9d%a1%e4%bb%b6" class="header-mark" aria-label="Header mark for '限制条件'"></a>9 限制条件</h2><h3 id="m-的限制" class="headerLink">
-    <a href="#m-%e7%9a%84%e9%99%90%e5%88%b6" class="header-mark" aria-label="Header mark for 'M 的限制'"></a>9.1 M 的限制</h3><p>在协程的执行中，真正干活的是 GPM 中的 M（系统线程） ，因为 G 是用户态上的东西，最终执行都是得映射，对应到 M 这一个系统线程上去运行。</p>
+    <a href="#%e9%99%90%e5%88%b6%e6%9d%a1%e4%bb%b6" class="header-mark"></a>9 限制条件</h2><h3 id="m-的限制" class="headerLink">
+    <a href="#m-%e7%9a%84%e9%99%90%e5%88%b6" class="header-mark"></a>9.1 M 的限制</h3><p>在协程的执行中，真正干活的是 GPM 中的 M（系统线程） ，因为 G 是用户态上的东西，最终执行都是得映射，对应到 M 这一个系统线程上去运行。</p>
 <p>那么 M 有没有限制呢？</p>
 <p>答案是：有的。在 Go 语言中，<strong>M 的默认数量限制是 10000</strong>，如果超出则会报错：</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
@@ -746,13 +745,13 @@
 <p>但是通常只有在 Goroutine 出现阻塞操作的情况下，才会遇到这种情况。这可能也预示着你的程序有问题。</p>
 <p>若确切是需要那么多，还可以通过 <code>debug.SetMaxThreads</code> 方法进行设置。</p>
 <h3 id="g-的限制" class="headerLink">
-    <a href="#g-%e7%9a%84%e9%99%90%e5%88%b6" class="header-mark" aria-label="Header mark for 'G 的限制'"></a>9.2 G 的限制</h3><p>Goroutine 的创建数量是否有限制？</p>
+    <a href="#g-%e7%9a%84%e9%99%90%e5%88%b6" class="header-mark"></a>9.2 G 的限制</h3><p>Goroutine 的创建数量是否有限制？</p>
 <p>答案是：没有。但理论上会受内存的影响，假设一个 Goroutine 创建需要 4k 的<strong>连续的内存块</strong>：</p>
 <p>4k * 80,000 = 320,000k ≈ 0.3G内存</p>
 <p>4k * 1,000,000 = 4,000,000k ≈ 4G内存</p>
 <p>以此就可以相对计算出来一台单机在通俗情况下，所能够创建 Goroutine 的大概数量级别。</p>
 <h3 id="p-的限制" class="headerLink">
-    <a href="#p-%e7%9a%84%e9%99%90%e5%88%b6" class="header-mark" aria-label="Header mark for 'P 的限制'"></a>9.3 P 的限制</h3><p>P 的数量是否有限制，受什么影响？</p>
+    <a href="#p-%e7%9a%84%e9%99%90%e5%88%b6" class="header-mark"></a>9.3 P 的限制</h3><p>P 的数量是否有限制，受什么影响？</p>
 <p>答案是：有限制。<strong>P 的数量受环境变量 <code>GOMAXPROCS</code> 的直接影响</strong>。</p>
 <p>环境变量 <code>GOMAXPROCS</code> 又是什么？在 Go 语言中，通过设置 <code>GOMAXPROCS</code>，用户可以调整调度中 P（Processor）的数量。</p>
 <p>另一个重点在于，与 P 相关联的的 M（系统线程），是需要绑定 P 才能进行具体的任务执行的，因此<strong>P 的多少会影响到 Go 程序的运行表现</strong>。</p>
@@ -760,7 +759,7 @@
 <p>那 P 的数量是否会影响 Goroutine 的数量创建呢？</p>
 <p>答案是：不影响。且 Goroutine 多了少了，P 也该干嘛干嘛，不会带来灾难性问题。</p>
 <h3 id="小结" class="headerLink">
-    <a href="#%e5%b0%8f%e7%bb%93" class="header-mark" aria-label="Header mark for '小结'"></a>9.4 小结</h3><ul>
+    <a href="#%e5%b0%8f%e7%bb%93" class="header-mark"></a>9.4 小结</h3><ul>
 <li>M：有限制，默认数量限制是 10000，可调整。</li>
 <li>G：没限制，但受内存影响。</li>
 <li>P：受本机的核数影响，可大可小，不影响 G 的数量创建。</li>
@@ -773,7 +772,7 @@
 </ul>
 <p>跑的如果是 “资源怪兽”，只运行几个 Goroutine 都可以跑死。</p>
 <h2 id="为什么要有-p" class="headerLink">
-    <a href="#%e4%b8%ba%e4%bb%80%e4%b9%88%e8%a6%81%e6%9c%89-p" class="header-mark" aria-label="Header mark for '为什么要有 P'"></a>10 为什么要有 P</h2><figure><a class="lightgallery" href="/bdcbfb4a788d477b991c0179a7180c3c_7596797690145248367.png" title="" data-thumbnail="/bdcbfb4a788d477b991c0179a7180c3c_7596797690145248367.png" data-sub-html="<h2>早期调度器</h2>"><img  loading="lazy" src="/bdcbfb4a788d477b991c0179a7180c3c_7596797690145248367.png" srcset="/bdcbfb4a788d477b991c0179a7180c3c_7596797690145248367_hu12796481390559180008.webp 800w, /bdcbfb4a788d477b991c0179a7180c3c_7596797690145248367_hu12996906416167526440.webp 1200w, /bdcbfb4a788d477b991c0179a7180c3c_7596797690145248367_hu6698664245857536493.webp 1600w"   height="860" width="600"></a><figcaption class="image-caption">早期调度器</figcaption>
+    <a href="#%e4%b8%ba%e4%bb%80%e4%b9%88%e8%a6%81%e6%9c%89-p" class="header-mark"></a>10 为什么要有 P</h2><figure><a class="lightgallery" href="/bdcbfb4a788d477b991c0179a7180c3c_7596797690145248367.png" title="" data-thumbnail="/bdcbfb4a788d477b991c0179a7180c3c_7596797690145248367.png" data-sub-html="<h2>早期调度器</h2>"><img  loading="lazy" src=/bdcbfb4a788d477b991c0179a7180c3c_7596797690145248367.png srcset="/bdcbfb4a788d477b991c0179a7180c3c_7596797690145248367_hu12796481390559180008.webp 800w, /bdcbfb4a788d477b991c0179a7180c3c_7596797690145248367_hu12996906416167526440.webp 1200w, /bdcbfb4a788d477b991c0179a7180c3c_7596797690145248367_hu6698664245857536493.webp 1600w"   height="860" width="600"></a><figcaption class="image-caption">早期调度器</figcaption>
     </figure>
 <p>Go 早期的调度器是没有 P 的，只有 M 和 G。M 想要执行和放回 G 都必须访问全局 G 队列，并且 M 有多个，多线程访问同一资源需要加锁进行保证互斥/同步，所以全局 G 队列是有互斥锁进行保护的。</p>
 <p>所以早期的调度器存在这样几个缺点：</p>
@@ -783,7 +782,7 @@
 <li>系统调用（CPU 在 M 之间的切换）导致频繁的线程阻塞和取消阻塞操作增加了系统开销。</li>
 </ul>
 <h2 id="faq" class="headerLink">
-    <a href="#faq" class="header-mark" aria-label="Header mark for 'FAQ'"></a>11 FAQ</h2><ol>
+    <a href="#faq" class="header-mark"></a>11 FAQ</h2><ol>
 <li><strong>hand off 机制</strong></li>
 </ol>
 <p>当本线程上执行的 G 阻塞时，线程会释放绑定的 P，把 P 和 M 分离，把 P 转移给其他空闲的线程执行。</p>
@@ -798,7 +797,7 @@
 <ol start="4">
 <li><strong>自旋线程</strong></li>
 </ol>
-<p><figure><a class="lightgallery" href="/f6015c66c0b946e5a775ee6928f4d9a7_461648476474122048.png" title="自旋线程" data-thumbnail="/f6015c66c0b946e5a775ee6928f4d9a7_461648476474122048.png" data-sub-html="<h2>自旋线程</h2><p>自旋线程</p>"><img  loading="lazy" src="/f6015c66c0b946e5a775ee6928f4d9a7_461648476474122048.png" srcset="/f6015c66c0b946e5a775ee6928f4d9a7_461648476474122048_hu8185666854602674979.webp 800w, /f6015c66c0b946e5a775ee6928f4d9a7_461648476474122048_hu1261468516843214205.webp 1200w, /f6015c66c0b946e5a775ee6928f4d9a7_461648476474122048_hu2121385979117263498.webp 1600w"  alt="自旋线程" height="1098" width="1976"></a><figcaption class="image-caption">自旋线程</figcaption>
+<p><figure><a class="lightgallery" href="/f6015c66c0b946e5a775ee6928f4d9a7_461648476474122048.png" title="自旋线程" data-thumbnail="/f6015c66c0b946e5a775ee6928f4d9a7_461648476474122048.png" data-sub-html="<h2>自旋线程</h2><p>自旋线程</p>"><img  loading="lazy" src=/f6015c66c0b946e5a775ee6928f4d9a7_461648476474122048.png srcset="/f6015c66c0b946e5a775ee6928f4d9a7_461648476474122048_hu8185666854602674979.webp 800w, /f6015c66c0b946e5a775ee6928f4d9a7_461648476474122048_hu1261468516843214205.webp 1200w, /f6015c66c0b946e5a775ee6928f4d9a7_461648476474122048_hu2121385979117263498.webp 1600w"  alt="自旋线程" height="1098" width="1976"></a><figcaption class="image-caption">自旋线程</figcaption>
 </figure></p>
 <p>假定 G2 唤醒了 M2，M2 绑定了 P2，M2 调用并运行<code>G0</code>，但 P2 本地队列没有 G，M2 此时的状态称为自旋线程（没有 G 但为运行状态的线程，不断寻找 G）。自旋线程<strong>优先</strong>会从全局队列里获取 G，当全局队列里没有了时，会去其他的<code>MP</code>组合中偷取 G。</p>
 <p>自旋线程的最大限制符合公式：<code>自旋线程 + 执行线程 &lt;= GOMAXPROCS</code></p>
@@ -903,7 +902,7 @@
       "><span class="line"><span class="cl">n =  min(len(GQ) / GOMAXPROCS +  1,  cap(LQ) / 2 )</span></span></code></pre>
 </div>
 <h2 id="参考" class="headerLink">
-    <a href="#%e5%8f%82%e8%80%83" class="header-mark" aria-label="Header mark for '参考'"></a>12 参考</h2><ul>
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>12 参考</h2><ul>
 <li><a href="https://www.yuque.com/aceld/golang/srxd6d" target="_blank" rel="noopener noreferrer">Golang的协程调度器原理及GMP设计思想</a></li>
 <li><a href="https://zhuanlan.zhihu.com/p/111346689" target="_blank" rel="noopener noreferrer">Go 为什么这么“快”</a></li>
 <li><a href="https://blog.csdn.net/weixin_38054045/article/details/104098072" target="_blank" rel="noopener noreferrer">让你很快就能理解-go的协程调度原理</a></li>

@@ -3,23 +3,50 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="4.1 Shell 简介 # Shell 是命令解释器，用于解释用户对操作系统的操作。CentOS7 默认使用的 Shell 是 bash。
+<meta name="description" content="
+  4.1 Shell 简介
+  #
+
+Shell 是命令解释器，用于解释用户对操作系统的操作。CentOS7 默认使用的 Shell 是 bash。
 Shell 有很多可以再 /etc/shells 文件中查看：
-4.1.1 脚本格式 # UNIX 的哲学：一条命令只做一件事。为了组合命令和多次执行，使用脚本文件来保存需要执行的命令，并赋予该文件执行权限（chmod u&#43;rx filename）。如果是二进制文件只需要一个可执性权限，如果是脚本文件需要可读和可执行权限。
-Sha-Bang # 在 shell 脚本中，Sha-Bang（也称为 Shebang 或 Hashbang）是指位于脚本文件的第一行的特殊注释。它的形式是以井号 # 开头，紧随其后是一个叹号 !，再加上一个可执行程序的路径。
+
+
+  4.1.1 脚本格式
+  #
+
+UNIX 的哲学：一条命令只做一件事。为了组合命令和多次执行，使用脚本文件来保存需要执行的命令，并赋予该文件执行权限（chmod u&#43;rx filename）。如果是二进制文件只需要一个可执性权限，如果是脚本文件需要可读和可执行权限。
+
+  Sha-Bang
+  #
+
+在 shell 脚本中，Sha-Bang（也称为 Shebang 或 Hashbang）是指位于脚本文件的第一行的特殊注释。它的形式是以井号 # 开头，紧随其后是一个叹号 !，再加上一个可执行程序的路径。
 下面是一个典型的 Sha-Bang 行示例：
-#!/bin/bash 在上述示例中，#!/bin/bash 是一个 Sha-Bang 行。其中 #!/bin/ 是固定的前缀，用于告诉系统该文件是一个可执行文件，接下来的 bash 是解释器的路径，表示使用 Bash 解释器来执行该脚本。
+#!/bin/bash
+在上述示例中，#!/bin/bash 是一个 Sha-Bang 行。其中 #!/bin/ 是固定的前缀，用于告诉系统该文件是一个可执行文件，接下来的 bash 是解释器的路径，表示使用 Bash 解释器来执行该脚本。
 Sha-Bang 行的作用是指定脚本所需的解释器。当在命令行中运行脚本文件时，操作系统会读取脚本文件的第一行，根据其中的 Sha-Bang 行来确定要使用的解释器，并将该解释器用于执行该脚本。
 除了 #!/bin/bash，还可以使用其他解释器路径，如 /bin/sh、/usr/bin/env python 等，根据脚本的需求选择适当的解释器。
 需要注意的是，Sha-Bang 行必须位于脚本文件的第一行，否则它将不会被正确解析。同时，脚本文件需要具有执行权限才能被执行。
-4.1.2 不同执行方式 # 脚本的执行方式大致有以下几种：
-# bash 执行不需要赋予执行权限 bash ./filename.sh # 需要有执行权限 ./filename.sh source .">
+
+  4.1.2 不同执行方式
+  #
+
+脚本的执行方式大致有以下几种：
+# bash 执行不需要赋予执行权限
+bash ./filename.sh
+
+# 需要有执行权限
+./filename.sh
+
+source ./filename.sh
+
+. filename.sh
+bash 和 ./ 在执行时会产生一个新的子进程，对当前的环境不会产生影响。">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/linux/docs/part4-shell/4.1-introduction/">
   <meta property="og:site_name" content="Linux 学习笔记">
   <meta property="og:title" content="4.1 Shell 简介">
-  <meta property="og:description" content="4.1 Shell 简介 # Shell 是命令解释器，用于解释用户对操作系统的操作。CentOS7 默认使用的 Shell 是 bash。
+  <meta property="og:description" content=" 4.1 Shell 简介 # Shell 是命令解释器，用于解释用户对操作系统的操作。CentOS7 默认使用的 Shell 是 bash。
 Shell 有很多可以再 /etc/shells 文件中查看：
 4.1.1 脚本格式 # UNIX 的哲学：一条命令只做一件事。为了组合命令和多次执行，使用脚本文件来保存需要执行的命令，并赋予该文件执行权限（chmod u&#43;rx filename）。如果是二进制文件只需要一个可执性权限，如果是脚本文件需要可读和可执行权限。
 Sha-Bang # 在 shell 脚本中，Sha-Bang（也称为 Shebang 或 Hashbang）是指位于脚本文件的第一行的特殊注释。它的形式是以井号 # 开头，紧随其后是一个叹号 !，再加上一个可执行程序的路径。
@@ -29,7 +56,7 @@ Sha-Bang 行的作用是指定脚本所需的解释器。当在命令行中运�
 除了 #!/bin/bash，还可以使用其他解释器路径，如 /bin/sh、/usr/bin/env python 等，根据脚本的需求选择适当的解释器。
 需要注意的是，Sha-Bang 行必须位于脚本文件的第一行，否则它将不会被正确解析。同时，脚本文件需要具有执行权限才能被执行。
 4.1.2 不同执行方式 # 脚本的执行方式大致有以下几种：
-# bash 执行不需要赋予执行权限 bash ./filename.sh # 需要有执行权限 ./filename.sh source .">
+# bash 执行不需要赋予执行权限 bash ./filename.sh # 需要有执行权限 ./filename.sh source ./filename.sh . filename.sh bash 和 ./ 在执行时会产生一个新的子进程，对当前的环境不会产生影响。">
   <meta property="og:locale" content="zh">
   <meta property="og:type" content="article">
     <meta property="article:section" content="docs">
@@ -43,9 +70,6 @@ Sha-Bang 行的作用是指定脚本所需的解释器。当在命令行中运�
   <script defer src="/linux/zh.search.min.0afc493c0e2806c47e6ea5c37eb3a83b7fd85c5ed030b4ef2823216a214c554a.js" integrity="sha256-CvxJPA4oBsR&#43;bqXDfrOoO3/YXF7QMLTvKCMhaiFMVUo=" crossorigin="anonymous"></script>
 
   <script defer src="/linux/sw.min.06246f7b13a877707832946d0b1941d626f4349fd8e3bdfd318889981ed22d49.js" integrity="sha256-BiRvexOod3B4MpRtCxlB1ib0NJ/Y4739MYiJmB7SLUk=" crossorigin="anonymous"></script>
-
-  
-
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book

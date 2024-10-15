@@ -3,23 +3,149 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="203. 移除链表元素 # 题目地址 # 力扣 LeetCode 解题思路 # 参看 https://leetcode.cn/problems/remove-linked-list-elements/solutions/813358/yi-chu-lian-biao-yuan-su-by-leetcode-sol-654m/
-迭代法 # 用 curr 表示当前节点。如果 curr 的下一个节点不为空且下一个节点的节点值等于给定的 val，则需要删除下一个节点。删除下一个节点可以通过 curr.next=curr.next.next 实现。
+<meta name="description" content="
+  203. 移除链表元素
+  #
+
+
+  题目地址
+  #
+
+
+
+  力扣
+
+  LeetCode
+
+
+  解题思路
+  #
+
+参看 
+  https://leetcode.cn/problems/remove-linked-list-elements/solutions/813358/yi-chu-lian-biao-yuan-su-by-leetcode-sol-654m/
+
+  迭代法
+  #
+
+用 curr 表示当前节点。如果 curr 的下一个节点不为空且下一个节点的节点值等于给定的 val，则需要删除下一个节点。删除下一个节点可以通过 curr.next=curr.next.next 实现。
 如果 curr 的下一个节点的节点值不等于给定的 val，则保留下一个节点，将 curr 移动到下一个节点即可。
 当curr的下一个节点为空时，链表遍历结束，此时所有节点值等于 val 的节点都被删除。
 具体实现方面，由于链表的头节点 head 有可能需要被删除，因此创建哑节点/虚拟节点 dummyHead，令 dummyHead.next=head，初始化 curr=dummyHead，然后遍历链表进行删除操作。最终返回dummyHead.next即为删除操作后的头节点。
 为什么要用 curr=dummyHead❓，这样 curr 指向的地址跟 dummyHead 指向的地址是一样的，如果不提前赋值，那么迭代到最后dummyHead.Next就是nil，不能正确的返回头结点，所以重新赋值后，用 curr 去循环 dummyHead.Next 还是正常的。
-递归法 # 链表的定义具有递归的性质，因此链表题目常可以用递归的方法求解。
+
+  递归法
+  #
+
+链表的定义具有递归的性质，因此链表题目常可以用递归的方法求解。
 递归的核心在于，我只关注我这一层要干什么，返回什么，至于我的下一层（规模减 1），我不管，我就是甩手掌柜。
 那么现在我要删除特定链表元素，我需要怎么做❓
 如果链表是nil我就直接返回，我的 next 让工具人函数去判断，当工具人函数做完判断给我之后，我按需 return，也就是如果 head.Val == val return head.Next，否则直接 return head。
-具体实现 # Go迭代 package main import ( &#34;fmt&#34; ) func removeElements(head *ListNode, val int) *ListNode { dummyHead := &amp;ListNode{ Val: 0, Next: head, } curr := dummyHead fmt.">
+
+  具体实现
+  #
+
+
+
+
+
+
+  Go迭代
+  package main
+
+import (
+	&#34;fmt&#34;
+)
+
+func removeElements(head *ListNode, val int) *ListNode {
+	dummyHead := &amp;ListNode{
+		Val:  0,
+		Next: head,
+	}
+
+	curr := dummyHead
+	fmt.Println(dummyHead, curr)
+	for curr.Next != nil {
+		if curr.Next.Val == val {
+			curr.Next = curr.Next.Next
+			// 需要注意：这里不需要再使用 curr = curr.Next，因为指针已经移动了
+		} else {
+			curr = curr.Next
+		}
+	}
+
+	return dummyHead.Next
+}
+
+type ListNode struct {
+	Val  int
+	Next *ListNode
+}
+
+func main() {
+	x := removeElements(&amp;ListNode{
+		Val: 1,
+		Next: &amp;ListNode{
+			Val: 2,
+			Next: &amp;ListNode{
+				Val: 1,
+				Next: &amp;ListNode{
+					Val:  3,
+					Next: nil,
+				},
+			},
+		},
+	}, 1)
+
+	fmt.Println(x)
+}
+
+  Go递归
+  package main
+
+import &#34;fmt&#34;
+
+type ListNode struct {
+	Val  int
+	Next *ListNode
+}
+
+func removeElements(head *ListNode, val int) *ListNode {
+	if head == nil {
+		return head
+	}
+
+	head.Next = removeElements(head.Next, val)
+	if head.Val == val {
+		return head.Next
+	}
+
+	return head
+}
+
+func main() {
+	x := removeElements(&amp;ListNode{
+		Val: 1,
+		Next: &amp;ListNode{
+			Val: 2,
+			Next: &amp;ListNode{
+				Val: 1,
+				Next: &amp;ListNode{
+					Val:  3,
+					Next: nil,
+				},
+			},
+		},
+	}, 1)
+
+	fmt.Println(x)
+}
+">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/leetcode/docs/easy/203/">
   <meta property="og:site_name" content="LeetCode">
   <meta property="og:title" content="203. 移除链表元素">
-  <meta property="og:description" content="203. 移除链表元素 # 题目地址 # 力扣 LeetCode 解题思路 # 参看 https://leetcode.cn/problems/remove-linked-list-elements/solutions/813358/yi-chu-lian-biao-yuan-su-by-leetcode-sol-654m/
+  <meta property="og:description" content=" 203. 移除链表元素 # 题目地址 # 力扣 LeetCode 解题思路 # 参看 https://leetcode.cn/problems/remove-linked-list-elements/solutions/813358/yi-chu-lian-biao-yuan-su-by-leetcode-sol-654m/
 迭代法 # 用 curr 表示当前节点。如果 curr 的下一个节点不为空且下一个节点的节点值等于给定的 val，则需要删除下一个节点。删除下一个节点可以通过 curr.next=curr.next.next 实现。
 如果 curr 的下一个节点的节点值不等于给定的 val，则保留下一个节点，将 curr 移动到下一个节点即可。
 当curr的下一个节点为空时，链表遍历结束，此时所有节点值等于 val 的节点都被删除。
@@ -29,7 +155,7 @@
 递归的核心在于，我只关注我这一层要干什么，返回什么，至于我的下一层（规模减 1），我不管，我就是甩手掌柜。
 那么现在我要删除特定链表元素，我需要怎么做❓
 如果链表是nil我就直接返回，我的 next 让工具人函数去判断，当工具人函数做完判断给我之后，我按需 return，也就是如果 head.Val == val return head.Next，否则直接 return head。
-具体实现 # Go迭代 package main import ( &#34;fmt&#34; ) func removeElements(head *ListNode, val int) *ListNode { dummyHead := &amp;ListNode{ Val: 0, Next: head, } curr := dummyHead fmt.">
+具体实现 # Go迭代 package main import ( &#34;fmt&#34; ) func removeElements(head *ListNode, val int) *ListNode { dummyHead := &amp;ListNode{ Val: 0, Next: head, } curr := dummyHead fmt.Println(dummyHead, curr) for curr.Next != nil { if curr.Next.Val == val { curr.Next = curr.Next.Next // 需要注意：这里不需要再使用 curr = curr.Next，因为指针已经移动了 } else { curr = curr.Next } } return dummyHead.Next } type ListNode struct { Val int Next *ListNode } func main() { x := removeElements(&amp;ListNode{ Val: 1, Next: &amp;ListNode{ Val: 2, Next: &amp;ListNode{ Val: 1, Next: &amp;ListNode{ Val: 3, Next: nil, }, }, }, }, 1) fmt.Println(x) } Go递归 package main import &#34;fmt&#34; type ListNode struct { Val int Next *ListNode } func removeElements(head *ListNode, val int) *ListNode { if head == nil { return head } head.Next = removeElements(head.Next, val) if head.Val == val { return head.Next } return head } func main() { x := removeElements(&amp;ListNode{ Val: 1, Next: &amp;ListNode{ Val: 2, Next: &amp;ListNode{ Val: 1, Next: &amp;ListNode{ Val: 3, Next: nil, }, }, }, }, 1) fmt.Println(x) } ">
   <meta property="og:locale" content="zh">
   <meta property="og:type" content="article">
     <meta property="article:section" content="docs">
@@ -43,9 +169,6 @@
   <script defer src="/leetcode/zh.search.min.f9cd73d20daebe0f064076c741a93203473f9497ee32d434a8774e691eea3972.js" integrity="sha256-&#43;c1z0g2uvg8GQHbHQakyA0c/lJfuMtQ0qHdOaR7qOXI=" crossorigin="anonymous"></script>
 
   <script defer src="/leetcode/sw.min.c814046bee19bfa0279b71972af9d15919d290341d7ecdfe781d2e1113df9ad1.js" integrity="sha256-yBQEa&#43;4Zv6Anm3GXKvnRWRnSkDQdfs3&#43;eB0uERPfmtE=" crossorigin="anonymous"></script>
-
-  
-
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book

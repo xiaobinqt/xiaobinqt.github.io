@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="zh-CN">
 
@@ -208,17 +206,18 @@
     <li><a href="#参考">参考</a></li>
   </ul>
 </nav></div>
-    </div><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single print:!tw-w-full print:!tw-max-w-none print:!tw-m-0 print:!tw-p-0"><h1 class="single-title">Go1.18 sync.Map 解读</h1><div class="post-meta">
+    </div><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single print:!tw-w-full print:!tw-max-w-none print:!tw-m-0 print:!tw-p-0"><h1 class="single-title" data-pagefind-meta="date:2022-09-14" data-pagefind-body>Go1.18 sync.Map 解读</h1><div class="post-meta">
             <div class="post-meta-line">
-                <span class="post-author"><img class="tw-inline-block tw-max-h-4 tw-rounded-full tw-translate-y-[-2px] tw-mr-1"  src="/images/avatar.webp" srcset="/images/avatar_hu11269060449570882715.webp 16w, /images/avatar_hu2515534640531409486.webp 24w, /images/avatar_hu9855092516384270799.webp 32w"  alt="xiaobinqt avatar" height="16" width="16"><a href="https://github.com/xiaobinqt" title="Author" target="_blank" rel="noopener noreferrer author" class="author">xiaobinqt</a>
+                <span class="post-author"><img class="tw-inline-block tw-max-h-4 tw-rounded-full tw-translate-y-[-2px] tw-mr-1"  src=/images/avatar.webp srcset="/images/avatar_hu11269060449570882715.webp 16w, /images/avatar_hu2515534640531409486.webp 24w, /images/avatar_hu9855092516384270799.webp 32w"  alt="xiaobinqt avatar" height="16" width="16"><a href="https://github.com/xiaobinqt" title="Author" target="_blank" rel="noopener noreferrer author" class="author">xiaobinqt</a>
                 </span>&nbsp;<span class="post-category">收录于 </span>&nbsp;<span class="post-category">类别 <a href="/categories/golang/"><svg class="icon"
     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M464 128H272l-54.63-54.63c-6-6-14.14-9.37-22.63-9.37H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V176c0-26.51-21.49-48-48-48zm0 272H48V112h140.12l54.63 54.63c6 6 14.14 9.37 22.63 9.37H464v224z"/></svg>Golang</a></span>&nbsp;<span class="post-category">和</span>&nbsp;<span class="post-series">系列 <a href="/series/go1.18/"><svg class="icon"
     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M464 32H48C21.49 32 0 53.49 0 80v352c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V80c0-26.51-21.49-48-48-48zm-6 400H54a6 6 0 0 1-6-6V86a6 6 0 0 1 6-6h404a6 6 0 0 1 6 6v340a6 6 0 0 1-6 6zm-42-92v24c0 6.627-5.373 12-12 12H204c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h200c6.627 0 12 5.373 12 12zm0-96v24c0 6.627-5.373 12-12 12H204c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h200c6.627 0 12 5.373 12 12zm0-96v24c0 6.627-5.373 12-12 12H204c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h200c6.627 0 12 5.373 12 12zm-252 12c0 19.882-16.118 36-36 36s-36-16.118-36-36 16.118-36 36-36 36 16.118 36 36zm0 96c0 19.882-16.118 36-36 36s-36-16.118-36-36 16.118-36 36-36 36 16.118 36 36zm0 96c0 19.882-16.118 36-36 36s-36-16.118-36-36 16.118-36 36-36 36 16.118 36 36z"/></svg>Go1.18 源码分析</a></span></div>
             <div class="post-meta-line"><svg class="icon"
     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M148 288h-40c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12zm108-12v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm-96 96v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm-96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm192 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm96-260v352c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h48V12c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h128V12c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h48c26.5 0 48 21.5 48 48zm-48 346V160H48v298c0 3.3 2.7 6 6 6h340c3.3 0 6-2.7 6-6z"/></svg>&nbsp;<time datetime="2022-09-14">2022-09-14</time>&nbsp;<svg class="icon"
     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M402.3 344.9l32-32c5-5 13.7-1.5 13.7 5.7V464c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h273.5c7.1 0 10.7 8.6 5.7 13.7l-32 32c-1.5 1.5-3.5 2.3-5.7 2.3H48v352h352V350.5c0-2.1.8-4.1 2.3-5.6zm156.6-201.8L296.3 405.7l-90.4 10c-26.2 2.9-48.5-19.2-45.6-45.6l10-90.4L432.9 17.1c22.9-22.9 59.9-22.9 82.7 0l43.2 43.2c22.9 22.9 22.9 60 .1 82.8zM460.1 174L402 115.9 216.2 301.8l-7.3 65.3 65.3-7.3L460.1 174zm64.8-79.7l-43.2-43.2c-4.1-4.1-10.8-4.1-14.8 0L436 82l58.1 58.1 30.9-30.9c4-4.2 4-10.8-.1-14.9z"/></svg>&nbsp;<time datetime="2023-10-07">2023-10-07</time>&nbsp;<svg class="icon"
-    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;约 7504 字&nbsp;<svg class="icon"
-    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm0 448c-110.5 0-200-89.5-200-200S145.5 56 256 56s200 89.5 200 200-89.5 200-200 200zm61.8-104.4l-84.9-61.7c-3.1-2.3-4.9-5.9-4.9-9.7V116c0-6.6 5.4-12 12-12h32c6.6 0 12 5.4 12 12v141.7l66.8 48.6c5.4 3.9 6.5 11.4 2.6 16.8L334.6 349c-3.9 5.3-11.4 6.5-16.8 2.6z"/></svg>&nbsp;预计阅读 15 分钟&nbsp;</div>
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;约 7504 字&nbsp;
+                    <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm0 448c-110.5 0-200-89.5-200-200S145.5 56 256 56s200 89.5 200 200-89.5 200-200 200zm61.8-104.4l-84.9-61.7c-3.1-2.3-4.9-5.9-4.9-9.7V116c0-6.6 5.4-12 12-12h32c6.6 0 12 5.4 12 12v141.7l66.8 48.6c5.4 3.9 6.5 11.4 2.6 16.8L334.6 349c-3.9 5.3-11.4 6.5-16.8 2.6z"/></svg>&nbsp;预计阅读 33 分钟&nbsp;</div>
         </div><div class="details toc print:!tw-block" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
                     <span>目录</span>
@@ -250,12 +249,12 @@
     <li><a href="#参考">参考</a></li>
   </ul>
 </nav></div>
-            </div><div class="content" id="content"><!-- author： xiaobinqt -->
+            </div><div class="content" id="content" data-pagefind-body><!-- author： xiaobinqt -->
 <!-- email： xiaobinqt@163.com -->
 <!-- https://xiaobinqt.github.io -->
 <!-- https://www.xiaobinqt.cn -->
 <h2 id="背景" class="headerLink">
-    <a href="#%e8%83%8c%e6%99%af" class="header-mark" aria-label="Header mark for '背景'"></a>1 背景</h2><p>项目中遇到了需要使用高并发的 map 的场景，众所周知 Go 官方的原生 map 是不支持并发读写的，直接并发的读写很容易触发 panic。</p>
+    <a href="#%e8%83%8c%e6%99%af" class="header-mark"></a>1 背景</h2><p>项目中遇到了需要使用高并发的 map 的场景，众所周知 Go 官方的原生 map 是不支持并发读写的，直接并发的读写很容易触发 panic。</p>
 <p>解决的办法有两个：</p>
 <ul>
 <li>自己配一把锁 <code>sync.Mutex</code> 或者更加考究一点配一把读写锁 <code>sync.RWMutex</code>。这种方案简约直接，但是缺点也明显，就是性能不会太高。</li>
@@ -263,7 +262,7 @@
 </ul>
 <p>很显然，方案 2 是优雅且实用的。但是，为什么官方的 <code>sync.Map</code> 能够在 <strong><ruby>lock free<rt>无锁并发</rt></ruby></strong> 的前提下，保证足够高的性能&#x2753;本文结合 golang 1.18 源码进行简单的分析。</p>
 <h2 id="核心思想" class="headerLink">
-    <a href="#%e6%a0%b8%e5%bf%83%e6%80%9d%e6%83%b3" class="header-mark" aria-label="Header mark for '核心思想'"></a>2 核心思想</h2><p>如果要保证并发的安全，最朴素的想法就是使用锁，但是这意味着要把一些并发的操作强制串行化，性能自然就会下降。</p>
+    <a href="#%e6%a0%b8%e5%bf%83%e6%80%9d%e6%83%b3" class="header-mark"></a>2 核心思想</h2><p>如果要保证并发的安全，最朴素的想法就是使用锁，但是这意味着要把一些并发的操作强制串行化，性能自然就会下降。</p>
 <p>事实上，除了使用锁，还有一个办法也可以达到类似并发安全的目的，就是 <code>atomic</code> 原子操作。<code>sync.Map</code> 的设计非常巧妙，充分利用了 <code>atmoic</code> 和 <code>mutex</code> 互斥锁的配合。</p>
 <ul>
 <li>
@@ -283,8 +282,8 @@
 </li>
 </ul>
 <h2 id="数据结构" class="headerLink">
-    <a href="#%e6%95%b0%e6%8d%ae%e7%bb%93%e6%9e%84" class="header-mark" aria-label="Header mark for '数据结构'"></a>3 数据结构</h2><p>尽量使用原子操作，最大程度上减少了锁的使用，从而接近了 lock free 的效果。</p>
-<p><figure><a class="lightgallery" href="/3c105d85e5c24fecb51e45bc3a184cfe_10164300604407277355.png" title="数据结构" data-thumbnail="/3c105d85e5c24fecb51e45bc3a184cfe_10164300604407277355.png" data-sub-html="<h2>数据结构</h2><p>数据结构</p>"><img  loading="lazy" src="/3c105d85e5c24fecb51e45bc3a184cfe_10164300604407277355.png" srcset="/3c105d85e5c24fecb51e45bc3a184cfe_10164300604407277355_hu989934659376978276.webp 800w, /3c105d85e5c24fecb51e45bc3a184cfe_10164300604407277355_hu7412391803036236828.webp 1200w, /3c105d85e5c24fecb51e45bc3a184cfe_10164300604407277355_hu9653584529973325655.webp 1600w"  alt="数据结构" height="652" width="1512"></a><figcaption class="image-caption">数据结构</figcaption>
+    <a href="#%e6%95%b0%e6%8d%ae%e7%bb%93%e6%9e%84" class="header-mark"></a>3 数据结构</h2><p>尽量使用原子操作，最大程度上减少了锁的使用，从而接近了 lock free 的效果。</p>
+<p><figure><a class="lightgallery" href="/3c105d85e5c24fecb51e45bc3a184cfe_10164300604407277355.png" title="数据结构" data-thumbnail="/3c105d85e5c24fecb51e45bc3a184cfe_10164300604407277355.png" data-sub-html="<h2>数据结构</h2><p>数据结构</p>"><img  loading="lazy" src=/3c105d85e5c24fecb51e45bc3a184cfe_10164300604407277355.png srcset="/3c105d85e5c24fecb51e45bc3a184cfe_10164300604407277355_hu989934659376978276.webp 800w, /3c105d85e5c24fecb51e45bc3a184cfe_10164300604407277355_hu7412391803036236828.webp 1200w, /3c105d85e5c24fecb51e45bc3a184cfe_10164300604407277355_hu9653584529973325655.webp 1600w"  alt="数据结构" height="652" width="1512"></a><figcaption class="image-caption">数据结构</figcaption>
 </figure></p>
 <p>sync.Map 类型的底层数据结构如下&#x1f447;</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
@@ -512,7 +511,7 @@
 </div>
 <p>其包含一个指针 p, 用于指向用户存储的元素（key）所指向的 value 值。</p>
 <h2 id="atomicvalue" class="headerLink">
-    <a href="#atomicvalue" class="header-mark" aria-label="Header mark for 'atomic.Value'"></a>4 atomic.Value</h2><p>当需要在 Go 中进行并发安全的值存储和读取时，可以使用 <code>sync/atomic</code> 包中的 <code>atomic.Value</code> 类型。<code>atomic.Value</code> 提供了一种原子操作的方式来存储和读取值，以确保在并发环境下不会出现数据竞争。</p>
+    <a href="#atomicvalue" class="header-mark"></a>4 atomic.Value</h2><p>当需要在 Go 中进行并发安全的值存储和读取时，可以使用 <code>sync/atomic</code> 包中的 <code>atomic.Value</code> 类型。<code>atomic.Value</code> 提供了一种原子操作的方式来存储和读取值，以确保在并发环境下不会出现数据竞争。</p>
 <p>以下是关于 <code>atomic.Value</code> 的详细说明：</p>
 <ol>
 <li>
@@ -837,16 +836,16 @@
 </ol>
 <p><code>atomic.Value</code> 是 Go 语言中用于并发安全值存储和读取的有用工具。它在简单的值存储和读取场景中非常有用，可以帮助避免数据竞争问题。但在处理复杂数据结构或需要更复杂同步的情况下，可能需要考虑其他并发控制机制。</p>
 <h2 id="entry-的-p-可能状态" class="headerLink">
-    <a href="#entry-%e7%9a%84-p-%e5%8f%af%e8%83%bd%e7%8a%b6%e6%80%81" class="header-mark" aria-label="Header mark for 'entry 的 p 可能状态'"></a>5 entry 的 p 可能状态</h2><p><figure><a class="lightgallery" href="/9ab5f3ce270e4d39ac832e6bea79238b_14594375054417847268.png" title="" data-thumbnail="/9ab5f3ce270e4d39ac832e6bea79238b_14594375054417847268.png" data-sub-html="<h2>p 的状态</h2>"><img  loading="lazy" src="/9ab5f3ce270e4d39ac832e6bea79238b_14594375054417847268.png" srcset="/9ab5f3ce270e4d39ac832e6bea79238b_14594375054417847268_hu5382214247928975386.webp 800w, /9ab5f3ce270e4d39ac832e6bea79238b_14594375054417847268_hu14863540503007965204.webp 1200w, /9ab5f3ce270e4d39ac832e6bea79238b_14594375054417847268_hu1261327348801450823.webp 1600w"   height="354" width="990"></a><figcaption class="image-caption">p 的状态</figcaption>
+    <a href="#entry-%e7%9a%84-p-%e5%8f%af%e8%83%bd%e7%8a%b6%e6%80%81" class="header-mark"></a>5 entry 的 p 可能状态</h2><p><figure><a class="lightgallery" href="/9ab5f3ce270e4d39ac832e6bea79238b_14594375054417847268.png" title="" data-thumbnail="/9ab5f3ce270e4d39ac832e6bea79238b_14594375054417847268.png" data-sub-html="<h2>p 的状态</h2>"><img  loading="lazy" src=/9ab5f3ce270e4d39ac832e6bea79238b_14594375054417847268.png srcset="/9ab5f3ce270e4d39ac832e6bea79238b_14594375054417847268_hu5382214247928975386.webp 800w, /9ab5f3ce270e4d39ac832e6bea79238b_14594375054417847268_hu14863540503007965204.webp 1200w, /9ab5f3ce270e4d39ac832e6bea79238b_14594375054417847268_hu1261327348801450823.webp 1600w"   height="354" width="990"></a><figcaption class="image-caption">p 的状态</figcaption>
 </figure></p>
 <h3 id="nil" class="headerLink">
-    <a href="#nil" class="header-mark" aria-label="Header mark for 'nil'"></a>5.1 nil</h3><p>当删除一个 key 时，如果 read 中存在会把这个 key 的 value 也就是 e.p 标记为 nil。这样在下次查找的时候还会在 read 中找个这个 key，这时需要去判断下 e.p 是否是 nil，如果是 nil 就表示这个 key 是已经删除的。</p>
+    <a href="#nil" class="header-mark"></a>5.1 nil</h3><p>当删除一个 key 时，如果 read 中存在会把这个 key 的 value 也就是 e.p 标记为 nil。这样在下次查找的时候还会在 read 中找个这个 key，这时需要去判断下 e.p 是否是 nil，如果是 nil 就表示这个 key 是已经删除的。</p>
 <p>如果 read 中不存在但是 dirty 中存在，会先从 dirty 中把这个 key 删除，然后把这个 key 对应的 value 也就是 e.p 标记为 nil。</p>
 <ul>
 <li><code>e.p==nil</code>：entry 已经被标记删除，不过此时还未经过 <code>read-&gt;dirty</code> 重塑，此时可能仍然属于 dirty（如果 dirty 非 nil）。</li>
 </ul>
 <h3 id="expunged" class="headerLink">
-    <a href="#expunged" class="header-mark" aria-label="Header mark for 'expunged'"></a>5.2 expunged</h3><p>当 <code>dirty-&gt;read</code> 完成后，又有新 key 写入时，此时 read 中的 amended 为 <code>false</code>，就会调用 <code>dirtyLocked()</code> 方法，此时会发生 <code>read-&gt;dirty</code> 的转变，此时会循环 read 数据，将 p 不为 nil 的值写到 dirty 中，如果 p 为 nil 则将 nil 转为 expunged，</p>
+    <a href="#expunged" class="header-mark"></a>5.2 expunged</h3><p>当 <code>dirty-&gt;read</code> 完成后，又有新 key 写入时，此时 read 中的 amended 为 <code>false</code>，就会调用 <code>dirtyLocked()</code> 方法，此时会发生 <code>read-&gt;dirty</code> 的转变，此时会循环 read 数据，将 p 不为 nil 的值写到 dirty 中，如果 p 为 nil 则将 nil 转为 expunged，</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
     code-block-title 
@@ -974,9 +973,9 @@
 </div>
 <p>在从 <code>read-&gt;dirty</code> 的转变中，虽然 read 中还会存在 expunged 的内容（expunged 是 read 独有的），但是不影响 sync.map 的高性能。相反，如果在 Delete 时直接去删除元素，那么就会去加锁操作 dirty，只要涉及到锁，就会影响到性能。</p>
 <h3 id="正常" class="headerLink">
-    <a href="#%e6%ad%a3%e5%b8%b8" class="header-mark" aria-label="Header mark for '正常'"></a>5.3 正常</h3><p>此时 entry 是一个普通的存在状态，属于 read，如果 dirty 非 nil，也属于 dirty。</p>
+    <a href="#%e6%ad%a3%e5%b8%b8" class="header-mark"></a>5.3 正常</h3><p>此时 entry 是一个普通的存在状态，属于 read，如果 dirty 非 nil，也属于 dirty。</p>
 <h2 id="store写入过程" class="headerLink">
-    <a href="#store%e5%86%99%e5%85%a5%e8%bf%87%e7%a8%8b" class="header-mark" aria-label="Header mark for 'Store写入过程'"></a>6 Store写入过程</h2><p>先来看 expunged</p>
+    <a href="#store%e5%86%99%e5%85%a5%e8%bf%87%e7%a8%8b" class="header-mark"></a>6 Store写入过程</h2><p>先来看 expunged</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
     code-block-title 
@@ -1579,8 +1578,8 @@
 <p>Store 可能会在某种情况下（初始化或者 <code>m.dirty</code> 刚被提升后，此时 <code>m.read</code> 中的数据和 <code>m.dirty</code> 中的相等，readOnly 中的 <code>amended</code> 为 <code>false</code>，也就是说可能存在一个 key，read 中找不到 dirty 中也找不到）从 <code>m.read</code> 中复制数据，如果这个时候 <code>m.read</code> 中数据量非常大，可能会影响性能。</p>
 <p>综上，sync.Map 类型<strong>不适合写多的场景</strong>，读多写少是比较好的。若有大数据量的场景，则需要考虑 read 复制数据时的偶然性能抖动是否能够接受。</p>
 <h2 id="load查找过程" class="headerLink">
-    <a href="#load%e6%9f%a5%e6%89%be%e8%bf%87%e7%a8%8b" class="header-mark" aria-label="Header mark for 'Load查找过程'"></a>7 Load查找过程</h2><p>sync.Map 类型本质上是有两个 map。一个叫 read、一个叫 dirty，长的也差不多&#x1f447;</p>
-<p><figure><a class="lightgallery" href="/301dd5df668c43c08845983b106b0fc4_375011998803726464.png" title="sync.map" data-thumbnail="/301dd5df668c43c08845983b106b0fc4_375011998803726464.png" data-sub-html="<h2>sync.map</h2><p>sync.map</p>"><img  loading="lazy" src="/301dd5df668c43c08845983b106b0fc4_375011998803726464.png" srcset="/301dd5df668c43c08845983b106b0fc4_375011998803726464_hu5848629053124100270.webp 800w, /301dd5df668c43c08845983b106b0fc4_375011998803726464_hu4901382406988222415.webp 1200w, /301dd5df668c43c08845983b106b0fc4_375011998803726464_hu4876636868132083868.webp 1600w"  alt="sync.map" height="527" width="1080"></a><figcaption class="image-caption">sync.map</figcaption>
+    <a href="#load%e6%9f%a5%e6%89%be%e8%bf%87%e7%a8%8b" class="header-mark"></a>7 Load查找过程</h2><p>sync.Map 类型本质上是有两个 map。一个叫 read、一个叫 dirty，长的也差不多&#x1f447;</p>
+<p><figure><a class="lightgallery" href="/301dd5df668c43c08845983b106b0fc4_375011998803726464.png" title="sync.map" data-thumbnail="/301dd5df668c43c08845983b106b0fc4_375011998803726464.png" data-sub-html="<h2>sync.map</h2><p>sync.map</p>"><img  loading="lazy" src=/301dd5df668c43c08845983b106b0fc4_375011998803726464.png srcset="/301dd5df668c43c08845983b106b0fc4_375011998803726464_hu5848629053124100270.webp 800w, /301dd5df668c43c08845983b106b0fc4_375011998803726464_hu4901382406988222415.webp 1200w, /301dd5df668c43c08845983b106b0fc4_375011998803726464_hu4876636868132083868.webp 1600w"  alt="sync.map" height="527" width="1080"></a><figcaption class="image-caption">sync.map</figcaption>
 </figure></p>
 <p>当从 sync.Map 类型中读取数据时，其会先查看 read 中是否包含所需的元素：</p>
 <ul>
@@ -1928,7 +1927,7 @@
 <p>对于 nil 和 expunged 状态的 entry，直接返回 <code>ok=false</code>；否则，将 p 转成 <code>any</code> 返回。</p>
 <p>sync.Map 的读操作性能如此之高的原因，就在于存在 read 这一巧妙的设计，其作为一个缓存层，提供了<strong><ruby>快路径<rt>fast path</rt></ruby></strong>的查找。</p>
 <h2 id="delete删除过程" class="headerLink">
-    <a href="#delete%e5%88%a0%e9%99%a4%e8%bf%87%e7%a8%8b" class="header-mark" aria-label="Header mark for 'Delete删除过程'"></a>8 Delete删除过程</h2><p>写入过程，理论上和删除不会差太远。怎么 sync.Map 类型的删除的性能似乎还行，那这里面到底是如何实现的呢&#x2753;</p>
+    <a href="#delete%e5%88%a0%e9%99%a4%e8%bf%87%e7%a8%8b" class="header-mark"></a>8 Delete删除过程</h2><p>写入过程，理论上和删除不会差太远。怎么 sync.Map 类型的删除的性能似乎还行，那这里面到底是如何实现的呢&#x2753;</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
     code-block-title 
@@ -2042,7 +2041,7 @@
 </span></span><span class="line"><span class="cl"><span class="p">}</span></span></span></code></pre>
 </div>
 <p>第一种情况：可以看到，先从 read 里查是否有这个 key，如果有则执行 <code>e.delete</code> 方法，将 p 置为 nil，这样 read 和 dirty 都能看到这个变化，因为它们指向的是同一块内存地址。</p>
-<p><figure><a class="lightgallery" href="/3c105d85e5c24fecb51e45bc3a184cfe_10164300604407277355.png" title="数据结构" data-thumbnail="/3c105d85e5c24fecb51e45bc3a184cfe_10164300604407277355.png" data-sub-html="<h2>数据结构</h2><p>数据结构</p>"><img  loading="lazy" src="/3c105d85e5c24fecb51e45bc3a184cfe_10164300604407277355.png" srcset="/3c105d85e5c24fecb51e45bc3a184cfe_10164300604407277355_hu989934659376978276.webp 800w, /3c105d85e5c24fecb51e45bc3a184cfe_10164300604407277355_hu7412391803036236828.webp 1200w, /3c105d85e5c24fecb51e45bc3a184cfe_10164300604407277355_hu9653584529973325655.webp 1600w"  alt="数据结构" height="652" width="1512"></a><figcaption class="image-caption">数据结构</figcaption>
+<p><figure><a class="lightgallery" href="/3c105d85e5c24fecb51e45bc3a184cfe_10164300604407277355.png" title="数据结构" data-thumbnail="/3c105d85e5c24fecb51e45bc3a184cfe_10164300604407277355.png" data-sub-html="<h2>数据结构</h2><p>数据结构</p>"><img  loading="lazy" src=/3c105d85e5c24fecb51e45bc3a184cfe_10164300604407277355.png srcset="/3c105d85e5c24fecb51e45bc3a184cfe_10164300604407277355_hu989934659376978276.webp 800w, /3c105d85e5c24fecb51e45bc3a184cfe_10164300604407277355_hu7412391803036236828.webp 1200w, /3c105d85e5c24fecb51e45bc3a184cfe_10164300604407277355_hu9653584529973325655.webp 1600w"  alt="数据结构" height="652" width="1512"></a><figcaption class="image-caption">数据结构</figcaption>
 </figure></p>
 <p>以下是<code>entry.delete</code>方法：</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
@@ -2262,7 +2261,7 @@
 <p>第二种情况：如果没在 read 中找到这个 key，并且 dirty 不为空，那么就要操作 dirty 了，操作之前，还是要先上锁。然后进行 double check，如果仍然没有在 read 里找到此 key，则从 dirty 中删掉这个 key。</p>
 <p>注意到如果 key 同时存在于 read 和 dirty 中时，删除只是做了一个标记，将 p 置为 nil；而如果仅在 dirty 中含有这个 key 时，会直接删除这个 key。原因在于，若两者都存在这个 key，仅做标记删除，可以在下次查找这个 key 时，命中 read，提升效率。若只有在 dirty 中存在时，read 起不到 “缓存” 的作用，直接删除。</p>
 <h2 id="dirty和read互转分别在什么样的时机下进行" class="headerLink">
-    <a href="#dirty%e5%92%8cread%e4%ba%92%e8%bd%ac%e5%88%86%e5%88%ab%e5%9c%a8%e4%bb%80%e4%b9%88%e6%a0%b7%e7%9a%84%e6%97%b6%e6%9c%ba%e4%b8%8b%e8%bf%9b%e8%a1%8c" class="header-mark" aria-label="Header mark for 'dirty和read互转，分别在什么样的时机下进行'"></a>9 dirty和read互转，分别在什么样的时机下进行</h2><ul>
+    <a href="#dirty%e5%92%8cread%e4%ba%92%e8%bd%ac%e5%88%86%e5%88%ab%e5%9c%a8%e4%bb%80%e4%b9%88%e6%a0%b7%e7%9a%84%e6%97%b6%e6%9c%ba%e4%b8%8b%e8%bf%9b%e8%a1%8c" class="header-mark"></a>9 dirty和read互转，分别在什么样的时机下进行</h2><ul>
 <li>
 <p><code>dirty-&gt;read</code>：随着 load 的 miss 不断自增，达到阈值（<code>m.misses &gt;= len(m.dirty)</code>）后触发升级转储。</p>
 </li>
@@ -2371,10 +2370,10 @@
 </span></span><span class="line"><span class="cl">   m.read.Store(readOnly{m: read.m, amended: true})
 </span></span><span class="line"><span class="cl">}</span></span></code></pre>
 </div>
-<p><figure><a class="lightgallery" href="/e8837d7eda904db586f5e78b23a69ef2_12963457893848697374.png" title="read-&amp;gt;dirty" data-thumbnail="/e8837d7eda904db586f5e78b23a69ef2_12963457893848697374.png" data-sub-html="<h2>read-&gt;dirty</h2><p>read-&amp;gt;dirty</p>"><img  loading="lazy" src="/e8837d7eda904db586f5e78b23a69ef2_12963457893848697374.png" srcset="/e8837d7eda904db586f5e78b23a69ef2_12963457893848697374_hu5070564224414372908.webp 800w, /e8837d7eda904db586f5e78b23a69ef2_12963457893848697374_hu6162661374721241623.webp 1200w, /e8837d7eda904db586f5e78b23a69ef2_12963457893848697374_hu2843728912789080836.webp 1600w"  alt="read-&amp;gt;dirty" height="316" width="510"></a><figcaption class="image-caption">read->dirty</figcaption>
+<p><figure><a class="lightgallery" href="/e8837d7eda904db586f5e78b23a69ef2_12963457893848697374.png" title="read-&gt;dirty" data-thumbnail="/e8837d7eda904db586f5e78b23a69ef2_12963457893848697374.png" data-sub-html="<h2>read-&gt;dirty</h2><p>read-&gt;dirty</p>"><img  loading="lazy" src=/e8837d7eda904db586f5e78b23a69ef2_12963457893848697374.png srcset="/e8837d7eda904db586f5e78b23a69ef2_12963457893848697374_hu5070564224414372908.webp 800w, /e8837d7eda904db586f5e78b23a69ef2_12963457893848697374_hu6162661374721241623.webp 1200w, /e8837d7eda904db586f5e78b23a69ef2_12963457893848697374_hu2843728912789080836.webp 1600w"  alt="read-&gt;dirty" height="316" width="510"></a><figcaption class="image-caption">read->dirty</figcaption>
 </figure></p>
 <h2 id="read从何而来存在的意义是什么" class="headerLink">
-    <a href="#read%e4%bb%8e%e4%bd%95%e8%80%8c%e6%9d%a5%e5%ad%98%e5%9c%a8%e7%9a%84%e6%84%8f%e4%b9%89%e6%98%af%e4%bb%80%e4%b9%88" class="header-mark" aria-label="Header mark for 'read从何而来，存在的意义是什么'"></a>10 read从何而来，存在的意义是什么</h2><ul>
+    <a href="#read%e4%bb%8e%e4%bd%95%e8%80%8c%e6%9d%a5%e5%ad%98%e5%9c%a8%e7%9a%84%e6%84%8f%e4%b9%89%e6%98%af%e4%bb%80%e4%b9%88" class="header-mark"></a>10 read从何而来，存在的意义是什么</h2><ul>
 <li>
 <p>read 是由 dirty 升级而来，是利用了 <code>atomic.Store</code> 一次性覆盖，而不是一点点的 set 操作出来的。所以，read 更像是一个快照，read 中 key 的集合不能被改变（注意，这里说的 read 的 key 不可改变，不代表指定的 key 的 value 不可改变，value 是可以通过原子 <code>CAS</code> 来进行更改的），所以其中的键的集合有时候可能是不全的。</p>
 </li>
@@ -2386,7 +2385,7 @@
 </li>
 </ul>
 <h2 id="dirty什么时候是nil" class="headerLink">
-    <a href="#dirty%e4%bb%80%e4%b9%88%e6%97%b6%e5%80%99%e6%98%afnil" class="header-mark" aria-label="Header mark for 'dirty什么时候是nil'"></a>11 dirty什么时候是nil</h2><p>dirty 数据提升为 read 时 <code>m.dirty</code> 会置为 nil。此时，<code>m.read</code> 和 <code>m.dirty</code> 相等，<code>m.amended</code> 为 false，也就是说，read 中找不到的数据，dirty 中同样找不到。</p>
+    <a href="#dirty%e4%bb%80%e4%b9%88%e6%97%b6%e5%80%99%e6%98%afnil" class="header-mark"></a>11 dirty什么时候是nil</h2><p>dirty 数据提升为 read 时 <code>m.dirty</code> 会置为 nil。此时，<code>m.read</code> 和 <code>m.dirty</code> 相等，<code>m.amended</code> 为 false，也就是说，read 中找不到的数据，dirty 中同样找不到。</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
     code-block-title 
@@ -2588,7 +2587,7 @@
 </span></span><span class="line"><span class="cl"><span class="p">}</span></span></span></code></pre>
 </div>
 <h2 id="删除时-ep-设置成了-nil-还是-expunged" class="headerLink">
-    <a href="#%e5%88%a0%e9%99%a4%e6%97%b6-ep-%e8%ae%be%e7%bd%ae%e6%88%90%e4%ba%86-nil-%e8%bf%98%e6%98%af-expunged" class="header-mark" aria-label="Header mark for '删除时 e.p 设置成了 nil 还是 expunged'"></a>12 删除时 e.p 设置成了 nil 还是 expunged</h2><div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
+    <a href="#%e5%88%a0%e9%99%a4%e6%97%b6-ep-%e8%ae%be%e7%bd%ae%e6%88%90%e4%ba%86-nil-%e8%bf%98%e6%98%af-expunged" class="header-mark"></a>12 删除时 e.p 设置成了 nil 还是 expunged</h2><div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
   <div class="
     code-block-title 
     
@@ -2728,7 +2727,7 @@
 </div>
 <p>由源码可知，不管 key 是在 read 中还是 dirty 中，最后都调用了 <code>e.delete()</code> 方法，将 e.p 设置为 nil。</p>
 <h2 id="什么时候-ep-由-nil-变成-expunged" class="headerLink">
-    <a href="#%e4%bb%80%e4%b9%88%e6%97%b6%e5%80%99-ep-%e7%94%b1-nil-%e5%8f%98%e6%88%90-expunged" class="header-mark" aria-label="Header mark for '什么时候 e.p 由 nil 变成 expunged'"></a>13 什么时候 e.p 由 nil 变成 expunged</h2><ul>
+    <a href="#%e4%bb%80%e4%b9%88%e6%97%b6%e5%80%99-ep-%e7%94%b1-nil-%e5%8f%98%e6%88%90-expunged" class="header-mark"></a>13 什么时候 e.p 由 nil 变成 expunged</h2><ul>
 <li><code>read-&gt;dirty</code> 重塑的时候，此时 read 中仍然是 nil 的会变成 expunged，表示这部分 key 等待被最终丢弃（expunged 是最终态，等待被丢弃，除非又出现了重新 Store 的情况）</li>
 </ul>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
@@ -2949,7 +2948,7 @@
 </span></span><span class="line"><span class="cl"><span class="p">}</span></span></span></code></pre>
 </div>
 <h2 id="既然-nil-表示标记删除expunged-的意义是什么" class="headerLink">
-    <a href="#%e6%97%a2%e7%84%b6-nil-%e8%a1%a8%e7%a4%ba%e6%a0%87%e8%ae%b0%e5%88%a0%e9%99%a4expunged-%e7%9a%84%e6%84%8f%e4%b9%89%e6%98%af%e4%bb%80%e4%b9%88" class="header-mark" aria-label="Header mark for '既然 nil 表示标记删除，expunged 的意义是什么'"></a>14 既然 nil 表示标记删除，expunged 的意义是什么</h2><p><code>expunged</code> 的意义是在删除操作后，键对应值被标记为 <code>expunged</code>，而不是简单地设置为 <code>nil</code>。这样做的好处是，<code>nil</code> 值可能是键本身的有效值，因此无法区分键已被删除和键对应的值为 <code>nil</code> 两种情况。通过使用 <code>expunged</code> 标记，<code>sync.Map</code> 可以清楚地区分键被删除和键对应的值为 <code>nil</code>。</p>
+    <a href="#%e6%97%a2%e7%84%b6-nil-%e8%a1%a8%e7%a4%ba%e6%a0%87%e8%ae%b0%e5%88%a0%e9%99%a4expunged-%e7%9a%84%e6%84%8f%e4%b9%89%e6%98%af%e4%bb%80%e4%b9%88" class="header-mark"></a>14 既然 nil 表示标记删除，expunged 的意义是什么</h2><p><code>expunged</code> 的意义是在删除操作后，键对应值被标记为 <code>expunged</code>，而不是简单地设置为 <code>nil</code>。这样做的好处是，<code>nil</code> 值可能是键本身的有效值，因此无法区分键已被删除和键对应的值为 <code>nil</code> 两种情况。通过使用 <code>expunged</code> 标记，<code>sync.Map</code> 可以清楚地区分键被删除和键对应的值为 <code>nil</code>。</p>
 <p>具体来说，当执行删除操作时，<code>sync.Map</code> 将键对应的值设置为一个特殊的占位符 <code>expunged</code>，表示该键已被删除。在后续的操作中，通过检查值是否等于 <code>expunged</code>，可以判断键是否存在。</p>
 <p>这种设计有以下好处：</p>
 <ol>
@@ -2964,7 +2963,7 @@
 </li>
 </ol>
 <h2 id="参考" class="headerLink">
-    <a href="#%e5%8f%82%e8%80%83" class="header-mark" aria-label="Header mark for '参考'"></a>15 参考</h2><ul>
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>15 参考</h2><ul>
 <li><a href="https://cloud.tencent.com/developer/article/2022098" target="_blank" rel="noopener noreferrer">不得不知道的Golang之sync.Map解读！</a></li>
 <li><a href="https://mp.weixin.qq.com/s?__biz=MzUxMDI4MDc1NA==&amp;mid=2247489164&amp;idx=1&amp;sn=e56e5c9836cda40f3c95a39e2ba57dde" target="_blank" rel="noopener noreferrer">一口气搞懂 Go sync.map 所有知识点</a></li>
 <li><a href="https://colobu.com/2017/07/11/dive-into-sync-Map/" target="_blank" rel="noopener noreferrer">Go 1.9 sync.Map揭秘</a></li>

@@ -3,23 +3,50 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="2.19 系统监控 # 2.19.1 Metrics Server # Linux top 命令能够实时显示当前系统的 CPU 和内存利用率，是性能分析和调优的工具。Kubernetes 也提供了类似的命令，就是 kubectl top，不过默认情况下这个命令不会生效，必须要安装插件 Metrics Server 才可以。
-Metrics Server 是一个专门用来收集 Kubernetes 核心资源指标（metrics）的工具，它定时从所有节点的 kubelet 里采集信息，但是对集群的整体性能影响极小，每个节点只大约会占用 1m 的 CPU 和 2MB 的内存，性价比非常高。项目网址在 https://github.com/kubernetes-sigs/metrics-server。
+<meta name="description" content="
+  2.19 系统监控
+  #
+
+
+  2.19.1 Metrics Server
+  #
+
+Linux top 命令能够实时显示当前系统的 CPU 和内存利用率，是性能分析和调优的工具。Kubernetes 也提供了类似的命令，就是 kubectl top，不过默认情况下这个命令不会生效，必须要安装插件 Metrics Server 才可以。
+Metrics Server 是一个专门用来收集 Kubernetes 核心资源指标（metrics）的工具，它定时从所有节点的 kubelet 里采集信息，但是对集群的整体性能影响极小，每个节点只大约会占用 1m 的 CPU 和 2MB 的内存，性价比非常高。项目网址在
+  https://github.com/kubernetes-sigs/metrics-server。
+
 Metrics Server 调用 kubelet 的 API 拿到节点和 Pod 的指标，再把这些信息交给 apiserver，这样 kubectl、HPA 就可以利用 apiserver 来读取指标了。
 Metrics Server 的所有依赖都放在了一个 YAML 描述文件里，你可以使用 wget 或者 curl 下载：
-wget https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml 下载下来的 YAML 描述文件不能直接使用，需要修改下。
-需要在 Metrics Server 的 Deployment 对象里，加上一个额外的运行参数 --kubelet-insecure-tls，也就是这样： apiVersion: apps/v1 kind: Deployment metadata: name: metrics-server namespace: kube-system spec: .">
+wget https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+下载下来的 YAML 描述文件不能直接使用，需要修改下。
+
+需要在 Metrics Server 的 Deployment 对象里，加上一个额外的运行参数 --kubelet-insecure-tls，也就是这样：
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: metrics-server
+  namespace: kube-system
+spec:
+  ... ...
+  template:
+    spec:
+      containers:
+          - args:
+            - --kubelet-insecure-tls
+            ... ...
+Metrics Server 默认使用 TLS 协议，要验证证书才能与 kubelet 实现安全通信，加上这个参数可以让部署工作简单很多（生产环境里就要慎用）。">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/kubernetes/docs/part2-break-ice/2.19-system-monitor/">
   <meta property="og:site_name" content="Kubernetes 学习笔记">
   <meta property="og:title" content="2.19 系统监控">
-  <meta property="og:description" content="2.19 系统监控 # 2.19.1 Metrics Server # Linux top 命令能够实时显示当前系统的 CPU 和内存利用率，是性能分析和调优的工具。Kubernetes 也提供了类似的命令，就是 kubectl top，不过默认情况下这个命令不会生效，必须要安装插件 Metrics Server 才可以。
+  <meta property="og:description" content=" 2.19 系统监控 # 2.19.1 Metrics Server # Linux top 命令能够实时显示当前系统的 CPU 和内存利用率，是性能分析和调优的工具。Kubernetes 也提供了类似的命令，就是 kubectl top，不过默认情况下这个命令不会生效，必须要安装插件 Metrics Server 才可以。
 Metrics Server 是一个专门用来收集 Kubernetes 核心资源指标（metrics）的工具，它定时从所有节点的 kubelet 里采集信息，但是对集群的整体性能影响极小，每个节点只大约会占用 1m 的 CPU 和 2MB 的内存，性价比非常高。项目网址在 https://github.com/kubernetes-sigs/metrics-server。
 Metrics Server 调用 kubelet 的 API 拿到节点和 Pod 的指标，再把这些信息交给 apiserver，这样 kubectl、HPA 就可以利用 apiserver 来读取指标了。
 Metrics Server 的所有依赖都放在了一个 YAML 描述文件里，你可以使用 wget 或者 curl 下载：
 wget https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml 下载下来的 YAML 描述文件不能直接使用，需要修改下。
-需要在 Metrics Server 的 Deployment 对象里，加上一个额外的运行参数 --kubelet-insecure-tls，也就是这样： apiVersion: apps/v1 kind: Deployment metadata: name: metrics-server namespace: kube-system spec: .">
+需要在 Metrics Server 的 Deployment 对象里，加上一个额外的运行参数 --kubelet-insecure-tls，也就是这样： apiVersion: apps/v1 kind: Deployment metadata: name: metrics-server namespace: kube-system spec: ... ... template: spec: containers: - args: - --kubelet-insecure-tls ... ... Metrics Server 默认使用 TLS 协议，要验证证书才能与 kubelet 实现安全通信，加上这个参数可以让部署工作简单很多（生产环境里就要慎用）。">
   <meta property="og:locale" content="zh">
   <meta property="og:type" content="article">
     <meta property="article:section" content="docs">
@@ -33,9 +60,6 @@ wget https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/
   <script defer src="/kubernetes/zh.search.min.da1c52546386c902e77e37ee10f137dd864d5defad152b94b97987f9bfccfa81.js" integrity="sha256-2hxSVGOGyQLnfjfuEPE33YZNXe&#43;tFSuUuXmH&#43;b/M&#43;oE=" crossorigin="anonymous"></script>
 
   <script defer src="/kubernetes/sw.min.18ff75d546fc59b9d538e96815256b253062dc991f14b3caff0f35a243a406d1.js" integrity="sha256-GP911Ub8WbnVOOloFSVrJTBi3JkfFLPK/w81okOkBtE=" crossorigin="anonymous"></script>
-
-  
-
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book

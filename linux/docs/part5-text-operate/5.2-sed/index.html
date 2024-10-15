@@ -3,19 +3,90 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="5.2 sed 命令 # 5.2.1 简介 # sed（stream EDitor）是一个强大而简单的文本解析转换工具，可以读取文本，并根据指定的条件对文本内容进行编辑（删除、替换，添加、移动等），最后输出所有行或仅输出处理的某些行。
+<meta name="description" content="
+  5.2 sed 命令
+  #
+
+
+  5.2.1 简介
+  #
+
+sed（stream EDitor）是一个强大而简单的文本解析转换工具，可以读取文本，并根据指定的条件对文本内容进行编辑（删除、替换，添加、移动等），最后输出所有行或仅输出处理的某些行。
 sed 也可以在无交互的情况下实现相当复杂的文本处理操作，将不规范的文本，处理为 “比较规范” 的文本，被广泛应用于 shell 脚本中，用以完成各种自动化处理任务。
 sed 的工作流程主要包括读取、执行和显示三个过程：
-读取： sed 从输入流（文件、管道、标准输入）中读取一行内容并存储到临时的缓冲区（又称模式空间）。 执行： 默认情况下，所有的 sed 命令都在模式空间中顺序地执行，除非指定了行的地址，否则 sed 命令将会在所有行上一次执行。 显示： 发送修改后的内容到输出流，在发送数据后，模式空间将会被清空。 在所有的文件内容都被处理完成之前，上述过程将重复执行，直至所有内容被处理完。
+
+读取： sed 从输入流（文件、管道、标准输入）中读取一行内容并存储到临时的缓冲区（又称模式空间）。
+执行： 默认情况下，所有的 sed 命令都在模式空间中顺序地执行，除非指定了行的地址，否则 sed 命令将会在所有行上一次执行。
+显示： 发送修改后的内容到输出流，在发送数据后，模式空间将会被清空。
+
+在所有的文件内容都被处理完成之前，上述过程将重复执行，直至所有内容被处理完。
 默认情况下所有的 sed 命令，都是在模式空间内执行的，因此输入的文件并不会发生变化。
-5.2.2 选项操作 # 通常情况下调用 sed 命令有两种格式。
-“参数” 是指操作的目标文件，当存在多个操作对象时，文件之间用逗号分隔。 sed [选项] &#39;操作&#39; 参数 scriptfile 表示脚本文件，需要用-f选项指定，当脚本文件出现在目标文件之前时，表示通过指定的脚本文件来处理输入的目标文件。 sed [选项] -f scriptfile 参数 常见选项 # 选项 功能 -e 表示用指定命令或者脚本来处理输入的文本文件 -f 表示用指定的脚本文件来处理输入的文本文件 -h 显示帮助 -n 表示仅显示处理后的结果 -i 直接编辑文本文件 -r 或 -E 使用扩展正则表达式 -s 将多个文件视为独立文件，而不是单个连续的长文件流 操作指令 # 「操作」用于指定文件对操作的动作行为，也就是 sed 的命令。">
+
+  5.2.2 选项操作
+  #
+
+通常情况下调用 sed 命令有两种格式。
+
+“参数” 是指操作的目标文件，当存在多个操作对象时，文件之间用逗号分隔。
+
+sed [选项] &#39;操作&#39; 参数
+
+scriptfile 表示脚本文件，需要用-f选项指定，当脚本文件出现在目标文件之前时，表示通过指定的脚本文件来处理输入的目标文件。
+
+sed [选项] -f scriptfile 参数
+
+  常见选项
+  #
+
+
+  
+      
+          选项
+          功能
+      
+  
+  
+      
+          -e
+          表示用指定命令或者脚本来处理输入的文本文件
+      
+      
+          -f
+          表示用指定的脚本文件来处理输入的文本文件
+      
+      
+          -h
+          显示帮助
+      
+      
+          -n
+          表示仅显示处理后的结果
+      
+      
+          -i
+          直接编辑文本文件
+      
+      
+          -r 或 -E
+          使用扩展正则表达式
+      
+      
+          -s
+          将多个文件视为独立文件，而不是单个连续的长文件流
+      
+  
+
+
+  操作指令
+  #
+
+「操作」用于指定文件对操作的动作行为，也就是 sed 的命令。">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/linux/docs/part5-text-operate/5.2-sed/">
   <meta property="og:site_name" content="Linux 学习笔记">
   <meta property="og:title" content="5.2 sed 命令">
-  <meta property="og:description" content="5.2 sed 命令 # 5.2.1 简介 # sed（stream EDitor）是一个强大而简单的文本解析转换工具，可以读取文本，并根据指定的条件对文本内容进行编辑（删除、替换，添加、移动等），最后输出所有行或仅输出处理的某些行。
+  <meta property="og:description" content=" 5.2 sed 命令 # 5.2.1 简介 # sed（stream EDitor）是一个强大而简单的文本解析转换工具，可以读取文本，并根据指定的条件对文本内容进行编辑（删除、替换，添加、移动等），最后输出所有行或仅输出处理的某些行。
 sed 也可以在无交互的情况下实现相当复杂的文本处理操作，将不规范的文本，处理为 “比较规范” 的文本，被广泛应用于 shell 脚本中，用以完成各种自动化处理任务。
 sed 的工作流程主要包括读取、执行和显示三个过程：
 读取： sed 从输入流（文件、管道、标准输入）中读取一行内容并存储到临时的缓冲区（又称模式空间）。 执行： 默认情况下，所有的 sed 命令都在模式空间中顺序地执行，除非指定了行的地址，否则 sed 命令将会在所有行上一次执行。 显示： 发送修改后的内容到输出流，在发送数据后，模式空间将会被清空。 在所有的文件内容都被处理完成之前，上述过程将重复执行，直至所有内容被处理完。
@@ -35,9 +106,6 @@ sed 的工作流程主要包括读取、执行和显示三个过程：
   <script defer src="/linux/zh.search.min.0afc493c0e2806c47e6ea5c37eb3a83b7fd85c5ed030b4ef2823216a214c554a.js" integrity="sha256-CvxJPA4oBsR&#43;bqXDfrOoO3/YXF7QMLTvKCMhaiFMVUo=" crossorigin="anonymous"></script>
 
   <script defer src="/linux/sw.min.06246f7b13a877707832946d0b1941d626f4349fd8e3bdfd318889981ed22d49.js" integrity="sha256-BiRvexOod3B4MpRtCxlB1ib0NJ/Y4739MYiJmB7SLUk=" crossorigin="anonymous"></script>
-
-  
-
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book
@@ -993,42 +1061,42 @@ https://github.com/alex-shpak/hugo-book
   <a class="anchor" href="#%e5%b8%b8%e8%a7%81%e9%80%89%e9%a1%b9">#</a>
 </h3>
 <table>
-<thead>
-<tr>
-<th>选项</th>
-<th>功能</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>-e</td>
-<td>表示用指定命令或者脚本来处理输入的文本文件</td>
-</tr>
-<tr>
-<td>-f</td>
-<td>表示用指定的脚本文件来处理输入的文本文件</td>
-</tr>
-<tr>
-<td>-h</td>
-<td>显示帮助</td>
-</tr>
-<tr>
-<td>-n</td>
-<td>表示仅显示处理后的结果</td>
-</tr>
-<tr>
-<td>-i</td>
-<td>直接编辑文本文件</td>
-</tr>
-<tr>
-<td>-r 或 -E</td>
-<td>使用扩展正则表达式</td>
-</tr>
-<tr>
-<td>-s</td>
-<td>将多个文件视为独立文件，而不是单个连续的长文件流</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">选项</th>
+          <th style="text-align: left">功能</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">-e</td>
+          <td style="text-align: left">表示用指定命令或者脚本来处理输入的文本文件</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">-f</td>
+          <td style="text-align: left">表示用指定的脚本文件来处理输入的文本文件</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">-h</td>
+          <td style="text-align: left">显示帮助</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">-n</td>
+          <td style="text-align: left">表示仅显示处理后的结果</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">-i</td>
+          <td style="text-align: left">直接编辑文本文件</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">-r 或 -E</td>
+          <td style="text-align: left">使用扩展正则表达式</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">-s</td>
+          <td style="text-align: left">将多个文件视为独立文件，而不是单个连续的长文件流</td>
+      </tr>
+  </tbody>
 </table>
 <h3 id="操作指令">
   操作指令
@@ -1037,42 +1105,42 @@ https://github.com/alex-shpak/hugo-book
 <p>「操作」用于指定文件对操作的动作行为，也就是 sed 的命令。</p>
 <p>通常情况下是采用的 <code>[n1[,n2]]</code> 操作参数的格式。n1、n2 是可选的，代表选择进行操作的行数，如操作需要在 5~20 行之间进行，则表示为「5,20 动作行为」。</p>
 <table>
-<thead>
-<tr>
-<th>选   项</th>
-<th>功能</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>a</td>
-<td>增加，在当前行<strong>下面</strong>增加一行指定内容</td>
-</tr>
-<tr>
-<td>i</td>
-<td>插入，在选定行<strong>上面</strong>插入一行指定内容</td>
-</tr>
-<tr>
-<td>c</td>
-<td>替换，将选定行替换为指定内容</td>
-</tr>
-<tr>
-<td>s</td>
-<td>替换，替换指定的字符串</td>
-</tr>
-<tr>
-<td>y</td>
-<td>字符替换（字符一一替换）</td>
-</tr>
-<tr>
-<td>p</td>
-<td>打印，如果同时指定行，表示打印指定行，如果不指定行，则表示打印所有内容，如果有非打印字符，则以 ASCII 码输出。其通常与<code>-n</code>选项一起使用。</td>
-</tr>
-<tr>
-<td>d</td>
-<td>删除，删除选定的行</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">选   项</th>
+          <th style="text-align: left">功能</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">a</td>
+          <td style="text-align: left">增加，在当前行<strong>下面</strong>增加一行指定内容</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">i</td>
+          <td style="text-align: left">插入，在选定行<strong>上面</strong>插入一行指定内容</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">c</td>
+          <td style="text-align: left">替换，将选定行替换为指定内容</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">s</td>
+          <td style="text-align: left">替换，替换指定的字符串</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">y</td>
+          <td style="text-align: left">字符替换（字符一一替换）</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">p</td>
+          <td style="text-align: left">打印，如果同时指定行，表示打印指定行，如果不指定行，则表示打印所有内容，如果有非打印字符，则以 ASCII 码输出。其通常与<code>-n</code>选项一起使用。</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">d</td>
+          <td style="text-align: left">删除，删除选定的行</td>
+      </tr>
+  </tbody>
 </table>
 <h3 id="多行模式">
   多行模式
@@ -1205,46 +1273,46 @@ https://github.com/alex-shpak/hugo-book
 </h3>
 <p>常用参数</p>
 <table>
-<thead>
-<tr>
-<th>参数</th>
-<th>功能</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>H</td>
-<td>复制到剪切板</td>
-</tr>
-<tr>
-<td>g、G</td>
-<td>将剪切板的数据覆盖/追加到指定行</td>
-</tr>
-<tr>
-<td>w</td>
-<td>保存为文件</td>
-</tr>
-<tr>
-<td>r</td>
-<td>读取指定文件</td>
-</tr>
-<tr>
-<td>a</td>
-<td>追加指定内容（a 是加入在行后，i 是加入在前行，6a 是指定多少行进行加入）</td>
-</tr>
-<tr>
-<td>I，i</td>
-<td>忽略大小写</td>
-</tr>
-<tr>
-<td>d</td>
-<td>将以前的删除</td>
-</tr>
-<tr>
-<td>$</td>
-<td>表示最后</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">参数</th>
+          <th style="text-align: left">功能</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">H</td>
+          <td style="text-align: left">复制到剪切板</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">g、G</td>
+          <td style="text-align: left">将剪切板的数据覆盖/追加到指定行</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">w</td>
+          <td style="text-align: left">保存为文件</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">r</td>
+          <td style="text-align: left">读取指定文件</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">a</td>
+          <td style="text-align: left">追加指定内容（a 是加入在行后，i 是加入在前行，6a 是指定多少行进行加入）</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">I，i</td>
+          <td style="text-align: left">忽略大小写</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">d</td>
+          <td style="text-align: left">将以前的删除</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">$</td>
+          <td style="text-align: left">表示最后</td>
+      </tr>
+  </tbody>
 </table>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sed <span style="color:#e6db74">&#39;/the/{H;d};$G&#39;</span> test.txt        <span style="color:#75715e"># 将包含 the 的行迁移至文件末尾,{;}用于多个操作</span>
 </span></span><span style="display:flex;"><span>sed <span style="color:#e6db74">&#39;1,5{H;d};17G&#39;</span> test.txt         <span style="color:#75715e"># 将第 1~5 行内容转移至第 17 行后</span>

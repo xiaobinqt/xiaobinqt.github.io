@@ -3,27 +3,62 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="3.1 网络 # 3.1.1 网络状态 # net-tools &amp; iproute # Centos 7 之前一般使用 net-tools，Centos 7 之后主推 iproute / iproute2。
-ifconfig # eth0 第一块网卡（网络接口)。很多时候，第一个网络接口也可能叫做下面的名字：
-eno1 板载网卡 ens33 PCI-E网卡 enp0s3 无法获取物理信息的PCI-E网卡 CentOS 7 使用了一致性网络设备命名，以上都不匹配则使用 eth0。
-网关/路由 # route -n 使用-n参数不解析主机名，因为默认每个 ip 都会反解成域名，如果解析耗时会一直等待。
-网卡物理连接情况 # 在 Centos 6 上可以直接输入mii-tool回车，但是 Centos 7 上必须要加上网络接口名。
+<meta name="description" content="
+  3.1 网络
+  #
+
+
+  3.1.1 网络状态
+  #
+
+
+  net-tools &amp; iproute
+  #
+
+Centos 7 之前一般使用 net-tools，Centos 7 之后主推 iproute / iproute2。
+
+  ifconfig
+  #
+
+eth0 第一块网卡（网络接口)。很多时候，第一个网络接口也可能叫做下面的名字：
+
+eno1 板载网卡
+ens33 PCI-E网卡
+enp0s3 无法获取物理信息的PCI-E网卡
+
+CentOS 7 使用了一致性网络设备命名，以上都不匹配则使用 eth0。
+
+  网关/路由
+  #
+
+route -n
+使用-n参数不解析主机名，因为默认每个 ip 都会反解成域名，如果解析耗时会一直等待。
+
+  网卡物理连接情况
+  #
+
+在 Centos 6 上可以直接输入mii-tool回车，但是 Centos 7 上必须要加上网络接口名。
+
+
 因为用的是虚拟机，所以会有 SIOCGMIIPHY on &rsquo;eth0&rsquo; failed: Operation not supported 错误
-网络接口/网卡名称修改 # 网卡命名规则受 biosdevname 和 net.ifnames 两个参数影响。
-biosdevname net.ifnames 网卡名 默认 0 1 ens33 组合1 1 0 em1 组合2 0 0 eth0 编辑/etc/default/grub文件，在 GRUB_CMDLINE_LINUX 中增加biosdevname=0 net.">
+
+
+  网络接口/网卡名称修改
+  #
+
+网卡命名规则受 biosdevname 和 net.ifnames 两个参数影响。">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/linux/docs/part3-sys-manage/3.1-network/">
   <meta property="og:site_name" content="Linux 学习笔记">
   <meta property="og:title" content="3.1 网络">
-  <meta property="og:description" content="3.1 网络 # 3.1.1 网络状态 # net-tools &amp; iproute # Centos 7 之前一般使用 net-tools，Centos 7 之后主推 iproute / iproute2。
+  <meta property="og:description" content=" 3.1 网络 # 3.1.1 网络状态 # net-tools &amp; iproute # Centos 7 之前一般使用 net-tools，Centos 7 之后主推 iproute / iproute2。
 ifconfig # eth0 第一块网卡（网络接口)。很多时候，第一个网络接口也可能叫做下面的名字：
 eno1 板载网卡 ens33 PCI-E网卡 enp0s3 无法获取物理信息的PCI-E网卡 CentOS 7 使用了一致性网络设备命名，以上都不匹配则使用 eth0。
 网关/路由 # route -n 使用-n参数不解析主机名，因为默认每个 ip 都会反解成域名，如果解析耗时会一直等待。
 网卡物理连接情况 # 在 Centos 6 上可以直接输入mii-tool回车，但是 Centos 7 上必须要加上网络接口名。
 因为用的是虚拟机，所以会有 SIOCGMIIPHY on ’eth0’ failed: Operation not supported 错误
-网络接口/网卡名称修改 # 网卡命名规则受 biosdevname 和 net.ifnames 两个参数影响。
-biosdevname net.ifnames 网卡名 默认 0 1 ens33 组合1 1 0 em1 组合2 0 0 eth0 编辑/etc/default/grub文件，在 GRUB_CMDLINE_LINUX 中增加biosdevname=0 net.">
+网络接口/网卡名称修改 # 网卡命名规则受 biosdevname 和 net.ifnames 两个参数影响。">
   <meta property="og:locale" content="zh">
   <meta property="og:type" content="article">
     <meta property="article:section" content="docs">
@@ -37,9 +72,6 @@ biosdevname net.ifnames 网卡名 默认 0 1 ens33 组合1 1 0 em1 组合2 0 0 e
   <script defer src="/linux/zh.search.min.0afc493c0e2806c47e6ea5c37eb3a83b7fd85c5ed030b4ef2823216a214c554a.js" integrity="sha256-CvxJPA4oBsR&#43;bqXDfrOoO3/YXF7QMLTvKCMhaiFMVUo=" crossorigin="anonymous"></script>
 
   <script defer src="/linux/sw.min.06246f7b13a877707832946d0b1941d626f4349fd8e3bdfd318889981ed22d49.js" integrity="sha256-BiRvexOod3B4MpRtCxlB1ib0NJ/Y4739MYiJmB7SLUk=" crossorigin="anonymous"></script>
-
-  
-
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book
@@ -997,34 +1029,34 @@ https://github.com/alex-shpak/hugo-book
 </h3>
 <p>网卡命名规则受 biosdevname 和 net.ifnames 两个参数影响。</p>
 <table>
-<thead>
-<tr>
-<th></th>
-<th>biosdevname</th>
-<th>net.ifnames</th>
-<th>网卡名</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>默认</td>
-<td>0</td>
-<td>1</td>
-<td>ens33</td>
-</tr>
-<tr>
-<td>组合1</td>
-<td>1</td>
-<td>0</td>
-<td>em1</td>
-</tr>
-<tr>
-<td>组合2</td>
-<td>0</td>
-<td>0</td>
-<td>eth0</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left"></th>
+          <th style="text-align: left">biosdevname</th>
+          <th style="text-align: left">net.ifnames</th>
+          <th style="text-align: left">网卡名</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">默认</td>
+          <td style="text-align: left">0</td>
+          <td style="text-align: left">1</td>
+          <td style="text-align: left">ens33</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">组合1</td>
+          <td style="text-align: left">1</td>
+          <td style="text-align: left">0</td>
+          <td style="text-align: left">em1</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">组合2</td>
+          <td style="text-align: left">0</td>
+          <td style="text-align: left">0</td>
+          <td style="text-align: left">eth0</td>
+      </tr>
+  </tbody>
 </table>
 <ol>
 <li>编辑<code>/etc/default/grub</code>文件，在 GRUB_CMDLINE_LINUX 中<strong>增加</strong><code>biosdevname=0 net.ifnames=0</code></li>

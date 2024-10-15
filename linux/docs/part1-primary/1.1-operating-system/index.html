@@ -3,31 +3,80 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="1.1 操作系统 # 1.1.1 基本特征 # 1. 并发 # 并发是指宏观上在一段时间内能同时运行多个程序，而并行则指同一时刻能运行多个指令。
+<meta name="description" content="
+  1.1 操作系统
+  #
+
+
+  1.1.1 基本特征
+  #
+
+
+  1. 并发
+  #
+
+并发是指宏观上在一段时间内能同时运行多个程序，而并行则指同一时刻能运行多个指令。
 并行需要硬件支持，如多流水线、多核处理器或者分布式计算系统。
 操作系统通过引入进程和线程，使得程序能够并发运行。
-2. 共享 # 共享是指系统中的资源可以被多个并发进程共同使用。
+
+  2. 共享
+  #
+
+共享是指系统中的资源可以被多个并发进程共同使用。
 有两种共享方式：互斥共享和同时共享。
 互斥共享的资源称为临界资源，例如打印机等，在同一时刻只允许一个进程访问，需要用同步机制来实现互斥访问。
-3. 虚拟 # 虚拟技术把一个物理实体转换为多个逻辑实体。
+
+  3. 虚拟
+  #
+
+虚拟技术把一个物理实体转换为多个逻辑实体。
 主要有两种虚拟技术：时（时间）分复用技术和空（空间）分复用技术。
 多个进程能在同一个处理器上并发执行使用了时分复用技术，让每个进程轮流占用处理器，每次只执行一小个时间片并快速切换。
 虚拟内存使用了空分复用技术，它将物理内存抽象为地址空间，每个进程都有各自的地址空间。地址空间的页被映射到物理内存，地址空间的页并不需要全部在物理内存中，当使用到一个没有在物理内存的页时，执行页面置换算法，将该页置换到内存中。
-4. 异步 # 异步指进程不是一次性执行完毕，而是走走停停，以不可知的速度向前推进。
-1.1.2 基本功能 # 1. 进程管理 # 进程控制、进程同步、进程通信、死锁处理、处理机调度等。
-2. 内存管理 # 内存分配、地址映射、内存保护与共享、虚拟内存等。
-3. 文件管理 # 文件存储空间的管理、目录管理、文件读写管理和保护等。
-4. 设备管理 # 完成用户的 I/O 请求，方便用户使用各种设备，并提高设备的利用率。
+
+  4. 异步
+  #
+
+异步指进程不是一次性执行完毕，而是走走停停，以不可知的速度向前推进。
+
+  1.1.2 基本功能
+  #
+
+
+  1. 进程管理
+  #
+
+进程控制、进程同步、进程通信、死锁处理、处理机调度等。
+
+  2. 内存管理
+  #
+
+内存分配、地址映射、内存保护与共享、虚拟内存等。
+
+  3. 文件管理
+  #
+
+文件存储空间的管理、目录管理、文件读写管理和保护等。
+
+  4. 设备管理
+  #
+
+完成用户的 I/O 请求，方便用户使用各种设备，并提高设备的利用率。
 主要包括缓冲管理、设备分配、设备处理、虛拟设备等。
-1.2.3 系统调用 # 如果一个进程在用户态需要使用内核态的功能，就进行系统调用从而陷入内核，由操作系统代为完成。
-Linux 的系统调用主要有以下这些：
-Task Commands 进程控制 fork(); exit(); wait(); 进程通信 pipe(); shmget(); mmap(); 文件操作 open(); read(); write(); 设备操作 ioctl(); read(); write(); 信息维护 getpid(); alarm(); sleep(); 安全 chmod(); umask(); chown(); 1.">
+
+  1.2.3 系统调用
+  #
+
+如果一个进程在用户态需要使用内核态的功能，就进行系统调用从而陷入内核，由操作系统代为完成。
+
+  
+Linux 的系统调用主要有以下这些：">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/linux/docs/part1-primary/1.1-operating-system/">
   <meta property="og:site_name" content="Linux 学习笔记">
   <meta property="og:title" content="1.1 操作系统">
-  <meta property="og:description" content="1.1 操作系统 # 1.1.1 基本特征 # 1. 并发 # 并发是指宏观上在一段时间内能同时运行多个程序，而并行则指同一时刻能运行多个指令。
+  <meta property="og:description" content=" 1.1 操作系统 # 1.1.1 基本特征 # 1. 并发 # 并发是指宏观上在一段时间内能同时运行多个程序，而并行则指同一时刻能运行多个指令。
 并行需要硬件支持，如多流水线、多核处理器或者分布式计算系统。
 操作系统通过引入进程和线程，使得程序能够并发运行。
 2. 共享 # 共享是指系统中的资源可以被多个并发进程共同使用。
@@ -44,8 +93,7 @@ Task Commands 进程控制 fork(); exit(); wait(); 进程通信 pipe(); shmget()
 4. 设备管理 # 完成用户的 I/O 请求，方便用户使用各种设备，并提高设备的利用率。
 主要包括缓冲管理、设备分配、设备处理、虛拟设备等。
 1.2.3 系统调用 # 如果一个进程在用户态需要使用内核态的功能，就进行系统调用从而陷入内核，由操作系统代为完成。
-Linux 的系统调用主要有以下这些：
-Task Commands 进程控制 fork(); exit(); wait(); 进程通信 pipe(); shmget(); mmap(); 文件操作 open(); read(); write(); 设备操作 ioctl(); read(); write(); 信息维护 getpid(); alarm(); sleep(); 安全 chmod(); umask(); chown(); 1.">
+Linux 的系统调用主要有以下这些：">
   <meta property="og:locale" content="zh">
   <meta property="og:type" content="article">
     <meta property="article:section" content="docs">
@@ -59,9 +107,6 @@ Task Commands 进程控制 fork(); exit(); wait(); 进程通信 pipe(); shmget()
   <script defer src="/linux/zh.search.min.0afc493c0e2806c47e6ea5c37eb3a83b7fd85c5ed030b4ef2823216a214c554a.js" integrity="sha256-CvxJPA4oBsR&#43;bqXDfrOoO3/YXF7QMLTvKCMhaiFMVUo=" crossorigin="anonymous"></script>
 
   <script defer src="/linux/sw.min.06246f7b13a877707832946d0b1941d626f4349fd8e3bdfd318889981ed22d49.js" integrity="sha256-BiRvexOod3B4MpRtCxlB1ib0NJ/Y4739MYiJmB7SLUk=" crossorigin="anonymous"></script>
-
-  
-
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book
@@ -1051,38 +1096,38 @@ https://github.com/alex-shpak/hugo-book
   <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/a31b70c3a2a04481b3e3849408cc4393.png" alt="" /></p>
 <p>Linux 的系统调用主要有以下这些：</p>
 <table>
-<thead>
-<tr>
-<th>Task</th>
-<th>Commands</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>进程控制</td>
-<td>fork(); exit(); wait();</td>
-</tr>
-<tr>
-<td>进程通信</td>
-<td>pipe(); shmget(); mmap();</td>
-</tr>
-<tr>
-<td>文件操作</td>
-<td>open(); read(); write();</td>
-</tr>
-<tr>
-<td>设备操作</td>
-<td>ioctl(); read(); write();</td>
-</tr>
-<tr>
-<td>信息维护</td>
-<td>getpid(); alarm(); sleep();</td>
-</tr>
-<tr>
-<td>安全</td>
-<td>chmod(); umask(); chown();</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">Task</th>
+          <th style="text-align: left">Commands</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">进程控制</td>
+          <td style="text-align: left">fork(); exit(); wait();</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">进程通信</td>
+          <td style="text-align: left">pipe(); shmget(); mmap();</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">文件操作</td>
+          <td style="text-align: left">open(); read(); write();</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">设备操作</td>
+          <td style="text-align: left">ioctl(); read(); write();</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">信息维护</td>
+          <td style="text-align: left">getpid(); alarm(); sleep();</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">安全</td>
+          <td style="text-align: left">chmod(); umask(); chown();</td>
+      </tr>
+  </tbody>
 </table>
 <h2 id="114-宏内核和微内核">
   1.1.4 宏内核和微内核

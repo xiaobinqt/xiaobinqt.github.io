@@ -3,23 +3,88 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="20. 有效的括号 # 题目地址 # 力扣 LeetCode 解题思路 # 判断括号的有效性可以使用「栈」这一数据结构来解决。
-我们遍历给定的字符串 s。当我们遇到一个左括号时，我们会期望在后续的遍历中，有一个相同类型的右括号将其闭合。由于 后遇到的左括号要先闭合，因此我们可以将这个左括号放入栈顶。
-当我们遇到一个右括号时，我们需要将一个相同类型的左括号闭合。此时，我们可以取出栈顶的左括号并判断它们是否是相同类型的括号。如果不是相同的类型，或者栈中并没有左括号，那么字符串 s 无效，返回 False。为了快速判断括号的类型，我们可以使用哈希表存储每一种括号。哈希表的键为右括号，值为相同类型的左括号。
+<meta name="description" content="
+  20. 有效的括号
+  #
+
+
+  题目地址
+  #
+
+
+
+  力扣
+
+  LeetCode
+
+
+  解题思路
+  #
+
+判断括号的有效性可以使用「栈」这一数据结构来解决。
+我们遍历给定的字符串 s。当我们遇到一个左括号时，我们会期望在后续的遍历中，有一个相同类型的右括号将其闭合。由于
+后遇到的左括号要先闭合，因此我们可以将这个左括号放入栈顶。
+当我们遇到一个右括号时，我们需要将一个相同类型的左括号闭合。此时，我们可以取出栈顶的左括号并判断它们是否是相同类型的括号。如果不是相同的类型，或者栈中并没有左括号，那么字符串 s 无效，返回
+False。为了快速判断括号的类型，我们可以使用哈希表存储每一种括号。哈希表的键为右括号，值为相同类型的左括号。
 在遍历结束后，如果栈中没有左括号，说明我们将字符串 s 中的所有左括号闭合，返回 True，否则返回 False。
 注意到有效字符串的长度一定为偶数，因此如果字符串的长度为奇数，我们可以直接返回 False，省去后续的遍历判断过程。
-具体实现 # Go package main import &#34;fmt&#34; func isValid(s string) bool { n := len(s) if n%2 != 0 { // 奇数直接退出 return false } pairs := map[byte]byte{ &#39;)&#39;: &#39;(&#39;, &#39;]&#39;: &#39;[&#39;, &#39;}&#39;: &#39;{&#39;, } stack := []byte{} for i := 0; i &lt; n; i&#43;&#43; { if pairs[s[i]] &gt; 0 { // 如果是右括号,判断栈顶是否是对应的左括号,果然有对应的左括号,则弹出栈顶元素,否则直接退出 if len(stack) == 0 || stack[len(stack)-1] !">
+
+  具体实现
+  #
+
+
+
+
+
+
+  Go
+  package main
+
+import &#34;fmt&#34;
+
+func isValid(s string) bool {
+	n := len(s)
+
+	if n%2 != 0 { // 奇数直接退出
+		return false
+	}
+
+	pairs := map[byte]byte{
+		&#39;)&#39;: &#39;(&#39;,
+		&#39;]&#39;: &#39;[&#39;,
+		&#39;}&#39;: &#39;{&#39;,
+	}
+
+	stack := []byte{}
+	for i := 0; i &lt; n; i&#43;&#43; {
+		if pairs[s[i]] &gt; 0 { // 如果是右括号,判断栈顶是否是对应的左括号,果然有对应的左括号,则弹出栈顶元素,否则直接退出
+			if len(stack) == 0 || stack[len(stack)-1] != pairs[s[i]] {
+				return false
+			}
+			stack = stack[:len(stack)-1]
+		} else {
+			stack = append(stack, s[i])
+		}
+	}
+
+	return len(stack) == 0
+}
+
+func main() {
+	fmt.Println(isValid(&#34;()[]{}&#34;))
+}
+">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/leetcode/docs/easy/20/">
   <meta property="og:site_name" content="LeetCode">
   <meta property="og:title" content="20. 有效的括号">
-  <meta property="og:description" content="20. 有效的括号 # 题目地址 # 力扣 LeetCode 解题思路 # 判断括号的有效性可以使用「栈」这一数据结构来解决。
+  <meta property="og:description" content=" 20. 有效的括号 # 题目地址 # 力扣 LeetCode 解题思路 # 判断括号的有效性可以使用「栈」这一数据结构来解决。
 我们遍历给定的字符串 s。当我们遇到一个左括号时，我们会期望在后续的遍历中，有一个相同类型的右括号将其闭合。由于 后遇到的左括号要先闭合，因此我们可以将这个左括号放入栈顶。
 当我们遇到一个右括号时，我们需要将一个相同类型的左括号闭合。此时，我们可以取出栈顶的左括号并判断它们是否是相同类型的括号。如果不是相同的类型，或者栈中并没有左括号，那么字符串 s 无效，返回 False。为了快速判断括号的类型，我们可以使用哈希表存储每一种括号。哈希表的键为右括号，值为相同类型的左括号。
 在遍历结束后，如果栈中没有左括号，说明我们将字符串 s 中的所有左括号闭合，返回 True，否则返回 False。
 注意到有效字符串的长度一定为偶数，因此如果字符串的长度为奇数，我们可以直接返回 False，省去后续的遍历判断过程。
-具体实现 # Go package main import &#34;fmt&#34; func isValid(s string) bool { n := len(s) if n%2 != 0 { // 奇数直接退出 return false } pairs := map[byte]byte{ &#39;)&#39;: &#39;(&#39;, &#39;]&#39;: &#39;[&#39;, &#39;}&#39;: &#39;{&#39;, } stack := []byte{} for i := 0; i &lt; n; i&#43;&#43; { if pairs[s[i]] &gt; 0 { // 如果是右括号,判断栈顶是否是对应的左括号,果然有对应的左括号,则弹出栈顶元素,否则直接退出 if len(stack) == 0 || stack[len(stack)-1] !">
+具体实现 # Go package main import &#34;fmt&#34; func isValid(s string) bool { n := len(s) if n%2 != 0 { // 奇数直接退出 return false } pairs := map[byte]byte{ &#39;)&#39;: &#39;(&#39;, &#39;]&#39;: &#39;[&#39;, &#39;}&#39;: &#39;{&#39;, } stack := []byte{} for i := 0; i &lt; n; i&#43;&#43; { if pairs[s[i]] &gt; 0 { // 如果是右括号,判断栈顶是否是对应的左括号,果然有对应的左括号,则弹出栈顶元素,否则直接退出 if len(stack) == 0 || stack[len(stack)-1] != pairs[s[i]] { return false } stack = stack[:len(stack)-1] } else { stack = append(stack, s[i]) } } return len(stack) == 0 } func main() { fmt.Println(isValid(&#34;()[]{}&#34;)) } ">
   <meta property="og:locale" content="zh">
   <meta property="og:type" content="article">
     <meta property="article:section" content="docs">
@@ -33,9 +98,6 @@
   <script defer src="/leetcode/zh.search.min.f9cd73d20daebe0f064076c741a93203473f9497ee32d434a8774e691eea3972.js" integrity="sha256-&#43;c1z0g2uvg8GQHbHQakyA0c/lJfuMtQ0qHdOaR7qOXI=" crossorigin="anonymous"></script>
 
   <script defer src="/leetcode/sw.min.c814046bee19bfa0279b71972af9d15919d290341d7ecdfe781d2e1113df9ad1.js" integrity="sha256-yBQEa&#43;4Zv6Anm3GXKvnRWRnSkDQdfs3&#43;eB0uERPfmtE=" crossorigin="anonymous"></script>
-
-  
-
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book
