@@ -17,9 +17,9 @@ featuredImage: ""
 
 reproduce: true
 
-series: ["reproduce"]
-tags: ["nginx"]
-categories: ["开发者手册"]
+series: [ "reproduce" ]
+tags: [ "nginx" ]
+categories: [ "开发者手册" ]
 lightgallery: true
 
 toc: true
@@ -61,7 +61,7 @@ Nginx 的最重要的几个使用场景：
 
 用一张图表示：
 
-![未命名文件.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/070a90dae22c4693858f367bc60934b2~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0.png)
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20241015/172d1b5300c041d98582848e951d11ca.png)
 
 ## Nginx 安装
 
@@ -138,7 +138,7 @@ ps -ef | grep nginx
 
 # 杀死Nginx进程
 kill -9 pid # 根据上面查看到的Nginx进程号，杀死Nginx进程，-9 表示强制结束进程
-  
+
 ```
 
 `Nginx`  应用程序命令：
@@ -150,14 +150,14 @@ nginx -s stop    # 快速关闭
 nginx -s quit    # 等待工作进程处理完成后关闭
 nginx -T         # 查看当前 Nginx 最终的配置
 nginx -t         # 检查配置是否有问题
-  
+
 ```
 
 ## Nginx 核心配置
 
 ### 配置文件结构
 
-`Nginx`  的典型配置示例：
+`Nginx` 的典型配置示例：
 
 ```
 # main段配置信息
@@ -174,7 +174,7 @@ events {
 
 # http段配置信息
 # 配置使用最频繁的部分，代理、缓存、日志定义等绝大多数功能和第三方模块的配置都在这里设置
-http { 
+http {
     # 设置日志模式
     log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
                       '$status $body_bytes_sent "$http_referer" '
@@ -192,12 +192,12 @@ http {
     default_type        application/octet-stream;   # 默认文件类型
 
     include /etc/nginx/conf.d/*.conf;   # 加载子配置项
-    
+
     # server段配置信息
     server {
     listen       80;       # 配置监听的端口
     server_name  localhost;    # 配置的域名
-      
+
     # location段配置信息
     location / {
     root   /usr/share/nginx/html;  # 网站根目录
@@ -205,7 +205,7 @@ http {
     deny 172.168.22.11;   # 禁止访问的ip地址，可以为all
     allow 172.168.33.44；# 允许访问的ip地址，可以为all
     }
-    
+
     error_page 500 502 503 504 /50x.html;  # 默认50x对应的访问页面
     error_page 400 404 error.html;   # 同上
     }
@@ -222,7 +222,7 @@ http {
 
 用一张图清晰的展示它的层级结构：
 
-![未命名文件 (4).png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/87fffe0360aa4f34adb6258a955aad38~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0.png)
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20241015/9a4425c620d74524813d87eae8886b67.png)
 
 ### 配置文件 main 段核心参数
 
@@ -234,7 +234,7 @@ http {
 user USERNAME [GROUP]
 
 user nginx lion; # 用户是nginx;组是lion
-  
+
 ```
 
 #### pid
@@ -243,80 +243,72 @@ user nginx lion; # 用户是nginx;组是lion
 
 ```
 pid /opt/nginx/logs/nginx.pid # master主进程的的pid存放在nginx.pid的文件
-  
 ```
 
-#### worker\_rlimit\_nofile\_number
+#### worker_rlimit_nofile_number
 
 指定 `worker`  子进程可以打开的最大文件句柄数。
 
 ```
 worker_rlimit_nofile 20480; # 可以理解成每个worker子进程的最大连接数量。
-  
 ```
 
-#### worker\_rlimit\_core
+#### worker_rlimit_core
 
 指定 `worker`  子进程异常终止后的 `core`  文件，用于记录分析问题。
 
 ```
 worker_rlimit_core 50M; # 存放大小限制
 working_directory /opt/nginx/tmp; # 存放目录
-  
 ```
 
-#### worker\_processes\_number
+#### worker_processes_number
 
 指定 `Nginx`  启动的 `worker`  子进程数量。
 
 ```
 worker_processes 4; # 指定具体子进程数量
 worker_processes auto; # 与当前cpu物理核心数一致
-  
 ```
 
-#### worker\_cpu\_affinity
+#### worker_cpu_affinity
 
 将每个 `worker`  子进程与我们的 `cpu`  物理核心绑定。
 
 ```
 worker_cpu_affinity 0001 0010 0100 1000; # 4个物理核心，4个worker子进程
-  
 ```
 
-![未命名文件 (1).png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e3c23de61deb4c6391fe70e561f18aa3~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0.png)
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20241015/22fefd50c9c642bbbcc7aeb333533221.png)
 
 将每个 `worker`  子进程与特定 `CPU`  物理核心绑定，优势在于，避免同一个 `worker`  子进程在不同的 `CPU`  核心上切换，缓存失效，降低性能。但其并不能真正的避免进程切换。
 
-#### worker\_priority
+#### worker_priority
 
 指定 `worker`  子进程的 `nice`  值，以调整运行 `Nginx`  的优先级，通常设定为负值，以优先调用 `Nginx`  。
 
 ```
 worker_priority -10; # 120-10=110，110就是最终的优先级
-  
 ```
 
 `Linux`  默认进程的优先级值是120，值越小越优先； `nice`   定范围为 `-20`  到 `+19`  。
 
-\[备注\] 应用的默认优先级值是120加上 `nice`  值等于它最终的值，这个值越小，优先级越高。
+[备注] 应用的默认优先级值是120加上 `nice`  值等于它最终的值，这个值越小，优先级越高。
 
-#### worker\_shutdown\_timeout
+#### worker_shutdown_timeout
 
 指定 `worker`  子进程优雅退出时的超时时间。
 
 ```
 worker_shutdown_timeout 5s;
-  
 ```
 
-#### timer\_resolution
+#### timer_resolution
 
 `worker`  子进程内部使用的计时器精度，调整时间间隔越大，系统调用越少，有利于性能提升；反之，系统调用越多，性能下降。
 
 ```
 timer_resolution 100ms;
-  
 ```
 
 在 `Linux`  系统中，用户需要获取计时器时需要向操作系统内核发送请求，有请求就必然会有开销，因此这个间隔越大开销就越小。
@@ -327,7 +319,6 @@ timer_resolution 100ms;
 
 ```
 daemon off; # 默认是on，后台运行模式
-  
 ```
 
 ### 配置文件 events 段核心参数
@@ -340,28 +331,25 @@ daemon off; # 默认是on，后台运行模式
 use method; # 不推荐配置它，让nginx自己选择
 
 method 可选值为：select、poll、kqueue、epoll、/dev/poll、eventport
-  
 ```
 
-#### worker\_connections
+#### worker_connections
 
 `worker` 子进程能够处理的最大并发连接数。
 
 ```
 worker_connections 1024 # 每个子进程的最大连接数为1024
-  
 ```
 
-#### accept\_mutex
+#### accept_mutex
 
 是否打开负载均衡互斥锁。
 
 ```
 accept_mutex on # 默认是off关闭的，这里推荐打开
-  
 ```
 
-### server\_name 指令
+### server_name 指令
 
 指定虚拟主机域名。
 
@@ -370,7 +358,6 @@ server_name name1 name2 name3
 
 # 示例：
 server_name www.nginx.com;
-  
 ```
 
 域名匹配的四种写法：
@@ -394,10 +381,10 @@ server_name www.nginx.com;
 121.42.11.34 doc.nginx-test.com
 121.42.11.34 www.nginx-test.cn
 121.42.11.34 fe.nginx-test.club
-  
+
 ```
 
-\[注意\] 这里使用的是虚拟域名进行测试，因此需要配置本地 `DNS`  解析，如果使用阿里云上购买的域名，则需要在阿里云上设置好域名解析。
+[注意] 这里使用的是虚拟域名进行测试，因此需要配置本地 `DNS`  解析，如果使用阿里云上购买的域名，则需要在阿里云上设置好域名解析。
 
 2、配置阿里云 `Nginx`  ，`vim /etc/nginx/nginx.conf`
 
@@ -443,7 +430,6 @@ location / {
 index index.html;
 }
 }
-  
 ```
 
 3、访问分析
@@ -468,10 +454,9 @@ root /opt/nginx/static;
 }
 
 当用户访问 www.test.com/image/1.png 时，实际在服务器找的路径是 /opt/nginx/static/image/1.png
-  
 ```
 
-\[注意\] `root`  会将定义路径与 `URI`  叠加， `alias`  则只取定义路径。
+[注意] `root`  会将定义路径与 `URI`  叠加， `alias`  则只取定义路径。
 
 ### alias
 
@@ -483,10 +468,9 @@ alias /opt/nginx/static/image/;
 }
 
 当用户访问 www.test.com/image/1.png 时，实际在服务器找的路径是 /opt/nginx/static/image/1.png
-  
 ```
 
-\[注意\] 使用 alias 末尾一定要添加 `/`  ，并且它只能位于 `location`  中。
+[注意] 使用 alias 末尾一定要添加 `/`  ，并且它只能位于 `location`  中。
 
 ### location
 
@@ -496,7 +480,7 @@ alias /opt/nginx/static/image/;
 location [ = | ~ | ~* | ^~ ] uri {
 ...
 }
-  
+
 ```
 
 匹配规则：
@@ -514,25 +498,25 @@ location [ = | ~ | ~* | ^~ ] uri {
 server {
   listen80;
   server_namewww.nginx-test.com;
-  
+
   # 只有当访问 www.nginx-test.com/match_all/ 时才会匹配到/usr/share/nginx/html/match_all/index.html
   location = /match_all/ {
       root/usr/share/nginx/html
       index index.html
   }
-  
+
   # 当访问 www.nginx-test.com/1.jpg 等路径时会去 /usr/share/nginx/images/1.jpg 找对应的资源
   location ~ \.(jpeg|jpg|png|svg)$ {
   root /usr/share/nginx/images;
   }
-  
+
   # 当访问 www.nginx-test.com/bbs/ 时会匹配上 /usr/share/nginx/html/bbs/index.html
   location ^~ /bbs/ {
   root /usr/share/nginx/html;
     index index.html index.htm;
   }
 }
-  
+
 ```
 
 #### location 中的反斜线
@@ -545,7 +529,7 @@ location /test {
 location /test/ {
 ...
 }
-  
+
 ```
 
 - 不带 `/`  当访问 `www.nginx-test.com/test`  时， `Nginx`  先找是否有 `test`  目录，如果有则找 `test`  目录下的 `index.html`  ；如果没有 `test`
@@ -578,7 +562,7 @@ return 302 /bbs ; # 返回状态码 + 重定向地址
 location / {
 return https://www.baidu.com ; # 返回重定向地址
 }
-  
+
 ```
 
 ### rewrite
@@ -591,7 +575,7 @@ return https://www.baidu.com ; # 返回重定向地址
 上下文：server、location、if
 
 示例：rewirte /images/(.*\.jpg)$ /pic/$1; # $1是前面括号(.*\.jpg)的反向引用
-  
+
 ```
 
 `flag`  可选值的含义：
@@ -609,20 +593,20 @@ server{
   location /search {
   rewrite ^/(.*) https://www.baidu.com redirect;
   }
-  
+
   location /images {
   rewrite /images/(.*) /pics/$1;
   }
-  
+
   location /pics {
   rewrite /pics/(.*) /photos/$1;
   }
-  
+
   location /photos {
-  
+
   }
 }
-  
+
 ```
 
 按照这个配置我们来分析：
@@ -642,7 +626,7 @@ server{
 if($http_user_agent ~ Chrome){
   rewrite /(.*)/browser/$1 break;
 }
-  
+
 ```
 
 `condition`  判断条件：
@@ -664,14 +648,14 @@ server {
   listen 8080;
   server_name localhost;
   root html;
-  
+
   location / {
   if ( $uri = "/images/" ){
     rewrite (.*) /pics/ break;
     }
   }
 }
-  
+
 ```
 
 当访问 `localhost:8080/images/`  时，会进入 `if`  判断里面执行 `rewrite`  命令。
@@ -686,22 +670,22 @@ server {
 server {
   listen 80;
   server_name fe.lion-test.club;
-  
+
   location /download/ {
     root /opt/source;
-    
+
     autoindex on; # 打开 autoindex，，可选参数有 on | off
     autoindex_exact_size on; # 修改为off，以KB、MB、GB显示文件大小，默认为on，以bytes显示出⽂件的确切⼤⼩
     autoindex_format html; # 以html的方式进行格式化，可选参数有 html | json | xml
     autoindex_localtime off; # 显示的⽂件时间为⽂件的服务器时间。默认为off，显示的⽂件时间为GMT时间
   }
 }
-  
+
 ```
 
 当访问 `fe.lion.com/download/`  时，会把服务器 `/opt/source/download/`  路径下的文件展示出来，如下图所示：
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/38aa834307654ae08ebf5aa72507daf7~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0.png)
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20241015/670dff405db5490aa4a5b8450d0bb680.png)
 
 ### 变量
 
@@ -709,35 +693,35 @@ server {
 
 下面列举些项目中常用的变量：
 
-| 变量名 | 含义 |
-| --- | --- |
-| `remote_addr`   | 客户端 `IP`  地址 |
-| `remote_port`   | 客户端端口 |
-| `server_addr`   | 服务端 `IP`  地址 |
-| `server_port`   | 服务端端口 |
-| `server_protocol`   | 服务端协议 |
-| `binary_remote_addr`   | 二进制格式的客户端 `IP`  地址 |
-| `connection`   | `TCP`  连接的序号，递增 |
-| `connection_request`   | `TCP`  连接当前的请求数量 |
-| `uri`   | 请求的URL，不包含参数 |
-| `request_uri`   | 请求的URL，包含参数 |
-| `scheme`   | 协议名， `http`  或 `https`   |
-| `request_method`   | 请求方法 |
-| `request_length`   | 全部请求的长度，包含请求行、请求头、请求体 |
-| `args`   | 全部参数字符串 |
-| `arg_参数名`   | 获取特定参数值 |
-| `is_args`   | `URL`  中是否有参数，有的话返回 `?`  ，否则返回空 |
-| `query_string`   | 与 `args`  相同 |
-| `host`   | 请求信息中的 `Host`  ，如果请求中没有 `Host`   行，则在请求头中找，最后使用 `nginx`  中设置的 `server_name`  。 |
-| `http_user_agent`   | 用户浏览器 |
-| `http_referer`   | 从哪些链接过来的请求 |
-| `http_via`   | 每经过一层代理服务器，都会添加相应的信息 |
-| `http_cookie`   | 获取用户 `cookie`   |
-| `request_time`   | 处理请求已消耗的时间 |
-| `https`   | 是否开启了 `https`  ，是则返回 `on`  ，否则返回空 |
-| `request_filename`   | 磁盘文件系统待访问文件的完整路径 |
-| `document_root`   | 由 `URI`  和 `root/alias`  规则生成的文件夹路径 |
-| `limit_rate`   | 返回响应时的速度上限值 |
+| 变量名                  | 含义                                                                             |
+|----------------------|--------------------------------------------------------------------------------|
+| `remote_addr`        | 客户端 `IP`  地址                                                                   |
+| `remote_port`        | 客户端端口                                                                          |
+| `server_addr`        | 服务端 `IP`  地址                                                                   |
+| `server_port`        | 服务端端口                                                                          |
+| `server_protocol`    | 服务端协议                                                                          |
+| `binary_remote_addr` | 二进制格式的客户端 `IP`  地址                                                             |
+| `connection`         | `TCP`  连接的序号，递增                                                                |
+| `connection_request` | `TCP`  连接当前的请求数量                                                               |
+| `uri`                | 请求的URL，不包含参数                                                                   |
+| `request_uri`        | 请求的URL，包含参数                                                                    |
+| `scheme`             | 协议名， `http`  或 `https`                                                         |
+| `request_method`     | 请求方法                                                                           |
+| `request_length`     | 全部请求的长度，包含请求行、请求头、请求体                                                          |
+| `args`               | 全部参数字符串                                                                        |
+| `arg_参数名`            | 获取特定参数值                                                                        |
+| `is_args`            | `URL`  中是否有参数，有的话返回 `?`  ，否则返回空                                                |
+| `query_string`       | 与 `args`  相同                                                                   |
+| `host`               | 请求信息中的 `Host`  ，如果请求中没有 `Host`   行，则在请求头中找，最后使用 `nginx`  中设置的 `server_name`  。 |
+| `http_user_agent`    | 用户浏览器                                                                          |
+| `http_referer`       | 从哪些链接过来的请求                                                                     |
+| `http_via`           | 每经过一层代理服务器，都会添加相应的信息                                                           |
+| `http_cookie`        | 获取用户 `cookie`                                                                  |
+| `request_time`       | 处理请求已消耗的时间                                                                     |
+| `https`              | 是否开启了 `https`  ，是则返回 `on`  ，否则返回空                                              |
+| `request_filename`   | 磁盘文件系统待访问文件的完整路径                                                               |
+| `document_root`      | 由 `URI`  和 `root/alias`  规则生成的文件夹路径                                            |
+| `limit_rate`         | 返回响应时的速度上限值                                                                    |
 
 实例演示 `var.conf`  ：
 
@@ -775,7 +759,7 @@ document_root: $document_root
 ";
 }
 }
-  
+
 ```
 
 当我们访问 `http://var.lion-test.club:8081/test?pid=121414&cid=sadasd`   时，由于 `Nginx`  中写了 `return`  方法，因此 `chrome`
@@ -800,13 +784,13 @@ is_args: ?
 query_string: pid=121414&cid=sadasd
 host: var.lion-test.club
 http_user_agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.182 Safari/537.36
-http_referer: 
-http_via: 
+http_referer:
+http_via:
 request_time: 0.000
-https: 
+https:
 request_filename: /usr/share/nginx/html/test/
 document_root: /usr/share/nginx/html
-  
+
 ```
 
 `Nginx`  的配置还有非常多，以上只是罗列了一些常用的配置，在实际项目中还是要学会查阅文档。
@@ -817,7 +801,7 @@ document_root: /usr/share/nginx/html
 
 不管是正向代理还是反向代理，实现的都是上面的功能。
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8232e3b1d3854ee2bdc743ad1f656414~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0.png)
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20241015/c2b200fcc9a541d6bf024100cb9e74e6.png)
 
 ### 正向代理
 
@@ -847,7 +831,7 @@ document_root: /usr/share/nginx/html
 
 动静分离是指在 `web`  服务器架构中，将静态页面与动态页面或者静态内容接口和动态内容接口分开不同系统访问的架构设计方法，进而提示整个服务的访问性和可维护性。
 
-![未命名文件.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/96c9221f098542ba8222565298c4038e~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0.png)
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20241015/d62adb774aad4403afc4197d298f8d41.png)
 
 一般来说，都需要将动态资源和静态资源分开，由于 `Nginx`  的高并发和静态资源缓存等特性，经常将静态资源部署在 `Nginx`
 上。如果请求的是静态资源，直接到静态资源目录获取资源，如果是动态资源的请求，则利用反向代理的原理，把请求转发给对应后台应用去处理，从而实现动静分离。
@@ -865,8 +849,9 @@ document_root: /usr/share/nginx/html
 请求爆发式增长的情况下，单个机器性能再强劲也无法满足要求了，这个时候集群的概念产生了，单个服务器解决不了的问题，可以使用多个服务器，然后将请求分发到各个服务器上，将负载分发到不同的服务器，这就是负载均衡，核心是「分摊压力」。 `Nginx`
 实现负载均衡，一般来说指的是将请求转发给服务器集群。
 
-举个具体的例子，晚高峰乘坐地铁的时候，入站口经常会有地铁工作人员大喇叭“请走 `B`  口， `B`  口人少车空....”，这个工作人员的作用就是负载均衡。  
-![未命名文件 (3).png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5f79f698d1fc497db14c971ea417f456~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0.png)
+举个具体的例子，晚高峰乘坐地铁的时候，入站口经常会有地铁工作人员大喇叭“请走 `B`  口， `B`  口人少车空....”，这个工作人员的作用就是负载均衡。
+
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20241015/632fa6b56353413b9f881afa77585263.png)
 
 `Nginx`  实现负载均衡的策略：
 
@@ -883,7 +868,7 @@ document_root: /usr/share/nginx/html
 
 用于定义上游服务器（指的就是后台提供的应用服务器）的相关信息。
 
-![未命名文件 (2).png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a8e5089117234f529180c8720922c2fc~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0.png)
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20241015/e1c99cb5497f496293f0dbdd24419130.png)
 
 ```
 语法：upstream name {
@@ -896,7 +881,7 @@ document_root: /usr/share/nginx/html
 upstream back_end_server{
   server 192.168.100.33:8081
 }
-  
+
 ```
 
 在 `upstream`  内可使用的指令：
@@ -920,7 +905,7 @@ upstream back_end_server{
 语法：server address [parameters]
 
 上下文：upstream
-  
+
 ```
 
 `parameters`  可选值：
@@ -942,7 +927,7 @@ keepalive connections;
 上下文：upstream
 
 示例：keepalive 16;
-  
+
 ```
 
 #### keepalive\_requests
@@ -955,7 +940,7 @@ keepalive connections;
 默认值：keepalive_requests 100;
 
 上下文：upstream
-  
+
 ```
 
 #### keepalive\_timeout
@@ -968,7 +953,7 @@ keepalive connections;
 默认值：keepalive_timeout 60s;
 
 上下文：upstream
-  
+
 ```
 
 #### 配置实例
@@ -980,7 +965,7 @@ server 127.0.0.1:8081 weight=3 max_conns=1000 fail_timeout=10s max_fails=2;
   keepalive_requests 50;
   keepalive_timeout 30s;
 }
-  
+
 ```
 
 ### proxy\_pass
@@ -995,7 +980,7 @@ server 127.0.0.1:8081 weight=3 max_conns=1000 fail_timeout=10s max_fails=2;
 示例：
 proxy_pass http://127.0.0.1:8081
 proxy_pass http://127.0.0.1:8081/proxy
-  
+
 ```
 
 `URL`  参数原则
@@ -1020,7 +1005,7 @@ proxy_pass http://127.0.0.1:8081/proxy
 location /bbs/{
   proxy_pass http://127.0.0.1:8080;
 }
-  
+
 ```
 
 分析：
@@ -1035,7 +1020,7 @@ location /bbs/{
 location /bbs/{
   proxy_pass http://127.0.0.1:8080/;
 }
-  
+
 ```
 
 分析：
@@ -1057,7 +1042,7 @@ location /bbs/{
 server{
   listen 8080;
   server_name localhost;
-  
+
   location /proxy/ {
     root /usr/share/nginx/html/proxy;
     index index.html;
@@ -1066,7 +1051,7 @@ server{
 
 # /usr/share/nginx/html/proxy/index.html
 <h1> 121.42.11.34 proxy html </h1>
-  
+
 ```
 
 配置完成后重启 `Nginx`  服务器 `nginx -s reload`  。
@@ -1089,17 +1074,17 @@ server {
   proxy_pass http://back_end/proxy;
   }
 }
-  
+
 ```
 
 本地机器要访问 `proxy.lion.club`  域名，因此需要配置本地 `hosts`  ，通过命令：`vim /etc/hosts`  进入配置文件，添加如下内容：
 
 ```
 121.5.180.193 proxy.lion.club
-  
+
 ```
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/076bebbb8f6b49be972c4264a5dc0aff~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0.png)
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20241015/38cbc7ed632a40b9970123863f8957b1.png)
 
 分析：
 
@@ -1135,7 +1120,7 @@ server{
   return 200 'return 8040 \n';
   }
 }
-  
+
 ```
 
 配置完成后：
@@ -1156,12 +1141,12 @@ upstream demo_server {
 server {
   listen 80;
   server_name balance.lion.club;
-  
+
   location /balance/ {
   proxy_pass http://demo_server;
   }
 }
-  
+
 ```
 
 配置完成后重启 `Nginx`  服务器。并且在需要访问的客户端配置好 `ip`  和域名的映射关系。
@@ -1170,12 +1155,12 @@ server {
 # /etc/hosts
 
 121.5.180.193 balance.lion.club
-  
+
 ```
 
 在客户端机器执行 `curl http://balance.lion.club/balance/`  命令：
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a140f1a03cb94a498a7bdb035c41660b~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0.png)
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20241015/79987452bf5b40d3a66c2d3efa7be255.png)
 
 不难看出，负载均衡的配置已经生效了，每次给我们分发的上游服务器都不一样。就是通过简单的轮询策略进行上游服务器分发。
 
@@ -1196,12 +1181,12 @@ upstream demo_server {
 server {
   listen 80;
   server_name balance.lion.club;
-  
+
   location /balance/ {
   proxy_pass http://demo_server;
   }
 }
-  
+
 ```
 
 `hash $request_uri`  表示使用 `request_uri`  变量作为 `hash`  的 `key`  值，只要访问的 `URI`  保持不变，就会一直分发给同一台服务器。
@@ -1221,12 +1206,12 @@ upstream demo_server {
 server {
   listen 80;
   server_name balance.lion.club;
-  
+
   location /balance/ {
   proxy_pass http://demo_server;
   }
 }
-  
+
 ```
 
 ### 最少连接数算法
@@ -1237,7 +1222,7 @@ server {
 语法：least_conn;
 
 上下文：upstream;
-  
+
 ```
 
 示例：
@@ -1254,12 +1239,12 @@ upstream demo_server {
 server {
   listen 80;
   server_name balance.lion.club;
-  
+
   location /balance/ {
   proxy_pass http://demo_server;
   }
 }
-  
+
 ```
 
 最后你会发现，负载均衡的配置其实一点都不复杂。
@@ -1278,7 +1263,7 @@ server {
 默认值：proxy_cache off;
 
 上下文：http、server、location
-  
+
 ```
 
 ### proxy\_cache\_path
@@ -1291,7 +1276,7 @@ server {
 默认值：proxy_cache_path off
 
 上下文：http
-  
+
 ```
 
 参数含义：
@@ -1311,7 +1296,7 @@ server {
 默认值：proxy_cache_key $scheme$proxy_host$request_uri;
 
 上下文：http、server、location
-  
+
 ```
 
 ### proxy\_cache\_valid
@@ -1324,7 +1309,7 @@ server {
 上下文：http、server、location
 
 配置示例：proxy_cache_valid 200 304 2m;; # 说明对于状态为200和304的缓存文件的缓存时间是2分钟
-  
+
 ```
 
 ### proxy\_no\_cache
@@ -1337,7 +1322,7 @@ server {
 上下文：http、server、location
 
 示例：proxy_no_cache $http_pragma    $http_authorization;
-  
+
 ```
 
 ### proxy\_cache\_bypass
@@ -1350,7 +1335,7 @@ server {
 上下文：http、server、location
 
 示例：proxy_cache_bypass $http_pragma    $http_authorization;
-  
+
 ```
 
 ### upstream\_cache\_status 变量
@@ -1365,7 +1350,7 @@ STALE: 命中了陈旧缓存
 REVALIDDATED: Nginx验证陈旧缓存依然有效
 UPDATING: 内容陈旧，但正在更新
 BYPASS: X响应从原始服务器获取
-  
+
 ```
 
 ### 配置实例
@@ -1388,7 +1373,7 @@ server {
   index index.html;
   }
 }
-  
+
 ```
 
 把 `121.5.180.193`  服务器作为代理服务器，做如下配置（ `/etc/nginx/conf.d/cache.conf`  ）：
@@ -1412,7 +1397,7 @@ server {
     proxy_pass http://cache_server; # 代理转发
   }
 }
-  
+
 ```
 
 缓存就是这样配置，我们可以在 `/etc/nginx/cache_temp`  路径下找到相应的缓存文件。
@@ -1429,7 +1414,7 @@ server {
   if ($request_uri ~ \.(txt|text)$) {
   set $cache_name "no cache"
   }
-  
+
   location / {
     proxy_no_cache $cache_name; # 判断该变量是否有值，如果有值则不进行缓存，如果没有值则进行缓存
     proxy_cache cache_zone; # 设置缓存内存
@@ -1439,7 +1424,7 @@ server {
     proxy_pass http://cache_server; # 代理转发
   }
 }
-  
+
 ```
 
 ## HTTPS
@@ -1474,13 +1459,13 @@ server {
   ssl_certificate_key /etc/nginx/https/lion.club.key;      # 私钥地址
   ssl_session_timeout 10m;
   ssl_protocols TLSv1 TLSv1.1 TLSv1.2; # 支持ssl协议版本，默认为后三个，主流版本是[TLSv1.2]
- 
+
   location / {
     root         /usr/share/nginx/html;
     index        index.html index.htm;
   }
 }
-  
+
 ```
 
 如此配置后就能正常访问 `HTTPS`  版的网站了。
@@ -1504,7 +1489,7 @@ http://store.company.com/dir2/other.html 同源
 https://store.company.com/secure.html 不同源，协议不同
 http://store.company.com:81/dir/etc.html 不同源，端口不同
 http://news.company.com/dir/other.html 不同源，主机不同
-  
+
 ```
 
 不同源会有如下限制：
@@ -1533,7 +1518,7 @@ location / {
 proxy_pass dev.server.com;
 }
 }
-  
+
 ```
 
 这样可以完美绕过浏览器的同源策略： `fe.server.com`  访问 `Nginx`  的 `fe.server.com`  属于同源访问，而 `Nginx`  对服务端转发的请求不会触发浏览器的同源策略。
@@ -1546,18 +1531,18 @@ proxy_pass dev.server.com;
 
 并不是每个浏览器都支持 `gzip`  的，如何知道客户端是否支持 `gzip`  呢，请求头中的 `Accept-Encoding`  来标识对压缩的支持。
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3052179d3b724b2b9cd2334b3263280c~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0.png)
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20241015/768639cc7fda46aa874ed6194d2c879c.png)
 
 启用 `gzip`  同时需要客户端和服务端的支持，如果客户端支持 `gzip`  的解析，那么只要服务端能够返回 `gzip`  的文件就可以启用 `gzip`  了,我们可以通过 `Nginx`  的配置来让服务端支持 `gzip`
 。下面的 `respone`  中 `content-encoding:gzip`  ，指服务端开启了 `gzip`  的压缩方式。
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d6c44208107243bab7cf0b15c89a6722~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0.png)
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20241015/144bdefc71924c3788b9e8a6bb30cadb.png)
 
 在  `/etc/nginx/conf.d/`    文件夹中新建配置文件  `gzip.conf`  ：
 
 ```
 # # 默认off，是否开启gzip
-gzip on; 
+gzip on;
 # 要采用 gzip 压缩的 MIME 文件类型，其中 text/html 被系统强制启用；
 gzip_types text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript;
 
@@ -1583,7 +1568,7 @@ gzip_buffers 16 8k;
 
 # 默认 1.1，启用 gzip 所需的 HTTP 最低版本；
 gzip_http_version 1.1;
-  
+
 ```
 
 其实也可以通过前端构建工具例如 `webpack`  、`rollup`  等在打生产包时就做好 `Gzip`  压缩，然后放到 `Nginx`  服务器中，这样可以减少服务器的开销，加快访问速度。
@@ -1592,11 +1577,11 @@ gzip_http_version 1.1;
 
 ## Nginx 架构
 
-## 进程结构
+### 进程结构
 
 多进程结构 `Nginx`  的进程模型图：
 
-![未命名文件.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1be5d62fb185454d825a56bf03e7dcd5~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0.png)
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20241015/b14954122ceb485eadf9197e9c988614.png)
 
 多进程中的 `Nginx`  进程架构如下图所示，会有一个父进程（ `Master Process`  ），它会有很多子进程（ `Child Processes`  ）。
 
@@ -1605,7 +1590,7 @@ gzip_http_version 1.1;
     - 某个配置文件被修改了 `Master`  进程会去通知 `work`  进程获取新的配置信息，这也就是我们所说的热部署。
 - 子进程间是通过共享内存的方式进行通信的。
 
-## 配置文件重载原理
+### 配置文件重载原理
 
 `reload`  重载配置文件的流程：
 
@@ -1617,14 +1602,14 @@ gzip_http_version 1.1;
 6. 老的 `worker`  进程关闭监听句柄，处理完当前连接后关闭进程；
 7. 整个过程 `Nginx`  始终处于平稳运行中，实现了平滑升级，用户无感知；
 
-## Nginx 模块化管理机制
+### Nginx 模块化管理机制
 
 `Nginx`  的内部结构是由核心部分和一系列的功能模块所组成。这样划分是为了使得每个模块的功能相对简单，便于开发，同时也便于对系统进行功能扩展。`Nginx`  的模块是互相独立的,低耦合高内聚。
 
-![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7c0d0801228d409b8fc202df83a2233d~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0.png)
+![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20241015/5494052cc4f14f53b47a1dbcd10fc215.png)
 
 ## 参考
 
-+ [万字总结，体系化带你全面认识 Nginx ！](https://juejin.cn/post/6942607113118023710)
+- [万字总结，体系化带你全面认识 Nginx ！](https://juejin.cn/post/6942607113118023710)
 
 

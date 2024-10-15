@@ -39,6 +39,10 @@ math: true
 <!-- https://xiaobinqt.github.io -->
 <!-- https://www.xiaobinqt.cn -->
 
+在 Go 中，build tag 是添加到代码中第一行，来标识编译相关信息的，build tag 决定了当前文件是否会被当前 package 所包含，用于限制一整个文件是否应该被编译入最终的二进制文件，而不是一个文件中的部分代码片段。
+
+<!--more-->
+
 ## 简介
 
 在 Go 中，build tag 是添加到代码中第一行，来标识编译相关信息的，build tag 决定了当前文件是否会被当前 package 所包含，用于限制一整个文件是否应该被编译入最终的二进制文件，而不是一个文件中的部分代码片段。
