@@ -6,6 +6,9 @@
 <!-- https://xiaobinqt.github.io -->
 <!-- https://www.xiaobinqt.cn -->
 
+系统中的多个模块在不同服务器上部署，即可称为分布式系统，如 Tomcat 和数据库分别部署在不同的服务器上，或两个相同功能的 Tomcat 分别部署在不同服务器上，系统中部分节点失效时，其他节点能够接替它继续提供服务，则可认为系统具有高可用性。
+
+<!--more-->
 
 > 原文链接：[https://segmentfault.com/a/1190000018626163](https://segmentfault.com/a/1190000018626163)
 
