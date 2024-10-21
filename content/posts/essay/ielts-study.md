@@ -790,9 +790,138 @@ Current work is not really friendly done by people, every day is tired and have 
 
 "This has to be" 是一种常用的表达方式，强调某事的真实性、重要性或特别之处，常用于口语和书面语中。
 
+### 20241020
+
+"Does they live in Japan?" 不对的原因是主语和助动词不匹配。
+
+- "Does" 是用于第三人称单数（he, she, it）的助动词，而 "they" 是复数代词，所以不能搭配在一起。
+
+正确的表达是：
+
+- **Do they live in Japan?**
+
+在这里，"do" 用于复数主语 "they"。
+
+----
+
+“A class of Chinese” 不是“一节中文课”的原因是英文中不同的词语搭配会产生不同的意思。
+
+1. **A class of Chinese**：通常指**一群中国人**，因为 "a class of" 常用来描述一类或一群人，例如 "a class of students"（一班学生）。如果直接翻译，它更像是“一个中国人的群体”。
+
+2. **A Chinese class** 或 **A class in Chinese**：才是**一节中文课**的正确表达。
+    - **A Chinese class**：表示中文课程或课。
+    - **A class in Chinese**：表示用中文教授的课。
+
+因此，想表达“一节中文课”时，应该使用 "a Chinese class" 或 "a class in Chinese"。
+
+---
+
+在句子 "What kind of meat do you like?" 中，不使用 "does" 的原因是主语是 "you"。
+
+- **"Do"** 用于主语是 **I、you、we、they** 这些复数或非第三人称单数时。
+- **"Does"** 只用于 **第三人称单数**（he, she, it）。
+
+因为 "you" 是第二人称单数或复数形式，所以正确的助动词是 **"do"**，而不是 "does"。
+
+因此，正确的句子是 "What kind of meat do you like?"
+
+---
+
+"Can I take a cup of coffee for you?" 和 "Can I get you a cup of coffee?" 之间的区别在于语境和措辞的使用：
+
+1. **Can I take a cup of coffee for you?**
+    - 这句话的意思是**你是否需要我帮你拿一杯咖啡**，通常是在对方已经有咖啡，或者你代替对方去拿的时候使用。比如，对方点了咖啡，但你要帮忙拿到某个地方。
+    - 重点在“帮忙带/拿”。
+
+2. **Can I get you a cup of coffee?**
+    - 这句话的意思是**你要不要我帮你买/提供一杯咖啡**，你主动提出帮对方弄一杯咖啡。更常用于你要为对方准备或提供一杯咖啡的时候。
+    - 重点在“提供”或“帮对方准备”。
+
+简而言之：
+
+- **"Take"** 侧重于帮忙**拿走**或**递交**现有的咖啡。
+- **"Get"** 侧重于**获取**或**提供**一杯咖啡。
+
+---
+
+"to only a very limited extent"：只在非常有限的程度上。
+
+---
+
+### 20241021
+
+"Does her birthday is in March?" 是不正确的，因为在使用助动词 **"does"** 时，主句的动词应该用**原形**，而这里的 "is" 是动词 "be" 的形式，不符合这个规则。
+
+正确的表达是：
+
+- **"Is her birthday in March?"**
+  这是一般疑问句形式，直接将动词 "is" 提到句首。
+
+或者，如果要用 "does" 构造疑问句，应该这样改写：
+
+- **"Does she have a birthday in March?"**
+  这里使用 "does" 作为助动词，主句的动词 "have" 保持原形。
+
+如果句中已经有助动词 "does"，句子中其他动词需要用原形；但如果使用的是 "is"，就不能再加 "does" 作为助动词。
+
+"Does her birthday be in March?" 是不正确的，因为 **"be"** 不能和助动词 **"does"** 一起使用。助动词 **"does"** 后面需要跟动词的原形，但 **"be"** 是动词 "to be" 的基本形式，不是其在陈述句中的正常用法。
+
+对于**状态动词**（如 "is"、"are"），在构造疑问句时，不能使用 **"does"** 作为助动词。相反，应该直接把动词 "be" 移到句首。
+
+正确的表达是：
+
+- **"Is her birthday in March?"**
+
+对于 "be" 动词的疑问句，我们直接将 "be"（如 "is"、"are" 等）移到句首，不需要使用 **"do"** 或 **"does"** 作为助动词。
+
+如果要用 **"does"**，则需要改变句子的结构，使用一个不同的动词。例如：
+
+- **"Does she celebrate her birthday in March?"**
+
+这里，"does" 后面跟的是动词原形 "celebrate"。
+
+---
+
+“**Gonna**” 是 **going to** 的非正式缩写，通常用于口语或非正式书面语中，表示即将做某事或未来的计划。它不能用于正式场合或书面表达。正确使用 “gonna” 时要注意以下几点：
+
+1. **只能代替 “going to” 用于将来时**
+
+“Gonna” 表示未来的计划或意图，后面跟动词原形。
+
+- 正确：**I’m gonna eat dinner.** （我要吃晚饭。）
+- 错误：**I’m gonna to eat dinner.** （这里不需要加 "to"。）
+
+2. **主语通常是人**
+
+“Gonna” 一般用于人作为主语，表示某人要做某事。
+
+- 正确：**He’s gonna call you later.** （他一会儿会打电话给你。）
+- 错误：**It’s gonna rain tomorrow.** （这种情况更常用 "going to"：**It’s going to rain tomorrow.**）
+
+3. **用于非正式场合**
+
+适合口语、聊天或非正式写作场合中使用。
+
+- 非正式：**I’m gonna watch a movie tonight.**
+- 正式：**I’m going to watch a movie tonight.**
+
+4. **不能用于“去某个地方”**
+
+当表示**去某个地方**时，必须使用 "going to" 结构，不能用 "gonna" 替换。
+
+- 正确：**I’m going to the store.**
+- 错误：**I’m gonna the store.**
+
+总结：
+
+- **Gonna** 只能替代 "going to" + 动词原形，表示未来的行动或计划。
+- 避免在正式场合或书面表达中使用 "gonna"。
+
 ## 每周总结
 
 ### 2024/10/14-2024/10/20
+
+### 20241021-20241027
 
 
 
