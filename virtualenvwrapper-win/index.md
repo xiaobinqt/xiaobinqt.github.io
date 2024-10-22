@@ -36,7 +36,7 @@ pip install virtualenvwrapper-win
 
 修改系统环境变量，增加一个名为`WORKON_HOME`的变量。
 
-![WORKON_HOME](https://cdn.xiaobinqt.cn/xiaobinqt.io/20241022/c31ac1381fea4119a97a366dbc408fcd.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15)
+![WORKON_HOME](https://cdn.xiaobinqt.cn/xiaobinqt.io/20241022/2cac06d1965b4b2096947589c2f14b37.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'WORKON_HOME')
 
 ### 查看所有虚拟环境
 
