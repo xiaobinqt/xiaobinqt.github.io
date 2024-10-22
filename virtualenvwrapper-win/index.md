@@ -32,6 +32,12 @@ pip install virtualenvwrapper-win
 
 ![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230526/9b1e834a1bff4c54b551bedd9b49e384.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15 'mkvirtualenv')
 
+### 设置虚拟环境存储位置
+
+修改系统环境变量，增加一个名为`WORKON_HOME`的变量。
+
+![WORKON_HOME](https://cdn.xiaobinqt.cn/xiaobinqt.io/20241022/c31ac1381fea4119a97a366dbc408fcd.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15)
+
 ### 查看所有虚拟环境
 
 要列出所有可用的虚拟环境，可以使用 workon 命令，不带任何参数运行它：
@@ -93,8 +99,9 @@ pip install --upgrade pip
 
 ![](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230526/4093998f664f4d47ad95d563cbfab817.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15)
 
+## 参考
 
-
+- [mkvirtualenv命令改变虚拟环境存储位置](https://blog.csdn.net/qq_41649001/article/details/106454327)
 
 
 
