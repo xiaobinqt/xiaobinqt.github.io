@@ -18,7 +18,7 @@ featuredImage: ""
 reproduce: false
 
 tags: [ "wampserver","php" ]
-categories: [ "开发者手册" ]
+categories: [ "开发者手册","php" ]
 lightgallery: true
 
 toc: true
@@ -37,6 +37,8 @@ math: true
 当然国产的 phpStudy 也可以，个人喜好问题。
 
 ## 下载
+
+> 如果缺少 Visual C++ 的扩展，可以去 [https://wampserver.aviatechno.net/](https://wampserver.aviatechno.net/) 统一下载。
 
 安装 wampserver 之前我们需要先安装 Visual C++ Redistributable for Visual Studio，这是 visual 2015
 的下载地址 [Visual C++ Redistributable for Visual Studio 2015 from Official Microsoft Download Center](https://www.microsoft.com/en-us/download/details.aspx?id=48145)
@@ -93,7 +95,6 @@ visual c++ redistributable for visual studio 2012 在很多时候已经不能用
 访问示例
 
 ![访问示例](https://cdn.xiaobinqt.cn/xiaobinqt.io/20230411/16f1c29cdfea48dbaa297f972b81b723.png '访问示例')
-
 
 
 

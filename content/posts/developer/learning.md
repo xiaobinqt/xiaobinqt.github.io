@@ -2,7 +2,7 @@
 title: "学习资料"
 subtitle: "持续更新"
 
-weight: 3
+weight:
 
 init_date: "2024-09-05T23:01:09+08:00"
 
