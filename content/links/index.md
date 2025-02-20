@@ -11,11 +11,11 @@ author: "xiaobinqt"
 description: ""
 resources:
 
-- name: ""
-  src: ""
+  - name: ""
+    src: ""
 
-tags: [""]
-categories: [""]
+tags: [ "" ]
+categories: [ "" ]
 lightgallery: true
 
 toc: true
@@ -57,18 +57,6 @@ math: true
         </div>
         <div class="frienddivright">
             <div class="friendname">西瓜</div>
-            <div class="friendinfo"></div>
-        </div>
-    </div>
-</a>
-
-<a target="_blank" href="http://liupray.com/" title="liupray" class="friendurl">
-    <div class="frienddiv">
-        <div class="frienddivleft">
-            <img class="myfriend" src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220509/f06314d098f24b79b3c0f14971251609.png">
-        </div>
-        <div class="frienddivright">
-            <div class="friendname">liupray</div>
             <div class="friendinfo"></div>
         </div>
     </div>

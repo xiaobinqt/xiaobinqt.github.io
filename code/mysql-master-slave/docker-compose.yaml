@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  mysql-master:
+    image: mysql:8.0
+    container_name: mysql-master
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: mydatabase
+    volumes:
+      - ./mysql.cnf:/etc/mysql/my.cnf
+      - ./ssl:/etc/mysql/ssl
+    networks:
+      - mysql-network
+    ports:
+      - "3307:3306"
+    command:
+      --server-id=1
+      --log-bin=mysql-bin
+      --binlog-do-db=mydatabase
+      --require-secure-transport=ON
+      --ssl-ca=/etc/mysql/ssl/ca-cert.pem
+      --ssl-cert=/etc/mysql/ssl/server-cert.pem
+      --ssl-key=/etc/mysql/ssl/server-key.pem
+      --default-authentication-plugin=caching_sha2_password
+    restart: always
+
+  mysql-slave:
+    image: mysql:8.0
+    container_name: mysql-slave
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: mydatabase
+    volumes:
+      - ./mysql.cnf:/etc/mysql/my.cnf
+      - ./ssl:/etc/mysql/ssl
+    networks:
+      - mysql-network
+    ports:
+      - "3308:3306"
+    command:
+      --server-id=2
+      --relay-log=mysql-relay-bin
+      # --log-bin=mysql-bin # 从库非必须
+      --binlog-do-db=mydatabase
+      --require-secure-transport=ON
+      --ssl-ca=/etc/mysql/ssl/ca-cert.pem
+      --ssl-cert=/etc/mysql/ssl/client-cert.pem
+      --ssl-key=/etc/mysql/ssl/client-key.pem
+      --default-authentication-plugin=caching_sha2_password
+    restart: always
+
+networks:
+  mysql-network:
+    driver: bridge

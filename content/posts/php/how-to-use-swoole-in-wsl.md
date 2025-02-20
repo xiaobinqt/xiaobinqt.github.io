@@ -13,7 +13,7 @@ lastmod: 2025-02-17
 draft: false
 
 author: "xiaobinqt"
-description: "xiaobinqt,"
+description: "xiaobinqt,swoole 如何安装, ubuntu 安装 swoole, swoole 路由"
 
 featuredImage: ""
 
@@ -45,6 +45,10 @@ math: true
 前几天一个同学问了我几个 swoole 的问题，好吧，我承认我已经好多年没写 php 了。刚好今天有空看了下 swoole 文档，学习了一下。
 
 在 Windows 上使用 Swoole 可能会遇到一些限制（我今年一定要换一个 mac:cry:），因为 Swoole 主要是为 Linux 环境设计的，依赖于 Linux 的一些特性（如 epoll、信号处理等）。如果一定要在 windows 上使用 swoole，推荐使用 WSL。
+
+我的 WSL 版本是 Ubuntu 22.04.5 LTS。
+
+![wsl 版本](https://cdn.xiaobinqt.cn/xiaobinqt.io/20250220/cab7d50cbf6841278236df88f19871e3.png 'wsl 版本')
 
 ## PPA
 
@@ -507,4 +511,6 @@ sudo apt install php8.4-mysql
 
 ## 参考
 
-- [swoole 文档](https://wiki.swoole.com/zh-cn/#/)
+- [swoole 文档 https://wiki.swoole.com/zh-cn/#/](https://wiki.swoole.com/zh-cn/#/)
+
+
