@@ -1,0 +1,90 @@
+version: '3.8'
+
+services:
+  mongo1:
+    image: mongo:6.0.3
+    container_name: mongo1
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    volumes:
+      - ./mongo1-data:/data/db
+      - ./mongodb-keyfile:/etc/mongodb-keyfile
+    command: mongod --replSet rs0 --bind_ip_all --keyFile /etc/mongodb-keyfile --auth
+    entrypoint:
+      - bash
+      - -c
+      - |
+        chmod 400 /etc/mongodb-keyfile
+        chown 999:999 /etc/mongodb-keyfile
+        exec docker-entrypoint.sh $$@
+
+  mongo2:
+    image: mongo:6.0.3
+    container_name: mongo2
+    restart: always
+    ports:
+      - "27018:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    volumes:
+      - ./mongo2-data:/data/db
+      - ./mongodb-keyfile:/etc/mongodb-keyfile
+    command: mongod --replSet rs0 --bind_ip_all --keyFile /etc/mongodb-keyfile --auth
+    entrypoint:
+      - bash
+      - -c
+      - |
+        chmod 400 /etc/mongodb-keyfile
+        chown 999:999 /etc/mongodb-keyfile
+        exec docker-entrypoint.sh $$@
+
+  mongo3:
+    image: mongo:6.0.3
+    container_name: mongo3
+    restart: always
+    ports:
+      - "27019:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    volumes:
+      - ./mongo3-data:/data/db
+      - ./mongodb-keyfile:/etc/mongodb-keyfile
+    command: mongod --replSet rs0 --bind_ip_all --keyFile /etc/mongodb-keyfile --auth
+    entrypoint:
+      - bash
+      - -c
+      - |
+        chmod 400 /etc/mongodb-keyfile
+        chown 999:999 /etc/mongodb-keyfile
+        exec docker-entrypoint.sh $$@
+
+  mongo-arbiter:
+    image: mongo:6.0.3
+    container_name: mongo-arbiter
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    volumes:
+      - ./mongo-arbiter-data:/data/db
+      - ./mongodb-keyfile:/etc/mongodb-keyfile
+    command: mongod --replSet rs0 --bind_ip_all --keyFile /etc/mongodb-keyfile --auth
+    entrypoint:
+      - bash
+      - -c
+      - |
+        chmod 400 /etc/mongodb-keyfile
+        chown 999:999 /etc/mongodb-keyfile
+        exec docker-entrypoint.sh $$@
+
+volumes:
+  mongo1-data:
+  mongo2-data:
+  mongo3-data:
+  mongo-arbiter-data:
