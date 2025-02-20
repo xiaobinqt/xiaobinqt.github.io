@@ -40,18 +40,6 @@
     </div>
 </a>
 
-<a target="_blank" href="http://liupray.com/" title="liupray" class="friendurl">
-    <div class="frienddiv">
-        <div class="frienddivleft">
-            <img class="myfriend" src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220509/f06314d098f24b79b3c0f14971251609.png">
-        </div>
-        <div class="frienddivright">
-            <div class="friendname">liupray</div>
-            <div class="friendinfo"></div>
-        </div>
-    </div>
-</a>
-
 <a target="_blank" href="https://xiaowuneng.github.io/" title="xiaowuneng" class="friendurl">
     <div class="frienddiv">
         <div class="frienddivleft">

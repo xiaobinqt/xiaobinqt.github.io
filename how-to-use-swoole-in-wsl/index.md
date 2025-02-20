@@ -11,6 +11,10 @@
 
 在 Windows 上使用 Swoole 可能会遇到一些限制（我今年一定要换一个 mac:cry:），因为 Swoole 主要是为 Linux 环境设计的，依赖于 Linux 的一些特性（如 epoll、信号处理等）。如果一定要在 windows 上使用 swoole，推荐使用 WSL。
 
+我的 WSL 版本是 Ubuntu 22.04.5 LTS。
+
+![wsl 版本](https://cdn.xiaobinqt.cn/xiaobinqt.io/20250220/cab7d50cbf6841278236df88f19871e3.png 'wsl 版本')
+
 ## PPA
 
 PPA 是 **Personal Package Archive** 的缩写，是 Ubuntu 系统中一种由个人或团队维护的软件仓库。它允许开发者将自己编写的软件或更新发布到一个独立的仓库中，用户可以通过添加这些仓库来安装官方软件源中没有的软件或更新版本。
@@ -472,5 +476,7 @@ sudo apt install php8.4-mysql
 
 ## 参考
 
-- [swoole 文档](https://wiki.swoole.com/zh-cn/#/)
+- [swoole 文档 https://wiki.swoole.com/zh-cn/#/](https://wiki.swoole.com/zh-cn/#/)
+
+
 
