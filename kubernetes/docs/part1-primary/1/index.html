@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="
+  1.1 Docker 简介
+  #
+
+
+目前使用 Docker 基本上有两个选择：Docker Desktop 和 Docker Engine。
+Docker Desktop 是专门针对个人使用而设计的，支持 Mac 和 Windows 快速安装，具有直观的图形界面，还集成了许多周边工具，方便易用。Docker Engine 完全免费，但只能在 Linux 上运行，只能使用命令行操作，缺乏辅助工具，需要我们自己动手安装运行环境，是现在各个公司在生产环境中实际使用的 Docker 产品，毕竟机房里 99% 的服务器跑的都是 Linux。
+
+  1.1.1 Docker 安装
+  #
+
+Docker 的安装可以参看官网 
+  https://docs.docker.com/engine/install/
+
+Docker Engine 不像 Docker Desktop 那样可以安装后就直接使用，必须要做一些手工调整才能用起来，所以在安装完毕后需要执行下面的两条命令：
+sudo service docker start       #启动docker服务
+sudo usermod -aG docker ${USER} #当前用户加入docker组
+第一个 service docker start 是启动 Docker 的后台服务，第二个 usermod -aG 是把当前的用户加入 Docker 的用户组。这是因为操作 Docker 必须要有 root 权限，而直接使用 root 用户不够安全，加入 Docker 用户组是一个比较好的选择，这也是 Docker 官方推荐的做法。当然，如果为了图省事，也可以直接切换到 root 用户来操作 Docker。">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/kubernetes/docs/part1-primary/1/">
+  <meta property="og:site_name" content="Kubernetes 学习笔记">
+  <meta property="og:title" content="1.1 Docker 简介">
+  <meta property="og:description" content="1.1 Docker 简介 # 目前使用 Docker 基本上有两个选择：Docker Desktop 和 Docker Engine。
+Docker Desktop 是专门针对个人使用而设计的，支持 Mac 和 Windows 快速安装，具有直观的图形界面，还集成了许多周边工具，方便易用。Docker Engine 完全免费，但只能在 Linux 上运行，只能使用命令行操作，缺乏辅助工具，需要我们自己动手安装运行环境，是现在各个公司在生产环境中实际使用的 Docker 产品，毕竟机房里 99% 的服务器跑的都是 Linux。
+1.1.1 Docker 安装 # Docker 的安装可以参看官网 https://docs.docker.com/engine/install/
+Docker Engine 不像 Docker Desktop 那样可以安装后就直接使用，必须要做一些手工调整才能用起来，所以在安装完毕后需要执行下面的两条命令：
+sudo service docker start #启动docker服务 sudo usermod -aG docker ${USER} #当前用户加入docker组 第一个 service docker start 是启动 Docker 的后台服务，第二个 usermod -aG 是把当前的用户加入 Docker 的用户组。这是因为操作 Docker 必须要有 root 权限，而直接使用 root 用户不够安全，加入 Docker 用户组是一个比较好的选择，这也是 Docker 官方推荐的做法。当然，如果为了图省事，也可以直接切换到 root 用户来操作 Docker。">
+  <meta property="og:locale" content="zh">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:modified_time" content="2023-05-09T15:51:58+08:00">
+<title>1.1 Docker 简介 | Kubernetes 学习笔记</title>
+<link rel="icon" href="/kubernetes/favicon.png" >
+<link rel="manifest" href="/kubernetes/manifest.json">
+<link rel="canonical" href="https://example.com/kubernetes/docs/part1-primary/1/">
+<link rel="stylesheet" href="/kubernetes/book.min.96232821adba402ff85cecaf752901db2c4375526aabb73e5d04cace30043e27.css" integrity="sha256-liMoIa26QC/4XOyvdSkB2yxDdVJqq7c&#43;XQTKzjAEPic=" crossorigin="anonymous">
+  <script defer src="/kubernetes/fuse.min.js"></script>
+  <script defer src="/kubernetes/zh.search.min.6a64e1f79d0728038613778a9797ae32aeb3f6f6d8d4d085e866a2b792b9a97f.js" integrity="sha256-amTh950HKAOGE3eKl5euMq6z9vbY1NCF6Gait5K5qX8=" crossorigin="anonymous"></script>
+
+  <script defer src="/kubernetes/sw.min.18ff75d546fc59b9d538e96815256b253062dc991f14b3caff0f35a243a406d1.js" integrity="sha256-GP911Ub8WbnVOOloFSVrJTBi3JkfFLPK/w81okOkBtE=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/kubernetes/"><span>Kubernetes 学习笔记</span>
+  </a>
+</h2>
+
+
+<div class="book-search hidden">
+  <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+
+
+<ul>
+    <li>
+        <a href="javascript:void(0)" onclick="hrefIndex()" rel="noopener">主页</a>
+    </li>
+    <li>
+        <a href="https://github.com/xiaobinqt" target="_blank" rel="noopener">GitHub</a>
+    </li>
+</ul>
+
+<hr>
+
+<script>
+    function hrefIndex() {
+        window.location = window.location.origin;
+    }
+</script>
+
+
+  
+<ul>
+  
+  <li>
+    <a href=""  target="_blank" rel="noopener">
+        
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第一部分 Docker</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1/" class="active">1.1 Docker 简介</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第二部分 入门</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2/" class="">2.1 简介</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/kubernetes/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>1.1 Docker 简介</h3>
+
+  <label for="toc-control">
+    
+    <img src="/kubernetes/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#11-docker-简介">1.1 Docker 简介</a>
+      <ul>
+        <li><a href="#111-docker-安装">1.1.1 Docker 安装</a></li>
+        <li><a href="#112-docker-架构">1.1.2 Docker 架构</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown book-article"><h1 id="11-docker-简介">
+  1.1 Docker 简介
+  <a class="anchor" href="#11-docker-%e7%ae%80%e4%bb%8b">#</a>
+</h1>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230509/d55b31e11e9546cb992bbd5af756b5ca.png" width=  /></div>
+<p>目前使用 Docker 基本上有两个选择：Docker Desktop 和 Docker Engine。</p>
+<p>Docker Desktop 是专门针对个人使用而设计的，支持 Mac 和 Windows 快速安装，具有直观的图形界面，还集成了许多周边工具，方便易用。Docker Engine 完全免费，但只能在 Linux 上运行，只能使用命令行操作，缺乏辅助工具，需要我们自己动手安装运行环境，是现在各个公司在生产环境中实际使用的 Docker 产品，毕竟机房里 99% 的服务器跑的都是 Linux。</p>
+<h2 id="111-docker-安装">
+  1.1.1 Docker 安装
+  <a class="anchor" href="#111-docker-%e5%ae%89%e8%a3%85">#</a>
+</h2>
+<p>Docker 的安装可以参看官网 
+  <a href="https://docs.docker.com/engine/install/">https://docs.docker.com/engine/install/</a></p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230509/2b23eaefbd5c48efa34ae369fbe20cc2.png" width=  /></div>
+<p>Docker Engine 不像 Docker Desktop 那样可以安装后就直接使用，必须要做一些手工调整才能用起来，所以在安装完毕后需要执行下面的两条命令：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sudo service docker start       <span style="color:#75715e">#启动docker服务</span>
+</span></span><span style="display:flex;"><span>sudo usermod -aG docker <span style="color:#e6db74">${</span>USER<span style="color:#e6db74">}</span> <span style="color:#75715e">#当前用户加入docker组</span>
+</span></span></code></pre></div><p>第一个 service docker start 是启动 Docker 的后台服务，第二个 usermod -aG 是把当前的用户加入 Docker 的用户组。这是因为操作 Docker 必须要有 root 权限，而直接使用 root 用户不够安全，加入 Docker 用户组是一个比较好的选择，这也是 Docker <strong>官方推荐</strong>的做法。当然，如果为了图省事，也可以直接切换到 root 用户来操作 Docker。</p>
+<h2 id="112-docker-架构">
+  1.1.2 Docker 架构
+  <a class="anchor" href="#112-docker-%e6%9e%b6%e6%9e%84">#</a>
+</h2>
+<p>这张图来自 Docker 官网 
+  <a href="https://docs.docker.com/get-started/overview/">https://docs.docker.com/get-started/overview/</a>，描述了 Docker Engine 的内部角色和工作流程。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230509/92cdcf27d7014993af036ebf0383e3c1.png" width=  /></div>
+<p>命令行 docker 实际上是一个客户端 client ，它会与 Docker Engine 里的后台服务 Docker daemon 通信，而镜像则存储在远端的仓库 Registry 里，客户端并不能直接访问镜像仓库。</p>
+<p>在 Docker Engine 里，真正干活的其实是默默运行在后台的 Docker daemon。Docker client 可以通过 build、pull、run 等命令向 Docker daemon 发送请求，而 Docker daemon 则是容器和镜像的 “大管家”，负责从远端拉取镜像、在本地存储镜像，还有从镜像生成容器、管理容器等所有功能。</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/56fc0723b1f0f7c6175b1f8b4e8bc2ac3365735b" title='最后修改者 weibin | 五月 9, 2023' target="_blank" rel="noopener">
+      <img src="/kubernetes/svg/calendar.svg" class="book-icon" alt="" />
+      <span>五月 9, 2023</span>
+    </a>
+  </div>
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/book.kubernetes/docs/part1-primary/1.1-docker-brief.md" target="_blank" rel="noopener">
+      <img src="/kubernetes/svg/edit.svg" class="book-icon" alt="" />
+      <span>编辑本页</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#11-docker-简介">1.1 Docker 简介</a>
+      <ul>
+        <li><a href="#111-docker-安装">1.1.1 Docker 安装</a></li>
+        <li><a href="#112-docker-架构">1.1.2 Docker 架构</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

@@ -48,8 +48,12 @@ if (nums[middle] &gt; target) right更新为middle，因为当前nums[middle]不
 
 
 
-  Go
-  区间左闭右闭
+Go
+
+
+**区间左闭右闭**
+
+```go
 package main
 
 import (
@@ -78,29 +82,79 @@ func binarySearch(nums []int, target int) int {
 
 	return -1
 }
-区间左闭右开">
+
+```
+
+**区间左闭右开**
+
+```go
+package main
+
+import (
+	&#34;fmt&#34;
+)
+
+func main() {
+	arr := []int{0, 1, 2, 3, 4, 5, 10}
+	fmt.Println(binarySearch(arr, 10))
+}
+
+func binarySearch(nums []int, target int) int {
+	left := 0
+	right := len(nums)
+
+	for left &lt; right {
+		middle := (left &#43; right) / 2
+		if target &gt; nums[middle] {
+			left = middle &#43; 1
+		} else if target &lt; nums[middle] {
+			right = middle
+		} else {
+			return middle
+		}
+	}
+
+	return -1
+}
+
+```
+
+
+
+
+
+
+Python
+
+
+TODO
+
+
+
+
+
+">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/leetcode/docs/easy/704/">
   <meta property="og:site_name" content="LeetCode">
   <meta property="og:title" content="704. 二分查找">
-  <meta property="og:description" content=" 704. 二分查找 # 题目地址 # 力扣 LeetCode 解题思路 # 可以参考
+  <meta property="og:description" content="704. 二分查找 # 题目地址 # 力扣 LeetCode 解题思路 # 可以参考
 https://www.bilibili.com/video/BV1fA4y1o715 二分查找 对于常规实现来说，在解题时要区分区间，也就是左闭右闭还是左闭右开区间两种解法，其实就是要区分右闭还是右开，在临界条件判断时包不包含最右边的值。
 对于左闭右闭来说，包含最右边，所以在临界条件判断时，左边的值可以等于右边的值，那么right其实是数组长度-1，也就是数组最后一个值。
 while (left &lt;= right)，因为left == right是有意义的，所以使用&lt;= if (nums[middle] &gt; target)，right要赋值为middle - 1，因为当前这个nums[middle]一定不是target，那么接下来要查找的左区间结束下标位置就是middle - 1 但是对于左闭右开来说，因为不包含最右元素，那么right其实就是数组长度，right 取不到数组最后一个值。
-while (left &lt; right)，因为left == right在区间[left, right)是没有意义的，所以这里要用&lt; if (nums[middle] &gt; target) right更新为middle，因为当前nums[middle]不等于target，去左区间继续寻找，而寻找区间是左闭右开区间，所以right更新为middle，也就是说，下一个查询区间不会去比较nums[middle] 具体实现 # Go 区间左闭右闭
-package main import ( &#34;fmt&#34; ) func main() { arr := []int{0, 1, 2, 3, 4, 5, 10} fmt.Println(binarySearch(arr, 10)) } func binarySearch(nums []int, target int) int { left := 0 right := len(nums) - 1 for left &lt;= right { middle := (left &#43; right) / 2 if target &gt; nums[middle] { left = middle &#43; 1 } else if target &lt; nums[middle] { right = middle - 1 } else { return middle } } return -1 } 区间左闭右开">
+while (left &lt; right)，因为left == right在区间[left, right)是没有意义的，所以这里要用&lt; if (nums[middle] &gt; target) right更新为middle，因为当前nums[middle]不等于target，去左区间继续寻找，而寻找区间是左闭右开区间，所以right更新为middle，也就是说，下一个查询区间不会去比较nums[middle] 具体实现 # Go **区间左闭右闭** ```go package main import ( &#34;fmt&#34; ) func main() { arr := []int{0, 1, 2, 3, 4, 5, 10} fmt.Println(binarySearch(arr, 10)) } func binarySearch(nums []int, target int) int { left := 0 right := len(nums) - 1 for left &lt;= right { middle := (left &#43; right) / 2 if target &gt; nums[middle] { left = middle &#43; 1 } else if target &lt; nums[middle] { right = middle - 1 } else { return middle } } return -1 } ``` **区间左闭右开** ```go package main import ( &#34;fmt&#34; ) func main() { arr := []int{0, 1, 2, 3, 4, 5, 10} fmt.Println(binarySearch(arr, 10)) } func binarySearch(nums []int, target int) int { left := 0 right := len(nums) for left &lt; right { middle := (left &#43; right) / 2 if target &gt; nums[middle] { left = middle &#43; 1 } else if target &lt; nums[middle] { right = middle } else { return middle } } return -1 } ``` Python TODO">
   <meta property="og:locale" content="zh">
   <meta property="og:type" content="article">
     <meta property="article:section" content="docs">
     <meta property="article:modified_time" content="2023-01-06T16:11:55+08:00">
 <title>704. 二分查找 | LeetCode</title>
-<link rel="manifest" href="/leetcode/manifest.json">
 <link rel="icon" href="/leetcode/favicon.png" >
+<link rel="manifest" href="/leetcode/manifest.json">
 <link rel="canonical" href="https://example.com/leetcode/docs/easy/704/">
-<link rel="stylesheet" href="/leetcode/book.min.c800dd82e49099945db6750ce1011947221e4464ea7e2ba833b653fe2dd19d1c.css" integrity="sha256-yADdguSQmZRdtnUM4QEZRyIeRGTqfiuoM7ZT/i3RnRw=" crossorigin="anonymous">
+<link rel="stylesheet" href="/leetcode/book.min.96232821adba402ff85cecaf752901db2c4375526aabb73e5d04cace30043e27.css" integrity="sha256-liMoIa26QC/4XOyvdSkB2yxDdVJqq7c&#43;XQTKzjAEPic=" crossorigin="anonymous">
   <script defer src="/leetcode/fuse.min.js"></script>
-  <script defer src="/leetcode/zh.search.min.80799504bc8f1d4c55b4f5f207e6a45d3459d9bb9cbbb162df6d2a780571c061.js" integrity="sha256-gHmVBLyPHUxVtPXyB&#43;akXTRZ2bucu7Fi320qeAVxwGE=" crossorigin="anonymous"></script>
+  <script defer src="/leetcode/zh.search.min.1508b611b19082d8eaf7334a3e9c5fed683af0a30dad56c438ffda1915729057.js" integrity="sha256-FQi2EbGQgtjq9zNKPpxf7Wg68KMNrVbEOP/aGRVykFc=" crossorigin="anonymous"></script>
 
   <script defer src="/leetcode/sw.min.c814046bee19bfa0279b71972af9d15919d290341d7ecdfe781d2e1113df9ad1.js" integrity="sha256-yBQEa&#43;4Zv6Anm3GXKvnRWRnSkDQdfs3&#43;eB0uERPfmtE=" crossorigin="anonymous"></script>
 <!--
@@ -168,7 +222,6 @@ https://github.com/alex-shpak/hugo-book
 
 
 
-  
 
 
 
@@ -792,7 +845,7 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/other/interview-08.06/" class="">😪面试题 08.06. 汉诺塔问题</a>
+    <a href="/leetcode/docs/other/interview-08/" class="">😪面试题 08.06. 汉诺塔问题</a>
   
 
         </li>
@@ -831,7 +884,6 @@ https://github.com/alex-shpak/hugo-book
 
 
 
-
 </nav>
 
 
@@ -852,7 +904,7 @@ https://github.com/alex-shpak/hugo-book
     <img src="/leetcode/svg/menu.svg" class="book-icon" alt="Menu" />
   </label>
 
-  <strong>704. 二分查找</strong>
+  <h3>704. 二分查找</h3>
 
   <label for="toc-control">
     
@@ -927,73 +979,97 @@ https://github.com/alex-shpak/hugo-book
   具体实现
   <a class="anchor" href="#%e5%85%b7%e4%bd%93%e5%ae%9e%e7%8e%b0">#</a>
 </h2>
+<div class="book-tabs">
 
 
 
+<input type="radio" class="toggle" name="tabs-uniqueid" id="tabs-uniqueid-0" checked="checked" />
+<label for="tabs-uniqueid-0">Go</label>
+<div class="book-tabs-content markdown-inner">
 
-<div class="book-tabs"><input type="radio" class="toggle" name="tabs-uniqueid" id="tabs-uniqueid-0" checked="checked" />
-  <label for="tabs-uniqueid-0">Go</label>
-  <div class="book-tabs-content markdown-inner"><p><strong>区间左闭右闭</strong></p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> (
-</span></span><span style="display:flex;"><span>	<span style="color:#e6db74">&#34;fmt&#34;</span>
-</span></span><span style="display:flex;"><span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">arr</span> <span style="color:#f92672">:=</span> []<span style="color:#66d9ef">int</span>{<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">4</span>, <span style="color:#ae81ff">5</span>, <span style="color:#ae81ff">10</span>}
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">binarySearch</span>(<span style="color:#a6e22e">arr</span>, <span style="color:#ae81ff">10</span>))
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">binarySearch</span>(<span style="color:#a6e22e">nums</span> []<span style="color:#66d9ef">int</span>, <span style="color:#a6e22e">target</span> <span style="color:#66d9ef">int</span>) <span style="color:#66d9ef">int</span> {
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">left</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">right</span> <span style="color:#f92672">:=</span> len(<span style="color:#a6e22e">nums</span>) <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">left</span> <span style="color:#f92672">&lt;=</span> <span style="color:#a6e22e">right</span> {
-</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">middle</span> <span style="color:#f92672">:=</span> (<span style="color:#a6e22e">left</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">right</span>) <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>
-</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">target</span> &gt; <span style="color:#a6e22e">nums</span>[<span style="color:#a6e22e">middle</span>] {
-</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">left</span> = <span style="color:#a6e22e">middle</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>
-</span></span><span style="display:flex;"><span>		} <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">target</span> &lt; <span style="color:#a6e22e">nums</span>[<span style="color:#a6e22e">middle</span>] {
-</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">right</span> = <span style="color:#a6e22e">middle</span> <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>
-</span></span><span style="display:flex;"><span>		} <span style="color:#66d9ef">else</span> {
-</span></span><span style="display:flex;"><span>			<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">middle</span>
-</span></span><span style="display:flex;"><span>		}
-</span></span><span style="display:flex;"><span>	}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p><strong>区间左闭右开</strong></p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> (
-</span></span><span style="display:flex;"><span>	<span style="color:#e6db74">&#34;fmt&#34;</span>
-</span></span><span style="display:flex;"><span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">arr</span> <span style="color:#f92672">:=</span> []<span style="color:#66d9ef">int</span>{<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">4</span>, <span style="color:#ae81ff">5</span>, <span style="color:#ae81ff">10</span>}
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">binarySearch</span>(<span style="color:#a6e22e">arr</span>, <span style="color:#ae81ff">10</span>))
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">binarySearch</span>(<span style="color:#a6e22e">nums</span> []<span style="color:#66d9ef">int</span>, <span style="color:#a6e22e">target</span> <span style="color:#66d9ef">int</span>) <span style="color:#66d9ef">int</span> {
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">left</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">right</span> <span style="color:#f92672">:=</span> len(<span style="color:#a6e22e">nums</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">left</span> &lt; <span style="color:#a6e22e">right</span> {
-</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">middle</span> <span style="color:#f92672">:=</span> (<span style="color:#a6e22e">left</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">right</span>) <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>
-</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">target</span> &gt; <span style="color:#a6e22e">nums</span>[<span style="color:#a6e22e">middle</span>] {
-</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">left</span> = <span style="color:#a6e22e">middle</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>
-</span></span><span style="display:flex;"><span>		} <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">target</span> &lt; <span style="color:#a6e22e">nums</span>[<span style="color:#a6e22e">middle</span>] {
-</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">right</span> = <span style="color:#a6e22e">middle</span>
-</span></span><span style="display:flex;"><span>		} <span style="color:#66d9ef">else</span> {
-</span></span><span style="display:flex;"><span>			<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">middle</span>
-</span></span><span style="display:flex;"><span>		}
-</span></span><span style="display:flex;"><span>	}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div></div><input type="radio" class="toggle" name="tabs-uniqueid" id="tabs-uniqueid-1"  />
-  <label for="tabs-uniqueid-1">Python</label>
-  <div class="book-tabs-content markdown-inner">TODO</div></div>
+**区间左闭右闭**
+
+```go
+package main
+
+import (
+	"fmt"
+)
+
+func main() {
+	arr := []int{0, 1, 2, 3, 4, 5, 10}
+	fmt.Println(binarySearch(arr, 10))
+}
+
+func binarySearch(nums []int, target int) int {
+	left := 0
+	right := len(nums) - 1
+
+	for left <= right {
+		middle := (left + right) / 2
+		if target > nums[middle] {
+			left = middle + 1
+		} else if target < nums[middle] {
+			right = middle - 1
+		} else {
+			return middle
+		}
+	}
+
+	return -1
+}
+
+```
+
+**区间左闭右开**
+
+```go
+package main
+
+import (
+	"fmt"
+)
+
+func main() {
+	arr := []int{0, 1, 2, 3, 4, 5, 10}
+	fmt.Println(binarySearch(arr, 10))
+}
+
+func binarySearch(nums []int, target int) int {
+	left := 0
+	right := len(nums)
+
+	for left < right {
+		middle := (left + right) / 2
+		if target > nums[middle] {
+			left = middle + 1
+		} else if target < nums[middle] {
+			right = middle
+		} else {
+			return middle
+		}
+	}
+
+	return -1
+}
+
+```
+
+</div>
+
+
+
+<input type="radio" class="toggle" name="tabs-uniqueid" id="tabs-uniqueid-1"  />
+<label for="tabs-uniqueid-1">Python</label>
+<div class="book-tabs-content markdown-inner">
+
+TODO
+
+</div>
+
+
+
+</div>
 
 </article>
  
@@ -1013,7 +1089,7 @@ https://github.com/alex-shpak/hugo-book
 
 
   <div>
-    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/content/docs/easy/704.md" target="_blank" rel="noopener">
+    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/book.leetcode/docs/easy/704.md" target="_blank" rel="noopener">
       <img src="/leetcode/svg/edit.svg" class="book-icon" alt="" />
       <span>编辑本页</span>
     </a>
