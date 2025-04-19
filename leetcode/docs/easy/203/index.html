@@ -49,15 +49,18 @@
 
 
 
-  Go迭代
-  package main
+Go迭代
+
+
+```go
+package main
 
 import (
 	&#34;fmt&#34;
 )
 
 func removeElements(head *ListNode, val int) *ListNode {
-	dummyHead := &amp;ListNode{
+	dummyHead := &ListNode{
 		Val:  0,
 		Next: head,
 	}
@@ -82,13 +85,13 @@ type ListNode struct {
 }
 
 func main() {
-	x := removeElements(&amp;ListNode{
+	x := removeElements(&ListNode{
 		Val: 1,
-		Next: &amp;ListNode{
+		Next: &ListNode{
 			Val: 2,
-			Next: &amp;ListNode{
+			Next: &ListNode{
 				Val: 1,
-				Next: &amp;ListNode{
+				Next: &ListNode{
 					Val:  3,
 					Next: nil,
 				},
@@ -99,8 +102,19 @@ func main() {
 	fmt.Println(x)
 }
 
-  Go递归
-  package main
+
+```
+
+
+
+
+
+
+Go递归
+
+
+````go
+package main
 
 import &#34;fmt&#34;
 
@@ -123,13 +137,13 @@ func removeElements(head *ListNode, val int) *ListNode {
 }
 
 func main() {
-	x := removeElements(&amp;ListNode{
+	x := removeElements(&ListNode{
 		Val: 1,
-		Next: &amp;ListNode{
+		Next: &ListNode{
 			Val: 2,
-			Next: &amp;ListNode{
+			Next: &ListNode{
 				Val: 1,
-				Next: &amp;ListNode{
+				Next: &ListNode{
 					Val:  3,
 					Next: nil,
 				},
@@ -139,13 +153,20 @@ func main() {
 
 	fmt.Println(x)
 }
+
+````
+
+
+
+
+
 ">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/leetcode/docs/easy/203/">
   <meta property="og:site_name" content="LeetCode">
   <meta property="og:title" content="203. 移除链表元素">
-  <meta property="og:description" content=" 203. 移除链表元素 # 题目地址 # 力扣 LeetCode 解题思路 # 参看 https://leetcode.cn/problems/remove-linked-list-elements/solutions/813358/yi-chu-lian-biao-yuan-su-by-leetcode-sol-654m/
+  <meta property="og:description" content="203. 移除链表元素 # 题目地址 # 力扣 LeetCode 解题思路 # 参看 https://leetcode.cn/problems/remove-linked-list-elements/solutions/813358/yi-chu-lian-biao-yuan-su-by-leetcode-sol-654m/
 迭代法 # 用 curr 表示当前节点。如果 curr 的下一个节点不为空且下一个节点的节点值等于给定的 val，则需要删除下一个节点。删除下一个节点可以通过 curr.next=curr.next.next 实现。
 如果 curr 的下一个节点的节点值不等于给定的 val，则保留下一个节点，将 curr 移动到下一个节点即可。
 当curr的下一个节点为空时，链表遍历结束，此时所有节点值等于 val 的节点都被删除。
@@ -155,18 +176,18 @@ func main() {
 递归的核心在于，我只关注我这一层要干什么，返回什么，至于我的下一层（规模减 1），我不管，我就是甩手掌柜。
 那么现在我要删除特定链表元素，我需要怎么做❓
 如果链表是nil我就直接返回，我的 next 让工具人函数去判断，当工具人函数做完判断给我之后，我按需 return，也就是如果 head.Val == val return head.Next，否则直接 return head。
-具体实现 # Go迭代 package main import ( &#34;fmt&#34; ) func removeElements(head *ListNode, val int) *ListNode { dummyHead := &amp;ListNode{ Val: 0, Next: head, } curr := dummyHead fmt.Println(dummyHead, curr) for curr.Next != nil { if curr.Next.Val == val { curr.Next = curr.Next.Next // 需要注意：这里不需要再使用 curr = curr.Next，因为指针已经移动了 } else { curr = curr.Next } } return dummyHead.Next } type ListNode struct { Val int Next *ListNode } func main() { x := removeElements(&amp;ListNode{ Val: 1, Next: &amp;ListNode{ Val: 2, Next: &amp;ListNode{ Val: 1, Next: &amp;ListNode{ Val: 3, Next: nil, }, }, }, }, 1) fmt.Println(x) } Go递归 package main import &#34;fmt&#34; type ListNode struct { Val int Next *ListNode } func removeElements(head *ListNode, val int) *ListNode { if head == nil { return head } head.Next = removeElements(head.Next, val) if head.Val == val { return head.Next } return head } func main() { x := removeElements(&amp;ListNode{ Val: 1, Next: &amp;ListNode{ Val: 2, Next: &amp;ListNode{ Val: 1, Next: &amp;ListNode{ Val: 3, Next: nil, }, }, }, }, 1) fmt.Println(x) } ">
+具体实现 # Go迭代 ```go package main import ( &#34;fmt&#34; ) func removeElements(head *ListNode, val int) *ListNode { dummyHead := &amp;ListNode{ Val: 0, Next: head, } curr := dummyHead fmt.Println(dummyHead, curr) for curr.Next != nil { if curr.Next.Val == val { curr.Next = curr.Next.Next // 需要注意：这里不需要再使用 curr = curr.Next，因为指针已经移动了 } else { curr = curr.Next } } return dummyHead.Next } type ListNode struct { Val int Next *ListNode } func main() { x := removeElements(&amp;ListNode{ Val: 1, Next: &amp;ListNode{ Val: 2, Next: &amp;ListNode{ Val: 1, Next: &amp;ListNode{ Val: 3, Next: nil, }, }, }, }, 1) fmt.Println(x) } ``` Go递归 ````go package main import &#34;fmt&#34; type ListNode struct { Val int Next *ListNode } func removeElements(head *ListNode, val int) *ListNode { if head == nil { return head } head.Next = removeElements(head.Next, val) if head.Val == val { return head.Next } return head } func main() { x := removeElements(&amp;ListNode{ Val: 1, Next: &amp;ListNode{ Val: 2, Next: &amp;ListNode{ Val: 1, Next: &amp;ListNode{ Val: 3, Next: nil, }, }, }, }, 1) fmt.Println(x) } ````">
   <meta property="og:locale" content="zh">
   <meta property="og:type" content="article">
     <meta property="article:section" content="docs">
     <meta property="article:modified_time" content="2023-09-05T13:59:23+08:00">
 <title>203. 移除链表元素 | LeetCode</title>
-<link rel="manifest" href="/leetcode/manifest.json">
 <link rel="icon" href="/leetcode/favicon.png" >
+<link rel="manifest" href="/leetcode/manifest.json">
 <link rel="canonical" href="https://example.com/leetcode/docs/easy/203/">
-<link rel="stylesheet" href="/leetcode/book.min.c800dd82e49099945db6750ce1011947221e4464ea7e2ba833b653fe2dd19d1c.css" integrity="sha256-yADdguSQmZRdtnUM4QEZRyIeRGTqfiuoM7ZT/i3RnRw=" crossorigin="anonymous">
+<link rel="stylesheet" href="/leetcode/book.min.96232821adba402ff85cecaf752901db2c4375526aabb73e5d04cace30043e27.css" integrity="sha256-liMoIa26QC/4XOyvdSkB2yxDdVJqq7c&#43;XQTKzjAEPic=" crossorigin="anonymous">
   <script defer src="/leetcode/fuse.min.js"></script>
-  <script defer src="/leetcode/zh.search.min.80799504bc8f1d4c55b4f5f207e6a45d3459d9bb9cbbb162df6d2a780571c061.js" integrity="sha256-gHmVBLyPHUxVtPXyB&#43;akXTRZ2bucu7Fi320qeAVxwGE=" crossorigin="anonymous"></script>
+  <script defer src="/leetcode/zh.search.min.1508b611b19082d8eaf7334a3e9c5fed683af0a30dad56c438ffda1915729057.js" integrity="sha256-FQi2EbGQgtjq9zNKPpxf7Wg68KMNrVbEOP/aGRVykFc=" crossorigin="anonymous"></script>
 
   <script defer src="/leetcode/sw.min.c814046bee19bfa0279b71972af9d15919d290341d7ecdfe781d2e1113df9ad1.js" integrity="sha256-yBQEa&#43;4Zv6Anm3GXKvnRWRnSkDQdfs3&#43;eB0uERPfmtE=" crossorigin="anonymous"></script>
 <!--
@@ -234,7 +255,6 @@ https://github.com/alex-shpak/hugo-book
 
 
 
-  
 
 
 
@@ -858,7 +878,7 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/other/interview-08.06/" class="">😪面试题 08.06. 汉诺塔问题</a>
+    <a href="/leetcode/docs/other/interview-08/" class="">😪面试题 08.06. 汉诺塔问题</a>
   
 
         </li>
@@ -897,7 +917,6 @@ https://github.com/alex-shpak/hugo-book
 
 
 
-
 </nav>
 
 
@@ -918,7 +937,7 @@ https://github.com/alex-shpak/hugo-book
     <img src="/leetcode/svg/menu.svg" class="book-icon" alt="Menu" />
   </label>
 
-  <strong>203. 移除链表元素</strong>
+  <h3>203. 移除链表元素</h3>
 
   <label for="toc-control">
     
@@ -999,102 +1018,123 @@ https://github.com/alex-shpak/hugo-book
   具体实现
   <a class="anchor" href="#%e5%85%b7%e4%bd%93%e5%ae%9e%e7%8e%b0">#</a>
 </h2>
+<div class="book-tabs">
 
 
 
+<input type="radio" class="toggle" name="tabs-uniqueid" id="tabs-uniqueid-0" checked="checked" />
+<label for="tabs-uniqueid-0">Go迭代</label>
+<div class="book-tabs-content markdown-inner">
 
-<div class="book-tabs"><input type="radio" class="toggle" name="tabs-uniqueid" id="tabs-uniqueid-0" checked="checked" />
-  <label for="tabs-uniqueid-0">Go迭代</label>
-  <div class="book-tabs-content markdown-inner"><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> (
-</span></span><span style="display:flex;"><span>	<span style="color:#e6db74">&#34;fmt&#34;</span>
-</span></span><span style="display:flex;"><span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">removeElements</span>(<span style="color:#a6e22e">head</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">ListNode</span>, <span style="color:#a6e22e">val</span> <span style="color:#66d9ef">int</span>) <span style="color:#f92672">*</span><span style="color:#a6e22e">ListNode</span> {
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">dummyHead</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">ListNode</span>{
-</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">Val</span>:  <span style="color:#ae81ff">0</span>,
-</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">Next</span>: <span style="color:#a6e22e">head</span>,
-</span></span><span style="display:flex;"><span>	}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">curr</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">dummyHead</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">dummyHead</span>, <span style="color:#a6e22e">curr</span>)
-</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">curr</span>.<span style="color:#a6e22e">Next</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">curr</span>.<span style="color:#a6e22e">Next</span>.<span style="color:#a6e22e">Val</span> <span style="color:#f92672">==</span> <span style="color:#a6e22e">val</span> {
-</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">curr</span>.<span style="color:#a6e22e">Next</span> = <span style="color:#a6e22e">curr</span>.<span style="color:#a6e22e">Next</span>.<span style="color:#a6e22e">Next</span>
-</span></span><span style="display:flex;"><span>			<span style="color:#75715e">// 需要注意：这里不需要再使用 curr = curr.Next，因为指针已经移动了
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>		} <span style="color:#66d9ef">else</span> {
-</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">curr</span> = <span style="color:#a6e22e">curr</span>.<span style="color:#a6e22e">Next</span>
-</span></span><span style="display:flex;"><span>		}
-</span></span><span style="display:flex;"><span>	}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">dummyHead</span>.<span style="color:#a6e22e">Next</span>
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">ListNode</span> <span style="color:#66d9ef">struct</span> {
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">Val</span>  <span style="color:#66d9ef">int</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">Next</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">ListNode</span>
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">x</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">removeElements</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">ListNode</span>{
-</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">Val</span>: <span style="color:#ae81ff">1</span>,
-</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">Next</span>: <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">ListNode</span>{
-</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">Val</span>: <span style="color:#ae81ff">2</span>,
-</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">Next</span>: <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">ListNode</span>{
-</span></span><span style="display:flex;"><span>				<span style="color:#a6e22e">Val</span>: <span style="color:#ae81ff">1</span>,
-</span></span><span style="display:flex;"><span>				<span style="color:#a6e22e">Next</span>: <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">ListNode</span>{
-</span></span><span style="display:flex;"><span>					<span style="color:#a6e22e">Val</span>:  <span style="color:#ae81ff">3</span>,
-</span></span><span style="display:flex;"><span>					<span style="color:#a6e22e">Next</span>: <span style="color:#66d9ef">nil</span>,
-</span></span><span style="display:flex;"><span>				},
-</span></span><span style="display:flex;"><span>			},
-</span></span><span style="display:flex;"><span>		},
-</span></span><span style="display:flex;"><span>	}, <span style="color:#ae81ff">1</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">x</span>)
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div></div><input type="radio" class="toggle" name="tabs-uniqueid" id="tabs-uniqueid-1"  />
-  <label for="tabs-uniqueid-1">Go递归</label>
-  <div class="book-tabs-content markdown-inner"><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> <span style="color:#e6db74">&#34;fmt&#34;</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">ListNode</span> <span style="color:#66d9ef">struct</span> {
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">Val</span>  <span style="color:#66d9ef">int</span>
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">Next</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">ListNode</span>
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">removeElements</span>(<span style="color:#a6e22e">head</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">ListNode</span>, <span style="color:#a6e22e">val</span> <span style="color:#66d9ef">int</span>) <span style="color:#f92672">*</span><span style="color:#a6e22e">ListNode</span> {
-</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">head</span> <span style="color:#f92672">==</span> <span style="color:#66d9ef">nil</span> {
-</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">head</span>
-</span></span><span style="display:flex;"><span>	}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">head</span>.<span style="color:#a6e22e">Next</span> = <span style="color:#a6e22e">removeElements</span>(<span style="color:#a6e22e">head</span>.<span style="color:#a6e22e">Next</span>, <span style="color:#a6e22e">val</span>)
-</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">head</span>.<span style="color:#a6e22e">Val</span> <span style="color:#f92672">==</span> <span style="color:#a6e22e">val</span> {
-</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">head</span>.<span style="color:#a6e22e">Next</span>
-</span></span><span style="display:flex;"><span>	}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">head</span>
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">x</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">removeElements</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">ListNode</span>{
-</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">Val</span>: <span style="color:#ae81ff">1</span>,
-</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">Next</span>: <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">ListNode</span>{
-</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">Val</span>: <span style="color:#ae81ff">2</span>,
-</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">Next</span>: <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">ListNode</span>{
-</span></span><span style="display:flex;"><span>				<span style="color:#a6e22e">Val</span>: <span style="color:#ae81ff">1</span>,
-</span></span><span style="display:flex;"><span>				<span style="color:#a6e22e">Next</span>: <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">ListNode</span>{
-</span></span><span style="display:flex;"><span>					<span style="color:#a6e22e">Val</span>:  <span style="color:#ae81ff">3</span>,
-</span></span><span style="display:flex;"><span>					<span style="color:#a6e22e">Next</span>: <span style="color:#66d9ef">nil</span>,
-</span></span><span style="display:flex;"><span>				},
-</span></span><span style="display:flex;"><span>			},
-</span></span><span style="display:flex;"><span>		},
-</span></span><span style="display:flex;"><span>	}, <span style="color:#ae81ff">1</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">x</span>)
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div></div></div>
+```go
+package main
+
+import (
+	"fmt"
+)
+
+func removeElements(head *ListNode, val int) *ListNode {
+	dummyHead := &ListNode{
+		Val:  0,
+		Next: head,
+	}
+
+	curr := dummyHead
+	fmt.Println(dummyHead, curr)
+	for curr.Next != nil {
+		if curr.Next.Val == val {
+			curr.Next = curr.Next.Next
+			// 需要注意：这里不需要再使用 curr = curr.Next，因为指针已经移动了
+		} else {
+			curr = curr.Next
+		}
+	}
+
+	return dummyHead.Next
+}
+
+type ListNode struct {
+	Val  int
+	Next *ListNode
+}
+
+func main() {
+	x := removeElements(&ListNode{
+		Val: 1,
+		Next: &ListNode{
+			Val: 2,
+			Next: &ListNode{
+				Val: 1,
+				Next: &ListNode{
+					Val:  3,
+					Next: nil,
+				},
+			},
+		},
+	}, 1)
+
+	fmt.Println(x)
+}
+
+
+```
+
+</div>
+
+
+
+<input type="radio" class="toggle" name="tabs-uniqueid" id="tabs-uniqueid-1"  />
+<label for="tabs-uniqueid-1">Go递归</label>
+<div class="book-tabs-content markdown-inner">
+
+````go
+package main
+
+import "fmt"
+
+type ListNode struct {
+	Val  int
+	Next *ListNode
+}
+
+func removeElements(head *ListNode, val int) *ListNode {
+	if head == nil {
+		return head
+	}
+
+	head.Next = removeElements(head.Next, val)
+	if head.Val == val {
+		return head.Next
+	}
+
+	return head
+}
+
+func main() {
+	x := removeElements(&ListNode{
+		Val: 1,
+		Next: &ListNode{
+			Val: 2,
+			Next: &ListNode{
+				Val: 1,
+				Next: &ListNode{
+					Val:  3,
+					Next: nil,
+				},
+			},
+		},
+	}, 1)
+
+	fmt.Println(x)
+}
+
+````
+
+</div>
+
+
+
+</div>
 
 </article>
  
@@ -1114,7 +1154,7 @@ https://github.com/alex-shpak/hugo-book
 
 
   <div>
-    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/content/docs/easy/203.md" target="_blank" rel="noopener">
+    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/book.leetcode/docs/easy/203.md" target="_blank" rel="noopener">
       <img src="/leetcode/svg/edit.svg" class="book-icon" alt="" />
       <span>编辑本页</span>
     </a>
