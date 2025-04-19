@@ -9,7 +9,8 @@ git submodule update --remote --merge
 
 hugo server --disableFastRender --configDir=config.io
 
-子站
+books 子站
+hugo server  --config XXXXX.toml
 
 hugo server  --config book.leetcode.toml
 
