@@ -12,9 +12,9 @@ title: "Hard"
 
 ## Hard
 
-{{< hint info >}}
+{{% hint info %}}
 
 好学近乎知，力行近乎仁，知耻近乎勇。
 
-{{< /hint >}}
+{{% /hint %}}
 

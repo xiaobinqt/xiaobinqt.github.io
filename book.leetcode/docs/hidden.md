@@ -18,10 +18,10 @@ title: "😪xxxxxx"
 
 ## 具体实现
 
-{{< tabs "uniqueid" >}}
+{{% tabs "uniqueid" %}}
 
-{{< tab "Go" >}}
+{{% tab "Go" %}}
 
-{{< /tab  >}}
+{{% /tab  %}}
 
-{{< /tabs  >}}
+{{% /tabs  %}}
