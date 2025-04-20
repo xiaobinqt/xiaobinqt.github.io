@@ -1,5 +1,5 @@
 ---
-weight: 2
+weight: 3
 
 bookFlatSection: true
 
@@ -7,7 +7,7 @@ bookCollapseSection: false
 
 bookToc: true
 
-title: "1.2 常见问题（二）"
+title: "1.3 常见问题（二）"
 ---
 
 ## 1.2 常见问题（二）
@@ -16,11 +16,9 @@ title: "1.2 常见问题（二）"
 
 在 PHP 中，黑魔法通常指的是一些复杂、晦涩难懂或有风险的编码技巧。黑魔法与常规 PHP 编程的区别在于它们通常违反了良好的编码规范，难以理解和维护。
 
-## 如何在 PHP 中实现 GraphQL 服务？
 
-在 PHP 中实现 GraphQL 服务可以使用 GraphQL-PHP 库来实现。GraphQL 是一种查询语言和运行时环境，允许客户端查询所需的数据，从而减少无用数据的传输，提高接口效率。
 
-## 请解释 PHP 中的 Brotli 压缩算法是什么，并说明与 gzip 压缩的比较
+## PHP 中的 Brotli 压缩算法是什么，gzip 压缩的比较
 
 Brotli 是一种新的压缩算法，用于压缩 HTTP 内容，可以显著减少传输数据的大小，从而提高网站的加载速度。与 gzip 相比，Brotli 压缩率更高，但相应的压缩和解压缩时间较长。
 
