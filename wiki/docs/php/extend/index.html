@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="
+  1.3 PHP 扩展
+  #
+
+
+  如何使用 PHP GD 库在服务器端生成图像？
+  #
+
+使用 PHP GD 库在服务器端生成图像可以通过 GD 扩展来实现。GD 扩展提供了一组用于处理图像的函数，包括创建图像、绘制图形和添加文本等。
+
+  PHP 中的 GMP 扩展是什么，以及它在处理大整数和加密方面的应用。
+  #
+
+在 PHP 中，GMP（GNU Multiple Precision）扩展是一个用于处理大整数的数学扩展。它允许 PHP 处理超过常规整数范围的大整数，包括负数和大于 64 位整数的数值。GMP 扩展使用了更高效的算法来处理大整数运算，比 PHP 内置的整数类型更快、更稳定。
+GMP 扩展的主要特点和功能：
+
+
+大整数运算：GMP 扩展可以进行大整数的加减乘除运算、取模、幂运算等操作，支持任意位数的整数运算。
+
+
+大整数比较：GMP 扩展可以比较两个大整数的大小，判断它们是否相等、大于、小于等关系。
+
+
+素数判断：GMP 扩展提供了素数判断函数，可以快速判断一个数是否为素数。
+
+
+大整数的位操作：GMP 扩展支持对大整数进行位操作，例如设置位、清除位、翻转位等。
+
+
+在处理大整数和加密方面的应用：
+GMP 扩展在处理大整数和加密方面具有重要的应用。
+
+
+加密算法：在密码学中，大整数是常用的数据类型，用于处理加密算法中的密钥和数据。GMP 扩展提供了高效的大整数运算，使得 PHP 能够支持各种加密算法，如 RSA、Diffie-Hellman、椭圆曲线加密等。
+
+
+哈希函数：哈希函数通常产生一个大整数值，GMP 扩展可以处理这些大整数值，并进行位操作、模运算等操作，用于处理哈希值的验证和加密相关操作。
+
+
+大数计算： 在一些特定的应用中，需要处理非常大的整数，如大数计算、组合数计算、RSA 密钥生成等。GMP 扩展提供了高效的大数计算功能，能够处理大整数运算的性能需求。
+
+
+使用 GMP 扩展的示例：
+以下是一个简单的示例，展示如何使用 GMP 扩展来进行大整数加法：
+$largeNumber1 = &#34;12345678901234567890&#34;;
+$largeNumber2 = &#34;9876543210987654321&#34;;
+
+$sum = gmp_add($largeNumber1, $largeNumber2);
+echo gmp_strval($sum); // 输出: 22222222112222222211
+在上面的示例中，我们使用 GMP 扩展的 gmp_add 函数对两个大整数进行相加，并使用 gmp_strval 函数将结果转换为字符串并输出。这样就能够处理超过 PHP 内置整数范围的大整数运算。">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/wiki/docs/php/extend/">
+  <meta property="og:site_name" content="wiki">
+  <meta property="og:title" content="1.4 PHP 扩展">
+  <meta property="og:description" content="1.3 PHP 扩展 # 如何使用 PHP GD 库在服务器端生成图像？ # 使用 PHP GD 库在服务器端生成图像可以通过 GD 扩展来实现。GD 扩展提供了一组用于处理图像的函数，包括创建图像、绘制图形和添加文本等。
+PHP 中的 GMP 扩展是什么，以及它在处理大整数和加密方面的应用。 # 在 PHP 中，GMP（GNU Multiple Precision）扩展是一个用于处理大整数的数学扩展。它允许 PHP 处理超过常规整数范围的大整数，包括负数和大于 64 位整数的数值。GMP 扩展使用了更高效的算法来处理大整数运算，比 PHP 内置的整数类型更快、更稳定。
+GMP 扩展的主要特点和功能：
+大整数运算：GMP 扩展可以进行大整数的加减乘除运算、取模、幂运算等操作，支持任意位数的整数运算。
+大整数比较：GMP 扩展可以比较两个大整数的大小，判断它们是否相等、大于、小于等关系。
+素数判断：GMP 扩展提供了素数判断函数，可以快速判断一个数是否为素数。
+大整数的位操作：GMP 扩展支持对大整数进行位操作，例如设置位、清除位、翻转位等。
+在处理大整数和加密方面的应用：
+GMP 扩展在处理大整数和加密方面具有重要的应用。
+加密算法：在密码学中，大整数是常用的数据类型，用于处理加密算法中的密钥和数据。GMP 扩展提供了高效的大整数运算，使得 PHP 能够支持各种加密算法，如 RSA、Diffie-Hellman、椭圆曲线加密等。
+哈希函数：哈希函数通常产生一个大整数值，GMP 扩展可以处理这些大整数值，并进行位操作、模运算等操作，用于处理哈希值的验证和加密相关操作。
+大数计算： 在一些特定的应用中，需要处理非常大的整数，如大数计算、组合数计算、RSA 密钥生成等。GMP 扩展提供了高效的大数计算功能，能够处理大整数运算的性能需求。
+使用 GMP 扩展的示例：
+以下是一个简单的示例，展示如何使用 GMP 扩展来进行大整数加法：
+$largeNumber1 = &#34;12345678901234567890&#34;; $largeNumber2 = &#34;9876543210987654321&#34;; $sum = gmp_add($largeNumber1, $largeNumber2); echo gmp_strval($sum); // 输出: 22222222112222222211 在上面的示例中，我们使用 GMP 扩展的 gmp_add 函数对两个大整数进行相加，并使用 gmp_strval 函数将结果转换为字符串并输出。这样就能够处理超过 PHP 内置整数范围的大整数运算。">
+  <meta property="og:locale" content="zh">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:modified_time" content="2025-04-20T16:31:38+08:00">
+<title>1.4 PHP 扩展 | wiki</title>
+<link rel="icon" href="/wiki/favicon.png" >
+<link rel="manifest" href="/wiki/manifest.json">
+<link rel="canonical" href="https://example.com/wiki/docs/php/extend/">
+<link rel="stylesheet" href="/wiki/book.min.1e8c332c823ff5970e639a0c180f0e3d074283c7f525185d3e42903a2f30e9be.css" integrity="sha256-HowzLII/9ZcOY5oMGA8OPQdCg8f1JRhdPkKQOi8w6b4=" crossorigin="anonymous">
+  <script defer src="/wiki/fuse.min.js"></script>
+  <script defer src="/wiki/zh.search.min.c9897bbc1453080f82bd73c2a71c96497dcf852b1c7757f8ae3491fe569c62cb.js" integrity="sha256-yYl7vBRTCA&#43;CvXPCpxyWSX3PhSscd1f4rjSR/lacYss=" crossorigin="anonymous"></script>
+
+  <script defer src="/wiki/sw.min.e67149a4572dea566681c97cf77821bb08285ae36bc9376d2616a9b5e253f230.js" integrity="sha256-5nFJpFct6lZmgcl893ghuwgoWuNryTdtJhapteJT8jA=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/wiki/"><span>wiki</span>
+  </a>
+</h2>
+
+
+<div class="book-search hidden">
+  <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+
+
+<ul>
+    <li>
+        <a href="javascript:void(0)" onclick="hrefIndex()" rel="noopener">主页</a>
+    </li>
+    <li>
+        <a href="https://github.com/xiaobinqt" target="_blank" rel="noopener">GitHub</a>
+    </li>
+</ul>
+
+<hr>
+
+<script>
+    function hrefIndex() {
+        window.location = window.location.origin;
+    }
+</script>
+
+
+  
+<ul>
+  
+  <li>
+    <a href=""  target="_blank" rel="noopener">
+        
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+
+
+
+
+  
+  <ul>
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <span>MySQL</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/mysql/overview/" class="">总览</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/mysql/sql-grammar/" class="">SQL 语法</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/mysql/dbs-theory/" class="">数据库系统原理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/mysql/faq1/" class="">常见问题（一）</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <span>Redis</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/redis/overview/" class="">总览</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/redis/string/" class="">STRING</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <span>系统设计</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/system-design/overview/" class="">系统设计基础</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/system-design/distributed/" class="">分布式</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/system-design/cluster/" class="">集群</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/system-design/attack/" class="">攻击技术</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/system-design/cache/" class="">缓存</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/system-design/queue-message/" class="">消息队列</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <span>编码实践</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/coding-practice/regex/" class="">正则表达式</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/coding-practice/docker/" class="">Docker</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/coding-practice/git/" class="">Git</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/coding-practice/code-readability/" class="">代码可读性</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/coding-practice/mac/" class="">Mac</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/coding-practice/jetbrains/" class="">Jetbrains</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <span>PHP</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/php/versions/" class="">1.1 版本区别</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/php/faq1/" class="">1.2 常见问题（一）</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/php/faq2/" class="">1.3 常见问题（二）</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/php/extend/" class="active">1.4 PHP 扩展</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/php/functions/" class="">1.5 常用函数</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <span>Golang</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/golang/1/" class="">杂项</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <span>JS</span>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <span>Python</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/python/1/" class="">1.1 基础知识</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a href="/wiki/docs/favorite/" class="">收藏夹</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/favorite/cs-learn/" class="">计算机基础书籍推荐</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/wiki/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>1.4 PHP 扩展</h3>
+
+  <label for="toc-control">
+    
+    <img src="/wiki/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#13-php-扩展">1.3 PHP 扩展</a>
+      <ul>
+        <li><a href="#如何使用-php-gd-库在服务器端生成图像">如何使用 PHP GD 库在服务器端生成图像？</a></li>
+        <li><a href="#php-中的-gmp-扩展是什么以及它在处理大整数和加密方面的应用">PHP 中的 GMP 扩展是什么，以及它在处理大整数和加密方面的应用。</a></li>
+        <li><a href="#请解释-php-中的-ffiforeign-function-interface是什么以及它在与其他编程语言交互方面的应用">请解释 PHP 中的 FFI（Foreign Function Interface）是什么，以及它在与其他编程语言交互方面的应用</a></li>
+        <li><a href="#如何在-php-中实现多进程编程以利用多核处理器的优势">如何在 PHP 中实现多进程编程，以利用多核处理器的优势？</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown book-article"><h1 id="13-php-扩展">
+  1.3 PHP 扩展
+  <a class="anchor" href="#13-php-%e6%89%a9%e5%b1%95">#</a>
+</h1>
+<h2 id="如何使用-php-gd-库在服务器端生成图像">
+  如何使用 PHP GD 库在服务器端生成图像？
+  <a class="anchor" href="#%e5%a6%82%e4%bd%95%e4%bd%bf%e7%94%a8-php-gd-%e5%ba%93%e5%9c%a8%e6%9c%8d%e5%8a%a1%e5%99%a8%e7%ab%af%e7%94%9f%e6%88%90%e5%9b%be%e5%83%8f">#</a>
+</h2>
+<p>使用 PHP GD 库在服务器端生成图像可以通过 GD 扩展来实现。GD 扩展提供了一组用于处理图像的函数，包括创建图像、绘制图形和添加文本等。</p>
+<h2 id="php-中的-gmp-扩展是什么以及它在处理大整数和加密方面的应用">
+  PHP 中的 GMP 扩展是什么，以及它在处理大整数和加密方面的应用。
+  <a class="anchor" href="#php-%e4%b8%ad%e7%9a%84-gmp-%e6%89%a9%e5%b1%95%e6%98%af%e4%bb%80%e4%b9%88%e4%bb%a5%e5%8f%8a%e5%ae%83%e5%9c%a8%e5%a4%84%e7%90%86%e5%a4%a7%e6%95%b4%e6%95%b0%e5%92%8c%e5%8a%a0%e5%af%86%e6%96%b9%e9%9d%a2%e7%9a%84%e5%ba%94%e7%94%a8">#</a>
+</h2>
+<p>在 PHP 中，GMP（GNU Multiple Precision）扩展是一个用于处理大整数的数学扩展。它允许 PHP 处理超过常规整数范围的大整数，包括负数和大于 64 位整数的数值。GMP 扩展使用了更高效的算法来处理大整数运算，比 PHP 内置的整数类型更快、更稳定。</p>
+<p>GMP 扩展的主要特点和功能：</p>
+<ol>
+<li>
+<p>大整数运算：GMP 扩展可以进行大整数的加减乘除运算、取模、幂运算等操作，支持任意位数的整数运算。</p>
+</li>
+<li>
+<p>大整数比较：GMP 扩展可以比较两个大整数的大小，判断它们是否相等、大于、小于等关系。</p>
+</li>
+<li>
+<p>素数判断：GMP 扩展提供了素数判断函数，可以快速判断一个数是否为素数。</p>
+</li>
+<li>
+<p>大整数的位操作：GMP 扩展支持对大整数进行位操作，例如设置位、清除位、翻转位等。</p>
+</li>
+</ol>
+<p>在处理大整数和加密方面的应用：</p>
+<p>GMP 扩展在处理大整数和加密方面具有重要的应用。</p>
+<ol>
+<li>
+<p>加密算法：在密码学中，大整数是常用的数据类型，用于处理加密算法中的密钥和数据。GMP 扩展提供了高效的大整数运算，使得 PHP 能够支持各种加密算法，如 RSA、Diffie-Hellman、椭圆曲线加密等。</p>
+</li>
+<li>
+<p>哈希函数：哈希函数通常产生一个大整数值，GMP 扩展可以处理这些大整数值，并进行位操作、模运算等操作，用于处理哈希值的验证和加密相关操作。</p>
+</li>
+<li>
+<p>大数计算： 在一些特定的应用中，需要处理非常大的整数，如大数计算、组合数计算、RSA 密钥生成等。GMP 扩展提供了高效的大数计算功能，能够处理大整数运算的性能需求。</p>
+</li>
+</ol>
+<p>使用 GMP 扩展的示例：</p>
+<p>以下是一个简单的示例，展示如何使用 GMP 扩展来进行大整数加法：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span>$largeNumber1 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;12345678901234567890&#34;</span>;
+</span></span><span style="display:flex;"><span>$largeNumber2 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;9876543210987654321&#34;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>$sum <span style="color:#f92672">=</span> <span style="color:#a6e22e">gmp_add</span>($largeNumber1, $largeNumber2);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">echo</span> <span style="color:#a6e22e">gmp_strval</span>($sum); <span style="color:#75715e">// 输出: 22222222112222222211
+</span></span></span></code></pre></div><p>在上面的示例中，我们使用 GMP 扩展的 <code>gmp_add</code> 函数对两个大整数进行相加，并使用 <code>gmp_strval</code> 函数将结果转换为字符串并输出。这样就能够处理超过 PHP 内置整数范围的大整数运算。</p>
+<h2 id="请解释-php-中的-ffiforeign-function-interface是什么以及它在与其他编程语言交互方面的应用">
+  请解释 PHP 中的 FFI（Foreign Function Interface）是什么，以及它在与其他编程语言交互方面的应用
+  <a class="anchor" href="#%e8%af%b7%e8%a7%a3%e9%87%8a-php-%e4%b8%ad%e7%9a%84-ffiforeign-function-interface%e6%98%af%e4%bb%80%e4%b9%88%e4%bb%a5%e5%8f%8a%e5%ae%83%e5%9c%a8%e4%b8%8e%e5%85%b6%e4%bb%96%e7%bc%96%e7%a8%8b%e8%af%ad%e8%a8%80%e4%ba%a4%e4%ba%92%e6%96%b9%e9%9d%a2%e7%9a%84%e5%ba%94%e7%94%a8">#</a>
+</h2>
+<p>FFI（Foreign Function Interface）是 PHP 的一个扩展，允许在 PHP 中调用其他编程语言（如 C）的函数和变量。FFI 提供了一种与 C 语言交互</p>
+<h2 id="如何在-php-中实现多进程编程以利用多核处理器的优势">
+  如何在 PHP 中实现多进程编程，以利用多核处理器的优势？
+  <a class="anchor" href="#%e5%a6%82%e4%bd%95%e5%9c%a8-php-%e4%b8%ad%e5%ae%9e%e7%8e%b0%e5%a4%9a%e8%bf%9b%e7%a8%8b%e7%bc%96%e7%a8%8b%e4%bb%a5%e5%88%a9%e7%94%a8%e5%a4%9a%e6%a0%b8%e5%a4%84%e7%90%86%e5%99%a8%e7%9a%84%e4%bc%98%e5%8a%bf">#</a>
+</h2>
+<p>在 PHP 中实现多进程编程可以使用 pcntl 扩展。pcntl 扩展允许在 PHP 脚本中创建和管理多个进程，从而充分利用多核处理器的优势。通过将任务分配给不同的进程并行执行，可以加快处理速度和提高性能。</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/book.wiki/commit/497b01d7b14e60cd68369b5933284910cf9b78c4" title='最后修改者 xiaobinqt | 四月 20, 2025' target="_blank" rel="noopener">
+      <img src="/wiki/svg/calendar.svg" class="book-icon" alt="" />
+      <span>四月 20, 2025</span>
+    </a>
+  </div>
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/book.wiki/tree/main/book.wiki/docs/php/extend.md" target="_blank" rel="noopener">
+      <img src="/wiki/svg/edit.svg" class="book-icon" alt="" />
+      <span>编辑本页</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#13-php-扩展">1.3 PHP 扩展</a>
+      <ul>
+        <li><a href="#如何使用-php-gd-库在服务器端生成图像">如何使用 PHP GD 库在服务器端生成图像？</a></li>
+        <li><a href="#php-中的-gmp-扩展是什么以及它在处理大整数和加密方面的应用">PHP 中的 GMP 扩展是什么，以及它在处理大整数和加密方面的应用。</a></li>
+        <li><a href="#请解释-php-中的-ffiforeign-function-interface是什么以及它在与其他编程语言交互方面的应用">请解释 PHP 中的 FFI（Foreign Function Interface）是什么，以及它在与其他编程语言交互方面的应用</a></li>
+        <li><a href="#如何在-php-中实现多进程编程以利用多核处理器的优势">如何在 PHP 中实现多进程编程，以利用多核处理器的优势？</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

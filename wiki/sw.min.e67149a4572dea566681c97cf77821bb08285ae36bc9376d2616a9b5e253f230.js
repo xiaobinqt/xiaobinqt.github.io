@@ -1,0 +1,1 @@
+navigator.serviceWorker&&navigator.serviceWorker.register("/wiki/sw.js",{scope:"/wiki/"})
