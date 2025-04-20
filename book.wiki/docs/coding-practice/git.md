@@ -142,6 +142,32 @@ $ ssh-keygen -t rsa -C "youremail@example.com"
 
 比较详细的地址：http://www.cheat-sheets.org/saved-copy/git-cheat-sheet.pdf
 
+## 为 GitHub 配置特定密钥
+
+假设有一个密钥 ~/.ssh/id_github，为 GitHub 配置如下：
+
+编辑 ~/.ssh/config：
+
+```
+Host github.com
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_github
+```
+
+- Host：定义一个别名（可以自定义，比如 github.com 或 gitlab.com）。
+- HostName：实际的 Git 服务器域名。
+- User：Git 服务器的用户名（通常是 git）。
+- IdentityFile：指定要使用的私钥路径。
+
+测试：
+
+```
+ssh -T git@github.com
+```
+
+完成以上步骤后，Git 就会使用指定的密钥进行身份验证。
+
 ## 参考资料
 
 - [Git - 简明指南](http://rogerdudler.github.io/git-guide/index.zh.html)

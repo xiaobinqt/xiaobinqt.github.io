@@ -1,5 +1,5 @@
 ---
-weight: 5
+weight: 1
 
 bookFlatSection: true
 
@@ -7,7 +7,7 @@ bookCollapseSection: false
 
 bookToc: true
 
-title: "1.5 版本区别"
+title: "1.1 版本区别"
 ---
 
 # 1.5 版本区别

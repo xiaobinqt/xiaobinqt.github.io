@@ -4,7 +4,7 @@ title: 简介
 type: docs
 ---
 
-# KeepLearning
+# Wiki
 
 ![keep learning](https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/1dc2a95e027e4c46994eaa1a2a7a07e6.png)
 

@@ -1,5 +1,5 @@
 ---
-weight: 3
+weight: 4
 
 bookFlatSection: true
 
@@ -7,7 +7,7 @@ bookCollapseSection: false
 
 bookToc: true
 
-title: "1.3 PHP 扩展"
+title: "1.4 PHP 扩展"
 ---
 
 # 1.3 PHP 扩展
@@ -61,11 +61,6 @@ FFI（Foreign Function Interface）是 PHP 的一个扩展，允许在 PHP 中�
 ## 如何在 PHP 中实现多进程编程，以利用多核处理器的优势？
 
 在 PHP 中实现多进程编程可以使用 pcntl 扩展。pcntl 扩展允许在 PHP 脚本中创建和管理多个进程，从而充分利用多核处理器的优势。通过将任务分配给不同的进程并行执行，可以加快处理速度和提高性能。
-
-## 如何在 PHP 中实现数据库迁移和版本控制？
-
-在 PHP 中实现数据库迁移和版本控制可以使用数据库迁移工具，如 Phinx。数据库迁移工具允许在不丢失数据的情况下对数据库架构进行更新和版本控制。
-
 
 
 
