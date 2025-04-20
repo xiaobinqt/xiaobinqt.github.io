@@ -1,0 +1,1761 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="
+  1.5 版本区别
+  #
+
+
+  1.5.1 汇总
+  #
+
+PHP5.1：
+
+autoload
+PDO
+MySQLi
+类型约束
+
+PHP5.2：
+
+JSON 支持
+
+PHP5.3：
+
+命名空间
+匿名函数
+闭包
+新增魔术方法__callStatic()和__invoke()
+新增魔术变量__DIR__
+动态调用静态方法
+延迟静态绑定
+Heredoc和 Nowdoc
+类外使用const定义常量
+三元运算符
+Phar
+
+PHP5.4：
+
+Short Open Tag
+数组简写
+Traits,
+内置 Web 服务器
+动态访问静态方法
+实例化时访问类成员
+
+PHP5.5：
+
+yield
+list用于foreach
+细节修改
+
+PHP5.6:
+
+常量增强
+命名空间增强
+可变函数参数
+
+PHP7.0:
+
+标量类型声明
+返回值类型声明
+defined定义常量数组
+匿名类
+null合并运算符
+
+PHP7.1：
+
+可为空类型
+void类型
+多异常捕获
+
+PHP7.2：
+
+新的对象object
+允许重写抽象方法
+
+PHP7.3：语法层面没有很大的改变
+PHP7.4：
+
+类型属性
+箭头函数
+Null合并运算符支持方法
+Opcache 预加载
+
+PHP8.0:
+
+JIT即时编译
+命名参数
+注解
+联合类型
+Match表达式
+Nullsafe 运算符
+构造器属性提升
+
+
+  1.5.2 PHP5.1
+  #
+
+
+  __autoload()魔术方法
+  #
+
+
+这是一个自动加载函数，在PHP5中，当我们实例化一个未定义的类时，就会触发此函数。可以通过定义这个函数来启用
+  类的自动加载。">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/wiki/docs/php/versions/">
+  <meta property="og:site_name" content="wiki">
+  <meta property="og:title" content="1.1 版本区别">
+  <meta property="og:description" content="1.5 版本区别 # 1.5.1 汇总 # PHP5.1：
+autoload PDO MySQLi 类型约束 PHP5.2：
+JSON 支持 PHP5.3：
+命名空间 匿名函数 闭包 新增魔术方法__callStatic()和__invoke() 新增魔术变量__DIR__ 动态调用静态方法 延迟静态绑定 Heredoc和 Nowdoc 类外使用const定义常量 三元运算符 Phar PHP5.4：
+Short Open Tag 数组简写 Traits, 内置 Web 服务器 动态访问静态方法 实例化时访问类成员 PHP5.5：
+yield list用于foreach 细节修改 PHP5.6:
+常量增强 命名空间增强 可变函数参数 PHP7.0:
+标量类型声明 返回值类型声明 defined定义常量数组 匿名类 null合并运算符 PHP7.1：
+可为空类型 void类型 多异常捕获 PHP7.2：
+新的对象object 允许重写抽象方法 PHP7.3：语法层面没有很大的改变
+PHP7.4：
+类型属性 箭头函数 Null合并运算符支持方法 Opcache 预加载 PHP8.0:
+JIT即时编译 命名参数 注解 联合类型 Match表达式 Nullsafe 运算符 构造器属性提升 1.5.2 PHP5.1 # __autoload()魔术方法 # 这是一个自动加载函数，在PHP5中，当我们实例化一个未定义的类时，就会触发此函数。可以通过定义这个函数来启用 类的自动加载。">
+  <meta property="og:locale" content="zh">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:modified_time" content="2025-04-20T16:31:38+08:00">
+<title>1.1 版本区别 | wiki</title>
+<link rel="icon" href="/wiki/favicon.png" >
+<link rel="manifest" href="/wiki/manifest.json">
+<link rel="canonical" href="https://example.com/wiki/docs/php/versions/">
+<link rel="stylesheet" href="/wiki/book.min.1e8c332c823ff5970e639a0c180f0e3d074283c7f525185d3e42903a2f30e9be.css" integrity="sha256-HowzLII/9ZcOY5oMGA8OPQdCg8f1JRhdPkKQOi8w6b4=" crossorigin="anonymous">
+  <script defer src="/wiki/fuse.min.js"></script>
+  <script defer src="/wiki/zh.search.min.c9897bbc1453080f82bd73c2a71c96497dcf852b1c7757f8ae3491fe569c62cb.js" integrity="sha256-yYl7vBRTCA&#43;CvXPCpxyWSX3PhSscd1f4rjSR/lacYss=" crossorigin="anonymous"></script>
+
+  <script defer src="/wiki/sw.min.e67149a4572dea566681c97cf77821bb08285ae36bc9376d2616a9b5e253f230.js" integrity="sha256-5nFJpFct6lZmgcl893ghuwgoWuNryTdtJhapteJT8jA=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/wiki/"><span>wiki</span>
+  </a>
+</h2>
+
+
+<div class="book-search hidden">
+  <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+
+
+<ul>
+    <li>
+        <a href="javascript:void(0)" onclick="hrefIndex()" rel="noopener">主页</a>
+    </li>
+    <li>
+        <a href="https://github.com/xiaobinqt" target="_blank" rel="noopener">GitHub</a>
+    </li>
+</ul>
+
+<hr>
+
+<script>
+    function hrefIndex() {
+        window.location = window.location.origin;
+    }
+</script>
+
+
+  
+<ul>
+  
+  <li>
+    <a href=""  target="_blank" rel="noopener">
+        
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+
+
+
+
+  
+  <ul>
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <span>MySQL</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/mysql/overview/" class="">总览</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/mysql/sql-grammar/" class="">SQL 语法</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/mysql/dbs-theory/" class="">数据库系统原理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/mysql/faq1/" class="">常见问题（一）</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <span>Redis</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/redis/overview/" class="">总览</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/redis/string/" class="">STRING</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <span>系统设计</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/system-design/overview/" class="">系统设计基础</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/system-design/distributed/" class="">分布式</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/system-design/cluster/" class="">集群</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/system-design/attack/" class="">攻击技术</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/system-design/cache/" class="">缓存</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/system-design/queue-message/" class="">消息队列</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <span>编码实践</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/coding-practice/regex/" class="">正则表达式</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/coding-practice/docker/" class="">Docker</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/coding-practice/git/" class="">Git</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/coding-practice/code-readability/" class="">代码可读性</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/coding-practice/mac/" class="">Mac</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/coding-practice/jetbrains/" class="">Jetbrains</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <span>PHP</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/php/versions/" class="active">1.1 版本区别</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/php/faq1/" class="">1.2 常见问题（一）</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/php/faq2/" class="">1.3 常见问题（二）</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/php/extend/" class="">1.4 PHP 扩展</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/php/functions/" class="">1.5 常用函数</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <span>Golang</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/golang/1/" class="">杂项</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <span>JS</span>
+  
+
+          
+  <ul>
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <span>Python</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/python/1/" class="">1.1 基础知识</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a href="/wiki/docs/favorite/" class="">收藏夹</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/favorite/cs-learn/" class="">计算机基础书籍推荐</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/wiki/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>1.1 版本区别</h3>
+
+  <label for="toc-control">
+    
+    <img src="/wiki/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#15-版本区别">1.5 版本区别</a>
+      <ul>
+        <li><a href="#151-汇总">1.5.1 汇总</a></li>
+        <li><a href="#152-php51">1.5.2 PHP5.1</a>
+          <ul>
+            <li><a href="#__autoload魔术方法">__autoload()魔术方法</a></li>
+            <li><a href="#pdo">PDO</a></li>
+            <li><a href="#mysqli">MySQLi</a></li>
+            <li><a href="#类型约束">类型约束</a></li>
+          </ul>
+        </li>
+        <li><a href="#153-php52">1.5.3 PHP5.2</a>
+          <ul>
+            <li><a href="#json">JSON</a></li>
+          </ul>
+        </li>
+        <li><a href="#154-php53">1.5.4 PHP5.3</a>
+          <ul>
+            <li><a href="#命名空间">命名空间</a></li>
+            <li><a href="#匿名函数闭包">匿名函数（闭包）</a></li>
+            <li><a href="#新增魔术方法__callstatic和__invoke">新增魔术方法<code>__callStatic()</code>和<code>__invoke()</code></a></li>
+            <li><a href="#新增魔术变量__dir__">新增魔术变量<code>__DIR__</code></a></li>
+            <li><a href="#动态调用静态方法">动态调用静态方法</a></li>
+            <li><a href="#延迟静态绑定">延迟静态绑定</a></li>
+            <li><a href="#类外使用const定义常量">类外使用const定义常量</a></li>
+            <li><a href="#简化三元运算符">简化三元运算符</a></li>
+            <li><a href="#phar">Phar</a></li>
+          </ul>
+        </li>
+        <li><a href="#155-php54">1.5.5 PHP5.4</a>
+          <ul>
+            <li><a href="#short-open-tag-短开放标签">Short Open Tag 短开放标签</a></li>
+            <li><a href="#数组简写"><strong>数组简写</strong></a></li>
+            <li><a href="#traits">Traits</a></li>
+            <li><a href="#内置-web-服务器"><strong>内置 Web 服务器</strong></a></li>
+            <li><a href="#动态访问静态方法">动态访问静态方法</a></li>
+            <li><a href="#实例化时访问类成员">实例化时访问类成员</a></li>
+          </ul>
+        </li>
+        <li><a href="#156-php55">1.5.6 PHP5.5</a>
+          <ul>
+            <li><a href="#yield关键字">yield关键字</a></li>
+            <li><a href="#list-用于-foreach">list() 用于 foreach</a></li>
+            <li><a href="#细节修改">细节修改</a></li>
+          </ul>
+        </li>
+        <li><a href="#157-php56">1.5.7 PHP5.6</a>
+          <ul>
+            <li><a href="#常量增强">常量增强</a></li>
+            <li><a href="#可变函数参数">可变函数参数</a></li>
+            <li><a href="#命名空间增强">命名空间增强</a></li>
+          </ul>
+        </li>
+        <li><a href="#158-php70">1.5.8 PHP7.0</a>
+          <ul>
+            <li><a href="#标量类型声明"><strong>标量类型声明</strong></a></li>
+            <li><a href="#返回值类型声明">返回值类型声明</a></li>
+            <li><a href="#define-定义数组">define 定义数组</a></li>
+            <li><a href="#匿名类">匿名类</a></li>
+            <li><a href="#null-合并运算符">null 合并运算符</a></li>
+          </ul>
+        </li>
+        <li><a href="#159-php71">1.5.9 PHP7.1</a>
+          <ul>
+            <li><a href="#可为空类型"><strong>可为空类型</strong></a></li>
+            <li><a href="#void类型">void类型</a></li>
+            <li><a href="#多异常捕获">多异常捕获</a></li>
+          </ul>
+        </li>
+        <li><a href="#1510-php72">1.5.10 PHP7.2</a>
+          <ul>
+            <li><a href="#新的对象类型object">新的对象类型object</a></li>
+            <li><a href="#允许重写抽象方法"><strong>允许重写抽象方法</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#1511-php74">1.5.11 PHP7.4</a>
+          <ul>
+            <li><a href="#类属性支持类型声明">类属性支持类型声明</a></li>
+            <li><a href="#箭头函数"><strong>箭头函数</strong></a></li>
+            <li><a href="#null-合并运算符支持方法"><strong>Null 合并运算符支持方法</strong></a></li>
+            <li><a href="#opcache-预加载">Opcache 预加载</a></li>
+          </ul>
+        </li>
+        <li><a href="#1512-php80">1.5.12 PHP8.0</a>
+          <ul>
+            <li><a href="#jit即时编译">JIT即时编译</a></li>
+            <li><a href="#命名参数">命名参数</a></li>
+            <li><a href="#注解">注解</a></li>
+            <li><a href="#联合类型">联合类型</a></li>
+            <li><a href="#match表达式">Match表达式</a></li>
+            <li><a href="#nullsafe-运算符">Nullsafe 运算符</a></li>
+            <li><a href="#构造器属性提升">构造器属性提升</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown book-article"><h1 id="15-版本区别">
+  1.5 版本区别
+  <a class="anchor" href="#15-%e7%89%88%e6%9c%ac%e5%8c%ba%e5%88%ab">#</a>
+</h1>
+<h2 id="151-汇总">
+  1.5.1 汇总
+  <a class="anchor" href="#151-%e6%b1%87%e6%80%bb">#</a>
+</h2>
+<p>PHP5.1：</p>
+<ul>
+<li>autoload</li>
+<li>PDO</li>
+<li>MySQLi</li>
+<li>类型约束</li>
+</ul>
+<p>PHP5.2：</p>
+<ul>
+<li>JSON 支持</li>
+</ul>
+<p>PHP5.3：</p>
+<ul>
+<li>命名空间</li>
+<li>匿名函数</li>
+<li>闭包</li>
+<li>新增魔术方法<code>__callStatic()</code>和<code>__invoke()</code></li>
+<li>新增魔术变量<code>__DIR__</code></li>
+<li>动态调用静态方法</li>
+<li>延迟静态绑定</li>
+<li>Heredoc和 Nowdoc</li>
+<li>类外使用const定义常量</li>
+<li>三元运算符</li>
+<li>Phar</li>
+</ul>
+<p>PHP5.4：</p>
+<ul>
+<li>Short Open Tag</li>
+<li>数组简写</li>
+<li>Traits,</li>
+<li>内置 Web 服务器</li>
+<li>动态访问静态方法</li>
+<li>实例化时访问类成员</li>
+</ul>
+<p>PHP5.5：</p>
+<ul>
+<li>yield</li>
+<li>list用于foreach</li>
+<li>细节修改</li>
+</ul>
+<p>PHP5.6:</p>
+<ul>
+<li>常量增强</li>
+<li>命名空间增强</li>
+<li>可变函数参数</li>
+</ul>
+<p>PHP7.0:</p>
+<ul>
+<li>标量类型声明</li>
+<li>返回值类型声明</li>
+<li>defined定义常量数组</li>
+<li>匿名类</li>
+<li>null合并运算符</li>
+</ul>
+<p>PHP7.1：</p>
+<ul>
+<li>可为空类型</li>
+<li>void类型</li>
+<li>多异常捕获</li>
+</ul>
+<p>PHP7.2：</p>
+<ul>
+<li>新的对象object</li>
+<li>允许重写抽象方法</li>
+</ul>
+<p>PHP7.3：语法层面没有很大的改变</p>
+<p>PHP7.4：</p>
+<ul>
+<li>类型属性</li>
+<li>箭头函数</li>
+<li>Null合并运算符支持方法</li>
+<li>Opcache 预加载</li>
+</ul>
+<p>PHP8.0:</p>
+<ul>
+<li>JIT即时编译</li>
+<li>命名参数</li>
+<li>注解</li>
+<li>联合类型</li>
+<li>Match表达式</li>
+<li>Nullsafe 运算符</li>
+<li>构造器属性提升</li>
+</ul>
+<h2 id="152-php51">
+  1.5.2 PHP5.1
+  <a class="anchor" href="#152-php51">#</a>
+</h2>
+<h3 id="__autoload魔术方法">
+  __autoload()魔术方法
+  <a class="anchor" href="#__autoload%e9%ad%94%e6%9c%af%e6%96%b9%e6%b3%95">#</a>
+</h3>
+<blockquote>
+<p>这是一个自动加载函数，在PHP5中，当我们实例化一个未定义的类时，就会触发此函数。可以通过定义这个函数来启用
+  <a href="https://link.segmentfault.com/?enc=K6gPDJqLNKcNB5cibcWVfw%3D%3D.0mC%2F5XlatumrZLgT1aW9WO6OFTQm1A4eDR8r9pVPKT56kJfXLv1dstDiE2EGi5bUB4iFfW7CcpZN9YeIVuAAvA%3D%3D">类的自动加载</a>。</p></blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#66d9ef">function</span>  <span style="color:#a6e22e">__autoload</span>($className) {
+</span></span><span style="display:flex;"><span>    $filePath <span style="color:#f92672">=</span> <span style="color:#a6e22e">“project</span><span style="color:#f92672">/</span><span style="color:#a6e22e">class</span><span style="color:#f92672">/</span>{$className}<span style="color:#f92672">.</span><span style="color:#a6e22e">php”</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">is_readable</span>($filePath)) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">require</span>($filePath);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>$a <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">A</span>();
+</span></span><span style="display:flex;"><span>$b <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">B</span>();
+</span></span><span style="display:flex;"><span>$c <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">C</span>();
+</span></span></code></pre></div><p>
+  <a href="https://link.segmentfault.com/?enc=6aZ7Q%2FPaBXDr0zdb0yUoJA%3D%3D.E6E2ioKPJ4qOeKqD0TNu%2B7qzav2EWU%2BL8dj92TjhhNNd0gag2G5lCFpvJp96p6Tp5m039G9BX5RLlrwxtgjqOA%3D%3D">PHP中__autoload()魔术方法详解</a></p>
+<h3 id="pdo">
+  PDO
+  <a class="anchor" href="#pdo">#</a>
+</h3>
+<blockquote>
+<p>PHP 数据对象 （PDO） 扩展为PHP访问数据库定义了一个轻量级的一致接口。</p></blockquote>
+<h4 id="安装">
+  安装
+  <a class="anchor" href="#%e5%ae%89%e8%a3%85">#</a>
+</h4>
+<p>可以通过 PHP 的 phpinfo() 函数来查看是否安装了PDO扩展。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#a6e22e">extension</span><span style="color:#f92672">=</span><span style="color:#a6e22e">pdo</span><span style="color:#f92672">.</span><span style="color:#a6e22e">so</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">extension</span><span style="color:#f92672">=</span><span style="color:#a6e22e">php_pdo</span><span style="color:#f92672">.</span><span style="color:#a6e22e">dll</span>
+</span></span></code></pre></div><h4 id="使用">
+  使用
+  <a class="anchor" href="#%e4%bd%bf%e7%94%a8">#</a>
+</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+</span></span><span style="display:flex;"><span>$dbms<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;mysql&#39;</span>;
+</span></span><span style="display:flex;"><span>$host<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;localhost&#39;</span>;
+</span></span><span style="display:flex;"><span>$dbName<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;test&#39;</span>;
+</span></span><span style="display:flex;"><span>$user<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;root&#39;</span>;
+</span></span><span style="display:flex;"><span>$pass<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;&#39;</span>;
+</span></span><span style="display:flex;"><span>$dsn<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">$dbms</span><span style="color:#e6db74">:host=</span><span style="color:#e6db74">$host</span><span style="color:#e6db74">;dbname=</span><span style="color:#e6db74">$dbName</span><span style="color:#e6db74">&#34;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">try</span> {
+</span></span><span style="display:flex;"><span>    $dbh <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">PDO</span>($dsn, $user, $pass);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#34;连接成功&lt;br/&gt;&#34;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    $dbh <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span>;
+</span></span><span style="display:flex;"><span>} <span style="color:#66d9ef">catch</span> (<span style="color:#a6e22e">PDOException</span> $e) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">die</span> (<span style="color:#e6db74">&#34;Error!: &#34;</span> <span style="color:#f92672">.</span> $e<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">getMessage</span>() <span style="color:#f92672">.</span> <span style="color:#e6db74">&#34;&lt;br/&gt;&#34;</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>$db <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">PDO</span>($dsn, $user, $pass, <span style="color:#66d9ef">array</span>(<span style="color:#a6e22e">PDO</span><span style="color:#f92672">::</span><span style="color:#a6e22e">ATTR_PERSISTENT</span> <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">true</span>));
+</span></span></code></pre></div><p>
+  <a href="https://link.segmentfault.com/?enc=tFOqwfyp8FPx3UbMlDAwLw%3D%3D.boeDABc8qYJs1TjJ%2FC%2FOADK4JP2JqLvZuXQId39tdVFhULsImX1uqO%2Fwo0DHrkNX">PHP PDO</a></p>
+<h3 id="mysqli">
+  MySQLi
+  <a class="anchor" href="#mysqli">#</a>
+</h3>
+<blockquote>
+<p>mysqli.dll是PHP对mysql新特性的一个扩展支持，允许访问MySQL 4.1及以上版本提供的功能。</p></blockquote>
+<h4 id="mysql与mysqli的区别">
+  mysql与mysqli的区别：
+  <a class="anchor" href="#mysql%e4%b8%8emysqli%e7%9a%84%e5%8c%ba%e5%88%ab">#</a>
+</h4>
+<ol>
+<li>mysqli连接是永久连接，而mysql是非永久连接。</li>
+<li>mysql连接每当第二次使用的时候，都会重新打开一个新的进程。mysqli连接一直都只使用同一个进程。</li>
+</ol>
+<h4 id="使用-1">
+  使用
+  <a class="anchor" href="#%e4%bd%bf%e7%94%a8-1">#</a>
+</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span>$conn <span style="color:#f92672">=</span> <span style="color:#a6e22e">mysqli_connect</span>(<span style="color:#e6db74">&#39;localhost&#39;</span>, <span style="color:#e6db74">&#39;root&#39;</span>, <span style="color:#e6db74">&#39;123&#39;</span>, <span style="color:#e6db74">&#39;db_test&#39;</span>) <span style="color:#66d9ef">or</span> (<span style="color:#e6db74">&#39;error&#39;</span>);
+</span></span><span style="display:flex;"><span>$sql <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;select * from db_table&#34;</span>;
+</span></span><span style="display:flex;"><span>$query <span style="color:#f92672">=</span> <span style="color:#a6e22e">mysqli_query</span>($conn,$sql);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">while</span>($row <span style="color:#f92672">=</span> <span style="color:#a6e22e">mysqli_fetch_array</span>($query)){
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">echo</span> $row[<span style="color:#e6db74">&#39;title&#39;</span>];
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>
+  <a href="https://link.segmentfault.com/?enc=8ZN13gHSt1Y85bjqPIl2PQ%3D%3D.Sxm43ll0lbv0Ap3fj90QqJTaJ%2Bckbk%2BnZuRGslumvf2KP%2Bj7XNQ7Ffks7OA28xSN">mysqli和mysql的区别是什么</a></p>
+<h3 id="类型约束">
+  类型约束
+  <a class="anchor" href="#%e7%b1%bb%e5%9e%8b%e7%ba%a6%e6%9d%9f">#</a>
+</h3>
+<p>通过类型约束可以限制参数的类型，不过这一机制并不完善，目前仅适用于类和 callable(可执行类型) 以及 array(数组), 不适用于 string 和 int.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">MyFunction</span>(<span style="color:#a6e22e">MyClass</span> $a, <span style="color:#a6e22e">callable</span> $b, <span style="color:#66d9ef">array</span> $c)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="153-php52">
+  1.5.3 PHP5.2
+  <a class="anchor" href="#153-php52">#</a>
+</h2>
+<h3 id="json">
+  JSON
+  <a class="anchor" href="#json">#</a>
+</h3>
+<ul>
+<li>
+  <a href="https://link.segmentfault.com/?enc=5Sss%2BvBMdDiiAxG%2FECaKwA%3D%3D.K2ukZYKfy8Rk%2FhpuNyOMP7rKSMzgTTqzaSZOKyRpmRqyGBtcVLIx%2BQbQegz8LP6qo%2FwHBimhLcxLKGMVYUumzA%3D%3D">json_encode</a> — 对变量进行 JSON 编码</li>
+<li>
+  <a href="https://link.segmentfault.com/?enc=07Gy1VMqwPA7RGDNtnXSxg%3D%3D.CYB6ERDjX2WsU5hEDFN2l%2BZdlvPLVz%2B7LVASCF%2B4lXdQsTncU9LUnu4VFVTTHOJBUUrvHo7JdlhSKpOPe9cFvg%3D%3D">json_decode</a> — 对 JSON 格式的字符串进行解码</li>
+</ul>
+<h2 id="154-php53">
+  1.5.4 PHP5.3
+  <a class="anchor" href="#154-php53">#</a>
+</h2>
+<h3 id="命名空间">
+  命名空间
+  <a class="anchor" href="#%e5%91%bd%e5%90%8d%e7%a9%ba%e9%97%b4">#</a>
+</h3>
+<blockquote>
+<p>避免不同包中的类名或变量名产生冲突</p></blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> <span style="color:#a6e22e">XXX</span>;
+</span></span></code></pre></div><h3 id="匿名函数闭包">
+  匿名函数（闭包）
+  <a class="anchor" href="#%e5%8c%bf%e5%90%8d%e5%87%bd%e6%95%b0%e9%97%ad%e5%8c%85">#</a>
+</h3>
+<blockquote>
+<p>用来临时性地创建一个无名函数，用于回调函数等用途。</p></blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span>$func <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span>($arg)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">print</span> $arg;
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>$func(<span style="color:#e6db74">&#34;Hello World！ hovertree.top&#34;</span>);
+</span></span></code></pre></div><h3 id="新增魔术方法__callstatic和__invoke">
+  新增魔术方法<code>__callStatic()</code>和<code>__invoke()</code>
+  <a class="anchor" href="#%e6%96%b0%e5%a2%9e%e9%ad%94%e6%9c%af%e6%96%b9%e6%b3%95__callstatic%e5%92%8c__invoke">#</a>
+</h3>
+<p><code>__callStatic()</code>：用静态方式中调用一个不可访问方法时调用</p>
+<p><code>__invoke()</code> ：以调用函数的方式调用一个对象时的回应方法</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span>$person <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Person</span>(<span style="color:#e6db74">&#39;小明&#39;</span>);
+</span></span><span style="display:flex;"><span>$person();
+</span></span></code></pre></div><h3 id="新增魔术变量__dir__">
+  新增魔术变量<code>__DIR__</code>
+  <a class="anchor" href="#%e6%96%b0%e5%a2%9e%e9%ad%94%e6%9c%af%e5%8f%98%e9%87%8f__dir__">#</a>
+</h3>
+<blockquote>
+<p>获取当前执行的PHP脚本所在的目录</p></blockquote>
+<p>如当前执行的PHP文件为 /htdocs/index.php，则<code>__FILE__</code>等于’/htdocs/index.php’，而<code>__DIR__</code>等于’/htdocs’。</p>
+<h3 id="动态调用静态方法">
+  动态调用静态方法
+  <a class="anchor" href="#%e5%8a%a8%e6%80%81%e8%b0%83%e7%94%a8%e9%9d%99%e6%80%81%e6%96%b9%e6%b3%95">#</a>
+</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">test</span>($userName)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>$className <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;cls&#39;</span>;
+</span></span><span style="display:flex;"><span>$className<span style="color:#f92672">::</span><span style="color:#a6e22e">test</span>(<span style="color:#e6db74">&#39;Tom&#39;</span>);
+</span></span></code></pre></div><h3 id="延迟静态绑定">
+  延迟静态绑定
+  <a class="anchor" href="#%e5%bb%b6%e8%bf%9f%e9%9d%99%e6%80%81%e7%bb%91%e5%ae%9a">#</a>
+</h3>
+<blockquote>
+<p>PHP 5.3.0中增加了一个static关键字来引用当前类，即实现了延迟静态绑定。</p></blockquote>
+<p>这是因为 self 的语义本来就是“当前类”，所以 PHP5.3 给 static 关键字赋予了一个新功能：后期静态绑定</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">A</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">callFuncXXOO</span>()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">print</span> <span style="color:#a6e22e">self</span><span style="color:#f92672">::</span><span style="color:#a6e22e">funcXXOO</span>();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">funcXXOO</span>()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;A::funcXXOO()&#34;</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">B</span> <span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">A</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">funcXXOO</span>()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;B::funcXXOO&#34;</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>$b <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">B</span>;
+</span></span><span style="display:flex;"><span>$b<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">callFuncXXOO</span>();
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">A</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">callFuncXXOO</span>()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">print</span> <span style="color:#66d9ef">static</span><span style="color:#f92672">::</span><span style="color:#a6e22e">funcXXOO</span>();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">B</span><span style="color:#f92672">::</span><span style="color:#a6e22e">callFuncXXOO</span>();
+</span></span></code></pre></div><h3 id="类外使用const定义常量">
+  类外使用const定义常量
+  <a class="anchor" href="#%e7%b1%bb%e5%a4%96%e4%bd%bf%e7%94%a8const%e5%ae%9a%e4%b9%89%e5%b8%b8%e9%87%8f">#</a>
+</h3>
+<p>常量是一个简单的标识符。在脚本执行期间该值不能改变（除了所谓的魔术常量，他们其实不是常量）。常量默认大小写敏感。通常常量标识符总是大写的。</p>
+<p>可以用define()函数来定义常量。在php5.3.0以后，可以使用const关键字在类定义的外部定义常量，先前版本const关键字只能在类(class)中使用。一个常量一旦被定义，就不能再改变或取消定义。</p>
+<h4 id="const和define的区别">
+  const和define的区别？
+  <a class="anchor" href="#const%e5%92%8cdefine%e7%9a%84%e5%8c%ba%e5%88%ab">#</a>
+</h4>
+<ol>
+<li>const是一个语言结构，而define是一个函数。const在编译时要比define快很多。</li>
+</ol>
+<p>const用于类成员变量的定义，一经定义，不可修改。Define不可以用于类成员变量的定义，可用于全局常量。</p>
+<ol start="2">
+<li>Const可在类中使用，define不能</li>
+<li>Const不能在条件语句中定义常量</li>
+<li>const采用普通的常量名称，define可以采用表达式作为名称</li>
+<li>const只能接受静态的标量，而define可以采用任何表达式</li>
+<li>const定义的常量时大小写敏感，而define可以通过第三个参数（为true表示大小写不敏感）来指定大小写是否敏感。</li>
+</ol>
+<p>
+  <a href="https://link.segmentfault.com/?enc=9kLCCeTpW3FprOH%2F8q%2FfCw%3D%3D.RruYKgpsfipbrIMun7bjcNVEWGU5bPPMsS37D00sleMDFg6xvNSeLJRv%2B0Bi5bN6smsmLAVmVDoHk3kOyemldA%3D%3D">PHP常量详解：define和const的区别</a></p>
+<h3 id="简化三元运算符">
+  简化三元运算符
+  <a class="anchor" href="#%e7%ae%80%e5%8c%96%e4%b8%89%e5%85%83%e8%bf%90%e7%ae%97%e7%ac%a6">#</a>
+</h3>
+<p>从PHP 5.3开始，通过排除中间表达式，甚至可以进一步简化三元语句。 如果测试表达式在布尔上下文中评估为true，则返回其值。 否则，将返回替代方法。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+</span></span><span style="display:flex;"><span>$favoriteColor <span style="color:#f92672">=</span> $_GET[<span style="color:#e6db74">&#34;color&#34;</span>] <span style="color:#f92672">?:</span> <span style="color:#e6db74">&#34;pink&#34;</span>;
+</span></span></code></pre></div><h3 id="phar">
+  Phar
+  <a class="anchor" href="#phar">#</a>
+</h3>
+<blockquote>
+<p>PHP5.3之后支持了类似Java的jar包，名为phar。用来将多个PHP文件打包为一个文件。</p></blockquote>
+<p>创建一个phar压缩包</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span>$phar <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Phar</span>(<span style="color:#e6db74">&#39;swoole.phar&#39;</span>);
+</span></span><span style="display:flex;"><span>$phar<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">buildFromDirectory</span>(<span style="color:#66d9ef">__DIR__</span><span style="color:#f92672">.</span><span style="color:#e6db74">&#39;/../&#39;</span>, <span style="color:#e6db74">&#39;/.php$/&#39;</span>);
+</span></span><span style="display:flex;"><span>$phar<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">compressFiles</span>(<span style="color:#a6e22e">Phar</span><span style="color:#f92672">::</span><span style="color:#a6e22e">GZ</span>);
+</span></span><span style="display:flex;"><span>$phar<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">stopBuffering</span>();
+</span></span><span style="display:flex;"><span>$phar<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">setStub</span>($phar<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">createDefaultStub</span>(<span style="color:#e6db74">&#39;lib_config.php&#39;</span>));
+</span></span></code></pre></div><p>使用phar压缩包</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#66d9ef">include</span> <span style="color:#e6db74">&#39;swoole.phar&#39;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">include</span> <span style="color:#e6db74">&#39;swoole.phar/code/page.php&#39;</span>;
+</span></span></code></pre></div><p>使用phar可以很方便的打包你的代码，集成部署到线上机器。</p>
+<p>
+  <a href="https://link.segmentfault.com/?enc=Utl5IWXRD5I354YgcgVr4w%3D%3D.OFpELaR7wN0QzTNM8gD2oV4dq0x8CUGOEn4xjPXhR%2FanjZ1tyPXAZKNquQgB%2FOAXd0YS4jQZB8fo4OwphP2%2Fxw%3D%3D">php phar教程,PHP中phar包的使用教程</a></p>
+<p>
+  <a href="https://link.segmentfault.com/?enc=kql9KJAEzpj8Z01rZ9o2sg%3D%3D.2UTy9L4XuZmS4E5pVv9yem0IlMdvZ%2ByeDM30OUyexg4RET1MWAyLyJGWQM6%2F1Hf8ThaKU5cI%2FQKnC0qw%2ByRqRA%3D%3D">PHP 5.3中的新特性及被弃用的功能函数总结</a></p>
+<p>
+  <a href="https://link.segmentfault.com/?enc=063i8tRokMP4pIDl4rYhZw%3D%3D.mWMI04xVwOfFv1udGERoKzbus%2Bul%2BoeG1btKDBrSMvI8fWzwgABUENbBNReqbNiC2HK3d1EXfwAuckVyViVHBg%3D%3D">PHP5各个版本的新功能和新特性总结</a></p>
+<h2 id="155-php54">
+  1.5.5 PHP5.4
+  <a class="anchor" href="#155-php54">#</a>
+</h2>
+<h3 id="short-open-tag-短开放标签">
+  Short Open Tag 短开放标签
+  <a class="anchor" href="#short-open-tag-%e7%9f%ad%e5%bc%80%e6%94%be%e6%a0%87%e7%ad%be">#</a>
+</h3>
+<blockquote>
+<p>自 PHP5.4 起总是可用。</p></blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span> <span style="color:#66d9ef">echo</span> $xxoo;<span style="color:#75715e">?&gt;</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">&lt;?= $xxoo;?&gt;
+</span></span></span></code></pre></div><h3 id="数组简写">
+  <strong>数组简写</strong>
+  <a class="anchor" href="#%e6%95%b0%e7%bb%84%e7%ae%80%e5%86%99">#</a>
+</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span>$arr <span style="color:#f92672">=</span> <span style="color:#66d9ef">array</span>(<span style="color:#e6db74">&#34;key&#34;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#34;value&#34;</span>, <span style="color:#e6db74">&#34;key2&#34;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#34;value2&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>$arr <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;key&#34;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#34;value&#34;</span>, <span style="color:#e6db74">&#34;key2&#34;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#34;value2&#34;</span>];
+</span></span></code></pre></div><h3 id="traits">
+  Traits
+  <a class="anchor" href="#traits">#</a>
+</h3>
+<blockquote>
+<p>Traits是 PHP 多重继承的一种解决方案。PHP中无法进行多重继承，但一个类可以包含多个Traits</p></blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#66d9ef">trait</span> <span style="color:#a6e22e">SayWorld</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">sayHello</span>()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#39;World!&#39;</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyHelloWorld</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">use</span> <span style="color:#a6e22e">SayWorld</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>$xxoo <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">MyHelloWorld</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>$xxoo<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">sayHello</span>();
+</span></span></code></pre></div><h4 id="优先级">
+  优先级
+  <a class="anchor" href="#%e4%bc%98%e5%85%88%e7%ba%a7">#</a>
+</h4>
+<p>基类中的成员函数将被Traits中的函数覆盖，当前类中的成员函数将覆盖Traits中的函数。</p>
+<p>
+  <a href="https://link.segmentfault.com/?enc=2eL45cd2G1zfKwB23HGteA%3D%3D.aKEuZN3aZiE19da8GRlsdsopb3CMhtbnBbDi0Ed0NjbIi3zywcVJzfOVv2FNRrcIgS9iDvvthkIkU88uNf6T7w%3D%3D">php5.4新功能Traits介绍</a></p>
+<h3 id="内置-web-服务器">
+  <strong>内置 Web 服务器</strong>
+  <a class="anchor" href="#%e5%86%85%e7%bd%ae-web-%e6%9c%8d%e5%8a%a1%e5%99%a8">#</a>
+</h3>
+<p>PHP 从 5.4 开始内置一个轻量级的 Web 服务器，不支持并发，定位是用于开发和调试环境。在开发环境使用它的确非常方便。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#a6e22e">php</span> <span style="color:#f92672">-</span><span style="color:#a6e22e">S</span> <span style="color:#a6e22e">localhost</span><span style="color:#f92672">:</span><span style="color:#ae81ff">8000</span>
+</span></span></code></pre></div><h3 id="动态访问静态方法">
+  动态访问静态方法
+  <a class="anchor" href="#%e5%8a%a8%e6%80%81%e8%ae%bf%e9%97%ae%e9%9d%99%e6%80%81%e6%96%b9%e6%b3%95">#</a>
+</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span>$func <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;funcXXOO&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">A</span><span style="color:#f92672">::</span>{$func}();
+</span></span></code></pre></div><h3 id="实例化时访问类成员">
+  实例化时访问类成员
+  <a class="anchor" href="#%e5%ae%9e%e4%be%8b%e5%8c%96%e6%97%b6%e8%ae%bf%e9%97%ae%e7%b1%bb%e6%88%90%e5%91%98">#</a>
+</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span>(<span style="color:#66d9ef">new</span> <span style="color:#a6e22e">MyClass</span>)<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">xxoo</span>();
+</span></span></code></pre></div><p>
+  <a href="https://link.segmentfault.com/?enc=5K12C2kCKdyO1bfhUcbY3w%3D%3D.Qu%2Bw2lTWpq9eaEQdstcuL71br1NWijFH99TWqPxRLolTmkxFamjcVMGbFAoc%2FNZg">php5.4总结</a></p>
+<h2 id="156-php55">
+  1.5.6 PHP5.5
+  <a class="anchor" href="#156-php55">#</a>
+</h2>
+<h3 id="yield关键字">
+  yield关键字
+  <a class="anchor" href="#yield%e5%85%b3%e9%94%ae%e5%ad%97">#</a>
+</h3>
+<p>yield关键字用于当函数需要返回一个迭代器的时候，逐个返回值。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">number10</span>()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span>($i <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>; $i <span style="color:#f92672">&lt;=</span> <span style="color:#ae81ff">10</span>; $i <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">yield</span> $i;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="list-用于-foreach">
+  list() 用于 foreach
+  <a class="anchor" href="#list-%e7%94%a8%e4%ba%8e-foreach">#</a>
+</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span>$array <span style="color:#f92672">=</span> [
+</span></span><span style="display:flex;"><span>    [<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">3</span>],
+</span></span><span style="display:flex;"><span>    [<span style="color:#ae81ff">4</span>, <span style="color:#ae81ff">5</span>, <span style="color:#ae81ff">6</span>],
+</span></span><span style="display:flex;"><span>];
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">foreach</span> ($array <span style="color:#66d9ef">as</span> <span style="color:#66d9ef">list</span>($a, $b, $c))
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">{</span>$a<span style="color:#e6db74">}</span><span style="color:#e6db74"> </span><span style="color:#e6db74">{</span>$b<span style="color:#e6db74">}</span><span style="color:#e6db74"> </span><span style="color:#e6db74">{</span>$c<span style="color:#e6db74">}</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>;
+</span></span></code></pre></div><h3 id="细节修改">
+  细节修改
+  <a class="anchor" href="#%e7%bb%86%e8%8a%82%e4%bf%ae%e6%94%b9">#</a>
+</h3>
+<ul>
+<li>不推荐使用 mysql 函数，推荐使用 PDO 或 MySQLi</li>
+<li>不再支持Windows XP.</li>
+<li>可用 MyClass::class 取到一个类的完整限定名(包括命名空间)</li>
+<li>empty() 支持表达式作为参数</li>
+<li>try-catch 结构新增 finally 块</li>
+</ul>
+<h2 id="157-php56">
+  1.5.7 PHP5.6
+  <a class="anchor" href="#157-php56">#</a>
+</h2>
+<h3 id="常量增强">
+  常量增强
+  <a class="anchor" href="#%e5%b8%b8%e9%87%8f%e5%a2%9e%e5%bc%ba">#</a>
+</h3>
+<ol>
+<li>
+<p>定义常量时允许使用之前定义的常量进行计算</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#66d9ef">A</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#66d9ef">B</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">A</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>;
+</span></span></code></pre></div></li>
+<li>
+<p>允许常量作为函数参数默认值</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">func</span>($arg <span style="color:#f92672">=</span> <span style="color:#a6e22e">C</span><span style="color:#f92672">::</span><span style="color:#a6e22e">STR2</span>)<span style="color:#a6e22e">asdf</span>
+</span></span></code></pre></div></li>
+</ol>
+<h3 id="可变函数参数">
+  可变函数参数
+  <a class="anchor" href="#%e5%8f%af%e5%8f%98%e5%87%bd%e6%95%b0%e5%8f%82%e6%95%b0">#</a>
+</h3>
+<p>用于代替 func_get_args()</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">add</span>(<span style="color:#f92672">...</span>$args)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>同时可以在调用函数时，把数组展开为函数参数：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span>$arr <span style="color:#f92672">=</span> [<span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">3</span>];
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">add</span>(<span style="color:#ae81ff">1</span>, <span style="color:#f92672">...</span>$arr);
+</span></span></code></pre></div><h3 id="命名空间增强">
+  命名空间增强
+  <a class="anchor" href="#%e5%91%bd%e5%90%8d%e7%a9%ba%e9%97%b4%e5%a2%9e%e5%bc%ba">#</a>
+</h3>
+<p>命名空间支持常量和函数</p>
+<p>
+  <a href="https://link.segmentfault.com/?enc=%2BKcl0uaElSp%2BcWrfcSINOQ%3D%3D.mrR%2FNEkbMg5viE%2BXY37KS3XK2ZDv4vtZuyc2h3W9EAzLMHWOeB8AGAA1aWDfaaeE">PHP5.6总结</a></p>
+<h2 id="158-php70">
+  1.5.8 PHP7.0
+  <a class="anchor" href="#158-php70">#</a>
+</h2>
+<h3 id="标量类型声明">
+  <strong>标量类型声明</strong>
+  <a class="anchor" href="#%e6%a0%87%e9%87%8f%e7%b1%bb%e5%9e%8b%e5%a3%b0%e6%98%8e">#</a>
+</h3>
+<p>四种标量类型：boolean （布尔型），integer （整型），float （浮点型, 也称作 double)，string （字符串）</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">typeString</span>(<span style="color:#a6e22e">string</span> $a)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">echo</span> $a;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">typeString</span>(<span style="color:#e6db74">&#39;sad&#39;</span>);
+</span></span></code></pre></div><h3 id="返回值类型声明">
+  返回值类型声明
+  <a class="anchor" href="#%e8%bf%94%e5%9b%9e%e5%80%bc%e7%b1%bb%e5%9e%8b%e5%a3%b0%e6%98%8e">#</a>
+</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">returnErrorArray</span>()<span style="color:#f92672">:</span> <span style="color:#66d9ef">array</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#39;1456546&#39;</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">print_r</span>(<span style="color:#a6e22e">returnErrorArray</span>());
+</span></span></code></pre></div><h3 id="define-定义数组">
+  define 定义数组
+  <a class="anchor" href="#define-%e5%ae%9a%e4%b9%89%e6%95%b0%e7%bb%84">#</a>
+</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#a6e22e">define</span>(<span style="color:#e6db74">&#39;ANIMALS&#39;</span>, [
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#39;dog&#39;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#39;cat&#39;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#39;bird&#39;</span>
+</span></span><span style="display:flex;"><span>]);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">echo</span> <span style="color:#a6e22e">ANIMALS</span>[<span style="color:#ae81ff">1</span>];
+</span></span></code></pre></div><h3 id="匿名类">
+  匿名类
+  <a class="anchor" href="#%e5%8c%bf%e5%90%8d%e7%b1%bb">#</a>
+</h3>
+<p><strong>匿名类就像一个没有事先定义的类，而在定义的时候直接就进行了实例化。</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span>$objA <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">class</span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">getName</span>(){
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#34;I&#39;m objA&#34;</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>$objA<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">getName</span>();
+</span></span></code></pre></div><p>
+  <a href="https://link.segmentfault.com/?enc=NtqGgv%2FkQYmcRVOs9K8%2F6g%3D%3D.e0I7QlWSTWEQCS4nv%2B0OB0JLEQQVmBmL6e3nVQrpdExmzEG0MXhAbZN0K%2B%2BNayYi3coZdrXAbTww%2F%2F5MZ3M0hQ%3D%3D">PHP7 匿名类的用法</a></p>
+<h3 id="null-合并运算符">
+  null 合并运算符
+  <a class="anchor" href="#null-%e5%90%88%e5%b9%b6%e8%bf%90%e7%ae%97%e7%ac%a6">#</a>
+</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span>$username <span style="color:#f92672">=</span> $_GET[<span style="color:#e6db74">&#39;user&#39;</span>] <span style="color:#f92672">??</span> <span style="color:#e6db74">&#39;nobody&#39;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>$username <span style="color:#f92672">=</span> <span style="color:#a6e22e">isset</span>($_GET[<span style="color:#e6db74">&#39;user&#39;</span>]) <span style="color:#f92672">?</span> $_GET[<span style="color:#e6db74">&#39;user&#39;</span>] <span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;nobody&#39;</span>;
+</span></span></code></pre></div><h2 id="159-php71">
+  1.5.9 PHP7.1
+  <a class="anchor" href="#159-php71">#</a>
+</h2>
+<h3 id="可为空类型">
+  <strong>可为空类型</strong>
+  <a class="anchor" href="#%e5%8f%af%e4%b8%ba%e7%a9%ba%e7%b1%bb%e5%9e%8b">#</a>
+</h3>
+<p>参数以及返回值的类型现在可以通过在类型前加上一个问号使之允许为空。</p>
+<p>当启用这个特性时，传入的参数或者函数返回的结果要么是给定的类型，要么是 null 。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">testReturn</span>()<span style="color:#f92672">:</span> <span style="color:#f92672">?</span><span style="color:#a6e22e">string</span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#39;elePHPant&#39;</span>;
+</span></span><span style="display:flex;"><span>  }
+</span></span></code></pre></div><h3 id="void类型">
+  void类型
+  <a class="anchor" href="#void%e7%b1%bb%e5%9e%8b">#</a>
+</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">swap</span>(<span style="color:#f92672">&amp;</span>$left, <span style="color:#f92672">&amp;</span>$right) <span style="color:#f92672">:</span> <span style="color:#a6e22e">void</span>{
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  }
+</span></span></code></pre></div><h3 id="多异常捕获">
+  多异常捕获
+  <a class="anchor" href="#%e5%a4%9a%e5%bc%82%e5%b8%b8%e6%8d%95%e8%8e%b7">#</a>
+</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">try</span> {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>} <span style="color:#66d9ef">catch</span> (<span style="color:#a6e22e">FirstException</span> <span style="color:#f92672">|</span> <span style="color:#a6e22e">SecondException</span> $e) {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="1510-php72">
+  1.5.10 PHP7.2
+  <a class="anchor" href="#1510-php72">#</a>
+</h2>
+<h3 id="新的对象类型object">
+  新的对象类型object
+  <a class="anchor" href="#%e6%96%b0%e7%9a%84%e5%af%b9%e8%b1%a1%e7%b1%bb%e5%9e%8bobject">#</a>
+</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">test</span>(<span style="color:#a6e22e">object</span> $obj) <span style="color:#f92672">:</span> <span style="color:#a6e22e">object</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">SplQueue</span>();
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">test</span>(<span style="color:#66d9ef">new</span> <span style="color:#66d9ef">StdClass</span>());
+</span></span></code></pre></div><h3 id="允许重写抽象方法">
+  <strong>允许重写抽象方法</strong>
+  <a class="anchor" href="#%e5%85%81%e8%ae%b8%e9%87%8d%e5%86%99%e6%8a%bd%e8%b1%a1%e6%96%b9%e6%b3%95">#</a>
+</h3>
+<p>当一个抽象类继承于另外一个抽象类的时候，继承后的抽象类可以重写被继承的抽象类的抽象方法。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">abstract</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">A</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">abstract</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">test</span>(<span style="color:#a6e22e">string</span> $s);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">abstract</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">B</span> <span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">A</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">abstract</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">test</span>($s) <span style="color:#f92672">:</span> <span style="color:#a6e22e">int</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="1511-php74">
+  1.5.11 PHP7.4
+  <a class="anchor" href="#1511-php74">#</a>
+</h2>
+<h3 id="类属性支持类型声明">
+  类属性支持类型声明
+  <a class="anchor" href="#%e7%b1%bb%e5%b1%9e%e6%80%a7%e6%94%af%e6%8c%81%e7%b1%bb%e5%9e%8b%e5%a3%b0%e6%98%8e">#</a>
+</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">User</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">int</span> $id;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">string</span> $name;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="箭头函数">
+  <strong>箭头函数</strong>
+  <a class="anchor" href="#%e7%ae%ad%e5%a4%b4%e5%87%bd%e6%95%b0">#</a>
+</h3>
+<p>使用隐式按值作用域绑定定义函数的简写语法。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+</span></span><span style="display:flex;"><span>  $factor <span style="color:#f92672">=</span> <span style="color:#ae81ff">10</span>;
+</span></span><span style="display:flex;"><span>  $nums <span style="color:#f92672">=</span> <span style="color:#a6e22e">array_map</span>(<span style="color:#a6e22e">fn</span>($n) <span style="color:#f92672">=&gt;</span> $n <span style="color:#f92672">*</span> $factor, [<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">4</span>]);
+</span></span></code></pre></div><h3 id="null-合并运算符支持方法">
+  <strong>Null 合并运算符支持方法</strong>
+  <a class="anchor" href="#null-%e5%90%88%e5%b9%b6%e8%bf%90%e7%ae%97%e7%ac%a6%e6%94%af%e6%8c%81%e6%96%b9%e6%b3%95">#</a>
+</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+</span></span><span style="display:flex;"><span>  $array[<span style="color:#e6db74">&#39;key&#39;</span>] <span style="color:#f92672">??=</span> <span style="color:#a6e22e">computeDefault</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">?&gt;</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span></code></pre></div><h3 id="opcache-预加载">
+  Opcache 预加载
+  <a class="anchor" href="#opcache-%e9%a2%84%e5%8a%a0%e8%bd%bd">#</a>
+</h3>
+<p>Opcache将获取您的PHP源文件，将其编译为“ opcodes”，然后将这些编译后的文件存储在磁盘上。opcache会跳过源文件和PHP解释器在运行时实际需要之间的转换步骤。</p>
+<p>
+  <a href="https://link.segmentfault.com/?enc=VYaM0M%2BuGiShmUulpNY5HA%3D%3D.jQ67PUXszY2QZtTBLyda7VpcL0%2F4NKTce%2BPyXwPRnOnaV4IUmvsgLir62Ff8meN%2B">掌握PHP 7.x 各个版本的新特性</a></p>
+<p>
+  <a href="https://link.segmentfault.com/?enc=qNVwqYNLFbqMTqRt4uqUbg%3D%3D.Vi7Xl0%2B%2FZCaZomCgoC65H4dEqARd1ad1nHmxdzjAtR2P3yqKUHnSj8Wy47SKS1sTZ0ZzAGXTbZ0aFBQcxZthqQ%3D%3D">PHP7.0<del>PHP7.1</del>PHP7.2<del>PHP7.3</del>PHP7.4新特性</a></p>
+<h2 id="1512-php80">
+  1.5.12 PHP8.0
+  <a class="anchor" href="#1512-php80">#</a>
+</h2>
+<h3 id="jit即时编译">
+  JIT即时编译
+  <a class="anchor" href="#jit%e5%8d%b3%e6%97%b6%e7%bc%96%e8%af%91">#</a>
+</h3>
+<p>PHP8的JIT目前是在Opcache之中提供的</p>
+<p>JIT在Opcache优化之后的基础上，结合Runtime的信息再次优化，直接生成机器码</p>
+<p>JIT不是原来Opcache优化的替代，是增强</p>
+<p>目前PHP8只支持x86架构的CPU</p>
+<h3 id="命名参数">
+  命名参数
+  <a class="anchor" href="#%e5%91%bd%e5%90%8d%e5%8f%82%e6%95%b0">#</a>
+</h3>
+<blockquote>
+<p>就是具名参数，在调用函数的时候，可以指定参数名称，指定参数名称后，参数顺序可以不安装原函数参数顺序传</p></blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#a6e22e">balance</span>(<span style="color:#ae81ff">100</span>, <span style="color:#ae81ff">20</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">balance</span>(<span style="color:#a6e22e">amount</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">100</span>, <span style="color:#a6e22e">payment</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">20</span>);
+</span></span></code></pre></div><h3 id="注解">
+  注解
+  <a class="anchor" href="#%e6%b3%a8%e8%a7%a3">#</a>
+</h3>
+<p>使用注解可以将类定义成一个一个低解耦，高内聚的元数据类。在使用的时候通过注解灵活引入，反射注解类实例的时候达到调用的目的。
+注解类只有在被实例化的时候才会调用</p>
+<h3 id="联合类型">
+  联合类型
+  <a class="anchor" href="#%e8%81%94%e5%90%88%e7%b1%bb%e5%9e%8b">#</a>
+</h3>
+<p>在不确定参数类型的场景下，可以使用</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">printSomeThing</span>(<span style="color:#a6e22e">string</span><span style="color:#f92672">|</span><span style="color:#a6e22e">int</span> $value)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">var_dump</span>($value);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="match表达式">
+  Match表达式
+  <a class="anchor" href="#match%e8%a1%a8%e8%be%be%e5%bc%8f">#</a>
+</h3>
+<p>和switch cash差不多，不过是严格===匹配</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+</span></span><span style="display:flex;"><span>$key <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;b&#39;</span>;
+</span></span><span style="display:flex;"><span>$str <span style="color:#f92672">=</span> <span style="color:#a6e22e">match</span>($key) {
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#39;a&#39;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;this a&#39;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#39;c&#39;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;this c&#39;</span>,
+</span></span><span style="display:flex;"><span>     <span style="color:#ae81ff">0</span>  <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;this 0&#39;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#39;b&#39;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;last b&#39;</span>,
+</span></span><span style="display:flex;"><span>  };
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">echo</span> $str;
+</span></span></code></pre></div><h3 id="nullsafe-运算符">
+  Nullsafe 运算符
+  <a class="anchor" href="#nullsafe-%e8%bf%90%e7%ae%97%e7%ac%a6">#</a>
+</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span>$user <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">echo</span> $user<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">getName</span>();
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">echo</span> $user<span style="color:#f92672">?-&gt;</span><span style="color:#a6e22e">getName</span>();
+</span></span></code></pre></div><h3 id="构造器属性提升">
+  构造器属性提升
+  <a class="anchor" href="#%e6%9e%84%e9%80%a0%e5%99%a8%e5%b1%9e%e6%80%a7%e6%8f%90%e5%8d%87">#</a>
+</h3>
+<p>在构造函数中可以声明类属性的修饰词作用域</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">User</span>
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">protected</span> <span style="color:#a6e22e">string</span> $name;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">protected</span> <span style="color:#a6e22e">int</span> $age;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">function</span> __construct(<span style="color:#a6e22e">string</span> $name, <span style="color:#a6e22e">int</span> $age)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">name</span> <span style="color:#f92672">=</span> $name;
+</span></span><span style="display:flex;"><span>            $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">age</span> <span style="color:#f92672">=</span> $age;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">User</span>
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">function</span> __construct(
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">protected</span> <span style="color:#a6e22e">string</span> $name,
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">protected</span> <span style="color:#a6e22e">int</span> $age
+</span></span><span style="display:flex;"><span>        ) {}
+</span></span><span style="display:flex;"><span>    }
+</span></span></code></pre></div><p>
+  <a href="https://link.segmentfault.com/?enc=GlcYyB7oKVsfIE6AGcM%2BVQ%3D%3D.k0nqw9YvX8n46oxJoyLhT%2F5nGNRcvBXPY1Dgf0RVRFyQZLwcgubyI%2FNrNIiW0LlJ">结合示例讲解PHP8的新特性</a></p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/book.wiki/commit/497b01d7b14e60cd68369b5933284910cf9b78c4" title='最后修改者 xiaobinqt | 四月 20, 2025' target="_blank" rel="noopener">
+      <img src="/wiki/svg/calendar.svg" class="book-icon" alt="" />
+      <span>四月 20, 2025</span>
+    </a>
+  </div>
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/book.wiki/tree/main/book.wiki/docs/php/versions.md" target="_blank" rel="noopener">
+      <img src="/wiki/svg/edit.svg" class="book-icon" alt="" />
+      <span>编辑本页</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#15-版本区别">1.5 版本区别</a>
+      <ul>
+        <li><a href="#151-汇总">1.5.1 汇总</a></li>
+        <li><a href="#152-php51">1.5.2 PHP5.1</a>
+          <ul>
+            <li><a href="#__autoload魔术方法">__autoload()魔术方法</a></li>
+            <li><a href="#pdo">PDO</a></li>
+            <li><a href="#mysqli">MySQLi</a></li>
+            <li><a href="#类型约束">类型约束</a></li>
+          </ul>
+        </li>
+        <li><a href="#153-php52">1.5.3 PHP5.2</a>
+          <ul>
+            <li><a href="#json">JSON</a></li>
+          </ul>
+        </li>
+        <li><a href="#154-php53">1.5.4 PHP5.3</a>
+          <ul>
+            <li><a href="#命名空间">命名空间</a></li>
+            <li><a href="#匿名函数闭包">匿名函数（闭包）</a></li>
+            <li><a href="#新增魔术方法__callstatic和__invoke">新增魔术方法<code>__callStatic()</code>和<code>__invoke()</code></a></li>
+            <li><a href="#新增魔术变量__dir__">新增魔术变量<code>__DIR__</code></a></li>
+            <li><a href="#动态调用静态方法">动态调用静态方法</a></li>
+            <li><a href="#延迟静态绑定">延迟静态绑定</a></li>
+            <li><a href="#类外使用const定义常量">类外使用const定义常量</a></li>
+            <li><a href="#简化三元运算符">简化三元运算符</a></li>
+            <li><a href="#phar">Phar</a></li>
+          </ul>
+        </li>
+        <li><a href="#155-php54">1.5.5 PHP5.4</a>
+          <ul>
+            <li><a href="#short-open-tag-短开放标签">Short Open Tag 短开放标签</a></li>
+            <li><a href="#数组简写"><strong>数组简写</strong></a></li>
+            <li><a href="#traits">Traits</a></li>
+            <li><a href="#内置-web-服务器"><strong>内置 Web 服务器</strong></a></li>
+            <li><a href="#动态访问静态方法">动态访问静态方法</a></li>
+            <li><a href="#实例化时访问类成员">实例化时访问类成员</a></li>
+          </ul>
+        </li>
+        <li><a href="#156-php55">1.5.6 PHP5.5</a>
+          <ul>
+            <li><a href="#yield关键字">yield关键字</a></li>
+            <li><a href="#list-用于-foreach">list() 用于 foreach</a></li>
+            <li><a href="#细节修改">细节修改</a></li>
+          </ul>
+        </li>
+        <li><a href="#157-php56">1.5.7 PHP5.6</a>
+          <ul>
+            <li><a href="#常量增强">常量增强</a></li>
+            <li><a href="#可变函数参数">可变函数参数</a></li>
+            <li><a href="#命名空间增强">命名空间增强</a></li>
+          </ul>
+        </li>
+        <li><a href="#158-php70">1.5.8 PHP7.0</a>
+          <ul>
+            <li><a href="#标量类型声明"><strong>标量类型声明</strong></a></li>
+            <li><a href="#返回值类型声明">返回值类型声明</a></li>
+            <li><a href="#define-定义数组">define 定义数组</a></li>
+            <li><a href="#匿名类">匿名类</a></li>
+            <li><a href="#null-合并运算符">null 合并运算符</a></li>
+          </ul>
+        </li>
+        <li><a href="#159-php71">1.5.9 PHP7.1</a>
+          <ul>
+            <li><a href="#可为空类型"><strong>可为空类型</strong></a></li>
+            <li><a href="#void类型">void类型</a></li>
+            <li><a href="#多异常捕获">多异常捕获</a></li>
+          </ul>
+        </li>
+        <li><a href="#1510-php72">1.5.10 PHP7.2</a>
+          <ul>
+            <li><a href="#新的对象类型object">新的对象类型object</a></li>
+            <li><a href="#允许重写抽象方法"><strong>允许重写抽象方法</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#1511-php74">1.5.11 PHP7.4</a>
+          <ul>
+            <li><a href="#类属性支持类型声明">类属性支持类型声明</a></li>
+            <li><a href="#箭头函数"><strong>箭头函数</strong></a></li>
+            <li><a href="#null-合并运算符支持方法"><strong>Null 合并运算符支持方法</strong></a></li>
+            <li><a href="#opcache-预加载">Opcache 预加载</a></li>
+          </ul>
+        </li>
+        <li><a href="#1512-php80">1.5.12 PHP8.0</a>
+          <ul>
+            <li><a href="#jit即时编译">JIT即时编译</a></li>
+            <li><a href="#命名参数">命名参数</a></li>
+            <li><a href="#注解">注解</a></li>
+            <li><a href="#联合类型">联合类型</a></li>
+            <li><a href="#match表达式">Match表达式</a></li>
+            <li><a href="#nullsafe-运算符">Nullsafe 运算符</a></li>
+            <li><a href="#构造器属性提升">构造器属性提升</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
