@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="
+  2.12 Ingress
+  #
+
+Service 的负载均衡功能有限，只能够依据 IP 地址和端口号做一些简单的判断和组合，而更多的高级路由条件，比如主机名、URI、请求头、证书等 Service 无法实现。Service 还有一个缺点，它比较适合代理集群内部的服务。如果想要把服务暴露到集群外部，就只能使用 NodePort 或者 LoadBalancer 这两种方式，而它们缺乏足够的灵活性，难以管控。
+Ingress 对象可以作为流量的总入口，统管集群的进出口数据，“扇入” “扇出” 流量（也就是常说的 “南北向”），让外部用户能够安全、顺畅、便捷地访问内部服务。
+
+
+  2.12.1 Ingress Controller &amp; Class
+  #
+
+Service 本身是没有服务能力的，它只是一些 iptables 规则，真正配置、应用这些规则的实际上是节点里的 kube-proxy 组件。如果没有 kube-proxy，Service 定义得再完善也没有用。
+Ingress 只是一些 HTTP 路由规则的集合，相当于一份静态的描述文件，真正要把这些规则在集群里实施运行，需要的是 Ingress Controller，它的作用就相当于 Service 的 kube-proxy，能够读取、应用 Ingress 规则，处理、调度流量。
+由于 Ingress Controller 与上层业务联系密切，所以 Kubernetes 把 Ingress Controller 的实现交给了社区，只要遵守 Ingress 规则，任何人都可以开发 Ingress Controller。在众多 Ingress Controller 中，Nginx 公司开发实现 Ingress Controller 是最多使用的。
+最初 Kubernetes 的构想是，一个集群里有一个 Ingress Controller，再给它配上许多不同的 Ingress 规则，应该就可以解决请求的路由和分发问题了。但随着 Ingress 在实践中的大量应用，有很多问题逐渐显现出来，比如：">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/kubernetes/docs/part2-break-ice/2.12-ingress/">
+  <meta property="og:site_name" content="Kubernetes 学习笔记">
+  <meta property="og:title" content="2.12 Ingress">
+  <meta property="og:description" content="2.12 Ingress # Service 的负载均衡功能有限，只能够依据 IP 地址和端口号做一些简单的判断和组合，而更多的高级路由条件，比如主机名、URI、请求头、证书等 Service 无法实现。Service 还有一个缺点，它比较适合代理集群内部的服务。如果想要把服务暴露到集群外部，就只能使用 NodePort 或者 LoadBalancer 这两种方式，而它们缺乏足够的灵活性，难以管控。
+Ingress 对象可以作为流量的总入口，统管集群的进出口数据，“扇入” “扇出” 流量（也就是常说的 “南北向”），让外部用户能够安全、顺畅、便捷地访问内部服务。
+2.12.1 Ingress Controller &amp; Class # Service 本身是没有服务能力的，它只是一些 iptables 规则，真正配置、应用这些规则的实际上是节点里的 kube-proxy 组件。如果没有 kube-proxy，Service 定义得再完善也没有用。
+Ingress 只是一些 HTTP 路由规则的集合，相当于一份静态的描述文件，真正要把这些规则在集群里实施运行，需要的是 Ingress Controller，它的作用就相当于 Service 的 kube-proxy，能够读取、应用 Ingress 规则，处理、调度流量。
+由于 Ingress Controller 与上层业务联系密切，所以 Kubernetes 把 Ingress Controller 的实现交给了社区，只要遵守 Ingress 规则，任何人都可以开发 Ingress Controller。在众多 Ingress Controller 中，Nginx 公司开发实现 Ingress Controller 是最多使用的。
+最初 Kubernetes 的构想是，一个集群里有一个 Ingress Controller，再给它配上许多不同的 Ingress 规则，应该就可以解决请求的路由和分发问题了。但随着 Ingress 在实践中的大量应用，有很多问题逐渐显现出来，比如：">
+  <meta property="og:locale" content="zh">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:modified_time" content="2023-06-13T14:29:11+08:00">
+<title>2.12 Ingress | Kubernetes 学习笔记</title>
+<link rel="icon" href="/kubernetes/favicon.png" >
+<link rel="manifest" href="/kubernetes/manifest.json">
+<link rel="canonical" href="https://example.com/kubernetes/docs/part2-break-ice/2.12-ingress/">
+<link rel="stylesheet" href="/kubernetes/book.min.1e8c332c823ff5970e639a0c180f0e3d074283c7f525185d3e42903a2f30e9be.css" integrity="sha256-HowzLII/9ZcOY5oMGA8OPQdCg8f1JRhdPkKQOi8w6b4=" crossorigin="anonymous">
+  <script defer src="/kubernetes/fuse.min.js"></script>
+  <script defer src="/kubernetes/zh.search.min.da1c52546386c902e77e37ee10f137dd864d5defad152b94b97987f9bfccfa81.js" integrity="sha256-2hxSVGOGyQLnfjfuEPE33YZNXe&#43;tFSuUuXmH&#43;b/M&#43;oE=" crossorigin="anonymous"></script>
+
+  <script defer src="/kubernetes/sw.min.18ff75d546fc59b9d538e96815256b253062dc991f14b3caff0f35a243a406d1.js" integrity="sha256-GP911Ub8WbnVOOloFSVrJTBi3JkfFLPK/w81okOkBtE=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/kubernetes/"><span>Kubernetes 学习笔记</span>
+  </a>
+</h2>
+
+
+<div class="book-search hidden">
+  <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+
+
+<ul>
+    <li>
+        <a href="javascript:void(0)" onclick="hrefIndex()" rel="noopener">主页</a>
+    </li>
+    <li>
+        <a href="https://github.com/xiaobinqt" target="_blank" rel="noopener">GitHub</a>
+    </li>
+</ul>
+
+<hr>
+
+<script>
+    function hrefIndex() {
+        window.location = window.location.origin;
+    }
+</script>
+
+
+  
+<ul>
+  
+  <li>
+    <a href=""  target="_blank" rel="noopener">
+        
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第一部分 Docker</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.1-docker-brief/" class="">1.1 Docker 简介</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.2-docker-cmd/" class="">1.2 Docker 常用命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.3-container/" class="">1.3 容器</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.4-image/" class="">1.4 镜像</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.5-network/" class="">1.5 网络互通</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.6-docker-compose/" class="">1.6 Docker Compose</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.7-private-registry/" class="">1.7 私有镜像仓库</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第二部分 入门</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.1-k8s-overview/" class="">2.1 简介</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.2-minikube/" class="">2.2 minikube</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.3-working-mechanism/" class="">2.3 工作机制</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.4-pod/" class="">2.4 Pod</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.5-job/" class="">2.5 Job</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.6-config-manage/" class="">2.6 配置管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.7-general-cmd/" class="">2.7 常用命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.8-kubeadm/" class="">2.8 kubeadm 搭建</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.9-deployment/" class="">2.9 Deployment</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.10-daemonset/" class="">2.10 DaemonSet</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.11-service/" class="">2.11 Service</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.12-ingress/" class="active">2.12 Ingress</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.13-persistent-volume/" class="">2.13 PersistentVolume</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.14-persistentvolume-nfs/" class="">2.14 网络共享存储</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.15-statefulset/" class="">2.15 StatefulSet</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.16-rolling-update/" class="">2.16 滚动更新</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.17-app-assurance/" class="">2.17 应用保障</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.18-cluster-management/" class="">2.18 集群管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.19-system-monitor/" class="">2.19 系统监控</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.20-network-communications/" class="">2.20 网络通信</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/kubernetes/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>2.12 Ingress</h3>
+
+  <label for="toc-control">
+    
+    <img src="/kubernetes/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#212-ingress">2.12 Ingress</a>
+      <ul>
+        <li><a href="#2121-ingress-controller--class">2.12.1 Ingress Controller &amp; Class</a></li>
+        <li><a href="#2122-描述-ingress">2.12.2 描述 Ingress</a></li>
+        <li><a href="#2123-使用-ingress">2.12.3 使用 Ingress</a></li>
+        <li><a href="#2124-使用-ingress-controller">2.12.4 使用 Ingress Controller</a></li>
+        <li><a href="#参考">参考</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown book-article"><h1 id="212-ingress">
+  2.12 Ingress
+  <a class="anchor" href="#212-ingress">#</a>
+</h1>
+<p>Service 的负载均衡功能有限，只能够依据 IP 地址和端口号做一些简单的判断和组合，而更多的高级路由条件，比如主机名、URI、请求头、证书等 Service 无法实现。Service 还有一个缺点，它比较适合代理集群内部的服务。如果想要把服务暴露到集群外部，就只能使用 NodePort 或者 LoadBalancer 这两种方式，而它们缺乏足够的灵活性，难以管控。</p>
+<p>Ingress 对象可以作为流量的总入口，统管集群的进出口数据，“扇入” “扇出” 流量（也就是常说的 “南北向”），让外部用户能够安全、顺畅、便捷地访问内部服务。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230609/0cb8b83d2479462598fcf4c307679fc0.png" width=700  /></div>
+<h2 id="2121-ingress-controller--class">
+  2.12.1 Ingress Controller &amp; Class
+  <a class="anchor" href="#2121-ingress-controller--class">#</a>
+</h2>
+<p>Service 本身是没有服务能力的，它只是一些 iptables 规则，真正配置、应用这些规则的实际上是节点里的 kube-proxy 组件。如果没有 kube-proxy，Service 定义得再完善也没有用。</p>
+<p>Ingress 只是一些 HTTP 路由规则的集合，相当于一份静态的描述文件，真正要把这些规则在集群里实施运行，需要的是 Ingress Controller，它的作用就相当于 Service 的 kube-proxy，能够读取、应用 Ingress 规则，处理、调度流量。</p>
+<p>由于 Ingress Controller 与上层业务联系密切，所以 Kubernetes 把 Ingress Controller 的实现交给了社区，只要遵守 Ingress 规则，任何人都可以开发 Ingress Controller。在众多 Ingress Controller 中，Nginx 公司开发实现 Ingress Controller 是最多使用的。</p>
+<p>最初 Kubernetes 的构想是，一个集群里有一个 Ingress Controller，再给它配上许多不同的 Ingress 规则，应该就可以解决请求的路由和分发问题了。但随着 Ingress 在实践中的大量应用，有很多问题逐渐显现出来，比如：</p>
+<ul>
+<li>
+<p>由于某些原因，项目组需要引入不同的 Ingress Controller，但 Kubernetes 不允许这样做；</p>
+</li>
+<li>
+<p>Ingress 规则太多，都交给一个 Ingress Controller 处理会让它不堪重负；</p>
+</li>
+<li>
+<p>多个 Ingress 对象没有很好的逻辑分组方式，管理和维护成本很高；</p>
+</li>
+<li>
+<p>集群里有不同的租户，他们对 Ingress 的需求差异很大甚至有冲突，无法部署在同一个 Ingress Controller 上。</p>
+</li>
+</ul>
+<p>基于以上的这些问题，又有了 Ingress Class 的概念，让它插在 Ingress 和 Ingress Controller 中间，作为流量规则和控制器的协调人，解除了 Ingress 和 Ingress Controller 的强绑定关系。</p>
+<p>Kubernetes 用户可以转向管理 Ingress Class，用它来定义不同的业务逻辑分组，简化 Ingress 规则的复杂度。比如，可以用 Class A 处理博客流量、Class B 处理短视频流量、Class C 处理购物流量。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230610/4539f26b9fb04782abc67dc4b03ac026.png" width=350  /></div>
+<h2 id="2122-描述-ingress">
+  2.12.2 描述 Ingress
+  <a class="anchor" href="#2122-%e6%8f%8f%e8%bf%b0-ingress">#</a>
+</h2>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230610/94d9479ed5114b34b23e83a5ddc099fe.png" width=  /></div>
+<p>Ingress 和 Ingress Class 的 apiVersion 都是 networking.k8s.io/v1，而且 Ingress 有一个简写 ing。Ingress Controller 和 Ingress，Ingress Class 两个对象不太一样，它不只是描述文件，是一个要实际干活、处理流量的应用程序，而应用程序在 Kubernetes 里早就有对象来管理了，那就是 Deployment 和 DaemonSet。</p>
+<p>Ingress 也是可以使用 kubectl create 来创建，它需要用两个附加参数：</p>
+<ul>
+<li>
+<p><code>--class</code>，指定 Ingress 从属的 Ingress Class 对象。</p>
+</li>
+<li>
+<p><code>--rule</code>，指定路由规则，基本形式是<code>URI=Service</code>。也就是说是访问 HTTP 路径就<strong>转发到对应的 Service 对象</strong>，再由 Service 对象转发给后端的 Pod。</p>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>export out<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;--dry-run=client -o yaml&#34;</span>
+</span></span><span style="display:flex;"><span>kubectl create ing ngx-ing --rule<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;ngx.test/=ngx-svc:80&#34;</span> --class<span style="color:#f92672">=</span>ngx-ink $out
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230610/415608b74dbc455fbd79351036fc480f.png" width=  /></div>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">networking.k8s.io/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Ingress</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ngx-ing</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">ingressClassName</span>: <span style="color:#ae81ff">ngx-ink</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">rules</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">host</span>: <span style="color:#ae81ff">ngx.test</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">http</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">paths</span>:
+</span></span><span style="display:flex;"><span>          - <span style="color:#f92672">path</span>: <span style="color:#ae81ff">/</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">pathType</span>: <span style="color:#ae81ff">Exact</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">backend</span>:
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">service</span>:
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ngx-svc</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">port</span>:
+</span></span><span style="display:flex;"><span>                  <span style="color:#f92672">number</span>: <span style="color:#ae81ff">80</span>
+</span></span></code></pre></div><p>以上的 YAML 描述文件，ingressClassName 和 rules，分别对应了命令行参数。rules 字段嵌套层次比较深，其实只是把路由规则拆散了，有 host 和 http path，在 path 里又指定了路径的匹配方式，可以是精确匹配（Exact）或者是前缀匹配（Prefix），再用 backend 来指定转发的目标 Service 对象。</p>
+<p>其实 Ingress Class 本身并没有什么实际的功能，只是起到联系 Ingress 和 Ingress Controller 的作用，在 spec 里只有一个必需的字段 controller，表示要使用哪个 Ingress Controller，具体的名字就要看实现文档了。比如，要用 Nginx 开发的 Ingress Controller，那么就要用名字 nginx.org/ingress-controller：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">networking.k8s.io/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">IngressClass</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ngx-ink</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">controller</span>: <span style="color:#ae81ff">nginx.org/ingress-controller</span>
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230610/0a61ab2726054b8a9958bcfe5ba20d42.png" width=  /></div>
+<h2 id="2123-使用-ingress">
+  2.12.3 使用 Ingress
+  <a class="anchor" href="#2123-%e4%bd%bf%e7%94%a8-ingress">#</a>
+</h2>
+<p>因为 Ingress Class 的 YAML 描述很小，可以把 Ingress Class 与 Ingress 合成了一个 YAML 文件，也就是下面的这个 ingress.yaml：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">networking.k8s.io/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">IngressClass</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ngx-ink</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">controller</span>: <span style="color:#ae81ff">nginx.org/ingress-controller</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">networking.k8s.io/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Ingress</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ngx-ing</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">ingressClassName</span>: <span style="color:#ae81ff">ngx-ink</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">rules</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">host</span>: <span style="color:#ae81ff">ngx.test</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">http</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">paths</span>:
+</span></span><span style="display:flex;"><span>          - <span style="color:#f92672">path</span>: <span style="color:#ae81ff">/</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">pathType</span>: <span style="color:#ae81ff">Exact</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">backend</span>:
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">service</span>:
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ngx-svc</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">port</span>:
+</span></span><span style="display:flex;"><span>                  <span style="color:#f92672">number</span>: <span style="color:#ae81ff">80</span>
+</span></span></code></pre></div><p>在使用 kubectl create 创建 Ingress 的 YAML 描述时，通过<code>--rule</code>指定了路由形式，Server 的 name 是 ngx-svc，所以创建 Service 的 YAML 描述可以是 ngx-svc.yml：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Service</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ngx-svc</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">type</span>: <span style="color:#ae81ff">NodePort</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">selector</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">app</span>: <span style="color:#ae81ff">ngx-dep</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">ports</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">port</span>: <span style="color:#ae81ff">80</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">targetPort</span>: <span style="color:#ae81ff">80</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">protocol</span>: <span style="color:#ae81ff">TCP</span>
+</span></span></code></pre></div><p>对应创建 Deployment 的描述是 nginx.yml：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">apps/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Deployment</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ngx-dep</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">replicas</span>: <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">selector</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">matchLabels</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">app</span>: <span style="color:#ae81ff">ngx-dep</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">template</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">app</span>: <span style="color:#ae81ff">ngx-dep</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">volumes</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ngx-conf-vol</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">configMap</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ngx-conf</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">containers</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">image</span>: <span style="color:#ae81ff">nginx:alpine</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">name</span>: <span style="color:#ae81ff">nginx</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">ports</span>:
+</span></span><span style="display:flex;"><span>            - <span style="color:#f92672">containerPort</span>: <span style="color:#ae81ff">80</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">volumeMounts</span>:
+</span></span><span style="display:flex;"><span>            - <span style="color:#f92672">mountPath</span>: <span style="color:#ae81ff">/etc/nginx/conf.d</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ngx-conf-vol</span>
+</span></span></code></pre></div><p>nginx.yml 需要的 ConfigMap 的描述 ngx-conf.yaml 为：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ConfigMap</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ngx-conf</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">data</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">default.conf</span>: |<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    server {
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      listen 80;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      location / {
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        default_type text/plain;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        return 200
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          &#39;srv : $server_addr:$server_port\nhost: $hostname\nuri : $request_method $host $request_uri\ndate: $time_iso8601\n&#39;;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      }
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    }</span>
+</span></span></code></pre></div><p>具体命令如下：</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230613/976a5bf6b75c411ab2d6a0857f845be1.png" width=  /></div>
+<p>命令 kubectl describe 可以看到更详细的 Ingress 信息：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>kubectl describe ing ngx-ing
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230613/8fb2e2e04d2c4ae2975acc26620c49ac.png" width=  /></div>
+<p>Ingress 对象的路由规则 Host/Path 就是在 YAML 里设置的域名<code>ngx.test/</code>，而且已经关联了我们创建的 Service 对象，还有 Service 中的两个 Pod。</p>
+<p>Ingress 里 Default backend 的错误，在找不到路由的时候，它被设计用来提供一个默认的后端服务，不设置也不会有什么问题，在大多数时候可以忽略这个错误。</p>
+<h2 id="2124-使用-ingress-controller">
+  2.12.4 使用 Ingress Controller
+  <a class="anchor" href="#2124-%e4%bd%bf%e7%94%a8-ingress-controller">#</a>
+</h2>
+<p>有了 Ingress 和 Ingress Class 对象，就可以部署真正处理路由规则的 Ingress Controller 了。这里使用 Nginx Ingress Controller 项目
+  <a href="https://github.com/nginxinc/kubernetes-ingress">https://github.com/nginxinc/kubernetes-ingress</a>，它以 Pod 的形式运行在 Kubernetes 里，所以同时支持 Deployment 和 DaemonSet 两种部署方式，这里选择 Deployment
+的部署方式 
+  <a href="https://github.com/nginxinc/kubernetes-ingress/blob/main/deployments/deployment/nginx-ingress.yaml">https://github.com/nginxinc/kubernetes-ingress/blob/main/deployments/deployment/nginx-ingress.yaml</a>。</p>
+<p>Nginx Ingress Controller 的安装有点麻烦，有很多个 YAML 需要执行，但如果只是做简单的试验，只需要用到以下的 4 个 YAML：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>kubectl apply -f ns-and-sa.yaml
+</span></span><span style="display:flex;"><span>kubectl apply -f rbac.yaml
+</span></span><span style="display:flex;"><span>kubectl apply -f nginx-config.yaml
+</span></span><span style="display:flex;"><span>kubectl apply -f default-server-secret.yaml
+</span></span></code></pre></div><p>前两条命令为 Ingress Controller 创建了一个独立的名字空间 nginx-ingress，还有相应的账号和权限，这是为了访问 apiserver 获取 Service、Endpoint 信息用的；后两条则是创建了一个 ConfigMap 和 Secret，用来配置 HTTP/HTTPS 服务。</p>
+<p>ns-and-sa.yaml 如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Namespace</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">nginx-ingress</span>
+</span></span><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ServiceAccount</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">nginx-ingress</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">nginx-ingress</span>
+</span></span></code></pre></div><p>rbac.yaml 如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ClusterRole</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">rbac.authorization.k8s.io/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">nginx-ingress</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">rules</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">apiGroups</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">resources</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">services</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">endpoints</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">verbs</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">get</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">list</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">watch</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">apiGroups</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">resources</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">secrets</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">verbs</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">get</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">list</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">watch</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">apiGroups</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">resources</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">configmaps</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">verbs</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">get</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">list</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">watch</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">update</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">create</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">apiGroups</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">resources</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">pods</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">verbs</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">list</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">watch</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">apiGroups</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">resources</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">events</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">verbs</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">create</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">patch</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">list</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">apiGroups</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">networking.k8s.io</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">resources</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">ingresses</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">verbs</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">list</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">watch</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">get</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">apiGroups</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">networking.k8s.io</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">resources</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">ingresses/status</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">verbs</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">update</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">apiGroups</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">k8s.nginx.org</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">resources</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">virtualservers</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">virtualserverroutes</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">globalconfigurations</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">transportservers</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">policies</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">verbs</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">list</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">watch</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">get</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">apiGroups</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">k8s.nginx.org</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">resources</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">virtualservers/status</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">virtualserverroutes/status</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">policies/status</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">transportservers/status</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">verbs</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">update</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">apiGroups</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">networking.k8s.io</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">resources</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">ingressclasses</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">verbs</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">get</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">apiGroups</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">cis.f5.com</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">resources</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">ingresslinks</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">verbs</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">list</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">watch</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">get</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">apiGroups</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">cert-manager.io</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">resources</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">certificates</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">verbs</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">list</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">watch</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">get</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">update</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">create</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">delete</span>
+</span></span><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ClusterRoleBinding</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">rbac.authorization.k8s.io/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">nginx-ingress</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">subjects</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ServiceAccount</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">name</span>: <span style="color:#ae81ff">nginx-ingress</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">nginx-ingress</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">roleRef</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ClusterRole</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">nginx-ingress</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">apiGroup</span>: <span style="color:#ae81ff">rbac.authorization.k8s.io</span>
+</span></span></code></pre></div><p>nginx-config.yaml 如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ConfigMap</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">nginx-config</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">nginx-ingress</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">data</span>:
+</span></span></code></pre></div><p>default-server-secret.yaml 如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Secret</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">default-server-secret</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">nginx-ingress</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">type</span>: <span style="color:#ae81ff">kubernetes.io/tls</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">data</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">tls.crt</span>: <span style="color:#ae81ff">LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUN2akNDQWFZQ0NRREFPRjl0THNhWFhEQU5CZ2txaGtpRzl3MEJBUXNGQURBaE1SOHdIUVlEVlFRRERCWk8KUjBsT1dFbHVaM0psYzNORGIyNTBjbTlzYkdWeU1CNFhEVEU0TURreE1qRTRNRE16TlZvWERUSXpNRGt4TVRFNApNRE16TlZvd0lURWZNQjBHQTFVRUF3d1dUa2RKVGxoSmJtZHlaWE56UTI5dWRISnZiR3hsY2pDQ0FTSXdEUVlKCktvWklodmNOQVFFQkJRQURnZ0VQQURDQ0FRb0NnZ0VCQUwvN2hIUEtFWGRMdjNyaUM3QlBrMTNpWkt5eTlyQ08KR2xZUXYyK2EzUDF0azIrS3YwVGF5aGRCbDRrcnNUcTZzZm8vWUk1Y2Vhbkw4WGM3U1pyQkVRYm9EN2REbWs1Qgo4eDZLS2xHWU5IWlg0Rm5UZ0VPaStlM2ptTFFxRlBSY1kzVnNPazFFeUZBL0JnWlJVbkNHZUtGeERSN0tQdGhyCmtqSXVuektURXUyaDU4Tlp0S21ScUJHdDEwcTNRYzhZT3ExM2FnbmovUWRjc0ZYYTJnMjB1K1lYZDdoZ3krZksKWk4vVUkxQUQ0YzZyM1lma1ZWUmVHd1lxQVp1WXN2V0RKbW1GNWRwdEMzN011cDBPRUxVTExSakZJOTZXNXIwSAo1TmdPc25NWFJNV1hYVlpiNWRxT3R0SmRtS3FhZ25TZ1JQQVpQN2MwQjFQU2FqYzZjNGZRVXpNQ0F3RUFBVEFOCkJna3Foa2lHOXcwQkFRc0ZBQU9DQVFFQWpLb2tRdGRPcEsrTzhibWVPc3lySmdJSXJycVFVY2ZOUitjb0hZVUoKdGhrYnhITFMzR3VBTWI5dm15VExPY2xxeC9aYzJPblEwMEJCLzlTb0swcitFZ1U2UlVrRWtWcitTTFA3NTdUWgozZWI4dmdPdEduMS9ienM3bzNBaS9kclkrcUI5Q2k1S3lPc3FHTG1US2xFaUtOYkcyR1ZyTWxjS0ZYQU80YTY3Cklnc1hzYktNbTQwV1U3cG9mcGltU1ZmaXFSdkV5YmN3N0NYODF6cFErUyt1eHRYK2VBZ3V0NHh3VlI5d2IyVXYKelhuZk9HbWhWNThDd1dIQnNKa0kxNXhaa2VUWXdSN0diaEFMSkZUUkk3dkhvQXprTWIzbjAxQjQyWjNrN3RXNQpJUDFmTlpIOFUvOWxiUHNoT21FRFZkdjF5ZytVRVJxbStGSis2R0oxeFJGcGZnPT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">tls.key</span>: <span style="color:#ae81ff">LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFcEFJQkFBS0NBUUVBdi91RWM4b1JkMHUvZXVJTHNFK1RYZUprckxMMnNJNGFWaEMvYjVyYy9XMlRiNHEvClJOcktGMEdYaVN1eE9ycXgrajlnamx4NXFjdnhkenRKbXNFUkJ1Z1B0ME9hVGtIekhvb3FVWmcwZGxmZ1dkT0EKUTZMNTdlT1l0Q29VOUZ4amRXdzZUVVRJVUQ4R0JsRlNjSVo0b1hFTkhzbysyR3VTTWk2Zk1wTVM3YUhudzFtMApxWkdvRWEzWFNyZEJ6eGc2clhkcUNlUDlCMXl3VmRyYURiUzc1aGQzdUdETDU4cGszOVFqVUFQaHpxdmRoK1JWClZGNGJCaW9CbTVpeTlZTW1hWVhsMm0wTGZzeTZuUTRRdFFzdEdNVWozcGJtdlFmazJBNnljeGRFeFpkZFZsdmwKMm82MjBsMllxcHFDZEtCRThCay90elFIVTlKcU56cHpoOUJUTXdJREFRQUJBb0lCQVFDZklHbXowOHhRVmorNwpLZnZJUXQwQ0YzR2MxNld6eDhVNml4MHg4Mm15d1kxUUNlL3BzWE9LZlRxT1h1SENyUlp5TnUvZ2IvUUQ4bUFOCmxOMjRZTWl0TWRJODg5TEZoTkp3QU5OODJDeTczckM5bzVvUDlkazAvYzRIbjAzSkVYNzZ5QjgzQm9rR1FvYksKMjhMNk0rdHUzUmFqNjd6Vmc2d2szaEhrU0pXSzBwV1YrSjdrUkRWYmhDYUZhNk5nMUZNRWxhTlozVDhhUUtyQgpDUDNDeEFTdjYxWTk5TEI4KzNXWVFIK3NYaTVGM01pYVNBZ1BkQUk3WEh1dXFET1lvMU5PL0JoSGt1aVg2QnRtCnorNTZud2pZMy8yUytSRmNBc3JMTnIwMDJZZi9oY0IraVlDNzVWYmcydVd6WTY3TWdOTGQ5VW9RU3BDRkYrVm4KM0cyUnhybnhBb0dCQU40U3M0ZVlPU2huMVpQQjdhTUZsY0k2RHR2S2ErTGZTTXFyY2pOZjJlSEpZNnhubmxKdgpGenpGL2RiVWVTbWxSekR0WkdlcXZXaHFISy9iTjIyeWJhOU1WMDlRQ0JFTk5jNmtWajJTVHpUWkJVbEx4QzYrCk93Z0wyZHhKendWelU0VC84ajdHalRUN05BZVpFS2FvRHFyRG5BYWkyaW5oZU1JVWZHRXFGKzJyQW9HQkFOMVAKK0tZL0lsS3RWRzRKSklQNzBjUis3RmpyeXJpY05iWCtQVzUvOXFHaWxnY2grZ3l4b25BWlBpd2NpeDN3QVpGdwpaZC96ZFB2aTBkWEppc1BSZjRMazg5b2pCUmpiRmRmc2l5UmJYbyt3TFU4NUhRU2NGMnN5aUFPaTVBRHdVU0FkCm45YWFweUNweEFkREtERHdObit3ZFhtaTZ0OHRpSFRkK3RoVDhkaVpBb0dCQUt6Wis1bG9OOTBtYlF4VVh5YUwKMjFSUm9tMGJjcndsTmVCaWNFSmlzaEhYa2xpSVVxZ3hSZklNM2hhUVRUcklKZENFaHFsV01aV0xPb2I2NTNyZgo3aFlMSXM1ZUtka3o0aFRVdnpldm9TMHVXcm9CV2xOVHlGanIrSWhKZnZUc0hpOGdsU3FkbXgySkJhZUFVWUNXCndNdlQ4NmNLclNyNkQrZG8wS05FZzFsL0FvR0FlMkFVdHVFbFNqLzBmRzgrV3hHc1RFV1JqclRNUzRSUjhRWXQKeXdjdFA4aDZxTGxKUTRCWGxQU05rMXZLTmtOUkxIb2pZT2pCQTViYjhibXNVU1BlV09NNENoaFJ4QnlHbmR2eAphYkJDRkFwY0IvbEg4d1R0alVZYlN5T294ZGt5OEp0ek90ajJhS0FiZHd6NlArWDZDODhjZmxYVFo5MWpYL3RMCjF3TmRKS2tDZ1lCbyt0UzB5TzJ2SWFmK2UwSkN5TGhzVDQ5cTN3Zis2QWVqWGx2WDJ1VnRYejN5QTZnbXo5aCsKcDNlK2JMRUxwb3B0WFhNdUFRR0xhUkcrYlNNcjR5dERYbE5ZSndUeThXczNKY3dlSTdqZVp2b0ZpbmNvVlVIMwphdmxoTUVCRGYxSjltSDB5cDBwWUNaS2ROdHNvZEZtQktzVEtQMjJhTmtsVVhCS3gyZzR6cFE9PQotLS0tLUVORCBSU0EgUFJJVkFURSBLRVktLS0tLQo=</span>
+</span></span></code></pre></div><p>部署 Ingress Controller 不需要从头编写 Deployment，Nginx 已经为我们提供了
+  <a href="https://github.com/nginxinc/kubernetes-ingress/blob/main/deployments/deployment/nginx-ingress.yaml">示例 YAML</a>，创建之前为了适配我们上面自己的应用还必须要做几处小改动：</p>
+<ul>
+<li>
+<p>metadata 里的 name 要改成自己的名字，比如 ngx-kic-dep。</p>
+</li>
+<li>
+<p>spec.selector 和 template.metadata.labels 也要修改成自己的名字，比如还是用 ngx-kic-dep。</p>
+</li>
+<li>
+<p>containers.image 可以改用 alpine 版本，加快下载速度，比如 nginx/nginx-ingress:2.2-alpine。</p>
+</li>
+<li>
+<p>最下面的 args 要加上 -ingress-class=ngx-ink，也就是前面创建的 Ingress Class 的名字，这是让 Ingress Controller 管理 Ingress 的关键。</p>
+</li>
+</ul>
+<p>修改完之后，Ingress Controller 的 YAML 如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">apps/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Deployment</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ngx-kic-dep</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">nginx-ingress</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">replicas</span>: <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">selector</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">matchLabels</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">app</span>: <span style="color:#ae81ff">ngx-kic-dep</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">template</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">app</span>: <span style="color:#ae81ff">ngx-kic-dep</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">app.kubernetes.io/name</span>: <span style="color:#ae81ff">nginx-ingress</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#annotations:</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#prometheus.io/scrape: &#34;true&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#prometheus.io/port: &#34;9113&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#prometheus.io/scheme: http</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">serviceAccountName</span>: <span style="color:#ae81ff">nginx-ingress</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">automountServiceAccountToken</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">securityContext</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">seccompProfile</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">type</span>: <span style="color:#ae81ff">RuntimeDefault</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e">#      volumes:</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e">#      - name: nginx-etc</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e">#        emptyDir: {}</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e">#      - name: nginx-cache</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e">#        emptyDir: {}</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e">#      - name: nginx-lib</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e">#        emptyDir: {}</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e">#      - name: nginx-log</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e">#        emptyDir: {}</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">containers</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">image</span>: <span style="color:#ae81ff">nginx/nginx-ingress:2.2-alpine</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">imagePullPolicy</span>: <span style="color:#ae81ff">IfNotPresent</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">name</span>: <span style="color:#ae81ff">nginx-ingress</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">ports</span>:
+</span></span><span style="display:flex;"><span>            - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">http</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">containerPort</span>: <span style="color:#ae81ff">80</span>
+</span></span><span style="display:flex;"><span>            - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">https</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">containerPort</span>: <span style="color:#ae81ff">443</span>
+</span></span><span style="display:flex;"><span>            - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">readiness-port</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">containerPort</span>: <span style="color:#ae81ff">8081</span>
+</span></span><span style="display:flex;"><span>            - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">prometheus</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">containerPort</span>: <span style="color:#ae81ff">9113</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">readinessProbe</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">httpGet</span>:
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">path</span>: <span style="color:#ae81ff">/nginx-ready</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">port</span>: <span style="color:#ae81ff">readiness-port</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">periodSeconds</span>: <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">resources</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">requests</span>:
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">cpu</span>: <span style="color:#e6db74">&#34;100m&#34;</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">memory</span>: <span style="color:#e6db74">&#34;128Mi&#34;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">#limits:</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">#  cpu: &#34;1&#34;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">#  memory: &#34;1Gi&#34;</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">securityContext</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">allowPrivilegeEscalation</span>: <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">#          readOnlyRootFilesystem: true</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">runAsUser</span>: <span style="color:#ae81ff">101</span> <span style="color:#75715e">#nginx</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">runAsNonRoot</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">capabilities</span>:
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">drop</span>:
+</span></span><span style="display:flex;"><span>                - <span style="color:#ae81ff">ALL</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">add</span>:
+</span></span><span style="display:flex;"><span>                - <span style="color:#ae81ff">NET_BIND_SERVICE</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#75715e">#        volumeMounts:</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#75715e">#        - mountPath: /etc/nginx</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#75715e">#          name: nginx-etc</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#75715e">#        - mountPath: /var/cache/nginx</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#75715e">#          name: nginx-cache</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#75715e">#        - mountPath: /var/lib/nginx</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#75715e">#          name: nginx-lib</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#75715e">#        - mountPath: /var/log/nginx</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#75715e">#          name: nginx-log</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">env</span>:
+</span></span><span style="display:flex;"><span>            - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">POD_NAMESPACE</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">valueFrom</span>:
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">fieldRef</span>:
+</span></span><span style="display:flex;"><span>                  <span style="color:#f92672">fieldPath</span>: <span style="color:#ae81ff">metadata.namespace</span>
+</span></span><span style="display:flex;"><span>            - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">POD_NAME</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">valueFrom</span>:
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">fieldRef</span>:
+</span></span><span style="display:flex;"><span>                  <span style="color:#f92672">fieldPath</span>: <span style="color:#ae81ff">metadata.name</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">args</span>:
+</span></span><span style="display:flex;"><span>            - -<span style="color:#ae81ff">nginx-configmaps=$(POD_NAMESPACE)/nginx-config</span>
+</span></span><span style="display:flex;"><span>            - -<span style="color:#ae81ff">ingress-class=ngx-ink</span>
+</span></span><span style="display:flex;"><span>            - -<span style="color:#ae81ff">enable-custom-resources=false</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">#- -default-server-tls-secret=$(POD_NAMESPACE)/default-server-secret</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">#- -include-year</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">#- -enable-cert-manager</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">#- -enable-external-dns</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">#- -v=3 # Enables extensive logging. Useful for troubleshooting.</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">#- -report-ingress-status</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">#- -external-service=nginx-ingress</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">#- -enable-prometheus-metrics</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">#- -global-configuration=$(POD_NAMESPACE)/nginx-configuration</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#      initContainers:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#      - image: nginx/nginx-ingress:3.1.1</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#        imagePullPolicy: IfNotPresent</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#        name: init-nginx-ingress</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#        command: [&#39;cp&#39;, &#39;-vdR&#39;, &#39;/etc/nginx/.&#39;, &#39;/mnt/etc&#39;]</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#        securityContext:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#          allowPrivilegeEscalation: false</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#          readOnlyRootFilesystem: true</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#          runAsUser: 101 #nginx</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#          runAsNonRoot: true</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#          capabilities:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#            drop:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#            - ALL</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#        volumeMounts:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#        - mountPath: /mnt/etc</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#          name: nginx-etc</span>
+</span></span></code></pre></div><p>有了 Ingress Controller，这些 API 对象的关联就更复杂，下面这张图示可以看出它们是如何使用对象名字联系起来的：</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230611/29f45ef449d5436488aea015b96cc925.png" width=  /></div>
+<p>执行命令如下：</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230611/0e23a563cbf74ff8ac230a3683b733cb.png" width=  /></div>
+<p>Ingress Controller 位于名字空间 nginx-ingress，查看状态需要用 <code>-n</code> 参数显式指定，否则我们只能看到 default 名字空间里的 Pod：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>kubectl get deploy -n nginx-ingress
+</span></span><span style="display:flex;"><span>kubectl get pod -n nginx-ingress
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230613/79b828b069f14777be3972c0d90847ad.png" width=  /></div>
+<p>如截图所示，Ingress Controller 已经运行起来了。因为 Ingress Controller 本身也是一个 Pod，想要向外提供服务还是要依赖于 Service 对象。所以至少还要再为它定义一个 Service，使用 NodePort 或者 LoadBalancer 暴露端口，才能真正把集群的内外流量打通。</p>
+<p>可以简单使用命令 kubectl port-forward，它可以直接把本地的端口映射到 Kubernetes 集群的某个 Pod 里，在测试验证的时候非常方便。</p>
+<p>下面这条命令就把本地的 8080 端口映射到了 Ingress Controller Pod 的 80 端口：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>kubectl port-forward -n nginx-ingress ngx-kic-dep-59bdb44896-2bgvm 8080:80 &amp;
+</span></span></code></pre></div><p>因为 Ingress 的路由规则是 HTTP 协议，所以就不能用 IP 地址的方式访问，必须要用域名、URI。可以修改 /etc/hosts 来手工添加域名解析，也可以在 curl 时使用 &ndash;resolve 参数，指定域名的解析规则，比如在这里把 ngx.test 强制解析到 127.0.0.1，也就是被 kubectl port-forward 转发的本地地址：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>curl --resolve ngx.test:8080:127.0.0.1 http://ngx.test:8080
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230613/6b9f5692b5cd40ee90dfd90e36e94b65.png" width=  /></div>
+<p>可以看到已经成功的把请求转发到了集群内部的 Pod。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230613/71bfd2e74c7243ff91ca16b5a63f350f.png" width=  /></div>
+<h2 id="参考">
+  参考
+  <a class="anchor" href="#%e5%8f%82%e8%80%83">#</a>
+</h2>
+<ul>
+<li>
+  <a href="https://docs.nginx.com/nginx-ingress-controller/">NGINX Ingress Controller</a></li>
+</ul>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/41320668d5bf6fbadbda6470bf60b7dd1e67adbf" title='最后修改者 weibin | 六月 13, 2023' target="_blank" rel="noopener">
+      <img src="/kubernetes/svg/calendar.svg" class="book-icon" alt="" />
+      <span>六月 13, 2023</span>
+    </a>
+  </div>
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/book.kubernetes/docs/part2-break-ice/2.12-ingress.md" target="_blank" rel="noopener">
+      <img src="/kubernetes/svg/edit.svg" class="book-icon" alt="" />
+      <span>编辑本页</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#212-ingress">2.12 Ingress</a>
+      <ul>
+        <li><a href="#2121-ingress-controller--class">2.12.1 Ingress Controller &amp; Class</a></li>
+        <li><a href="#2122-描述-ingress">2.12.2 描述 Ingress</a></li>
+        <li><a href="#2123-使用-ingress">2.12.3 使用 Ingress</a></li>
+        <li><a href="#2124-使用-ingress-controller">2.12.4 使用 Ingress Controller</a></li>
+        <li><a href="#参考">参考</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

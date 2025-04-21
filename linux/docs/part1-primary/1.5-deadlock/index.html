@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="
+  1.5 死锁
+  #
+
+
+  1.5.1 必要条件
+  #
+
+
+  
+
+互斥：每个资源要么已经分配给了一个进程，要么就是可用的。
+占有和等待：已经得到了某个资源的进程可以再请求新的资源。
+不可抢占：已经分配给一个进程的资源不能强制性地被抢占，它只能被占有它的进程显式地释放。
+环路等待：有两个或者两个以上的进程组成一条环路，该环路中的每个进程都在等待下一个进程所占有的资源。
+
+
+  1.5.2 处理方法
+  #
+
+主要有以下四种方法：
+
+鸵鸟策略
+死锁检测与死锁恢复
+死锁预防
+死锁避免
+
+
+  1.5.3 鸵鸟策略
+  #
+
+把头埋在沙子里，假装根本没发生问题。
+因为解决死锁问题的代价很高，因此鸵鸟策略这种不采取任务措施的方案会获得更高的性能。
+当发生死锁时不会对用户造成多大影响，或发生死锁的概率很低，可以采用鸵鸟策略。
+大多数操作系统，包括 Unix，Linux 和 Windows，处理死锁问题的办法仅仅是忽略它。
+
+  1.5.4 死锁检测与死锁恢复
+  #
+
+不试图阻止死锁，而是当检测到死锁发生时，采取措施进行恢复。
+
+  1. 每种类型一个资源的死锁检测
+  #
+
+
+  
+上图为资源分配图，其中方框表示资源，圆圈表示进程。资源指向进程表示该资源已经分配给该进程，进程指向资源表示进程请求获取该资源。
+图 a 可以抽取出环，如图 b，它满足了环路等待条件，因此会发生死锁。
+每种类型一个资源的死锁检测算法是通过检测有向图是否存在环来实现，从一个节点出发进行深度优先搜索，对访问过的节点进行标记，如果访问了已经标记的节点，就表示有向图存在环，也就是检测到死锁的发生。
+
+  2. 每种类型多个资源的死锁检测
+  #
+
+
+  
+上图中，有三个进程四个资源，每个数据代表的含义如下：
+
+E 向量：资源总量
+A 向量：资源剩余量
+C 矩阵：每个进程所拥有的资源数量，每一行都代表一个进程拥有资源的数量
+R 矩阵：每个进程请求的资源数量
+
+进程 P1 和 P2 所请求的资源都得不到满足，只有进程 P3 可以，让 P3 执行，之后释放 P3 拥有的资源，此时 A = (2 2 2 0)。P2 可以执行，执行后释放 P2 拥有的资源，A = (4 2 2 1) 。P1 也可以执行。所有进程都可以顺利执行，没有死锁。">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/linux/docs/part1-primary/1.5-deadlock/">
+  <meta property="og:site_name" content="Linux 学习笔记">
+  <meta property="og:title" content="1.5 死锁">
+  <meta property="og:description" content="1.5 死锁 # 1.5.1 必要条件 # 互斥：每个资源要么已经分配给了一个进程，要么就是可用的。 占有和等待：已经得到了某个资源的进程可以再请求新的资源。 不可抢占：已经分配给一个进程的资源不能强制性地被抢占，它只能被占有它的进程显式地释放。 环路等待：有两个或者两个以上的进程组成一条环路，该环路中的每个进程都在等待下一个进程所占有的资源。 1.5.2 处理方法 # 主要有以下四种方法：
+鸵鸟策略 死锁检测与死锁恢复 死锁预防 死锁避免 1.5.3 鸵鸟策略 # 把头埋在沙子里，假装根本没发生问题。
+因为解决死锁问题的代价很高，因此鸵鸟策略这种不采取任务措施的方案会获得更高的性能。
+当发生死锁时不会对用户造成多大影响，或发生死锁的概率很低，可以采用鸵鸟策略。
+大多数操作系统，包括 Unix，Linux 和 Windows，处理死锁问题的办法仅仅是忽略它。
+1.5.4 死锁检测与死锁恢复 # 不试图阻止死锁，而是当检测到死锁发生时，采取措施进行恢复。
+1. 每种类型一个资源的死锁检测 # 上图为资源分配图，其中方框表示资源，圆圈表示进程。资源指向进程表示该资源已经分配给该进程，进程指向资源表示进程请求获取该资源。
+图 a 可以抽取出环，如图 b，它满足了环路等待条件，因此会发生死锁。
+每种类型一个资源的死锁检测算法是通过检测有向图是否存在环来实现，从一个节点出发进行深度优先搜索，对访问过的节点进行标记，如果访问了已经标记的节点，就表示有向图存在环，也就是检测到死锁的发生。
+2. 每种类型多个资源的死锁检测 # 上图中，有三个进程四个资源，每个数据代表的含义如下：
+E 向量：资源总量 A 向量：资源剩余量 C 矩阵：每个进程所拥有的资源数量，每一行都代表一个进程拥有资源的数量 R 矩阵：每个进程请求的资源数量 进程 P1 和 P2 所请求的资源都得不到满足，只有进程 P3 可以，让 P3 执行，之后释放 P3 拥有的资源，此时 A = (2 2 2 0)。P2 可以执行，执行后释放 P2 拥有的资源，A = (4 2 2 1) 。P1 也可以执行。所有进程都可以顺利执行，没有死锁。">
+  <meta property="og:locale" content="zh">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:modified_time" content="2023-03-14T10:05:56+08:00">
+<title>1.5 死锁 | Linux 学习笔记</title>
+<link rel="icon" href="/linux/favicon.png" >
+<link rel="manifest" href="/linux/manifest.json">
+<link rel="canonical" href="https://example.com/linux/docs/part1-primary/1.5-deadlock/">
+<link rel="stylesheet" href="/linux/book.min.1e8c332c823ff5970e639a0c180f0e3d074283c7f525185d3e42903a2f30e9be.css" integrity="sha256-HowzLII/9ZcOY5oMGA8OPQdCg8f1JRhdPkKQOi8w6b4=" crossorigin="anonymous">
+  <script defer src="/linux/fuse.min.js"></script>
+  <script defer src="/linux/zh.search.min.b9891c33b571af39c91da92bf084a21b17f7b63d10eeda94f6077a1dc343e219.js" integrity="sha256-uYkcM7VxrznJHakr8ISiGxf3tj0Q7tqU9gd6HcND4hk=" crossorigin="anonymous"></script>
+
+  <script defer src="/linux/sw.min.06246f7b13a877707832946d0b1941d626f4349fd8e3bdfd318889981ed22d49.js" integrity="sha256-BiRvexOod3B4MpRtCxlB1ib0NJ/Y4739MYiJmB7SLUk=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/linux/"><span>Linux 学习笔记</span>
+  </a>
+</h2>
+
+
+<div class="book-search hidden">
+  <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+
+
+<ul>
+    <li>
+        <a href="javascript:void(0)" onclick="hrefIndex()" rel="noopener">主页</a>
+    </li>
+    <li>
+        <a href="https://github.com/xiaobinqt" target="_blank" rel="noopener">GitHub</a>
+    </li>
+</ul>
+
+<hr>
+
+<script>
+    function hrefIndex() {
+        window.location = window.location.origin;
+    }
+</script>
+
+
+  
+<ul>
+  
+  <li>
+    <a href=""  target="_blank" rel="noopener">
+        
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第一部分 基础知识</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.1-operating-system/" class="">1.1 操作系统</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.2-overview/" class="">1.2 总览</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.3-common-dir/" class="">1.3 常见目录</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.4-process-manage/" class="">1.4 进程管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.5-deadlock/" class="active">1.5 死锁</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.6-memory-manage/" class="">1.6 内存管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.7-link/" class="">1.7 链接</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.7-device-manage/" class="">1.7 设备管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.8-instruction-arch/" class="">1.8 指令集</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.9-mirrors-sources/" class="">1.9 国内镜像源</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第二部分 系统操作</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.1-help/" class="">2.1 帮助命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.2-ls/" class="">2.2 ls 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.3-shutdown/" class="">2.3 关机</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.4-cp/" class="">2.4 cp 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.5-file-view/" class="">2.5 文件查看命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.6-backup-compression/" class="">2.6 压缩和打包</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.7-vim/" class="">2.7 vim</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.8-user-manage/" class="">2.8 用户管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.9-switch-user/" class="">2.9 切换用户</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.10-file-dir/" class="">2.10 文件和文件夹</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第三部分 系统管理</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.1-network/" class="">3.1 网络</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.2-net-trouble-removal/" class="">3.2 网络故障排除</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.3-net-manage/" class="">3.3 网络服务管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.4-soft-install/" class="">3.4 软件安装</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.5-process/" class="">3.5 进程管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.6-memory-disk/" class="">3.6 内存和磁盘管理</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第四部分 Shell</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.1-introduction/" class="">4.1 Shell 简介</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.2-env-config-file/" class="">4.2 环境变量</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.3-array/" class="">4.3 数组</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.4-escape-quot/" class="">4.4 转义和引用</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.5-operator/" class="">4.5 运算符</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.6-test-and-judge/" class="">4.6 测试和判断</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.7-process-control/" class="">4.7 流程控制</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.8-function/" class="">4.8 函数</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.9-script-cron/" class="">4.9 脚本和计划任务</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第五部分 文本操作</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part5-text-operate/5.1-regular/" class="">5.1 正则表达式</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part5-text-operate/5.2-sed/" class="">5.2 sed 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part5-text-operate/5.3-awk/" class="">5.3 awk 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part5-text-operate/5.4-cut-sort-uniq-tr/" class="">5.4 cut、sort、uniq、tr 命令</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第六部分 服务管理</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.1-firewall/" class="">6.1 防火墙</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.2-ssh/" class="">6.2 ssh</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.3-ftp/" class="">6.3 ftp</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.4-samba/" class="">6.4 samba</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.5-nfs/" class="">6.5 NFS</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.6-nginx/" class="">6.6 nginx</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.7-dns/" class="">6.7 DNS</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.8-nas/" class="">6.8 NAS</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第七部分 常见问题</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part7-faq/7.1-cmd/" class="">7.1 命令相关</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/linux/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>1.5 死锁</h3>
+
+  <label for="toc-control">
+    
+    <img src="/linux/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#15-死锁">1.5 死锁</a>
+      <ul>
+        <li><a href="#151-必要条件">1.5.1 必要条件</a></li>
+        <li><a href="#152-处理方法">1.5.2 处理方法</a></li>
+        <li><a href="#153-鸵鸟策略">1.5.3 鸵鸟策略</a></li>
+        <li><a href="#154-死锁检测与死锁恢复">1.5.4 死锁检测与死锁恢复</a>
+          <ul>
+            <li><a href="#1-每种类型一个资源的死锁检测">1. 每种类型一个资源的死锁检测</a></li>
+            <li><a href="#2-每种类型多个资源的死锁检测">2. 每种类型多个资源的死锁检测</a></li>
+            <li><a href="#3-死锁恢复">3. 死锁恢复</a></li>
+          </ul>
+        </li>
+        <li><a href="#155-死锁预防">1.5.5 死锁预防</a>
+          <ul>
+            <li><a href="#1-破坏互斥条件">1. 破坏互斥条件</a></li>
+            <li><a href="#2-破坏占有和等待条件">2. 破坏占有和等待条件</a></li>
+            <li><a href="#3-破坏不可抢占条件">3. 破坏不可抢占条件</a></li>
+            <li><a href="#4-破坏环路等待">4. 破坏环路等待</a></li>
+          </ul>
+        </li>
+        <li><a href="#156-死锁避免">1.5.6 死锁避免</a>
+          <ul>
+            <li><a href="#1-安全状态">1. 安全状态</a></li>
+            <li><a href="#2-单个资源的银行家算法">2. 单个资源的银行家算法</a></li>
+            <li><a href="#3-多个资源的银行家算法">3. 多个资源的银行家算法</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown book-article"><h1 id="15-死锁">
+  1.5 死锁
+  <a class="anchor" href="#15-%e6%ad%bb%e9%94%81">#</a>
+</h1>
+<h2 id="151-必要条件">
+  1.5.1 必要条件
+  <a class="anchor" href="#151-%e5%bf%85%e8%a6%81%e6%9d%a1%e4%bb%b6">#</a>
+</h2>
+<p>
+  <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/fbddf71f41b9495fb852f1ec50026239.png" alt="" /></p>
+<ul>
+<li>互斥：每个资源要么已经分配给了一个进程，要么就是可用的。</li>
+<li>占有和等待：已经得到了某个资源的进程可以再请求新的资源。</li>
+<li>不可抢占：已经分配给一个进程的资源不能强制性地被抢占，它只能被占有它的进程显式地释放。</li>
+<li>环路等待：有两个或者两个以上的进程组成一条环路，该环路中的每个进程都在等待下一个进程所占有的资源。</li>
+</ul>
+<h2 id="152-处理方法">
+  1.5.2 处理方法
+  <a class="anchor" href="#152-%e5%a4%84%e7%90%86%e6%96%b9%e6%b3%95">#</a>
+</h2>
+<p>主要有以下四种方法：</p>
+<ul>
+<li>鸵鸟策略</li>
+<li>死锁检测与死锁恢复</li>
+<li>死锁预防</li>
+<li>死锁避免</li>
+</ul>
+<h2 id="153-鸵鸟策略">
+  1.5.3 鸵鸟策略
+  <a class="anchor" href="#153-%e9%b8%b5%e9%b8%9f%e7%ad%96%e7%95%a5">#</a>
+</h2>
+<p>把头埋在沙子里，假装根本没发生问题。</p>
+<p>因为解决死锁问题的代价很高，因此鸵鸟策略这种不采取任务措施的方案会获得更高的性能。</p>
+<p>当发生死锁时不会对用户造成多大影响，或发生死锁的概率很低，可以采用鸵鸟策略。</p>
+<p>大多数操作系统，包括 Unix，Linux 和 Windows，处理死锁问题的办法仅仅是忽略它。</p>
+<h2 id="154-死锁检测与死锁恢复">
+  1.5.4 死锁检测与死锁恢复
+  <a class="anchor" href="#154-%e6%ad%bb%e9%94%81%e6%a3%80%e6%b5%8b%e4%b8%8e%e6%ad%bb%e9%94%81%e6%81%a2%e5%a4%8d">#</a>
+</h2>
+<p>不试图阻止死锁，而是当检测到死锁发生时，采取措施进行恢复。</p>
+<h3 id="1-每种类型一个资源的死锁检测">
+  1. 每种类型一个资源的死锁检测
+  <a class="anchor" href="#1-%e6%af%8f%e7%a7%8d%e7%b1%bb%e5%9e%8b%e4%b8%80%e4%b8%aa%e8%b5%84%e6%ba%90%e7%9a%84%e6%ad%bb%e9%94%81%e6%a3%80%e6%b5%8b">#</a>
+</h3>
+<p>
+  <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/763fb2c5f8c44738945930bc4017741a.png" alt="" /></p>
+<p>上图为资源分配图，其中方框表示资源，圆圈表示进程。资源指向进程表示该资源已经分配给该进程，进程指向资源表示进程请求获取该资源。</p>
+<p>图 a 可以抽取出环，如图 b，它满足了环路等待条件，因此会发生死锁。</p>
+<p>每种类型一个资源的死锁检测算法是通过检测有向图是否存在环来实现，从一个节点出发进行深度优先搜索，对访问过的节点进行标记，如果访问了已经标记的节点，就表示有向图存在环，也就是检测到死锁的发生。</p>
+<h3 id="2-每种类型多个资源的死锁检测">
+  2. 每种类型多个资源的死锁检测
+  <a class="anchor" href="#2-%e6%af%8f%e7%a7%8d%e7%b1%bb%e5%9e%8b%e5%a4%9a%e4%b8%aa%e8%b5%84%e6%ba%90%e7%9a%84%e6%ad%bb%e9%94%81%e6%a3%80%e6%b5%8b">#</a>
+</h3>
+<p>
+  <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/503c4a5ba8104e5fba114f65e33556ca.png" alt="" /></p>
+<p>上图中，有三个进程四个资源，每个数据代表的含义如下：</p>
+<ul>
+<li>E 向量：资源总量</li>
+<li>A 向量：资源剩余量</li>
+<li>C 矩阵：每个进程所拥有的资源数量，每一行都代表一个进程拥有资源的数量</li>
+<li>R 矩阵：每个进程请求的资源数量</li>
+</ul>
+<p>进程 P1 和 P2 所请求的资源都得不到满足，只有进程 P3 可以，让 P3 执行，之后释放 P3 拥有的资源，此时 A = (2 2 2 0)。P2 可以执行，执行后释放 P2 拥有的资源，A = (4 2 2 1) 。P1 也可以执行。所有进程都可以顺利执行，没有死锁。</p>
+<p>算法总结如下：</p>
+<p>每个进程最开始时都不被标记，执行过程有可能被标记。当算法结束时，任何没有被标记的进程都是死锁进程。</p>
+<ol>
+<li>寻找一个没有标记的进程 Pi，它所请求的资源小于等于 A。</li>
+<li>如果找到了这样一个进程，那么将 C 矩阵的第 i 行向量加到 A 中，标记该进程，并转回 1。</li>
+<li>如果没有这样一个进程，算法终止。</li>
+</ol>
+<h3 id="3-死锁恢复">
+  3. 死锁恢复
+  <a class="anchor" href="#3-%e6%ad%bb%e9%94%81%e6%81%a2%e5%a4%8d">#</a>
+</h3>
+<ul>
+<li>利用抢占恢复</li>
+<li>利用回滚恢复</li>
+<li>通过杀死进程恢复</li>
+</ul>
+<h2 id="155-死锁预防">
+  1.5.5 死锁预防
+  <a class="anchor" href="#155-%e6%ad%bb%e9%94%81%e9%a2%84%e9%98%b2">#</a>
+</h2>
+<p>在程序运行之前预防发生死锁。</p>
+<h3 id="1-破坏互斥条件">
+  1. 破坏互斥条件
+  <a class="anchor" href="#1-%e7%a0%b4%e5%9d%8f%e4%ba%92%e6%96%a5%e6%9d%a1%e4%bb%b6">#</a>
+</h3>
+<p>例如假脱机打印机技术允许若干个进程同时输出，唯一真正请求物理打印机的进程是打印机守护进程。</p>
+<h3 id="2-破坏占有和等待条件">
+  2. 破坏占有和等待条件
+  <a class="anchor" href="#2-%e7%a0%b4%e5%9d%8f%e5%8d%a0%e6%9c%89%e5%92%8c%e7%ad%89%e5%be%85%e6%9d%a1%e4%bb%b6">#</a>
+</h3>
+<p>一种实现方式是规定所有进程在开始执行前请求所需要的全部资源。</p>
+<h3 id="3-破坏不可抢占条件">
+  3. 破坏不可抢占条件
+  <a class="anchor" href="#3-%e7%a0%b4%e5%9d%8f%e4%b8%8d%e5%8f%af%e6%8a%a2%e5%8d%a0%e6%9d%a1%e4%bb%b6">#</a>
+</h3>
+<h3 id="4-破坏环路等待">
+  4. 破坏环路等待
+  <a class="anchor" href="#4-%e7%a0%b4%e5%9d%8f%e7%8e%af%e8%b7%af%e7%ad%89%e5%be%85">#</a>
+</h3>
+<p>给资源统一编号，进程只能按编号顺序来请求资源。</p>
+<h2 id="156-死锁避免">
+  1.5.6 死锁避免
+  <a class="anchor" href="#156-%e6%ad%bb%e9%94%81%e9%81%bf%e5%85%8d">#</a>
+</h2>
+<p>在程序运行时避免发生死锁。</p>
+<h3 id="1-安全状态">
+  1. 安全状态
+  <a class="anchor" href="#1-%e5%ae%89%e5%85%a8%e7%8a%b6%e6%80%81">#</a>
+</h3>
+<p>
+  <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/5fe7e6ee886943e4a36f0d00c5462ccf.png" alt="" /></p>
+<p>图 a 的第二列 Has 表示已拥有的资源数，第三列 Max 表示总共需要的资源数，Free 表示还有可以使用的资源数。从图 a 开始出发，先让 B 拥有所需的所有资源（图 b），运行结束后释放 B，此时 Free 变为 5（图 c）；接着以同样的方式运行 C 和 A，使得所有进程都能成功运行，因此可以称图 a 所示的状态时安全的。</p>
+<p>定义：如果没有死锁发生，并且即使所有进程突然请求对资源的最大需求，也仍然存在某种调度次序能够使得每一个进程运行完毕，则称该状态是安全的。</p>
+<p>安全状态的检测与死锁的检测类似，因为安全状态必须要求不能发生死锁。下面的银行家算法与死锁检测算法非常类似，可以结合着做参考对比。</p>
+<h3 id="2-单个资源的银行家算法">
+  2. 单个资源的银行家算法
+  <a class="anchor" href="#2-%e5%8d%95%e4%b8%aa%e8%b5%84%e6%ba%90%e7%9a%84%e9%93%b6%e8%a1%8c%e5%ae%b6%e7%ae%97%e6%b3%95">#</a>
+</h3>
+<p>一个小城镇的银行家，他向一群客户分别承诺了一定的贷款额度，算法要做的是判断对请求的满足是否会进入不安全状态，如果是，就拒绝请求；否则予以分配。</p>
+<p>
+  <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/80118e48d7e5403fa8c1906faa798444.png" alt="" /></p>
+<p>上图 c 为不安全状态，因此算法会拒绝之前的请求，从而避免进入图 c 中的状态。</p>
+<h3 id="3-多个资源的银行家算法">
+  3. 多个资源的银行家算法
+  <a class="anchor" href="#3-%e5%a4%9a%e4%b8%aa%e8%b5%84%e6%ba%90%e7%9a%84%e9%93%b6%e8%a1%8c%e5%ae%b6%e7%ae%97%e6%b3%95">#</a>
+</h3>
+<p>
+  <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221223/cadb3c8b0eb145339e2557603f6f64e6.png" alt="" /></p>
+<p>上图中有五个进程，四个资源。左边的图表示已经分配的资源，右边的图表示还需要分配的资源。最右边的 E、P 以及 A 分别表示：总资源、已分配资源以及可用资源，注意这三个为向量，而不是具体数值，例如 A=(1020)，表示 4 个资源分别还剩下 1/0/2/0。</p>
+<p>检查一个状态是否安全的算法如下：</p>
+<ul>
+<li>查找右边的矩阵是否存在一行小于等于向量 A。如果不存在这样的行，那么系统将会发生死锁，状态是不安全的。</li>
+<li>假若找到这样一行，将该进程标记为终止，并将其已分配资源加到 A 中。</li>
+<li>重复以上两步，直到所有进程都标记为终止，则状态时安全的。</li>
+</ul>
+<p>如果一个状态不是安全的，需要拒绝进入这个状态。</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/b0cc6c190723e17328db57a4e1d41d8d2dec5880" title='最后修改者 weibin | 三月 14, 2023' target="_blank" rel="noopener">
+      <img src="/linux/svg/calendar.svg" class="book-icon" alt="" />
+      <span>三月 14, 2023</span>
+    </a>
+  </div>
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/book.linux/docs/part1-primary/1.5-deadlock.md" target="_blank" rel="noopener">
+      <img src="/linux/svg/edit.svg" class="book-icon" alt="" />
+      <span>编辑本页</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#15-死锁">1.5 死锁</a>
+      <ul>
+        <li><a href="#151-必要条件">1.5.1 必要条件</a></li>
+        <li><a href="#152-处理方法">1.5.2 处理方法</a></li>
+        <li><a href="#153-鸵鸟策略">1.5.3 鸵鸟策略</a></li>
+        <li><a href="#154-死锁检测与死锁恢复">1.5.4 死锁检测与死锁恢复</a>
+          <ul>
+            <li><a href="#1-每种类型一个资源的死锁检测">1. 每种类型一个资源的死锁检测</a></li>
+            <li><a href="#2-每种类型多个资源的死锁检测">2. 每种类型多个资源的死锁检测</a></li>
+            <li><a href="#3-死锁恢复">3. 死锁恢复</a></li>
+          </ul>
+        </li>
+        <li><a href="#155-死锁预防">1.5.5 死锁预防</a>
+          <ul>
+            <li><a href="#1-破坏互斥条件">1. 破坏互斥条件</a></li>
+            <li><a href="#2-破坏占有和等待条件">2. 破坏占有和等待条件</a></li>
+            <li><a href="#3-破坏不可抢占条件">3. 破坏不可抢占条件</a></li>
+            <li><a href="#4-破坏环路等待">4. 破坏环路等待</a></li>
+          </ul>
+        </li>
+        <li><a href="#156-死锁避免">1.5.6 死锁避免</a>
+          <ul>
+            <li><a href="#1-安全状态">1. 安全状态</a></li>
+            <li><a href="#2-单个资源的银行家算法">2. 单个资源的银行家算法</a></li>
+            <li><a href="#3-多个资源的银行家算法">3. 多个资源的银行家算法</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

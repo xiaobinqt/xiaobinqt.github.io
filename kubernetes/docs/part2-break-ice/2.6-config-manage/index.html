@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="
+  2.6 配置管理
+  #
+
+服务中的配置信息，从数据安全的角度来看可以分成两类：一类是明文配置，可以任意查询修改，比如服务端口、运行参数、文件路径等等。另一类则是机密配置，由于涉及敏感信息需要保密，不能随便查看，比如密码、密钥、证书等等。这两类配置信息本质上都是字符串，只是由于安全性的原因，在存放和使用方面有些差异。
+Kubernetes 中的 ConfigMap API 用来保存明文配置，Secret API 用来保存秘密配置。
+
+  2.6.1 ConfigMap
+  #
+
+export out=&#34;--dry-run=client -o yaml&#34; # 定义Shell变量
+kubectl create cm info --from-literal=k=v $out
+
+ConfigMap 里的数据都是 Key-Value 结构，所以 --from-literal 参数使用 k=v 的形式生成数据。ConfigMap 的 YAML 描述大概如下：
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: info
+
+data:
+  count: &#39;10&#39;
+  debug: &#39;on&#39;
+  path: &#39;/etc/systemd&#39;
+  greeting: |
+    say hello to kubernetes.
+
+由上图可知，现在 ConfigMap 的 Key-Value 信息就已经存入了 etcd 数据库，后续就可以被其他 API 对象使用。">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/kubernetes/docs/part2-break-ice/2.6-config-manage/">
+  <meta property="og:site_name" content="Kubernetes 学习笔记">
+  <meta property="og:title" content="2.6 配置管理">
+  <meta property="og:description" content="2.6 配置管理 # 服务中的配置信息，从数据安全的角度来看可以分成两类：一类是明文配置，可以任意查询修改，比如服务端口、运行参数、文件路径等等。另一类则是机密配置，由于涉及敏感信息需要保密，不能随便查看，比如密码、密钥、证书等等。这两类配置信息本质上都是字符串，只是由于安全性的原因，在存放和使用方面有些差异。
+Kubernetes 中的 ConfigMap API 用来保存明文配置，Secret API 用来保存秘密配置。
+2.6.1 ConfigMap # export out=&#34;--dry-run=client -o yaml&#34; # 定义Shell变量 kubectl create cm info --from-literal=k=v $out ConfigMap 里的数据都是 Key-Value 结构，所以 --from-literal 参数使用 k=v 的形式生成数据。ConfigMap 的 YAML 描述大概如下：
+apiVersion: v1 kind: ConfigMap metadata: name: info data: count: &#39;10&#39; debug: &#39;on&#39; path: &#39;/etc/systemd&#39; greeting: | say hello to kubernetes. 由上图可知，现在 ConfigMap 的 Key-Value 信息就已经存入了 etcd 数据库，后续就可以被其他 API 对象使用。">
+  <meta property="og:locale" content="zh">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:modified_time" content="2023-06-08T20:58:17+08:00">
+<title>2.6 配置管理 | Kubernetes 学习笔记</title>
+<link rel="icon" href="/kubernetes/favicon.png" >
+<link rel="manifest" href="/kubernetes/manifest.json">
+<link rel="canonical" href="https://example.com/kubernetes/docs/part2-break-ice/2.6-config-manage/">
+<link rel="stylesheet" href="/kubernetes/book.min.1e8c332c823ff5970e639a0c180f0e3d074283c7f525185d3e42903a2f30e9be.css" integrity="sha256-HowzLII/9ZcOY5oMGA8OPQdCg8f1JRhdPkKQOi8w6b4=" crossorigin="anonymous">
+  <script defer src="/kubernetes/fuse.min.js"></script>
+  <script defer src="/kubernetes/zh.search.min.da1c52546386c902e77e37ee10f137dd864d5defad152b94b97987f9bfccfa81.js" integrity="sha256-2hxSVGOGyQLnfjfuEPE33YZNXe&#43;tFSuUuXmH&#43;b/M&#43;oE=" crossorigin="anonymous"></script>
+
+  <script defer src="/kubernetes/sw.min.18ff75d546fc59b9d538e96815256b253062dc991f14b3caff0f35a243a406d1.js" integrity="sha256-GP911Ub8WbnVOOloFSVrJTBi3JkfFLPK/w81okOkBtE=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/kubernetes/"><span>Kubernetes 学习笔记</span>
+  </a>
+</h2>
+
+
+<div class="book-search hidden">
+  <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+
+
+<ul>
+    <li>
+        <a href="javascript:void(0)" onclick="hrefIndex()" rel="noopener">主页</a>
+    </li>
+    <li>
+        <a href="https://github.com/xiaobinqt" target="_blank" rel="noopener">GitHub</a>
+    </li>
+</ul>
+
+<hr>
+
+<script>
+    function hrefIndex() {
+        window.location = window.location.origin;
+    }
+</script>
+
+
+  
+<ul>
+  
+  <li>
+    <a href=""  target="_blank" rel="noopener">
+        
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第一部分 Docker</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.1-docker-brief/" class="">1.1 Docker 简介</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.2-docker-cmd/" class="">1.2 Docker 常用命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.3-container/" class="">1.3 容器</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.4-image/" class="">1.4 镜像</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.5-network/" class="">1.5 网络互通</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.6-docker-compose/" class="">1.6 Docker Compose</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.7-private-registry/" class="">1.7 私有镜像仓库</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第二部分 入门</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.1-k8s-overview/" class="">2.1 简介</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.2-minikube/" class="">2.2 minikube</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.3-working-mechanism/" class="">2.3 工作机制</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.4-pod/" class="">2.4 Pod</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.5-job/" class="">2.5 Job</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.6-config-manage/" class="active">2.6 配置管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.7-general-cmd/" class="">2.7 常用命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.8-kubeadm/" class="">2.8 kubeadm 搭建</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.9-deployment/" class="">2.9 Deployment</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.10-daemonset/" class="">2.10 DaemonSet</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.11-service/" class="">2.11 Service</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.12-ingress/" class="">2.12 Ingress</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.13-persistent-volume/" class="">2.13 PersistentVolume</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.14-persistentvolume-nfs/" class="">2.14 网络共享存储</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.15-statefulset/" class="">2.15 StatefulSet</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.16-rolling-update/" class="">2.16 滚动更新</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.17-app-assurance/" class="">2.17 应用保障</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.18-cluster-management/" class="">2.18 集群管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.19-system-monitor/" class="">2.19 系统监控</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.20-network-communications/" class="">2.20 网络通信</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/kubernetes/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>2.6 配置管理</h3>
+
+  <label for="toc-control">
+    
+    <img src="/kubernetes/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#26-配置管理">2.6 配置管理</a>
+      <ul>
+        <li><a href="#261-configmap">2.6.1 ConfigMap</a></li>
+        <li><a href="#262-secret">2.6.2 Secret</a></li>
+        <li><a href="#263-使用配置">2.6.3 使用配置</a>
+          <ul>
+            <li><a href="#环境变量">环境变量</a></li>
+            <li><a href="#加载文件">加载文件</a></li>
+          </ul>
+        </li>
+        <li><a href="#参考">参考</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown book-article"><h1 id="26-配置管理">
+  2.6 配置管理
+  <a class="anchor" href="#26-%e9%85%8d%e7%bd%ae%e7%ae%a1%e7%90%86">#</a>
+</h1>
+<p>服务中的配置信息，从数据安全的角度来看可以分成两类：一类是明文配置，可以任意查询修改，比如服务端口、运行参数、文件路径等等。另一类则是机密配置，由于涉及敏感信息需要保密，不能随便查看，比如密码、密钥、证书等等。这两类配置信息本质上都是字符串，只是由于安全性的原因，在存放和使用方面有些差异。</p>
+<p>Kubernetes 中的 ConfigMap API 用来保存明文配置，Secret API 用来保存秘密配置。</p>
+<h2 id="261-configmap">
+  2.6.1 ConfigMap
+  <a class="anchor" href="#261-configmap">#</a>
+</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>export out<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;--dry-run=client -o yaml&#34;</span> <span style="color:#75715e"># 定义Shell变量</span>
+</span></span><span style="display:flex;"><span>kubectl create cm info --from-literal<span style="color:#f92672">=</span>k<span style="color:#f92672">=</span>v $out
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230512/41fdf9b68772489f8a793f14b7595e06.png" width=  /></div>
+<p>ConfigMap 里的数据都是 Key-Value 结构，所以 --from-literal 参数使用 k=v 的形式生成数据。ConfigMap 的 YAML 描述大概如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ConfigMap</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">info</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">data</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">count</span>: <span style="color:#e6db74">&#39;10&#39;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">debug</span>: <span style="color:#e6db74">&#39;on&#39;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">path</span>: <span style="color:#e6db74">&#39;/etc/systemd&#39;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">greeting</span>: |<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    say hello to kubernetes.</span>
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230512/c8099dabf2d449f482c33bc8f7b20094.png" width=  /></div>
+<p>由上图可知，现在 ConfigMap 的 Key-Value 信息就已经存入了 etcd 数据库，后续就可以被其他 API 对象使用。</p>
+<h2 id="262-secret">
+  2.6.2 Secret
+  <a class="anchor" href="#262-secret">#</a>
+</h2>
+<p>Secret 和 ConfigMap 的结构和用法很类似，不过 Secret 对象又细分出很多类，比如：</p>
+<ul>
+<li>访问私有镜像仓库的认证信息</li>
+<li>身份识别的凭证信息</li>
+<li>HTTPS 通信的证书和私钥</li>
+<li>一般的机密信息（格式由用户自行解释）</li>
+</ul>
+<p>最后一种比较常见。创建 YAML 样板的命令是 kubectl create secret generic ，可以使用参数 --from-literal 给出 Key-Value 值：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>kubectl create secret generic user --from-literal<span style="color:#f92672">=</span>name<span style="color:#f92672">=</span>root $out
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230512/fd74fd558bf44edb9e6db81bc253899b.png" width=  /></div>
+<blockquote>
+<p>echo 的 -n 参数是为了去掉字符串里隐含的换行符</p></blockquote>
+<p>比如有如下的一个 Secret YAML 描述：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Secret</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">user</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">data</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">cm9vdA== </span> <span style="color:#75715e"># root</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">pwd</span>: <span style="color:#ae81ff">MTIzNDU2  </span> <span style="color:#75715e"># 123456</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">db</span>: <span style="color:#ae81ff">bXlzcWw=   </span> <span style="color:#75715e"># mysql</span>
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230512/41d0be585aec428c961851321174c435.png" width=  /></div>
+<p>Secret 对配置参数做了 base64 加密。kubectl describe 不能直接看到内容，只能看到数据的大小。</p>
+<h2 id="263-使用配置">
+  2.6.3 使用配置
+  <a class="anchor" href="#263-%e4%bd%bf%e7%94%a8%e9%85%8d%e7%bd%ae">#</a>
+</h2>
+<p>ConfigMap 和 Secret 只是一些存储在 etcd 里的字符串，如果想要在运行时产生效果，就必须要以某种方式 “注入” 到 Pod 里，让应用去读取。有两种实现途径：环境变量和加载文件。</p>
+<h3 id="环境变量">
+  环境变量
+  <a class="anchor" href="#%e7%8e%af%e5%a2%83%e5%8f%98%e9%87%8f">#</a>
+</h3>
+<p>在 Pod 里描述容器的字段 “containers” 里有一个 “env”，它定义了 Pod 里容器能够看到的环境变量。可以使用 “value” 的形式，把环境变量的值写死在了 YAML 里，比如：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">containers</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">image</span>: <span style="color:#ae81ff">busybox:latest</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">name</span>: <span style="color:#ae81ff">busy</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">env</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">os</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">value</span>: <span style="color:#e6db74">&#34;ubuntu&#34;</span>
+</span></span></code></pre></div><p>这里的 os 环境变量就固定写死是 ubuntu 了。</p>
+<p>实际上 env 还可以使用 “valueFrom” 字段，从 ConfigMap 或者 Secret 对象里获取值，这样就实现了<strong>把配置信息以环境变量的形式注入进 Pod</strong>，也就是配置与应用的解耦。</p>
+<p>可以使用 kubectl explain 查看对 valueFrom 的说明：</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230512/09a1fc2b937d4b679ad26b6788ba1487.png" width=  /></div>
+<p>valueFrom 字段指定了环境变量值的来源，可以是 configMapKeyRef 或者 secretKeyRef，然后需要再进一步指定应用的 ConfigMap/Secret 的 name 和它里面的 key，需要注意的是这个 name 字段是 <strong>API 对象的名字</strong>，也就是 ConfigMap 或是 Secret 对象里的<code>metadata.name</code>的值，而不是 Key-Value 的名字。</p>
+<p>如下的例子，ConfigMap YAML：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ConfigMap</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">info</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">data</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">count</span>: <span style="color:#e6db74">&#39;10&#39;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">debug</span>: <span style="color:#e6db74">&#39;on&#39;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">path</span>: <span style="color:#e6db74">&#39;/etc/systemd&#39;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">greeting</span>: |<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    say hello to kubernetes.</span>
+</span></span></code></pre></div><p>Secret YAML：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Secret</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">user</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">data</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">cm9vdA== </span> <span style="color:#75715e"># root</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">pwd</span>: <span style="color:#ae81ff">MTIzNDU2  </span> <span style="color:#75715e"># 123456</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">db</span>: <span style="color:#ae81ff">bXlzcWw=   </span> <span style="color:#75715e"># mysql</span>
+</span></span></code></pre></div><p>env-pod YAML 引用了 ConfigMap 和 Secret 对象里的配置：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Pod</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">env-pod</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">containers</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">env</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">COUNT</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">valueFrom</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">configMapKeyRef</span>:
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">name</span>: <span style="color:#ae81ff">info</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">key</span>: <span style="color:#ae81ff">count</span>
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">GREETING</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">valueFrom</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">configMapKeyRef</span>:
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">name</span>: <span style="color:#ae81ff">info</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">key</span>: <span style="color:#ae81ff">greeting</span>
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">USERNAME</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">valueFrom</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">secretKeyRef</span>:
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">name</span>: <span style="color:#ae81ff">user</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">key</span>: <span style="color:#ae81ff">name</span>
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">PASSWORD</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">valueFrom</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">secretKeyRef</span>:
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">name</span>: <span style="color:#ae81ff">user</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">key</span>: <span style="color:#ae81ff">pwd</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">image</span>: <span style="color:#ae81ff">busybox</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">name</span>: <span style="color:#ae81ff">busy</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">imagePullPolicy</span>: <span style="color:#ae81ff">IfNotPresent</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">command</span>: [ <span style="color:#e6db74">&#34;/bin/sleep&#34;</span>, <span style="color:#e6db74">&#34;300&#34;</span> ]
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230518/9e41bc8b8daa44d28043842cd2cc9caa.png" width=800  /></div>
+<p>对于 env-pod，apply 运行起来之后，可以通过 kubectl exec 进到 pod 中：</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230518/89aa8568b49041589bc4503971266d6a.png" width=  /></div>
+<h4 id="envfrom">
+  envFrom
+  <a class="anchor" href="#envfrom">#</a>
+</h4>
+<p>如果 ConfigMap 里的信息比较多，用 env.valueFrom 一个个地写会非常麻烦，容易出错，而 envFrom 可以一次性地把 ConfigMap 里的字段全导入进 Pod，并且还能够指定变量名的前缀，非常方便。比如下面的这个示例：</p>
+<p>cm.yaml</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ConfigMap</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">maria-cm</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">data</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">DATABASE</span>: <span style="color:#e6db74">&#39;db&#39;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">USER</span>: <span style="color:#e6db74">&#39;wp&#39;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">PASSWORD</span>: <span style="color:#e6db74">&#39;123&#39;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">ROOT_PASSWORD</span>: <span style="color:#e6db74">&#39;123&#39;</span>
+</span></span></code></pre></div><p>pod.yaml</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Pod</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">maria-pod</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">app</span>: <span style="color:#ae81ff">wordpress</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">role</span>: <span style="color:#ae81ff">database</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">containers</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">image</span>: <span style="color:#ae81ff">mariadb:10</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">name</span>: <span style="color:#ae81ff">maria</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">imagePullPolicy</span>: <span style="color:#ae81ff">IfNotPresent</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">ports</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">containerPort</span>: <span style="color:#ae81ff">3306</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">envFrom</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">prefix</span>: <span style="color:#e6db74">&#39;MARIADB_&#39;</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">configMapRef</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">name</span>: <span style="color:#ae81ff">maria-cm</span>
+</span></span></code></pre></div><p>这里使用 envFrom 将 maria-cm 的数据全部加载进来到 pod 里，并设置了一个 prefix 前缀。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230531/84e07146435d41c0b684ccf08a574bf5.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" width=  /></div>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230531/80cfed91048a44428d9ef55c0167318c.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" width=  /></div>
+<h3 id="加载文件">
+  加载文件
+  <a class="anchor" href="#%e5%8a%a0%e8%bd%bd%e6%96%87%e4%bb%b6">#</a>
+</h3>
+<p>Pod 有 Volume 存储卷的概念，如果把 Pod 理解成是一个虚拟机，那么 Volume 就相当于是虚拟机里的磁盘。可以为 Pod “挂载（mount）” 多个 Volume，里面存放供 Pod 访问的数据，这种方式有点类似 docker run -v。</p>
+<p>在 Pod 里挂载 Volume 只需要在 “spec” 里增加一个 “volumes” 字段，然后再定义卷的名字和引用的 ConfigMap/Secret 就可以。Volume 属于 Pod，不属于容器，所以这个字段和 “containers” 字段是同级的，都属于 “spec”。</p>
+<p>比如，分别引用 ConfigMap 和 Secret，名字是 cm-vol 和 sec-vol：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">volumes</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">cm-vol</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">configMap</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">name</span>: <span style="color:#ae81ff">info</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">sec-vol</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">secret</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">secretName</span>: <span style="color:#ae81ff">user</span>
+</span></span></code></pre></div><p>在容器里挂载需用到 volumeMounts 字段，该字段可以把定义好的 Volume 挂载到容器里的某个路径下，还需要在里面用 mountPath，name 明确地指定挂载路径和 Volume 的名字，配置信息就可以加载成文件。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">containers</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">volumeMounts</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">mountPath</span>: <span style="color:#ae81ff">/tmp/cm-items</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">name</span>: <span style="color:#ae81ff">cm-vol</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">mountPath</span>: <span style="color:#ae81ff">/tmp/sec-items</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">name</span>: <span style="color:#ae81ff">sec-vol</span>
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230518/37637a7e6dbd4149b1f428242b369b61.png" width=800  /></div>
+<p>比如如下的 vol-pod YAML：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Pod</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">vol-pod</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">volumes</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">cm-vol</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">configMap</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">name</span>: <span style="color:#ae81ff">info</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">sec-vol</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">secret</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">secretName</span>: <span style="color:#ae81ff">user</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">containers</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">volumeMounts</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">mountPath</span>: <span style="color:#ae81ff">/tmp/cm-items</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">name</span>: <span style="color:#ae81ff">cm-vol</span>
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">mountPath</span>: <span style="color:#ae81ff">/tmp/sec-items</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">name</span>: <span style="color:#ae81ff">sec-vol</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">image</span>: <span style="color:#ae81ff">busybox</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">name</span>: <span style="color:#ae81ff">busy</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">imagePullPolicy</span>: <span style="color:#ae81ff">IfNotPresent</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">command</span>: [ <span style="color:#e6db74">&#34;/bin/sleep&#34;</span>, <span style="color:#e6db74">&#34;300&#34;</span> ]
+</span></span></code></pre></div><p>apply 创建后可以通过 exec 进入 pod 查看：</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230518/798418f2aa2747bab27e6a4907895936.png" width=  /></div>
+<p>ConfigMap 和 Secret 都变成了目录的形式，而里面的 Key-Value 变成了一个个的文件，而文件名就是 Key。</p>
+<p>ConfigMap 在设计上不是用来保存大量数据的。在 ConfigMap 中保存的数据不可超过 1 MiB。如果需要保存超出此尺寸限制的数据，可以考虑挂载存储卷。</p>
+<p>环境变量用法简单，更适合存放简短的字符串，而 Volume 更适合存放大数据量的配置文件，在 Pod 里加载成文件后让应用直接读取使用。</p>
+<h2 id="参考">
+  参考
+  <a class="anchor" href="#%e5%8f%82%e8%80%83">#</a>
+</h2>
+<ul>
+<li>
+  <a href="https://kubernetes.io/zh-cn/docs/concepts/configuration/configmap/#motivation">ConfigMap</a></li>
+</ul>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/8c49de71ca3feb6b7c26a2c5957a21bda3821946" title='最后修改者 weibin | 六月 8, 2023' target="_blank" rel="noopener">
+      <img src="/kubernetes/svg/calendar.svg" class="book-icon" alt="" />
+      <span>六月 8, 2023</span>
+    </a>
+  </div>
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/book.kubernetes/docs/part2-break-ice/2.6-config-manage.md" target="_blank" rel="noopener">
+      <img src="/kubernetes/svg/edit.svg" class="book-icon" alt="" />
+      <span>编辑本页</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#26-配置管理">2.6 配置管理</a>
+      <ul>
+        <li><a href="#261-configmap">2.6.1 ConfigMap</a></li>
+        <li><a href="#262-secret">2.6.2 Secret</a></li>
+        <li><a href="#263-使用配置">2.6.3 使用配置</a>
+          <ul>
+            <li><a href="#环境变量">环境变量</a></li>
+            <li><a href="#加载文件">加载文件</a></li>
+          </ul>
+        </li>
+        <li><a href="#参考">参考</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

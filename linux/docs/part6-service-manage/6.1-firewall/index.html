@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="
+  6.1 防火墙
+  #
+
+
+  6.1.1 分类
+  #
+
+软件防火墙和硬件防火墙是两种常见的网络安全设备或软件，用于保护计算机系统和网络免受未授权访问、恶意攻击和网络威胁等。
+
+软件防火墙（Software Firewall）：
+
+软件防火墙是一种安装在计算机系统上的软件应用程序，用于监控和控制网络流量。它可以通过检查网络数据包的来源、目的地、协议和端口等信息，来判断是否允许或阻止数据包的传输。软件防火墙通常运行在操作系统的网络协议栈之上，能够保护单个计算机系统或网络中的特定主机。常见的软件防火墙包括Windows防火墙、IPTables、NetFilter等。
+
+硬件防火墙（Hardware Firewall）：
+
+硬件防火墙是一种独立的物理设备，专门用于网络安全防护。它通常部署在网络的边界位置，作为网络流量的第一道防线。硬件防火墙通过硬件和专用的嵌入式软件来执行数据包过滤和访问控制。它可以监控和检测网络流量，并根据预先定义的规则和策略来允许或阻止数据包的传输。硬件防火墙通常具有更高的性能和吞吐量，并且对于整个网络中的所有主机都提供保护。常见的硬件防火墙包括 Cisco ASA、Palo Alto Networks、Fortinet 等。
+包过滤防火墙（Packet Filtering Firewall）和应用层防火墙（Application Layer Firewall）是防火墙的两种不同类型：
+
+包过滤防火墙：
+
+包过滤防火墙是一种基于网络数据包的源地址、目的地址、端口号和协议等信息进行过滤和控制的防火墙。它工作在网络协议栈的较低层，可以根据预定义的规则，对数据包进行简单的检查和处理。包过滤防火墙通常比较高效，并且适用于处理大量数据包的情况。但它的检查范围相对较窄，仅能检查和过滤网络层（IP层）和传输层（TCP/UDP层）的信息。
+
+应用层防火墙：
+
+应用层防火墙是一种工作在网络协议栈较高层的防火墙，它能够检查和过滤网络流量中的应用层数据，如 HTTP、FTP、SMTP 等协议的内容。应用层防火墙能够深入检查数据包的有效载荷，根据应用层协议的特征和规则来判断和阻止恶意行为。它提供了更高级的安全功能，如访问控制、应用程序识别、反病毒扫描、入侵检测等。然而，相对于包过滤防火墙，应用层防火墙的处理开销较大，对性能有一定的影响。
+综上，软件防火墙和硬件防火墙是不同类型的防火墙设备或软件，而包过滤防火墙和应用层防火墙是防火墙的两种不同功能和层次的分类。它们的选择和使用取决于网络环境、安全需求和性能要求。
+
+  iptables
+  #
+
+iptables 是一个软件防火墙，而不是硬件防火墙，提供了对 Linux 内核网络层的访问控制和数据包过滤的功能。
+iptables 可以通过定义规则集来控制传入、传出和转发的网络流量。这些规则可以基于源 IP 地址、目标 IP 地址、协议、端口号等条件进行过滤和操作。使用 iptables 可以实现诸如网络地址转换（NAT）、端口转发、数据包屏蔽、阻止 DoS（拒绝服务）攻击等功能。
+iptables 的工作方式是通过配置 iptables 规则表来匹配和处理网络数据包。常见的 iptables 规则表包括 filter 表（用于过滤数据包）、nat 表（用于网络地址转换）和 mangle 表（用于特殊处理数据包）。管理员可以使用命令行界面（CLI）或脚本来配置和管理 iptables。
+尽管 iptables 是一个软件防火墙，但它在 Linux 系统中可以与硬件防火墙配合使用。在网络架构中，可以将 Linux 服务器作为边界设备放置在硬件防火墙之后，并使用 iptables 来增强安全性和网络流量控制。这种组合的优势是，硬件防火墙负责网络的第一道防线，而 iptables 在服务器本身提供了更细粒度的流量控制和策略定制能力。">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/linux/docs/part6-service-manage/6.1-firewall/">
+  <meta property="og:site_name" content="Linux 学习笔记">
+  <meta property="og:title" content="6.1 防火墙">
+  <meta property="og:description" content="6.1 防火墙 # 6.1.1 分类 # 软件防火墙和硬件防火墙是两种常见的网络安全设备或软件，用于保护计算机系统和网络免受未授权访问、恶意攻击和网络威胁等。
+软件防火墙（Software Firewall）： 软件防火墙是一种安装在计算机系统上的软件应用程序，用于监控和控制网络流量。它可以通过检查网络数据包的来源、目的地、协议和端口等信息，来判断是否允许或阻止数据包的传输。软件防火墙通常运行在操作系统的网络协议栈之上，能够保护单个计算机系统或网络中的特定主机。常见的软件防火墙包括Windows防火墙、IPTables、NetFilter等。
+硬件防火墙（Hardware Firewall）： 硬件防火墙是一种独立的物理设备，专门用于网络安全防护。它通常部署在网络的边界位置，作为网络流量的第一道防线。硬件防火墙通过硬件和专用的嵌入式软件来执行数据包过滤和访问控制。它可以监控和检测网络流量，并根据预先定义的规则和策略来允许或阻止数据包的传输。硬件防火墙通常具有更高的性能和吞吐量，并且对于整个网络中的所有主机都提供保护。常见的硬件防火墙包括 Cisco ASA、Palo Alto Networks、Fortinet 等。
+包过滤防火墙（Packet Filtering Firewall）和应用层防火墙（Application Layer Firewall）是防火墙的两种不同类型：
+包过滤防火墙： 包过滤防火墙是一种基于网络数据包的源地址、目的地址、端口号和协议等信息进行过滤和控制的防火墙。它工作在网络协议栈的较低层，可以根据预定义的规则，对数据包进行简单的检查和处理。包过滤防火墙通常比较高效，并且适用于处理大量数据包的情况。但它的检查范围相对较窄，仅能检查和过滤网络层（IP层）和传输层（TCP/UDP层）的信息。
+应用层防火墙： 应用层防火墙是一种工作在网络协议栈较高层的防火墙，它能够检查和过滤网络流量中的应用层数据，如 HTTP、FTP、SMTP 等协议的内容。应用层防火墙能够深入检查数据包的有效载荷，根据应用层协议的特征和规则来判断和阻止恶意行为。它提供了更高级的安全功能，如访问控制、应用程序识别、反病毒扫描、入侵检测等。然而，相对于包过滤防火墙，应用层防火墙的处理开销较大，对性能有一定的影响。
+综上，软件防火墙和硬件防火墙是不同类型的防火墙设备或软件，而包过滤防火墙和应用层防火墙是防火墙的两种不同功能和层次的分类。它们的选择和使用取决于网络环境、安全需求和性能要求。
+iptables # iptables 是一个软件防火墙，而不是硬件防火墙，提供了对 Linux 内核网络层的访问控制和数据包过滤的功能。
+iptables 可以通过定义规则集来控制传入、传出和转发的网络流量。这些规则可以基于源 IP 地址、目标 IP 地址、协议、端口号等条件进行过滤和操作。使用 iptables 可以实现诸如网络地址转换（NAT）、端口转发、数据包屏蔽、阻止 DoS（拒绝服务）攻击等功能。
+iptables 的工作方式是通过配置 iptables 规则表来匹配和处理网络数据包。常见的 iptables 规则表包括 filter 表（用于过滤数据包）、nat 表（用于网络地址转换）和 mangle 表（用于特殊处理数据包）。管理员可以使用命令行界面（CLI）或脚本来配置和管理 iptables。
+尽管 iptables 是一个软件防火墙，但它在 Linux 系统中可以与硬件防火墙配合使用。在网络架构中，可以将 Linux 服务器作为边界设备放置在硬件防火墙之后，并使用 iptables 来增强安全性和网络流量控制。这种组合的优势是，硬件防火墙负责网络的第一道防线，而 iptables 在服务器本身提供了更细粒度的流量控制和策略定制能力。">
+  <meta property="og:locale" content="zh">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:modified_time" content="2023-07-07T17:36:57+08:00">
+<title>6.1 防火墙 | Linux 学习笔记</title>
+<link rel="icon" href="/linux/favicon.png" >
+<link rel="manifest" href="/linux/manifest.json">
+<link rel="canonical" href="https://example.com/linux/docs/part6-service-manage/6.1-firewall/">
+<link rel="stylesheet" href="/linux/book.min.1e8c332c823ff5970e639a0c180f0e3d074283c7f525185d3e42903a2f30e9be.css" integrity="sha256-HowzLII/9ZcOY5oMGA8OPQdCg8f1JRhdPkKQOi8w6b4=" crossorigin="anonymous">
+  <script defer src="/linux/fuse.min.js"></script>
+  <script defer src="/linux/zh.search.min.b9891c33b571af39c91da92bf084a21b17f7b63d10eeda94f6077a1dc343e219.js" integrity="sha256-uYkcM7VxrznJHakr8ISiGxf3tj0Q7tqU9gd6HcND4hk=" crossorigin="anonymous"></script>
+
+  <script defer src="/linux/sw.min.06246f7b13a877707832946d0b1941d626f4349fd8e3bdfd318889981ed22d49.js" integrity="sha256-BiRvexOod3B4MpRtCxlB1ib0NJ/Y4739MYiJmB7SLUk=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/linux/"><span>Linux 学习笔记</span>
+  </a>
+</h2>
+
+
+<div class="book-search hidden">
+  <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+
+
+<ul>
+    <li>
+        <a href="javascript:void(0)" onclick="hrefIndex()" rel="noopener">主页</a>
+    </li>
+    <li>
+        <a href="https://github.com/xiaobinqt" target="_blank" rel="noopener">GitHub</a>
+    </li>
+</ul>
+
+<hr>
+
+<script>
+    function hrefIndex() {
+        window.location = window.location.origin;
+    }
+</script>
+
+
+  
+<ul>
+  
+  <li>
+    <a href=""  target="_blank" rel="noopener">
+        
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第一部分 基础知识</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.1-operating-system/" class="">1.1 操作系统</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.2-overview/" class="">1.2 总览</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.3-common-dir/" class="">1.3 常见目录</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.4-process-manage/" class="">1.4 进程管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.5-deadlock/" class="">1.5 死锁</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.6-memory-manage/" class="">1.6 内存管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.7-link/" class="">1.7 链接</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.7-device-manage/" class="">1.7 设备管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.8-instruction-arch/" class="">1.8 指令集</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.9-mirrors-sources/" class="">1.9 国内镜像源</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第二部分 系统操作</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.1-help/" class="">2.1 帮助命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.2-ls/" class="">2.2 ls 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.3-shutdown/" class="">2.3 关机</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.4-cp/" class="">2.4 cp 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.5-file-view/" class="">2.5 文件查看命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.6-backup-compression/" class="">2.6 压缩和打包</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.7-vim/" class="">2.7 vim</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.8-user-manage/" class="">2.8 用户管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.9-switch-user/" class="">2.9 切换用户</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.10-file-dir/" class="">2.10 文件和文件夹</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第三部分 系统管理</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.1-network/" class="">3.1 网络</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.2-net-trouble-removal/" class="">3.2 网络故障排除</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.3-net-manage/" class="">3.3 网络服务管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.4-soft-install/" class="">3.4 软件安装</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.5-process/" class="">3.5 进程管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.6-memory-disk/" class="">3.6 内存和磁盘管理</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第四部分 Shell</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.1-introduction/" class="">4.1 Shell 简介</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.2-env-config-file/" class="">4.2 环境变量</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.3-array/" class="">4.3 数组</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.4-escape-quot/" class="">4.4 转义和引用</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.5-operator/" class="">4.5 运算符</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.6-test-and-judge/" class="">4.6 测试和判断</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.7-process-control/" class="">4.7 流程控制</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.8-function/" class="">4.8 函数</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.9-script-cron/" class="">4.9 脚本和计划任务</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第五部分 文本操作</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part5-text-operate/5.1-regular/" class="">5.1 正则表达式</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part5-text-operate/5.2-sed/" class="">5.2 sed 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part5-text-operate/5.3-awk/" class="">5.3 awk 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part5-text-operate/5.4-cut-sort-uniq-tr/" class="">5.4 cut、sort、uniq、tr 命令</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第六部分 服务管理</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.1-firewall/" class="active">6.1 防火墙</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.2-ssh/" class="">6.2 ssh</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.3-ftp/" class="">6.3 ftp</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.4-samba/" class="">6.4 samba</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.5-nfs/" class="">6.5 NFS</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.6-nginx/" class="">6.6 nginx</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.7-dns/" class="">6.7 DNS</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.8-nas/" class="">6.8 NAS</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第七部分 常见问题</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part7-faq/7.1-cmd/" class="">7.1 命令相关</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/linux/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>6.1 防火墙</h3>
+
+  <label for="toc-control">
+    
+    <img src="/linux/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#61-防火墙">6.1 防火墙</a>
+      <ul>
+        <li><a href="#611-分类">6.1.1 分类</a>
+          <ul>
+            <li><a href="#iptables">iptables</a></li>
+          </ul>
+        </li>
+        <li><a href="#612-iptables-表和链">6.1.2 iptables 表和链</a>
+          <ul>
+            <li><a href="#filter">filter</a></li>
+            <li><a href="#nat">nat</a></li>
+          </ul>
+        </li>
+        <li><a href="#613-iptables-配置文件">6.1.3 iptables 配置文件</a></li>
+        <li><a href="#614-firewalld-服务">6.1.4 firewallD 服务</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown book-article"><h1 id="61-防火墙">
+  6.1 防火墙
+  <a class="anchor" href="#61-%e9%98%b2%e7%81%ab%e5%a2%99">#</a>
+</h1>
+<h2 id="611-分类">
+  6.1.1 分类
+  <a class="anchor" href="#611-%e5%88%86%e7%b1%bb">#</a>
+</h2>
+<p>软件防火墙和硬件防火墙是两种常见的网络安全设备或软件，用于保护计算机系统和网络免受未授权访问、恶意攻击和网络威胁等。</p>
+<ol>
+<li>软件防火墙（Software Firewall）：</li>
+</ol>
+<p>软件防火墙是一种安装在计算机系统上的软件应用程序，用于监控和控制网络流量。它可以通过检查网络数据包的来源、目的地、协议和端口等信息，来判断是否允许或阻止数据包的传输。软件防火墙通常运行在操作系统的网络协议栈之上，能够保护单个计算机系统或网络中的特定主机。常见的软件防火墙包括Windows防火墙、IPTables、NetFilter等。</p>
+<ol start="2">
+<li>硬件防火墙（Hardware Firewall）：</li>
+</ol>
+<p>硬件防火墙是一种独立的物理设备，专门用于网络安全防护。它通常部署在网络的边界位置，作为网络流量的第一道防线。硬件防火墙通过硬件和专用的嵌入式软件来执行数据包过滤和访问控制。它可以监控和检测网络流量，并根据预先定义的规则和策略来允许或阻止数据包的传输。硬件防火墙通常具有更高的性能和吞吐量，并且对于整个网络中的所有主机都提供保护。常见的硬件防火墙包括 Cisco ASA、Palo Alto Networks、Fortinet 等。</p>
+<p>包过滤防火墙（Packet Filtering Firewall）和应用层防火墙（Application Layer Firewall）是防火墙的两种不同类型：</p>
+<ol>
+<li>包过滤防火墙：</li>
+</ol>
+<p>包过滤防火墙是一种基于网络数据包的源地址、目的地址、端口号和协议等信息进行过滤和控制的防火墙。它工作在网络协议栈的较低层，可以根据预定义的规则，对数据包进行简单的检查和处理。包过滤防火墙通常比较高效，并且适用于处理大量数据包的情况。但它的检查范围相对较窄，仅能检查和过滤网络层（IP层）和传输层（TCP/UDP层）的信息。</p>
+<ol start="2">
+<li>应用层防火墙：</li>
+</ol>
+<p>应用层防火墙是一种工作在网络协议栈较高层的防火墙，它能够检查和过滤网络流量中的应用层数据，如 HTTP、FTP、SMTP 等协议的内容。应用层防火墙能够深入检查数据包的有效载荷，根据应用层协议的特征和规则来判断和阻止恶意行为。它提供了更高级的安全功能，如访问控制、应用程序识别、反病毒扫描、入侵检测等。然而，相对于包过滤防火墙，应用层防火墙的处理开销较大，对性能有一定的影响。</p>
+<p>综上，软件防火墙和硬件防火墙是不同类型的防火墙设备或软件，而包过滤防火墙和应用层防火墙是防火墙的两种不同功能和层次的分类。它们的选择和使用取决于网络环境、安全需求和性能要求。</p>
+<h3 id="iptables">
+  iptables
+  <a class="anchor" href="#iptables">#</a>
+</h3>
+<p><code>iptables</code> 是一个软件防火墙，而不是硬件防火墙，提供了对 Linux 内核网络层的访问控制和数据包过滤的功能。</p>
+<p>iptables 可以通过定义规则集来控制传入、传出和转发的网络流量。这些规则可以基于源 IP 地址、目标 IP 地址、协议、端口号等条件进行过滤和操作。使用 iptables 可以实现诸如网络地址转换（NAT）、端口转发、数据包屏蔽、阻止 DoS（拒绝服务）攻击等功能。</p>
+<p>iptables 的工作方式是通过配置 iptables 规则表来匹配和处理网络数据包。常见的 iptables 规则表包括 filter 表（用于过滤数据包）、nat 表（用于网络地址转换）和 mangle 表（用于特殊处理数据包）。管理员可以使用命令行界面（CLI）或脚本来配置和管理 iptables。</p>
+<p>尽管 iptables 是一个软件防火墙，但它在 Linux 系统中可以与硬件防火墙配合使用。在网络架构中，可以将 Linux 服务器作为边界设备放置在硬件防火墙之后，并使用 iptables 来增强安全性和网络流量控制。这种组合的优势是，硬件防火墙负责网络的第一道防线，而 iptables 在服务器本身提供了更细粒度的流量控制和策略定制能力。</p>
+<p>CentOS 6 默认的防火墙是 iptables。CentOS 7 默认的防火墙是 firewallD（底层使用 netfilter）。</p>
+<h2 id="612-iptables-表和链">
+  6.1.2 iptables 表和链
+  <a class="anchor" href="#612-iptables-%e8%a1%a8%e5%92%8c%e9%93%be">#</a>
+</h2>
+<p>规则表有 filter，nat，mangle，raw。</p>
+<p>规则链：</p>
+<ul>
+<li>INPUT OUTPUT FORWARD</li>
+<li>PREROUTING（路由前转换） POSTROUTING（路由后转换）</li>
+</ul>
+<h3 id="filter">
+  filter
+  <a class="anchor" href="#filter">#</a>
+</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>iptables -t filter 命令 规则链 规则
+</span></span></code></pre></div><p>常见的命令有：</p>
+<table>
+  <thead>
+      <tr>
+          <th>命令</th>
+          <th>说明</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>-L</td>
+          <td>用于列出当前 iptables 规则集的信息，包括不同表中的规则和链的状态</td>
+      </tr>
+      <tr>
+          <td>-A</td>
+          <td>用于向指定链（如 INPUT、OUTPUT、FORWARD）添加规则，插入到最后。<code>-A</code> 后面通常跟着链名和规则的具体内容</td>
+      </tr>
+      <tr>
+          <td>-I</td>
+          <td>用于在指定链中插入规则，在最开始插入。<code>-I</code> 后面通常跟着链名、位置和规则的具体内容。</td>
+      </tr>
+      <tr>
+          <td>-D</td>
+          <td>用于删除指定链中的规则。<code>-D</code> 后面通常跟着链名和要删除的规则的具体内容。</td>
+      </tr>
+      <tr>
+          <td>-F</td>
+          <td>用于清除指定链中的所有规则，将链重置为空。<code>-F</code> 后面通常跟着链名，如果不加链名就是清楚所有自定义规则。</td>
+      </tr>
+      <tr>
+          <td>-P</td>
+          <td>用于设置指定链的默认策略。<code>-P</code> 后面通常跟着链名和策略（ACCEPT、DROP、REJECT 等）。</td>
+      </tr>
+      <tr>
+          <td>-N</td>
+          <td>用于创建一个新的用户定义链，以便将规则归类和组织。<code>-N</code> 后面通常跟着链名。</td>
+      </tr>
+      <tr>
+          <td>-X</td>
+          <td>用于删除一个用户定义链，如果该链不再需要。<code>-X</code> 后面通常跟着链名。</td>
+      </tr>
+      <tr>
+          <td>-E</td>
+          <td>用于对用户定义链进行重命名。<code>-E</code> 后面通常跟着原始链名和新链名。</td>
+      </tr>
+  </tbody>
+</table>
+<p><code>iptables -vnL</code> 命令是省略了 filter 表的命令。命令将显示所有表的规则列表，包括详细信息和禁用反向解析。</p>
+<p>具体选项的含义如下：</p>
+<ul>
+<li><code>-v</code>：显示详细信息，包括规则的计数器和数据包/字节的计数。</li>
+<li><code>-n</code>：禁止对 IP 地址和端口进行反向解析，以避免 DNS 查询延迟。</li>
+<li><code>-L</code>：显示所有表（filter、nat、mangle、raw、security）的规则列表。</li>
+</ul>
+<p>对于只显示 filter 表规则列表的命令，应使用 <code>iptables -vnx -L</code>。其中的 <code>-x</code> 选项用于显示精确的数据包/字节计数，而不使用单位扩展。</p>
+<hr>
+<p><strong>-A -I 区别</strong></p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230707/ec846288d08f4a15b4d428a5748c2670.png" width=  /></div>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230707/ebdcb568903f43e8a1f2135f29757e55.png" width=  /></div>
+<p>可以看到 -A 和 -I 唯一的区别就是添加的顺序，-I 插入到第一条。</p>
+<p><strong>-P 修改默认规则</strong></p>
+<p>默认规则（Default Policy）用于定义当数据包不匹配任何规则时应采取的动作。默认规则通常应用于各个链（如 INPUT、OUTPUT、FORWARD 等），并在规则列表的末尾指定。</p>
+<p>以下是 iptables 中默认规则的常见取值：</p>
+<p>ACCEPT：接受数据包。如果数据包不匹配任何规则，则允许数据包通过。</p>
+<p>DROP：丢弃数据包。如果数据包不匹配任何规则，则直接丢弃数据包，不给予任何响应。</p>
+<p>REJECT：拒绝数据包，并发送拒绝消息给发送者。如果数据包不匹配任何规则，则向发送者发送拒绝响应。</p>
+<p>RETURN：返回到调用链中的上一级。用于在子链中执行完操作后，将控制权返回给上级链。</p>
+<p>默认情况下，iptables 中的默认规则通常设置为 ACCEPT。这意味着如果数据包不匹配任何规则，它将被默认接受。</p>
+<p>要更改默认规则，可以使用 -P 选项。以下是一个更改默认规则的示例命令：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>iptables -P INPUT DROP
+</span></span></code></pre></div><p>上述命令将更改 INPUT 链的默认规则为 DROP，即数据包不匹配任何规则时将被丢弃。</p>
+<hr>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># 运行某个 ip 通过某个网络接口(网卡)访问指定协议的指定端口</span>
+</span></span><span style="display:flex;"><span>iptables -t filter -A INPUT -i eth0 -s 10.0.0.2 -p tcp --dport <span style="color:#ae81ff">80</span> -j ACCEPT
+</span></span></code></pre></div><h3 id="nat">
+  nat
+  <a class="anchor" href="#nat">#</a>
+</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>iptables -t nat 命令 规则链 规则
+</span></span></code></pre></div><ul>
+<li>PREROUTING 目的地址转换</li>
+<li>POSTROUTING 源地址转换</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># 目录地址转换</span>
+</span></span><span style="display:flex;"><span>iptables -t nat -A POEROUTING -i eth0 114.115.116.117 -p tcp --dport <span style="color:#ae81ff">80</span> -j DNAT --to-destination 10.0.0.1
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 内网所有 10.0.0.0/24 都会伪装成 111.112.113.114 与外网通信</span>
+</span></span><span style="display:flex;"><span>iptables -t nat -A POSTROUTING -s 10.0.0.0/24 -o eth1 -j SNAT --to-source 111.112.113.114
+</span></span></code></pre></div><h2 id="613-iptables-配置文件">
+  6.1.3 iptables 配置文件
+  <a class="anchor" href="#613-iptables-%e9%85%8d%e7%bd%ae%e6%96%87%e4%bb%b6">#</a>
+</h2>
+<p>iptables 配置文件在 /etc/sysconfig/iptables。</p>
+<p>CentOS 6 在保存时可以执行：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>service iptables save|start|stop|restart
+</span></span></code></pre></div><p>在 CentOS 7 中需要先安装：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>yum install iptables-services
+</span></span></code></pre></div><h2 id="614-firewalld-服务">
+  6.1.4 firewallD 服务
+  <a class="anchor" href="#614-firewalld-%e6%9c%8d%e5%8a%a1">#</a>
+</h2>
+<p>FirewallD 是 CentOS 7 及其衍生发行版中使用的动态防火墙管理工具。它提供了一种简单的方式来配置和管理防火墙规则，以保护服务器免受未授权访问和恶意网络活动的威胁。</p>
+<p>FirewallD 的主要特点包括：</p>
+<ol>
+<li>动态更新：FirewallD 允许在运行时动态添加、删除和修改防火墙规则，而无需重启防火墙服务。</li>
+<li>区域（Zone）概念：FirewallD 使用区域来定义网络环境，并为每个区域指定不同的防火墙策略。</li>
+<li>简化的规则管理：FirewallD 通过提供简单的命令和工具，使规则管理更易于操作和维护。</li>
+</ol>
+<p>以下是一些常用的 FirewallD 服务管理命令：</p>
+<ul>
+<li>
+<p>启动 FirewallD 服务：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>systemctl start firewalld
+</span></span></code></pre></div></li>
+<li>
+<p>停止 FirewallD 服务：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>systemctl stop firewalld
+</span></span></code></pre></div></li>
+<li>
+<p>设置 FirewallD 服务在系统启动时自动启动：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>systemctl enable firewalld
+</span></span></code></pre></div></li>
+<li>
+<p>禁止 FirewallD 服务在系统启动时自动启动：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>systemctl disable firewalld
+</span></span></code></pre></div></li>
+<li>
+<p>查看 FirewallD 服务状态：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>systemctl status firewalld
+</span></span></code></pre></div></li>
+<li>
+<p>查看所有可用的防火墙区域：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>firewall-cmd --get-zones
+</span></span></code></pre></div></li>
+<li>
+<p>查看当前活动的防火墙区域：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>firewall-cmd --get-active-zones
+</span></span></code></pre></div></li>
+<li>
+<p>查看指定区域的详细信息：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>firewall-cmd --zone<span style="color:#f92672">=</span>&lt;zone_name&gt; --list-all
+</span></span></code></pre></div></li>
+<li>
+<p>添加端口到指定区域：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>firewall-cmd --zone<span style="color:#f92672">=</span>&lt;zone_name&gt; --add-port<span style="color:#f92672">=</span>&lt;port_number&gt;/tcp
+</span></span></code></pre></div></li>
+<li>
+<p>重新加载防火墙配置：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>firewall-cmd --reload
+</span></span></code></pre></div></li>
+</ul>
+<p>要添加服务和端口到 FirewallD 的配置中，可以使用 <code>firewall-cmd</code> 命令。下面是一些常见的命令示例：</p>
+<ol>
+<li>添加一个端口到指定的防火墙区域：</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>firewall-cmd --zone<span style="color:#f92672">=</span>&lt;zone_name&gt; --add-port<span style="color:#f92672">=</span>&lt;port_number&gt;/tcp
+</span></span></code></pre></div><p>其中，<code>&lt;zone_name&gt;</code> 是要添加端口的防火墙区域的名称，<code>&lt;port_number&gt;</code> 是要添加的端口号。例如，要将端口 8080 添加到 public 区域，可以执行以下命令：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>firewall-cmd --zone<span style="color:#f92672">=</span>public --add-port<span style="color:#f92672">=</span>8080/tcp
+</span></span></code></pre></div><p>这将允许 TCP 流量通过端口 8080。</p>
+<ol start="2">
+<li>添加一个预定义的服务到指定的防火墙区域：</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>firewall-cmd --zone<span style="color:#f92672">=</span>&lt;zone_name&gt; --add-service<span style="color:#f92672">=</span>&lt;service_name&gt;
+</span></span></code></pre></div><p>其中，<code>&lt;zone_name&gt;</code> 是要添加服务的防火墙区域的名称，<code>&lt;service_name&gt;</code> 是要添加的预定义服务的名称。例如，要将 SSH 服务添加到 public 区域，可以执行以下命令：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>firewall-cmd --zone<span style="color:#f92672">=</span>public --add-service<span style="color:#f92672">=</span>ssh
+</span></span></code></pre></div><p>这将允许 SSH 连接通过防火墙。</p>
+<ol start="3">
+<li>永久保存更改：</li>
+</ol>
+<p>上述命令添加的规则在系统重启后会失效。要使更改永久生效，可以添加 <code>--permanent</code> 选项，并重新加载防火墙配置：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>firewall-cmd --zone<span style="color:#f92672">=</span>&lt;zone_name&gt; --add-port<span style="color:#f92672">=</span>&lt;port_number&gt;/tcp --permanent
+</span></span><span style="display:flex;"><span>firewall-cmd --reload
+</span></span></code></pre></div><p>例如：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>firewall-cmd --zone<span style="color:#f92672">=</span>public --add-port<span style="color:#f92672">=</span>8080/tcp --permanent
+</span></span><span style="display:flex;"><span>firewall-cmd --reload
+</span></span></code></pre></div><p>这将在系统重启后仍然允许通过端口 8080 的 TCP 流量，并将更改永久保存。</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/8c289b4a2647a6ce517ce8b9a492340a7559ab78" title='最后修改者 weibin | 七月 7, 2023' target="_blank" rel="noopener">
+      <img src="/linux/svg/calendar.svg" class="book-icon" alt="" />
+      <span>七月 7, 2023</span>
+    </a>
+  </div>
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/book.linux/docs/part6-service-manage/6.1-firewall.md" target="_blank" rel="noopener">
+      <img src="/linux/svg/edit.svg" class="book-icon" alt="" />
+      <span>编辑本页</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#61-防火墙">6.1 防火墙</a>
+      <ul>
+        <li><a href="#611-分类">6.1.1 分类</a>
+          <ul>
+            <li><a href="#iptables">iptables</a></li>
+          </ul>
+        </li>
+        <li><a href="#612-iptables-表和链">6.1.2 iptables 表和链</a>
+          <ul>
+            <li><a href="#filter">filter</a></li>
+            <li><a href="#nat">nat</a></li>
+          </ul>
+        </li>
+        <li><a href="#613-iptables-配置文件">6.1.3 iptables 配置文件</a></li>
+        <li><a href="#614-firewalld-服务">6.1.4 firewallD 服务</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

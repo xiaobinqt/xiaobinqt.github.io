@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="
+  2.13 PersistentVolume
+  #
+
+Pod 里的容器是由镜像产生的，而镜像文件本身是只读的，进程要读写磁盘只能用一个临时的存储空间，一旦 Pod 销毁，临时存储也就会立即回收释放，数据也就丢失了。
+Kubernetes 的 Volume 对数据存储已经给出了一个很好的抽象，它只是定义了有这么一个 “存储卷”，而这个 “存储卷” 是什么类型、有多大容量、怎么存储，可以自由发挥。Pod 不需要关心那些专业、复杂的细节，只要设置好 volumeMounts，就可以把 Volume 加载进容器里使用。所以，由 Volume 的概念，延伸出了 PersistentVolume 对象，它专门用来表示持久存储设备，但隐藏了存储的底层实现，使用者只需要知道它能安全可靠地保管数据就可以了（由于 PersistentVolume 这个词很长，一般把它简称为 PV）。
+作为存储的抽象，PV 实际上就是一些存储设备、文件系统，比如 Ceph、GlusterFS、NFS，甚至是本地磁盘，管理它们已经超出了 Kubernetes 的能力范围，所以，一般会由系统管理员单独维护，然后再在 Kubernetes 里创建对应的 PV。PV 属于集群的系统资源，是和 Node 平级的一种对象，Pod 对它没有管理权，只有使用权。
+
+  2.13.1 PersistentVolumeClaim/StorageClass
+  #
+
+由于不同存储设备的差异实在是太大了：有的速度快，有的速度慢；有的可以共享读写，有的只能独占读写；有的容量小，只有几百 MB，有的容量大到 TB、PB 级别等，这么多种存储设备，只用一个 PV 对象来管理不符合 “单一职责” 的原则，让 Pod 直接去选择 PV 也不灵活。所以 Kubernetes 就又增加了两个新对象，PersistentVolumeClaim 和 StorageClass，这种 “中间层” 的思想，把存储卷的分配管理过程再次细化。
+PersistentVolumeClaim，简称 PVC，用来向 Kubernetes 申请存储资源。PVC 是给 Pod 使用的对象，它相当于是 Pod 的代理，代表 Pod 向系统申请 PV。一旦资源申请成功，Kubernetes 就会把 PV 和 PVC 关联在一起，这个动作叫做 “绑定”（bind）。">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/kubernetes/docs/part2-break-ice/2.13-persistent-volume/">
+  <meta property="og:site_name" content="Kubernetes 学习笔记">
+  <meta property="og:title" content="2.13 PersistentVolume">
+  <meta property="og:description" content="2.13 PersistentVolume # Pod 里的容器是由镜像产生的，而镜像文件本身是只读的，进程要读写磁盘只能用一个临时的存储空间，一旦 Pod 销毁，临时存储也就会立即回收释放，数据也就丢失了。
+Kubernetes 的 Volume 对数据存储已经给出了一个很好的抽象，它只是定义了有这么一个 “存储卷”，而这个 “存储卷” 是什么类型、有多大容量、怎么存储，可以自由发挥。Pod 不需要关心那些专业、复杂的细节，只要设置好 volumeMounts，就可以把 Volume 加载进容器里使用。所以，由 Volume 的概念，延伸出了 PersistentVolume 对象，它专门用来表示持久存储设备，但隐藏了存储的底层实现，使用者只需要知道它能安全可靠地保管数据就可以了（由于 PersistentVolume 这个词很长，一般把它简称为 PV）。
+作为存储的抽象，PV 实际上就是一些存储设备、文件系统，比如 Ceph、GlusterFS、NFS，甚至是本地磁盘，管理它们已经超出了 Kubernetes 的能力范围，所以，一般会由系统管理员单独维护，然后再在 Kubernetes 里创建对应的 PV。PV 属于集群的系统资源，是和 Node 平级的一种对象，Pod 对它没有管理权，只有使用权。
+2.13.1 PersistentVolumeClaim/StorageClass # 由于不同存储设备的差异实在是太大了：有的速度快，有的速度慢；有的可以共享读写，有的只能独占读写；有的容量小，只有几百 MB，有的容量大到 TB、PB 级别等，这么多种存储设备，只用一个 PV 对象来管理不符合 “单一职责” 的原则，让 Pod 直接去选择 PV 也不灵活。所以 Kubernetes 就又增加了两个新对象，PersistentVolumeClaim 和 StorageClass，这种 “中间层” 的思想，把存储卷的分配管理过程再次细化。
+PersistentVolumeClaim，简称 PVC，用来向 Kubernetes 申请存储资源。PVC 是给 Pod 使用的对象，它相当于是 Pod 的代理，代表 Pod 向系统申请 PV。一旦资源申请成功，Kubernetes 就会把 PV 和 PVC 关联在一起，这个动作叫做 “绑定”（bind）。">
+  <meta property="og:locale" content="zh">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:modified_time" content="2023-06-13T12:50:35+08:00">
+<title>2.13 PersistentVolume | Kubernetes 学习笔记</title>
+<link rel="icon" href="/kubernetes/favicon.png" >
+<link rel="manifest" href="/kubernetes/manifest.json">
+<link rel="canonical" href="https://example.com/kubernetes/docs/part2-break-ice/2.13-persistent-volume/">
+<link rel="stylesheet" href="/kubernetes/book.min.1e8c332c823ff5970e639a0c180f0e3d074283c7f525185d3e42903a2f30e9be.css" integrity="sha256-HowzLII/9ZcOY5oMGA8OPQdCg8f1JRhdPkKQOi8w6b4=" crossorigin="anonymous">
+  <script defer src="/kubernetes/fuse.min.js"></script>
+  <script defer src="/kubernetes/zh.search.min.da1c52546386c902e77e37ee10f137dd864d5defad152b94b97987f9bfccfa81.js" integrity="sha256-2hxSVGOGyQLnfjfuEPE33YZNXe&#43;tFSuUuXmH&#43;b/M&#43;oE=" crossorigin="anonymous"></script>
+
+  <script defer src="/kubernetes/sw.min.18ff75d546fc59b9d538e96815256b253062dc991f14b3caff0f35a243a406d1.js" integrity="sha256-GP911Ub8WbnVOOloFSVrJTBi3JkfFLPK/w81okOkBtE=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/kubernetes/"><span>Kubernetes 学习笔记</span>
+  </a>
+</h2>
+
+
+<div class="book-search hidden">
+  <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+
+
+<ul>
+    <li>
+        <a href="javascript:void(0)" onclick="hrefIndex()" rel="noopener">主页</a>
+    </li>
+    <li>
+        <a href="https://github.com/xiaobinqt" target="_blank" rel="noopener">GitHub</a>
+    </li>
+</ul>
+
+<hr>
+
+<script>
+    function hrefIndex() {
+        window.location = window.location.origin;
+    }
+</script>
+
+
+  
+<ul>
+  
+  <li>
+    <a href=""  target="_blank" rel="noopener">
+        
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第一部分 Docker</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.1-docker-brief/" class="">1.1 Docker 简介</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.2-docker-cmd/" class="">1.2 Docker 常用命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.3-container/" class="">1.3 容器</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.4-image/" class="">1.4 镜像</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.5-network/" class="">1.5 网络互通</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.6-docker-compose/" class="">1.6 Docker Compose</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.7-private-registry/" class="">1.7 私有镜像仓库</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第二部分 入门</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.1-k8s-overview/" class="">2.1 简介</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.2-minikube/" class="">2.2 minikube</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.3-working-mechanism/" class="">2.3 工作机制</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.4-pod/" class="">2.4 Pod</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.5-job/" class="">2.5 Job</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.6-config-manage/" class="">2.6 配置管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.7-general-cmd/" class="">2.7 常用命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.8-kubeadm/" class="">2.8 kubeadm 搭建</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.9-deployment/" class="">2.9 Deployment</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.10-daemonset/" class="">2.10 DaemonSet</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.11-service/" class="">2.11 Service</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.12-ingress/" class="">2.12 Ingress</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.13-persistent-volume/" class="active">2.13 PersistentVolume</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.14-persistentvolume-nfs/" class="">2.14 网络共享存储</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.15-statefulset/" class="">2.15 StatefulSet</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.16-rolling-update/" class="">2.16 滚动更新</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.17-app-assurance/" class="">2.17 应用保障</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.18-cluster-management/" class="">2.18 集群管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.19-system-monitor/" class="">2.19 系统监控</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.20-network-communications/" class="">2.20 网络通信</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/kubernetes/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>2.13 PersistentVolume</h3>
+
+  <label for="toc-control">
+    
+    <img src="/kubernetes/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#213-persistentvolume">2.13 PersistentVolume</a>
+      <ul>
+        <li><a href="#2131-persistentvolumeclaimstorageclass">2.13.1 PersistentVolumeClaim/StorageClass</a></li>
+        <li><a href="#2132-描述-persistentvolume">2.13.2 描述 PersistentVolume</a></li>
+        <li><a href="#2133-描述-persistentvolumeclaim">2.13.3 描述 PersistentVolumeClaim</a></li>
+        <li><a href="#2134-使用-persistentvolume">2.13.4 使用 PersistentVolume</a></li>
+        <li><a href="#2135-pod-挂载-persistentvolume">2.13.5 Pod 挂载 PersistentVolume</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown book-article"><h1 id="213-persistentvolume">
+  2.13 PersistentVolume
+  <a class="anchor" href="#213-persistentvolume">#</a>
+</h1>
+<p>Pod 里的容器是由镜像产生的，而镜像文件本身是只读的，进程要读写磁盘只能用一个<strong>临时的存储空间</strong>，一旦 Pod 销毁，临时存储也就会立即回收释放，数据也就丢失了。</p>
+<p>Kubernetes 的 Volume 对数据存储已经给出了一个很好的抽象，它只是定义了有这么一个 “存储卷”，而这个 “存储卷” 是什么类型、有多大容量、怎么存储，可以自由发挥。Pod 不需要关心那些专业、复杂的细节，只要设置好 volumeMounts，就可以把 Volume 加载进容器里使用。所以，由 Volume 的概念，延伸出了 PersistentVolume 对象，它专门用来表示持久存储设备，但隐藏了存储的底层实现，使用者只需要知道它能安全可靠地保管数据就可以了（由于 PersistentVolume 这个词很长，一般把它简称为 PV）。</p>
+<p>作为存储的抽象，PV 实际上就是一些存储设备、文件系统，比如 Ceph、GlusterFS、NFS，甚至是本地磁盘，管理它们已经超出了 Kubernetes 的能力范围，所以，一般会由系统管理员单独维护，然后再在 Kubernetes 里创建对应的 PV。PV 属于集群的系统资源，是和 Node 平级的一种对象，Pod 对它没有管理权，只有使用权。</p>
+<h2 id="2131-persistentvolumeclaimstorageclass">
+  2.13.1 PersistentVolumeClaim/StorageClass
+  <a class="anchor" href="#2131-persistentvolumeclaimstorageclass">#</a>
+</h2>
+<p>由于不同存储设备的差异实在是太大了：有的速度快，有的速度慢；有的可以共享读写，有的只能独占读写；有的容量小，只有几百 MB，有的容量大到 TB、PB 级别等，这么多种存储设备，只用一个 PV 对象来管理不符合 “单一职责” 的原则，让 Pod 直接去选择 PV 也不灵活。所以 Kubernetes 就又增加了两个新对象，PersistentVolumeClaim 和 StorageClass，这种 “中间层” 的思想，把存储卷的分配管理过程再次细化。</p>
+<p>PersistentVolumeClaim，简称 PVC，用来向 Kubernetes 申请存储资源。PVC 是给 Pod 使用的对象，它相当于是 Pod 的代理，代表 Pod 向系统申请 PV。一旦资源申请成功，Kubernetes 就会把 PV 和 PVC 关联在一起，这个动作叫做 “绑定”（bind）。</p>
+<p>由于系统里的存储资源非常多，如果要 PVC 去直接遍历查找合适的 PV 也很麻烦，这里就用到了 StorageClass。StorageClass 抽象了特定类型的存储系统（比如 Ceph、NFS），在 PVC 和 PV 之间充当 “协调人” 的角色，帮助 PVC 找到合适的 PV。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230612/bd5729ddbb5040c8922e6d023e0f490c.png" width=700  /></div>
+<h2 id="2132-描述-persistentvolume">
+  2.13.2 描述 PersistentVolume
+  <a class="anchor" href="#2132-%e6%8f%8f%e8%bf%b0-persistentvolume">#</a>
+</h2>
+<p>Kubernetes 里有很多种类型的 PV，最容易的是本机存储 HostPath，它和 Docker 里挂载本地目录的 <code>-v</code> 参数非常类似。因为 Pod 会在集群的任意节点上运行，所以系统管理员需在每个节点上创建一个目录，它将会作为本地存储卷挂载到 Pod 里。</p>
+<p>比如在 /tmp 里建一个名字是 host-10m-pv 的目录，表示一个只有 10MB 容量的存储设备。有了存储，就可以使用 YAML 来描述这个 PV 对象了。这里不能用 kubectl create 直接创建 PV 对象，只能用 kubectl api-resources、kubectl explain 查看 PV 的字段说明，手动编写 PV 的 YAML 描述文件😂。以下是一个 YAML 描述示例：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">PersistentVolume</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">host-10m-pv</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">storageClassName</span>: <span style="color:#ae81ff">host-test</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">accessModes</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">ReadWriteOnce</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">capacity</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">storage</span>: <span style="color:#ae81ff">10Mi</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">hostPath</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">path</span>: <span style="color:#ae81ff">/tmp/host-10m-pv/</span>
+</span></span></code></pre></div><p>storageClassName 表示对存储类型的抽象 StorageClass。这个 PV 是我们手动管理的，名字可以任意起，这里写的是 host-test。</p>
+<p>accessModes 定义了存储设备的访问模式，也就是虚拟盘的读写权限，和 Linux 的文件访问模式差不多，目前 Kubernetes 有 3 种：</p>
+<ul>
+<li>
+<p>ReadWriteOnce：存储卷可读可写，但只能被一个节点上的 Pod 挂载。</p>
+</li>
+<li>
+<p>ReadOnlyMany：存储卷只读不可写，可以被任意节点上的 Pod 多次挂载。</p>
+</li>
+<li>
+<p>ReadWriteMany：存储卷可读可写，也可以被任意节点上的 Pod 多次挂载。</p>
+</li>
+</ul>
+<p>这 3 种访问模式<strong>限制的对象是节点</strong>而不是 Pod，因为存储是系统级别的概念，不属于 Pod 里的进程。因为本地目录只能是在本机使用，所以这个 PV 使用了 ReadWriteOnce 访问模式。</p>
+<p>capacity 表示存储设备的容量，这里设置为 10MB。</p>
+<p>Kubernetes 里定义存储容量使用的是<strong>国际标准</strong>，日常习惯使用的 KB/MB/GB 的基数是 1024，要写成 Ki/Mi/Gi，如果写错了，单位不一致实际容量就会对不上。</p>
+<p>hostPath 指定了存储卷的本地路径，也就是在节点上创建的目录。</p>
+<h2 id="2133-描述-persistentvolumeclaim">
+  2.13.3 描述 PersistentVolumeClaim
+  <a class="anchor" href="#2133-%e6%8f%8f%e8%bf%b0-persistentvolumeclaim">#</a>
+</h2>
+<p>有了 PV 就表示集群里有了一个持久化存储可以供 Pod 使用，需要再定义 PVC 对象，向 Kubernetes 申请存储。下面这个 YAML PVC 描述，要求使用一个 5MB 的存储设备，访问模式是 ReadWriteOnce：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">PersistentVolumeClaim</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">host-5m-pvc</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">storageClassName</span>: <span style="color:#ae81ff">host-test</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">accessModes</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">ReadWriteOnce</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">resources</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">requests</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">storage</span>: <span style="color:#ae81ff">5Mi</span>
+</span></span></code></pre></div><p>PVC 的 YAML 内容与 PV 很像，但它不表示实际的存储，而是一个 “申请” 或者 “声明”，spec 里的字段描述的是对存储的 “期望状态”。PVC 里的 storageClassName、accessModes 和 PV 是一样的，但<strong>不会</strong>有字段 capacity，而是要用 resources.request 表示希望要有多大的容量。</p>
+<p>Kubernetes 会根据 PVC 里的描述，去找能够匹配 StorageClass 和容量的 PV，然后把 PV 和 PVC “绑定” 在一起，实现存储的分配。</p>
+<h2 id="2134-使用-persistentvolume">
+  2.13.4 使用 PersistentVolume
+  <a class="anchor" href="#2134-%e4%bd%bf%e7%94%a8-persistentvolume">#</a>
+</h2>
+<p>当已经准备好了 PV 和 PVC，就可以让 Pod 实现持久化存储了。</p>
+<p>host-path-pv.yml</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">PersistentVolume</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">host-10m-pv</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">storageClassName</span>: <span style="color:#ae81ff">host-test</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">accessModes</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">ReadWriteOnce</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">capacity</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">storage</span>: <span style="color:#ae81ff">10Mi</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">hostPath</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">path</span>: <span style="color:#ae81ff">/tmp/host-10m-pv/</span>
+</span></span></code></pre></div><p>host-path-pvc.yml</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">PersistentVolumeClaim</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">host-5m-pvc</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">storageClassName</span>: <span style="color:#ae81ff">host-test</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">accessModes</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">ReadWriteOnce</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">resources</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">requests</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">storage</span>: <span style="color:#ae81ff">5Mi</span>
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230613/dc738d5f31664f0ea8f46b306abc5b8d.png" width=  /></div>
+<p>从上面的截图可以看到，这个 PV 的容量是 10MB，访问模式是 RWO（ReadWriteOnce），StorageClass 是我们定义的 host-test，状态显示的是 Available，也就是处于可用状态，可以随时分配给 Pod 使用。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230613/ca3db52ab5bf4fa9900bf9457c28b66d.png" width=  /></div>
+<p>一旦 PVC 对象创建成功，Kubernetes 就会立即通过 StorageClass、resources 等条件在集群里查找符合要求的 PV，如果找到合适的存储对象就会把它俩 “绑定” 在一起。</p>
+<p>PVC 对象申请的是 5MB，但现在系统里只有一个 10MB 的 PV，没有更合适的对象，所以 Kubernetes 也只能把这个 PV 分配出去，多出的容量就算是 “福利” 了。这两个对象的状态都是 Bound，也就是说存储申请成功，PVC 的实际容量就是 PV 的容量 10MB，而不是最初申请的容量 5MB。</p>
+<p>如果把 PVC 的申请容量改大一些，比如改成 100MB，apply 后会看到 PVC 会一直处于 Pending 状态，意味着 Kubernetes 在系统里没有找到符合要求的存储，无法分配资源，只能等有满足要求的 PV 才能完成绑定。</p>
+<h2 id="2135-pod-挂载-persistentvolume">
+  2.13.5 Pod 挂载 PersistentVolume
+  <a class="anchor" href="#2135-pod-%e6%8c%82%e8%bd%bd-persistentvolume">#</a>
+</h2>
+<p>当 PV 和 PVC 绑定好了，有了持久化存储，就可以为 Pod 挂载存储卷。先要在 spec.volumes 定义存储卷，然后在 containers.volumeMounts 挂载进容器。因为用的是 PVC，所以要在 volumes 里用字段 persistentVolumeClaim 指定 PVC 的名字。</p>
+<p>以下的 Pod 的 YAML 描述文件，把存储卷挂载到了 Nginx 容器的 /tmp 目录：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Pod</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">host-pvc-pod</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">volumes</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">host-pvc-vol</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">persistentVolumeClaim</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">claimName</span>: <span style="color:#ae81ff">host-5m-pvc</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">containers</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ngx-pvc-pod</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">image</span>: <span style="color:#ae81ff">nginx:alpine</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">ports</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">containerPort</span>: <span style="color:#ae81ff">80</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">volumeMounts</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">host-pvc-vol</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">mountPath</span>: <span style="color:#ae81ff">/tmp</span>
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230613/cc9fb0caba124893bf9658413f21e959.png" width=  /></div>
+<p>创建 Pod 并查看它的状态：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>kubectl apply -f host-path-pod.yml
+</span></span><span style="display:flex;"><span>kubectl get pod -o wide
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230613/9a42b9f9e07e47e6bd8813021ee0441f.png" width=  /></div>
+<p>可以看到，这个 Pod 被 Kubernetes 调到了 worker 节点上。可以使用 kubectl exec 进入容器，查看 PV 是否确实挂载成功：</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230613/fe74f66ace974d61ac62f2d974d2eafe.png" width=  /></div>
+<p>在容器的 /tmp 目录里生成了一个 a.txt 的文件，根据 PV 的定义，这个文件就应该落在 worker 节点的磁盘上，登录到 worker 节点上查看，在 worker 节点这台机器的 /tmp/host-10m-pv 目录下，里面有个 a.txt 文件，文件内容跟我们在容器中创建的一样，可以确认确实是刚才在 Pod 里生成的文件。其实<strong>并没有提前</strong>在 worker 节点上创建 /tmp/host-10m-pv 目录，但是当 Pod 运行起来时，/tmp/host-10m-pv 目录在 worker 节点上被自动创建了。</p>
+<p>因为 Pod 产生的数据已经通过 PV 存在了磁盘上，如果 Pod 删除后再重新创建，挂载存储卷时会依然使用这个目录，数据保持不变，也就实现了持久化存储。但是，由于这个 PV 是 HostPath 类型，只在本节点存储，如果 Pod 重建时被调度到了其他节点上，那么即使加载了本地目录，也不会是之前的存储位置，持久化功能也就失效了。</p>
+<p>所以，HostPath 类型的 PV 一般用来做测试，或者是用于 DaemonSet 这样与节点关系比较密切的应用。</p>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/8ae3d01356cb2a4e6abbe7cfb9173a00e70b8d56" title='最后修改者 weibin | 六月 13, 2023' target="_blank" rel="noopener">
+      <img src="/kubernetes/svg/calendar.svg" class="book-icon" alt="" />
+      <span>六月 13, 2023</span>
+    </a>
+  </div>
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/book.kubernetes/docs/part2-break-ice/2.13-persistent-volume.md" target="_blank" rel="noopener">
+      <img src="/kubernetes/svg/edit.svg" class="book-icon" alt="" />
+      <span>编辑本页</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#213-persistentvolume">2.13 PersistentVolume</a>
+      <ul>
+        <li><a href="#2131-persistentvolumeclaimstorageclass">2.13.1 PersistentVolumeClaim/StorageClass</a></li>
+        <li><a href="#2132-描述-persistentvolume">2.13.2 描述 PersistentVolume</a></li>
+        <li><a href="#2133-描述-persistentvolumeclaim">2.13.3 描述 PersistentVolumeClaim</a></li>
+        <li><a href="#2134-使用-persistentvolume">2.13.4 使用 PersistentVolume</a></li>
+        <li><a href="#2135-pod-挂载-persistentvolume">2.13.5 Pod 挂载 PersistentVolume</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="
+  2.8 TLS 连接
+  #
+
+在 HTTP 协议里，建立连接后，浏览器会立即发送请求报文，但在 HTTPS 协议中，它需要再用另外一个 “握手” 过程，在 TCP 上建立安全连接，之后才是收发 HTTP 报文。
+
+  2.8.1 TLS 协议组成
+  #
+
+TLS 包含几个子协议，可以理解为是由几个不同职责的模块组成，比较常用的有记录协议、警报协议、握手协议、变更密码规范协议等。
+
+  记录协议
+  #
+
+记录协议（Record Protocol）规定了 TLS 收发数据的基本单位：记录（record）。它有点像是 TCP 里的 segment，所有的其他子协议都需要通过记录协议发出。但多个记录数据可以在一个 TCP 包里一次性发出，也并不需要像 TCP 那样返回 ACK。
+
+  警报协议
+  #
+
+警报协议（Alert Protocol）的职责是向对方发出警报信息，有点像是 HTTP 协议里的状态码。比如，protocol_version 就是不支持旧版本，bad_certificate 就是证书有问题，收到警报后另一方可以选择继续，也可以立即终止连接。
+
+  握手协议
+  #
+
+握手协议（Handshake Protocol）是 TLS 里最复杂的子协议，要比 TCP 的 SYN/ACK 复杂的多，浏览器和服务器会在握手过程中协商 TLS 版本号、随机数、密码套件等信息，然后交换证书和密钥参数，最终双方协商得到会话密钥，用于后续的混合加密系统。
+
+  变更密码规范协议
+  #
+
+变更密码规范协议（Change Cipher Spec Protocol），就是一个 “通知”，告诉对方，后续的数据都将使用加密保护。那么反过来，在它之前，数据都是明文的。
+下面的这张图简要地描述了 TLS 的握手过程，其中每一个 “框” 都是一个记录，多个记录组合成一个 TCP 包发送。所以，最多经过两次消息往返（4 个消息）就可以完成握手，然后就可以在安全的通信环境里发送 HTTP 报文，实现 HTTPS 协议。">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/http/docs/part2-break-ice/2.8-tls-connect/">
+  <meta property="og:site_name" content="HTTP 协议学习笔记">
+  <meta property="og:title" content="2.8 TLS 连接">
+  <meta property="og:description" content="2.8 TLS 连接 # 在 HTTP 协议里，建立连接后，浏览器会立即发送请求报文，但在 HTTPS 协议中，它需要再用另外一个 “握手” 过程，在 TCP 上建立安全连接，之后才是收发 HTTP 报文。
+2.8.1 TLS 协议组成 # TLS 包含几个子协议，可以理解为是由几个不同职责的模块组成，比较常用的有记录协议、警报协议、握手协议、变更密码规范协议等。
+记录协议 # 记录协议（Record Protocol）规定了 TLS 收发数据的基本单位：记录（record）。它有点像是 TCP 里的 segment，所有的其他子协议都需要通过记录协议发出。但多个记录数据可以在一个 TCP 包里一次性发出，也并不需要像 TCP 那样返回 ACK。
+警报协议 # 警报协议（Alert Protocol）的职责是向对方发出警报信息，有点像是 HTTP 协议里的状态码。比如，protocol_version 就是不支持旧版本，bad_certificate 就是证书有问题，收到警报后另一方可以选择继续，也可以立即终止连接。
+握手协议 # 握手协议（Handshake Protocol）是 TLS 里最复杂的子协议，要比 TCP 的 SYN/ACK 复杂的多，浏览器和服务器会在握手过程中协商 TLS 版本号、随机数、密码套件等信息，然后交换证书和密钥参数，最终双方协商得到会话密钥，用于后续的混合加密系统。
+变更密码规范协议 # 变更密码规范协议（Change Cipher Spec Protocol），就是一个 “通知”，告诉对方，后续的数据都将使用加密保护。那么反过来，在它之前，数据都是明文的。
+下面的这张图简要地描述了 TLS 的握手过程，其中每一个 “框” 都是一个记录，多个记录组合成一个 TCP 包发送。所以，最多经过两次消息往返（4 个消息）就可以完成握手，然后就可以在安全的通信环境里发送 HTTP 报文，实现 HTTPS 协议。">
+  <meta property="og:locale" content="zh">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:modified_time" content="2024-10-15T17:54:23+08:00">
+<title>2.8 TLS 连接 | HTTP 协议学习笔记</title>
+<link rel="icon" href="/http/favicon.png" >
+<link rel="manifest" href="/http/manifest.json">
+<link rel="canonical" href="https://example.com/http/docs/part2-break-ice/2.8-tls-connect/">
+<link rel="stylesheet" href="/http/book.min.1e8c332c823ff5970e639a0c180f0e3d074283c7f525185d3e42903a2f30e9be.css" integrity="sha256-HowzLII/9ZcOY5oMGA8OPQdCg8f1JRhdPkKQOi8w6b4=" crossorigin="anonymous">
+  <script defer src="/http/fuse.min.js"></script>
+  <script defer src="/http/zh.search.min.f35d86d28a186f0f068eefcb7a1549631ddb08d656417ffe77e5fc2fb2b76a8f.js" integrity="sha256-812G0ooYbw8Gju/LehVJYx3bCNZWQX/&#43;d&#43;X8L7K3ao8=" crossorigin="anonymous"></script>
+
+  <script defer src="/http/sw.min.9c2899688c7eda021eaf848ecb15bf0131bffb6b338096110fdb0e7027cfec8b.js" integrity="sha256-nCiZaIx&#43;2gIer4SOyxW/ATG/&#43;2szgJYRD9sOcCfP7Is=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/http/"><span>HTTP 协议学习笔记</span>
+  </a>
+</h2>
+
+
+<div class="book-search hidden">
+  <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+
+
+<ul>
+    <li>
+        <a href="javascript:void(0)" onclick="hrefIndex()" rel="noopener">主页</a>
+    </li>
+    <li>
+        <a href="https://github.com/xiaobinqt" target="_blank" rel="noopener">GitHub</a>
+    </li>
+</ul>
+
+<hr>
+
+<script>
+    function hrefIndex() {
+        window.location = window.location.origin;
+    }
+</script>
+
+
+  
+<ul>
+  
+  <li>
+    <a href=""  target="_blank" rel="noopener">
+        
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第一部分 总览</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part1-overview/1.1-basic-concept/" class="">1.1 基础概念</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part1-overview/1.2-net-overview/" class="">1.2 概述</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part1-overview/1.3-physical-layer/" class="">1.3 物理层</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part1-overview/1.4-link-layer/" class="">1.4 链路层</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part1-overview/1.5-network-layer/" class="">1.5 网络层</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part1-overview/1.6-transport-layer/" class="">1.6 传输层</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part1-overview/1.7-application-layer/" class="">1.7 应用层</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part1-overview/1.8-socket/" class="">1.8 Socket</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第二部分 破冰</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part2-break-ice/2.1-proxy/" class="">2.1 代理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part2-break-ice/2.2-network-layer-model/" class="">2.2 网络分层模型</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part2-break-ice/2.3-entity-data/" class="">2.3 实体数据</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part2-break-ice/2.4-connection-management/" class="">2.4 连接管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part2-break-ice/2.5-cookie/" class="">2.5 Cookie</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part2-break-ice/2.6-cache/" class="">2.6 Cache</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part2-break-ice/2.7-https/" class="">2.7 HTTPS</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/http/docs/part2-break-ice/2.8-tls-connect/" class="active">2.8 TLS 连接</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/http/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>2.8 TLS 连接</h3>
+
+  <label for="toc-control">
+    
+    <img src="/http/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#28-tls-连接">2.8 TLS 连接</a>
+      <ul>
+        <li><a href="#281-tls-协议组成">2.8.1 TLS 协议组成</a>
+          <ul>
+            <li><a href="#记录协议">记录协议</a></li>
+            <li><a href="#警报协议">警报协议</a></li>
+            <li><a href="#握手协议">握手协议</a></li>
+            <li><a href="#变更密码规范协议">变更密码规范协议</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown book-article"><h1 id="28-tls-连接">
+  2.8 TLS 连接
+  <a class="anchor" href="#28-tls-%e8%bf%9e%e6%8e%a5">#</a>
+</h1>
+<p>在 HTTP 协议里，建立连接后，浏览器会立即发送请求报文，但在 HTTPS 协议中，它需要再用另外一个 “握手” 过程，在 TCP 上建立安全连接，之后才是收发 HTTP 报文。</p>
+<h2 id="281-tls-协议组成">
+  2.8.1 TLS 协议组成
+  <a class="anchor" href="#281-tls-%e5%8d%8f%e8%ae%ae%e7%bb%84%e6%88%90">#</a>
+</h2>
+<p>TLS 包含几个子协议，可以理解为是由几个不同职责的模块组成，比较常用的有记录协议、警报协议、握手协议、变更密码规范协议等。</p>
+<h3 id="记录协议">
+  记录协议
+  <a class="anchor" href="#%e8%ae%b0%e5%bd%95%e5%8d%8f%e8%ae%ae">#</a>
+</h3>
+<p>记录协议（Record Protocol）规定了 TLS 收发数据的基本单位：记录（record）。它有点像是 TCP 里的 segment，所有的其他子协议都需要通过记录协议发出。但多个记录数据可以在一个 TCP 包里一次性发出，也并不需要像 TCP 那样返回 ACK。</p>
+<h3 id="警报协议">
+  警报协议
+  <a class="anchor" href="#%e8%ad%a6%e6%8a%a5%e5%8d%8f%e8%ae%ae">#</a>
+</h3>
+<p>警报协议（Alert Protocol）的职责是向对方发出警报信息，有点像是 HTTP 协议里的状态码。比如，protocol_version 就是不支持旧版本，bad_certificate 就是证书有问题，收到警报后另一方可以选择继续，也可以立即终止连接。</p>
+<h3 id="握手协议">
+  握手协议
+  <a class="anchor" href="#%e6%8f%a1%e6%89%8b%e5%8d%8f%e8%ae%ae">#</a>
+</h3>
+<p>握手协议（Handshake Protocol）是 TLS 里最复杂的子协议，要比 TCP 的 SYN/ACK 复杂的多，浏览器和服务器会在握手过程中协商 TLS 版本号、随机数、密码套件等信息，然后交换证书和密钥参数，最终双方协商得到会话密钥，用于后续的混合加密系统。</p>
+<h3 id="变更密码规范协议">
+  变更密码规范协议
+  <a class="anchor" href="#%e5%8f%98%e6%9b%b4%e5%af%86%e7%a0%81%e8%a7%84%e8%8c%83%e5%8d%8f%e8%ae%ae">#</a>
+</h3>
+<p>变更密码规范协议（Change Cipher Spec Protocol），就是一个 “通知”，告诉对方，后续的数据都将使用加密保护。那么反过来，在它之前，数据都是明文的。</p>
+<p>下面的这张图简要地描述了 TLS 的握手过程，其中每一个 “框” 都是一个记录，多个记录组合成一个 TCP 包发送。所以，最多经过两次消息往返（4 个消息）就可以完成握手，然后就可以在安全的通信环境里发送 HTTP 报文，实现 HTTPS 协议。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230508/aa47393a3798413e9468129dfd18599c.png" width=800  /></div>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/e3ee639d51e52e7b16488b0e6159d1ba2b7efd75" title='最后修改者 weibin | 十月 15, 2024' target="_blank" rel="noopener">
+      <img src="/http/svg/calendar.svg" class="book-icon" alt="" />
+      <span>十月 15, 2024</span>
+    </a>
+  </div>
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/book.http/docs/part2-break-ice/2.8-tls-connect.md" target="_blank" rel="noopener">
+      <img src="/http/svg/edit.svg" class="book-icon" alt="" />
+      <span>编辑本页</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#28-tls-连接">2.8 TLS 连接</a>
+      <ul>
+        <li><a href="#281-tls-协议组成">2.8.1 TLS 协议组成</a>
+          <ul>
+            <li><a href="#记录协议">记录协议</a></li>
+            <li><a href="#警报协议">警报协议</a></li>
+            <li><a href="#握手协议">握手协议</a></li>
+            <li><a href="#变更密码规范协议">变更密码规范协议</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
