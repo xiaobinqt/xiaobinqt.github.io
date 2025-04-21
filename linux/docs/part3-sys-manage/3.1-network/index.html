@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="
+  3.1 网络
+  #
+
+
+  3.1.1 网络状态
+  #
+
+
+  net-tools &amp; iproute
+  #
+
+Centos 7 之前一般使用 net-tools，Centos 7 之后主推 iproute / iproute2。
+
+  ifconfig
+  #
+
+eth0 第一块网卡（网络接口)。很多时候，第一个网络接口也可能叫做下面的名字：
+
+eno1 板载网卡
+ens33 PCI-E网卡
+enp0s3 无法获取物理信息的PCI-E网卡
+
+CentOS 7 使用了一致性网络设备命名，以上都不匹配则使用 eth0。
+
+  网关/路由
+  #
+
+route -n
+使用-n参数不解析主机名，因为默认每个 ip 都会反解成域名，如果解析耗时会一直等待。
+
+  网卡物理连接情况
+  #
+
+在 Centos 6 上可以直接输入mii-tool回车，但是 Centos 7 上必须要加上网络接口名。
+
+
+因为用的是虚拟机，所以会有 SIOCGMIIPHY on &rsquo;eth0&rsquo; failed: Operation not supported 错误
+
+  网络接口/网卡名称修改
+  #
+
+网卡命名规则受 biosdevname 和 net.ifnames 两个参数影响。">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/linux/docs/part3-sys-manage/3.1-network/">
+  <meta property="og:site_name" content="Linux 学习笔记">
+  <meta property="og:title" content="3.1 网络">
+  <meta property="og:description" content="3.1 网络 # 3.1.1 网络状态 # net-tools &amp; iproute # Centos 7 之前一般使用 net-tools，Centos 7 之后主推 iproute / iproute2。
+ifconfig # eth0 第一块网卡（网络接口)。很多时候，第一个网络接口也可能叫做下面的名字：
+eno1 板载网卡 ens33 PCI-E网卡 enp0s3 无法获取物理信息的PCI-E网卡 CentOS 7 使用了一致性网络设备命名，以上都不匹配则使用 eth0。
+网关/路由 # route -n 使用-n参数不解析主机名，因为默认每个 ip 都会反解成域名，如果解析耗时会一直等待。
+网卡物理连接情况 # 在 Centos 6 上可以直接输入mii-tool回车，但是 Centos 7 上必须要加上网络接口名。
+因为用的是虚拟机，所以会有 SIOCGMIIPHY on ’eth0’ failed: Operation not supported 错误
+网络接口/网卡名称修改 # 网卡命名规则受 biosdevname 和 net.ifnames 两个参数影响。">
+  <meta property="og:locale" content="zh">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:modified_time" content="2023-02-12T20:34:19+08:00">
+<title>3.1 网络 | Linux 学习笔记</title>
+<link rel="icon" href="/linux/favicon.png" >
+<link rel="manifest" href="/linux/manifest.json">
+<link rel="canonical" href="https://example.com/linux/docs/part3-sys-manage/3.1-network/">
+<link rel="stylesheet" href="/linux/book.min.1e8c332c823ff5970e639a0c180f0e3d074283c7f525185d3e42903a2f30e9be.css" integrity="sha256-HowzLII/9ZcOY5oMGA8OPQdCg8f1JRhdPkKQOi8w6b4=" crossorigin="anonymous">
+  <script defer src="/linux/fuse.min.js"></script>
+  <script defer src="/linux/zh.search.min.b9891c33b571af39c91da92bf084a21b17f7b63d10eeda94f6077a1dc343e219.js" integrity="sha256-uYkcM7VxrznJHakr8ISiGxf3tj0Q7tqU9gd6HcND4hk=" crossorigin="anonymous"></script>
+
+  <script defer src="/linux/sw.min.06246f7b13a877707832946d0b1941d626f4349fd8e3bdfd318889981ed22d49.js" integrity="sha256-BiRvexOod3B4MpRtCxlB1ib0NJ/Y4739MYiJmB7SLUk=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/linux/"><span>Linux 学习笔记</span>
+  </a>
+</h2>
+
+
+<div class="book-search hidden">
+  <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+
+
+<ul>
+    <li>
+        <a href="javascript:void(0)" onclick="hrefIndex()" rel="noopener">主页</a>
+    </li>
+    <li>
+        <a href="https://github.com/xiaobinqt" target="_blank" rel="noopener">GitHub</a>
+    </li>
+</ul>
+
+<hr>
+
+<script>
+    function hrefIndex() {
+        window.location = window.location.origin;
+    }
+</script>
+
+
+  
+<ul>
+  
+  <li>
+    <a href=""  target="_blank" rel="noopener">
+        
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第一部分 基础知识</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.1-operating-system/" class="">1.1 操作系统</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.2-overview/" class="">1.2 总览</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.3-common-dir/" class="">1.3 常见目录</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.4-process-manage/" class="">1.4 进程管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.5-deadlock/" class="">1.5 死锁</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.6-memory-manage/" class="">1.6 内存管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.7-link/" class="">1.7 链接</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.7-device-manage/" class="">1.7 设备管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.8-instruction-arch/" class="">1.8 指令集</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.9-mirrors-sources/" class="">1.9 国内镜像源</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第二部分 系统操作</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.1-help/" class="">2.1 帮助命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.2-ls/" class="">2.2 ls 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.3-shutdown/" class="">2.3 关机</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.4-cp/" class="">2.4 cp 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.5-file-view/" class="">2.5 文件查看命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.6-backup-compression/" class="">2.6 压缩和打包</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.7-vim/" class="">2.7 vim</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.8-user-manage/" class="">2.8 用户管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.9-switch-user/" class="">2.9 切换用户</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.10-file-dir/" class="">2.10 文件和文件夹</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第三部分 系统管理</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.1-network/" class="active">3.1 网络</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.2-net-trouble-removal/" class="">3.2 网络故障排除</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.3-net-manage/" class="">3.3 网络服务管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.4-soft-install/" class="">3.4 软件安装</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.5-process/" class="">3.5 进程管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.6-memory-disk/" class="">3.6 内存和磁盘管理</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第四部分 Shell</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.1-introduction/" class="">4.1 Shell 简介</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.2-env-config-file/" class="">4.2 环境变量</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.3-array/" class="">4.3 数组</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.4-escape-quot/" class="">4.4 转义和引用</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.5-operator/" class="">4.5 运算符</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.6-test-and-judge/" class="">4.6 测试和判断</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.7-process-control/" class="">4.7 流程控制</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.8-function/" class="">4.8 函数</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.9-script-cron/" class="">4.9 脚本和计划任务</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第五部分 文本操作</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part5-text-operate/5.1-regular/" class="">5.1 正则表达式</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part5-text-operate/5.2-sed/" class="">5.2 sed 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part5-text-operate/5.3-awk/" class="">5.3 awk 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part5-text-operate/5.4-cut-sort-uniq-tr/" class="">5.4 cut、sort、uniq、tr 命令</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第六部分 服务管理</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.1-firewall/" class="">6.1 防火墙</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.2-ssh/" class="">6.2 ssh</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.3-ftp/" class="">6.3 ftp</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.4-samba/" class="">6.4 samba</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.5-nfs/" class="">6.5 NFS</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.6-nginx/" class="">6.6 nginx</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.7-dns/" class="">6.7 DNS</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.8-nas/" class="">6.8 NAS</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第七部分 常见问题</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part7-faq/7.1-cmd/" class="">7.1 命令相关</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/linux/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>3.1 网络</h3>
+
+  <label for="toc-control">
+    
+    <img src="/linux/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#31-网络">3.1 网络</a>
+      <ul>
+        <li><a href="#311-网络状态">3.1.1 网络状态</a>
+          <ul>
+            <li><a href="#net-tools--iproute">net-tools &amp; iproute</a></li>
+            <li><a href="#ifconfig">ifconfig</a></li>
+            <li><a href="#网关路由">网关/路由</a></li>
+            <li><a href="#网卡物理连接情况">网卡物理连接情况</a></li>
+            <li><a href="#网络接口网卡名称修改">网络接口/网卡名称修改</a></li>
+          </ul>
+        </li>
+        <li><a href="#312-网络配置">3.1.2 网络配置</a>
+          <ul>
+            <li><a href="#修改-ip">修改 ip</a></li>
+            <li><a href="#启动关闭网卡">启动关闭网卡</a></li>
+            <li><a href="#删除添加网关">删除/添加网关</a></li>
+            <li><a href="#明细路由">明细路由</a></li>
+          </ul>
+        </li>
+        <li><a href="#313-路由命令">3.1.3 路由命令</a></li>
+        <li><a href="#314-网络故障排除">3.1.4 网络故障排除</a></li>
+        <li><a href="#315-网络服务管理">3.1.5 网络服务管理</a></li>
+        <li><a href="#316-常用网络配置文件">3.1.6 常用网络配置文件</a></li>
+        <li><a href="#参考">参考</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown book-article"><h1 id="31-网络">
+  3.1 网络
+  <a class="anchor" href="#31-%e7%bd%91%e7%bb%9c">#</a>
+</h1>
+<h2 id="311-网络状态">
+  3.1.1 网络状态
+  <a class="anchor" href="#311-%e7%bd%91%e7%bb%9c%e7%8a%b6%e6%80%81">#</a>
+</h2>
+<h3 id="net-tools--iproute">
+  net-tools &amp; iproute
+  <a class="anchor" href="#net-tools--iproute">#</a>
+</h3>
+<p>Centos 7 之前一般使用 net-tools，Centos 7 之后主推 iproute / iproute2。</p>
+<h3 id="ifconfig">
+  ifconfig
+  <a class="anchor" href="#ifconfig">#</a>
+</h3>
+<p>eth0 第一块网卡（网络接口)。很多时候，第一个网络接口也可能叫做下面的名字：</p>
+<ul>
+<li>eno1 板载网卡</li>
+<li>ens33 PCI-E网卡</li>
+<li>enp0s3 无法获取物理信息的PCI-E网卡</li>
+</ul>
+<p>CentOS 7 使用了一致性网络设备命名，以上都不匹配则使用 eth0。</p>
+<h3 id="网关路由">
+  网关/路由
+  <a class="anchor" href="#%e7%bd%91%e5%85%b3%e8%b7%af%e7%94%b1">#</a>
+</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>route -n
+</span></span></code></pre></div><p>使用<code>-n</code>参数不解析主机名，因为默认每个 ip 都会反解成域名，如果解析耗时会一直等待。</p>
+<h3 id="网卡物理连接情况">
+  网卡物理连接情况
+  <a class="anchor" href="#%e7%bd%91%e5%8d%a1%e7%89%a9%e7%90%86%e8%bf%9e%e6%8e%a5%e6%83%85%e5%86%b5">#</a>
+</h3>
+<p>在 Centos 6 上可以直接输入<code>mii-tool</code>回车，但是 Centos 7 上必须要加上网络接口名。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230203/e180058f83f5483c87e58339415feb6a.png" width=  /></div>
+<blockquote>
+<p>因为用的是虚拟机，所以会有 SIOCGMIIPHY on &rsquo;eth0&rsquo; failed: Operation not supported 错误</p></blockquote>
+<h3 id="网络接口网卡名称修改">
+  网络接口/网卡名称修改
+  <a class="anchor" href="#%e7%bd%91%e7%bb%9c%e6%8e%a5%e5%8f%a3%e7%bd%91%e5%8d%a1%e5%90%8d%e7%a7%b0%e4%bf%ae%e6%94%b9">#</a>
+</h3>
+<p>网卡命名规则受 biosdevname 和 net.ifnames 两个参数影响。</p>
+<table>
+  <thead>
+      <tr>
+          <th></th>
+          <th>biosdevname</th>
+          <th>net.ifnames</th>
+          <th>网卡名</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>默认</td>
+          <td>0</td>
+          <td>1</td>
+          <td>ens33</td>
+      </tr>
+      <tr>
+          <td>组合1</td>
+          <td>1</td>
+          <td>0</td>
+          <td>em1</td>
+      </tr>
+      <tr>
+          <td>组合2</td>
+          <td>0</td>
+          <td>0</td>
+          <td>eth0</td>
+      </tr>
+  </tbody>
+</table>
+<ol>
+<li>编辑<code>/etc/default/grub</code>文件，在 GRUB_CMDLINE_LINUX 中<strong>增加</strong><code>biosdevname=0 net.ifnames=0</code></li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>GRUB_CMDLINE_LINUX<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;crashkernel=auto rd.lvm.lv=centos/root rd.lvm.lv=centos/swap rhgb quiet biosdevname=0 net.ifnames=0&#34;</span>
+</span></span></code></pre></div><ol start="2">
+<li>更新 grub</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>grub2-mkconfig -o /boot/grub2/grub.cfg
+</span></span></code></pre></div><ol start="3">
+<li>reboot 重启之后，网卡名的修改就成功了。</li>
+</ol>
+<h2 id="312-网络配置">
+  3.1.2 网络配置
+  <a class="anchor" href="#312-%e7%bd%91%e7%bb%9c%e9%85%8d%e7%bd%ae">#</a>
+</h2>
+<h3 id="修改-ip">
+  修改 ip
+  <a class="anchor" href="#%e4%bf%ae%e6%94%b9-ip">#</a>
+</h3>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230203/aafba86992bc4441a2db149fddd7eea0.png" width=  /></div>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>ifconfig eth0 192.168.120.56
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 给eth0网卡配置IP地：192.168.120.56</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>ifconfig eth0 192.168.120.56 netmask 255.255.255.0
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#给eth0网卡配置IP地址：192.168.120.56 ，并加上子掩码：255.255.255.0</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>ifconfig eth0 192.168.120.56 netmask 255.255.255.0 broadcast 192.168.120.255
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 给eth0网卡配置IP地址：192.168.120.56，加上子掩码：255.255.255.0，加上个广播地址： 192.168.120.255</span>
+</span></span></code></pre></div><h3 id="启动关闭网卡">
+  启动关闭网卡
+  <a class="anchor" href="#%e5%90%af%e5%8a%a8%e5%85%b3%e9%97%ad%e7%bd%91%e5%8d%a1">#</a>
+</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>ifconfig eth0 up
+</span></span><span style="display:flex;"><span>ifup eth0
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>ifconfig eth0 down
+</span></span><span style="display:flex;"><span>ifdown eth0
+</span></span></code></pre></div><h3 id="删除添加网关">
+  删除/添加网关
+  <a class="anchor" href="#%e5%88%a0%e9%99%a4%e6%b7%bb%e5%8a%a0%e7%bd%91%e5%85%b3">#</a>
+</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>route del default gw 192.168.48.2 <span style="color:#75715e"># 删除网关</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>route add default gw 192.168.48.3 <span style="color:#75715e"># 添加网关</span>
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230203/8816fe66814f4b328050478eaff04004.png" width=  /></div>
+<h3 id="明细路由">
+  明细路由
+  <a class="anchor" href="#%e6%98%8e%e7%bb%86%e8%b7%af%e7%94%b1">#</a>
+</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>route add -host 10.0.0.1 gw 192.168.48.4 <span style="color:#75715e"># 通过设置主机</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>route add -net 192.168.0.0 netmask 255.255.255.0 gw 192.168.48.5 <span style="color:#75715e"># 通过设置网段</span>
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230203/1b964fefe2444568b664e4097fa2e928.png" width=  /></div>
+<h2 id="313-路由命令">
+  3.1.3 路由命令
+  <a class="anchor" href="#313-%e8%b7%af%e7%94%b1%e5%91%bd%e4%bb%a4">#</a>
+</h2>
+<h2 id="314-网络故障排除">
+  3.1.4 网络故障排除
+  <a class="anchor" href="#314-%e7%bd%91%e7%bb%9c%e6%95%85%e9%9a%9c%e6%8e%92%e9%99%a4">#</a>
+</h2>
+<h2 id="315-网络服务管理">
+  3.1.5 网络服务管理
+  <a class="anchor" href="#315-%e7%bd%91%e7%bb%9c%e6%9c%8d%e5%8a%a1%e7%ae%a1%e7%90%86">#</a>
+</h2>
+<h2 id="316-常用网络配置文件">
+  3.1.6 常用网络配置文件
+  <a class="anchor" href="#316-%e5%b8%b8%e7%94%a8%e7%bd%91%e7%bb%9c%e9%85%8d%e7%bd%ae%e6%96%87%e4%bb%b6">#</a>
+</h2>
+<h2 id="参考">
+  参考
+  <a class="anchor" href="#%e5%8f%82%e8%80%83">#</a>
+</h2>
+<ul>
+<li>
+  <a href="https://www.cnblogs.com/peida/archive/2013/02/27/2934525.html">每天一个linux命令（52）：ifconfig命令</a></li>
+</ul>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/bdacdb767ad27120ea38f1a251da7b10c7e0cd71" title='最后修改者 weibin | 二月 12, 2023' target="_blank" rel="noopener">
+      <img src="/linux/svg/calendar.svg" class="book-icon" alt="" />
+      <span>二月 12, 2023</span>
+    </a>
+  </div>
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/book.linux/docs/part3-sys-manage/3.1-network.md" target="_blank" rel="noopener">
+      <img src="/linux/svg/edit.svg" class="book-icon" alt="" />
+      <span>编辑本页</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#31-网络">3.1 网络</a>
+      <ul>
+        <li><a href="#311-网络状态">3.1.1 网络状态</a>
+          <ul>
+            <li><a href="#net-tools--iproute">net-tools &amp; iproute</a></li>
+            <li><a href="#ifconfig">ifconfig</a></li>
+            <li><a href="#网关路由">网关/路由</a></li>
+            <li><a href="#网卡物理连接情况">网卡物理连接情况</a></li>
+            <li><a href="#网络接口网卡名称修改">网络接口/网卡名称修改</a></li>
+          </ul>
+        </li>
+        <li><a href="#312-网络配置">3.1.2 网络配置</a>
+          <ul>
+            <li><a href="#修改-ip">修改 ip</a></li>
+            <li><a href="#启动关闭网卡">启动关闭网卡</a></li>
+            <li><a href="#删除添加网关">删除/添加网关</a></li>
+            <li><a href="#明细路由">明细路由</a></li>
+          </ul>
+        </li>
+        <li><a href="#313-路由命令">3.1.3 路由命令</a></li>
+        <li><a href="#314-网络故障排除">3.1.4 网络故障排除</a></li>
+        <li><a href="#315-网络服务管理">3.1.5 网络服务管理</a></li>
+        <li><a href="#316-常用网络配置文件">3.1.6 常用网络配置文件</a></li>
+        <li><a href="#参考">参考</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

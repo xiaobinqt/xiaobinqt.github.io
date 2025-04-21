@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="
+  2.8 kubeadm 搭建
+  #
+
+kubeadm 和 minikube 类似，也是用容器和镜像来封装 Kubernetes 的各种组件，但它的目标不是单机部署，而是要能够轻松地在集群环境里部署 Kubernetes，并且让这个集群接近甚至达到生产级别质量。
+kubeadm 具有了和 minikube 一样的易用性，只要很少的几条命令，如 init、join、upgrade、reset 就能够完成 Kubernetes 集群的管理维护工作，让它不仅适用于集群管理员，也适用于开发、测试人员。
+
+  2.8.1 准备工作
+  #
+
+所谓的多节点集群，要求服务器应该有两台或者更多，其实最小可用的 Kubernetes 集群就只有两台主机，一台是 Master 节点，另一台是 Worker 节点。Master 节点需要运行 apiserver、etcd、scheduler、controller-manager 等组件，管理整个集群，Worker 节点只运行业务应用。
+因为 Kubernetes 对系统有一些特殊要求，所以要先在 Master 和 Worker 节点上做一些准备，包括改主机名、改 Docker 配置、改网络设置、改交换分区这四步。
+第一，由于 Kubernetes 使用主机名来区分集群里的节点，所以每个节点的 hostname 必须不能重名。需要修改 /etc/hostname 这个文件，把它改成容易辨识的名字，比如 Master 节点就叫 master，Worker 节点就叫 worker。
+第二，虽然 Kubernetes 目前支持多种容器运行时，但 Docker 还是最方便最易用的一种，所以使用 Docker 作为 Kubernetes 的底层支持，这里可以参考 Docker 官网
+  安装 Docker Engine。安装完成后需要再对 Docker 的配置做一点修改，在 /etc/docker/daemon.json 里把 cgroup 的驱动程序改成 systemd ，然后重启 Docker 的守护进程，具体的操作如下：">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/kubernetes/docs/part2-break-ice/2.8-kubeadm/">
+  <meta property="og:site_name" content="Kubernetes 学习笔记">
+  <meta property="og:title" content="2.8 kubeadm 搭建">
+  <meta property="og:description" content="2.8 kubeadm 搭建 # kubeadm 和 minikube 类似，也是用容器和镜像来封装 Kubernetes 的各种组件，但它的目标不是单机部署，而是要能够轻松地在集群环境里部署 Kubernetes，并且让这个集群接近甚至达到生产级别质量。
+kubeadm 具有了和 minikube 一样的易用性，只要很少的几条命令，如 init、join、upgrade、reset 就能够完成 Kubernetes 集群的管理维护工作，让它不仅适用于集群管理员，也适用于开发、测试人员。
+2.8.1 准备工作 # 所谓的多节点集群，要求服务器应该有两台或者更多，其实最小可用的 Kubernetes 集群就只有两台主机，一台是 Master 节点，另一台是 Worker 节点。Master 节点需要运行 apiserver、etcd、scheduler、controller-manager 等组件，管理整个集群，Worker 节点只运行业务应用。
+因为 Kubernetes 对系统有一些特殊要求，所以要先在 Master 和 Worker 节点上做一些准备，包括改主机名、改 Docker 配置、改网络设置、改交换分区这四步。
+第一，由于 Kubernetes 使用主机名来区分集群里的节点，所以每个节点的 hostname 必须不能重名。需要修改 /etc/hostname 这个文件，把它改成容易辨识的名字，比如 Master 节点就叫 master，Worker 节点就叫 worker。
+第二，虽然 Kubernetes 目前支持多种容器运行时，但 Docker 还是最方便最易用的一种，所以使用 Docker 作为 Kubernetes 的底层支持，这里可以参考 Docker 官网 安装 Docker Engine。安装完成后需要再对 Docker 的配置做一点修改，在 /etc/docker/daemon.json 里把 cgroup 的驱动程序改成 systemd ，然后重启 Docker 的守护进程，具体的操作如下：">
+  <meta property="og:locale" content="zh">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:modified_time" content="2023-06-28T16:41:17+08:00">
+<title>2.8 kubeadm 搭建 | Kubernetes 学习笔记</title>
+<link rel="icon" href="/kubernetes/favicon.png" >
+<link rel="manifest" href="/kubernetes/manifest.json">
+<link rel="canonical" href="https://example.com/kubernetes/docs/part2-break-ice/2.8-kubeadm/">
+<link rel="stylesheet" href="/kubernetes/book.min.1e8c332c823ff5970e639a0c180f0e3d074283c7f525185d3e42903a2f30e9be.css" integrity="sha256-HowzLII/9ZcOY5oMGA8OPQdCg8f1JRhdPkKQOi8w6b4=" crossorigin="anonymous">
+  <script defer src="/kubernetes/fuse.min.js"></script>
+  <script defer src="/kubernetes/zh.search.min.da1c52546386c902e77e37ee10f137dd864d5defad152b94b97987f9bfccfa81.js" integrity="sha256-2hxSVGOGyQLnfjfuEPE33YZNXe&#43;tFSuUuXmH&#43;b/M&#43;oE=" crossorigin="anonymous"></script>
+
+  <script defer src="/kubernetes/sw.min.18ff75d546fc59b9d538e96815256b253062dc991f14b3caff0f35a243a406d1.js" integrity="sha256-GP911Ub8WbnVOOloFSVrJTBi3JkfFLPK/w81okOkBtE=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/kubernetes/"><span>Kubernetes 学习笔记</span>
+  </a>
+</h2>
+
+
+<div class="book-search hidden">
+  <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+
+
+<ul>
+    <li>
+        <a href="javascript:void(0)" onclick="hrefIndex()" rel="noopener">主页</a>
+    </li>
+    <li>
+        <a href="https://github.com/xiaobinqt" target="_blank" rel="noopener">GitHub</a>
+    </li>
+</ul>
+
+<hr>
+
+<script>
+    function hrefIndex() {
+        window.location = window.location.origin;
+    }
+</script>
+
+
+  
+<ul>
+  
+  <li>
+    <a href=""  target="_blank" rel="noopener">
+        
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第一部分 Docker</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.1-docker-brief/" class="">1.1 Docker 简介</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.2-docker-cmd/" class="">1.2 Docker 常用命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.3-container/" class="">1.3 容器</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.4-image/" class="">1.4 镜像</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.5-network/" class="">1.5 网络互通</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.6-docker-compose/" class="">1.6 Docker Compose</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.7-private-registry/" class="">1.7 私有镜像仓库</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第二部分 入门</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.1-k8s-overview/" class="">2.1 简介</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.2-minikube/" class="">2.2 minikube</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.3-working-mechanism/" class="">2.3 工作机制</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.4-pod/" class="">2.4 Pod</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.5-job/" class="">2.5 Job</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.6-config-manage/" class="">2.6 配置管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.7-general-cmd/" class="">2.7 常用命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.8-kubeadm/" class="active">2.8 kubeadm 搭建</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.9-deployment/" class="">2.9 Deployment</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.10-daemonset/" class="">2.10 DaemonSet</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.11-service/" class="">2.11 Service</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.12-ingress/" class="">2.12 Ingress</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.13-persistent-volume/" class="">2.13 PersistentVolume</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.14-persistentvolume-nfs/" class="">2.14 网络共享存储</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.15-statefulset/" class="">2.15 StatefulSet</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.16-rolling-update/" class="">2.16 滚动更新</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.17-app-assurance/" class="">2.17 应用保障</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.18-cluster-management/" class="">2.18 集群管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.19-system-monitor/" class="">2.19 系统监控</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.20-network-communications/" class="">2.20 网络通信</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/kubernetes/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>2.8 kubeadm 搭建</h3>
+
+  <label for="toc-control">
+    
+    <img src="/kubernetes/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#28-kubeadm-搭建">2.8 kubeadm 搭建</a>
+      <ul>
+        <li><a href="#281-准备工作">2.8.1 准备工作</a></li>
+        <li><a href="#282-安装-kubeadm">2.8.2 安装 kubeadm</a></li>
+        <li><a href="#283-下载-kubernetes-组件镜像">2.8.3 下载 Kubernetes 组件镜像</a></li>
+        <li><a href="#284-安装-master-节点">2.8.4 安装 Master 节点</a>
+          <ul>
+            <li><a href="#安装-flannel-网络插件">安装 Flannel 网络插件</a></li>
+          </ul>
+        </li>
+        <li><a href="#285-安装-worker-节点">2.8.5 安装 Worker 节点</a></li>
+        <li><a href="#286-console-节点">2.8.6 Console 节点</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown book-article"><h1 id="28-kubeadm-搭建">
+  2.8 kubeadm 搭建
+  <a class="anchor" href="#28-kubeadm-%e6%90%ad%e5%bb%ba">#</a>
+</h1>
+<p>kubeadm 和 minikube 类似，也是用容器和镜像来封装 Kubernetes 的各种组件，但它的目标不是单机部署，而是要能够轻松地在集群环境里部署 Kubernetes，并且让这个集群接近甚至达到生产级别质量。</p>
+<p>kubeadm 具有了和 minikube 一样的易用性，只要很少的几条命令，如 init、join、upgrade、reset 就能够完成 Kubernetes 集群的管理维护工作，让它不仅适用于集群管理员，也适用于开发、测试人员。</p>
+<h2 id="281-准备工作">
+  2.8.1 准备工作
+  <a class="anchor" href="#281-%e5%87%86%e5%a4%87%e5%b7%a5%e4%bd%9c">#</a>
+</h2>
+<p>所谓的多节点集群，要求服务器应该有两台或者更多，其实最小可用的 Kubernetes 集群就只有两台主机，一台是 Master 节点，另一台是 Worker 节点。Master 节点需要运行 apiserver、etcd、scheduler、controller-manager 等组件，管理整个集群，Worker 节点只运行业务应用。</p>
+<p>因为 Kubernetes 对系统有一些特殊要求，所以要先在 Master 和 Worker 节点上做一些准备，包括改主机名、改 Docker 配置、改网络设置、改交换分区这四步。</p>
+<p>第一，由于 Kubernetes 使用主机名来区分集群里的节点，所以每个节点的 hostname 必须<strong>不能重名</strong>。需要修改 /etc/hostname 这个文件，把它改成容易辨识的名字，比如 Master 节点就叫 master，Worker 节点就叫 worker。</p>
+<p>第二，虽然 Kubernetes 目前支持多种容器运行时，但 Docker 还是最方便最易用的一种，所以使用 Docker 作为 Kubernetes 的底层支持，这里可以参考 Docker 官网
+  <a href="https://docs.docker.com/engine/install/">安装 Docker Engine</a>。安装完成后需要再对 Docker 的配置做一点修改，在 /etc/docker/daemon.json 里把 cgroup 的驱动程序改成 systemd ，然后重启 Docker 的守护进程，具体的操作如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF | sudo tee /etc/docker/daemon.json
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">{
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  &#34;exec-opts&#34;: [&#34;native.cgroupdriver=systemd&#34;],
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  &#34;log-driver&#34;: &#34;json-file&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  &#34;log-opts&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    &#34;max-size&#34;: &#34;100m&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  },
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  &#34;storage-driver&#34;: &#34;overlay2&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>sudo systemctl enable docker
+</span></span><span style="display:flex;"><span>sudo systemctl daemon-reload
+</span></span><span style="display:flex;"><span>sudo systemctl restart docker
+</span></span></code></pre></div><p>在 Docker 中，cgroup 驱动程序是用来管理和限制容器资源的一种机制。默认情况下，Docker 使用 cgroupfs 作为 cgroup 驱动程序。然而，将 Docker 的 cgroup 驱动程序更改为 systemd 可以带来一些好处：</p>
+<ol>
+<li>
+<p>与系统一致性：将 Docker 的 cgroup 驱动程序设置为 systemd 可以使 Docker 与系统中的其他进程一致。这样，Docker 容器的资源管理将与其他系统服务使用的 cgroup 驱动程序一致，简化了资源管理和监控。</p>
+</li>
+<li>
+<p>安全性和隔离性：systemd-cgroups 提供了更强大的资源隔离和安全性特性。使用 systemd 作为 cgroup 驱动程序可以更好地利用 systemd 提供的资源控制和隔离功能，进一步增强容器的安全性和资源限制能力。</p>
+</li>
+<li>
+<p>性能改进：systemd-cgroups 在某些情况下可能会提供更好的性能。systemd-cgroups 使用一个单一的 cgroup 作为容器的父级 cgroup，而 cgroupfs 则在每个层级都使用单独的 cgroup。这种改变可能会减少 cgroup 操作的数量，从而提高性能。</p>
+</li>
+</ol>
+<p>需要注意的是，将 Docker 的 cgroup 驱动程序更改为 systemd 需要系统已经安装和配置了 systemd，并且与 Docker 版本兼容。</p>
+<p>第三，为了让 Kubernetes 能够检查、转发网络流量，你需要修改 iptables 的配置，启用 br_netfilter 模块：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF | sudo tee /etc/modules-load.d/k8s.conf
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">br_netfilter
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF | sudo tee /etc/sysctl.d/k8s.conf
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">net.bridge.bridge-nf-call-ip6tables = 1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">net.bridge.bridge-nf-call-iptables = 1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">net.ipv4.ip_forward=1 # better than modify /etc/sysctl.conf
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>sudo sysctl --system
+</span></span></code></pre></div><p>br_netfilter 是 Linux 内核中的一个模块，用于在 Linux 桥接（bridge）网络中实现网络过滤功能。</p>
+<p>Linux 桥接是一种网络技术，用于将多个网络接口连接在一起，形成一个逻辑上的网络。桥接器可以根据 MAC 地址来转发网络数据包，使得连接在不同网桥接口上的设备可以互相通信。</p>
+<p>br_netfilter 模块提供了桥接网络中的网络过滤功能，主要用于实现网络层（IP）和传输层（TCP、UDP）的数据包过滤。具体来说，br_netfilter 模块使得可以在 Linux 桥接器上执行以下操作：</p>
+<ol>
+<li>
+<p>桥接器上的 IP 数据包过滤：通过在桥接器上启用 iptables 规则，可以对进出桥接器的 IP 数据包进行过滤、修改和重定向操作。这对于实施网络安全策略、防火墙规则和网络地址转换（NAT）等非常有用。</p>
+</li>
+<li>
+<p>桥接器上的传输层数据包过滤：通过在桥接器上启用 ebtables 规则，可以对进出桥接器的传输层（如 TCP、UDP）数据包进行过滤、修改和重定向操作。这使得可以在桥接器级别上执行更细粒度的网络流量控制。</p>
+</li>
+</ol>
+<p>br_netfilter 模块扩展了 Linux 桥接网络的功能，使得可以在桥接器上实现更多的网络过滤和控制策略，提高网络的安全性和可配置性。</p>
+<p>第四，你需要修改 /etc/fstab ，关闭 Linux 的 swap 分区，提升 Kubernetes 的性能：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sudo swapoff -a
+</span></span><span style="display:flex;"><span>sudo sed -ri <span style="color:#e6db74">&#39;/\sswap\s/s/^#?/#/&#39;</span> /etc/fstab
+</span></span></code></pre></div><p>完成之后，重启一下系统。</p>
+<h2 id="282-安装-kubeadm">
+  2.8.2 安装 kubeadm
+  <a class="anchor" href="#282-%e5%ae%89%e8%a3%85-kubeadm">#</a>
+</h2>
+<p>在 Master 节点和 Worker 节点上都要做有安装 kubeadm 这一操作。kubeadm 可以直接从 Google 自己的软件仓库下载安装，但国内的网络不稳定，很难下载成功，需要改用其他的软件源，可以选择国内的某云厂商：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sudo apt install -y apt-transport-https ca-certificates curl
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>curl https://mirrors.aliyun.com/kubernetes/apt/doc/apt-key.gpg | sudo apt-key add -
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF | sudo tee /etc/apt/sources.list.d/kubernetes.list
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">deb https://mirrors.aliyun.com/kubernetes/apt/ kubernetes-xenial main
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>sudo apt update
+</span></span></code></pre></div><p>更新了软件仓库之后，可以用 apt install 获取 kubeadm、kubelet 和 kubectl 这三个安装必备工具。apt 默认会下载最新版本，也可以指定版本号，比如 1.23.3：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sudo apt install -y kubeadm<span style="color:#f92672">=</span>1.23.3-00 kubelet<span style="color:#f92672">=</span>1.23.3-00 kubectl<span style="color:#f92672">=</span>1.23.3-00
+</span></span></code></pre></div><p>安装完成之后，可以用 kubeadm version、kubectl version 来验证版本是否正确：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>kubeadm version
+</span></span><span style="display:flex;"><span>kubectl version --client
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230601/4e09416d3cd846e588669e6aeabe3488.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" width=  /></div>
+<p>最后可以使用命令 apt-mark hold ，锁定这三个软件的版本，避免意外升级导致版本错误：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sudo apt-mark hold kubeadm kubelet kubectl
+</span></span></code></pre></div><h2 id="283-下载-kubernetes-组件镜像">
+  2.8.3 下载 Kubernetes 组件镜像
+  <a class="anchor" href="#283-%e4%b8%8b%e8%bd%bd-kubernetes-%e7%bb%84%e4%bb%b6%e9%95%9c%e5%83%8f">#</a>
+</h2>
+<p>kubeadm 把 apiserver、etcd、scheduler 等组件都打包成了镜像，以容器的方式启动 Kubernetes，但这些镜像不是放在 Docker Hub 上，而是放在 Google 自己的镜像仓库网站 gcr.io，在国内的访问很困难。可以采取一些变通措施，提前把镜像下载到本地。使用命令 kubeadm config images list 可以查看安装 Kubernetes 所需的镜像列表，参数 <code>--kubernetes-version</code> 可以指定版本号：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>kubeadm config images list --kubernetes-version v1.23.3
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>k8s.gcr.io/kube-apiserver:v1.23.3
+</span></span><span style="display:flex;"><span>k8s.gcr.io/kube-controller-manager:v1.23.3
+</span></span><span style="display:flex;"><span>k8s.gcr.io/kube-scheduler:v1.23.3
+</span></span><span style="display:flex;"><span>k8s.gcr.io/kube-proxy:v1.23.3
+</span></span><span style="display:flex;"><span>k8s.gcr.io/pause:3.6
+</span></span><span style="display:flex;"><span>k8s.gcr.io/etcd:3.5.1-0
+</span></span><span style="display:flex;"><span>k8s.gcr.io/coredns/coredns:v1.8.6
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230601/fd58ab3cb20941c393e64296d5be9976.png?imageView2/0/q/75|watermark/2/text/eGlhb2JpbnF0/font/dmlqYXlh/fontsize/1000/fill/IzVDNUI1Qg==/dissolve/52/gravity/SouthEast/dx/15/dy/15" width=  /></div>
+<p>可以从国内的镜像网站下载然后再用 docker tag 改名，shell 脚本如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>repo<span style="color:#f92672">=</span>registry.aliyuncs.com/google_containers
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> name in <span style="color:#e6db74">`</span>kubeadm config images list --kubernetes-version v1.23.3<span style="color:#e6db74">`</span>; <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    src_name<span style="color:#f92672">=</span><span style="color:#e6db74">${</span>name#k8s.gcr.io/<span style="color:#e6db74">}</span>
+</span></span><span style="display:flex;"><span>    src_name<span style="color:#f92672">=</span><span style="color:#e6db74">${</span>src_name#coredns/<span style="color:#e6db74">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    docker pull $repo/$src_name
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    docker tag $repo/$src_name $name
+</span></span><span style="display:flex;"><span>    docker rmi $repo/$src_name
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">done</span>
+</span></span></code></pre></div><h2 id="284-安装-master-节点">
+  2.8.4 安装 Master 节点
+  <a class="anchor" href="#284-%e5%ae%89%e8%a3%85-master-%e8%8a%82%e7%82%b9">#</a>
+</h2>
+<p>只需要一个命令 kubeadm init 就可以把组件在 Master 节点上运行起来，不过它还有很多参数用来调整集群的配置，可以使用 -h 查看。常见的有 3 个参数：</p>
+<ul>
+<li>
+<p><code>--pod-network-cidr</code>，设置集群里 Pod 的 IP 地址段。</p>
+</li>
+<li>
+<p><code>--apiserver-advertise-address</code>，设置 apiserver 的 IP 地址，对于多网卡服务器来说很重要（比如 VirtualBox 虚拟机就用了两块网卡），可以指定 apiserver 在哪个网卡上对外提供服务。</p>
+</li>
+<li>
+<p><code>--kubernetes-version</code>，指定 Kubernetes 的版本号。下面的这个安装命令里，指定了 Pod 的地址段是<code>10.10.0.0/16</code>，apiserver 的服务地址是 192.168.10.210（主机的 IP 地址），Kubernetes 的版本号是 1.23.3。</p>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sudo kubeadm init <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --pod-network-cidr<span style="color:#f92672">=</span>10.10.0.0/16 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --apiserver-advertise-address<span style="color:#f92672">=</span>192.168.10.210 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --kubernetes-version<span style="color:#f92672">=</span>v1.23.3
+</span></span></code></pre></div><p>kubeadm 安装完成后，会提示出接下来要做的工作：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>To start using your cluster, you need to run the following as a regular user:
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  mkdir -p $HOME/.kube
+</span></span><span style="display:flex;"><span>  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+</span></span><span style="display:flex;"><span>  sudo chown <span style="color:#66d9ef">$(</span>id -u<span style="color:#66d9ef">)</span>:<span style="color:#66d9ef">$(</span>id -g<span style="color:#66d9ef">)</span> $HOME/.kube/config
+</span></span></code></pre></div><p>另外还有一个很重要的 kubeadm join 提示，其他节点要加入集群必须要用指令里的 token 和 ca 证书，所以这条命令务必<strong>拷贝后保存好</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>Then you can join any number of worker nodes by running the following on each as root:
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubeadm join 192.168.10.210:6443 --token tv9mkx.tw7it9vphe158e74 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --discovery-token-ca-cert-hash sha256:e8721b8630d5b562e23c010c70559a6d3084f629abad6a2920e87855f8fb96f3
+</span></span></code></pre></div><h3 id="安装-flannel-网络插件">
+  安装 Flannel 网络插件
+  <a class="anchor" href="#%e5%ae%89%e8%a3%85-flannel-%e7%bd%91%e7%bb%9c%e6%8f%92%e4%bb%b6">#</a>
+</h3>
+<p>CNI（Container Networking Interface）标准是一个用于容器网络的开放标准和接口规范。它定义了容器运行时（如 Docker、Kubernetes 等）与网络插件之间的通信协议和数据格式，以实现容器网络的配置和管理。</p>
+<p>CNI 标准的设计目标是提供一个统一的、可互操作的容器网络接口，使得不同的容器运行时可以使用各种网络插件，并与宿主机上的网络配置进行无缝集成。通过遵循 CNI 标准，容器运行时可以动态地创建、配置和删除容器网络，而不依赖于特定的容器运行时或网络插件实现。</p>
+<p>Kubernetes 定义了 CNI 标准，有很多网络插件，可以使用常用的 Flannel。只需要使用如下的 kube-flannel.yml 文件（或者去仓库
+  <a href="https://github.com/flannel-io/flannel/">https://github.com/flannel-io/flannel/</a>）找相关文档）在 Kubernetes 里部署一下就好了。因为它应用了 Kubernetes 的网段地址，需要修改 net-conf.json 字段，把 Network 改成刚才 kubeadm 的参数 <code>--pod-network-cidr</code> 设置的地址段。比如在这里，就要修改成 10.10.0.0/16 ：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Namespace</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">k8s-app</span>: <span style="color:#ae81ff">flannel</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">pod-security.kubernetes.io/enforce</span>: <span style="color:#ae81ff">privileged</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">kube-flannel</span>
+</span></span><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ServiceAccount</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">k8s-app</span>: <span style="color:#ae81ff">flannel</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">flannel</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">kube-flannel</span>
+</span></span><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">rbac.authorization.k8s.io/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ClusterRole</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">k8s-app</span>: <span style="color:#ae81ff">flannel</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">flannel</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">rules</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">apiGroups</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">resources</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">pods</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">verbs</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">get</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">apiGroups</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">resources</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">nodes</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">verbs</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">get</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">list</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">watch</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">apiGroups</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">resources</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">nodes/status</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">verbs</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">patch</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">apiGroups</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">networking.k8s.io</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">resources</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">clustercidrs</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">verbs</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">list</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">watch</span>
+</span></span><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">rbac.authorization.k8s.io/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ClusterRoleBinding</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">k8s-app</span>: <span style="color:#ae81ff">flannel</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">flannel</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">roleRef</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">apiGroup</span>: <span style="color:#ae81ff">rbac.authorization.k8s.io</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ClusterRole</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">flannel</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">subjects</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ServiceAccount</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">name</span>: <span style="color:#ae81ff">flannel</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">kube-flannel</span>
+</span></span><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">data</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">cni-conf.json</span>: |<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    {
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      &#34;name&#34;: &#34;cbr0&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      &#34;cniVersion&#34;: &#34;0.3.1&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      &#34;plugins&#34;: [
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        {
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          &#34;type&#34;: &#34;flannel&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          &#34;delegate&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            &#34;hairpinMode&#34;: true,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            &#34;isDefaultGateway&#34;: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          }
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        },
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        {
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          &#34;type&#34;: &#34;portmap&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          &#34;capabilities&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            &#34;portMappings&#34;: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          }
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        }
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      ]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    }</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">net-conf.json</span>: |<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    {
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      &#34;Network&#34;: &#34;10.10.0.0/16&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      &#34;Backend&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        &#34;Type&#34;: &#34;vxlan&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      }
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    }</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ConfigMap</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">app</span>: <span style="color:#ae81ff">flannel</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">k8s-app</span>: <span style="color:#ae81ff">flannel</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">tier</span>: <span style="color:#ae81ff">node</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">kube-flannel-cfg</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">kube-flannel</span>
+</span></span><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">apps/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">DaemonSet</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">app</span>: <span style="color:#ae81ff">flannel</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">k8s-app</span>: <span style="color:#ae81ff">flannel</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">tier</span>: <span style="color:#ae81ff">node</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">kube-flannel-ds</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">kube-flannel</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">selector</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">matchLabels</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">app</span>: <span style="color:#ae81ff">flannel</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">k8s-app</span>: <span style="color:#ae81ff">flannel</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">template</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">app</span>: <span style="color:#ae81ff">flannel</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">k8s-app</span>: <span style="color:#ae81ff">flannel</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">tier</span>: <span style="color:#ae81ff">node</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">affinity</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">nodeAffinity</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">requiredDuringSchedulingIgnoredDuringExecution</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">nodeSelectorTerms</span>:
+</span></span><span style="display:flex;"><span>              - <span style="color:#f92672">matchExpressions</span>:
+</span></span><span style="display:flex;"><span>                  - <span style="color:#f92672">key</span>: <span style="color:#ae81ff">kubernetes.io/os</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">operator</span>: <span style="color:#ae81ff">In</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">values</span>:
+</span></span><span style="display:flex;"><span>                      - <span style="color:#ae81ff">linux</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">containers</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">args</span>:
+</span></span><span style="display:flex;"><span>            - --<span style="color:#ae81ff">ip-masq</span>
+</span></span><span style="display:flex;"><span>            - --<span style="color:#ae81ff">kube-subnet-mgr</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">command</span>:
+</span></span><span style="display:flex;"><span>            - <span style="color:#ae81ff">/opt/bin/flanneld</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">env</span>:
+</span></span><span style="display:flex;"><span>            - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">POD_NAME</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">valueFrom</span>:
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">fieldRef</span>:
+</span></span><span style="display:flex;"><span>                  <span style="color:#f92672">fieldPath</span>: <span style="color:#ae81ff">metadata.name</span>
+</span></span><span style="display:flex;"><span>            - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">POD_NAMESPACE</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">valueFrom</span>:
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">fieldRef</span>:
+</span></span><span style="display:flex;"><span>                  <span style="color:#f92672">fieldPath</span>: <span style="color:#ae81ff">metadata.namespace</span>
+</span></span><span style="display:flex;"><span>            - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">EVENT_QUEUE_DEPTH</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">value</span>: <span style="color:#e6db74">&#34;5000&#34;</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">image</span>: <span style="color:#ae81ff">docker.io/flannel/flannel:v0.22.0</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">name</span>: <span style="color:#ae81ff">kube-flannel</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">resources</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">requests</span>:
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">cpu</span>: <span style="color:#ae81ff">100m</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">memory</span>: <span style="color:#ae81ff">50Mi</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">securityContext</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">capabilities</span>:
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">add</span>:
+</span></span><span style="display:flex;"><span>                - <span style="color:#ae81ff">NET_ADMIN</span>
+</span></span><span style="display:flex;"><span>                - <span style="color:#ae81ff">NET_RAW</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">privileged</span>: <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">volumeMounts</span>:
+</span></span><span style="display:flex;"><span>            - <span style="color:#f92672">mountPath</span>: <span style="color:#ae81ff">/run/flannel</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">name</span>: <span style="color:#ae81ff">run</span>
+</span></span><span style="display:flex;"><span>            - <span style="color:#f92672">mountPath</span>: <span style="color:#ae81ff">/etc/kube-flannel/</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">name</span>: <span style="color:#ae81ff">flannel-cfg</span>
+</span></span><span style="display:flex;"><span>            - <span style="color:#f92672">mountPath</span>: <span style="color:#ae81ff">/run/xtables.lock</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">name</span>: <span style="color:#ae81ff">xtables-lock</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">hostNetwork</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">initContainers</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">args</span>:
+</span></span><span style="display:flex;"><span>            - -<span style="color:#ae81ff">f</span>
+</span></span><span style="display:flex;"><span>            - <span style="color:#ae81ff">/flannel</span>
+</span></span><span style="display:flex;"><span>            - <span style="color:#ae81ff">/opt/cni/bin/flannel</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">command</span>:
+</span></span><span style="display:flex;"><span>            - <span style="color:#ae81ff">cp</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">image</span>: <span style="color:#ae81ff">docker.io/flannel/flannel-cni-plugin:v1.1.2</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">name</span>: <span style="color:#ae81ff">install-cni-plugin</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">volumeMounts</span>:
+</span></span><span style="display:flex;"><span>            - <span style="color:#f92672">mountPath</span>: <span style="color:#ae81ff">/opt/cni/bin</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">name</span>: <span style="color:#ae81ff">cni-plugin</span>
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">args</span>:
+</span></span><span style="display:flex;"><span>            - -<span style="color:#ae81ff">f</span>
+</span></span><span style="display:flex;"><span>            - <span style="color:#ae81ff">/etc/kube-flannel/cni-conf.json</span>
+</span></span><span style="display:flex;"><span>            - <span style="color:#ae81ff">/etc/cni/net.d/10-flannel.conflist</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">command</span>:
+</span></span><span style="display:flex;"><span>            - <span style="color:#ae81ff">cp</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">image</span>: <span style="color:#ae81ff">docker.io/flannel/flannel:v0.22.0</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">name</span>: <span style="color:#ae81ff">install-cni</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">volumeMounts</span>:
+</span></span><span style="display:flex;"><span>            - <span style="color:#f92672">mountPath</span>: <span style="color:#ae81ff">/etc/cni/net.d</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">name</span>: <span style="color:#ae81ff">cni</span>
+</span></span><span style="display:flex;"><span>            - <span style="color:#f92672">mountPath</span>: <span style="color:#ae81ff">/etc/kube-flannel/</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">name</span>: <span style="color:#ae81ff">flannel-cfg</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">priorityClassName</span>: <span style="color:#ae81ff">system-node-critical</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">serviceAccountName</span>: <span style="color:#ae81ff">flannel</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">tolerations</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">effect</span>: <span style="color:#ae81ff">NoSchedule</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">operator</span>: <span style="color:#ae81ff">Exists</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">volumes</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">hostPath</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">path</span>: <span style="color:#ae81ff">/run/flannel</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">name</span>: <span style="color:#ae81ff">run</span>
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">hostPath</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">path</span>: <span style="color:#ae81ff">/opt/cni/bin</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">name</span>: <span style="color:#ae81ff">cni-plugin</span>
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">hostPath</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">path</span>: <span style="color:#ae81ff">/etc/cni/net.d</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">name</span>: <span style="color:#ae81ff">cni</span>
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">configMap</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">name</span>: <span style="color:#ae81ff">kube-flannel-cfg</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">name</span>: <span style="color:#ae81ff">flannel-cfg</span>
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">hostPath</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">path</span>: <span style="color:#ae81ff">/run/xtables.lock</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">type</span>: <span style="color:#ae81ff">FileOrCreate</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">name</span>: <span style="color:#ae81ff">xtables-lock</span>
+</span></span></code></pre></div><p>改好后，可以用 kubectl apply 来安装 Flannel 网络：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>kubectl apply -f kube-flannel.yml
+</span></span></code></pre></div><p>安装完成后，如果执行 kubectl get node 能够看到 Master 节点的状态是 Ready，则表明节点网络工作正常了。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230601/1a2c6ab590bb478499b2528a05dc66c8.png" width=  /></div>
+<h2 id="285-安装-worker-节点">
+  2.8.5 安装 Worker 节点
+  <a class="anchor" href="#285-%e5%ae%89%e8%a3%85-worker-%e8%8a%82%e7%82%b9">#</a>
+</h2>
+<p>如果已经成功安装了 Master 节点，那么 Worker 节点就执行执行之前拷贝的那条 kubeadm join 命令就可以了：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sudo kubeadm join 192.168.10.210:6443 --token tv9mkx.tw7it9vphe158e74 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --discovery-token-ca-cert-hash sha256:e8721b8630d5b562e23c010c70559a6d3084f629abad6a2920e87855f8fb96f3
+</span></span></code></pre></div><blockquote>
+<p>kubeadm join 命令里的 token 有时效性，默认是 24 小时，如果失效了可以用 kubeadm token create 创建一个新的 token。</p></blockquote>
+<p>这条命令会连接 Master 节点，然后拉取镜像，安装网络插件，最后把节点加入集群。在这个过程中可能也会遇到拉取镜像的问题，可以按照安装 Master 的方式解决。Worker 节点安装完毕后，执行 kubectl get node ，就会看到两个节点都是 Ready 状态：</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230601/fa62ba0cb5104e8e8d0da6e44a1ca22d.png" width=  /></div>
+<hr>
+<p>在 Master 和 Worker 都安装成功后，可以使用 kubectl run ，运行 Nginx 测试一下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>kubectl run ngx --image<span style="color:#f92672">=</span>nginx:alpine
+</span></span><span style="display:flex;"><span>kubectl get pod -o wide
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230601/08290379267842b9a2473b008653b51a.png" width=  /></div>
+<h2 id="286-console-节点">
+  2.8.6 Console 节点
+  <a class="anchor" href="#286-console-%e8%8a%82%e7%82%b9">#</a>
+</h2>
+<p>在生产环境中，在 Kubernetes 集群之外还需要有一台起辅助作用的服务器，也就是 Console 控制台，Console 服务器上只需要安装一个 kubectl，所有对 Kubernetes 集群的管理命令都是从这台主机发出去的，因为出于因为安全的原因，集群里的主机部署好之后应该尽量少直接登录上去操作。</p>
+<p>由于 Console 节点的部署只需要安装一个 kubectl，然后复制 config 文件就行，可以直接在 Master 节点上用 scp 远程拷贝，例如：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>scp <span style="color:#66d9ef">$(</span>which kubectl<span style="color:#66d9ef">)</span> root@192.168.10.208:~/
+</span></span><span style="display:flex;"><span>scp ~/.kube/config root@192.168.10.208:~/.kube
+</span></span></code></pre></div></article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/827335b4f98e782936efeb21ad890648403e5dd3" title='最后修改者 weibin | 六月 28, 2023' target="_blank" rel="noopener">
+      <img src="/kubernetes/svg/calendar.svg" class="book-icon" alt="" />
+      <span>六月 28, 2023</span>
+    </a>
+  </div>
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/book.kubernetes/docs/part2-break-ice/2.8-kubeadm.md" target="_blank" rel="noopener">
+      <img src="/kubernetes/svg/edit.svg" class="book-icon" alt="" />
+      <span>编辑本页</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#28-kubeadm-搭建">2.8 kubeadm 搭建</a>
+      <ul>
+        <li><a href="#281-准备工作">2.8.1 准备工作</a></li>
+        <li><a href="#282-安装-kubeadm">2.8.2 安装 kubeadm</a></li>
+        <li><a href="#283-下载-kubernetes-组件镜像">2.8.3 下载 Kubernetes 组件镜像</a></li>
+        <li><a href="#284-安装-master-节点">2.8.4 安装 Master 节点</a>
+          <ul>
+            <li><a href="#安装-flannel-网络插件">安装 Flannel 网络插件</a></li>
+          </ul>
+        </li>
+        <li><a href="#285-安装-worker-节点">2.8.5 安装 Worker 节点</a></li>
+        <li><a href="#286-console-节点">2.8.6 Console 节点</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

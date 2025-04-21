@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="
+  3.6 内存和磁盘管理
+  #
+
+
+  3.6.1 内存和磁盘使用率查看
+  #
+
+
+  内存使用率
+  #
+
+free 和 top 命令效果基本无差，区别就是 free 是静态的，top 是动态的。
+
+  free
+  #
+
+一般多少 G 内存用 free -m 查看，多少 T 内存用 free -g 查看。
+
+
+  top
+  #
+
+
+
+  磁盘使用率
+  #
+
+
+  fdisk
+  #
+
+慎用。fdisk 不仅可以用来查看磁盘，还可以用来磁盘分区，在实际工作中慎用。
+查看磁盘信息可以用 fdisk -l。
+
+
+  df
+  #
+
+用于显示磁盘分区上的可使用的磁盘空间。默认显示单位为 KB。可以利用该命令来获取硬盘被占用了多少空间，目前还剩下多少空间等信息。
+
+
+  du
+  #
+
+也是查看使用空间的，但是与 d f命令不同的是 du 命令是对文件和目录磁盘使用的空间的查看。
+
+
+  du 和 ls 的区别
+  #
+
+ls -lh 和 du 命令都可以查看文件，但是 du 查看的实际文件大小，ls 查看的文件大小可能包含空洞。">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/linux/docs/part3-sys-manage/3.6-memory-disk/">
+  <meta property="og:site_name" content="Linux 学习笔记">
+  <meta property="og:title" content="3.6 内存和磁盘管理">
+  <meta property="og:description" content="3.6 内存和磁盘管理 # 3.6.1 内存和磁盘使用率查看 # 内存使用率 # free 和 top 命令效果基本无差，区别就是 free 是静态的，top 是动态的。
+free # 一般多少 G 内存用 free -m 查看，多少 T 内存用 free -g 查看。
+top # 磁盘使用率 # fdisk # 慎用。fdisk 不仅可以用来查看磁盘，还可以用来磁盘分区，在实际工作中慎用。
+查看磁盘信息可以用 fdisk -l。
+df # 用于显示磁盘分区上的可使用的磁盘空间。默认显示单位为 KB。可以利用该命令来获取硬盘被占用了多少空间，目前还剩下多少空间等信息。
+du # 也是查看使用空间的，但是与 d f命令不同的是 du 命令是对文件和目录磁盘使用的空间的查看。
+du 和 ls 的区别 # ls -lh 和 du 命令都可以查看文件，但是 du 查看的实际文件大小，ls 查看的文件大小可能包含空洞。">
+  <meta property="og:locale" content="zh">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:modified_time" content="2023-02-22T17:16:36+08:00">
+<title>3.6 内存和磁盘管理 | Linux 学习笔记</title>
+<link rel="icon" href="/linux/favicon.png" >
+<link rel="manifest" href="/linux/manifest.json">
+<link rel="canonical" href="https://example.com/linux/docs/part3-sys-manage/3.6-memory-disk/">
+<link rel="stylesheet" href="/linux/book.min.1e8c332c823ff5970e639a0c180f0e3d074283c7f525185d3e42903a2f30e9be.css" integrity="sha256-HowzLII/9ZcOY5oMGA8OPQdCg8f1JRhdPkKQOi8w6b4=" crossorigin="anonymous">
+  <script defer src="/linux/fuse.min.js"></script>
+  <script defer src="/linux/zh.search.min.b9891c33b571af39c91da92bf084a21b17f7b63d10eeda94f6077a1dc343e219.js" integrity="sha256-uYkcM7VxrznJHakr8ISiGxf3tj0Q7tqU9gd6HcND4hk=" crossorigin="anonymous"></script>
+
+  <script defer src="/linux/sw.min.06246f7b13a877707832946d0b1941d626f4349fd8e3bdfd318889981ed22d49.js" integrity="sha256-BiRvexOod3B4MpRtCxlB1ib0NJ/Y4739MYiJmB7SLUk=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/linux/"><span>Linux 学习笔记</span>
+  </a>
+</h2>
+
+
+<div class="book-search hidden">
+  <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+
+
+<ul>
+    <li>
+        <a href="javascript:void(0)" onclick="hrefIndex()" rel="noopener">主页</a>
+    </li>
+    <li>
+        <a href="https://github.com/xiaobinqt" target="_blank" rel="noopener">GitHub</a>
+    </li>
+</ul>
+
+<hr>
+
+<script>
+    function hrefIndex() {
+        window.location = window.location.origin;
+    }
+</script>
+
+
+  
+<ul>
+  
+  <li>
+    <a href=""  target="_blank" rel="noopener">
+        
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第一部分 基础知识</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.1-operating-system/" class="">1.1 操作系统</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.2-overview/" class="">1.2 总览</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.3-common-dir/" class="">1.3 常见目录</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.4-process-manage/" class="">1.4 进程管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.5-deadlock/" class="">1.5 死锁</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.6-memory-manage/" class="">1.6 内存管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.7-link/" class="">1.7 链接</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.7-device-manage/" class="">1.7 设备管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.8-instruction-arch/" class="">1.8 指令集</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.9-mirrors-sources/" class="">1.9 国内镜像源</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第二部分 系统操作</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.1-help/" class="">2.1 帮助命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.2-ls/" class="">2.2 ls 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.3-shutdown/" class="">2.3 关机</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.4-cp/" class="">2.4 cp 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.5-file-view/" class="">2.5 文件查看命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.6-backup-compression/" class="">2.6 压缩和打包</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.7-vim/" class="">2.7 vim</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.8-user-manage/" class="">2.8 用户管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.9-switch-user/" class="">2.9 切换用户</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.10-file-dir/" class="">2.10 文件和文件夹</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第三部分 系统管理</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.1-network/" class="">3.1 网络</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.2-net-trouble-removal/" class="">3.2 网络故障排除</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.3-net-manage/" class="">3.3 网络服务管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.4-soft-install/" class="">3.4 软件安装</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.5-process/" class="">3.5 进程管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.6-memory-disk/" class="active">3.6 内存和磁盘管理</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第四部分 Shell</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.1-introduction/" class="">4.1 Shell 简介</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.2-env-config-file/" class="">4.2 环境变量</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.3-array/" class="">4.3 数组</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.4-escape-quot/" class="">4.4 转义和引用</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.5-operator/" class="">4.5 运算符</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.6-test-and-judge/" class="">4.6 测试和判断</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.7-process-control/" class="">4.7 流程控制</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.8-function/" class="">4.8 函数</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.9-script-cron/" class="">4.9 脚本和计划任务</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第五部分 文本操作</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part5-text-operate/5.1-regular/" class="">5.1 正则表达式</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part5-text-operate/5.2-sed/" class="">5.2 sed 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part5-text-operate/5.3-awk/" class="">5.3 awk 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part5-text-operate/5.4-cut-sort-uniq-tr/" class="">5.4 cut、sort、uniq、tr 命令</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第六部分 服务管理</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.1-firewall/" class="">6.1 防火墙</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.2-ssh/" class="">6.2 ssh</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.3-ftp/" class="">6.3 ftp</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.4-samba/" class="">6.4 samba</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.5-nfs/" class="">6.5 NFS</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.6-nginx/" class="">6.6 nginx</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.7-dns/" class="">6.7 DNS</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.8-nas/" class="">6.8 NAS</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第七部分 常见问题</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part7-faq/7.1-cmd/" class="">7.1 命令相关</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/linux/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>3.6 内存和磁盘管理</h3>
+
+  <label for="toc-control">
+    
+    <img src="/linux/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#36-内存和磁盘管理">3.6 内存和磁盘管理</a>
+      <ul>
+        <li><a href="#361-内存和磁盘使用率查看">3.6.1 内存和磁盘使用率查看</a>
+          <ul>
+            <li><a href="#内存使用率">内存使用率</a></li>
+            <li><a href="#磁盘使用率">磁盘使用率</a></li>
+          </ul>
+        </li>
+        <li><a href="#362-常见文件系统">3.6.2 常见文件系统</a>
+          <ul>
+            <li><a href="#ext4">ext4</a></li>
+            <li><a href="#xfs">xfs</a></li>
+            <li><a href="#ntfs">NTFS</a></li>
+          </ul>
+        </li>
+        <li><a href="#363-磁盘配额的使用">3.6.3 磁盘配额的使用</a></li>
+        <li><a href="#364-磁盘的分区与挂载">3.6.4 磁盘的分区与挂载</a>
+          <ul>
+            <li><a href="#常用命令">常用命令</a></li>
+            <li><a href="#常见配置文件">常见配置文件</a></li>
+          </ul>
+        </li>
+        <li><a href="#365-交换分区虚拟内存的查看与创建">3.6.5 交换分区（虚拟内存）的查看与创建</a></li>
+        <li><a href="#366-软件-raid-的使用">3.6.6 软件 RAID 的使用</a></li>
+        <li><a href="#367-逻辑卷管理">3.6.7 逻辑卷管理</a></li>
+        <li><a href="#368-系统综合状态查看">3.6.8 系统综合状态查看</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown book-article"><h1 id="36-内存和磁盘管理">
+  3.6 内存和磁盘管理
+  <a class="anchor" href="#36-%e5%86%85%e5%ad%98%e5%92%8c%e7%a3%81%e7%9b%98%e7%ae%a1%e7%90%86">#</a>
+</h1>
+<h2 id="361-内存和磁盘使用率查看">
+  3.6.1 内存和磁盘使用率查看
+  <a class="anchor" href="#361-%e5%86%85%e5%ad%98%e5%92%8c%e7%a3%81%e7%9b%98%e4%bd%bf%e7%94%a8%e7%8e%87%e6%9f%a5%e7%9c%8b">#</a>
+</h2>
+<h3 id="内存使用率">
+  内存使用率
+  <a class="anchor" href="#%e5%86%85%e5%ad%98%e4%bd%bf%e7%94%a8%e7%8e%87">#</a>
+</h3>
+<p>free 和 top 命令效果基本无差，区别就是 free 是静态的，top 是动态的。</p>
+<h4 id="free">
+  free
+  <a class="anchor" href="#free">#</a>
+</h4>
+<p>一般多少 G 内存用 free -m 查看，多少 T 内存用 free -g 查看。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230221/97443e997c62493e8629c28407d4fa53.png" width=  /></div>
+<h4 id="top">
+  top
+  <a class="anchor" href="#top">#</a>
+</h4>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230221/323c7fc9e1d34e2f948cebab118be825.png" width=  /></div>
+<h3 id="磁盘使用率">
+  磁盘使用率
+  <a class="anchor" href="#%e7%a3%81%e7%9b%98%e4%bd%bf%e7%94%a8%e7%8e%87">#</a>
+</h3>
+<h4 id="fdisk">
+  fdisk
+  <a class="anchor" href="#fdisk">#</a>
+</h4>
+<p><strong>慎用</strong>。fdisk 不仅可以用来查看磁盘，还可以用来磁盘分区，在实际工作中慎用。</p>
+<p>查看磁盘信息可以用 fdisk -l。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230221/b8b4d937b4a1485197b86bcd08a9491c.png" width=  /></div>
+<h4 id="df">
+  df
+  <a class="anchor" href="#df">#</a>
+</h4>
+<p>用于显示磁盘分区上的可使用的磁盘空间。默认显示单位为 KB。可以利用该命令来获取硬盘被占用了多少空间，目前还剩下多少空间等信息。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230222/99464225dfab496e9b44fd61cc8c9f68.png" width=  /></div>
+<h4 id="du">
+  du
+  <a class="anchor" href="#du">#</a>
+</h4>
+<p>也是查看使用空间的，但是与 d f命令不同的是 du 命令是对文件和目录磁盘使用的空间的查看。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230222/42d7c0ef7e1443d38f399905d37f3ef4.png" width=  /></div>
+<h4 id="du-和-ls-的区别">
+  du 和 ls 的区别
+  <a class="anchor" href="#du-%e5%92%8c-ls-%e7%9a%84%e5%8c%ba%e5%88%ab">#</a>
+</h4>
+<p><code>ls -lh</code> 和 du 命令都可以查看文件，但是 du 查看的实际文件大小，ls 查看的文件大小可能包含空洞。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230222/5f091dbeb41a47949348b2e38cbc1514.png" width=  /></div>
+<p>afile 文件没有空洞，ls 和 du 显示的文件大小都是 40M。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230222/6f57ad3fd33747d7a2870e33e7cfc52c.png" width=  /></div>
+<p>bfile 在写入的时候由于跳过了 20*4=80M，所以这 80M 是空洞文件，那么 ls 和 du 最后显示的结果就会不一样。</p>
+<p>在底层中，ls 其实统计的是 i 节点的文件大小信息，i 节点的数据块有可能是空的。du 统计的是数据块（datablock）个数的信息。</p>
+<h2 id="362-常见文件系统">
+  3.6.2 常见文件系统
+  <a class="anchor" href="#362-%e5%b8%b8%e8%a7%81%e6%96%87%e4%bb%b6%e7%b3%bb%e7%bb%9f">#</a>
+</h2>
+<h3 id="ext4">
+  ext4
+  <a class="anchor" href="#ext4">#</a>
+</h3>
+<h3 id="xfs">
+  xfs
+  <a class="anchor" href="#xfs">#</a>
+</h3>
+<h3 id="ntfs">
+  NTFS
+  <a class="anchor" href="#ntfs">#</a>
+</h3>
+<p>NTFS 是有版权的，需要安装额外的软件才能读写。</p>
+<h2 id="363-磁盘配额的使用">
+  3.6.3 磁盘配额的使用
+  <a class="anchor" href="#363-%e7%a3%81%e7%9b%98%e9%85%8d%e9%a2%9d%e7%9a%84%e4%bd%bf%e7%94%a8">#</a>
+</h2>
+<h2 id="364-磁盘的分区与挂载">
+  3.6.4 磁盘的分区与挂载
+  <a class="anchor" href="#364-%e7%a3%81%e7%9b%98%e7%9a%84%e5%88%86%e5%8c%ba%e4%b8%8e%e6%8c%82%e8%bd%bd">#</a>
+</h2>
+<p>硬盘分区有三种，主磁盘分区、扩展磁盘分区、逻辑分区。一个硬盘可以有一个主分区，一个扩展分区，也可以有一个主分区和若干逻辑分区。</p>
+<p>一个硬盘可以有 1 到 3 个主分区和 1 个扩展分区，也可以只有主分区而没有扩展分区，但主分区必须至少有 1 个，扩展分区则最多只有 1 个,且主分区+扩展分区总共不能超过 4 个。逻辑分区可以有若干个。扩展分区不能直接使用，必须分成若干逻辑分区。所有的逻辑分区都是扩展分区的一部分。</p>
+<p>1、主分区。主分区是硬盘的启动分区，他是独立的，也是硬盘的第一个分区——正常情况下，我们常说的 “C盘” 就是硬盘上的主分区。主分区也可称为 “引导分区”，会被操作系统和主板认定为这个硬盘的第一个分区。所以 C 盘永远都是排在所有磁盘分区的第一的位置上。</p>
+<p>2、扩展分区。除去主分区所占用的容量以外，剩下的容量就被认定为扩展分区（也可以这么讲：一块硬盘除去主分区外的容量后，如果对剩下的容量进行了再分区，那么，这个再分区就是扩展分区）。打个不太恰当的比喻就是主分区是主人，而扩展分区是仆人，主分区和扩展分区为主从关系。</p>
+<p>3、逻辑分区。扩展分区是不能直接使用的，他是以逻辑分区的方式来使用的，所以说扩展分区可以分成若干个逻辑分区。他们的关系是包含的关系，所有的逻辑分区都是扩展分区的一部分——扩展分区如果不再进行分区了，那么扩展分区就是逻辑分区了。</p>
+<p>对它们之间的关系可以这样比喻：在仆人（扩展分区）中进行细分类，分成洗衣服的（逻辑分区D盘）、扫地的（逻辑分区E盘）、做饭的（逻辑分区F盘）等等。 所以扩展分区和逻辑分区的关系相当于再分类关系。</p>
+<h3 id="常用命令">
+  常用命令
+  <a class="anchor" href="#%e5%b8%b8%e7%94%a8%e5%91%bd%e4%bb%a4">#</a>
+</h3>
+<h4 id="fdisk-1">
+  fdisk
+  <a class="anchor" href="#fdisk-1">#</a>
+</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>fdisk /dev/sdc
+</span></span></code></pre></div><p>新建分区按 <code>n</code> 键。</p>
+<h4 id="mkfs">
+  mkfs
+  <a class="anchor" href="#mkfs">#</a>
+</h4>
+<p>创建完分区需要对这个分区进行使用，把这个分区映射成一个盘符。</p>
+<p>mkfs 用于在设备上（通常为硬盘）创建 Linux 文件系统。mkfs 本身并不执行建立文件系统的工作，而是去调用相关的程序来执行。</p>
+<h4 id="parted">
+  parted
+  <a class="anchor" href="#parted">#</a>
+</h4>
+<p>如果磁盘大与 2T 不能使用 fdisk 进行分区，需要用 parted。</p>
+<h4 id="mount">
+  mount
+  <a class="anchor" href="#mount">#</a>
+</h4>
+<p>用于挂载 Linux 系统外的文件。</p>
+<p>将 /dev/hda1 挂在 /mnt 之下。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>mount /dev/hda1 /mnt
+</span></span></code></pre></div><p>将 /dev/hda1 用只读模式挂在 /mnt 之下。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>mount -o ro /dev/hda1 /mnt
+</span></span></code></pre></div><h3 id="常见配置文件">
+  常见配置文件
+  <a class="anchor" href="#%e5%b8%b8%e8%a7%81%e9%85%8d%e7%bd%ae%e6%96%87%e4%bb%b6">#</a>
+</h3>
+<p>使用 mount 挂载命令只在内存中生效的临时配置，如果要使参数进行固话，可以修改配置文件 /etc/fstab。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230222/07992b36158a4dc985b19674c8236a91.png" width=  /></div>
+<h2 id="365-交换分区虚拟内存的查看与创建">
+  3.6.5 交换分区（虚拟内存）的查看与创建
+  <a class="anchor" href="#365-%e4%ba%a4%e6%8d%a2%e5%88%86%e5%8c%ba%e8%99%9a%e6%8b%9f%e5%86%85%e5%ad%98%e7%9a%84%e6%9f%a5%e7%9c%8b%e4%b8%8e%e5%88%9b%e5%bb%ba">#</a>
+</h2>
+<h2 id="366-软件-raid-的使用">
+  3.6.6 软件 RAID 的使用
+  <a class="anchor" href="#366-%e8%bd%af%e4%bb%b6-raid-%e7%9a%84%e4%bd%bf%e7%94%a8">#</a>
+</h2>
+<h2 id="367-逻辑卷管理">
+  3.6.7 逻辑卷管理
+  <a class="anchor" href="#367-%e9%80%bb%e8%be%91%e5%8d%b7%e7%ae%a1%e7%90%86">#</a>
+</h2>
+<h2 id="368-系统综合状态查看">
+  3.6.8 系统综合状态查看
+  <a class="anchor" href="#368-%e7%b3%bb%e7%bb%9f%e7%bb%bc%e5%90%88%e7%8a%b6%e6%80%81%e6%9f%a5%e7%9c%8b">#</a>
+</h2>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/8f10bff18148186f3d97f4712cf884bcd380d6b9" title='最后修改者 weibin | 二月 22, 2023' target="_blank" rel="noopener">
+      <img src="/linux/svg/calendar.svg" class="book-icon" alt="" />
+      <span>二月 22, 2023</span>
+    </a>
+  </div>
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/book.linux/docs/part3-sys-manage/3.6-memory-disk.md" target="_blank" rel="noopener">
+      <img src="/linux/svg/edit.svg" class="book-icon" alt="" />
+      <span>编辑本页</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#36-内存和磁盘管理">3.6 内存和磁盘管理</a>
+      <ul>
+        <li><a href="#361-内存和磁盘使用率查看">3.6.1 内存和磁盘使用率查看</a>
+          <ul>
+            <li><a href="#内存使用率">内存使用率</a></li>
+            <li><a href="#磁盘使用率">磁盘使用率</a></li>
+          </ul>
+        </li>
+        <li><a href="#362-常见文件系统">3.6.2 常见文件系统</a>
+          <ul>
+            <li><a href="#ext4">ext4</a></li>
+            <li><a href="#xfs">xfs</a></li>
+            <li><a href="#ntfs">NTFS</a></li>
+          </ul>
+        </li>
+        <li><a href="#363-磁盘配额的使用">3.6.3 磁盘配额的使用</a></li>
+        <li><a href="#364-磁盘的分区与挂载">3.6.4 磁盘的分区与挂载</a>
+          <ul>
+            <li><a href="#常用命令">常用命令</a></li>
+            <li><a href="#常见配置文件">常见配置文件</a></li>
+          </ul>
+        </li>
+        <li><a href="#365-交换分区虚拟内存的查看与创建">3.6.5 交换分区（虚拟内存）的查看与创建</a></li>
+        <li><a href="#366-软件-raid-的使用">3.6.6 软件 RAID 的使用</a></li>
+        <li><a href="#367-逻辑卷管理">3.6.7 逻辑卷管理</a></li>
+        <li><a href="#368-系统综合状态查看">3.6.8 系统综合状态查看</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

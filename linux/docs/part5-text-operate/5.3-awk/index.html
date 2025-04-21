@@ -1,0 +1,1564 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="
+  5.3 awk 命令
+  #
+
+awk 是一种处理文本文件的语言，是一个强大的文件分析工具。常用于处理 “比较规范” 的文本处理，统计数量并输出指定字段。
+awk 比较倾向于将一行分成多个 “字段” 进行处理。awk 信息的读入是逐行读取的，执行结果可以通过 print 将字段数据打印显示。在使用 awk 命令的过程中，可以使用逻辑操作符，&amp;&amp;、|| 、!，还可以进行简单的数学运算，如&#43;、-、*、/、%、^分别表示加、减、乘、除、取余和乘方。
+
+  5.3.1 使用格式
+  #
+
+awk 「选项」 &#39;模式或条件{操作}&#39; 文件名 # 格式1
+
+awk -f 脚本文件 文件名 # 格式2
+
+  5.3.2 内置变量
+  #
+
+
+  
+      
+          内置变量
+          功能
+      
+  
+  
+      
+          NF
+          当前处理的行的字段个数（就是：有多少列）
+      
+      
+          NR
+          当前处理的行的行号（就是：有多少行）
+      
+      
+          FNR
+          读取文件的记录数（行号），从1开始，新的文件重新从1开始计数
+      
+      
+          $0
+          当前处理的行的整行内容（就是：表示一行的内容）
+      
+      
+          $n
+          当前处理行的第n个字段（就是：第n列）
+      
+      
+          FILENAME
+          被处理的文件名
+      
+      
+          FS
+          指定每行的字段分隔符，默认为空格或制表位（相当于选项 -F ）
+      
+      
+          OFS
+          输出字段的分隔符，默认也是空格
+      
+      
+          RS
+          行分割符。awk 从文件上读取资料时，将根据 RS 的定义把资料切割成许多条记录，而 awk 一次仅读取一条记录，预设值是\n
+      
+      
+          ORS
+          输出分割符，默认也是换行符
+      
+  
+
+
+  $n 用法
+  #
+
+n 为数字，数字为几就表示第几列。">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/linux/docs/part5-text-operate/5.3-awk/">
+  <meta property="og:site_name" content="Linux 学习笔记">
+  <meta property="og:title" content="5.3 awk 命令">
+  <meta property="og:description" content="5.3 awk 命令 # awk 是一种处理文本文件的语言，是一个强大的文件分析工具。常用于处理 “比较规范” 的文本处理，统计数量并输出指定字段。
+awk 比较倾向于将一行分成多个 “字段” 进行处理。awk 信息的读入是逐行读取的，执行结果可以通过 print 将字段数据打印显示。在使用 awk 命令的过程中，可以使用逻辑操作符，&amp;&amp;、|| 、!，还可以进行简单的数学运算，如&#43;、-、*、/、%、^分别表示加、减、乘、除、取余和乘方。
+5.3.1 使用格式 # awk 「选项」 &#39;模式或条件{操作}&#39; 文件名 # 格式1 awk -f 脚本文件 文件名 # 格式2 5.3.2 内置变量 # 内置变量 功能 NF 当前处理的行的字段个数（就是：有多少列） NR 当前处理的行的行号（就是：有多少行） FNR 读取文件的记录数（行号），从1开始，新的文件重新从1开始计数 $0 当前处理的行的整行内容（就是：表示一行的内容） $n 当前处理行的第n个字段（就是：第n列） FILENAME 被处理的文件名 FS 指定每行的字段分隔符，默认为空格或制表位（相当于选项 -F ） OFS 输出字段的分隔符，默认也是空格 RS 行分割符。awk 从文件上读取资料时，将根据 RS 的定义把资料切割成许多条记录，而 awk 一次仅读取一条记录，预设值是\n ORS 输出分割符，默认也是换行符 $n 用法 # n 为数字，数字为几就表示第几列。">
+  <meta property="og:locale" content="zh">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:modified_time" content="2023-07-07T13:59:41+08:00">
+<title>5.3 awk 命令 | Linux 学习笔记</title>
+<link rel="icon" href="/linux/favicon.png" >
+<link rel="manifest" href="/linux/manifest.json">
+<link rel="canonical" href="https://example.com/linux/docs/part5-text-operate/5.3-awk/">
+<link rel="stylesheet" href="/linux/book.min.1e8c332c823ff5970e639a0c180f0e3d074283c7f525185d3e42903a2f30e9be.css" integrity="sha256-HowzLII/9ZcOY5oMGA8OPQdCg8f1JRhdPkKQOi8w6b4=" crossorigin="anonymous">
+  <script defer src="/linux/fuse.min.js"></script>
+  <script defer src="/linux/zh.search.min.b9891c33b571af39c91da92bf084a21b17f7b63d10eeda94f6077a1dc343e219.js" integrity="sha256-uYkcM7VxrznJHakr8ISiGxf3tj0Q7tqU9gd6HcND4hk=" crossorigin="anonymous"></script>
+
+  <script defer src="/linux/sw.min.06246f7b13a877707832946d0b1941d626f4349fd8e3bdfd318889981ed22d49.js" integrity="sha256-BiRvexOod3B4MpRtCxlB1ib0NJ/Y4739MYiJmB7SLUk=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/linux/"><span>Linux 学习笔记</span>
+  </a>
+</h2>
+
+
+<div class="book-search hidden">
+  <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+
+
+<ul>
+    <li>
+        <a href="javascript:void(0)" onclick="hrefIndex()" rel="noopener">主页</a>
+    </li>
+    <li>
+        <a href="https://github.com/xiaobinqt" target="_blank" rel="noopener">GitHub</a>
+    </li>
+</ul>
+
+<hr>
+
+<script>
+    function hrefIndex() {
+        window.location = window.location.origin;
+    }
+</script>
+
+
+  
+<ul>
+  
+  <li>
+    <a href=""  target="_blank" rel="noopener">
+        
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第一部分 基础知识</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.1-operating-system/" class="">1.1 操作系统</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.2-overview/" class="">1.2 总览</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.3-common-dir/" class="">1.3 常见目录</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.4-process-manage/" class="">1.4 进程管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.5-deadlock/" class="">1.5 死锁</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.6-memory-manage/" class="">1.6 内存管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.7-link/" class="">1.7 链接</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.7-device-manage/" class="">1.7 设备管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.8-instruction-arch/" class="">1.8 指令集</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part1-primary/1.9-mirrors-sources/" class="">1.9 国内镜像源</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第二部分 系统操作</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.1-help/" class="">2.1 帮助命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.2-ls/" class="">2.2 ls 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.3-shutdown/" class="">2.3 关机</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.4-cp/" class="">2.4 cp 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.5-file-view/" class="">2.5 文件查看命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.6-backup-compression/" class="">2.6 压缩和打包</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.7-vim/" class="">2.7 vim</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.8-user-manage/" class="">2.8 用户管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.9-switch-user/" class="">2.9 切换用户</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part2-sys-operate/2.10-file-dir/" class="">2.10 文件和文件夹</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第三部分 系统管理</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.1-network/" class="">3.1 网络</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.2-net-trouble-removal/" class="">3.2 网络故障排除</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.3-net-manage/" class="">3.3 网络服务管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.4-soft-install/" class="">3.4 软件安装</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.5-process/" class="">3.5 进程管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part3-sys-manage/3.6-memory-disk/" class="">3.6 内存和磁盘管理</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第四部分 Shell</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.1-introduction/" class="">4.1 Shell 简介</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.2-env-config-file/" class="">4.2 环境变量</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.3-array/" class="">4.3 数组</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.4-escape-quot/" class="">4.4 转义和引用</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.5-operator/" class="">4.5 运算符</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.6-test-and-judge/" class="">4.6 测试和判断</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.7-process-control/" class="">4.7 流程控制</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.8-function/" class="">4.8 函数</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part4-shell/4.9-script-cron/" class="">4.9 脚本和计划任务</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第五部分 文本操作</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part5-text-operate/5.1-regular/" class="">5.1 正则表达式</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part5-text-operate/5.2-sed/" class="">5.2 sed 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part5-text-operate/5.3-awk/" class="active">5.3 awk 命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part5-text-operate/5.4-cut-sort-uniq-tr/" class="">5.4 cut、sort、uniq、tr 命令</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第六部分 服务管理</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.1-firewall/" class="">6.1 防火墙</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.2-ssh/" class="">6.2 ssh</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.3-ftp/" class="">6.3 ftp</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.4-samba/" class="">6.4 samba</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.5-nfs/" class="">6.5 NFS</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.6-nginx/" class="">6.6 nginx</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.7-dns/" class="">6.7 DNS</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part6-service-manage/6.8-nas/" class="">6.8 NAS</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第七部分 常见问题</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/linux/docs/part7-faq/7.1-cmd/" class="">7.1 命令相关</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/linux/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>5.3 awk 命令</h3>
+
+  <label for="toc-control">
+    
+    <img src="/linux/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#53-awk-命令">5.3 awk 命令</a>
+      <ul>
+        <li><a href="#531-使用格式">5.3.1 使用格式</a></li>
+        <li><a href="#532-内置变量">5.3.2 内置变量</a>
+          <ul>
+            <li><a href="#n-用法">$n 用法</a></li>
+            <li><a href="#0-用法">$0 用法</a></li>
+            <li><a href="#nf-和-nr-用法">NF 和 NR 用法</a></li>
+            <li><a href="#fnr-用法">FNR 用法</a></li>
+            <li><a href="#rs-用法">RS 用法</a></li>
+          </ul>
+        </li>
+        <li><a href="#533-begin-和-end-用法">5.3.3 BEGIN 和 END 用法</a>
+          <ul>
+            <li><a href="#常见用法">常见用法</a></li>
+          </ul>
+        </li>
+        <li><a href="#534-包含与不包含">5.3.4 包含与不包含</a></li>
+        <li><a href="#535-数值与字符串比较">5.3.5 数值与字符串比较</a>
+          <ul>
+            <li><a href="#逻辑运算">逻辑运算</a></li>
+          </ul>
+        </li>
+        <li><a href="#536-判断和循环">5.3.6 判断和循环</a>
+          <ul>
+            <li><a href="#判断">判断</a></li>
+            <li><a href="#循环">循环</a></li>
+          </ul>
+        </li>
+        <li><a href="#537-数组">5.3.7 数组</a>
+          <ul>
+            <li><a href="#综合案例">综合案例</a></li>
+          </ul>
+        </li>
+        <li><a href="#538-awk-函数">5.3.8 awk 函数</a>
+          <ul>
+            <li><a href="#算数函数">算数函数</a></li>
+            <li><a href="#字符串函数">字符串函数</a></li>
+            <li><a href="#自定义函数">自定义函数</a></li>
+          </ul>
+        </li>
+        <li><a href="#539-常见问题">5.3.9 常见问题</a>
+          <ul>
+            <li><a href="#获取本机-ip-地址">获取本机 ip 地址</a></li>
+            <li><a href="#查看本机流量有多少字节">查看本机流量有多少字节</a></li>
+            <li><a href="#查看根分区的可用量">查看根分区的可用量</a></li>
+          </ul>
+        </li>
+        <li><a href="#5310-总结">5.3.10 总结</a></li>
+        <li><a href="#参考">参考</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown book-article"><h1 id="53-awk-命令">
+  5.3 awk 命令
+  <a class="anchor" href="#53-awk-%e5%91%bd%e4%bb%a4">#</a>
+</h1>
+<p>awk 是一种处理文本文件的语言，是一个强大的文件分析工具。常用于处理 “比较规范” 的文本处理，统计数量并输出指定字段。</p>
+<p>awk 比较倾向于将一行分成多个 “字段” 进行处理。awk 信息的读入是逐行读取的，执行结果可以通过 print 将字段数据打印显示。在使用 awk 命令的过程中，可以使用逻辑操作符，<code>&amp;&amp;</code>、<code>||</code> 、<code>!</code>，还可以进行简单的数学运算，如<code>+</code>、<code>-</code>、<code>*</code>、<code>/</code>、<code>%</code>、<code>^</code>分别表示加、减、乘、除、取余和乘方。</p>
+<h2 id="531-使用格式">
+  5.3.1 使用格式
+  <a class="anchor" href="#531-%e4%bd%bf%e7%94%a8%e6%a0%bc%e5%bc%8f">#</a>
+</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>awk 「选项」 <span style="color:#e6db74">&#39;模式或条件{操作}&#39;</span> 文件名 <span style="color:#75715e"># 格式1</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>awk -f 脚本文件 文件名 <span style="color:#75715e"># 格式2</span>
+</span></span></code></pre></div><h2 id="532-内置变量">
+  5.3.2 内置变量
+  <a class="anchor" href="#532-%e5%86%85%e7%bd%ae%e5%8f%98%e9%87%8f">#</a>
+</h2>
+<table>
+  <thead>
+      <tr>
+          <th>内置变量</th>
+          <th>功能</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>NF</td>
+          <td>当前处理的行的字段个数（就是：有多少列）</td>
+      </tr>
+      <tr>
+          <td>NR</td>
+          <td>当前处理的行的行号（就是：有多少行）</td>
+      </tr>
+      <tr>
+          <td>FNR</td>
+          <td>读取文件的记录数（行号），从1开始，新的文件重新从1开始计数</td>
+      </tr>
+      <tr>
+          <td>$0</td>
+          <td>当前处理的行的整行内容（就是：表示一行的内容）</td>
+      </tr>
+      <tr>
+          <td>$n</td>
+          <td>当前处理行的第n个字段（就是：第n列）</td>
+      </tr>
+      <tr>
+          <td>FILENAME</td>
+          <td>被处理的文件名</td>
+      </tr>
+      <tr>
+          <td>FS</td>
+          <td>指定每行的字段分隔符，默认为空格或制表位（相当于选项 -F ）</td>
+      </tr>
+      <tr>
+          <td>OFS</td>
+          <td>输出字段的分隔符，默认也是空格</td>
+      </tr>
+      <tr>
+          <td>RS</td>
+          <td>行分割符。awk 从文件上读取资料时，将根据 RS 的定义把资料切割成许多条记录，而 awk 一次仅读取一条记录，预设值是<code>\n</code></td>
+      </tr>
+      <tr>
+          <td>ORS</td>
+          <td>输出分割符，默认也是换行符</td>
+      </tr>
+  </tbody>
+</table>
+<h3 id="n-用法">
+  $n 用法
+  <a class="anchor" href="#n-%e7%94%a8%e6%b3%95">#</a>
+</h3>
+<p>n 为数字，数字为几就表示第几列。</p>
+<ol>
+<li>直接输入全部内容。</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230207/97c7e287194b4bf38cf611cb493361da.png" width=  /></div>
+<ol start="2">
+<li>要求输出的是第 1 列。但是没有指定分隔符，awk 默认是以空格位分割。所有它认为这整个一行都是一列。</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230207/3b89da489910447180c987cadef98ee2.png" width=  /></div>
+<ol start="3">
+<li>设定分割符号<code>:</code>，输出第 5 列。</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230207/7fb9b16f75c94a1b8ad0bcb8fdf1fe7b.png" width=  /></div>
+<ol start="4">
+<li>设定分割符号<code>x</code>，输出第 1 列。</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230207/6b15059118444e1da0f608cede92789c.png" width=  /></div>
+<ol start="5">
+<li>输出时，显示列的空格。</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230207/3d5d2948f36544e09af80e1cb0076dfb.png" width=850  /></div>
+<ol start="6">
+<li>设置多个分割符。</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230207/233215aa460742a4a60704b029d1db59.png" width=800  /></div>
+<h3 id="0-用法">
+  $0 用法
+  <a class="anchor" href="#0-%e7%94%a8%e6%b3%95">#</a>
+</h3>
+<p>$0 表示整行。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230207/84fb10b564d749daa41b6ca7f1e696f9.png" width=  /></div>
+<h3 id="nf-和-nr-用法">
+  NF 和 NR 用法
+  <a class="anchor" href="#nf-%e5%92%8c-nr-%e7%94%a8%e6%b3%95">#</a>
+</h3>
+<p>NF 表示该处理的行序号是多少，表示多少列。NR 表示该处理的行，有多少行。</p>
+<ol>
+<li>打印每一行的列数。</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230207/7f8206c9bc894ecbac1068b2ea267f44.png" width=850  /></div>
+<ol start="2">
+<li>显示行号。</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230207/43d6dd1962f3404d9d8ab8373b28e9d6.png" width=850  /></div>
+<ol start="3">
+<li>显示行号，并显示每一行的内容。</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230207/44cf28e626364ebd91623b7ee54942ba.png" width=  /></div>
+<ol start="4">
+<li>打印第 2 行，不加 print 也一样，默认就是打印。</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230207/185220cc2f954add9d5d7593a01e8720.png" width=  /></div>
+<ol start="5">
+<li>打印第 2 行的第 1 列。</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230208/9002fe4f2d8544b39564a30d5ca0c046.png" width=800  /></div>
+<ol start="6">
+<li>打印最后一列。</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230208/5de72e539b824d96a70c8de50f08bc83.png" width=800  /></div>
+<ol start="7">
+<li>打印总行数。</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230208/fb5d950bf9a74a1f9cc9d3afd04a92a8.png" width=800  /></div>
+<ol start="8">
+<li>打印文件最后一行。</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230208/a9028b3351a94e5e9202473f142e734e.png" width=  /></div>
+<ol start="9">
+<li>加上文字描述行数和列数。</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230208/be65579345c14316b6f0054da1cb8ff3.png" width=750  /></div>
+<h3 id="fnr-用法">
+  FNR 用法
+  <a class="anchor" href="#fnr-%e7%94%a8%e6%b3%95">#</a>
+</h3>
+<p>可以看到当有多个文件时，序号会分别标好每一个文件内容的行号，不同文件会从头开始。（NR会连续在一起）。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230208/c26bc11305734769a6f9bc62b2c6a1d7.png" width=800  /></div>
+<h3 id="rs-用法">
+  RS 用法
+  <a class="anchor" href="#rs-%e7%94%a8%e6%b3%95">#</a>
+</h3>
+<p>指定以什么为换行符，这里指定是冒号，指定的必须是原文里存在的字符。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230208/eec20ded6a8d4a078881dbeef8997305.png" width=800  /></div>
+<h2 id="533-begin-和-end-用法">
+  5.3.3 BEGIN 和 END 用法
+  <a class="anchor" href="#533-begin-%e5%92%8c-end-%e7%94%a8%e6%b3%95">#</a>
+</h2>
+<p>逐行执行开始之前执行什么任务，结束之后再执行什么任务，用 BEGIN、END。</p>
+<ul>
+<li>BEGIN：一般用来做初始化操作，仅在读取数据记录之前执行一次。</li>
+<li>END：一般用来做汇总操作，仅在读取完数据记录之后执行一次。</li>
+</ul>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230208/4c905ae9566c437da23655e748a8a960.png" width=800  /></div>
+<h3 id="常见用法">
+  常见用法
+  <a class="anchor" href="#%e5%b8%b8%e8%a7%81%e7%94%a8%e6%b3%95">#</a>
+</h3>
+<ol>
+<li>在打印之前定义字段分割符为冒号<code>:</code>。</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230208/41807d50da1946369d480c12a316c086.png" width=800  /></div>
+<ol start="2">
+<li>OFS 定义了输出时以什么分隔，$1$2 中间要用逗号分隔，因为逗号默认被映射为 OFS 变量，而这个变量默认是空格。</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230208/fd2a0a75478e4e02b3322eab6a55f4ea.png" width=800  /></div>
+<ol start="3">
+<li>把多行合并成一行输出，输出的时候自定义以空格分隔每行，本来默认的是回车键。</li>
+</ol>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230208/5113512d5c3e4d22b66a0f0ec906fbc0.png" width=  /></div>
+<h2 id="534-包含与不包含">
+  5.3.4 包含与不包含
+  <a class="anchor" href="#534-%e5%8c%85%e5%90%ab%e4%b8%8e%e4%b8%8d%e5%8c%85%e5%90%ab">#</a>
+</h2>
+<p>用<code>~</code>表示包含，用<code>!~</code>表示不包含。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230208/e7a9dd2b55a54ba7bdda7194185a7100.png" width=  /></div>
+<h2 id="535-数值与字符串比较">
+  5.3.5 数值与字符串比较
+  <a class="anchor" href="#535-%e6%95%b0%e5%80%bc%e4%b8%8e%e5%ad%97%e7%ac%a6%e4%b8%b2%e6%af%94%e8%be%83">#</a>
+</h2>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230208/397242fed20647c39b064e19b248612a.png" width=  /></div>
+<h3 id="逻辑运算">
+  逻辑运算
+  <a class="anchor" href="#%e9%80%bb%e8%be%91%e8%bf%90%e7%ae%97">#</a>
+</h3>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230208/c7d824316c0a4beb909dd1b553d4ea5b.png" width=  /></div>
+<h2 id="536-判断和循环">
+  5.3.6 判断和循环
+  <a class="anchor" href="#536-%e5%88%a4%e6%96%ad%e5%92%8c%e5%be%aa%e7%8e%af">#</a>
+</h2>
+<p>现在有个一个 kpi.txt 文档：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>user1 70 72 74 76 74 72
+</span></span><span style="display:flex;"><span>user2 80 82 84 82 80 78
+</span></span><span style="display:flex;"><span>user3 60 61 62 63 64 65
+</span></span><span style="display:flex;"><span>user4 90 89 88 87 86 85
+</span></span><span style="display:flex;"><span>user5 45 60 63 62 61 50
+</span></span></code></pre></div><h3 id="判断">
+  判断
+  <a class="anchor" href="#%e5%88%a4%e6%96%ad">#</a>
+</h3>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230706/7f17d547cdc64c2dbeba552189573fb7.png" width=  /></div>
+<blockquote>
+<p>if 语句后如果跟了多个语句，需要用 {} 括起来。</p></blockquote>
+<h3 id="循环">
+  循环
+  <a class="anchor" href="#%e5%be%aa%e7%8e%af">#</a>
+</h3>
+<p>计算一行的总成绩和平均成绩：</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230706/e2736132f977404399982a1ec8ab0671.png" width=  /></div>
+<p>计算每个用户 KPI 平均值：</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230706/053df1fc6020485096a1caa70866d73d.png" width=  /></div>
+<h2 id="537-数组">
+  5.3.7 数组
+  <a class="anchor" href="#537-%e6%95%b0%e7%bb%84">#</a>
+</h2>
+<p><strong>定义</strong></p>
+<p><code>数组名\[下标\]=值</code> 下标可以使用数字也可以使用字符串。</p>
+<p><strong>遍历</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#66d9ef">for</span><span style="color:#f92672">(</span>变量 in 数组名<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span> 使用数组名<span style="color:#f92672">[</span>变量<span style="color:#f92672">]</span> 的方式依次对每个数组的元素进行操作
+</span></span></code></pre></div><p><strong>删除</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>delete 数组
+</span></span><span style="display:flex;"><span>delete 数组<span style="color:#f92672">[</span>下标<span style="color:#f92672">]</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># 求每个用户的平均成绩</span>
+</span></span><span style="display:flex;"><span>awk <span style="color:#e6db74">&#39;{sum=0; for(column=2;column &lt;= NF;column++) sum+=$column; average[$1]=sum/(NF-1)} END{ for(user in average) print user,average[user] }&#39;</span> kpi.txt
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 把每个用户的平均成绩相加</span>
+</span></span><span style="display:flex;"><span>awk <span style="color:#e6db74">&#39;{sum=0; for(column=2;column &lt;= NF;column++) sum+=$column; average[$1]=sum/(NF-1)} END{ for(user in average) sum2+=average[user];print sum2 }&#39;</span> kpi.txt
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 总平均成绩的平均成绩</span>
+</span></span><span style="display:flex;"><span>awk <span style="color:#e6db74">&#39;{sum=0; for(column=2;column &lt;= NF;column++) sum+=$column; average[$1]=sum/(NF-1)} END{ for(user in average) sum2+=average[user];print sum2/NR }&#39;</span> kpi.txt
+</span></span></code></pre></div><p><strong>命令行参数数组</strong></p>
+<p>在 AWK 编程语言中，ARGC 和 ARGV 是内置变量，用于处理命令行参数。</p>
+<ul>
+<li>
+<p>ARGC 是一个整数变量，用于存储命令行参数的数量（包括 AWK 脚本本身）。ARGC 的值表示传递给 AWK 脚本的参数总数。</p>
+</li>
+<li>
+<p>ARGV 是一个字符串数组，用于存储命令行参数的值。ARGV[0] 存储的是 AWK 脚本的名称，而 ARGV[1]、ARGV[2]、ARGV[3]，以此类推，存储的是传递给 AWK 脚本的参数值。</p>
+</li>
+</ul>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230706/17dea0032e584941871c0e449be115f7.png" width=  /></div>
+<h3 id="综合案例">
+  综合案例
+  <a class="anchor" href="#%e7%bb%bc%e5%90%88%e6%a1%88%e4%be%8b">#</a>
+</h3>
+<p>kpi.txt</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>user1 70 72 74 76 74 72
+</span></span><span style="display:flex;"><span>user2 80 82 84 82 80 78
+</span></span><span style="display:flex;"><span>user3 60 61 62 63 64 65
+</span></span><span style="display:flex;"><span>user4 90 89 88 87 86 85
+</span></span><span style="display:flex;"><span>user5 45 60 63 62 61 50
+</span></span></code></pre></div><p>result.sh</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>sum <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span><span style="color:#f92672">(</span> column <span style="color:#f92672">=</span> 2; column &lt;<span style="color:#f92672">=</span> NF; column++ <span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        sum <span style="color:#f92672">+=</span> $column
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>average<span style="color:#f92672">[</span>$1<span style="color:#f92672">]</span> <span style="color:#f92672">=</span> sum / <span style="color:#f92672">(</span>NF - 1<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>print <span style="color:#e6db74">&#34;用户&#34;</span>,$1,<span style="color:#e6db74">&#34;的平均成绩是:&#34;</span>,average<span style="color:#f92672">[</span>$1<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>average<span style="color:#f92672">[</span>$1<span style="color:#f92672">]</span> &gt;<span style="color:#f92672">=</span> 80<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        letter <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;S&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>average<span style="color:#f92672">[</span>$1<span style="color:#f92672">]</span> &gt;<span style="color:#f92672">=</span> 70<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        letter <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;A&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>average<span style="color:#f92672">[</span>$1<span style="color:#f92672">]</span> &gt;<span style="color:#f92672">=</span> 60<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        letter <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;B&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>        letter <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;C&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>print $1,average<span style="color:#f92672">[</span>$1<span style="color:#f92672">]</span>,letter
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ----</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>letter_all<span style="color:#f92672">[</span>letter<span style="color:#f92672">]</span>++
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>END <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span><span style="color:#f92672">(</span> user in average <span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>   sum_all <span style="color:#f92672">+=</span> average<span style="color:#f92672">[</span>user<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>avg_all <span style="color:#f92672">=</span> sum_all / NR <span style="color:#75715e"># NR 函数</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>print <span style="color:#e6db74">&#34;总的平均成绩 avg_all: &#34;</span>, avg_all
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span><span style="color:#f92672">(</span> user in average <span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span> average<span style="color:#f92672">[</span>user<span style="color:#f92672">]</span> &gt; avg_all <span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                above++
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>                below++
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>print <span style="color:#e6db74">&#34;above&#34;</span>,above
+</span></span><span style="display:flex;"><span>print <span style="color:#e6db74">&#34;below&#34;</span>, below
+</span></span><span style="display:flex;"><span>print <span style="color:#e6db74">&#34;S: &#34;</span>,letter_all<span style="color:#f92672">[</span><span style="color:#e6db74">&#34;S&#34;</span><span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>print <span style="color:#e6db74">&#34;A: &#34;</span>,letter_all<span style="color:#f92672">[</span><span style="color:#e6db74">&#34;A&#34;</span><span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>print <span style="color:#e6db74">&#34;B: &#34;</span>,letter_all<span style="color:#f92672">[</span><span style="color:#e6db74">&#34;B&#34;</span><span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>print <span style="color:#e6db74">&#34;C: &#34;</span>,letter_all<span style="color:#f92672">[</span><span style="color:#e6db74">&#34;C&#34;</span><span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230707/5e2821d7296147f2acc21056caba0cc9.png" width=  /></div>
+<h2 id="538-awk-函数">
+  5.3.8 awk 函数
+  <a class="anchor" href="#538-awk-%e5%87%bd%e6%95%b0">#</a>
+</h2>
+<h3 id="算数函数">
+  算数函数
+  <a class="anchor" href="#%e7%ae%97%e6%95%b0%e5%87%bd%e6%95%b0">#</a>
+</h3>
+<ul>
+<li>sin()</li>
+<li>cos()</li>
+<li>int()</li>
+<li>rand()</li>
+<li>srand()</li>
+<li>&hellip;</li>
+</ul>
+<p>rand 获取伪随机数，取值范围是 [0,1)，需要和 srand() 结合使用，srand() 表示重新获取种子，不然每次 rand() 函数值都是一样的。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230707/2be1394f0e9f4a16864bf644aeb683f8.png" width=  /></div>
+<h3 id="字符串函数">
+  字符串函数
+  <a class="anchor" href="#%e5%ad%97%e7%ac%a6%e4%b8%b2%e5%87%bd%e6%95%b0">#</a>
+</h3>
+<ul>
+<li>gsub(r, s, t)</li>
+<li>index(s, t)</li>
+<li>length(s)</li>
+<li>match(s, r)</li>
+<li>split(s, a, sep)</li>
+<li>sub(r, s, t)</li>
+<li>substr(s, p, n)</li>
+<li>&hellip;</li>
+</ul>
+<h3 id="自定义函数">
+  自定义函数
+  <a class="anchor" href="#%e8%87%aa%e5%ae%9a%e4%b9%89%e5%87%bd%e6%95%b0">#</a>
+</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>function函数名（参数）<span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  awk语句
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">return</span> awk变量
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230707/4aaccc82711a4acd9de51653a87c2eea.png" width=  /></div>
+<h2 id="539-常见问题">
+  5.3.9 常见问题
+  <a class="anchor" href="#539-%e5%b8%b8%e8%a7%81%e9%97%ae%e9%a2%98">#</a>
+</h2>
+<h3 id="获取本机-ip-地址">
+  获取本机 ip 地址
+  <a class="anchor" href="#%e8%8e%b7%e5%8f%96%e6%9c%ac%e6%9c%ba-ip-%e5%9c%b0%e5%9d%80">#</a>
+</h3>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230208/39e936b7caf74ad8b8840d9f3d468612.png" width=  /></div>
+<h3 id="查看本机流量有多少字节">
+  查看本机流量有多少字节
+  <a class="anchor" href="#%e6%9f%a5%e7%9c%8b%e6%9c%ac%e6%9c%ba%e6%b5%81%e9%87%8f%e6%9c%89%e5%a4%9a%e5%b0%91%e5%ad%97%e8%8a%82">#</a>
+</h3>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230208/fc581ae54de34fdbac12ce03d2899b37.png" width=  /></div>
+<h3 id="查看根分区的可用量">
+  查看根分区的可用量
+  <a class="anchor" href="#%e6%9f%a5%e7%9c%8b%e6%a0%b9%e5%88%86%e5%8c%ba%e7%9a%84%e5%8f%af%e7%94%a8%e9%87%8f">#</a>
+</h3>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230208/b31fd58dee0a4cccb095d0c621814a14.png" width=  /></div>
+<h2 id="5310-总结">
+  5.3.10 总结
+  <a class="anchor" href="#5310-%e6%80%bb%e7%bb%93">#</a>
+</h2>
+<p>awk 常用操作是提取转换文本文件内容，awk 功能十分强大，几乎其它文本处理命令能做的，awk 都能做。</p>
+<ul>
+<li>$n 表示截取哪一列，通常和 print 一起使用</li>
+<li>$0 表示整行内容</li>
+<li>NF 表示该行有多少列</li>
+<li>NR 表示该行的行号</li>
+<li>FNR 表示读取两个文件时，序号会分别从0开始标</li>
+<li>FS 表示读取文件的分隔符（默认空格）</li>
+<li>OFS 表示输入的内容以什么为分割符（默认空格）</li>
+<li>RS 表示读取文件的以什么为换行符（默认\n）</li>
+<li>ORS 表示输出的内容以什么为换行符（默认\n）</li>
+<li>~ 表示包含</li>
+<li>!~ 表示不包含</li>
+</ul>
+<h2 id="参考">
+  参考
+  <a class="anchor" href="#%e5%8f%82%e8%80%83">#</a>
+</h2>
+<ul>
+<li>
+  <a href="https://blog.csdn.net/m0_57515995/article/details/125713566">shell之三剑客awk（基础用法）</a></li>
+</ul>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/6b02f2c79f7eff005dae95c52b0ba1cbc06c0d68" title='最后修改者 weibin | 七月 7, 2023' target="_blank" rel="noopener">
+      <img src="/linux/svg/calendar.svg" class="book-icon" alt="" />
+      <span>七月 7, 2023</span>
+    </a>
+  </div>
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/book.linux/docs/part5-text-operate/5.3-awk.md" target="_blank" rel="noopener">
+      <img src="/linux/svg/edit.svg" class="book-icon" alt="" />
+      <span>编辑本页</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#53-awk-命令">5.3 awk 命令</a>
+      <ul>
+        <li><a href="#531-使用格式">5.3.1 使用格式</a></li>
+        <li><a href="#532-内置变量">5.3.2 内置变量</a>
+          <ul>
+            <li><a href="#n-用法">$n 用法</a></li>
+            <li><a href="#0-用法">$0 用法</a></li>
+            <li><a href="#nf-和-nr-用法">NF 和 NR 用法</a></li>
+            <li><a href="#fnr-用法">FNR 用法</a></li>
+            <li><a href="#rs-用法">RS 用法</a></li>
+          </ul>
+        </li>
+        <li><a href="#533-begin-和-end-用法">5.3.3 BEGIN 和 END 用法</a>
+          <ul>
+            <li><a href="#常见用法">常见用法</a></li>
+          </ul>
+        </li>
+        <li><a href="#534-包含与不包含">5.3.4 包含与不包含</a></li>
+        <li><a href="#535-数值与字符串比较">5.3.5 数值与字符串比较</a>
+          <ul>
+            <li><a href="#逻辑运算">逻辑运算</a></li>
+          </ul>
+        </li>
+        <li><a href="#536-判断和循环">5.3.6 判断和循环</a>
+          <ul>
+            <li><a href="#判断">判断</a></li>
+            <li><a href="#循环">循环</a></li>
+          </ul>
+        </li>
+        <li><a href="#537-数组">5.3.7 数组</a>
+          <ul>
+            <li><a href="#综合案例">综合案例</a></li>
+          </ul>
+        </li>
+        <li><a href="#538-awk-函数">5.3.8 awk 函数</a>
+          <ul>
+            <li><a href="#算数函数">算数函数</a></li>
+            <li><a href="#字符串函数">字符串函数</a></li>
+            <li><a href="#自定义函数">自定义函数</a></li>
+          </ul>
+        </li>
+        <li><a href="#539-常见问题">5.3.9 常见问题</a>
+          <ul>
+            <li><a href="#获取本机-ip-地址">获取本机 ip 地址</a></li>
+            <li><a href="#查看本机流量有多少字节">查看本机流量有多少字节</a></li>
+            <li><a href="#查看根分区的可用量">查看根分区的可用量</a></li>
+          </ul>
+        </li>
+        <li><a href="#5310-总结">5.3.10 总结</a></li>
+        <li><a href="#参考">参考</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

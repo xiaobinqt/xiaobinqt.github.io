@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="
+  2.9 Deployment
+  #
+
+在线业务远不是单纯启动一个 Pod 这么简单，还有多实例、高可用、版本更新等许多复杂的操作。比如多实例需求，为了提高系统的服务能力，应对突发的流量和压力，需要创建多个应用的副本，还要即时监控它们的状态。如果只使用 Pod，但有人不小心用 kubectl delete 误删了 Pod，又或者 Pod 运行的节点发生了断电故障，那么 Pod 就会在集群里彻底消失，Pod 容器里运行的服务也会消息，这样就会导致业务出现异常。
+处理这种问题的思路就是 “单一职责” 和 “对象组合”。既然 Pod 管理不了自己，那么就再创建一个新的对象，由它来管理 Pod，采用 “对象套对象” 的形式。这个用来管理 Pod，实现在线业务应用的新 API 对象，就是 Deployment。
+
+  2.9.1 创建
+  #
+
+Deployment 的简称是 deploy，它的 apiVersion 是 apps/v1，kind 是 Deployment。
+Deployment 的 YAML 描述大致如下：
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: ngx-dep
+  name: ngx-dep
+
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ngx-dep
+
+  template:
+    metadata:
+      labels:
+        app: ngx-dep
+    spec:
+      containers:
+        - image: nginx:alpine
+          name: nginx
+
+  replicas 字段
+  #
+
+replicas 字段的含义比较简单明了，就是 “副本数量” 的意思，也就是说，指定要在 Kubernetes 集群里运行多少个 Pod 实例。有了这个字段，就相当于为 Kubernetes 明确了应用部署的 “期望状态”，Deployment 对象就可以扮演运维监控人员的角色，自动地在集群里调整 Pod 的数量。">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/kubernetes/docs/part2-break-ice/2.9-deployment/">
+  <meta property="og:site_name" content="Kubernetes 学习笔记">
+  <meta property="og:title" content="2.9 Deployment">
+  <meta property="og:description" content="2.9 Deployment # 在线业务远不是单纯启动一个 Pod 这么简单，还有多实例、高可用、版本更新等许多复杂的操作。比如多实例需求，为了提高系统的服务能力，应对突发的流量和压力，需要创建多个应用的副本，还要即时监控它们的状态。如果只使用 Pod，但有人不小心用 kubectl delete 误删了 Pod，又或者 Pod 运行的节点发生了断电故障，那么 Pod 就会在集群里彻底消失，Pod 容器里运行的服务也会消息，这样就会导致业务出现异常。
+处理这种问题的思路就是 “单一职责” 和 “对象组合”。既然 Pod 管理不了自己，那么就再创建一个新的对象，由它来管理 Pod，采用 “对象套对象” 的形式。这个用来管理 Pod，实现在线业务应用的新 API 对象，就是 Deployment。
+2.9.1 创建 # Deployment 的简称是 deploy，它的 apiVersion 是 apps/v1，kind 是 Deployment。
+Deployment 的 YAML 描述大致如下：
+apiVersion: apps/v1 kind: Deployment metadata: labels: app: ngx-dep name: ngx-dep spec: replicas: 2 selector: matchLabels: app: ngx-dep template: metadata: labels: app: ngx-dep spec: containers: - image: nginx:alpine name: nginx replicas 字段 # replicas 字段的含义比较简单明了，就是 “副本数量” 的意思，也就是说，指定要在 Kubernetes 集群里运行多少个 Pod 实例。有了这个字段，就相当于为 Kubernetes 明确了应用部署的 “期望状态”，Deployment 对象就可以扮演运维监控人员的角色，自动地在集群里调整 Pod 的数量。">
+  <meta property="og:locale" content="zh">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:modified_time" content="2023-06-03T12:45:04+08:00">
+<title>2.9 Deployment | Kubernetes 学习笔记</title>
+<link rel="icon" href="/kubernetes/favicon.png" >
+<link rel="manifest" href="/kubernetes/manifest.json">
+<link rel="canonical" href="https://example.com/kubernetes/docs/part2-break-ice/2.9-deployment/">
+<link rel="stylesheet" href="/kubernetes/book.min.1e8c332c823ff5970e639a0c180f0e3d074283c7f525185d3e42903a2f30e9be.css" integrity="sha256-HowzLII/9ZcOY5oMGA8OPQdCg8f1JRhdPkKQOi8w6b4=" crossorigin="anonymous">
+  <script defer src="/kubernetes/fuse.min.js"></script>
+  <script defer src="/kubernetes/zh.search.min.da1c52546386c902e77e37ee10f137dd864d5defad152b94b97987f9bfccfa81.js" integrity="sha256-2hxSVGOGyQLnfjfuEPE33YZNXe&#43;tFSuUuXmH&#43;b/M&#43;oE=" crossorigin="anonymous"></script>
+
+  <script defer src="/kubernetes/sw.min.18ff75d546fc59b9d538e96815256b253062dc991f14b3caff0f35a243a406d1.js" integrity="sha256-GP911Ub8WbnVOOloFSVrJTBi3JkfFLPK/w81okOkBtE=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/kubernetes/"><span>Kubernetes 学习笔记</span>
+  </a>
+</h2>
+
+
+<div class="book-search hidden">
+  <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+
+
+<ul>
+    <li>
+        <a href="javascript:void(0)" onclick="hrefIndex()" rel="noopener">主页</a>
+    </li>
+    <li>
+        <a href="https://github.com/xiaobinqt" target="_blank" rel="noopener">GitHub</a>
+    </li>
+</ul>
+
+<hr>
+
+<script>
+    function hrefIndex() {
+        window.location = window.location.origin;
+    }
+</script>
+
+
+  
+<ul>
+  
+  <li>
+    <a href=""  target="_blank" rel="noopener">
+        
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+
+
+
+
+  
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第一部分 Docker</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.1-docker-brief/" class="">1.1 Docker 简介</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.2-docker-cmd/" class="">1.2 Docker 常用命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.3-container/" class="">1.3 容器</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.4-image/" class="">1.4 镜像</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.5-network/" class="">1.5 网络互通</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.6-docker-compose/" class="">1.6 Docker Compose</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part1-primary/1.7-private-registry/" class="">1.7 私有镜像仓库</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <span>第二部分 入门</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.1-k8s-overview/" class="">2.1 简介</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.2-minikube/" class="">2.2 minikube</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.3-working-mechanism/" class="">2.3 工作机制</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.4-pod/" class="">2.4 Pod</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.5-job/" class="">2.5 Job</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.6-config-manage/" class="">2.6 配置管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.7-general-cmd/" class="">2.7 常用命令</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.8-kubeadm/" class="">2.8 kubeadm 搭建</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.9-deployment/" class="active">2.9 Deployment</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.10-daemonset/" class="">2.10 DaemonSet</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.11-service/" class="">2.11 Service</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.12-ingress/" class="">2.12 Ingress</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.13-persistent-volume/" class="">2.13 PersistentVolume</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.14-persistentvolume-nfs/" class="">2.14 网络共享存储</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.15-statefulset/" class="">2.15 StatefulSet</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.16-rolling-update/" class="">2.16 滚动更新</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.17-app-assurance/" class="">2.17 应用保障</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.18-cluster-management/" class="">2.18 集群管理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.19-system-monitor/" class="">2.19 系统监控</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/kubernetes/docs/part2-break-ice/2.20-network-communications/" class="">2.20 网络通信</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/kubernetes/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>2.9 Deployment</h3>
+
+  <label for="toc-control">
+    
+    <img src="/kubernetes/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#29-deployment">2.9 Deployment</a>
+      <ul>
+        <li><a href="#291-创建">2.9.1 创建</a>
+          <ul>
+            <li><a href="#replicas-字段">replicas 字段</a></li>
+            <li><a href="#selector-字段">selector 字段</a></li>
+          </ul>
+        </li>
+        <li><a href="#292-部署">2.9.2 部署</a></li>
+        <li><a href="#293-扩容伸缩">2.9.3 扩容伸缩</a></li>
+        <li><a href="#295-常用命令">2.9.5 常用命令</a></li>
+        <li><a href="#296-labels-筛选">2.9.6 labels 筛选</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown book-article"><h1 id="29-deployment">
+  2.9 Deployment
+  <a class="anchor" href="#29-deployment">#</a>
+</h1>
+<p>在线业务远不是单纯启动一个 Pod 这么简单，还有多实例、高可用、版本更新等许多复杂的操作。比如多实例需求，为了提高系统的服务能力，应对突发的流量和压力，需要创建多个应用的副本，还要即时监控它们的状态。如果只使用 Pod，但有人不小心用 kubectl delete 误删了 Pod，又或者 Pod 运行的节点发生了断电故障，那么 Pod 就会在集群里彻底消失，Pod 容器里运行的服务也会消息，这样就会导致业务出现异常。</p>
+<p>处理这种问题的思路就是 “单一职责” 和 “对象组合”。既然 Pod 管理不了自己，那么就再创建一个新的对象，由它来管理 Pod，采用 “对象套对象” 的形式。这个用来管理 Pod，实现在线业务应用的新 API 对象，就是 Deployment。</p>
+<h2 id="291-创建">
+  2.9.1 创建
+  <a class="anchor" href="#291-%e5%88%9b%e5%bb%ba">#</a>
+</h2>
+<p>Deployment 的简称是 deploy，它的 apiVersion 是 apps/v1，kind 是 Deployment。</p>
+<p>Deployment 的 YAML 描述大致如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">apps/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Deployment</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">app</span>: <span style="color:#ae81ff">ngx-dep</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ngx-dep</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">replicas</span>: <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">selector</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">matchLabels</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">app</span>: <span style="color:#ae81ff">ngx-dep</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">template</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">app</span>: <span style="color:#ae81ff">ngx-dep</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">containers</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">image</span>: <span style="color:#ae81ff">nginx:alpine</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">name</span>: <span style="color:#ae81ff">nginx</span>
+</span></span></code></pre></div><h3 id="replicas-字段">
+  replicas 字段
+  <a class="anchor" href="#replicas-%e5%ad%97%e6%ae%b5">#</a>
+</h3>
+<p>replicas 字段的含义比较简单明了，就是 “副本数量” 的意思，也就是说，指定要在 Kubernetes 集群里运行多少个 Pod 实例。有了这个字段，就相当于为 Kubernetes 明确了应用部署的 “期望状态”，Deployment 对象就可以扮演运维监控人员的角色，自动地在集群里调整 Pod 的数量。</p>
+<p>比如，Deployment 对象刚创建出来的时候，Pod 数量肯定是 0，那么它就会根据 YAML 文件里的 Pod 模板，逐个创建出要求数量的 Pod。接下来 Kubernetes 还会持续地监控 Pod 的运行状态，万一有 Pod 发生意外消失了，数量不满足 “期望状态”，它就会通过 apiserver、scheduler 等核心组件去选择新的节点，创建出新的 Pod，直至数量与 “期望状态” 一致。这里面的工作流程复杂，但对于外部用户来说，只需要一个 replicas 字段就可以了，不需要再用人工监控管理，整个过程完全自动化。</p>
+<h3 id="selector-字段">
+  selector 字段
+  <a class="anchor" href="#selector-%e5%ad%97%e6%ae%b5">#</a>
+</h3>
+<p>selector 的作用是 “筛选” 出要被 Deployment 管理的 Pod 对象，下属字段 “matchLabels” 定义了 Pod 对象应该携带的 label，它必须和 “template” 里 Pod 定义的 “labels” <strong>完全相同</strong>，否则 Deployment 就会找不到要控制的 Pod 对象，apiserver 也会告诉你 YAML 格式校验错误无法创建。</p>
+<p>这个 selector 字段的用法看起来好像是有点多余，但为了保证 Deployment 成功创建，必须在 YAML 里把 label <strong>重复</strong>写两次：一次是在 selector.matchLabels，另一次是在 template.matadata。比如上面的例子中就要在这两个地方连续写 app: ngx-dep ：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>...
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">replicas</span>: <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">selector</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">matchLabels</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">app</span>: <span style="color:#ae81ff">ngx-dep</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">template</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">app</span>: <span style="color:#ae81ff">ngx-dep</span>
+</span></span><span style="display:flex;"><span>...
+</span></span></code></pre></div><p>Deployment 和 Pod 实际上是一种松散的组合关系，Deployment 实际上并不 “持有” Pod 对象，它只是帮助 Pod 对象能够有足够的副本数量运行，仅此而已。</p>
+<p>Kubernetes 采用的是这种 “贴标签” 的方式，通过在 API 对象的 metadata 元信息里加各种标签（labels），就可以使用类似关系数据库里查询语句的方式，筛选出具有特定标识的那些对象。通过标签这种设计，Kubernetes 就解除了 Deployment 和模板里 Pod 的强绑定，把组合关系变成了 “弱引用”。</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230601/81b7aedd77444f478de84eeadce620f0.png" width=500  /></div>
+<h2 id="292-部署">
+  2.9.2 部署
+  <a class="anchor" href="#292-%e9%83%a8%e7%bd%b2">#</a>
+</h2>
+<p>把 Deployment 的 YAML 写好之后，可以用 kubectl apply 来创建对象了：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>kubectl apply -f deploy.yml
+</span></span></code></pre></div><p>要查看 Deployment 的状态，可以使用 kubectl get 命令：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>kubectl get deploy
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230601/bf09a24557304d208632b7089c11907e.png" width=  /></div>
+<ul>
+<li>
+<p>READY 表示运行的 Pod 数量，前面的数字是当前数量，后面的数字是期望数量，“2/2” 的意思就是要求有两个 Pod 运行，现在已经启动了两个 Pod。</p>
+</li>
+<li>
+<p>UP-TO-DATE 指的是当前已经更新到最新状态的 Pod 数量。因为如果要部署的 Pod 数量很多或者 Pod 启动比较慢，Deployment 完全生效需要一个过程，UP-TO-DATE 就表示现在有多少个 Pod 已经完成了部署，达成了模板里的 “期望状态”。</p>
+</li>
+<li>
+<p>AVAILABLE 要比 READY、UP-TO-DATE 更进一步，不仅要求已经运行，还必须是健康状态，能够正常对外提供服务。</p>
+</li>
+<li>
+<p>AGE 表示 Deployment 从创建到现在所经过的时间，也就是运行的时间。</p>
+</li>
+</ul>
+<p>因为 Deployment 管理的是 Pod，最终使用的也是 Pod，还可以用 kubectl get pod 命令来看看 Pod 的状态：</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230601/e240241790ef4405bcb2efce5240b45c.png" width=  /></div>
+<p>被 Deployment 管理的 Pod 自动带上了名字，命名的规则是 Deployment 的名字加上两串随机数（其实是 Pod 模板的 Hash 值）。</p>
+<p>现在可以模拟一下 Pod 发生故障的情景，用 kubectl delete 删除一个 Pod，然后再查看 Pod 的状态：</p>
+<div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230601/5718390558c24a5b8253faabc6f141d5.png" width=  /></div>
+<p>可以看到，被删除的 Pod 确实是消失了，但 Kubernetes 在 Deployment 的管理之下，很快又创建出了一个新的 Pod，保证了应用实例的数量始终是在 YAML 里定义的数量。</p>
+<h2 id="293-扩容伸缩">
+  2.9.3 扩容伸缩
+  <a class="anchor" href="#293-%e6%89%a9%e5%ae%b9%e4%bc%b8%e7%bc%a9">#</a>
+</h2>
+<p>在 Deployment 部署成功之后，可以随时调整 Pod 的数量，实现所谓的 “应用伸缩”。kubectl scale 是专门用于实现 “扩容” 和 “缩容” 的命令，只要用参数 <code>--replicas</code> 指定需要的副本数量，Kubernetes 就会自动增加或者删除 Pod，让最终的 Pod 数量达到 “期望状态”。</p>
+<p>比如下面的这条命令，就把 ngx-dep 应用扩容到了 5 个：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>kubectl scale --replicas<span style="color:#f92672">=</span><span style="color:#ae81ff">5</span> deploy ngx-dep
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230601/a94d485d1b304e459c71e1ba6711ba0a.png" width=  /></div>
+<p>kubectl scale 是命令式操作，扩容和缩容只是<strong>临时的措施</strong>，如果应用需要长时间保持一个确定的 Pod 数量，还是需要编辑 Deployment 的 YAML 文件，改动 replicas，再以声明式的 kubectl apply 修改对象的状态。</p>
+<h2 id="295-常用命令">
+  2.9.5 常用命令
+  <a class="anchor" href="#295-%e5%b8%b8%e7%94%a8%e5%91%bd%e4%bb%a4">#</a>
+</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>kubectl get deploy
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl get deploy -o wide
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubectl delete deploy xxx
+</span></span></code></pre></div><h2 id="296-labels-筛选">
+  2.9.6 labels 筛选
+  <a class="anchor" href="#296-labels-%e7%ad%9b%e9%80%89">#</a>
+</h2>
+<p>labels 为对象 “贴” 了各种 “标签”，在使用 kubectl get 命令的时候，加上参数 <code>-l</code>，使用 ==、!=、in、notin 的表达式，就能够很容易地用“标签”筛选、过滤出所要查找的对象。</p>
+<p>以下两个例子，第一条命令找出 app 标签是 nginx 的所有 Pod，第二条命令找出 app 标签是 ngx、nginx、ngx-dep 的所有 Pod：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>kubectl get pod -l app<span style="color:#f92672">=</span>nginx
+</span></span><span style="display:flex;"><span>kubectl get pod -l <span style="color:#e6db74">&#39;app in (ngx, nginx, ngx-dep)&#39;</span>
+</span></span></code></pre></div><div align="center"><img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20230601/206fdaa0063a43eca4c0b95277ea462c.png" width=  /></div>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/7e48ae594a1747bcfd3b0c7fb012973073d5074a" title='最后修改者 weibin | 六月 3, 2023' target="_blank" rel="noopener">
+      <img src="/kubernetes/svg/calendar.svg" class="book-icon" alt="" />
+      <span>六月 3, 2023</span>
+    </a>
+  </div>
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/book.kubernetes/docs/part2-break-ice/2.9-deployment.md" target="_blank" rel="noopener">
+      <img src="/kubernetes/svg/edit.svg" class="book-icon" alt="" />
+      <span>编辑本页</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#29-deployment">2.9 Deployment</a>
+      <ul>
+        <li><a href="#291-创建">2.9.1 创建</a>
+          <ul>
+            <li><a href="#replicas-字段">replicas 字段</a></li>
+            <li><a href="#selector-字段">selector 字段</a></li>
+          </ul>
+        </li>
+        <li><a href="#292-部署">2.9.2 部署</a></li>
+        <li><a href="#293-扩容伸缩">2.9.3 扩容伸缩</a></li>
+        <li><a href="#295-常用命令">2.9.5 常用命令</a></li>
+        <li><a href="#296-labels-筛选">2.9.6 labels 筛选</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

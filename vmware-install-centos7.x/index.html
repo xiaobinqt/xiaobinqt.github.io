@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noodp" /><title>VMware 安装 CentOS 7.x - xiaobinqt 博客 - 技术改变生活</title><meta name="Description" content="xiaobinqt,vmware,centos 7.9,静态 ip,vmware 安装,vmware 安装 CentOS 7.x,vmware 设置静态 ip,centos7,ifconfig command not found,修改网卡为 eth0"><meta property="og:url" content="https://www.xiaobinqt.cn/vmware-install-centos7.x/">
+  <meta property="og:site_name" content="xiaobinqt 博客 - 技术改变生活">
+  <meta property="og:title" content="VMware 安装 CentOS 7.x">
+  <meta property="og:description" content="xiaobinqt,vmware,centos 7.9,静态 ip,vmware 安装,vmware 安装 CentOS 7.x,vmware 设置静态 ip,centos7,ifconfig command not found,修改网卡为 eth0">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2021-03-08T00:00:00+00:00">
+    <meta property="article:modified_time" content="2023-07-10T17:11:31+08:00">
+    <meta property="article:tag" content="CentOS 7.x">
+    <meta property="article:tag" content="VMware">
+    <meta property="article:tag" content="Linux">
+    <meta property="og:image" content="https://www.xiaobinqt.cn/images/avatar.webp">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://www.xiaobinqt.cn/images/avatar.webp">
+  <meta name="twitter:title" content="VMware 安装 CentOS 7.x">
+  <meta name="twitter:description" content="xiaobinqt,vmware,centos 7.9,静态 ip,vmware 安装,vmware 安装 CentOS 7.x,vmware 设置静态 ip,centos7,ifconfig command not found,修改网卡为 eth0">
+<meta name="application-name" content="DoIt">
+<meta name="apple-mobile-web-app-title" content="DoIt">
+
+<meta name="theme-color" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<link rel="canonical" href="https://www.xiaobinqt.cn/vmware-install-centos7.x/" /><link rel="prev" href="https://www.xiaobinqt.cn/redis-glance-faq/" /><link rel="next" href="https://www.xiaobinqt.cn/upd-demo/" />
+<link rel="stylesheet" href="/css/main.min.css"><link rel="stylesheet" href="/css/style.min.css"><meta name="google-site-verification" content="hFkClWMTOtPBuE0lQaXNiNb707E7P6O2CwexZoSm3VQ" /><meta name="msvalidate.01" content="A961D393878F86E04112E1198500FDBD" /><meta name="baidu-site-verification" content="code-cMh5ORsrP2" /><script type="application/ld+json">{"@context": "https://schema.org","@type": "BlogPosting",
+        "headline": "VMware 安装 CentOS 7.x",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https://www.xiaobinqt.cn/vmware-install-centos7.x/"
+        },"image": ["https://www.xiaobinqt.cn/images/Apple-Devices-Preview.png"],"genre": "posts","keywords":["CentOS 7.x","VMware","linux"],"wordcount":  1569 ,
+        "url": "https://www.xiaobinqt.cn/vmware-install-centos7.x/","datePublished": "2021-03-08T00:00:00+00:00","dateModified": "2023-07-10T17:11:31+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+            "@type": "Organization",
+            "name": "xxxx","logo": {
+                    "@type": "ImageObject",
+                    "url": "https://www.xiaobinqt.cn/images/avatar.webp",
+                    "width":  400 ,
+                    "height":  400 
+                }},"author": {
+                "@type": "Person",
+                "name": "xiaobinqt",
+                "url": "https://github.com/xiaobinqt"
+            },"description": "xiaobinqt,vmware,centos 7.9,静态 ip,vmware 安装,vmware 安装 CentOS 7.x,vmware 设置静态 ip,centos7,ifconfig command not found,修改网卡为 eth0"
+    }</script></head>
+
+
+<body data-instant-intensity="viewport" class="tw-flex tw-min-h-screen tw-flex-col"><script type="text/javascript">
+    function setTheme(theme) {
+      document.body.setAttribute('theme', theme); 
+      document.documentElement.className = theme;
+      document.documentElement.style.setProperty('color-scheme', theme === 'light' ? 'light' : 'dark');
+      if (theme === 'light') {
+        document.documentElement.classList.remove('tw-dark')
+      } else {
+        document.documentElement.classList.add('tw-dark')
+      }
+      window.theme = theme;   
+      window.isDark = window.theme !== 'light' 
+    }
+    function saveTheme(theme) {window.localStorage && localStorage.setItem('theme', theme);}
+    function getMeta(metaName) {const metas = document.getElementsByTagName('meta'); for (let i = 0; i < metas.length; i++) if (metas[i].getAttribute('name') === metaName) return metas[i]; return '';}
+    if (window.localStorage && localStorage.getItem('theme')) {
+        let theme = localStorage.getItem('theme');
+        if (theme === 'light' || theme === 'dark') {
+        setTheme(theme);
+        } else {
+            if ((window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                setTheme('dark');
+            } else {
+                setTheme('light');
+            }
+        }
+      } else { 
+        if ('auto' === 'light' || 'auto' === 'dark') 
+            setTheme('auto'), saveTheme('auto'); 
+        else saveTheme('auto'), window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? setTheme('dark') : setTheme('light');
+    }
+    let metaColors = {'light': '#f8f8f8','dark': '#161b22'}
+    getMeta('theme-color').content = metaColors[document.body.getAttribute('theme')];
+    window.switchThemeEventSet = new Set()
+</script><div id="back-to-top"></div>
+    <div id="mask"></div><header class="desktop print:!tw-hidden" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="xiaobinqt 博客 - 技术改变生活"><span class="tw-mr-1"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M402.3 344.9l32-32c5-5 13.7-1.5 13.7 5.7V464c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h273.5c7.1 0 10.7 8.6 5.7 13.7l-32 32c-1.5 1.5-3.5 2.3-5.7 2.3H48v352h352V350.5c0-2.1.8-4.1 2.3-5.6zm156.6-201.8L296.3 405.7l-90.4 10c-26.2 2.9-48.5-19.2-45.6-45.6l10-90.4L432.9 17.1c22.9-22.9 59.9-22.9 82.7 0l43.2 43.2c22.9 22.9 22.9 60 .1 82.8zM460.1 174L402 115.9 216.2 301.8l-7.3 65.3 65.3-7.3L460.1 174zm64.8-79.7l-43.2-43.2c-4.1-4.1-10.8-4.1-14.8 0L436 82l58.1 58.1 30.9-30.9c4-4.2 4-10.8-.1-14.9z"/></svg></span>萧十一郎</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item"
+                    href="/posts/" > 所有文章 </a><a class="menu-item"
+                    href="/tags/" > 标签 </a><a class="menu-item"
+                    href="/categories/" > 分类 </a><a class="menu-item"
+                    href="/series/" > 系列 </a><a class="menu-item"
+                    href="/showcase/" > 小册 </a><a class="menu-item"
+                    href="/wiki" > wiki </a><a class="menu-item"
+                    href="/leetcode" > LeetCode </a><a class="menu-item"
+                    href="/links/" > 友链 </a><a class="menu-item"
+                    href="/about/" > 关于 </a><a class="menu-item"
+                    href="https://github.com/xiaobinqt"  title="GitHub" 
+                    rel="noopener noreferrer" target="_blank" ><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                    <input type="text"
+                        placeholder="搜索文章标题或内容..."
+                        id="search-input-desktop">
+                    <button class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                        <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg>
+                    </button>
+                    <button class="search-button search-clear" id="search-clear-desktop" title="清空">
+                        <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm121.6 313.1c4.7 4.7 4.7 12.3 0 17L338 377.6c-4.7 4.7-12.3 4.7-17 0L256 312l-65.1 65.6c-4.7 4.7-12.3 4.7-17 0L134.4 338c-4.7-4.7-4.7-12.3 0-17l65.6-65-65.6-65.1c-4.7-4.7-4.7-12.3 0-17l39.6-39.6c4.7-4.7 12.3-4.7 17 0l65 65.7 65.1-65.6c4.7-4.7 12.3-4.7 17 0l39.6 39.6c4.7 4.7 4.7 12.3 0 17L312 256l65.6 65.1z"/></svg>
+                    </button>
+                    <span class="search-button search-loading tw-animate-spin" id="search-loading-desktop">
+                        <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M304 48c0 26.51-21.49 48-48 48s-48-21.49-48-48 21.49-48 48-48 48 21.49 48 48zm-48 368c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zm208-208c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zM96 256c0-26.51-21.49-48-48-48S0 229.49 0 256s21.49 48 48 48 48-21.49 48-48zm12.922 99.078c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.491-48-48-48zm294.156 0c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.49-48-48-48zM108.922 60.922c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.491-48-48-48z"/></svg>
+                    </span>
+                </span><button class="menu-item theme-select" aria-label="切换主题">
+                    <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M8 256c0 136.966 111.033 248 248 248s248-111.034 248-248S392.966 8 256 8 8 119.033 8 256zm248 184V72c101.705 0 184 82.311 184 184 0 101.705-82.311 184-184 184z"/></svg>
+                    <select class="color-theme-select" id="theme-select-desktop" aria-label="切换主题">
+                        <option value="light">浅色</option>
+                        <option value="dark">深色</option>
+                        <option value="auto">跟随系统</option>
+                    </select>
+                </button></div>
+        </div>
+    </div>
+</header><header class="mobile print:!tw-hidden" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="xiaobinqt 博客 - 技术改变生活"><span class="tw-mr-1"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M402.3 344.9l32-32c5-5 13.7-1.5 13.7 5.7V464c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h273.5c7.1 0 10.7 8.6 5.7 13.7l-32 32c-1.5 1.5-3.5 2.3-5.7 2.3H48v352h352V350.5c0-2.1.8-4.1 2.3-5.6zm156.6-201.8L296.3 405.7l-90.4 10c-26.2 2.9-48.5-19.2-45.6-45.6l10-90.4L432.9 17.1c22.9-22.9 59.9-22.9 82.7 0l43.2 43.2c22.9 22.9 22.9 60 .1 82.8zM460.1 174L402 115.9 216.2 301.8l-7.3 65.3 65.3-7.3L460.1 174zm64.8-79.7l-43.2-43.2c-4.1-4.1-10.8-4.1-14.8 0L436 82l58.1 58.1 30.9-30.9c4-4.2 4-10.8-.1-14.9z"/></svg></span>萧十一郎</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                <div class="search mobile" id="search-mobile">
+                    <input type="text"
+                        placeholder="搜索文章标题或内容..."
+                        id="search-input-mobile">
+                    <button class="search-button search-toggle tw-h-10" id="search-toggle-mobile" title="搜索">
+                        <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg>
+                    </button>
+                    <button class="search-button search-clear tw-h-fit" id="search-clear-mobile" title="清空">
+                        <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm121.6 313.1c4.7 4.7 4.7 12.3 0 17L338 377.6c-4.7 4.7-12.3 4.7-17 0L256 312l-65.1 65.6c-4.7 4.7-12.3 4.7-17 0L134.4 338c-4.7-4.7-4.7-12.3 0-17l65.6-65-65.6-65.1c-4.7-4.7-4.7-12.3 0-17l39.6-39.6c4.7-4.7 12.3-4.7 17 0l65 65.7 65.1-65.6c4.7-4.7 12.3-4.7 17 0l39.6 39.6c4.7 4.7 4.7 12.3 0 17L312 256l65.6 65.1z"/></svg>
+                    </button>
+                    <span class="search-button search-loading tw-animate-spin" id="search-loading-mobile">
+                        <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M304 48c0 26.51-21.49 48-48 48s-48-21.49-48-48 21.49-48 48-48 48 21.49 48 48zm-48 368c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zm208-208c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zM96 256c0-26.51-21.49-48-48-48S0 229.49 0 256s21.49 48 48 48 48-21.49 48-48zm12.922 99.078c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.491-48-48-48zm294.156 0c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.49-48-48-48zM108.922 60.922c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.491-48-48-48z"/></svg>
+                    </span>
+                </div>
+                <button class="search-cancel" id="search-cancel-mobile">
+                    取消
+                </button>
+            </div><a class="menu-item" href="/posts/" title="" >所有文章</a><a class="menu-item" href="/tags/" title="" >标签</a><a class="menu-item" href="/categories/" title="" >分类</a><a class="menu-item" href="/series/" title="" >系列</a><a class="menu-item" href="/showcase/" title="" >小册</a><a class="menu-item" href="/wiki" title="" >wiki</a><a class="menu-item" href="/leetcode" title="" >LeetCode</a><a class="menu-item" href="/links/" title="" >友链</a><a class="menu-item" href="/about/" title="" >关于</a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" 
+                rel="noopener noreferrer" target="_blank" ><i class='fab fa-github fa-fw'></i></a><button class="menu-item theme-select tw-w-full" aria-label="切换主题">
+                <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M8 256c0 136.966 111.033 248 248 248s248-111.034 248-248S392.966 8 256 8 8 119.033 8 256zm248 184V72c101.705 0 184 82.311 184 184 0 101.705-82.311 184-184 184z"/></svg>
+                <select class="color-theme-select" id="theme-select-mobile" aria-label="切换主题">
+                    <option value="light">浅色</option>
+                    <option value="dark">深色</option>
+                    <option value="auto">跟随系统</option>
+                </select>
+            </button></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div><main class="tw-mx-4 tw-flex-1"><div class="toc print:!tw-hidden" id="toc-auto">
+        <h2 class="toc-title">目录</h2>
+        <div class="toc-content" id="toc-content-auto"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#下载镜像">下载镜像</a></li>
+    <li><a href="#安装-centos-79">安装 CentOS 7.9</a></li>
+    <li><a href="#网络配置">网络配置</a></li>
+    <li><a href="#ifconfig-command-not-found">ifconfig command not found</a></li>
+    <li><a href="#修改网卡为-eth0">修改网卡为 eth0</a></li>
+    <li><a href="#设置静态-ip">设置静态 IP</a>
+      <ul>
+        <li><a href="#设置">设置</a></li>
+        <li><a href="#访问测试">访问测试</a></li>
+        <li><a href="#物理机测试">物理机测试</a></li>
+        <li><a href="#虚拟机测试">虚拟机测试</a></li>
+        <li><a href="#说明">说明</a></li>
+      </ul>
+    </li>
+    <li><a href="#faq">FAQ</a></li>
+    <li><a href="#参考">参考</a></li>
+  </ul>
+</nav></div>
+    </div><dialog id="toc-dialog" class="tw-max-w-full tw-w-full tw-max-h-full tw-h-full tw-ml-16">
+        <div class="toc tw-mx-4 tw-max-w-full">
+            <h2 class="tw-mx-0 tw-my-6 tw-uppercase tw-text-2xl">目录</h2>
+            <div class="toc-content"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#下载镜像">下载镜像</a></li>
+    <li><a href="#安装-centos-79">安装 CentOS 7.9</a></li>
+    <li><a href="#网络配置">网络配置</a></li>
+    <li><a href="#ifconfig-command-not-found">ifconfig command not found</a></li>
+    <li><a href="#修改网卡为-eth0">修改网卡为 eth0</a></li>
+    <li><a href="#设置静态-ip">设置静态 IP</a>
+      <ul>
+        <li><a href="#设置">设置</a></li>
+        <li><a href="#访问测试">访问测试</a></li>
+        <li><a href="#物理机测试">物理机测试</a></li>
+        <li><a href="#虚拟机测试">虚拟机测试</a></li>
+        <li><a href="#说明">说明</a></li>
+      </ul>
+    </li>
+    <li><a href="#faq">FAQ</a></li>
+    <li><a href="#参考">参考</a></li>
+  </ul>
+</nav></div>
+        </div>
+    </dialog><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single print:!tw-w-full print:!tw-max-w-none print:!tw-m-0 print:!tw-p-0"><h1 class="single-title" data-pagefind-meta="date:2021-03-08" data-pagefind-body>VMware 安装 CentOS 7.x</h1><div class="post-meta">
+            <div class="post-meta-line">
+                <span class="post-author"><img class="tw-inline-block tw-max-h-4 tw-rounded-full tw-translate-y-[-2px] tw-mr-1"  src='/images/avatar.webp' srcset="/images/avatar_hu_77eed54fe2464759.webp 16w, /images/avatar_hu_943873fea8b048fb.webp 24w, /images/avatar_hu_8a2a7dbc51ae197c.webp 32w"  alt="xiaobinqt avatar" height="16" width="16"><a href="https://github.com/xiaobinqt" title="Author" target="_blank" rel="noopener noreferrer author" class="author">xiaobinqt</a>
+                </span>&nbsp;<span class="post-category">收录于 </span>&nbsp;<span class="post-category">类别 <a href="/categories/%E5%BC%80%E5%8F%91%E8%80%85%E6%89%8B%E5%86%8C/"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M464 128H272l-54.63-54.63c-6-6-14.14-9.37-22.63-9.37H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V176c0-26.51-21.49-48-48-48zm0 272H48V112h140.12l54.63 54.63c6 6 14.14 9.37 22.63 9.37H464v224z"/></svg>开发者手册</a></span></div>
+            <div class="post-meta-line"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M148 288h-40c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12zm108-12v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm-96 96v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm-96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm192 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm96-260v352c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h48V12c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h128V12c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h48c26.5 0 48 21.5 48 48zm-48 346V160H48v298c0 3.3 2.7 6 6 6h340c3.3 0 6-2.7 6-6z"/></svg>&nbsp;<time datetime="2021-03-08">2021-03-08</time>&nbsp;<svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M402.3 344.9l32-32c5-5 13.7-1.5 13.7 5.7V464c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h273.5c7.1 0 10.7 8.6 5.7 13.7l-32 32c-1.5 1.5-3.5 2.3-5.7 2.3H48v352h352V350.5c0-2.1.8-4.1 2.3-5.6zm156.6-201.8L296.3 405.7l-90.4 10c-26.2 2.9-48.5-19.2-45.6-45.6l10-90.4L432.9 17.1c22.9-22.9 59.9-22.9 82.7 0l43.2 43.2c22.9 22.9 22.9 60 .1 82.8zM460.1 174L402 115.9 216.2 301.8l-7.3 65.3 65.3-7.3L460.1 174zm64.8-79.7l-43.2-43.2c-4.1-4.1-10.8-4.1-14.8 0L436 82l58.1 58.1 30.9-30.9c4-4.2 4-10.8-.1-14.9z"/></svg>&nbsp;<time datetime="2023-07-10">2023-07-10</time>&nbsp;<svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;约 1569 字&nbsp;
+                    <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm0 448c-110.5 0-200-89.5-200-200S145.5 56 256 56s200 89.5 200 200-89.5 200-200 200zm61.8-104.4l-84.9-61.7c-3.1-2.3-4.9-5.9-4.9-9.7V116c0-6.6 5.4-12 12-12h32c6.6 0 12 5.4 12 12v141.7l66.8 48.6c5.4 3.9 6.5 11.4 2.6 16.8L334.6 349c-3.9 5.3-11.4 6.5-16.8 2.6z"/></svg>&nbsp;预计阅读 7 分钟&nbsp;</div>
+        </div><div class="details toc print:!tw-block" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span class="details-icon"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M224.3 273l-136 136c-9.4 9.4-24.6 9.4-33.9 0l-22.6-22.6c-9.4-9.4-9.4-24.6 0-33.9l96.4-96.4-96.4-96.4c-9.4-9.4-9.4-24.6 0-33.9L54.3 103c9.4-9.4 24.6-9.4 33.9 0l136 136c9.5 9.4 9.5 24.6.1 34z"/></svg></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#下载镜像">下载镜像</a></li>
+    <li><a href="#安装-centos-79">安装 CentOS 7.9</a></li>
+    <li><a href="#网络配置">网络配置</a></li>
+    <li><a href="#ifconfig-command-not-found">ifconfig command not found</a></li>
+    <li><a href="#修改网卡为-eth0">修改网卡为 eth0</a></li>
+    <li><a href="#设置静态-ip">设置静态 IP</a>
+      <ul>
+        <li><a href="#设置">设置</a></li>
+        <li><a href="#访问测试">访问测试</a></li>
+        <li><a href="#物理机测试">物理机测试</a></li>
+        <li><a href="#虚拟机测试">虚拟机测试</a></li>
+        <li><a href="#说明">说明</a></li>
+      </ul>
+    </li>
+    <li><a href="#faq">FAQ</a></li>
+    <li><a href="#参考">参考</a></li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content" data-pagefind-body><!-- author： xiaobinqt -->
+<!-- email： xiaobinqt@163.com -->
+<!-- https://xiaobinqt.github.io -->
+<!-- https://www.xiaobinqt.cn -->
+<h2 id="下载镜像" class="headerLink">
+    <a href="#%e4%b8%8b%e8%bd%bd%e9%95%9c%e5%83%8f" class="header-mark"></a>1 下载镜像</h2><p>在 CentOS 的官网 <a href="https://wiki.centos.org/Download" target="_blank" rel="noopener noreferrer">https://wiki.centos.org/Download</a> 可以下载 CentOS 各个版本的镜像文件。</p>
+<p><figure><a class="lightgallery" href="/b74714e1b8a14d97898350923f9bdc9a_11945973597694268130.png" title="CentOS Download" data-thumbnail="/b74714e1b8a14d97898350923f9bdc9a_11945973597694268130.png" data-sub-html="<h2>CentOS Download</h2><p>CentOS Download</p>"><img  loading="lazy" src='/b74714e1b8a14d97898350923f9bdc9a_11945973597694268130.png' srcset="/b74714e1b8a14d97898350923f9bdc9a_11945973597694268130_hu_95a3cbf3493b0477.webp 800w, /b74714e1b8a14d97898350923f9bdc9a_11945973597694268130_hu_ec9cb2820d86b880.webp 1200w, /b74714e1b8a14d97898350923f9bdc9a_11945973597694268130_hu_310b2e62a5d8f075.webp 1600w"  alt="CentOS Download" height="549" width="1218"></a><figcaption class="image-caption">CentOS Download</figcaption>
+</figure></p>
+<p>包括已经不在维护的各个版本：</p>
+<p><figure><a class="lightgallery" href="/ec976869da494f84bf74d765ed21b59c_3174742902856691023.png" title="Archived Versions" data-thumbnail="/ec976869da494f84bf74d765ed21b59c_3174742902856691023.png" data-sub-html="<h2>Archived Versions</h2><p>Archived Versions</p>"><img  loading="lazy" src='/ec976869da494f84bf74d765ed21b59c_3174742902856691023.png' srcset="/ec976869da494f84bf74d765ed21b59c_3174742902856691023_hu_64c899e70decf84f.webp 800w, /ec976869da494f84bf74d765ed21b59c_3174742902856691023_hu_58629dfeab50942f.webp 1200w, /ec976869da494f84bf74d765ed21b59c_3174742902856691023_hu_17dc89fa8f39322a.webp 1600w"  alt="Archived Versions" height="777" width="531"></a><figcaption class="image-caption">Archived Versions</figcaption>
+</figure></p>
+<p>也可以去阿里的镜像仓库去下载 <a href="https://mirrors.aliyun.com/centos/" target="_blank" rel="noopener noreferrer">mirrors.aliyun.com/centos</a>。</p>
+<h2 id="安装-centos-79" class="headerLink">
+    <a href="#%e5%ae%89%e8%a3%85-centos-79" class="header-mark"></a>2 安装 CentOS 7.9</h2><p>下载完 <a href="https://mirrors.aliyun.com/centos/7.9.2009/isos/x86_64/" target="_blank" rel="noopener noreferrer">CentOS-7-x86_64-Minimal-2009</a> 就可以安装了，这里用的是 Minimal 版本，安装完成后，系统中只有最基本的组件，方便学习。</p>
+<p><figure><a class="lightgallery" href="/b3e26ed50cd849c4acb1fd03eda92705_50821103568510351.png" title="新建虚拟机" data-thumbnail="/b3e26ed50cd849c4acb1fd03eda92705_50821103568510351.png" data-sub-html="<h2>新建虚拟机</h2><p>新建虚拟机</p>"><img  loading="lazy" src='/b3e26ed50cd849c4acb1fd03eda92705_50821103568510351.png' srcset="/b3e26ed50cd849c4acb1fd03eda92705_50821103568510351_hu_d351cfc9a1b0d92c.webp 800w, /b3e26ed50cd849c4acb1fd03eda92705_50821103568510351_hu_6fbc6e750aede803.webp 1200w, /b3e26ed50cd849c4acb1fd03eda92705_50821103568510351_hu_6d7705b382393d18.webp 1600w"  alt="新建虚拟机" height="313" width="454"></a><figcaption class="image-caption">新建虚拟机</figcaption>
+</figure></p>
+<p><figure><a class="lightgallery" href="/8a9a3656b1f14461847da9924c730acb_338324708582887689.png" title="典型配置" data-thumbnail="/8a9a3656b1f14461847da9924c730acb_338324708582887689.png" data-sub-html="<h2>典型配置</h2><p>典型配置</p>"><img  loading="lazy" src='/8a9a3656b1f14461847da9924c730acb_338324708582887689.png' srcset="/8a9a3656b1f14461847da9924c730acb_338324708582887689_hu_b9e8f9a012974942.webp 800w, /8a9a3656b1f14461847da9924c730acb_338324708582887689_hu_2aa5a7bfb8029603.webp 1200w, /8a9a3656b1f14461847da9924c730acb_338324708582887689_hu_912161e7c2e69b08.webp 1600w"  alt="典型配置" height="455" width="566"></a><figcaption class="image-caption">典型配置</figcaption>
+</figure></p>
+<p><figure><a class="lightgallery" href="/f31b7d2ae48548d9b9273829a75fc4d6_9554681218619755423.png" title="选择 ios 文件" data-thumbnail="/f31b7d2ae48548d9b9273829a75fc4d6_9554681218619755423.png" data-sub-html="<h2>选择 ios 文件</h2><p>选择 ios 文件</p>"><img  loading="lazy" src='/f31b7d2ae48548d9b9273829a75fc4d6_9554681218619755423.png' srcset="/f31b7d2ae48548d9b9273829a75fc4d6_9554681218619755423_hu_c0142c74a5d5055a.webp 800w, /f31b7d2ae48548d9b9273829a75fc4d6_9554681218619755423_hu_9f05aee77ac2123e.webp 1200w, /f31b7d2ae48548d9b9273829a75fc4d6_9554681218619755423_hu_60d6e1ca6b2f5faa.webp 1600w"  alt="选择 ios 文件" height="493" width="603"></a><figcaption class="image-caption">选择 ios 文件</figcaption>
+</figure></p>
+<p>命名虚拟机并选择系统文件保存路径：</p>
+<p><figure><a class="lightgallery" href="/ba19b8c62ee94986985291c00dd5a88c_15540594642347301652.png" title="命名虚拟机" data-thumbnail="/ba19b8c62ee94986985291c00dd5a88c_15540594642347301652.png" data-sub-html="<h2>命名虚拟机</h2><p>命名虚拟机</p>"><img  loading="lazy" src='/ba19b8c62ee94986985291c00dd5a88c_15540594642347301652.png' srcset="/ba19b8c62ee94986985291c00dd5a88c_15540594642347301652_hu_82b0bdf5257e976c.webp 800w, /ba19b8c62ee94986985291c00dd5a88c_15540594642347301652_hu_260d52b756b73b9c.webp 1200w, /ba19b8c62ee94986985291c00dd5a88c_15540594642347301652_hu_9bffb765db773b60.webp 1600w"  alt="命名虚拟机" height="463" width="607"></a><figcaption class="image-caption">命名虚拟机</figcaption>
+</figure></p>
+<blockquote>
+  <p>如果物理机支持大与 4GB 以上的单文件，可以选择“将虚拟磁盘存储为单个文件”</p>
+</blockquote><p><figure><a class="lightgallery" href="/72fc8ae20afe4887809079325a562115_17686849698766188594.png" title="指定磁盘容量" data-thumbnail="/72fc8ae20afe4887809079325a562115_17686849698766188594.png" data-sub-html="<h2>指定磁盘容量</h2><p>指定磁盘容量</p>"><img  loading="lazy" src='/72fc8ae20afe4887809079325a562115_17686849698766188594.png' srcset="/72fc8ae20afe4887809079325a562115_17686849698766188594_hu_d83493d99771fa7b.webp 800w, /72fc8ae20afe4887809079325a562115_17686849698766188594_hu_fe2a248738644d7a.webp 1200w, /72fc8ae20afe4887809079325a562115_17686849698766188594_hu_9980618d492e8cb7.webp 1600w"  alt="指定磁盘容量" height="449" width="548"></a><figcaption class="image-caption">指定磁盘容量</figcaption>
+</figure></p>
+<p><figure><a class="lightgallery" href="/439029d3f584484582121b347112eaa0_16473151431630699395.png" title="自定义硬件" data-thumbnail="/439029d3f584484582121b347112eaa0_16473151431630699395.png" data-sub-html="<h2>自定义硬件</h2><p>自定义硬件</p>"><img  loading="lazy" src='/439029d3f584484582121b347112eaa0_16473151431630699395.png' srcset="/439029d3f584484582121b347112eaa0_16473151431630699395_hu_27f904e2a47451d7.webp 800w, /439029d3f584484582121b347112eaa0_16473151431630699395_hu_5f800a70e4e79ff0.webp 1200w, /439029d3f584484582121b347112eaa0_16473151431630699395_hu_614921642edc5d37.webp 1600w"  alt="自定义硬件" height="452" width="576"></a><figcaption class="image-caption">自定义硬件</figcaption>
+</figure></p>
+<p>由于服务器用不到声卡，USB 控制器，打印机这些设备，可以将这些设备移除：</p>
+<p><figure><a class="lightgallery" href="/c13f3ed6b3d5458fbf9c9a676894eb43_9585490776146172983.png" title="移除硬件" data-thumbnail="/c13f3ed6b3d5458fbf9c9a676894eb43_9585490776146172983.png" data-sub-html="<h2>移除硬件</h2><p>移除硬件</p>"><img  loading="lazy" src='/c13f3ed6b3d5458fbf9c9a676894eb43_9585490776146172983.png' srcset="/c13f3ed6b3d5458fbf9c9a676894eb43_9585490776146172983_hu_4b5993eaafc5f15c.webp 800w, /c13f3ed6b3d5458fbf9c9a676894eb43_9585490776146172983_hu_c3954ec810e14c9c.webp 1200w, /c13f3ed6b3d5458fbf9c9a676894eb43_9585490776146172983_hu_73795591679b1048.webp 1600w"  alt="移除硬件" height="803" width="759"></a><figcaption class="image-caption">移除硬件</figcaption>
+</figure></p>
+<p><figure><a class="lightgallery" href="/15df2863d25b49d7a76ec9bdc6b617b9_9099032712565281199.png" title="移除后的硬件" data-thumbnail="/15df2863d25b49d7a76ec9bdc6b617b9_9099032712565281199.png" data-sub-html="<h2>移除后的硬件</h2><p>移除后的硬件</p>"><img  loading="lazy" src='/15df2863d25b49d7a76ec9bdc6b617b9_9099032712565281199.png' srcset="/15df2863d25b49d7a76ec9bdc6b617b9_9099032712565281199_hu_3ba71ef6c51d661d.webp 800w, /15df2863d25b49d7a76ec9bdc6b617b9_9099032712565281199_hu_9bbe6df5b9289ab5.webp 1200w, /15df2863d25b49d7a76ec9bdc6b617b9_9099032712565281199_hu_d729875e42d34d8e.webp 1600w"  alt="移除后的硬件" height="784" width="740"></a><figcaption class="image-caption">移除后的硬件</figcaption>
+</figure></p>
+<p>可以<strong>不用</strong>勾选「创建后开启此虚拟机选项」：</p>
+<p><figure><a class="lightgallery" href="/d5663f41d9ee4c25a9d842ee42d92d17_9806032564469740857.png" title="完成" data-thumbnail="/d5663f41d9ee4c25a9d842ee42d92d17_9806032564469740857.png" data-sub-html="<h2>完成</h2><p>完成</p>"><img  loading="lazy" src='/d5663f41d9ee4c25a9d842ee42d92d17_9806032564469740857.png' srcset="/d5663f41d9ee4c25a9d842ee42d92d17_9806032564469740857_hu_e368519de3672536.webp 800w, /d5663f41d9ee4c25a9d842ee42d92d17_9806032564469740857_hu_de9213e712de2b62.webp 1200w, /d5663f41d9ee4c25a9d842ee42d92d17_9806032564469740857_hu_4fc60583dd21c383.webp 1600w"  alt="完成" height="464" width="595"></a><figcaption class="image-caption">完成</figcaption>
+</figure></p>
+<p><figure><a class="lightgallery" href="/476f763d3cbc41d4839429bca8b3175e_9342530856343234768.png" title="开启虚拟机" data-thumbnail="/476f763d3cbc41d4839429bca8b3175e_9342530856343234768.png" data-sub-html="<h2>开启虚拟机</h2><p>开启虚拟机</p>"><img  loading="lazy" src='/476f763d3cbc41d4839429bca8b3175e_9342530856343234768.png' srcset="/476f763d3cbc41d4839429bca8b3175e_9342530856343234768_hu_86566fd2bd034011.webp 800w, /476f763d3cbc41d4839429bca8b3175e_9342530856343234768_hu_915617c770d5abc3.webp 1200w, /476f763d3cbc41d4839429bca8b3175e_9342530856343234768_hu_f95b3e5179f2809b.webp 1600w"  alt="开启虚拟机" height="390" width="723"></a><figcaption class="image-caption">开启虚拟机</figcaption>
+</figure></p>
+<p><figure><a class="lightgallery" href="/c9840008ce6144e5a91e17e33c03d3bf_4331140936488674457.png" title="Install CentOS7" data-thumbnail="/c9840008ce6144e5a91e17e33c03d3bf_4331140936488674457.png" data-sub-html="<h2>Install CentOS7</h2><p>Install CentOS7</p>"><img  loading="lazy" src='/c9840008ce6144e5a91e17e33c03d3bf_4331140936488674457.png' srcset="/c9840008ce6144e5a91e17e33c03d3bf_4331140936488674457_hu_ad6dca32b854f9d6.webp 800w, /c9840008ce6144e5a91e17e33c03d3bf_4331140936488674457_hu_d66addc4dfa47f5c.webp 1200w, /c9840008ce6144e5a91e17e33c03d3bf_4331140936488674457_hu_d2196775db1a8a98.webp 1600w"  alt="Install CentOS7" height="422" width="675"></a><figcaption class="image-caption">Install CentOS7</figcaption>
+</figure></p>
+<p><figure><a class="lightgallery" href="/a939c8c699a042aaa1b0cb6bdbd85b60_12986215943989674089.png" title="安装中" data-thumbnail="/a939c8c699a042aaa1b0cb6bdbd85b60_12986215943989674089.png" data-sub-html="<h2>安装中</h2><p>安装中</p>"><img  loading="lazy" src='/a939c8c699a042aaa1b0cb6bdbd85b60_12986215943989674089.png' srcset="/a939c8c699a042aaa1b0cb6bdbd85b60_12986215943989674089_hu_a9c4b8ca31ccffa7.webp 800w, /a939c8c699a042aaa1b0cb6bdbd85b60_12986215943989674089_hu_fd0ed0b5cad7c986.webp 1200w, /a939c8c699a042aaa1b0cb6bdbd85b60_12986215943989674089_hu_a9dffcc063deeb6e.webp 1600w"  alt="安装中" height="578" width="919"></a><figcaption class="image-caption">安装中</figcaption>
+</figure></p>
+<p><figure><a class="lightgallery" href="/a1e517684d1946fa9f560b4a848eaaff_2662503607069677495.png" title="选择语言" data-thumbnail="/a1e517684d1946fa9f560b4a848eaaff_2662503607069677495.png" data-sub-html="<h2>选择语言</h2><p>选择语言</p>"><img  loading="lazy" src='/a1e517684d1946fa9f560b4a848eaaff_2662503607069677495.png' srcset="/a1e517684d1946fa9f560b4a848eaaff_2662503607069677495_hu_4d3a5e627adba4ae.webp 800w, /a1e517684d1946fa9f560b4a848eaaff_2662503607069677495_hu_6e7f7cdd935c3f28.webp 1200w, /a1e517684d1946fa9f560b4a848eaaff_2662503607069677495_hu_64c0b114b88283da.webp 1600w"  alt="选择语言" height="638" width="857"></a><figcaption class="image-caption">选择语言</figcaption>
+</figure></p>
+<p>点击 INSTALLATION DESTINATION</p>
+<p><figure><a class="lightgallery" href="/f78e0f23022749eb88895182d245375f_14227434105189078041.png" title="INSTALLATION DESTINATION" data-thumbnail="/f78e0f23022749eb88895182d245375f_14227434105189078041.png" data-sub-html="<h2>INSTALLATION DESTINATION</h2><p>INSTALLATION DESTINATION</p>"><img  loading="lazy" src='/f78e0f23022749eb88895182d245375f_14227434105189078041.png' srcset="/f78e0f23022749eb88895182d245375f_14227434105189078041_hu_1a297043a797104f.webp 800w, /f78e0f23022749eb88895182d245375f_14227434105189078041_hu_9ff82bc8fd41469b.webp 1200w, /f78e0f23022749eb88895182d245375f_14227434105189078041_hu_b08ab2fdf29f159a.webp 1600w"  alt="INSTALLATION DESTINATION" height="606" width="808"></a><figcaption class="image-caption">INSTALLATION DESTINATION</figcaption>
+</figure></p>
+<p>INSTALLATION DESTINATION 默认值不用改，直接点 Done</p>
+<p><figure><a class="lightgallery" href="/0f3fef4c733c499eb1f6690d1421280b_13785774756019156940.png" title="INSTALLATION DESTINATION Done" data-thumbnail="/0f3fef4c733c499eb1f6690d1421280b_13785774756019156940.png" data-sub-html="<h2>INSTALLATION DESTINATION Done</h2><p>INSTALLATION DESTINATION Done</p>"><img  loading="lazy" src='/0f3fef4c733c499eb1f6690d1421280b_13785774756019156940.png' srcset="/0f3fef4c733c499eb1f6690d1421280b_13785774756019156940_hu_fabc5cdc5f6f2619.webp 800w, /0f3fef4c733c499eb1f6690d1421280b_13785774756019156940_hu_884dcd12a91b7e52.webp 1200w, /0f3fef4c733c499eb1f6690d1421280b_13785774756019156940_hu_f179e7b4b6b3e5b1.webp 1600w"  alt="INSTALLATION DESTINATION Done" height="604" width="804"></a><figcaption class="image-caption">INSTALLATION DESTINATION Done</figcaption>
+</figure></p>
+<p><figure><a class="lightgallery" href="/a9563032d90c46f0aaf001b848b486b7_8119372507465926752.png" title="Begin Installation" data-thumbnail="/a9563032d90c46f0aaf001b848b486b7_8119372507465926752.png" data-sub-html="<h2>Begin Installation</h2><p>Begin Installation</p>"><img  loading="lazy" src='/a9563032d90c46f0aaf001b848b486b7_8119372507465926752.png' srcset="/a9563032d90c46f0aaf001b848b486b7_8119372507465926752_hu_e45196ea6c893d20.webp 800w, /a9563032d90c46f0aaf001b848b486b7_8119372507465926752_hu_af0bd585fa2afc91.webp 1200w, /a9563032d90c46f0aaf001b848b486b7_8119372507465926752_hu_79a3d5dbe8fb3836.webp 1600w"  alt="Begin Installation" height="597" width="818"></a><figcaption class="image-caption">Begin Installation</figcaption>
+</figure></p>
+<p>如果想要创建带桌面的虚拟机，可以在 SOFTWARE SELECTION 中选择 GNOME Desktop：</p>
+<p><figure><a class="lightgallery" href="/fad64195e6e64249a5a26bad0fb928c7_1739391172832773827.png" title="" data-thumbnail="/fad64195e6e64249a5a26bad0fb928c7_1739391172832773827.png" data-sub-html="<h2>GNOME Desktop</h2>"><img  loading="lazy" src='/fad64195e6e64249a5a26bad0fb928c7_1739391172832773827.png' srcset="/fad64195e6e64249a5a26bad0fb928c7_1739391172832773827_hu_d81b56c6d14d3606.webp 800w, /fad64195e6e64249a5a26bad0fb928c7_1739391172832773827_hu_e87eaf8a4d973aa5.webp 1200w, /fad64195e6e64249a5a26bad0fb928c7_1739391172832773827_hu_da2f882f26ffd3a7.webp 1600w"   height="611" width="826"></a><figcaption class="image-caption">GNOME Desktop</figcaption>
+</figure></p>
+<p>设置 ROOT 密码和创建用户</p>
+<p><figure><a class="lightgallery" href="/3352639ce0dd4648b3dcebf1b2bc69dd_259983612275083939.png" title="设置 ROOT 密码和创建用户" data-thumbnail="/3352639ce0dd4648b3dcebf1b2bc69dd_259983612275083939.png" data-sub-html="<h2>设置 ROOT 密码和创建用户</h2><p>设置 ROOT 密码和创建用户</p>"><img  loading="lazy" src='/3352639ce0dd4648b3dcebf1b2bc69dd_259983612275083939.png' srcset="/3352639ce0dd4648b3dcebf1b2bc69dd_259983612275083939_hu_1e9778761898e9fa.webp 800w, /3352639ce0dd4648b3dcebf1b2bc69dd_259983612275083939_hu_cee0530cab1f4e04.webp 1200w, /3352639ce0dd4648b3dcebf1b2bc69dd_259983612275083939_hu_fe4b19e2b8dac863.webp 1600w"  alt="设置 ROOT 密码和创建用户" height="604" width="807"></a><figcaption class="image-caption">设置 ROOT 密码和创建用户</figcaption>
+</figure></p>
+<p><figure><a class="lightgallery" href="/066889c865c44947bde9387c1e5187a1_17189802483101665749.png" title="创建用户" data-thumbnail="/066889c865c44947bde9387c1e5187a1_17189802483101665749.png" data-sub-html="<h2>创建用户</h2><p>创建用户</p>"><img  loading="lazy" src='/066889c865c44947bde9387c1e5187a1_17189802483101665749.png' srcset="/066889c865c44947bde9387c1e5187a1_17189802483101665749_hu_7a00dd071b2e24e.webp 800w, /066889c865c44947bde9387c1e5187a1_17189802483101665749_hu_f792b826d8d38d65.webp 1200w, /066889c865c44947bde9387c1e5187a1_17189802483101665749_hu_b13739ef03959169.webp 1600w"  alt="创建用户" height="607" width="811"></a><figcaption class="image-caption">创建用户</figcaption>
+</figure></p>
+<p>等待安装任务</p>
+<p><figure><a class="lightgallery" href="/d411484eb47847dfb51dd5c24ef58de8_14880220177686741561.png" title="等待安装任务" data-thumbnail="/d411484eb47847dfb51dd5c24ef58de8_14880220177686741561.png" data-sub-html="<h2>等待安装任务</h2><p>等待安装任务</p>"><img  loading="lazy" src='/d411484eb47847dfb51dd5c24ef58de8_14880220177686741561.png' srcset="/d411484eb47847dfb51dd5c24ef58de8_14880220177686741561_hu_680ee3b542ff716e.webp 800w, /d411484eb47847dfb51dd5c24ef58de8_14880220177686741561_hu_9c5c948928038ef0.webp 1200w, /d411484eb47847dfb51dd5c24ef58de8_14880220177686741561_hu_43cc8cda9d95f055.webp 1600w"  alt="等待安装任务" height="607" width="805"></a><figcaption class="image-caption">等待安装任务</figcaption>
+</figure></p>
+<p><figure><a class="lightgallery" href="/154217e8813f421fbb8649a3816d1c79_15050628817881733949.png" title="安装任务完成重启" data-thumbnail="/154217e8813f421fbb8649a3816d1c79_15050628817881733949.png" data-sub-html="<h2>安装任务完成重启</h2><p>安装任务完成重启</p>"><img  loading="lazy" src='/154217e8813f421fbb8649a3816d1c79_15050628817881733949.png' srcset="/154217e8813f421fbb8649a3816d1c79_15050628817881733949_hu_dd20d1672b647975.webp 800w, /154217e8813f421fbb8649a3816d1c79_15050628817881733949_hu_e61d179f404c1396.webp 1200w, /154217e8813f421fbb8649a3816d1c79_15050628817881733949_hu_9c63140e7df26c31.webp 1600w"  alt="安装任务完成重启" height="606" width="811"></a><figcaption class="image-caption">安装任务完成重启</figcaption>
+</figure></p>
+<p>重启完成登录</p>
+<p><figure><a class="lightgallery" href="/3585320091a1411586204f12701ccd94_7871982639227192805.png" title="root Login" data-thumbnail="/3585320091a1411586204f12701ccd94_7871982639227192805.png" data-sub-html="<h2>root Login</h2><p>root Login</p>"><img  loading="lazy" src='/3585320091a1411586204f12701ccd94_7871982639227192805.png' srcset="/3585320091a1411586204f12701ccd94_7871982639227192805_hu_be378efe46d3812e.webp 800w, /3585320091a1411586204f12701ccd94_7871982639227192805_hu_41e4e2d3f565ba23.webp 1200w, /3585320091a1411586204f12701ccd94_7871982639227192805_hu_80a902d3d2a379f1.webp 1600w"  alt="root Login" height="147" width="456"></a><figcaption class="image-caption">root Login</figcaption>
+</figure></p>
+<h2 id="网络配置" class="headerLink">
+    <a href="#%e7%bd%91%e7%bb%9c%e9%85%8d%e7%bd%ae" class="header-mark"></a>3 网络配置</h2><p>一般新装的<strong>最小化</strong>的 CentOS 7.x 系统是没有网络配置的，而安装命令就是联网下载软件，所以网络配置是必须的。</p>
+<p><figure><a class="lightgallery" href="/3a7a989e2f68499e853cc206c3eb9a13_9346854121073395864.png" title="ping" data-thumbnail="/3a7a989e2f68499e853cc206c3eb9a13_9346854121073395864.png" data-sub-html="<h2>ping</h2><p>ping</p>"><img  loading="lazy" src='/3a7a989e2f68499e853cc206c3eb9a13_9346854121073395864.png' srcset="/3a7a989e2f68499e853cc206c3eb9a13_9346854121073395864_hu_20e60a18cee10a85.webp 800w, /3a7a989e2f68499e853cc206c3eb9a13_9346854121073395864_hu_994732a439737b38.webp 1200w, /3a7a989e2f68499e853cc206c3eb9a13_9346854121073395864_hu_cdffa8e3906e2b89.webp 1600w"  alt="ping" height="101" width="478"></a><figcaption class="image-caption">ping</figcaption>
+</figure></p>
+<p>CentOS 7.x 的默认网卡是 essxx，我们可以在配置文件 <code>/etc/syconfig/network-scripts</code> 中看到：</p>
+<p><figure><a class="lightgallery" href="/b09768d8763041f0bcefe58d5dbea5c6_13095687616985276089.png" title="network-scripts" data-thumbnail="/b09768d8763041f0bcefe58d5dbea5c6_13095687616985276089.png" data-sub-html="<h2>network-scripts</h2><p>network-scripts</p>"><img  loading="lazy" src='/b09768d8763041f0bcefe58d5dbea5c6_13095687616985276089.png' srcset="/b09768d8763041f0bcefe58d5dbea5c6_13095687616985276089_hu_6a0708bf78e944d4.webp 800w, /b09768d8763041f0bcefe58d5dbea5c6_13095687616985276089_hu_92cd6bba5eab1494.webp 1200w, /b09768d8763041f0bcefe58d5dbea5c6_13095687616985276089_hu_263e24b6b7558ab2.webp 1600w"  alt="network-scripts" height="190" width="868"></a><figcaption class="image-caption">network-scripts</figcaption>
+</figure></p>
+<p>可以先把 ifcfg-ensxx 这个文件<strong>备份下</strong>，然后修改 <code>onboot</code> 参数从 no 修改为 yes ，保存，重启机器。</p>
+<p><figure><a class="lightgallery" href="/62dffe2555ef424e8f0009b9c3bc7be8_16615378666398929287.png" title="update onboot" data-thumbnail="/62dffe2555ef424e8f0009b9c3bc7be8_16615378666398929287.png" data-sub-html="<h2>update onboot</h2><p>update onboot</p>"><img  loading="lazy" src='/62dffe2555ef424e8f0009b9c3bc7be8_16615378666398929287.png' srcset="/62dffe2555ef424e8f0009b9c3bc7be8_16615378666398929287_hu_63c1ba0ac2cf29f0.webp 800w, /62dffe2555ef424e8f0009b9c3bc7be8_16615378666398929287_hu_51da0190a72955e4.webp 1200w, /62dffe2555ef424e8f0009b9c3bc7be8_16615378666398929287_hu_1722091d8f731f87.webp 1600w"  alt="update onboot" height="298" width="556"></a><figcaption class="image-caption">update onboot</figcaption>
+</figure></p>
+<p>重启完后就可以 ping 通网络了：</p>
+<p><figure><a class="lightgallery" href="/5db4c9b9390f4617b8ca1a3e900ffa3f_13855157036083070114.png" title="ping 2" data-thumbnail="/5db4c9b9390f4617b8ca1a3e900ffa3f_13855157036083070114.png" data-sub-html="<h2>ping 2</h2><p>ping 2</p>"><img  loading="lazy" src='/5db4c9b9390f4617b8ca1a3e900ffa3f_13855157036083070114.png' srcset="/5db4c9b9390f4617b8ca1a3e900ffa3f_13855157036083070114_hu_4cc48ac786851fa4.webp 800w, /5db4c9b9390f4617b8ca1a3e900ffa3f_13855157036083070114_hu_2efa01679b955bb3.webp 1200w, /5db4c9b9390f4617b8ca1a3e900ffa3f_13855157036083070114_hu_1b2d30319962ecc4.webp 1600w"  alt="ping 2" height="312" width="720"></a><figcaption class="image-caption">ping 2</figcaption>
+</figure></p>
+<h2 id="ifconfig-command-not-found" class="headerLink">
+    <a href="#ifconfig-command-not-found" class="header-mark"></a>4 ifconfig command not found</h2><p>安装 net-tools 工具</p>
+<div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
+  <div class="
+    
+    tw-flex 
+    tw-flex-row
+    tw-flex-1 
+    tw-justify-between 
+    tw-w-full tw-bg-bgColor-secondary
+    ">      
+    <button 
+      class="
+        code-block-button
+        tw-mx-2 
+        tw-flex
+        tw-flex-row
+        tw-flex-1"
+      aria-hidden="true">
+          <div class="group-[.is-open]:tw-rotate-90 tw-transition-[transform] tw-duration-500 tw-ease-in-out print:!tw-hidden tw-w-min tw-h-min tw-my-1 tw-mx-1"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"/></svg></div>
+          <p class="tw-select-none !tw-my-1">shell</p>
+      </button>
+
+   <div class="tw-flex">
+      <button 
+        class="
+          line-number-button
+          tw-mx-2 
+          tw-hidden 
+          group-[.is-open]:tw-block 
+          group-[.show-line-numbers]:tw-text-fgColor-link 
+          print:!tw-hidden" 
+        title="Toggle line numbers"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M61.77 401l17.5-20.15a19.92 19.92 0 0 0 5.07-14.19v-3.31C84.34 356 80.5 352 73 352H16a8 8 0 0 0-8 8v16a8 8 0 0 0 8 8h22.83a157.41 157.41 0 0 0-11 12.31l-5.61 7c-4 5.07-5.25 10.13-2.8 14.88l1.05 1.93c3 5.76 6.29 7.88 12.25 7.88h4.73c10.33 0 15.94 2.44 15.94 9.09 0 4.72-4.2 8.22-14.36 8.22a41.54 41.54 0 0 1-15.47-3.12c-6.49-3.88-11.74-3.5-15.6 3.12l-5.59 9.31c-3.72 6.13-3.19 11.72 2.63 15.94 7.71 4.69 20.38 9.44 37 9.44 34.16 0 48.5-22.75 48.5-44.12-.03-14.38-9.12-29.76-28.73-34.88zM496 224H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zm0-160H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16V80a16 16 0 0 0-16-16zm0 320H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zM16 160h64a8 8 0 0 0 8-8v-16a8 8 0 0 0-8-8H64V40a8 8 0 0 0-8-8H32a8 8 0 0 0-7.14 4.42l-8 16A8 8 0 0 0 24 64h8v64H16a8 8 0 0 0-8 8v16a8 8 0 0 0 8 8zm-3.91 160H80a8 8 0 0 0 8-8v-16a8 8 0 0 0-8-8H41.32c3.29-10.29 48.34-18.68 48.34-56.44 0-29.06-25-39.56-44.47-39.56-21.36 0-33.8 10-40.46 18.75-4.37 5.59-3 10.84 2.8 15.37l8.58 6.88c5.61 4.56 11 2.47 16.12-2.44a13.44 13.44 0 0 1 9.46-3.84c3.33 0 9.28 1.56 9.28 8.75C51 248.19 0 257.31 0 304.59v4C0 316 5.08 320 12.09 320z"/></svg></button>
+
+      <button 
+        class="
+          wrap-code-button
+          tw-select-none 
+          tw-mx-2 
+          tw-hidden 
+          group-[.is-open]:tw-block 
+          group-[.is-wrap]:tw-text-fgColor-link 
+          print:!tw-hidden" 
+        title="Toggle code wrap"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"/></svg></button>
+      
+      <button 
+        class="
+          copy-code-button
+          tw-select-none
+          tw-mx-2 
+          tw-hidden
+          group-[.is-open]:tw-block
+          hover:tw-text-fgColor-link 
+          print:!tw-hidden"
+        title="Copy code">
+          <span class="copy-icon tw-block"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M433.941 65.941l-51.882-51.882A48 48 0 0 0 348.118 0H176c-26.51 0-48 21.49-48 48v48H48c-26.51 0-48 21.49-48 48v320c0 26.51 21.49 48 48 48h224c26.51 0 48-21.49 48-48v-48h80c26.51 0 48-21.49 48-48V99.882a48 48 0 0 0-14.059-33.941zM266 464H54a6 6 0 0 1-6-6V150a6 6 0 0 1 6-6h74v224c0 26.51 21.49 48 48 48h96v42a6 6 0 0 1-6 6zm128-96H182a6 6 0 0 1-6-6V54a6 6 0 0 1 6-6h106v88c0 13.255 10.745 24 24 24h88v202a6 6 0 0 1-6 6zm6-256h-64V48h9.632c1.591 0 3.117.632 4.243 1.757l48.368 48.368a6 6 0 0 1 1.757 4.243V112z"/></svg></span>
+          <span class="check-icon tw-hidden"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z"/></svg></span>
+      </button>
+        
+      <button 
+        class="
+          tw-select-none 
+          tw-mx-2 
+          tw-block 
+          group-[.is-open]:tw-hidden 
+          print:!tw-hidden" 
+        disabled
+        aria-hidden="true"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M328 256c0 39.8-32.2 72-72 72s-72-32.2-72-72 32.2-72 72-72 72 32.2 72 72zm104-72c-39.8 0-72 32.2-72 72s32.2 72 72 72 72-32.2 72-72-32.2-72-72-72zm-352 0c-39.8 0-72 32.2-72 72s32.2 72 72 72 72-32.2 72-72-32.2-72-72-72z"/></svg></button>
+    </div>
+  </div>
+  <pre style="counter-reset: codeblock;" class="tw-block tw-m-0 tw-p-0"><code 
+    id="codeblock-id-1" 
+    class="
+      chroma 
+      !tw-block 
+      tw-p-0
+      tw-m-0
+      tw-transition-[max-height] 
+      tw-duration-500 
+      tw-ease-in-out 
+      group-[.is-closed]:!tw-max-h-0 
+      group-[.is-wrap]:tw-text-wrap
+      tw-overflow-y-hidden
+      tw-overflow-x-auto
+      tw-scrollbar-thin
+      "><span class="line"><span class="cl">yum install -y net-tools</span></span></code></pre>
+</div>
+<p><figure><a class="lightgallery" href="/d77b3da7989f4020b5d9a7ee9574e719_6764033169638916058.png" title="net-tools install" data-thumbnail="/d77b3da7989f4020b5d9a7ee9574e719_6764033169638916058.png" data-sub-html="<h2>net-tools install</h2><p>net-tools install</p>"><img  loading="lazy" src='/d77b3da7989f4020b5d9a7ee9574e719_6764033169638916058.png' srcset="/d77b3da7989f4020b5d9a7ee9574e719_6764033169638916058_hu_d32b90ce966e4b89.webp 800w, /d77b3da7989f4020b5d9a7ee9574e719_6764033169638916058_hu_10681acfe84d1bdb.webp 1200w, /d77b3da7989f4020b5d9a7ee9574e719_6764033169638916058_hu_9d6a1d3aa7ad3d57.webp 1600w"  alt="net-tools install" height="629" width="869"></a><figcaption class="image-caption">net-tools install</figcaption>
+</figure></p>
+<p><figure><a class="lightgallery" href="/3e3b4820d5ac4ce0b5883f0be3e547e1_11924256174473721098.png" title="ifconfig" data-thumbnail="/3e3b4820d5ac4ce0b5883f0be3e547e1_11924256174473721098.png" data-sub-html="<h2>ifconfig</h2><p>ifconfig</p>"><img  loading="lazy" src='/3e3b4820d5ac4ce0b5883f0be3e547e1_11924256174473721098.png' srcset="/3e3b4820d5ac4ce0b5883f0be3e547e1_11924256174473721098_hu_d73f178164a83ddc.webp 800w, /3e3b4820d5ac4ce0b5883f0be3e547e1_11924256174473721098_hu_f693d81488a5b63a.webp 1200w, /3e3b4820d5ac4ce0b5883f0be3e547e1_11924256174473721098_hu_8c634548896bbdf5.webp 1600w"  alt="ifconfig" height="384" width="680"></a><figcaption class="image-caption">ifconfig</figcaption>
+</figure></p>
+<h2 id="修改网卡为-eth0" class="headerLink">
+    <a href="#%e4%bf%ae%e6%94%b9%e7%bd%91%e5%8d%a1%e4%b8%ba-eth0" class="header-mark"></a>5 修改网卡为 eth0</h2><p>CentOS 7.x 的网卡不是 eth0 而是 ensxx，这是 CentOS 7.x 的一致性网络设备命名导致的，可以使用以下方式，将网卡名称回到 eth0 格式。</p>
+<p><figure><a class="lightgallery" href="/031a5551677449d8a3e83f3dc02a3562_6649981294315285449.png" title="ensxx" data-thumbnail="/031a5551677449d8a3e83f3dc02a3562_6649981294315285449.png" data-sub-html="<h2>ensxx</h2><p>ensxx</p>"><img  loading="lazy" src='/031a5551677449d8a3e83f3dc02a3562_6649981294315285449.png' srcset="/031a5551677449d8a3e83f3dc02a3562_6649981294315285449_hu_f8bb990824a6e46c.webp 800w, /031a5551677449d8a3e83f3dc02a3562_6649981294315285449_hu_93cbd8669f76b3be.webp 1200w, /031a5551677449d8a3e83f3dc02a3562_6649981294315285449_hu_7e15811678ea6e7e.webp 1600w"  alt="ensxx" height="387" width="795"></a><figcaption class="image-caption">ensxx</figcaption>
+</figure></p>
+<p>修改配置</p>
+<div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
+  <div class="
+    
+    tw-flex 
+    tw-flex-row
+    tw-flex-1 
+    tw-justify-between 
+    tw-w-full tw-bg-bgColor-secondary
+    ">      
+    <button 
+      class="
+        code-block-button
+        tw-mx-2 
+        tw-flex
+        tw-flex-row
+        tw-flex-1"
+      aria-hidden="true">
+          <div class="group-[.is-open]:tw-rotate-90 tw-transition-[transform] tw-duration-500 tw-ease-in-out print:!tw-hidden tw-w-min tw-h-min tw-my-1 tw-mx-1"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"/></svg></div>
+          <p class="tw-select-none !tw-my-1">shell</p>
+      </button>
+
+   <div class="tw-flex">
+      <button 
+        class="
+          line-number-button
+          tw-mx-2 
+          tw-hidden 
+          group-[.is-open]:tw-block 
+          group-[.show-line-numbers]:tw-text-fgColor-link 
+          print:!tw-hidden" 
+        title="Toggle line numbers"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M61.77 401l17.5-20.15a19.92 19.92 0 0 0 5.07-14.19v-3.31C84.34 356 80.5 352 73 352H16a8 8 0 0 0-8 8v16a8 8 0 0 0 8 8h22.83a157.41 157.41 0 0 0-11 12.31l-5.61 7c-4 5.07-5.25 10.13-2.8 14.88l1.05 1.93c3 5.76 6.29 7.88 12.25 7.88h4.73c10.33 0 15.94 2.44 15.94 9.09 0 4.72-4.2 8.22-14.36 8.22a41.54 41.54 0 0 1-15.47-3.12c-6.49-3.88-11.74-3.5-15.6 3.12l-5.59 9.31c-3.72 6.13-3.19 11.72 2.63 15.94 7.71 4.69 20.38 9.44 37 9.44 34.16 0 48.5-22.75 48.5-44.12-.03-14.38-9.12-29.76-28.73-34.88zM496 224H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zm0-160H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16V80a16 16 0 0 0-16-16zm0 320H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zM16 160h64a8 8 0 0 0 8-8v-16a8 8 0 0 0-8-8H64V40a8 8 0 0 0-8-8H32a8 8 0 0 0-7.14 4.42l-8 16A8 8 0 0 0 24 64h8v64H16a8 8 0 0 0-8 8v16a8 8 0 0 0 8 8zm-3.91 160H80a8 8 0 0 0 8-8v-16a8 8 0 0 0-8-8H41.32c3.29-10.29 48.34-18.68 48.34-56.44 0-29.06-25-39.56-44.47-39.56-21.36 0-33.8 10-40.46 18.75-4.37 5.59-3 10.84 2.8 15.37l8.58 6.88c5.61 4.56 11 2.47 16.12-2.44a13.44 13.44 0 0 1 9.46-3.84c3.33 0 9.28 1.56 9.28 8.75C51 248.19 0 257.31 0 304.59v4C0 316 5.08 320 12.09 320z"/></svg></button>
+
+      <button 
+        class="
+          wrap-code-button
+          tw-select-none 
+          tw-mx-2 
+          tw-hidden 
+          group-[.is-open]:tw-block 
+          group-[.is-wrap]:tw-text-fgColor-link 
+          print:!tw-hidden" 
+        title="Toggle code wrap"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"/></svg></button>
+      
+      <button 
+        class="
+          copy-code-button
+          tw-select-none
+          tw-mx-2 
+          tw-hidden
+          group-[.is-open]:tw-block
+          hover:tw-text-fgColor-link 
+          print:!tw-hidden"
+        title="Copy code">
+          <span class="copy-icon tw-block"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M433.941 65.941l-51.882-51.882A48 48 0 0 0 348.118 0H176c-26.51 0-48 21.49-48 48v48H48c-26.51 0-48 21.49-48 48v320c0 26.51 21.49 48 48 48h224c26.51 0 48-21.49 48-48v-48h80c26.51 0 48-21.49 48-48V99.882a48 48 0 0 0-14.059-33.941zM266 464H54a6 6 0 0 1-6-6V150a6 6 0 0 1 6-6h74v224c0 26.51 21.49 48 48 48h96v42a6 6 0 0 1-6 6zm128-96H182a6 6 0 0 1-6-6V54a6 6 0 0 1 6-6h106v88c0 13.255 10.745 24 24 24h88v202a6 6 0 0 1-6 6zm6-256h-64V48h9.632c1.591 0 3.117.632 4.243 1.757l48.368 48.368a6 6 0 0 1 1.757 4.243V112z"/></svg></span>
+          <span class="check-icon tw-hidden"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z"/></svg></span>
+      </button>
+        
+      <button 
+        class="
+          tw-select-none 
+          tw-mx-2 
+          tw-block 
+          group-[.is-open]:tw-hidden 
+          print:!tw-hidden" 
+        disabled
+        aria-hidden="true"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M328 256c0 39.8-32.2 72-72 72s-72-32.2-72-72 32.2-72 72-72 72 32.2 72 72zm104-72c-39.8 0-72 32.2-72 72s32.2 72 72 72 72-32.2 72-72-32.2-72-72-72zm-352 0c-39.8 0-72 32.2-72 72s32.2 72 72 72 72-32.2 72-72-32.2-72-72-72z"/></svg></button>
+    </div>
+  </div>
+  <pre style="counter-reset: codeblock;" class="tw-block tw-m-0 tw-p-0"><code 
+    id="codeblock-id-2" 
+    class="
+      chroma 
+      !tw-block 
+      tw-p-0
+      tw-m-0
+      tw-transition-[max-height] 
+      tw-duration-500 
+      tw-ease-in-out 
+      group-[.is-closed]:!tw-max-h-0 
+      group-[.is-wrap]:tw-text-wrap
+      tw-overflow-y-hidden
+      tw-overflow-x-auto
+      tw-scrollbar-thin
+      "><span class="line"><span class="cl">vim /etc/default/grub</span></span></code></pre>
+</div>
+<p>中添加</p>
+<div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
+  <div class="
+    
+    tw-flex 
+    tw-flex-row
+    tw-flex-1 
+    tw-justify-between 
+    tw-w-full tw-bg-bgColor-secondary
+    ">      
+    <button 
+      class="
+        code-block-button
+        tw-mx-2 
+        tw-flex
+        tw-flex-row
+        tw-flex-1"
+      aria-hidden="true">
+          <div class="group-[.is-open]:tw-rotate-90 tw-transition-[transform] tw-duration-500 tw-ease-in-out print:!tw-hidden tw-w-min tw-h-min tw-my-1 tw-mx-1"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"/></svg></div>
+          <p class="tw-select-none !tw-my-1">bash</p>
+      </button>
+
+   <div class="tw-flex">
+      <button 
+        class="
+          line-number-button
+          tw-mx-2 
+          tw-hidden 
+          group-[.is-open]:tw-block 
+          group-[.show-line-numbers]:tw-text-fgColor-link 
+          print:!tw-hidden" 
+        title="Toggle line numbers"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M61.77 401l17.5-20.15a19.92 19.92 0 0 0 5.07-14.19v-3.31C84.34 356 80.5 352 73 352H16a8 8 0 0 0-8 8v16a8 8 0 0 0 8 8h22.83a157.41 157.41 0 0 0-11 12.31l-5.61 7c-4 5.07-5.25 10.13-2.8 14.88l1.05 1.93c3 5.76 6.29 7.88 12.25 7.88h4.73c10.33 0 15.94 2.44 15.94 9.09 0 4.72-4.2 8.22-14.36 8.22a41.54 41.54 0 0 1-15.47-3.12c-6.49-3.88-11.74-3.5-15.6 3.12l-5.59 9.31c-3.72 6.13-3.19 11.72 2.63 15.94 7.71 4.69 20.38 9.44 37 9.44 34.16 0 48.5-22.75 48.5-44.12-.03-14.38-9.12-29.76-28.73-34.88zM496 224H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zm0-160H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16V80a16 16 0 0 0-16-16zm0 320H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zM16 160h64a8 8 0 0 0 8-8v-16a8 8 0 0 0-8-8H64V40a8 8 0 0 0-8-8H32a8 8 0 0 0-7.14 4.42l-8 16A8 8 0 0 0 24 64h8v64H16a8 8 0 0 0-8 8v16a8 8 0 0 0 8 8zm-3.91 160H80a8 8 0 0 0 8-8v-16a8 8 0 0 0-8-8H41.32c3.29-10.29 48.34-18.68 48.34-56.44 0-29.06-25-39.56-44.47-39.56-21.36 0-33.8 10-40.46 18.75-4.37 5.59-3 10.84 2.8 15.37l8.58 6.88c5.61 4.56 11 2.47 16.12-2.44a13.44 13.44 0 0 1 9.46-3.84c3.33 0 9.28 1.56 9.28 8.75C51 248.19 0 257.31 0 304.59v4C0 316 5.08 320 12.09 320z"/></svg></button>
+
+      <button 
+        class="
+          wrap-code-button
+          tw-select-none 
+          tw-mx-2 
+          tw-hidden 
+          group-[.is-open]:tw-block 
+          group-[.is-wrap]:tw-text-fgColor-link 
+          print:!tw-hidden" 
+        title="Toggle code wrap"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"/></svg></button>
+      
+      <button 
+        class="
+          copy-code-button
+          tw-select-none
+          tw-mx-2 
+          tw-hidden
+          group-[.is-open]:tw-block
+          hover:tw-text-fgColor-link 
+          print:!tw-hidden"
+        title="Copy code">
+          <span class="copy-icon tw-block"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M433.941 65.941l-51.882-51.882A48 48 0 0 0 348.118 0H176c-26.51 0-48 21.49-48 48v48H48c-26.51 0-48 21.49-48 48v320c0 26.51 21.49 48 48 48h224c26.51 0 48-21.49 48-48v-48h80c26.51 0 48-21.49 48-48V99.882a48 48 0 0 0-14.059-33.941zM266 464H54a6 6 0 0 1-6-6V150a6 6 0 0 1 6-6h74v224c0 26.51 21.49 48 48 48h96v42a6 6 0 0 1-6 6zm128-96H182a6 6 0 0 1-6-6V54a6 6 0 0 1 6-6h106v88c0 13.255 10.745 24 24 24h88v202a6 6 0 0 1-6 6zm6-256h-64V48h9.632c1.591 0 3.117.632 4.243 1.757l48.368 48.368a6 6 0 0 1 1.757 4.243V112z"/></svg></span>
+          <span class="check-icon tw-hidden"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z"/></svg></span>
+      </button>
+        
+      <button 
+        class="
+          tw-select-none 
+          tw-mx-2 
+          tw-block 
+          group-[.is-open]:tw-hidden 
+          print:!tw-hidden" 
+        disabled
+        aria-hidden="true"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M328 256c0 39.8-32.2 72-72 72s-72-32.2-72-72 32.2-72 72-72 72 32.2 72 72zm104-72c-39.8 0-72 32.2-72 72s32.2 72 72 72 72-32.2 72-72-32.2-72-72-72zm-352 0c-39.8 0-72 32.2-72 72s32.2 72 72 72 72-32.2 72-72-32.2-72-72-72z"/></svg></button>
+    </div>
+  </div>
+  <pre style="counter-reset: codeblock;" class="tw-block tw-m-0 tw-p-0"><code 
+    id="codeblock-id-3" 
+    class="
+      chroma 
+      !tw-block 
+      tw-p-0
+      tw-m-0
+      tw-transition-[max-height] 
+      tw-duration-500 
+      tw-ease-in-out 
+      group-[.is-closed]:!tw-max-h-0 
+      group-[.is-wrap]:tw-text-wrap
+      tw-overflow-y-hidden
+      tw-overflow-x-auto
+      tw-scrollbar-thin
+      "><span class="line"><span class="cl"><span class="nv">biosdevname</span><span class="o">=</span><span class="m">0</span> net.ifnames<span class="o">=</span><span class="m">0</span></span></span></code></pre>
+</div>
+<p><figure><a class="lightgallery" href="/ee2294ced6d54804ac88fe49edabd248_140934313422795127.png" title="biosdevname=0 net.ifnames=0" data-thumbnail="/ee2294ced6d54804ac88fe49edabd248_140934313422795127.png" data-sub-html="<h2>biosdevname=0 net.ifnames=0</h2><p>biosdevname=0 net.ifnames=0</p>"><img  loading="lazy" src='/ee2294ced6d54804ac88fe49edabd248_140934313422795127.png' srcset="/ee2294ced6d54804ac88fe49edabd248_140934313422795127_hu_ea6b773d52a1ead3.webp 800w, /ee2294ced6d54804ac88fe49edabd248_140934313422795127_hu_1fd8256de55cdafa.webp 1200w, /ee2294ced6d54804ac88fe49edabd248_140934313422795127_hu_76f4359a2900d4dc.webp 1600w"  alt="biosdevname=0 net.ifnames=0" height="220" width="899"></a><figcaption class="image-caption">biosdevname=0 net.ifnames=0</figcaption>
+</figure></p>
+<p>执行命令</p>
+<div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
+  <div class="
+    
+    tw-flex 
+    tw-flex-row
+    tw-flex-1 
+    tw-justify-between 
+    tw-w-full tw-bg-bgColor-secondary
+    ">      
+    <button 
+      class="
+        code-block-button
+        tw-mx-2 
+        tw-flex
+        tw-flex-row
+        tw-flex-1"
+      aria-hidden="true">
+          <div class="group-[.is-open]:tw-rotate-90 tw-transition-[transform] tw-duration-500 tw-ease-in-out print:!tw-hidden tw-w-min tw-h-min tw-my-1 tw-mx-1"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"/></svg></div>
+          <p class="tw-select-none !tw-my-1">shell</p>
+      </button>
+
+   <div class="tw-flex">
+      <button 
+        class="
+          line-number-button
+          tw-mx-2 
+          tw-hidden 
+          group-[.is-open]:tw-block 
+          group-[.show-line-numbers]:tw-text-fgColor-link 
+          print:!tw-hidden" 
+        title="Toggle line numbers"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M61.77 401l17.5-20.15a19.92 19.92 0 0 0 5.07-14.19v-3.31C84.34 356 80.5 352 73 352H16a8 8 0 0 0-8 8v16a8 8 0 0 0 8 8h22.83a157.41 157.41 0 0 0-11 12.31l-5.61 7c-4 5.07-5.25 10.13-2.8 14.88l1.05 1.93c3 5.76 6.29 7.88 12.25 7.88h4.73c10.33 0 15.94 2.44 15.94 9.09 0 4.72-4.2 8.22-14.36 8.22a41.54 41.54 0 0 1-15.47-3.12c-6.49-3.88-11.74-3.5-15.6 3.12l-5.59 9.31c-3.72 6.13-3.19 11.72 2.63 15.94 7.71 4.69 20.38 9.44 37 9.44 34.16 0 48.5-22.75 48.5-44.12-.03-14.38-9.12-29.76-28.73-34.88zM496 224H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zm0-160H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16V80a16 16 0 0 0-16-16zm0 320H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zM16 160h64a8 8 0 0 0 8-8v-16a8 8 0 0 0-8-8H64V40a8 8 0 0 0-8-8H32a8 8 0 0 0-7.14 4.42l-8 16A8 8 0 0 0 24 64h8v64H16a8 8 0 0 0-8 8v16a8 8 0 0 0 8 8zm-3.91 160H80a8 8 0 0 0 8-8v-16a8 8 0 0 0-8-8H41.32c3.29-10.29 48.34-18.68 48.34-56.44 0-29.06-25-39.56-44.47-39.56-21.36 0-33.8 10-40.46 18.75-4.37 5.59-3 10.84 2.8 15.37l8.58 6.88c5.61 4.56 11 2.47 16.12-2.44a13.44 13.44 0 0 1 9.46-3.84c3.33 0 9.28 1.56 9.28 8.75C51 248.19 0 257.31 0 304.59v4C0 316 5.08 320 12.09 320z"/></svg></button>
+
+      <button 
+        class="
+          wrap-code-button
+          tw-select-none 
+          tw-mx-2 
+          tw-hidden 
+          group-[.is-open]:tw-block 
+          group-[.is-wrap]:tw-text-fgColor-link 
+          print:!tw-hidden" 
+        title="Toggle code wrap"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"/></svg></button>
+      
+      <button 
+        class="
+          copy-code-button
+          tw-select-none
+          tw-mx-2 
+          tw-hidden
+          group-[.is-open]:tw-block
+          hover:tw-text-fgColor-link 
+          print:!tw-hidden"
+        title="Copy code">
+          <span class="copy-icon tw-block"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M433.941 65.941l-51.882-51.882A48 48 0 0 0 348.118 0H176c-26.51 0-48 21.49-48 48v48H48c-26.51 0-48 21.49-48 48v320c0 26.51 21.49 48 48 48h224c26.51 0 48-21.49 48-48v-48h80c26.51 0 48-21.49 48-48V99.882a48 48 0 0 0-14.059-33.941zM266 464H54a6 6 0 0 1-6-6V150a6 6 0 0 1 6-6h74v224c0 26.51 21.49 48 48 48h96v42a6 6 0 0 1-6 6zm128-96H182a6 6 0 0 1-6-6V54a6 6 0 0 1 6-6h106v88c0 13.255 10.745 24 24 24h88v202a6 6 0 0 1-6 6zm6-256h-64V48h9.632c1.591 0 3.117.632 4.243 1.757l48.368 48.368a6 6 0 0 1 1.757 4.243V112z"/></svg></span>
+          <span class="check-icon tw-hidden"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z"/></svg></span>
+      </button>
+        
+      <button 
+        class="
+          tw-select-none 
+          tw-mx-2 
+          tw-block 
+          group-[.is-open]:tw-hidden 
+          print:!tw-hidden" 
+        disabled
+        aria-hidden="true"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M328 256c0 39.8-32.2 72-72 72s-72-32.2-72-72 32.2-72 72-72 72 32.2 72 72zm104-72c-39.8 0-72 32.2-72 72s32.2 72 72 72 72-32.2 72-72-32.2-72-72-72zm-352 0c-39.8 0-72 32.2-72 72s32.2 72 72 72 72-32.2 72-72-32.2-72-72-72z"/></svg></button>
+    </div>
+  </div>
+  <pre style="counter-reset: codeblock;" class="tw-block tw-m-0 tw-p-0"><code 
+    id="codeblock-id-4" 
+    class="
+      chroma 
+      !tw-block 
+      tw-p-0
+      tw-m-0
+      tw-transition-[max-height] 
+      tw-duration-500 
+      tw-ease-in-out 
+      group-[.is-closed]:!tw-max-h-0 
+      group-[.is-wrap]:tw-text-wrap
+      tw-overflow-y-hidden
+      tw-overflow-x-auto
+      tw-scrollbar-thin
+      "><span class="line"><span class="cl">grub2-mkconfig -o /boot/grub2/grub.cfg</span></span></code></pre>
+</div>
+<p><figure><a class="lightgallery" href="/15180738ff9745dda45fd7060d61efba_4527421633696043249.png" title="执行命令" data-thumbnail="/15180738ff9745dda45fd7060d61efba_4527421633696043249.png" data-sub-html="<h2>执行命令</h2><p>执行命令</p>"><img  loading="lazy" src='/15180738ff9745dda45fd7060d61efba_4527421633696043249.png' srcset="/15180738ff9745dda45fd7060d61efba_4527421633696043249_hu_55a68f8405ad78a6.webp 800w, /15180738ff9745dda45fd7060d61efba_4527421633696043249_hu_f104d324a690b6de.webp 1200w, /15180738ff9745dda45fd7060d61efba_4527421633696043249_hu_e56ecf2575f7b103.webp 1600w"  alt="执行命令" height="186" width="702"></a><figcaption class="image-caption">执行命令</figcaption>
+</figure></p>
+<p><code>reboot</code> 重启机器</p>
+<p><figure><a class="lightgallery" href="/05fde4e3946c43c88de3b9e063408e1b_3543786081302667067.png" title="修改成功" data-thumbnail="/05fde4e3946c43c88de3b9e063408e1b_3543786081302667067.png" data-sub-html="<h2>
+修改成功</h2><p>修改成功</p>"><img  loading="lazy" src='/05fde4e3946c43c88de3b9e063408e1b_3543786081302667067.png' srcset="/05fde4e3946c43c88de3b9e063408e1b_3543786081302667067_hu_3b95d89665c69eb2.webp 800w, /05fde4e3946c43c88de3b9e063408e1b_3543786081302667067_hu_552c23ab3a5ba1d2.webp 1200w, /05fde4e3946c43c88de3b9e063408e1b_3543786081302667067_hu_7032a1df347fb440.webp 1600w"  alt="修改成功" height="463" width="717"></a><figcaption class="image-caption">
+修改成功</figcaption>
+</figure></p>
+<h2 id="设置静态-ip" class="headerLink">
+    <a href="#%e8%ae%be%e7%bd%ae%e9%9d%99%e6%80%81-ip" class="header-mark"></a>6 设置静态 IP</h2><p>NAT 模式是 VMware 虚拟机默认使用的模式，其最大的优势就是虚拟机接入网络非常简单，只要物理机可以访问网络，虚拟机就可以访问网络。网络结构如下图：</p>
+<p><figure><a class="lightgallery" href="/c8ee635f5e554f8c8e717360a51f763b_1514477643566953768.png" title="NAT模式" data-thumbnail="/c8ee635f5e554f8c8e717360a51f763b_1514477643566953768.png" data-sub-html="<h2>NAT模式</h2><p>NAT模式</p>"><img  loading="lazy" src='/c8ee635f5e554f8c8e717360a51f763b_1514477643566953768.png' srcset="/c8ee635f5e554f8c8e717360a51f763b_1514477643566953768_hu_a6370277153bf9dd.webp 800w, /c8ee635f5e554f8c8e717360a51f763b_1514477643566953768_hu_e37d324f54ccd02f.webp 1200w, /c8ee635f5e554f8c8e717360a51f763b_1514477643566953768_hu_e63291ff0bfd0cac.webp 1600w"  alt="NAT模式" height="263" width="663"></a><figcaption class="image-caption">NAT模式</figcaption>
+</figure></p>
+<p>所谓的静态 ip ，就是设置后固定不变的，因为在真实环境中，需要为所有的服务器配置静态 ip，从而确保通过一个 ip 地址只能找到一台服务器。</p>
+<h3 id="设置" class="headerLink">
+    <a href="#%e8%ae%be%e7%bd%ae" class="header-mark"></a>6.1 设置</h3><p>在修改配置文件之前，为了防止配置出错，建议提前备份配置文件 <code>ifcfg-eth0</code>。我把原来的 ifcfg-ens32 重命名为了 ifcfg-eth0。</p>
+<div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
+  <div class="
+    
+    tw-flex 
+    tw-flex-row
+    tw-flex-1 
+    tw-justify-between 
+    tw-w-full tw-bg-bgColor-secondary
+    ">      
+    <button 
+      class="
+        code-block-button
+        tw-mx-2 
+        tw-flex
+        tw-flex-row
+        tw-flex-1"
+      aria-hidden="true">
+          <div class="group-[.is-open]:tw-rotate-90 tw-transition-[transform] tw-duration-500 tw-ease-in-out print:!tw-hidden tw-w-min tw-h-min tw-my-1 tw-mx-1"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"/></svg></div>
+          <p class="tw-select-none !tw-my-1">shell</p>
+      </button>
+
+   <div class="tw-flex">
+      <button 
+        class="
+          line-number-button
+          tw-mx-2 
+          tw-hidden 
+          group-[.is-open]:tw-block 
+          group-[.show-line-numbers]:tw-text-fgColor-link 
+          print:!tw-hidden" 
+        title="Toggle line numbers"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M61.77 401l17.5-20.15a19.92 19.92 0 0 0 5.07-14.19v-3.31C84.34 356 80.5 352 73 352H16a8 8 0 0 0-8 8v16a8 8 0 0 0 8 8h22.83a157.41 157.41 0 0 0-11 12.31l-5.61 7c-4 5.07-5.25 10.13-2.8 14.88l1.05 1.93c3 5.76 6.29 7.88 12.25 7.88h4.73c10.33 0 15.94 2.44 15.94 9.09 0 4.72-4.2 8.22-14.36 8.22a41.54 41.54 0 0 1-15.47-3.12c-6.49-3.88-11.74-3.5-15.6 3.12l-5.59 9.31c-3.72 6.13-3.19 11.72 2.63 15.94 7.71 4.69 20.38 9.44 37 9.44 34.16 0 48.5-22.75 48.5-44.12-.03-14.38-9.12-29.76-28.73-34.88zM496 224H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zm0-160H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16V80a16 16 0 0 0-16-16zm0 320H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zM16 160h64a8 8 0 0 0 8-8v-16a8 8 0 0 0-8-8H64V40a8 8 0 0 0-8-8H32a8 8 0 0 0-7.14 4.42l-8 16A8 8 0 0 0 24 64h8v64H16a8 8 0 0 0-8 8v16a8 8 0 0 0 8 8zm-3.91 160H80a8 8 0 0 0 8-8v-16a8 8 0 0 0-8-8H41.32c3.29-10.29 48.34-18.68 48.34-56.44 0-29.06-25-39.56-44.47-39.56-21.36 0-33.8 10-40.46 18.75-4.37 5.59-3 10.84 2.8 15.37l8.58 6.88c5.61 4.56 11 2.47 16.12-2.44a13.44 13.44 0 0 1 9.46-3.84c3.33 0 9.28 1.56 9.28 8.75C51 248.19 0 257.31 0 304.59v4C0 316 5.08 320 12.09 320z"/></svg></button>
+
+      <button 
+        class="
+          wrap-code-button
+          tw-select-none 
+          tw-mx-2 
+          tw-hidden 
+          group-[.is-open]:tw-block 
+          group-[.is-wrap]:tw-text-fgColor-link 
+          print:!tw-hidden" 
+        title="Toggle code wrap"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"/></svg></button>
+      
+      <button 
+        class="
+          copy-code-button
+          tw-select-none
+          tw-mx-2 
+          tw-hidden
+          group-[.is-open]:tw-block
+          hover:tw-text-fgColor-link 
+          print:!tw-hidden"
+        title="Copy code">
+          <span class="copy-icon tw-block"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M433.941 65.941l-51.882-51.882A48 48 0 0 0 348.118 0H176c-26.51 0-48 21.49-48 48v48H48c-26.51 0-48 21.49-48 48v320c0 26.51 21.49 48 48 48h224c26.51 0 48-21.49 48-48v-48h80c26.51 0 48-21.49 48-48V99.882a48 48 0 0 0-14.059-33.941zM266 464H54a6 6 0 0 1-6-6V150a6 6 0 0 1 6-6h74v224c0 26.51 21.49 48 48 48h96v42a6 6 0 0 1-6 6zm128-96H182a6 6 0 0 1-6-6V54a6 6 0 0 1 6-6h106v88c0 13.255 10.745 24 24 24h88v202a6 6 0 0 1-6 6zm6-256h-64V48h9.632c1.591 0 3.117.632 4.243 1.757l48.368 48.368a6 6 0 0 1 1.757 4.243V112z"/></svg></span>
+          <span class="check-icon tw-hidden"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z"/></svg></span>
+      </button>
+        
+      <button 
+        class="
+          tw-select-none 
+          tw-mx-2 
+          tw-block 
+          group-[.is-open]:tw-hidden 
+          print:!tw-hidden" 
+        disabled
+        aria-hidden="true"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M328 256c0 39.8-32.2 72-72 72s-72-32.2-72-72 32.2-72 72-72 72 32.2 72 72zm104-72c-39.8 0-72 32.2-72 72s32.2 72 72 72 72-32.2 72-72-32.2-72-72-72zm-352 0c-39.8 0-72 32.2-72 72s32.2 72 72 72 72-32.2 72-72-32.2-72-72-72z"/></svg></button>
+    </div>
+  </div>
+  <pre style="counter-reset: codeblock;" class="tw-block tw-m-0 tw-p-0"><code 
+    id="codeblock-id-5" 
+    class="
+      chroma 
+      !tw-block 
+      tw-p-0
+      tw-m-0
+      tw-transition-[max-height] 
+      tw-duration-500 
+      tw-ease-in-out 
+      group-[.is-closed]:!tw-max-h-0 
+      group-[.is-wrap]:tw-text-wrap
+      tw-overflow-y-hidden
+      tw-overflow-x-auto
+      tw-scrollbar-thin
+      "><span class="line"><span class="cl">cp /etc/sysconfig/network-scripts/ifcfg-eth0 /etc/sysconfig/network-scripts/ifcfg-eth0.bak</span></span></code></pre>
+</div>
+<p>我们需要把 <code>ifcfg-eth0</code> 配置文件中的 <code>BOOTPROTO</code> 的值设置为 <code>static</code>，将 <code>IPADDR</code>(IP 地址)的值设置为其所在的子网中正确的，无冲突的 ip 地址即可。</p>
+<p>在 NAT 模式中，我们需要找到 4 个地址才能确定我们的无冲突的 ip 到底是哪些。</p>
+<ul>
+<li>子网 ip</li>
+<li>VMnet8 虚拟网卡 ip</li>
+<li>NAT 网关 ip</li>
+<li>DHCP 地址池</li>
+</ul>
+<p>接下来找这几个参数：</p>
+<p><figure><a class="lightgallery" href="/8197b0164ca24015b522f4ba13b5f04a_15458317768957192845.png" title="图 1" data-thumbnail="/8197b0164ca24015b522f4ba13b5f04a_15458317768957192845.png" data-sub-html="<h2>图 1</h2><p>图 1</p>"><img  loading="lazy" src='/8197b0164ca24015b522f4ba13b5f04a_15458317768957192845.png' srcset="/8197b0164ca24015b522f4ba13b5f04a_15458317768957192845_hu_c9afe7625332c09a.webp 800w, /8197b0164ca24015b522f4ba13b5f04a_15458317768957192845_hu_41e7fd3fc76a86ac.webp 1200w, /8197b0164ca24015b522f4ba13b5f04a_15458317768957192845_hu_af3a774508d17413.webp 1600w"  alt="图 1" height="501" width="923"></a><figcaption class="image-caption">图 1</figcaption>
+</figure></p>
+<p><figure><a class="lightgallery" href="/fc5eb5ca96ca4bd29b796b8f32fbec1b_2314209245118794607.png" title="图 2" data-thumbnail="/fc5eb5ca96ca4bd29b796b8f32fbec1b_2314209245118794607.png" data-sub-html="<h2>图 2</h2><p>图 2</p>"><img  loading="lazy" src='/fc5eb5ca96ca4bd29b796b8f32fbec1b_2314209245118794607.png' srcset="/fc5eb5ca96ca4bd29b796b8f32fbec1b_2314209245118794607_hu_b02390eca58d61b7.webp 800w, /fc5eb5ca96ca4bd29b796b8f32fbec1b_2314209245118794607_hu_b9797d1aa7dd43d2.webp 1200w, /fc5eb5ca96ca4bd29b796b8f32fbec1b_2314209245118794607_hu_6ea728562bab702f.webp 1600w"  alt="图 2" height="559" width="612"></a><figcaption class="image-caption">图 2</figcaption>
+</figure></p>
+<p>点击【NAT设置】查看子网掩码和网关 IP。点击【DHCP 设置】查看起始 IP 地址和结束 IP 地址。</p>
+<p><figure><a class="lightgallery" href="/bc1b37ed3e9c43e39c6988342b746b0d_1198114202940374585.png" title="图 3" data-thumbnail="/bc1b37ed3e9c43e39c6988342b746b0d_1198114202940374585.png" data-sub-html="<h2>图 3</h2><p>图 3</p>"><img  loading="lazy" src='/bc1b37ed3e9c43e39c6988342b746b0d_1198114202940374585.png' srcset="/bc1b37ed3e9c43e39c6988342b746b0d_1198114202940374585_hu_a06280372cc4d1ec.webp 800w, /bc1b37ed3e9c43e39c6988342b746b0d_1198114202940374585_hu_43d7984c0c8ef32b.webp 1200w, /bc1b37ed3e9c43e39c6988342b746b0d_1198114202940374585_hu_1ebf81ccdc6ce1cf.webp 1600w"  alt="图 3" height="563" width="610"></a><figcaption class="image-caption">图 3</figcaption>
+</figure></p>
+<p><figure><a class="lightgallery" href="/59acd1549914426b9375c5850e8b5b36_2170722765043907551.png" title="图 4" data-thumbnail="/59acd1549914426b9375c5850e8b5b36_2170722765043907551.png" data-sub-html="<h2>图 4</h2><p>图 4</p>"><img  loading="lazy" src='/59acd1549914426b9375c5850e8b5b36_2170722765043907551.png' srcset="/59acd1549914426b9375c5850e8b5b36_2170722765043907551_hu_b974639fdbc0146e.webp 800w, /59acd1549914426b9375c5850e8b5b36_2170722765043907551_hu_8e193dece5c0e8a6.webp 1200w, /59acd1549914426b9375c5850e8b5b36_2170722765043907551_hu_12307dd1f342dfda.webp 1600w"  alt="图 4" height="557" width="623"></a><figcaption class="image-caption">图 4</figcaption>
+</figure></p>
+<p>打开物理机的 cmd 输入 <code>ipconfig</code> 命令：</p>
+<p><figure><a class="lightgallery" href="/655158e74b14445cb92005f842ed225e_1200606597335096821.png" title="图 5" data-thumbnail="/655158e74b14445cb92005f842ed225e_1200606597335096821.png" data-sub-html="<h2>图 5</h2><p>图 5</p>"><img  loading="lazy" src='/655158e74b14445cb92005f842ed225e_1200606597335096821.png' srcset="/655158e74b14445cb92005f842ed225e_1200606597335096821_hu_5712ec386188d966.webp 800w, /655158e74b14445cb92005f842ed225e_1200606597335096821_hu_bd7fc49e929840d.webp 1200w, /655158e74b14445cb92005f842ed225e_1200606597335096821_hu_bba82ba3115b30c0.webp 1600w"  alt="图 5" height="303" width="864"></a><figcaption class="image-caption">图 5</figcaption>
+</figure></p>
+<p>如果发现物理机的 VMnet8 跟虚拟机的不在一个网段，可以在「虚拟网络适配器」中「还原默认设置」：</p>
+<p><figure><a class="lightgallery" href="/c8e5f4dc518e4bb9b076e890ed1d37be_13414838553261512601.png" title="" data-thumbnail="/c8e5f4dc518e4bb9b076e890ed1d37be_13414838553261512601.png" data-sub-html="<h2>还原默认设置</h2>"><img  loading="lazy" src='/c8e5f4dc518e4bb9b076e890ed1d37be_13414838553261512601.png' srcset="/c8e5f4dc518e4bb9b076e890ed1d37be_13414838553261512601_hu_74399a5864032171.webp 800w, /c8e5f4dc518e4bb9b076e890ed1d37be_13414838553261512601_hu_ca3ae4dd2cda73a0.webp 1200w, /c8e5f4dc518e4bb9b076e890ed1d37be_13414838553261512601_hu_861805e763ea18b9.webp 1600w"   height="533" width="612"></a><figcaption class="image-caption">还原默认设置</figcaption>
+</figure></p>
+<p>所以，除去这几个地址，<code>192.168.48.3</code> ~ <code>192.168.48.127</code> 范围内的 ip 都可以作为静态 ip 使用。</p>
+<p><code>vi ifcfg-eth0</code> 需要修改的地方为：</p>
+<ol>
+<li>将 <code>ONBOOT</code> 改为 <code>yes</code></li>
+<li><code>BOOTPROTO</code> 由 <code>dhcp</code> 改为 <code>static</code></li>
+<li>增加 <code>IPADDR</code>(ip 地址)</li>
+<li>增加 <code>NETMASK</code>(子网掩码)</li>
+<li>增加 <code>GATEWAY</code>(网关)</li>
+<li>增加 <code>DNS1</code>(首选域名服务器)</li>
+</ol>
+<p>其中，网关不设置，虚拟机只能在局域网内访问，无法访问外部网络。DNS 不设置则无法解析域名。 <strong>DNS 可以设置成跟网关一样的地址</strong>。</p>
+<p><figure><a class="lightgallery" href="/3e52c6df0d1c40678ad826e6a3d995c1_461924469913366649.png" title="图 6" data-thumbnail="/3e52c6df0d1c40678ad826e6a3d995c1_461924469913366649.png" data-sub-html="<h2>图 6</h2><p>图 6</p>"><img  loading="lazy" src='/3e52c6df0d1c40678ad826e6a3d995c1_461924469913366649.png' srcset="/3e52c6df0d1c40678ad826e6a3d995c1_461924469913366649_hu_53d1156646412978.webp 800w, /3e52c6df0d1c40678ad826e6a3d995c1_461924469913366649_hu_46d9aa33b850e540.webp 1200w, /3e52c6df0d1c40678ad826e6a3d995c1_461924469913366649_hu_c1733b648cd4b305.webp 1600w"  alt="图 6" height="356" width="467"></a><figcaption class="image-caption">图 6</figcaption>
+</figure></p>
+<p>设置完成后执行：<code>systemctl restart network </code> 命令使配置生效。</p>
+<p><figure><a class="lightgallery" href="/b5384ea25f6a4345b041f0d488c8ff6c_8117091719215926486.png" title="图 7" data-thumbnail="/b5384ea25f6a4345b041f0d488c8ff6c_8117091719215926486.png" data-sub-html="<h2>图 7</h2><p>图 7</p>"><img  loading="lazy" src='/b5384ea25f6a4345b041f0d488c8ff6c_8117091719215926486.png' srcset="/b5384ea25f6a4345b041f0d488c8ff6c_8117091719215926486_hu_e7499a4c3842edbc.webp 800w, /b5384ea25f6a4345b041f0d488c8ff6c_8117091719215926486_hu_605e577c4e56cb5e.webp 1200w, /b5384ea25f6a4345b041f0d488c8ff6c_8117091719215926486_hu_b8924f01a9c79ec6.webp 1600w"  alt="图 7" height="158" width="577"></a><figcaption class="image-caption">图 7</figcaption>
+</figure></p>
+<h3 id="访问测试" class="headerLink">
+    <a href="#%e8%ae%bf%e9%97%ae%e6%b5%8b%e8%af%95" class="header-mark"></a>6.2 访问测试</h3><h3 id="物理机测试" class="headerLink">
+    <a href="#%e7%89%a9%e7%90%86%e6%9c%ba%e6%b5%8b%e8%af%95" class="header-mark"></a>6.3 物理机测试</h3><p>在物理机中 ping 虚拟机 ip 地址：</p>
+<p><figure><a class="lightgallery" href="/32c855d6ab164f8293c14191716296e4_12910670744641379562.png" title="图 8" data-thumbnail="/32c855d6ab164f8293c14191716296e4_12910670744641379562.png" data-sub-html="<h2>图 8</h2><p>图 8</p>"><img  loading="lazy" src='/32c855d6ab164f8293c14191716296e4_12910670744641379562.png' srcset="/32c855d6ab164f8293c14191716296e4_12910670744641379562_hu_9e269a2dc83d1462.webp 800w, /32c855d6ab164f8293c14191716296e4_12910670744641379562_hu_590f5a23cbc6d4a9.webp 1200w, /32c855d6ab164f8293c14191716296e4_12910670744641379562_hu_3f6c3436666a297c.webp 1600w"  alt="图 8" height="373" width="756"></a><figcaption class="image-caption">图 8</figcaption>
+</figure></p>
+<p>物理机共向 ip 地址 <code>192.168.48.8</code> 发送了 4 次 ping 请求，4 次都是成功的，发送的数据包为 32 字节，TTL(生存时间值)为 64，其中 TTL 在发送时的默认值为 64，每经过一个路由则减 1 ，此次显示最终结果为 64 说明中间没有经过路由。</p>
+<h3 id="虚拟机测试" class="headerLink">
+    <a href="#%e8%99%9a%e6%8b%9f%e6%9c%ba%e6%b5%8b%e8%af%95" class="header-mark"></a>6.4 虚拟机测试</h3><p><figure><a class="lightgallery" href="/356ddc9263ac44619d2c003fbcc146f5_9149751416843249761.png" title="图 9" data-thumbnail="/356ddc9263ac44619d2c003fbcc146f5_9149751416843249761.png" data-sub-html="<h2>图 9</h2><p>图 9</p>"><img  loading="lazy" src='/356ddc9263ac44619d2c003fbcc146f5_9149751416843249761.png' srcset="/356ddc9263ac44619d2c003fbcc146f5_9149751416843249761_hu_13ec69ae2474bc7b.webp 800w, /356ddc9263ac44619d2c003fbcc146f5_9149751416843249761_hu_5c0d832ad288f132.webp 1200w, /356ddc9263ac44619d2c003fbcc146f5_9149751416843249761_hu_88d491d5968d48fc.webp 1600w"  alt="图 9" height="243" width="587"></a><figcaption class="image-caption">图 9</figcaption>
+</figure></p>
+<h3 id="说明" class="headerLink">
+    <a href="#%e8%af%b4%e6%98%8e" class="header-mark"></a>6.5 说明</h3><p>因为我把默认网卡从 ensxx 改成了 eth0 所以在修改静态 ip 是把配置文件也改成了 ifcfg-eth0</p>
+<p><figure><a class="lightgallery" href="/a1e71dfe0e6948648eed5ac052fdd3e9_684284961318730717.png" title="图 10" data-thumbnail="/a1e71dfe0e6948648eed5ac052fdd3e9_684284961318730717.png" data-sub-html="<h2>图 10</h2><p>图 10</p>"><img  loading="lazy" src='/a1e71dfe0e6948648eed5ac052fdd3e9_684284961318730717.png' srcset="/a1e71dfe0e6948648eed5ac052fdd3e9_684284961318730717_hu_c1dac980823355c2.webp 800w, /a1e71dfe0e6948648eed5ac052fdd3e9_684284961318730717_hu_6224eea33ef2cb1d.webp 1200w, /a1e71dfe0e6948648eed5ac052fdd3e9_684284961318730717_hu_c7fe44a47a1ea8d0.webp 1600w"  alt="图 10" height="524" width="934"></a><figcaption class="image-caption">图 10</figcaption>
+</figure></p>
+<h2 id="faq" class="headerLink">
+    <a href="#faq" class="header-mark"></a>7 FAQ</h2><ul>
+<li>&#x2753;重启网卡问题</li>
+</ul>
+<p><code>loaded (/etc/rc.d/init.d/network; bad; vendor preset: disabled)</code></p>
+<p><figure><a class="lightgallery" href="/ef54a9001aea4752bd5591e0d555a986_9759937476151315209.png" title="network err" data-thumbnail="/ef54a9001aea4752bd5591e0d555a986_9759937476151315209.png" data-sub-html="<h2>network err</h2><p>network err</p>"><img  loading="lazy" src='/ef54a9001aea4752bd5591e0d555a986_9759937476151315209.png' srcset="/ef54a9001aea4752bd5591e0d555a986_9759937476151315209_hu_49a515c8bb2b7993.webp 800w, /ef54a9001aea4752bd5591e0d555a986_9759937476151315209_hu_39513dfab1a50164.webp 1200w, /ef54a9001aea4752bd5591e0d555a986_9759937476151315209_hu_fd88050e58318934.webp 1600w"  alt="network err" height="369" width="1021"></a><figcaption class="image-caption">network err</figcaption>
+</figure></p>
+<p>&#x261d;&#xfe0f; 以上这个问题可以参考<a href="https://blog.csdn.net/qq_41601836/article/details/90171237" target="_blank" rel="noopener noreferrer">centos7重启网卡提示错误的解决方法</a>这篇文章。</p>
+<h2 id="参考" class="headerLink">
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>8 参考</h2><ul>
+<li><a href="https://www.itzgeek.com/how-tos/linux/centos-how-tos/how-to-configure-static-ip-address-in-centos-7-rhel-7-fedora-26.html" target="_blank" rel="noopener noreferrer">How To Configure Static IP Address in CentOS 7 / RHEL 7</a></li>
+<li><a href="https://blog.csdn.net/qi341500/article/details/128974230" target="_blank" rel="noopener noreferrer">虚拟机安装CentOS 7（带界面）</a></li>
+</ul>
+</div>
+
+        <div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2023-07-10&nbsp;<a class="git-hash" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/cf50c8c22bb36b2c6ed3465381491eef2e431cf0" target="_blank" title="commit by weibin(xiaobinqt@163.com) cf50c8c22bb36b2c6ed3465381491eef2e431cf0: update vmware-install-centos7.x.md" rel="noopener noreferrer">
+                                    <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M440.667 182.109l7.143-40c1.313-7.355-4.342-14.109-11.813-14.109h-74.81l14.623-81.891C377.123 38.754 371.468 32 363.997 32h-40.632a12 12 0 0 0-11.813 9.891L296.175 128H197.54l14.623-81.891C213.477 38.754 207.822 32 200.35 32h-40.632a12 12 0 0 0-11.813 9.891L132.528 128H53.432a12 12 0 0 0-11.813 9.891l-7.143 40C33.163 185.246 38.818 192 46.289 192h74.81L98.242 320H19.146a12 12 0 0 0-11.813 9.891l-7.143 40C-1.123 377.246 4.532 384 12.003 384h74.81L72.19 465.891C70.877 473.246 76.532 480 84.003 480h40.632a12 12 0 0 0 11.813-9.891L151.826 384h98.634l-14.623 81.891C234.523 473.246 240.178 480 247.65 480h40.632a12 12 0 0 0 11.813-9.891L315.472 384h79.096a12 12 0 0 0 11.813-9.891l7.143-40c1.313-7.355-4.342-14.109-11.813-14.109h-74.81l22.857-128h79.096a12 12 0 0 0 11.813-9.891zM261.889 320h-98.634l22.857-128h98.634l-22.857 128z"/></svg>cf50c8c22</a></span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line print:!tw-hidden">
+            <div class="post-info-md"><span><a class="link-to-mardown" href=/vmware-install-centos7.x/index.md target="_blank" rel="noopener noreferrer">阅读原始文档</a>
+                    </span><span>|&nbsp;<a class="link-to-source" href=https://github.com/xiaobinqt/xiaobinqt.github.io/blob/main/content/posts/linux/vmware-install-centos7.x.md target="_blank" rel="noopener noreferrer">查看源代码</a>
+                    </span><span>|&nbsp;<a class="link-to-edit" href=https://github.com/xiaobinqt/xiaobinqt.github.io/edit/main/content/posts/linux/vmware-install-centos7.x.md target="_blank" rel="noopener noreferrer">编辑此页</a>
+                    </span></div>
+            <div class="post-info-share"><button title="分享到 微博" data-sharer="weibo" data-url="https://www.xiaobinqt.cn/vmware-install-centos7.x/" data-title="VMware 安装 CentOS 7.x"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M407 177.6c7.6-24-13.4-46.8-37.4-41.7-22 4.8-28.8-28.1-7.1-32.8 50.1-10.9 92.3 37.1 76.5 84.8-6.8 21.2-38.8 10.8-32-10.3zM214.8 446.7C108.5 446.7 0 395.3 0 310.4c0-44.3 28-95.4 76.3-143.7C176 67 279.5 65.8 249.9 161c-4 13.1 12.3 5.7 12.3 6 79.5-33.6 140.5-16.8 114 51.4-3.7 9.4 1.1 10.9 8.3 13.1 135.7 42.3 34.8 215.2-169.7 215.2zm143.7-146.3c-5.4-55.7-78.5-94-163.4-85.7-84.8 8.6-148.8 60.3-143.4 116s78.5 94 163.4 85.7c84.8-8.6 148.8-60.3 143.4-116zM347.9 35.1c-25.9 5.6-16.8 43.7 8.3 38.3 72.3-15.2 134.8 52.8 111.7 124-7.4 24.2 29.1 37 37.4 12 31.9-99.8-55.1-195.9-157.4-174.3zm-78.5 311c-17.1 38.8-66.8 60-109.1 46.3-40.8-13.1-58-53.4-40.3-89.7 17.7-35.4 63.1-55.4 103.4-45.1 42 10.8 63.1 50.2 46 88.5zm-86.3-30c-12.9-5.4-30 .3-38 12.9-8.3 12.9-4.3 28 8.6 34 13.1 6 30.8.3 39.1-12.9 8-13.1 3.7-28.3-9.7-34zm32.6-13.4c-5.1-1.7-11.4.6-14.3 5.4-2.9 5.1-1.4 10.6 3.7 12.9 5.1 2 11.7-.3 14.6-5.4 2.8-5.2 1.1-10.9-4-12.9z"/></svg></button><button title="分享到 百度" data-sharer="baidu" data-url="https://www.xiaobinqt.cn/vmware-install-centos7.x/" data-title="VMware 安装 CentOS 7.x"><svg class="icon" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>Baidu</title><path d="M9.154 0C7.71 0 6.54 1.658 6.54 3.707c0 2.051 1.171 3.71 2.615 3.71 1.446 0 2.614-1.659 2.614-3.71C11.768 1.658 10.6 0 9.154 0zm7.025.594C14.86.58 13.347 2.589 13.2 3.927c-.187 1.745.25 3.487 2.179 3.735 1.933.25 3.175-1.806 3.422-3.364.252-1.555-.995-3.364-2.362-3.674a1.218 1.218 0 0 0-.261-.03zM3.582 5.535a2.811 2.811 0 0 0-.156.008c-2.118.19-2.428 3.24-2.428 3.24-.287 1.41.686 4.425 3.297 3.864 2.617-.561 2.262-3.68 2.183-4.362-.125-1.018-1.292-2.773-2.896-2.75zm16.534 1.753c-2.308 0-2.617 2.119-2.617 3.616 0 1.43.121 3.425 2.988 3.362 2.867-.063 2.553-3.238 2.553-3.988 0-.745-.62-2.99-2.924-2.99zm-8.264 2.478c-1.424.014-2.708.925-3.323 1.947-1.118 1.868-2.863 3.05-3.112 3.363-.25.309-3.61 2.116-2.864 5.42.746 3.301 3.365 3.237 3.365 3.237s1.93.19 4.171-.31c2.24-.495 4.17.123 4.17.123s5.233 1.748 6.665-1.616c1.43-3.364-.808-5.109-.808-5.109s-2.99-2.306-4.736-4.798c-1.072-1.665-2.348-2.268-3.528-2.257zm-2.234 3.84l1.542.024v8.197H7.758c-1.47-.291-2.055-1.292-2.13-1.462-.072-.173-.488-.976-.268-2.343.635-2.049 2.447-2.196 2.447-2.196h1.81zm3.964 2.39v3.881c.096.413.612.488.612.488h1.614v-4.343h1.689v5.782h-3.915c-1.517-.39-1.59-1.465-1.59-1.465v-4.317zm-5.458 1.147c-.66.197-.978.708-1.05.928-.076.22-.247.78-.1 1.269.294 1.095 1.248 1.144 1.248 1.144h1.37v-3.34z"/></svg></button></div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M497.941 225.941L286.059 14.059A48 48 0 0 0 252.118 0H48C21.49 0 0 21.49 0 48v204.118a48 48 0 0 0 14.059 33.941l211.882 211.882c18.744 18.745 49.136 18.746 67.882 0l204.118-204.118c18.745-18.745 18.745-49.137 0-67.882zM112 160c-26.51 0-48-21.49-48-48s21.49-48 48-48 48 21.49 48 48-21.49 48-48 48zm513.941 133.823L421.823 497.941c-18.745 18.745-49.137 18.745-67.882 0l-.36-.36L527.64 323.522c16.999-16.999 26.36-39.6 26.36-63.64s-9.362-46.641-26.36-63.64L331.397 0h48.721a48 48 0 0 1 33.941 14.059l211.882 211.882c18.745 18.745 18.745 49.137 0 67.882z"/></svg>&nbsp;<a href="/tags/centos-7.x/">CentOS 7.x</a>,&nbsp;<a href="/tags/vmware/">VMware</a>,&nbsp;<a href="/tags/linux/">Linux</a></section>
+        <section class="print:!tw-hidden">
+            <span><button class="tw-text-fgColor-link-muted hover:tw-text-fgColor-link-muted-hover" onclick="window.history.back();">返回</button></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav print:tw-hidden"><a href="/redis-glance-faq/" class="prev" rel="prev" title="Redis 学习笔记"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M31.7 239l136-136c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9L127.9 256l96.4 96.4c9.4 9.4 9.4 24.6 0 33.9L201.7 409c-9.4 9.4-24.6 9.4-33.9 0l-136-136c-9.5-9.4-9.5-24.6-.1-34z"/></svg>Redis 学习笔记</a>
+            <a href="/upd-demo/" class="next" rel="next" title="Go udp 简单使用">Go udp 简单使用<svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M224.3 273l-136 136c-9.4 9.4-24.6 9.4-33.9 0l-22.6-22.6c-9.4-9.4-9.4-24.6 0-33.9l96.4-96.4-96.4-96.4c-9.4-9.4-9.4-24.6 0-33.9L54.3 103c9.4-9.4 24.6-9.4 33.9 0l136 136c9.5 9.4 9.5 24.6.1 34z"/></svg></a></div>
+</div>
+<div id="comments" class="print:!tw-hidden tw-pt-32 tw-pb-8"><div id="gitalk" class="comment"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://github.com/gitalk/gitalk"></a>Gitalk</a>.
+            </noscript></div></article></main><footer class="footer">
+        <div class="footer-container"><div class="footer-line"><svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M256 8C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 448c-110.532 0-200-89.451-200-200 0-110.531 89.451-200 200-200 110.532 0 200 89.451 200 200 0 110.532-89.451 200-200 200zm107.351-101.064c-9.614 9.712-45.53 41.396-104.065 41.396-82.43 0-140.484-61.425-140.484-141.567 0-79.152 60.275-139.401 139.762-139.401 55.531 0 88.738 26.62 97.593 34.779a11.965 11.965 0 0 1 1.936 15.322l-18.155 28.113c-3.841 5.95-11.966 7.282-17.499 2.921-8.595-6.776-31.814-22.538-61.708-22.538-48.303 0-77.916 35.33-77.916 80.082 0 41.589 26.888 83.692 78.277 83.692 32.657 0 56.843-19.039 65.726-27.225 5.27-4.857 13.596-4.039 17.82 1.738l19.865 27.17a11.947 11.947 0 0 1-1.152 15.518z"/></svg>2018 - 2025<span class="author">&nbsp;<a href="https://github.com/xiaobinqt" target="_blank" rel="noopener noreferrer">xiaobinqt</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+            <div class="footer-line"></div>
+            <div class="footer-line">
+            </div>
+        </div></footer><div class="print:!tw-hidden tw-flex tw-flex-col tw-fixed tw-right-4 tw-bottom-4 tw-gap-2"><a href="#back-to-top" id="back-to-top-button" class="tw-transition-opacity tw-opacity-0 tw-block tw-bg-bgColor-secondary tw-rounded-full" style="padding: 0.6rem; line-height: 1.3rem; font-size: 1rem;" title="回到顶部">
+      <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M34.9 289.5l-22.2-22.2c-9.4-9.4-9.4-24.6 0-33.9L207 39c9.4-9.4 24.6-9.4 33.9 0l194.3 194.3c9.4 9.4 9.4 24.6 0 33.9L413 289.4c-9.5 9.5-25 9.3-34.3-.4L264 168.6V456c0 13.3-10.7 24-24 24h-32c-13.3 0-24-10.7-24-24V168.6L69.2 289.1c-9.3 9.8-24.8 10-34.3.4z"/></svg>
+  </a>
+
+  <button id="toc-drawer-button" class="tw-block tw-bg-bgColor-secondary tw-rounded-full md:tw-hidden" style="padding: 0.6rem; line-height: 1.3rem; font-size: 1rem;">
+      <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"/></svg>
+  </button></div>
+<script type="module">
+        (async () => {
+            const supportSpeculationRules = HTMLScriptElement.supports && HTMLScriptElement.supports("speculationrules");
+            if (!supportSpeculationRules) {
+              await import("\/lib\/instant.page\/instantpage.min.js");
+            }
+        })();
+    </script><link rel="stylesheet" href="/lib/gitalk/gitalk.min.css"><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/lightgallery/lightgallery.min.css">
+        <noscript><link rel="stylesheet" href="/lib/lightgallery/lightgallery.min.css"></noscript>
+<script>window.config={"algoliasearch.min.js":"/lib/algoliasearch/algoliasearch-lite.umd.min.js","autocomplete.min.js":"/lib/autocomplete/autocomplete.min.js","comment":{"gitalk":{"admin":["xiaobinqt"],"clientID":"47b15de6c2d8a0f8d707","clientSecret":"c70556c8b3a3b38ea7c72e539ff3b37d5bc1b4f3","id":"6cc4f71b0fc7d4db68e37964ec1856dc","owner":"xiaobinqt","repo":"xiaobinqt.github.io","title":"VMware 安装 CentOS 7.x"}},"lightGallery":{"actualSize":false,"exThumbImage":"data-thumbnail","hideBarsDelay":2000,"selector":".lightgallery","speed":400,"thumbContHeight":80,"thumbWidth":80,"thumbnail":true},"search":{"algoliaAppID":"U7QBQFMJWZ","algoliaIndex":"xiaobinqt.io","algoliaSearchKey":"1679f7a929fbfff6be0d47ba33947c03","highlightTag":"em","maxResultLength":20,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"},"sharerjs":true,"table":{"sort":true}};</script><script
+    src="/lib/tablesort/tablesort.min.js"
+    
+  ></script><script
+    src="/lib/lightgallery/lightgallery.min.js"
+    
+      defer
+    
+  ></script><script
+    src="/lib/lightgallery/lg-thumbnail.min.js"
+    
+      defer
+    
+  ></script><script
+    src="/lib/lightgallery/lg-zoom.min.js"
+    
+      defer
+    
+  ></script><script
+    src="/lib/sharer/sharer.min.js"
+    
+  ></script><script
+    src="/js/theme.min.js"
+    
+      defer
+    
+  ></script><script
+    src="/lib/gitalk/gitalk.min.js"
+    
+  ></script><script
+    src="/js/gitalk.min.js"
+    
+      defer
+    
+  ></script>
+
+<script type="speculationrules">
+  {
+    "prerender": [
+      {
+        "where": { "href_matches": "/*" },
+        "eagerness": "moderate"
+      }
+    ]
+  }
+</script>
+</body>
+
+</html>
