@@ -59,14 +59,14 @@ du 是一个用于统计磁盘使用量的命令。
   <meta property="og:locale" content="zh">
   <meta property="og:type" content="article">
     <meta property="article:section" content="docs">
-    <meta property="article:modified_time" content="2025-04-20T16:31:38+08:00">
+    <meta property="article:modified_time" content="2025-04-26T23:13:14+08:00">
 <title>Mac | wiki</title>
 <link rel="icon" href="/wiki/favicon.png" >
 <link rel="manifest" href="/wiki/manifest.json">
 <link rel="canonical" href="https://example.com/wiki/docs/coding-practice/mac/">
 <link rel="stylesheet" href="/wiki/book.min.1e8c332c823ff5970e639a0c180f0e3d074283c7f525185d3e42903a2f30e9be.css" integrity="sha256-HowzLII/9ZcOY5oMGA8OPQdCg8f1JRhdPkKQOi8w6b4=" crossorigin="anonymous">
   <script defer src="/wiki/fuse.min.js"></script>
-  <script defer src="/wiki/zh.search.min.d45438a799b8c66ea6eec18dba911bf67b85ee7ad6ed215d1a3a5730f6b75241.js" integrity="sha256-1FQ4p5m4xm6m7sGNupEb9nuF7nrW7SFdGjpXMPa3UkE=" crossorigin="anonymous"></script>
+  <script defer src="/wiki/zh.search.min.4fd2f5f292111ebec9013646e32028614dd2f4950786d4af9342cd689f6fce5e.js" integrity="sha256-T9L18pIRHr7JATZG4yAoYU3S9JUHhtSvk0LNaJ9vzl4=" crossorigin="anonymous"></script>
 
   <script defer src="/wiki/sw.min.e67149a4572dea566681c97cf77821bb08285ae36bc9376d2616a9b5e253f230.js" integrity="sha256-5nFJpFct6lZmgcl893ghuwgoWuNryTdtJhapteJT8jA=" crossorigin="anonymous"></script>
 <!--
@@ -567,11 +567,24 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <span>JS</span>
+    <span>前端知识</span>
   
 
           
   <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/frontend/html/" class="">html</a>
+  
+
+        </li>
+      
     
   </ul>
 
@@ -701,7 +714,14 @@ https://github.com/alex-shpak/hugo-book
             <li><a href="#安装扩展">安装扩展</a></li>
           </ul>
         </li>
-        <li><a href="#安装-nginx">安装 nginx</a></li>
+        <li><a href="#安装-hugo">安装 hugo</a></li>
+        <li><a href="#安装-nginx">安装 nginx</a>
+          <ul>
+            <li><a href="#-常见路径homebrew-安装">🍎 常见路径（Homebrew 安装）</a></li>
+            <li><a href="#-自定义日志路径">🛠️ 自定义日志路径</a></li>
+            <li><a href="#-实时查看日志">📖 实时查看日志</a></li>
+          </ul>
+        </li>
       </ul>
     </li>
   </ul>
@@ -794,11 +814,56 @@ https://github.com/alex-shpak/hugo-book
 <li>mcrypt</li>
 </ul>
 <pre tabindex="0"><code>brew install shivammathur/extensions/mcrypt@7.2
+</code></pre><h2 id="安装-hugo">
+  安装 hugo
+  <a class="anchor" href="#%e5%ae%89%e8%a3%85-hugo">#</a>
+</h2>
+<p>安装指定版本的</p>
+<p>
+  <a href="https://github.com/gohugoio/hugo/releases">https://github.com/gohugoio/hugo/releases</a></p>
+<pre tabindex="0"><code>wget https://github.com/gohugoio/hugo/releases/download/v0.144.0/hugo_extended_0.144.0_darwin-universal.tar.gz
+
+tar -zxvf hugo_extended_0.144.0_darwin-universal.tar.gz
+
+mv hugo /usr/local/bin
+</code></pre><p>安装最新版</p>
+<pre tabindex="0"><code>brew install hugo
 </code></pre><h2 id="安装-nginx">
   安装 nginx
   <a class="anchor" href="#%e5%ae%89%e8%a3%85-nginx">#</a>
 </h2>
-</article>
+<p>在 macOS 上，Nginx 的错误日志（error log）默认路径可能因安装方式而异。下面是常见的几种情况：</p>
+<h3 id="-常见路径homebrew-安装">
+  🍎 常见路径（Homebrew 安装）
+  <a class="anchor" href="#-%e5%b8%b8%e8%a7%81%e8%b7%af%e5%be%84homebrew-%e5%ae%89%e8%a3%85">#</a>
+</h3>
+<p>如果你是用 <strong>Homebrew 安装的 Nginx</strong>（大多数人都是这样装的），那么错误日志的位置通常是：</p>
+<pre tabindex="0"><code>/opt/homebrew/var/log/nginx/error.log    # Apple Silicon (M1/M2/M3)
+/usr/local/var/log/nginx/error.log       # Intel Mac
+</code></pre><p>你可以用这个命令快速查看当前日志路径：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>grep error_log /opt/homebrew/etc/nginx/nginx.conf
+</span></span></code></pre></div><p>或者（Intel Mac）：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>grep error_log /usr/local/etc/nginx/nginx.conf
+</span></span></code></pre></div><h3 id="-自定义日志路径">
+  🛠️ 自定义日志路径
+  <a class="anchor" href="#-%e8%87%aa%e5%ae%9a%e4%b9%89%e6%97%a5%e5%bf%97%e8%b7%af%e5%be%84">#</a>
+</h3>
+<p>你也可以在 <code>nginx.conf</code> 中找到这行配置：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-nginx" data-lang="nginx"><span style="display:flex;"><span><span style="color:#66d9ef">error_log</span>  <span style="color:#e6db74">/path/to/log/error.log</span>  <span style="color:#e6db74">warn</span>;
+</span></span></code></pre></div><p>这就是你当前设置的错误日志路径。你可以改成你想要的，比如：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-nginx" data-lang="nginx"><span style="display:flex;"><span><span style="color:#66d9ef">error_log</span>  <span style="color:#e6db74">/var/log/nginx/my_error.log</span>  <span style="color:#e6db74">error</span>;
+</span></span></code></pre></div><p>记得改完之后：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>nginx -t         <span style="color:#75715e"># 检查配置</span>
+</span></span><span style="display:flex;"><span>sudo nginx -s reload  <span style="color:#75715e"># 重新加载配置</span>
+</span></span></code></pre></div><h3 id="-实时查看日志">
+  📖 实时查看日志
+  <a class="anchor" href="#-%e5%ae%9e%e6%97%b6%e6%9f%a5%e7%9c%8b%e6%97%a5%e5%bf%97">#</a>
+</h3>
+<p>你可以用 <code>tail -f</code> 实时查看错误日志：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>tail -f /opt/homebrew/var/log/nginx/error.log
+</span></span></code></pre></div><p>或者 Intel Mac：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>tail -f /usr/local/var/log/nginx/error.log
+</span></span></code></pre></div></article>
  
       
 
@@ -807,9 +872,9 @@ https://github.com/alex-shpak/hugo-book
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/book.wiki/commit/497b01d7b14e60cd68369b5933284910cf9b78c4" title='最后修改者 xiaobinqt | 四月 20, 2025' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/book.wiki/commit/e6b194e9e0f826b0383d836abf5a9541a344b843" title='最后修改者 xiaobinqt | 四月 26, 2025' target="_blank" rel="noopener">
       <img src="/wiki/svg/calendar.svg" class="book-icon" alt="" />
-      <span>四月 20, 2025</span>
+      <span>四月 26, 2025</span>
     </a>
   </div>
 
@@ -862,7 +927,14 @@ https://github.com/alex-shpak/hugo-book
             <li><a href="#安装扩展">安装扩展</a></li>
           </ul>
         </li>
-        <li><a href="#安装-nginx">安装 nginx</a></li>
+        <li><a href="#安装-hugo">安装 hugo</a></li>
+        <li><a href="#安装-nginx">安装 nginx</a>
+          <ul>
+            <li><a href="#-常见路径homebrew-安装">🍎 常见路径（Homebrew 安装）</a></li>
+            <li><a href="#-自定义日志路径">🛠️ 自定义日志路径</a></li>
+            <li><a href="#-实时查看日志">📖 实时查看日志</a></li>
+          </ul>
+        </li>
       </ul>
     </li>
   </ul>
