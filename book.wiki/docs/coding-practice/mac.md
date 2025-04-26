@@ -86,8 +86,88 @@ brew install shivammathur/php/php@8.2
 brew install shivammathur/extensions/mcrypt@7.2
 ```
 
+## 安装 hugo
+
+安装指定版本的
+
+[https://github.com/gohugoio/hugo/releases](https://github.com/gohugoio/hugo/releases)
+
+```
+wget https://github.com/gohugoio/hugo/releases/download/v0.144.0/hugo_extended_0.144.0_darwin-universal.tar.gz
+
+tar -zxvf hugo_extended_0.144.0_darwin-universal.tar.gz
+
+mv hugo /usr/local/bin
+```
+
+安装最新版
+
+```
+brew install hugo
+```
+
 ## 安装 nginx
 
+在 macOS 上，Nginx 的错误日志（error log）默认路径可能因安装方式而异。下面是常见的几种情况：
+
+
+### 🍎 常见路径（Homebrew 安装）
+
+如果你是用 **Homebrew 安装的 Nginx**（大多数人都是这样装的），那么错误日志的位置通常是：
+
+```
+/opt/homebrew/var/log/nginx/error.log    # Apple Silicon (M1/M2/M3)
+/usr/local/var/log/nginx/error.log       # Intel Mac
+```
+
+你可以用这个命令快速查看当前日志路径：
+
+```bash
+grep error_log /opt/homebrew/etc/nginx/nginx.conf
+```
+
+或者（Intel Mac）：
+
+```bash
+grep error_log /usr/local/etc/nginx/nginx.conf
+```
+
+
+### 🛠️ 自定义日志路径
+
+你也可以在 `nginx.conf` 中找到这行配置：
+
+```nginx
+error_log  /path/to/log/error.log  warn;
+```
+
+这就是你当前设置的错误日志路径。你可以改成你想要的，比如：
+
+```nginx
+error_log  /var/log/nginx/my_error.log  error;
+```
+
+记得改完之后：
+
+```bash
+nginx -t         # 检查配置
+sudo nginx -s reload  # 重新加载配置
+```
+
+
+### 📖 实时查看日志
+
+你可以用 `tail -f` 实时查看错误日志：
+
+```bash
+tail -f /opt/homebrew/var/log/nginx/error.log
+```
+
+或者 Intel Mac：
+
+```bash
+tail -f /usr/local/var/log/nginx/error.log
+```
 
 
 
