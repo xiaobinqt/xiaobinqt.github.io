@@ -7,5 +7,5 @@ bookCollapseSection: false
 
 bookToc: false
 
-title: "JS"
+title: "前端知识"
 ---
