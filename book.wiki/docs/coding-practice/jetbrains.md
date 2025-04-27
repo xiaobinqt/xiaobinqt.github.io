@@ -20,7 +20,7 @@ title: "Jetbrains"
 
 ![](https://cdn.xiaobinqt.cn//xiaobinqt.io/20250426/5afcb725a5634a9a8bf79e9d8e8c5e17.png)
 
-新版本把这个功能去掉了，我非常不习惯，可以用一个插件解决。
+新版本把这个功能去掉了，我非常不习惯，可以用一个插件 [Git Modal commit Interface](https://plugins.jetbrains.com/plugin/26647-git-modal-commit-interface) 解决。
 
 [Commit Tool window missing! ](https://intellij-support.jetbrains.com/hc/en-us/community/posts/13000351411346-Commit-Tool-window-missing)
 
