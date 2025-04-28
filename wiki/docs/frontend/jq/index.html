@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="
+  Jquery
+  #
+
+
+  获取值
+  #
+
+todo..
+
+  base64 数据给前端使用
+  #
+
+后端可以用 base64 把数据传给前端，前端直接用，特别是常见的：
+
+图片
+小文件
+小段 JSON
+
+比如后端 PHP：
+&lt;?php
+$data = [
+    &#34;s3_region&#34; =&gt; &#34;us-east-2&#34;,
+    &#34;s3_bucket&#34; =&gt; &#34;avator&#34;,
+];
+// 1. 转 JSON
+$json = json_encode($data, JSON_UNESCAPED_UNICODE);
+
+// 2. 再 base64 编码
+$base64 = base64_encode($json);
+?&gt;
+&lt;input type=&#34;hidden&#34; id=&#34;s3_config&#34; value=&#34;&lt;?= $base64 ?&gt;&#34;&gt;
+JS 前端解码回来：
+const base64Str = $(&#39;#s3_config&#39;).val();
+const jsonStr = atob(base64Str);   // base64 decode
+const config = JSON.parse(jsonStr); // 解析 JSON
+
+console.log(config.s3_region); // us-east-2
+为什么用 base64？什么时候用？
+
+  
+      
+          用途
+          解释
+      
+  
+  
+      
+          避免 HTML 转义问题
+          里面即使有 &quot;、&lt;、&gt; 都不会影响 HTML
+      
+      
+          保证内容完整安全
+          base64是纯字符串，不会破坏标签结构
+      
+      
+          小数据安全传递
+          一般几 KB 以内的数据可以这样做
+      
+  
+
+
+  注意事项 ⚡
+  #
+
+
+大数据量不要 base64：因为 base64 会比原数据大 33% 左右，太大就浪费带宽。
+小段数据（JSON、短文本）非常合适。
+图片的话，小图 base64 没问题，大图最好还是用 URL。
+
+
+  页面加载时就执行
+  #
+
+如果想在 页面加载完成 时就用 jQuery 自动执行某些代码。
+最常见的方法就是用 $(document).ready() 或 $(function() {...})。">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/wiki/docs/frontend/jq/">
+  <meta property="og:site_name" content="wiki">
+  <meta property="og:title" content="Jquery">
+  <meta property="og:description" content="Jquery # 获取值 # todo..
+base64 数据给前端使用 # 后端可以用 base64 把数据传给前端，前端直接用，特别是常见的：
+图片 小文件 小段 JSON 比如后端 PHP：
+&lt;?php $data = [ &#34;s3_region&#34; =&gt; &#34;us-east-2&#34;, &#34;s3_bucket&#34; =&gt; &#34;avator&#34;, ]; // 1. 转 JSON $json = json_encode($data, JSON_UNESCAPED_UNICODE); // 2. 再 base64 编码 $base64 = base64_encode($json); ?&gt; &lt;input type=&#34;hidden&#34; id=&#34;s3_config&#34; value=&#34;&lt;?= $base64 ?&gt;&#34;&gt; JS 前端解码回来：
+const base64Str = $(&#39;#s3_config&#39;).val(); const jsonStr = atob(base64Str); // base64 decode const config = JSON.parse(jsonStr); // 解析 JSON console.log(config.s3_region); // us-east-2 为什么用 base64？什么时候用？
+用途 解释 避免 HTML 转义问题 里面即使有 &#34;、&lt;、&gt; 都不会影响 HTML 保证内容完整安全 base64是纯字符串，不会破坏标签结构 小数据安全传递 一般几 KB 以内的数据可以这样做 注意事项 ⚡ # 大数据量不要 base64：因为 base64 会比原数据大 33% 左右，太大就浪费带宽。 小段数据（JSON、短文本）非常合适。 图片的话，小图 base64 没问题，大图最好还是用 URL。 页面加载时就执行 # 如果想在 页面加载完成 时就用 jQuery 自动执行某些代码。 最常见的方法就是用 $(document).ready() 或 $(function() {...})。">
+  <meta property="og:locale" content="zh">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:modified_time" content="2025-04-28T08:49:40+08:00">
+<title>Jquery | wiki</title>
+<link rel="icon" href="/wiki/favicon.png" >
+<link rel="manifest" href="/wiki/manifest.json">
+<link rel="canonical" href="https://example.com/wiki/docs/frontend/jq/">
+<link rel="stylesheet" href="/wiki/book.min.1e8c332c823ff5970e639a0c180f0e3d074283c7f525185d3e42903a2f30e9be.css" integrity="sha256-HowzLII/9ZcOY5oMGA8OPQdCg8f1JRhdPkKQOi8w6b4=" crossorigin="anonymous">
+  <script defer src="/wiki/fuse.min.js"></script>
+  <script defer src="/wiki/zh.search.min.344713b5359b6d8d2d36e119fb9f5d4877426c47ec1b66b399ce5158a71c0edd.js" integrity="sha256-NEcTtTWbbY0tNuEZ&#43;59dSHdCbEfsG2azmc5RWKccDt0=" crossorigin="anonymous"></script>
+
+  <script defer src="/wiki/sw.min.e67149a4572dea566681c97cf77821bb08285ae36bc9376d2616a9b5e253f230.js" integrity="sha256-5nFJpFct6lZmgcl893ghuwgoWuNryTdtJhapteJT8jA=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/wiki/"><span>wiki</span>
+  </a>
+</h2>
+
+
+<div class="book-search hidden">
+  <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+
+
+<ul>
+    <li>
+        <a href="javascript:void(0)" onclick="hrefIndex()" rel="noopener">主页</a>
+    </li>
+    <li>
+        <a href="https://github.com/xiaobinqt" target="_blank" rel="noopener">GitHub</a>
+    </li>
+</ul>
+
+<hr>
+
+<script>
+    function hrefIndex() {
+        window.location = window.location.origin;
+    }
+</script>
+
+
+  
+<ul>
+  
+  <li>
+    <a href=""  target="_blank" rel="noopener">
+        
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+
+
+
+
+  
+  <ul>
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <span>MySQL</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/mysql/overview/" class="">总览</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/mysql/sql-grammar/" class="">SQL 语法</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/mysql/dbs-theory/" class="">数据库系统原理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/mysql/faq1.md/" class="">常见问题（一）</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <span>Redis</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/redis/overview/" class="">总览</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/redis/string/" class="">STRING</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <span>系统设计</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/system-design/overview/" class="">系统设计基础</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/system-design/distributed/" class="">分布式</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/system-design/cluster/" class="">集群</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/system-design/attack/" class="">攻击技术</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/system-design/cache/" class="">缓存</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/system-design/queue-message/" class="">消息队列</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <span>编码实践</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/coding-practice/regex/" class="">正则表达式</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/coding-practice/docker/" class="">Docker</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/coding-practice/git/" class="">Git</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/coding-practice/code-readability/" class="">代码可读性</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/coding-practice/mac/" class="">Mac</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/coding-practice/jetbrains/" class="">Jetbrains</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/coding-practice/chrome/" class="">Chrome</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <span>PHP</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/php/versions/" class="">1.1 版本区别</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/php/faq1/" class="">1.2 常见问题（一）</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/php/faq2/" class="">1.3 常见问题（二）</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/php/extend/" class="">1.4 PHP 扩展</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/php/functions/" class="">1.5 常用函数</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <span>Golang</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/golang/1.sundry/" class="">杂项</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <span>前端知识</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/frontend/html/" class="">html</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/frontend/jq/" class="active">Jquery</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <span>Python</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/python/1.basic/" class="">1.1 基础知识</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a href="/wiki/docs/favorite/" class="">收藏夹</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/favorite/cs-learn/" class="">计算机基础书籍推荐</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/wiki/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>Jquery</h3>
+
+  <label for="toc-control">
+    
+    <img src="/wiki/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#jquery">Jquery</a>
+      <ul>
+        <li><a href="#获取值">获取值</a></li>
+        <li><a href="#base64-数据给前端使用">base64 数据给前端使用</a>
+          <ul>
+            <li><a href="#注意事项-">注意事项 ⚡</a></li>
+          </ul>
+        </li>
+        <li><a href="#页面加载时就执行">页面加载时就执行</a>
+          <ul>
+            <li><a href="#-最标准写法">✅ 最标准写法：</a></li>
+            <li><a href="#-简写版更常用">✅ 简写版（更常用）</a></li>
+          </ul>
+        </li>
+        <li><a href="#判断页面上是否有某个元素">判断页面上是否有某个元素</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown book-article"><h1 id="jquery">
+  Jquery
+  <a class="anchor" href="#jquery">#</a>
+</h1>
+<h2 id="获取值">
+  获取值
+  <a class="anchor" href="#%e8%8e%b7%e5%8f%96%e5%80%bc">#</a>
+</h2>
+<p>todo..</p>
+<h2 id="base64-数据给前端使用">
+  base64 数据给前端使用
+  <a class="anchor" href="#base64-%e6%95%b0%e6%8d%ae%e7%bb%99%e5%89%8d%e7%ab%af%e4%bd%bf%e7%94%a8">#</a>
+</h2>
+<p>后端可以用 base64 把数据传给前端，前端直接用，特别是常见的：</p>
+<ul>
+<li>图片</li>
+<li>小文件</li>
+<li>小段 JSON</li>
+</ul>
+<p>比如<strong>后端 PHP</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+</span></span><span style="display:flex;"><span>$data <span style="color:#f92672">=</span> [
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;s3_region&#34;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#34;us-east-2&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;s3_bucket&#34;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#34;avator&#34;</span>,
+</span></span><span style="display:flex;"><span>];
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 1. 转 JSON
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>$json <span style="color:#f92672">=</span> <span style="color:#a6e22e">json_encode</span>($data, <span style="color:#a6e22e">JSON_UNESCAPED_UNICODE</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 2. 再 base64 编码
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>$base64 <span style="color:#f92672">=</span> <span style="color:#a6e22e">base64_encode</span>($json);
+</span></span><span style="display:flex;"><span><span style="color:#75715e">?&gt;</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">&lt;input type=&#34;hidden&#34; id=&#34;s3_config&#34; value=&#34;&lt;?= $base64 ?&gt;&#34;&gt;
+</span></span></span></code></pre></div><p>JS 前端解码回来：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">base64Str</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">$</span>(<span style="color:#e6db74">&#39;#s3_config&#39;</span>).<span style="color:#a6e22e">val</span>();
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">jsonStr</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">atob</span>(<span style="color:#a6e22e">base64Str</span>);   <span style="color:#75715e">// base64 decode
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">config</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">JSON</span>.<span style="color:#a6e22e">parse</span>(<span style="color:#a6e22e">jsonStr</span>); <span style="color:#75715e">// 解析 JSON
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">s3_region</span>); <span style="color:#75715e">// us-east-2
+</span></span></span></code></pre></div><p>为什么用 base64？什么时候用？</p>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: left">用途</th>
+          <th style="text-align: left">解释</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">避免 HTML 转义问题</td>
+          <td style="text-align: left">里面即使有 <code>&quot;</code>、<code>&lt;</code>、<code>&gt;</code> 都不会影响 HTML</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">保证内容完整安全</td>
+          <td style="text-align: left">base64是纯字符串，不会破坏标签结构</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">小数据安全传递</td>
+          <td style="text-align: left">一般几 KB 以内的数据可以这样做</td>
+      </tr>
+  </tbody>
+</table>
+<h3 id="注意事项-">
+  注意事项 ⚡
+  <a class="anchor" href="#%e6%b3%a8%e6%84%8f%e4%ba%8b%e9%a1%b9-">#</a>
+</h3>
+<ul>
+<li><strong>大数据量不要 base64</strong>：因为 base64 会比原数据大 <strong>33% 左右</strong>，太大就浪费带宽。</li>
+<li><strong>小段数据（JSON、短文本）非常合适</strong>。</li>
+<li><strong>图片的话</strong>，小图 base64 没问题，大图最好还是用 URL。</li>
+</ul>
+<h2 id="页面加载时就执行">
+  页面加载时就执行
+  <a class="anchor" href="#%e9%a1%b5%e9%9d%a2%e5%8a%a0%e8%bd%bd%e6%97%b6%e5%b0%b1%e6%89%a7%e8%a1%8c">#</a>
+</h2>
+<p>如果想在 页面加载完成 时就用 <strong>jQuery</strong> 自动执行某些代码。
+最常见的方法就是用 <code>$(document).ready()</code> 或 <code>$(function() {...})</code>。</p>
+<h3 id="-最标准写法">
+  ✅ 最标准写法：
+  <a class="anchor" href="#-%e6%9c%80%e6%a0%87%e5%87%86%e5%86%99%e6%b3%95">#</a>
+</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#a6e22e">$</span>(document).<span style="color:#a6e22e">ready</span>(<span style="color:#66d9ef">function</span> () {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 页面加载完成后自动执行这里的代码
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;页面加载完成，开始执行任务！&#34;</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">upload</span>(<span style="color:#ae81ff">2</span>);  <span style="color:#75715e">// 举个例子，直接执行你的 upload(2)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>});
+</span></span></code></pre></div><h3 id="-简写版更常用">
+  ✅ 简写版（更常用）
+  <a class="anchor" href="#-%e7%ae%80%e5%86%99%e7%89%88%e6%9b%b4%e5%b8%b8%e7%94%a8">#</a>
+</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#a6e22e">$</span>(<span style="color:#66d9ef">function</span> () {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;页面加载完成！&#34;</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">upload</span>(<span style="color:#ae81ff">2</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><p>页面里要先引入 jQuery：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>&lt;<span style="color:#f92672">script</span> <span style="color:#a6e22e">src</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;https://code.jquery.com/jquery-3.6.0.min.js&#34;</span>&gt;&lt;/<span style="color:#f92672">script</span>&gt;
+</span></span></code></pre></div><p>（一般是放在 <code>&lt;head&gt;</code> 或 <code>&lt;body&gt;</code> 结尾）</p>
+<ul>
+<li><code>$(function(){})</code> 和 <code>$(document).ready(function(){})</code> 是等价的，写哪个都行。</li>
+</ul>
+<h2 id="判断页面上是否有某个元素">
+  判断页面上是否有某个元素
+  <a class="anchor" href="#%e5%88%a4%e6%96%ad%e9%a1%b5%e9%9d%a2%e4%b8%8a%e6%98%af%e5%90%a6%e6%9c%89%e6%9f%90%e4%b8%aa%e5%85%83%e7%b4%a0">#</a>
+</h2>
+<p>在 jQuery 中判断页面上是否存在某个元素，通常有几种方法。可以使用 <code>.length</code> 属性来判断是否找到了匹配的元素。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">input</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">$</span>(<span style="color:#e6db74">`textarea[name=&#34;</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">lang</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;]`</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">input</span>.<span style="color:#a6e22e">length</span> <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;元素存在&#34;</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 执行你需要的操作
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>} <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;元素不存在&#34;</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 做其他处理
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><p><code>input.length</code>: jQuery 选择器返回的是一个 jQuery 对象，它的 <code>.length</code> 属性表示匹配的元素数量。<strong>如果 <code>.length</code> 大于 <code>0</code>，说明页面上存在该元素；否则，元素不存在</strong>。</p>
+<p>另一种方法：使用 <code>if (input)</code> 判断</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">input</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">$</span>(<span style="color:#e6db74">`textarea[name=&#34;</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">lang</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;]`</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">input</span>.<span style="color:#a6e22e">length</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;元素存在&#34;</span>);
+</span></span><span style="display:flex;"><span>} <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;元素不存在&#34;</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ul>
+<li><strong><code>input.length</code></strong> 判断返回的是元素集合的长度，<code>length &gt; 0</code> 表示元素存在。</li>
+<li><code>input</code> 本身是一个 jQuery 对象，通过 <code>.length</code> 可以快速判断是否找到了元素。</li>
+</ul>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/book.wiki/commit/c6a604f025334d2537221544af1ac59226a33dde" title='最后修改者 xiaobinqt | 四月 28, 2025' target="_blank" rel="noopener">
+      <img src="/wiki/svg/calendar.svg" class="book-icon" alt="" />
+      <span>四月 28, 2025</span>
+    </a>
+  </div>
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/book.wiki/tree/main/book.wiki/docs/frontend/jq.md" target="_blank" rel="noopener">
+      <img src="/wiki/svg/edit.svg" class="book-icon" alt="" />
+      <span>编辑本页</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#jquery">Jquery</a>
+      <ul>
+        <li><a href="#获取值">获取值</a></li>
+        <li><a href="#base64-数据给前端使用">base64 数据给前端使用</a>
+          <ul>
+            <li><a href="#注意事项-">注意事项 ⚡</a></li>
+          </ul>
+        </li>
+        <li><a href="#页面加载时就执行">页面加载时就执行</a>
+          <ul>
+            <li><a href="#-最标准写法">✅ 最标准写法：</a></li>
+            <li><a href="#-简写版更常用">✅ 简写版（更常用）</a></li>
+          </ul>
+        </li>
+        <li><a href="#判断页面上是否有某个元素">判断页面上是否有某个元素</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
