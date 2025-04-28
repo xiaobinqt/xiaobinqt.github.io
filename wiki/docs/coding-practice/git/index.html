@@ -67,14 +67,14 @@ git commit -a 直接把所有文件的修改添加到暂存区然后执行提交
   <meta property="og:locale" content="zh">
   <meta property="og:type" content="article">
     <meta property="article:section" content="docs">
-    <meta property="article:modified_time" content="2025-04-26T23:13:14+08:00">
+    <meta property="article:modified_time" content="2025-04-28T08:49:40+08:00">
 <title>Git | wiki</title>
 <link rel="icon" href="/wiki/favicon.png" >
 <link rel="manifest" href="/wiki/manifest.json">
 <link rel="canonical" href="https://example.com/wiki/docs/coding-practice/git/">
 <link rel="stylesheet" href="/wiki/book.min.1e8c332c823ff5970e639a0c180f0e3d074283c7f525185d3e42903a2f30e9be.css" integrity="sha256-HowzLII/9ZcOY5oMGA8OPQdCg8f1JRhdPkKQOi8w6b4=" crossorigin="anonymous">
   <script defer src="/wiki/fuse.min.js"></script>
-  <script defer src="/wiki/zh.search.min.b42ebb7e811cc2efab0d0438a20147a58bd48bd5d2be8815c5dc2bbdc879d5c8.js" integrity="sha256-tC67foEcwu&#43;rDQQ4ogFHpYvUi9XSvogVxdwrvch51cg=" crossorigin="anonymous"></script>
+  <script defer src="/wiki/zh.search.min.344713b5359b6d8d2d36e119fb9f5d4877426c47ec1b66b399ce5158a71c0edd.js" integrity="sha256-NEcTtTWbbY0tNuEZ&#43;59dSHdCbEfsG2azmc5RWKccDt0=" crossorigin="anonymous"></script>
 
   <script defer src="/wiki/sw.min.e67149a4572dea566681c97cf77821bb08285ae36bc9376d2616a9b5e253f230.js" integrity="sha256-5nFJpFct6lZmgcl893ghuwgoWuNryTdtJhapteJT8jA=" crossorigin="anonymous"></script>
 <!--
@@ -607,6 +607,19 @@ https://github.com/alex-shpak/hugo-book
         </li>
       
     
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/frontend/jq/" class="">Jquery</a>
+  
+
+        </li>
+      
+    
   </ul>
 
         </li>
@@ -738,6 +751,13 @@ https://github.com/alex-shpak/hugo-book
         <li><a href="#gitignore-文件">.gitignore 文件</a></li>
         <li><a href="#git-命令一览">Git 命令一览</a></li>
         <li><a href="#为-github-配置特定密钥">为 GitHub 配置特定密钥</a></li>
+        <li><a href="#git-指定用户名">git 指定用户名</a>
+          <ul>
+            <li><a href="#全局指定用户名">全局指定用户名</a></li>
+            <li><a href="#单个仓库指定用户名">单个仓库指定用户名</a></li>
+            <li><a href="#查看当前配置">查看当前配置</a></li>
+          </ul>
+        </li>
         <li><a href="#tag">tag</a></li>
         <li><a href="#指定-ssh-文件">指定 ssh 文件</a></li>
         <li><a href="#参考资料">参考资料</a></li>
@@ -882,6 +902,39 @@ https://github.com/alex-shpak/hugo-book
 <p>测试：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ssh -T git@github.com
 </span></span></code></pre></div><p>完成以上步骤后，Git 就会使用指定的密钥进行身份验证。</p>
+<h2 id="git-指定用户名">
+  git 指定用户名
+  <a class="anchor" href="#git-%e6%8c%87%e5%ae%9a%e7%94%a8%e6%88%b7%e5%90%8d">#</a>
+</h2>
+<p>在 Git 中指定用户名，有两种常见情况：</p>
+<h3 id="全局指定用户名">
+  全局指定用户名
+  <a class="anchor" href="#%e5%85%a8%e5%b1%80%e6%8c%87%e5%ae%9a%e7%94%a8%e6%88%b7%e5%90%8d">#</a>
+</h3>
+<p>这种方式对所有仓库生效。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git config --global user.name <span style="color:#e6db74">&#34;你的用户名&#34;</span>
+</span></span><span style="display:flex;"><span>git config --global user.email <span style="color:#e6db74">&#34;你的邮箱&#34;</span>
+</span></span></code></pre></div><p>比如：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git config --global user.name <span style="color:#e6db74">&#34;Alice&#34;</span>
+</span></span><span style="display:flex;"><span>git config --global user.email <span style="color:#e6db74">&#34;alice@example.com&#34;</span>
+</span></span></code></pre></div><p>这会写入到 <code>~/.gitconfig</code> 文件里，所有仓库都会默认用这个用户名和邮箱。</p>
+<h3 id="单个仓库指定用户名">
+  单个仓库指定用户名
+  <a class="anchor" href="#%e5%8d%95%e4%b8%aa%e4%bb%93%e5%ba%93%e6%8c%87%e5%ae%9a%e7%94%a8%e6%88%b7%e5%90%8d">#</a>
+</h3>
+<p>这种方式只对当前仓库生效。进入你的仓库目录，然后执行：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git config user.name <span style="color:#e6db74">&#34;你的用户名&#34;</span>
+</span></span><span style="display:flex;"><span>git config user.email <span style="color:#e6db74">&#34;你的邮箱&#34;</span>
+</span></span></code></pre></div><p>比如：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git config user.name <span style="color:#e6db74">&#34;Bob&#34;</span>
+</span></span><span style="display:flex;"><span>git config user.email <span style="color:#e6db74">&#34;bob@example.com&#34;</span>
+</span></span></code></pre></div><p>这样只会改当前这个仓库，不影响其他项目。</p>
+<h3 id="查看当前配置">
+  查看当前配置
+  <a class="anchor" href="#%e6%9f%a5%e7%9c%8b%e5%bd%93%e5%89%8d%e9%85%8d%e7%bd%ae">#</a>
+</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git config --list
+</span></span></code></pre></div><p>可以看到当前生效的用户名、邮箱、编辑器等等配置。</p>
 <h2 id="tag">
   tag
   <a class="anchor" href="#tag">#</a>
@@ -922,9 +975,9 @@ https://github.com/alex-shpak/hugo-book
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/book.wiki/commit/e6b194e9e0f826b0383d836abf5a9541a344b843" title='最后修改者 xiaobinqt | 四月 26, 2025' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/book.wiki/commit/c6a604f025334d2537221544af1ac59226a33dde" title='最后修改者 xiaobinqt | 四月 28, 2025' target="_blank" rel="noopener">
       <img src="/wiki/svg/calendar.svg" class="book-icon" alt="" />
-      <span>四月 26, 2025</span>
+      <span>四月 28, 2025</span>
     </a>
   </div>
 
@@ -980,6 +1033,13 @@ https://github.com/alex-shpak/hugo-book
         <li><a href="#gitignore-文件">.gitignore 文件</a></li>
         <li><a href="#git-命令一览">Git 命令一览</a></li>
         <li><a href="#为-github-配置特定密钥">为 GitHub 配置特定密钥</a></li>
+        <li><a href="#git-指定用户名">git 指定用户名</a>
+          <ul>
+            <li><a href="#全局指定用户名">全局指定用户名</a></li>
+            <li><a href="#单个仓库指定用户名">单个仓库指定用户名</a></li>
+            <li><a href="#查看当前配置">查看当前配置</a></li>
+          </ul>
+        </li>
         <li><a href="#tag">tag</a></li>
         <li><a href="#指定-ssh-文件">指定 ssh 文件</a></li>
         <li><a href="#参考资料">参考资料</a></li>
