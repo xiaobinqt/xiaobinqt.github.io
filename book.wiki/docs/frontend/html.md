@@ -41,7 +41,15 @@ title: "html"
 - muted 静音播放
 - autoplay 自动播放，浏览器支持视频在静音状态下自动播放
 
+## 常用标签
 
+### input
+
+浏览器对类型和后缀都会同时过滤，限制只能选 PNG 图片。
+
+```
+<input type="file" accept="image/png,.png">
+```
 
 
 
