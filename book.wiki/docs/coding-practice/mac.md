@@ -151,7 +151,8 @@ error_log  /var/log/nginx/my_error.log  error;
 
 ```bash
 nginx -t         # 检查配置
-sudo nginx -s reload  # 重新加载配置
+sudo nginx -s reload  # linux 系统使用，重新加载配置
+brew services restart nginx # mac 使用 brew 重启
 ```
 
 
