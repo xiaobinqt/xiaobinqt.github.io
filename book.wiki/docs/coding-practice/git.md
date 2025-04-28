@@ -168,6 +168,54 @@ ssh -T git@github.com
 
 完成以上步骤后，Git 就会使用指定的密钥进行身份验证。
 
+## git 指定用户名
+
+在 Git 中指定用户名，有两种常见情况：
+
+### 全局指定用户名
+
+这种方式对所有仓库生效。
+
+```bash
+git config --global user.name "你的用户名"
+git config --global user.email "你的邮箱"
+```
+
+比如：
+
+```bash
+git config --global user.name "Alice"
+git config --global user.email "alice@example.com"
+```
+
+这会写入到 `~/.gitconfig` 文件里，所有仓库都会默认用这个用户名和邮箱。
+
+### 单个仓库指定用户名
+
+这种方式只对当前仓库生效。进入你的仓库目录，然后执行：
+
+```bash
+git config user.name "你的用户名"
+git config user.email "你的邮箱"
+```
+
+比如：
+
+```bash
+git config user.name "Bob"
+git config user.email "bob@example.com"
+```
+
+这样只会改当前这个仓库，不影响其他项目。
+
+### 查看当前配置
+
+```bash
+git config --list
+```
+
+可以看到当前生效的用户名、邮箱、编辑器等等配置。
+
 ## tag
 
 ```bash
