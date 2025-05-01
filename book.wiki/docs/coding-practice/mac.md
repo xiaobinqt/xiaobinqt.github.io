@@ -110,7 +110,6 @@ brew install hugo
 
 在 macOS 上，Nginx 的错误日志（error log）默认路径可能因安装方式而异。下面是常见的几种情况：
 
-
 ### 🍎 常见路径（Homebrew 安装）
 
 如果你是用 **Homebrew 安装的 Nginx**（大多数人都是这样装的），那么错误日志的位置通常是：
@@ -169,6 +168,36 @@ tail -f /opt/homebrew/var/log/nginx/error.log
 ```bash
 tail -f /usr/local/var/log/nginx/error.log
 ```
+
+## Beyond Compare 4 破解方式
+
+在应用程序找到 Beyond Compare，然后右键，点击显示包内容，进入 Contents 目录，然后再进到 MacOs 目录。
+
+![](https://cdn.xiaobinqt.cn//xiaobinqt.io/20250501/e97ba105ba2d47a19771d494a665a9bf.png)
+
+重命名主应用程序 BCompare 更改为 BCompare.real
+
+在这种目录中用终端打开
+
+![](https://cdn.xiaobinqt.cn//xiaobinqt.io/20250501/9ee588af9b014a9b923dff18eff81173.png)
+
+vim 新建 BCompare 文件，文件内容如下：
+
+```shell
+#!/bin/bash
+rm "/Users/电脑名称/Library/Application Support/Beyond Compare/registry.dat"
+"`dirname "$0"`"/BCompare.real $@
+```
+
+给与执行权限
+
+```shell
+chmod a+x BCompare.real
+chmod a+x BCompare
+```
+
+
+
 
 
 
