@@ -19,6 +19,14 @@ title: "Mac"
 - [录屏后没声音？这应该是 Mac（苹果电脑） 内录声音最优雅的解决方案了](https://www.youtube.com/watch?v=-aTCbnc-0Dk&ab_channel=Mac%E4%BA%91%E8%AF%BE%E5%A0%82)
 - [苹果Mac录屏没声音怎么办？安装LoopBack解决Mac内录电脑系统声音](https://zhuanlan.zhihu.com/p/121026374)
 
+## 常用功能
+
+### 强制退出软件
+
+同时按下以下三个按键：Option（或 Alt）、Command、Esc (Escape)1。或者，从屏幕角落的苹果菜单  中选取“强制退出”。
+
+[如何在 Mac 上强制退出 App](https://support.apple.com/zh-cn/102586)
+
 ## 查看系统数据占用
 
 最近遇到一个问题，突然磁盘满了，直接显示 no space left on device. 排查了半天也不知道是什么东西把磁盘写满了。
