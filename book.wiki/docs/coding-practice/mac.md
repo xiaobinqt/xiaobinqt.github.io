@@ -27,6 +27,33 @@ title: "Mac"
 
 [如何在 Mac 上强制退出 App](https://support.apple.com/zh-cn/102586)
 
+### 查看隐藏文件
+
+方法一：使用快捷键
+
+在 Finder 中按下：
+
+⌘ Command + ⇧ Shift + .（英文句号）
+
+再次按一次会隐藏它们，相当于开关。
+
+方法二：使用终端命令永久开启
+
+1. 打开「终端 Terminal」
+2. 输入以下命令并回车：
+
+```bash
+defaults write com.apple.finder AppleShowAllFiles -bool true
+killall Finder
+```
+
+3. 若想关闭显示隐藏文件：
+
+```bash
+defaults write com.apple.finder AppleShowAllFiles -bool false
+killall Finder
+```
+
 ## 查看系统数据占用
 
 最近遇到一个问题，突然磁盘满了，直接显示 no space left on device. 排查了半天也不知道是什么东西把磁盘写满了。
