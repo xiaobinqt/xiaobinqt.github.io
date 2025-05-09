@@ -33,31 +33,30 @@
 
   如何在 Mac 上强制退出 App
 
+  查看隐藏文件
+  #
+
+方法一：使用快捷键
+在 Finder 中按下：
+⌘ Command &#43; ⇧ Shift &#43; .（英文句号）
+再次按一次会隐藏它们，相当于开关。
+方法二：使用终端命令永久开启
+
+打开「终端 Terminal」
+输入以下命令并回车：
+
+defaults write com.apple.finder AppleShowAllFiles -bool true
+killall Finder
+
+若想关闭显示隐藏文件：
+
+defaults write com.apple.finder AppleShowAllFiles -bool false
+killall Finder
+
   查看系统数据占用
   #
 
-最近遇到一个问题，突然磁盘满了，直接显示 no space left on device. 排查了半天也不知道是什么东西把磁盘写满了。
-du -sh ./* ./.??* 2&gt;/dev/null | sort -hr | head -n 10
-这个命令按照从大到小排序并显示前 10 个最大的文件或目录。
-du 是一个用于统计磁盘使用量的命令。
-
--s：汇总（summarize），仅显示每个指定路径的总大小。
--h：以人类可读的格式输出大小（例如 1.2G、345M、12K 等）。
-./*：匹配当前目录下的所有非隐藏文件和目录（通配符 * 匹配所有文件名，但不包括以 . 开头的隐藏文件）。
-./.??*：匹配当前目录下的隐藏文件和目录，但只包括以 . 开头且文件名长度至少为 3 字符的项（例如 .git、.env）。具体解释：
-
-.??* 表示：
-
-第一个 .：匹配隐藏文件的开头点。
-??：匹配任意两个字符（确保文件名至少有 2 个字符，避免匹配 . 和 ..）。
-*：匹配剩余的任意字符。
-
-
-这样可以避免匹配当前目录（.）和父目录（..），只包括真正的隐藏文件或目录。
-
-
-
-./* ./.??* 结合在一起，覆盖了当前目录下几乎所有的文件和目录（包括隐藏文件，但排除 . 和 ..）。">
+最近遇到一个问题，突然磁盘满了，直接显示 no space left on device. 排查了半天也不知道是什么东西把磁盘写满了。">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/wiki/docs/coding-practice/mac/">
@@ -65,21 +64,23 @@ du 是一个用于统计磁盘使用量的命令。
   <meta property="og:title" content="Mac">
   <meta property="og:description" content="Mac # 工具 # iTerm2安装配置使用指南——保姆级 奇技淫巧玄妙无穷| M1 mac os(苹果/AppleSilicon)系统的基本操作和设置 录屏后没声音？这应该是 Mac（苹果电脑） 内录声音最优雅的解决方案了 苹果Mac录屏没声音怎么办？安装LoopBack解决Mac内录电脑系统声音 常用功能 # 强制退出软件 # 同时按下以下三个按键：Option（或 Alt）、Command、Esc (Escape)1。或者，从屏幕角落的苹果菜单  中选取“强制退出”。
 如何在 Mac 上强制退出 App
-查看系统数据占用 # 最近遇到一个问题，突然磁盘满了，直接显示 no space left on device. 排查了半天也不知道是什么东西把磁盘写满了。
-du -sh ./* ./.??* 2&gt;/dev/null | sort -hr | head -n 10 这个命令按照从大到小排序并显示前 10 个最大的文件或目录。
-du 是一个用于统计磁盘使用量的命令。
--s：汇总（summarize），仅显示每个指定路径的总大小。 -h：以人类可读的格式输出大小（例如 1.2G、345M、12K 等）。 ./*：匹配当前目录下的所有非隐藏文件和目录（通配符 * 匹配所有文件名，但不包括以 . 开头的隐藏文件）。 ./.??*：匹配当前目录下的隐藏文件和目录，但只包括以 . 开头且文件名长度至少为 3 字符的项（例如 .git、.env）。具体解释： .??* 表示： 第一个 .：匹配隐藏文件的开头点。 ??：匹配任意两个字符（确保文件名至少有 2 个字符，避免匹配 . 和 ..）。 *：匹配剩余的任意字符。 这样可以避免匹配当前目录（.）和父目录（..），只包括真正的隐藏文件或目录。 ./* ./.??* 结合在一起，覆盖了当前目录下几乎所有的文件和目录（包括隐藏文件，但排除 . 和 ..）。">
+查看隐藏文件 # 方法一：使用快捷键
+在 Finder 中按下：
+⌘ Command &#43; ⇧ Shift &#43; .（英文句号）
+再次按一次会隐藏它们，相当于开关。
+方法二：使用终端命令永久开启
+打开「终端 Terminal」 输入以下命令并回车： defaults write com.apple.finder AppleShowAllFiles -bool true killall Finder 若想关闭显示隐藏文件： defaults write com.apple.finder AppleShowAllFiles -bool false killall Finder 查看系统数据占用 # 最近遇到一个问题，突然磁盘满了，直接显示 no space left on device. 排查了半天也不知道是什么东西把磁盘写满了。">
   <meta property="og:locale" content="zh">
   <meta property="og:type" content="article">
     <meta property="article:section" content="docs">
-    <meta property="article:modified_time" content="2025-05-08T17:42:06+08:00">
+    <meta property="article:modified_time" content="2025-05-09T21:13:41+08:00">
 <title>Mac | wiki</title>
 <link rel="icon" href="/wiki/favicon.png" >
 <link rel="manifest" href="/wiki/manifest.json">
 <link rel="canonical" href="https://example.com/wiki/docs/coding-practice/mac/">
 <link rel="stylesheet" href="/wiki/book.min.1e8c332c823ff5970e639a0c180f0e3d074283c7f525185d3e42903a2f30e9be.css" integrity="sha256-HowzLII/9ZcOY5oMGA8OPQdCg8f1JRhdPkKQOi8w6b4=" crossorigin="anonymous">
   <script defer src="/wiki/fuse.min.js"></script>
-  <script defer src="/wiki/zh.search.min.f19851cb1e085bfbf69ecf1dff72dea666f1ae537690f7d495a79a217e81e44c.js" integrity="sha256-8ZhRyx4IW/v2ns8d/3LepmbxrlN2kPfUlaeaIX6B5Ew=" crossorigin="anonymous"></script>
+  <script defer src="/wiki/zh.search.min.75097e3b4ba787120c65bbe406644b84334510eb2929a106fb088a57e1c3145c.js" integrity="sha256-dQl&#43;O0unhxIMZbvkBmRLhDNFEOspKaEG&#43;wiKV&#43;HDFFw=" crossorigin="anonymous"></script>
 
   <script defer src="/wiki/sw.min.e67149a4572dea566681c97cf77821bb08285ae36bc9376d2616a9b5e253f230.js" integrity="sha256-5nFJpFct6lZmgcl893ghuwgoWuNryTdtJhapteJT8jA=" crossorigin="anonymous"></script>
 <!--
@@ -775,6 +776,7 @@ https://github.com/alex-shpak/hugo-book
         <li><a href="#常用功能">常用功能</a>
           <ul>
             <li><a href="#强制退出软件">强制退出软件</a></li>
+            <li><a href="#查看隐藏文件">查看隐藏文件</a></li>
           </ul>
         </li>
         <li><a href="#查看系统数据占用">查看系统数据占用</a></li>
@@ -836,7 +838,27 @@ https://github.com/alex-shpak/hugo-book
 <p>同时按下以下三个按键：Option（或 Alt）、Command、Esc (Escape)1。或者，从屏幕角落的苹果菜单  中选取“强制退出”。</p>
 <p>
   <a href="https://support.apple.com/zh-cn/102586">如何在 Mac 上强制退出 App</a></p>
-<h2 id="查看系统数据占用">
+<h3 id="查看隐藏文件">
+  查看隐藏文件
+  <a class="anchor" href="#%e6%9f%a5%e7%9c%8b%e9%9a%90%e8%97%8f%e6%96%87%e4%bb%b6">#</a>
+</h3>
+<p>方法一：使用快捷键</p>
+<p>在 Finder 中按下：</p>
+<p>⌘ Command + ⇧ Shift + .（英文句号）</p>
+<p>再次按一次会隐藏它们，相当于开关。</p>
+<p>方法二：使用终端命令永久开启</p>
+<ol>
+<li>打开「终端 Terminal」</li>
+<li>输入以下命令并回车：</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>defaults write com.apple.finder AppleShowAllFiles -bool true
+</span></span><span style="display:flex;"><span>killall Finder
+</span></span></code></pre></div><ol start="3">
+<li>若想关闭显示隐藏文件：</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>defaults write com.apple.finder AppleShowAllFiles -bool false
+</span></span><span style="display:flex;"><span>killall Finder
+</span></span></code></pre></div><h2 id="查看系统数据占用">
   查看系统数据占用
   <a class="anchor" href="#%e6%9f%a5%e7%9c%8b%e7%b3%bb%e7%bb%9f%e6%95%b0%e6%8d%ae%e5%8d%a0%e7%94%a8">#</a>
 </h2>
@@ -973,9 +995,9 @@ mv hugo /usr/local/bin
   <div class="flex flex-wrap justify-between">
 
 
-  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/book.wiki/commit/bd31d8ade0d3370490460a8cd83a653b758d6aed" title='最后修改者 xiaobinqt | 五月 8, 2025' target="_blank" rel="noopener">
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/book.wiki/commit/8e48fa0a366230c527f98c977faf0c254f8b92f9" title='最后修改者 xiaobinqt | 五月 9, 2025' target="_blank" rel="noopener">
       <img src="/wiki/svg/calendar.svg" class="book-icon" alt="" />
-      <span>五月 8, 2025</span>
+      <span>五月 9, 2025</span>
     </a>
   </div>
 
@@ -1024,6 +1046,7 @@ mv hugo /usr/local/bin
         <li><a href="#常用功能">常用功能</a>
           <ul>
             <li><a href="#强制退出软件">强制退出软件</a></li>
+            <li><a href="#查看隐藏文件">查看隐藏文件</a></li>
           </ul>
         </li>
         <li><a href="#查看系统数据占用">查看系统数据占用</a></li>
