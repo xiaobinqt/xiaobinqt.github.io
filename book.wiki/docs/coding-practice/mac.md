@@ -19,6 +19,10 @@ title: "Mac"
 - [录屏后没声音？这应该是 Mac（苹果电脑） 内录声音最优雅的解决方案了](https://www.youtube.com/watch?v=-aTCbnc-0Dk&ab_channel=Mac%E4%BA%91%E8%AF%BE%E5%A0%82)
 - [苹果Mac录屏没声音怎么办？安装LoopBack解决Mac内录电脑系统声音](https://zhuanlan.zhihu.com/p/121026374)
 
+### 常用软件
+
+- sequel ace
+
 ## 常用功能
 
 ### 强制退出软件
