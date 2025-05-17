@@ -18,6 +18,7 @@ title: "Mac"
 - [奇技淫巧玄妙无穷| M1 mac os(苹果/AppleSilicon)系统的基本操作和设置](https://segmentfault.com/a/1190000039782096)
 - [录屏后没声音？这应该是 Mac（苹果电脑） 内录声音最优雅的解决方案了](https://www.youtube.com/watch?v=-aTCbnc-0Dk&ab_channel=Mac%E4%BA%91%E8%AF%BE%E5%A0%82)
 - [苹果Mac录屏没声音怎么办？安装LoopBack解决Mac内录电脑系统声音](https://zhuanlan.zhihu.com/p/121026374)
+- [如何快速更换苹果 macOS 应用图标？](https://www.ifanr.com/app/1379030)
 
 ### 常用软件
 
