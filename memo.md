@@ -14,6 +14,10 @@ hugo server  --config XXXXX.toml
 
 hugo server  --config book.leetcode.toml
 
+新建文章
+
+hugo new  content/posts/php/xxxx.md --configDir config.io
+
 ```
 
 
