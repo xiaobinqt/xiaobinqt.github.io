@@ -384,14 +384,14 @@
 </span></span><span class="line"><span class="cl">}</span></span></code></pre>
 </div>
 <p>这段代码会执行得磕磕绊绊，就像这样。</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/%E4%BC%A0%E7%BB%9FIO.gif" title="阻塞IO" data-thumbnail="https://cdn.xiaobinqt.cn/%E4%BC%A0%E7%BB%9FIO.gif" data-sub-html="<h2>阻塞IO</h2><p>阻塞IO</p>"><img  loading="lazy" src='https://cdn.xiaobinqt.cn/%E4%BC%A0%E7%BB%9FIO.gif'   alt="阻塞IO"  ></a><figcaption class="image-caption">阻塞IO</figcaption>
+<p><figure><a class="lightgallery" href="/%E4%BC%A0%E7%BB%9FIO_15346286505597755739.gif" title="阻塞IO" data-thumbnail="/%E4%BC%A0%E7%BB%9FIO_15346286505597755739.gif" data-sub-html="<h2>阻塞IO</h2><p>阻塞IO</p>"><img  loading="lazy" src='/%E4%BC%A0%E7%BB%9FIO_15346286505597755739.gif' srcset="/%E4%BC%A0%E7%BB%9FIO_15346286505597755739_hu_21d3c73379a1e67f.webp 800w, /%E4%BC%A0%E7%BB%9FIO_15346286505597755739_hu_a3af2025b710469a.webp 1200w, /%E4%BC%A0%E7%BB%9FIO_15346286505597755739_hu_ff1b18a166659b91.webp 1600w"  alt="阻塞IO" height="385" width="767"></a><figcaption class="image-caption">阻塞IO</figcaption>
 </figure></p>
 <p>可以看到，服务端的线程阻塞在了两个地方，一个是<code>accept</code>函数，一个是<code>read</code>函数。</p>
 <p>如果再把<code>read</code>函数的细节展开，我们会发现其阻塞在了两个阶段。一个阶段是数据从网卡拷贝到内核缓冲区，第二个阶段是数据从内核缓冲区拷贝到用户缓冲区。</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/read.gif" title="read 阻塞" data-thumbnail="https://cdn.xiaobinqt.cn/read.gif" data-sub-html="<h2>read 阻塞</h2><p>read 阻塞</p>"><img  loading="lazy" src='https://cdn.xiaobinqt.cn/read.gif'   alt="read 阻塞"  ></a><figcaption class="image-caption">read 阻塞</figcaption>
+<p><figure><a class="lightgallery" href="/read_9380596094553533581.gif" title="read 阻塞" data-thumbnail="/read_9380596094553533581.gif" data-sub-html="<h2>read 阻塞</h2><p>read 阻塞</p>"><img  loading="lazy" src='/read_9380596094553533581.gif' srcset="/read_9380596094553533581_hu_56b7b7891575b46b.webp 800w, /read_9380596094553533581_hu_74d9f6ed03c686ba.webp 1200w, /read_9380596094553533581_hu_6077041f2ef4849d.webp 1600w"  alt="read 阻塞" height="547" width="679"></a><figcaption class="image-caption">read 阻塞</figcaption>
 </figure></p>
 <p>这就是传统的阻塞 IO。整体流程如下图&#x1f447;</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221124/631dedf37f5544d2b74214112468e72f.png" title="阻塞IO流程" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221124/631dedf37f5544d2b74214112468e72f.png" data-sub-html="<h2>阻塞IO流程</h2><p>阻塞IO流程</p>"><img  loading="lazy" src='https://cdn.xiaobinqt.cn/xiaobinqt.io/20221124/631dedf37f5544d2b74214112468e72f.png'   alt="阻塞IO流程"  ></a><figcaption class="image-caption">阻塞IO流程</figcaption>
+<p><figure><a class="lightgallery" href="/631dedf37f5544d2b74214112468e72f_4708626787782672885.png" title="阻塞IO流程" data-thumbnail="/631dedf37f5544d2b74214112468e72f_4708626787782672885.png" data-sub-html="<h2>阻塞IO流程</h2><p>阻塞IO流程</p>"><img  loading="lazy" src='/631dedf37f5544d2b74214112468e72f_4708626787782672885.png' srcset="/631dedf37f5544d2b74214112468e72f_4708626787782672885_hu_5664b0f9a81d2db8.webp 800w, /631dedf37f5544d2b74214112468e72f_4708626787782672885_hu_b3aa06b86e92c10c.webp 1200w, /631dedf37f5544d2b74214112468e72f_4708626787782672885_hu_b8d35b04f2e29394.webp 1600w"  alt="阻塞IO流程" height="538" width="653"></a><figcaption class="image-caption">阻塞IO流程</figcaption>
 </figure></p>
 <p>如果这个连接的客户端一直不发数据，那么服务端线程将会一直阻塞在<code>read</code>函数上不返回，也无法接受其他客户端连接，这肯定是不行的。</p>
 <h2 id="非阻塞io" class="headerLink">
@@ -496,7 +496,7 @@
 </span></span><span class="line"><span class="cl">}</span></span></code></pre>
 </div>
 <p>这样，当给一个客户端建立好连接后，就可以立刻等待新的客户端连接，而不用阻塞在原客户端的<code>read</code>请求上。</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/%E9%9D%9E%E9%98%BB%E5%A1%9EIO.gif" title="假非阻塞IO" data-thumbnail="https://cdn.xiaobinqt.cn/%E9%9D%9E%E9%98%BB%E5%A1%9EIO.gif" data-sub-html="<h2>假非阻塞IO</h2><p>假非阻塞IO</p>"><img  loading="lazy" src='https://cdn.xiaobinqt.cn/%E9%9D%9E%E9%98%BB%E5%A1%9EIO.gif'   alt="假非阻塞IO"  ></a><figcaption class="image-caption">假非阻塞IO</figcaption>
+<p><figure><a class="lightgallery" href="/%E9%9D%9E%E9%98%BB%E5%A1%9EIO_17765733065247448160.gif" title="假非阻塞IO" data-thumbnail="/%E9%9D%9E%E9%98%BB%E5%A1%9EIO_17765733065247448160.gif" data-sub-html="<h2>假非阻塞IO</h2><p>假非阻塞IO</p>"><img  loading="lazy" src='/%E9%9D%9E%E9%98%BB%E5%A1%9EIO_17765733065247448160.gif' srcset="/%E9%9D%9E%E9%98%BB%E5%A1%9EIO_17765733065247448160_hu_e9bf5fc59ab030f.webp 800w, /%E9%9D%9E%E9%98%BB%E5%A1%9EIO_17765733065247448160_hu_6cf0bf881041720f.webp 1200w, /%E9%9D%9E%E9%98%BB%E5%A1%9EIO_17765733065247448160_hu_de15720ac09a52e9.webp 1600w"  alt="假非阻塞IO" height="390" width="669"></a><figcaption class="image-caption">假非阻塞IO</figcaption>
 </figure></p>
 <p>不过，这不叫非阻塞 IO，只不过用了多线程的手段使得主线程没有卡在<code>read</code>函数上不往下走罢了。操作系统为我们提供的<code>read</code>函数<strong>仍然是阻塞的</strong>。</p>
 <p>真正的非阻塞 IO，不能是通过我们用户层的小把戏，而是要<strong>恳请操作系统为我们提供一个非阻塞的<code>read</code>函数</strong>。</p>
@@ -594,14 +594,14 @@
 </span></span><span class="line"><span class="cl">int n = read(connfd, buffer) != SUCCESS);</span></span></code></pre>
 </div>
 <p>这样，就需要<strong>用户线程循环调用<code>read</code>，直到返回值不为 -1</strong>，再开始处理业务。</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/%E7%9C%9F%E7%9A%84%E9%9D%9E%E9%98%BB%E5%A1%9EIO.gif" title="非阻塞IO" data-thumbnail="https://cdn.xiaobinqt.cn/%E7%9C%9F%E7%9A%84%E9%9D%9E%E9%98%BB%E5%A1%9EIO.gif" data-sub-html="<h2>非阻塞IO</h2><p>非阻塞IO</p>"><img  loading="lazy" src='https://cdn.xiaobinqt.cn/%E7%9C%9F%E7%9A%84%E9%9D%9E%E9%98%BB%E5%A1%9EIO.gif'   alt="非阻塞IO"  ></a><figcaption class="image-caption">非阻塞IO</figcaption>
+<p><figure><a class="lightgallery" href="/%E7%9C%9F%E7%9A%84%E9%9D%9E%E9%98%BB%E5%A1%9EIO_6845277110126384780.gif" title="非阻塞IO" data-thumbnail="/%E7%9C%9F%E7%9A%84%E9%9D%9E%E9%98%BB%E5%A1%9EIO_6845277110126384780.gif" data-sub-html="<h2>非阻塞IO</h2><p>非阻塞IO</p>"><img  loading="lazy" src='/%E7%9C%9F%E7%9A%84%E9%9D%9E%E9%98%BB%E5%A1%9EIO_6845277110126384780.gif' srcset="/%E7%9C%9F%E7%9A%84%E9%9D%9E%E9%98%BB%E5%A1%9EIO_6845277110126384780_hu_9e65fab669b7b844.webp 800w, /%E7%9C%9F%E7%9A%84%E9%9D%9E%E9%98%BB%E5%A1%9EIO_6845277110126384780_hu_7df46660e58f16c5.webp 1200w, /%E7%9C%9F%E7%9A%84%E9%9D%9E%E9%98%BB%E5%A1%9EIO_6845277110126384780_hu_7cd10febeac6f9bc.webp 1600w"  alt="非阻塞IO" height="547" width="679"></a><figcaption class="image-caption">非阻塞IO</figcaption>
 </figure></p>
 <p>这里有一个细节&#x261d;&#xfe0f;。非阻塞的<code>read</code>，指的是在数据到达前，即数据还未到达网卡，或者到达网卡但还没有拷贝到内核缓冲区之前，这个阶段是非阻塞的，一旦数据已到达内核缓冲区，此时调用<code>read</code>函数<strong>仍然是阻塞的</strong>，需要等待数据从内核缓冲区拷贝到用户缓冲区，才能返回。整体流程如下图&#x1f447;</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221124/15b4551071694947a1df10ef9d80208a.png" title="非阻塞IO流程" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221124/15b4551071694947a1df10ef9d80208a.png" data-sub-html="<h2>非阻塞IO流程</h2><p>非阻塞IO流程</p>"><img  loading="lazy" src='https://cdn.xiaobinqt.cn/xiaobinqt.io/20221124/15b4551071694947a1df10ef9d80208a.png'   alt="非阻塞IO流程"  ></a><figcaption class="image-caption">非阻塞IO流程</figcaption>
+<p><figure><a class="lightgallery" href="/15b4551071694947a1df10ef9d80208a_15157000414091730243.png" title="非阻塞IO流程" data-thumbnail="/15b4551071694947a1df10ef9d80208a_15157000414091730243.png" data-sub-html="<h2>非阻塞IO流程</h2><p>非阻塞IO流程</p>"><img  loading="lazy" src='/15b4551071694947a1df10ef9d80208a_15157000414091730243.png' srcset="/15b4551071694947a1df10ef9d80208a_15157000414091730243_hu_6d7d22f62908fc07.webp 800w, /15b4551071694947a1df10ef9d80208a_15157000414091730243_hu_5362550d368b4875.webp 1200w, /15b4551071694947a1df10ef9d80208a_15157000414091730243_hu_293fc6b286b43cdf.webp 1600w"  alt="非阻塞IO流程" height="562" width="777"></a><figcaption class="image-caption">非阻塞IO流程</figcaption>
 </figure></p>
 <h2 id="io多路复用" class="headerLink">
     <a href="#io%e5%a4%9a%e8%b7%af%e5%a4%8d%e7%94%a8" class="header-mark"></a>3 IO多路复用</h2><p>为每个客户端创建一个线程，服务器端的线程资源很容易被耗光。</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221124/1d4069e204fe4c94b059bbaccf8e6262.png" title="线程资源" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221124/1d4069e204fe4c94b059bbaccf8e6262.png" data-sub-html="<h2>线程资源</h2><p>线程资源</p>"><img  loading="lazy" src='https://cdn.xiaobinqt.cn/xiaobinqt.io/20221124/1d4069e204fe4c94b059bbaccf8e6262.png'   alt="线程资源"  ></a><figcaption class="image-caption">线程资源</figcaption>
+<p><figure><a class="lightgallery" href="/1d4069e204fe4c94b059bbaccf8e6262_5385660354864542500.png" title="线程资源" data-thumbnail="/1d4069e204fe4c94b059bbaccf8e6262_5385660354864542500.png" data-sub-html="<h2>线程资源</h2><p>线程资源</p>"><img  loading="lazy" src='/1d4069e204fe4c94b059bbaccf8e6262_5385660354864542500.png' srcset="/1d4069e204fe4c94b059bbaccf8e6262_5385660354864542500_hu_c0f91b9c0f47c274.webp 800w, /1d4069e204fe4c94b059bbaccf8e6262_5385660354864542500_hu_e8f8aa2d03c0df78.webp 1200w, /1d4069e204fe4c94b059bbaccf8e6262_5385660354864542500_hu_a7bb25c95e686ca7.webp 1600w"  alt="线程资源" height="300" width="550"></a><figcaption class="image-caption">线程资源</figcaption>
 </figure></p>
 <p>当然还有个聪明的办法，我们可以每个<code>accept</code>客户端连接后，将这个文件描述符（connfd）放到一个数组里。</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
@@ -793,13 +793,13 @@
 </span></span><span class="line"><span class="cl">  }
 </span></span><span class="line"><span class="cl">}</span></span></code></pre>
 </div>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/fdlist.gif" title="fdlist" data-thumbnail="https://cdn.xiaobinqt.cn/fdlist.gif" data-sub-html="<h2>fdlist</h2><p>fdlist</p>"><img  loading="lazy" src='https://cdn.xiaobinqt.cn/fdlist.gif'   alt="fdlist"  ></a><figcaption class="image-caption">fdlist</figcaption>
+<p><figure><a class="lightgallery" href="/fdlist_1573304327419562817.gif" title="fdlist" data-thumbnail="/fdlist_1573304327419562817.gif" data-sub-html="<h2>fdlist</h2><p>fdlist</p>"><img  loading="lazy" src='/fdlist_1573304327419562817.gif' srcset="/fdlist_1573304327419562817_hu_383df379aeaa186e.webp 800w, /fdlist_1573304327419562817_hu_3b0feb4a5bacae4c.webp 1200w, /fdlist_1573304327419562817_hu_96a8cee5bb08ab21.webp 1600w"  alt="fdlist" height="219" width="505"></a><figcaption class="image-caption">fdlist</figcaption>
 </figure></p>
 <p>这样看起来是不是觉得这有些多路复用的意思？</p>
 <p>但这和我们用多线程去将阻塞 IO 改造成看起来是非阻塞 IO 一样，这种遍历方式也只是我们用户自己想出的小把戏，每次遍历遇到<code>read</code>返回 -1 时仍然是一次浪费资源的系统调用。在<code>while</code>循环里做系统调用，是不划算的。所以，还是得恳请操作系统老大，提供给我们一个有这样效果的函数，我们将一批文件描述符通过一次系统调用传给内核，由内核层去遍历，才能真正解决这个问题。</p>
 <h3 id="select" class="headerLink">
     <a href="#select" class="header-mark"></a>3.1 select</h3><p>select 是操作系统提供的系统调用函数，通过它，我们可以把一个文件描述符的数组发给操作系统，<strong>让操作系统去遍历，确定哪个文件描述符可以读写</strong>，然后告诉我们去处理：</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/select.gif" title="select" data-thumbnail="https://cdn.xiaobinqt.cn/select.gif" data-sub-html="<h2>select</h2><p>select</p>"><img  loading="lazy" src='https://cdn.xiaobinqt.cn/select.gif'   alt="select"  ></a><figcaption class="image-caption">select</figcaption>
+<p><figure><a class="lightgallery" href="/select_6706822251602501752.gif" title="select" data-thumbnail="/select_6706822251602501752.gif" data-sub-html="<h2>select</h2><p>select</p>"><img  loading="lazy" src='/select_6706822251602501752.gif' srcset="/select_6706822251602501752_hu_93e7033d0e6d0fca.webp 800w, /select_6706822251602501752_hu_f1c509518ca00361.webp 1200w, /select_6706822251602501752_hu_f7de989085d57648.webp 1600w"  alt="select" height="400" width="550"></a><figcaption class="image-caption">select</figcaption>
 </figure></p>
 <p>select系统调用的函数定义如下：</p>
 <div class="code-block highlight is-open show-line-numbers  tw-group tw-my-2">
@@ -1203,7 +1203,7 @@
 </span></span><span class="line"><span class="cl">}</span></span></code></pre>
 </div>
 <p>正如刚刚的动图中所描述的，其直观效果如下。</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/select.gif" title="select" data-thumbnail="https://cdn.xiaobinqt.cn/select.gif" data-sub-html="<h2>select</h2><p>select</p>"><img  loading="lazy" src='https://cdn.xiaobinqt.cn/select.gif'   alt="select"  ></a><figcaption class="image-caption">select</figcaption>
+<p><figure><a class="lightgallery" href="/select_6706822251602501752.gif" title="select" data-thumbnail="/select_6706822251602501752.gif" data-sub-html="<h2>select</h2><p>select</p>"><img  loading="lazy" src='/select_6706822251602501752.gif' srcset="/select_6706822251602501752_hu_93e7033d0e6d0fca.webp 800w, /select_6706822251602501752_hu_f1c509518ca00361.webp 1200w, /select_6706822251602501752_hu_f7de989085d57648.webp 1600w"  alt="select" height="400" width="550"></a><figcaption class="image-caption">select</figcaption>
 </figure></p>
 <p>可以看出几个细节：</p>
 <ol>
@@ -1218,7 +1218,7 @@
 </li>
 </ol>
 <p>整个 select 的流程图如下&#x1f447;</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221124/d4914bc01ce140c790589ec87cf3b181.png" title="select流程图" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221124/d4914bc01ce140c790589ec87cf3b181.png" data-sub-html="<h2>select流程图</h2><p>select流程图</p>"><img  loading="lazy" src='https://cdn.xiaobinqt.cn/xiaobinqt.io/20221124/d4914bc01ce140c790589ec87cf3b181.png'   alt="select流程图"  ></a><figcaption class="image-caption">select流程图</figcaption>
+<p><figure><a class="lightgallery" href="/d4914bc01ce140c790589ec87cf3b181_4841111885213183769.png" title="select流程图" data-thumbnail="/d4914bc01ce140c790589ec87cf3b181_4841111885213183769.png" data-sub-html="<h2>select流程图</h2><p>select流程图</p>"><img  loading="lazy" src='/d4914bc01ce140c790589ec87cf3b181_4841111885213183769.png' srcset="/d4914bc01ce140c790589ec87cf3b181_4841111885213183769_hu_e69f68a457bc9d04.webp 800w, /d4914bc01ce140c790589ec87cf3b181_4841111885213183769_hu_94a0656437119ad9.webp 1200w, /d4914bc01ce140c790589ec87cf3b181_4841111885213183769_hu_6bbd22065d7d0e86.webp 1600w"  alt="select流程图" height="542" width="658"></a><figcaption class="image-caption">select流程图</figcaption>
 </figure></p>
 <p>可以看到，这种方式，既做到了一个线程处理多个客户端连接（文件描述符），又减少了系统调用的开销（多个文件描述符只有一次 select 的系统调用 + n 次就绪状态的文件描述符的<code>read</code>系统调用）。</p>
 <h3 id="poll" class="headerLink">
@@ -1347,7 +1347,7 @@
 <p>内核仅会将有 IO 事件的文件描述符返回给用户，用户也无需遍历整个文件描述符集合。</p>
 </li>
 </ol>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/epoll.gif" title="epoll" data-thumbnail="https://cdn.xiaobinqt.cn/epoll.gif" data-sub-html="<h2>epoll</h2><p>epoll</p>"><img  loading="lazy" src='https://cdn.xiaobinqt.cn/epoll.gif'   alt="epoll"  ></a><figcaption class="image-caption">epoll</figcaption>
+<p><figure><a class="lightgallery" href="/epoll_1412202982486230584.gif" title="epoll" data-thumbnail="/epoll_1412202982486230584.gif" data-sub-html="<h2>epoll</h2><p>epoll</p>"><img  loading="lazy" src='/epoll_1412202982486230584.gif' srcset="/epoll_1412202982486230584_hu_f7dba561462129b5.webp 800w, /epoll_1412202982486230584_hu_8f6d73fcee57ff94.webp 1200w, /epoll_1412202982486230584_hu_27f618dc2d166745.webp 1600w"  alt="epoll" height="400" width="550"></a><figcaption class="image-caption">epoll</figcaption>
 </figure></p>
 <h3 id="小结" class="headerLink">
     <a href="#%e5%b0%8f%e7%bb%93" class="header-mark"></a>3.4 小结</h3><p>一切的开始，都起源于这个<code>read</code>函数是操作系统提供的，而且是阻塞的，我们叫它阻塞 IO。为了破这个局，程序员在用户态通过多线程来防止主线程卡死。</p>
