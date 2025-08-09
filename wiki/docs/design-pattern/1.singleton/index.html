@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="
+  1. 单例模式
+  #
+
+单例模式采用了 饿汉式 和 懒汉式 两种实现，饿汉式的实现，简单，并且可以将问题及早暴露，懒汉式虽然支持延迟加载，并没有本质上解决问题，并且为了实现懒汉式还不可避免的需要加锁。
+
+  1.1 饿汉式
+  #
+
+package singleton
+
+// Singleton 饿汉式单例
+type Singleton struct {
+	a string // 测试字段
+}
+
+var singleton *Singleton
+
+func init() {
+	singleton = &amp;Singleton{a: &#34;test&#34;}
+}
+
+// GetInstance 获取实例
+func GetInstance() *Singleton {
+	return singleton
+}
+
+  1.2 懒汉式
+  #
+
+package singleton
+
+import &#34;sync&#34;
+
+var (
+	lazySingleton *Singleton
+	once          = &amp;sync.Once{}
+)
+
+// GetLazyInstance 懒汉式
+func GetLazyInstance() *Singleton {
+	// once 内的方法只会执行一次，所以不需要再次判断
+	once.Do(func() {
+		lazySingleton = &amp;Singleton{a: &#34;test&#34;}
+	})
+
+	return lazySingleton
+}
+">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/wiki/docs/design-pattern/1.singleton/">
+  <meta property="og:site_name" content="wiki">
+  <meta property="og:title" content="1. 单例模式">
+  <meta property="og:description" content="1. 单例模式 # 单例模式采用了 饿汉式 和 懒汉式 两种实现，饿汉式的实现，简单，并且可以将问题及早暴露，懒汉式虽然支持延迟加载，并没有本质上解决问题，并且为了实现懒汉式还不可避免的需要加锁。
+1.1 饿汉式 # package singleton // Singleton 饿汉式单例 type Singleton struct { a string // 测试字段 } var singleton *Singleton func init() { singleton = &amp;Singleton{a: &#34;test&#34;} } // GetInstance 获取实例 func GetInstance() *Singleton { return singleton } 1.2 懒汉式 # package singleton import &#34;sync&#34; var ( lazySingleton *Singleton once = &amp;sync.Once{} ) // GetLazyInstance 懒汉式 func GetLazyInstance() *Singleton { // once 内的方法只会执行一次，所以不需要再次判断 once.Do(func() { lazySingleton = &amp;Singleton{a: &#34;test&#34;} }) return lazySingleton }">
+  <meta property="og:locale" content="zh">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:modified_time" content="2025-08-09T23:42:00+08:00">
+<title>1. 单例模式 | wiki</title>
+<link rel="icon" href="/wiki/favicon.png" >
+<link rel="manifest" href="/wiki/manifest.json">
+<link rel="canonical" href="https://example.com/wiki/docs/design-pattern/1.singleton/">
+<link rel="stylesheet" href="/wiki/book.min.1e8c332c823ff5970e639a0c180f0e3d074283c7f525185d3e42903a2f30e9be.css" integrity="sha256-HowzLII/9ZcOY5oMGA8OPQdCg8f1JRhdPkKQOi8w6b4=" crossorigin="anonymous">
+  <script defer src="/wiki/fuse.min.js"></script>
+  <script defer src="/wiki/zh.search.min.bf384620bb71214286832136ff0c8484c94d55a80e8ca9f83636ec7d22916bc7.js" integrity="sha256-vzhGILtxIUKGgyE2/wyEhMlNVagOjKn4NjbsfSKRa8c=" crossorigin="anonymous"></script>
+
+  <script defer src="/wiki/sw.min.e67149a4572dea566681c97cf77821bb08285ae36bc9376d2616a9b5e253f230.js" integrity="sha256-5nFJpFct6lZmgcl893ghuwgoWuNryTdtJhapteJT8jA=" crossorigin="anonymous"></script>
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+  
+</head>
+<body dir="ltr">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      <div class="book-menu-content">
+        
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/wiki/"><span>wiki</span>
+  </a>
+</h2>
+
+
+<div class="book-search hidden">
+  <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+
+
+<ul>
+    <li>
+        <a href="javascript:void(0)" onclick="hrefIndex()" rel="noopener">主页</a>
+    </li>
+    <li>
+        <a href="https://github.com/xiaobinqt" target="_blank" rel="noopener">GitHub</a>
+    </li>
+</ul>
+
+<hr>
+
+<script>
+    function hrefIndex() {
+        window.location = window.location.origin;
+    }
+</script>
+
+
+  
+<ul>
+  
+  <li>
+    <a href=""  target="_blank" rel="noopener">
+        
+      </a>
+  </li>
+  
+</ul>
+
+
+
+
+
+
+
+
+
+
+  
+  <ul>
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <span>MySQL</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/mysql/overview/" class="">总览</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/mysql/sql-grammar/" class="">SQL 语法</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/mysql/dbs-theory/" class="">数据库系统原理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/mysql/faq1.md/" class="">常见问题（一）</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <span>Redis</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/redis/overview/" class="">总览</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/redis/string/" class="">STRING</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <span>系统设计</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/system-design/overview/" class="">系统设计基础</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/system-design/distributed/" class="">分布式</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/system-design/cluster/" class="">集群</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/system-design/attack/" class="">攻击技术</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/system-design/cache/" class="">缓存</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/system-design/queue-message/" class="">消息队列</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <span>编码实践</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/coding-practice/regex/" class="">正则表达式</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/coding-practice/docker/" class="">Docker</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/coding-practice/git/" class="">Git</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/coding-practice/code-readability/" class="">代码可读性</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/coding-practice/mac/" class="">Mac</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/coding-practice/jetbrains/" class="">Jetbrains</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/coding-practice/chrome/" class="">Chrome</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/coding-practice/shell/" class="">Shell</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <span>PHP</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/php/1.1-versions/" class="">1.1 版本区别</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/php/1.2-faq1/" class="">1.2 常见问题（一）</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/php/1.3-faq2/" class="">1.3 常见问题（二）</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/php/1.4-extend/" class="">1.4 PHP 扩展</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/php/1.5-functions/" class="">1.5 常用函数</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/php/1.6-advanced/" class="">1.6 高级用法</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <span>Golang</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/golang/1.sundry/" class="">杂项</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <span>前端知识</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/frontend/html/" class="">html</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/frontend/jq/" class="">Jquery</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <span>Golang 设计模式</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/design-pattern/1.singleton/" class="active">1. 单例模式</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/design-pattern/2.factory/" class="">2. 工厂模式</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <span>Python</span>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/python/1.basic/" class="">1.1 基础知识</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a href="/wiki/docs/favorite/" class="">收藏夹</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/favorite/cs-learn/" class="">计算机基础书籍推荐</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+ 
+      </div>
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/wiki/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>1. 单例模式</h3>
+
+  <label for="toc-control">
+    
+    <img src="/wiki/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden clearfix">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-单例模式">1. 单例模式</a>
+      <ul>
+        <li><a href="#11-饿汉式">1.1 饿汉式</a></li>
+        <li><a href="#12-懒汉式">1.2 懒汉式</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown book-article"><h1 id="1-单例模式">
+  1. 单例模式
+  <a class="anchor" href="#1-%e5%8d%95%e4%be%8b%e6%a8%a1%e5%bc%8f">#</a>
+</h1>
+<p>单例模式采用了 饿汉式 和 懒汉式 两种实现，饿汉式的实现，简单，并且可以将问题及早暴露，懒汉式虽然支持延迟加载，并没有本质上解决问题，并且为了实现懒汉式还不可避免的需要加锁。</p>
+<h2 id="11-饿汉式">
+  1.1 饿汉式
+  <a class="anchor" href="#11-%e9%a5%bf%e6%b1%89%e5%bc%8f">#</a>
+</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">singleton</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Singleton 饿汉式单例</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Singleton</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">a</span> <span style="color:#66d9ef">string</span> <span style="color:#75715e">// 测试字段</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">singleton</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Singleton</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">init</span>() {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">singleton</span> = <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">Singleton</span>{<span style="color:#a6e22e">a</span>: <span style="color:#e6db74">&#34;test&#34;</span>}
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// GetInstance 获取实例</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">GetInstance</span>() <span style="color:#f92672">*</span><span style="color:#a6e22e">Singleton</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">singleton</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="12-懒汉式">
+  1.2 懒汉式
+  <a class="anchor" href="#12-%e6%87%92%e6%b1%89%e5%bc%8f">#</a>
+</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">singleton</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> <span style="color:#e6db74">&#34;sync&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> (
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">lazySingleton</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">Singleton</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">once</span>          = <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">sync</span>.<span style="color:#a6e22e">Once</span>{}
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// GetLazyInstance 懒汉式</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">GetLazyInstance</span>() <span style="color:#f92672">*</span><span style="color:#a6e22e">Singleton</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// once 内的方法只会执行一次，所以不需要再次判断</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">once</span>.<span style="color:#a6e22e">Do</span>(<span style="color:#66d9ef">func</span>() {
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">lazySingleton</span> = <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">Singleton</span>{<span style="color:#a6e22e">a</span>: <span style="color:#e6db74">&#34;test&#34;</span>}
+</span></span><span style="display:flex;"><span>	})
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">lazySingleton</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div></article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+
+  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/book.wiki/commit/59c454339490fb6cafdd141f7942a175ab17e3ae" title='最后修改者 xiaobinqt | 八月 9, 2025' target="_blank" rel="noopener">
+      <img src="/wiki/svg/calendar.svg" class="book-icon" alt="" />
+      <span>八月 9, 2025</span>
+    </a>
+  </div>
+
+
+
+  <div>
+    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/book.wiki/tree/main/book.wiki/docs/design-pattern/1.singleton.md" target="_blank" rel="noopener">
+      <img src="/wiki/svg/edit.svg" class="book-icon" alt="" />
+      <span>编辑本页</span>
+    </a>
+  </div>
+
+
+</div>
+
+
+
+  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+    <aside class="book-toc">
+      <div class="book-toc-content">
+        
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-单例模式">1. 单例模式</a>
+      <ul>
+        <li><a href="#11-饿汉式">1.1 饿汉式</a></li>
+        <li><a href="#12-懒汉式">1.2 懒汉式</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+ 
+      </div>
+    </aside>
+    
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

@@ -339,7 +339,7 @@
             </div><div class="content" id="content" data-pagefind-body><h2 id="缓存击穿" class="headerLink">
     <a href="#%e7%bc%93%e5%ad%98%e5%87%bb%e7%a9%bf" class="header-mark"></a>1 缓存击穿</h2><p>高并发流量，访问的这个数据是热点数据，请求的数据在 DB 中存在，但是 Redis 存的那一份已经过期，后端需要从 DB 从加载数据并写到 Redis。</p>
 <p>总结起来就是：单一热点数据、高并发、数据失效。</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/10c8c8557c8b41ea967c82617bef1814.png" title="缓存击穿" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/10c8c8557c8b41ea967c82617bef1814.png" data-sub-html="<h2>缓存击穿</h2><p>缓存击穿</p>"><img  loading="lazy" src='https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/10c8c8557c8b41ea967c82617bef1814.png'   alt="缓存击穿"  ></a><figcaption class="image-caption">缓存击穿</figcaption>
+<p><figure><a class="lightgallery" href="/10c8c8557c8b41ea967c82617bef1814_9641744110265768403.png" title="缓存击穿" data-thumbnail="/10c8c8557c8b41ea967c82617bef1814_9641744110265768403.png" data-sub-html="<h2>缓存击穿</h2><p>缓存击穿</p>"><img  loading="lazy" src='/10c8c8557c8b41ea967c82617bef1814_9641744110265768403.png' srcset="/10c8c8557c8b41ea967c82617bef1814_9641744110265768403_hu_26c206535d253d1e.webp 800w, /10c8c8557c8b41ea967c82617bef1814_9641744110265768403_hu_92f993ad92cd2c44.webp 1200w, /10c8c8557c8b41ea967c82617bef1814_9641744110265768403_hu_cf3e301da777a3d0.webp 1600w"  alt="缓存击穿" height="1004" width="1080"></a><figcaption class="image-caption">缓存击穿</figcaption>
 </figure></p>
 <h3 id="解决方案" class="headerLink">
     <a href="#%e8%a7%a3%e5%86%b3%e6%96%b9%e6%a1%88" class="header-mark"></a>1.1 解决方案</h3><h4 id="过期时间heavy_plus_sign随机值" class="headerLink">
@@ -354,7 +354,7 @@
 <h2 id="缓存穿透" class="headerLink">
     <a href="#%e7%bc%93%e5%ad%98%e7%a9%bf%e9%80%8f" class="header-mark"></a>2 缓存穿透</h2><p>数据库本就没有这个数据，请求直奔数据库，缓存系统形同虚设。</p>
 <p>大量请求的 key 根本<font color="red"><strong>不存在于缓存中也不存在数据库</strong></font>，导致请求直接到了数据库上，根本没有经过缓存这一层，对数据库造成压力而影响正常服务。</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/19352698c9c047d4a635c3e561b8293b.png" title="缓存穿透" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/19352698c9c047d4a635c3e561b8293b.png" data-sub-html="<h2>缓存穿透</h2><p>缓存穿透</p>"><img  loading="lazy" src='https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/19352698c9c047d4a635c3e561b8293b.png'   alt="缓存穿透"  ></a><figcaption class="image-caption">缓存穿透</figcaption>
+<p><figure><a class="lightgallery" href="/19352698c9c047d4a635c3e561b8293b_2799895058453699920.png" title="缓存穿透" data-thumbnail="/19352698c9c047d4a635c3e561b8293b_2799895058453699920.png" data-sub-html="<h2>缓存穿透</h2><p>缓存穿透</p>"><img  loading="lazy" src='/19352698c9c047d4a635c3e561b8293b_2799895058453699920.png' srcset="/19352698c9c047d4a635c3e561b8293b_2799895058453699920_hu_d064429824453907.webp 800w, /19352698c9c047d4a635c3e561b8293b_2799895058453699920_hu_748ed1d704d7a8f6.webp 1200w, /19352698c9c047d4a635c3e561b8293b_2799895058453699920_hu_b720b6348fda66a2.webp 1600w"  alt="缓存穿透" height="1070" width="692"></a><figcaption class="image-caption">缓存穿透</figcaption>
 </figure></p>
 <h3 id="解决方案-1" class="headerLink">
     <a href="#%e8%a7%a3%e5%86%b3%e6%96%b9%e6%a1%88-1" class="header-mark"></a>2.1 解决方案</h3><p>最基本的首先就是做好参数校验，一些不合法的参数请求直接抛出异常信息返回给客户端。</p>
@@ -364,7 +364,7 @@
 <h4 id="布隆过滤器" class="headerLink">
     <a href="#%e5%b8%83%e9%9a%86%e8%bf%87%e6%bb%a4%e5%99%a8" class="header-mark"></a>2.1.2 布隆过滤器</h4><p>布隆过滤器是一个非常神奇的数据结构，通过它我们可以非常方便地<strong>判断一个给定数据是否存在于海量数据中</strong>。我们需要的仅仅就是判断 key 是否合法。</p>
 <p>具体是这样做的：把所有可能存在的请求的值都存放在布隆过滤器中，当用户请求过来，先判断用户发来的请求的值是否存在于布隆过滤器中。不存在的话，直接返回请求参数错误信息给客户端，存在的话再走其他的判断流程。</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220407/c81922434bf5420c94e349e07980054b.png" title="布隆过滤器" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220407/c81922434bf5420c94e349e07980054b.png" data-sub-html="<h2>布隆过滤器</h2><p>布隆过滤器</p>"><img  loading="lazy" src='https://cdn.xiaobinqt.cn/xiaobinqt.io/20220407/c81922434bf5420c94e349e07980054b.png'   alt="布隆过滤器"  ></a><figcaption class="image-caption">布隆过滤器</figcaption>
+<p><figure><a class="lightgallery" href="/c81922434bf5420c94e349e07980054b_12835169665026046972.png" title="布隆过滤器" data-thumbnail="/c81922434bf5420c94e349e07980054b_12835169665026046972.png" data-sub-html="<h2>布隆过滤器</h2><p>布隆过滤器</p>"><img  loading="lazy" src='/c81922434bf5420c94e349e07980054b_12835169665026046972.png' srcset="/c81922434bf5420c94e349e07980054b_12835169665026046972_hu_402b636c411830ec.webp 800w, /c81922434bf5420c94e349e07980054b_12835169665026046972_hu_961c15f6e7989138.webp 1200w, /c81922434bf5420c94e349e07980054b_12835169665026046972_hu_fcfd265e62d2dcfc.webp 1600w"  alt="布隆过滤器" height="758" width="626"></a><figcaption class="image-caption">布隆过滤器</figcaption>
 </figure></p>
 <p>需要注意的是布隆过滤器可能会存在误判的情况。</p>
 <p><strong>布隆过滤器说某个元素存在，小概率会误判。布隆过滤器说某个元素不在，这个元素一定不在</strong>。</p>
@@ -390,7 +390,7 @@
     <a href="#%e7%bc%93%e5%ad%98%e5%a4%a7%e9%87%8f%e6%95%b0%e6%8d%ae%e5%90%8c%e6%97%b6%e8%bf%87%e6%9c%9f" class="header-mark"></a>3.1 缓存大量数据同时过期</h3><p>数据保存在缓存系统并设置了过期时间，但是由于在同时一刻，大量数据同时过期。系统就把请求全部打到数据库获取数据，并发量大的话就会导致数据库压力激增。</p>
 <p><font color="red"><strong>缓存雪崩是发生在大量数据同时失效的场景，而缓存击穿是在某个热点数据失效的场景，这是他们最大的区别</strong>
 </font>。</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/12a33b5773ef4e36be2c71a94b93df11.png" title="缓存大量数据同时过期" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/12a33b5773ef4e36be2c71a94b93df11.png" data-sub-html="<h2>缓存大量数据同时过期</h2><p>缓存大量数据同时过期</p>"><img  loading="lazy" src='https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/12a33b5773ef4e36be2c71a94b93df11.png'   alt="缓存大量数据同时过期"  ></a><figcaption class="image-caption">缓存大量数据同时过期</figcaption>
+<p><figure><a class="lightgallery" href="/12a33b5773ef4e36be2c71a94b93df11_1368679492002761918.png" title="缓存大量数据同时过期" data-thumbnail="/12a33b5773ef4e36be2c71a94b93df11_1368679492002761918.png" data-sub-html="<h2>缓存大量数据同时过期</h2><p>缓存大量数据同时过期</p>"><img  loading="lazy" src='/12a33b5773ef4e36be2c71a94b93df11_1368679492002761918.png' srcset="/12a33b5773ef4e36be2c71a94b93df11_1368679492002761918_hu_a2d7f88941161fcf.webp 800w, /12a33b5773ef4e36be2c71a94b93df11_1368679492002761918_hu_d7a08833ef2d6634.webp 1200w, /12a33b5773ef4e36be2c71a94b93df11_1368679492002761918_hu_e21b7bc5917a45da.webp 1600w"  alt="缓存大量数据同时过期" height="851" width="614"></a><figcaption class="image-caption">缓存大量数据同时过期</figcaption>
 </figure></p>
 <h4 id="过期时间添加随机值" class="headerLink">
     <a href="#%e8%bf%87%e6%9c%9f%e6%97%b6%e9%97%b4%e6%b7%bb%e5%8a%a0%e9%9a%8f%e6%9c%ba%e5%80%bc" class="header-mark"></a>3.1.1 过期时间添加随机值</h4><p>要避免给大量的数据设置一样的过期时间，过期时间 = baes 时间+ 随机时间（较小的随机数，比如随机增加 1~5 分钟）。</p>
@@ -398,7 +398,7 @@
 <h4 id="接口限流" class="headerLink">
     <a href="#%e6%8e%a5%e5%8f%a3%e9%99%90%e6%b5%81" class="header-mark"></a>3.1.2 接口限流</h4><p>当访问的不是核心数据的时候，在查询的方法上加上接口限流保护。比如设置 10000 req/s。如果访问的是核心数据接口，缓存不存在允许从数据库中查询并设置到缓存中。这样的话，只有部分请求会发送到数据库，减少了压力。</p>
 <p><strong>限流，就是指，我们在业务系统的请求入口前端控制每秒进入系统的请求数，避免过多的请求被发送到数据库</strong>。</p>
-<p><figure><a class="lightgallery" href="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/340401972fac48f391fa6906a9444eac.png" title="限流" data-thumbnail="https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/340401972fac48f391fa6906a9444eac.png" data-sub-html="<h2>限流</h2><p>限流</p>"><img  loading="lazy" src='https://cdn.xiaobinqt.cn/xiaobinqt.io/20220413/340401972fac48f391fa6906a9444eac.png'   alt="限流"  ></a><figcaption class="image-caption">限流</figcaption>
+<p><figure><a class="lightgallery" href="/340401972fac48f391fa6906a9444eac_1573906051014200624.png" title="限流" data-thumbnail="/340401972fac48f391fa6906a9444eac_1573906051014200624.png" data-sub-html="<h2>限流</h2><p>限流</p>"><img  loading="lazy" src='/340401972fac48f391fa6906a9444eac_1573906051014200624.png' srcset="/340401972fac48f391fa6906a9444eac_1573906051014200624_hu_9eccd581130dfc5.webp 800w, /340401972fac48f391fa6906a9444eac_1573906051014200624_hu_ee37c8bba22226d2.webp 1200w, /340401972fac48f391fa6906a9444eac_1573906051014200624_hu_38186e06a978f74e.webp 1600w"  alt="限流" height="758" width="525"></a><figcaption class="image-caption">限流</figcaption>
 </figure></p>
 <h3 id="redis-故障" class="headerLink">
     <a href="#redis-%e6%95%85%e9%9a%9c" class="header-mark"></a>3.2 Redis 故障</h3><p>一旦 Redis 故障或宕机，会导致大量请求打到数据库，从而发生缓存雪崩。对于 Redis 故障，主要有以下两种解决方案。</p>
