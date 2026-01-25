@@ -33,9 +33,9 @@ header:
 + 个人网站：[https://www.xiaobinqt.cn](https://www.xiaobinqt.cn) / [https://xiaobinqt.github.io](https://xiaobinqt.github.io/)
 + Email：[xiaobinqt@163.com](mailto:xiaobinqt@163.com)
 + 开源项目：
-  + [Go微信机器人](https://github.com/xiaobinqt/go-wxbot)
-  + [dounai-checkin](https://github.com/xiaobinqt/dounai-checkin)
-  + [K0 - 容器管理平台](https://github.com/go-k0s/k0s)
+    + [Go微信机器人](https://github.com/xiaobinqt/go-wxbot)
+    + [dounai-checkin](https://github.com/xiaobinqt/dounai-checkin)
+    + [K0 - 容器管理平台](https://github.com/go-k0s/k0s)
 
 ## 教育经历
 
@@ -45,25 +45,25 @@ header:
 
 ## 个人技能
 
-+ 熟练使用 Go 语言进行项目开发，对 Slice、Map、Goroutine、Channel 有深入了解，擅长并发编程；
-+ 熟练使用 Gin、GRPC、GoFrame、Go-kratos 等 web 和微服务框架，熟悉熔断，限流，服务治理等；
-+ 深入理解 CSP 模型，深入理解 GC 垃圾回收机制和三色标记法，有过实际性能调优经验;
-+ 熟悉 MySQL 的存储引擎、事务隔离级别、锁、索引，有 MySQL 的性能调优经验;
-+ 熟悉 Redis 持久化机制、过期策略以及集群部署;
-+ 熟悉 RabbitMQ 消息队列事务消息底层原理，掌握消息丢失、消息重复等问题的解决方案;
-+ 熟练使用 Docker 和 K8S，有 CICD 经验；擅长敏捷开发；熟练使用常见的设计模式；
-+ 精通基于 LNMP 环境的编程，具备扎实的 PHP 基础知识，理解面向对象编程思想。
-+ 熟练使用 Yii、ThinkPHP 和 Laravel 等框架进行快速开发，了解基本的核心源代码，熟悉 swoole 扩展。
-+ 熟练使用 python 编写脚本。
++ 精通 Go 语言，深入理解内存模型、Slice/Map 底层实现、Goroutine 调度机制、Channel 通信原理；掌握 CSP（Communicating Sequential Processes）并发模型，深入理解 GC 三色标记算法、写屏障机制及性能调优策略；具备高并发系统设计与性能优化实战经验，掌握 HTTP/2、Protocol Buffers 序列化、服务注册发现等机制；
++ 精通 LNMP 架构开发，深入理解 PHP-FPM 运行机制、OPcache 优化、命名空间与自动加载；熟悉 Yii、ThinkPHP、Laravel 等框架核心实现，掌握依赖注入、服务容器、ORM 映射等设计模式；熟悉 Swoole 协程编程与异步 I/O；
++ 深入理解微服务架构设计，掌握服务熔断（Circuit Breaker）、限流（Rate Limiting）、负载均衡、分布式追踪等核心机制；
++ 具备大规模分布式系统架构设计经验，熟悉服务网格（Service Mesh）概念与实践；
++ 深入理解 InnoDB 存储引擎、MVCC 多版本并发控制、事务隔离级别（RC/RR）、行锁/表锁/间隙锁机制、B+ 树索引原理；具备 SQL 性能调优、慢查询分析、分库分表设计经验；
++ 深入理解 RDB/AOF 持久化机制、LRU/LFU 过期策略、主从复制、哨兵模式、Cluster 集群架构；掌握缓存穿透/击穿/雪崩解决方案、分布式锁实现（Redlock 算法）；
++ 深入理解 AMQP 协议、Exchange 路由机制、事务消息与确认机制、死信队列；掌握消息可靠性投递、幂等性设计、消息顺序性保证等解决方案
++ 熟悉 Kafka 架构设计、分区策略、副本机制、消费者组（Consumer Group）原理；具备高吞吐量消息处理系统设计经验；
++ 精通 Docker 容器化技术，熟悉 Dockerfile 优化、多阶段构建、镜像分层原理；
++ 熟悉 Kubernetes 核心概念：Pod/Deployment/Service/Ingress、资源调度、服务发现、配置管理（ConfigMap/Secret）；
++ 熟悉 Elasticsearch 全文检索、倒排索引原理、聚合查询、集群管理；
++ 具备 CI/CD 实践经验，熟悉 GitLab CI、Jenkins 等持续集成工具，掌握自动化构建、测试、部署流程；
++ 掌握常见设计模式（单例、工厂、观察者、策略等），具备良好的系统架构设计能力；
++ 熟悉 Git 版本控制、代码审查流程，具备良好的工程化实践和代码规范意识；
 
 ## 自我评价
 
 + 热爱代码，对开源抱有极大的热情，曾给多个开源项目贡献代码。有坚持做一件事的毅力和决心。
 + 良好的沟通能力，学习能力，适应能力强及团队协作意识，具有主人翁意识。
-
-## 期望职位
-
-+ 期望职位：Golang 开发 / PHP 开发
 
 ## 工作经历
 
@@ -157,8 +157,7 @@ header:
 **项目成果**
 
 + 支持业务的开度更迭和稳定运行。
-+ 获取 docker，微信SDK [EasyWeChat](https://easywechat.com) 和七牛云服务的相关使用经验。
-+ 参与开源并贡献代码 [SocialiteProviders/Weixin#44bc75b7](https://github.com/SocialiteProviders/Weixin/commit/44bc75b7d98760ce32e71331f28871ccb186546a)。
++ 获取 docker，微信SDK [EasyWeChat](https://easywechat.com) 和七牛云服务的相关使用经验。参与开源并贡献代码 [SocialiteProviders/Weixin#44bc75b7](https://github.com/SocialiteProviders/Weixin/commit/44bc75b7d98760ce32e71331f28871ccb186546a)。
 
 ### 潘帕斯 pop 商城
 
