@@ -8,7 +8,7 @@ date: 2022-11-06
 lastmod: 2022-11-06
 
 author: "xiaobinqt"
-description: "xiaobinqt的个人简历,萧十一郎的个人简历,简历"
+description: "xiaobinqt 的个人简历,萧十一郎的个人简历,简历"
 resources:
 
 tags: [ "" ]
@@ -32,7 +32,10 @@ header:
 + DockerHub：[https://hub.docker.com/u/xiaobinqt](https://hub.docker.com/u/xiaobinqt)
 + 个人网站：[https://www.xiaobinqt.cn](https://www.xiaobinqt.cn) / [https://xiaobinqt.github.io](https://xiaobinqt.github.io/)
 + Email：[xiaobinqt@163.com](mailto:xiaobinqt@163.com)
-+ 开源项目：[Go微信机器人](https://github.com/xiaobinqt/go-wxbot) / [豆奶签到](https://github.com/xiaobinqt/dounai-checkin)
++ 开源项目：
+  + [Go微信机器人](https://github.com/xiaobinqt/go-wxbot)
+  + [dounai-checkin](https://github.com/xiaobinqt/dounai-checkin)
+  + [K0 - 容器管理平台](https://github.com/go-k0s/k0s)
 
 ## 教育经历
 
@@ -64,17 +67,19 @@ header:
 
 ## 工作经历
 
-### [希云科技（北京）有限公司](http://xii.cloud/) （ 2021/4 ~ 2024/6）
+### [希云科技（北京）有限公司](http://xii.cloud/) （ 2022/04 ~ 2025/03）
 
-在公司担任 Go 开发，参与研发了 [柔性开发仿真一体化项目](http://g.xii.cloud:42225/) 和 xae 项目。目前柔性开发仿真一体化项目已上线，服务于国家电网，该项目是组态化微应用开发仿真发布一体化云平台，可以帮助客户快速开发应用并部署。信创项目 xae 项目，目的是赋能企业数字化转型，快速搭建迁徙适配测试平台。
+作为核心开发成员参与研发了 [柔性开发仿真一体化项目](http://g.xii.cloud:42225/) 和 xae 项目。目前柔性开发仿真一体化项目已上线，服务于国家电网，该项目是组态化微应用开发仿真发布一体化云平台，可以帮助客户快速开发应用并部署。信创项目 xae 项目，目的是赋能企业数字化转型，快速搭建迁徙适配测试平台。
 
-### 北京腾讯公司 （ 2019/4 ~ 2021/4 ）
+### 北京腾讯公司 （ 2020/04 ~ 2022/04 ）
 
-在北京腾讯总部参与了星盘数据平台和烽火统一 PUSH 平台的开发。星盘数据平台使用 php 开发。PUSH 平台使用 Go 开发，主要使用了 Go 协程，channel 等提高系统整体性能和并发。
+作为星盘数据平台的后端开发人员负责改产品的开发和后期维护。该项目主要由 sodoo php 框架实现。主要负责包括需求评审，大盘数据统计，自定义数据图表和开发工作。
 
-### [西安维客软件科技有限公司](https://www.victtech.com/) （ 2017/4 ~ 2019/3 ）
+作为核心开发人员，成功将 PUSH 中台系统从 PHP 迁移至 Golang 开发环境。利用 trpc-go 框架提升整体系统性能，对系统进行性能优化，显著提高系统的并发处理能力，集成性能检测工具，实现对系统运行状态的实时监控和故障预警。
 
-在公司担任 PHP 开发并在项目中接触到 Go，主动学习并使用 Go 开发一些小功能。主要在公司参与了 pop 商城，医疗器械租赁项目，小程序和一些 [wordpress](https://wordpress.com) 项目的开发，如 [西班牙旅游网站](http://aragontourism.cn)。
+### [西安维客软件科技有限公司](https://www.victtech.com/) （ 2017/04 ~ 2020/03 ）
+
+在公司担任 PHP 开发，参与了 pop 商城，医疗器械租赁项目，小程序和一些 [wordpress](https://wordpress.com) 项目的开发，如 [西班牙旅游网站](http://aragontourism.cn)。在系统开发中主动使用 Golang 实现一些并发功能，提高项目整体性呢功能。
 
 ## 项目经验
 
