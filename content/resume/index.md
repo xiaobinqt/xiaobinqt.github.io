@@ -29,7 +29,6 @@ header:
 + 卫彬/男/1994
 + 手机/微信：15209272743
 + Github：[https://github.com/xiaobinqt](https://github.com/xiaobinqt)
-+ DockerHub：[https://hub.docker.com/u/xiaobinqt](https://hub.docker.com/u/xiaobinqt)
 + 个人网站：[https://www.xiaobinqt.cn](https://www.xiaobinqt.cn) / [https://xiaobinqt.github.io](https://xiaobinqt.github.io/)
 + Email：[xiaobinqt@163.com](mailto:xiaobinqt@163.com)
 + 开源项目：
