@@ -44,16 +44,17 @@ header:
 
 ## 个人技能
 
-+ 精通 Go 语言，深入理解内存模型、Slice/Map 底层实现、Goroutine 调度机制、Channel 通信原理；掌握 CSP（Communicating Sequential Processes）并发模型，深入理解 GC 三色标记算法、写屏障机制及性能调优策略；具备高并发系统设计与性能优化实战经验，掌握 HTTP/2、Protocol Buffers 序列化、服务注册发现等机制；
-+ 精通 LNMP 架构开发，深入理解 PHP-FPM 运行机制、OPcache 优化、命名空间与自动加载；熟悉 Yii、ThinkPHP、Laravel 等框架核心实现，掌握依赖注入、服务容器、ORM 映射等设计模式；熟悉 Swoole 协程编程与异步 I/O；
-+ 深入理解微服务架构设计，掌握服务熔断（Circuit Breaker）、限流（Rate Limiting）、负载均衡、分布式追踪等核心机制；
-+ 具备大规模分布式系统架构设计经验，熟悉服务网格（Service Mesh）概念与实践；
++ 精通 Go 语言，深入理解内存模型、Slice/Map 底层实现、Goroutine 调度机制、Channel 通信原理；掌握 CSP 并发模型，深入理解 GC 三色标记算法、写屏障机制及性能调优策略；
++ 具备高并发系统设计与性能优化实战经验，掌握 HTTP/2、Protocol Buffers 序列化、服务注册发现等机制；
++ 精通 LNMP 架构开发，深入理解 PHP-FPM 运行机制、命名空间与自动加载；熟悉 Yii、ThinkPHP、Laravel 等框架核心实现，掌握依赖注入、服务容器、ORM 映射等设计模式；熟悉 Swoole 协程编程与异步 I/O；
++ 深入理解微服务架构设计，掌握服务熔断、限流、负载均衡、分布式追踪等核心机制；
++ 具备大规模分布式系统架构设计经验，熟悉服务网格概念与实践；
 + 深入理解 InnoDB 存储引擎、MVCC 多版本并发控制、事务隔离级别（RC/RR）、行锁/表锁/间隙锁机制、B+ 树索引原理；具备 SQL 性能调优、慢查询分析、分库分表设计经验；
-+ 深入理解 RDB/AOF 持久化机制、LRU/LFU 过期策略、主从复制、哨兵模式、Cluster 集群架构；掌握缓存穿透/击穿/雪崩解决方案、分布式锁实现（Redlock 算法）；
++ 深入理解 RDB/AOF 持久化机制、LRU/LFU 过期策略、主从复制、哨兵模式、Cluster 集群架构；掌握缓存穿透/击穿/雪崩解决方案、分布式锁实现；
 + 深入理解 AMQP 协议、Exchange 路由机制、事务消息与确认机制、死信队列；掌握消息可靠性投递、幂等性设计、消息顺序性保证等解决方案
 + 熟悉 Kafka 架构设计、分区策略、副本机制、消费者组（Consumer Group）原理；具备高吞吐量消息处理系统设计经验；
 + 精通 Docker 容器化技术，熟悉 Dockerfile 优化、多阶段构建、镜像分层原理；
-+ 熟悉 Kubernetes 核心概念：Pod/Deployment/Service/Ingress、资源调度、服务发现、配置管理（ConfigMap/Secret）；
++ 熟悉 Kubernetes 核心概念：Pod/Deployment/Service/Ingress、资源调度、服务发现、配置管理；
 + 熟悉 Elasticsearch 全文检索、倒排索引原理、聚合查询、集群管理；
 + 具备 CI/CD 实践经验，熟悉 GitLab CI、Jenkins 等持续集成工具，掌握自动化构建、测试、部署流程；
 + 掌握常见设计模式（单例、工厂、观察者、策略等），具备良好的系统架构设计能力；
