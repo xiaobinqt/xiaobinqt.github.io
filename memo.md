@@ -1,6 +1,10 @@
 # my memo
 
 ```
+如果 submodule 为空，需要先执行
+
+git submodule update --init --recursive
+
 合并 submodule
 
 git submodule update --remote --merge
