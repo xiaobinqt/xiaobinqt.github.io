@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+<head>
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="2. 工厂模式# 2.1 简单工厂# 使用 NewName 的方式创建对象/接口，当它返回的是接口的时候，其实就是简单工厂模式。
+package factory type IRuleConfigParser interface { Parse(data []byte) } type jsonRuleConfigParser struct { } func (J jsonRuleConfigParser) Parse(data []byte) { panic(&#34;implement me&#34;) } type yamlRuleConfigParser struct { } func (Y yamlRuleConfigParser) Parse(data []byte) { panic(&#34;implement me&#34;) } func NewIRuleConfigParser(t string) IRuleConfigParser { switch t { case &#34;json&#34;: return jsonRuleConfigParser{} case &#34;yaml&#34;: return yamlRuleConfigParser{} } return nil }2.2 工厂方法# 当对象的创建逻辑比较复杂，不只是简单的 new 一下就可以，而是要组合其他类对象，做各种初始化操作的时候，推荐使用工厂方法模式，将复杂的创建逻辑拆分到多个工厂类中，让具体的工厂实现具体的业务逻辑，让每个工厂类都不至于过于复杂。
+package factory type IRuleConfigParser interface { Parse(data []byte) } type jsonRuleConfigParser struct { } func (J jsonRuleConfigParser) Parse(data []byte) { panic(&#34;implement me&#34;) } type yamlRuleConfigParser struct { } func (Y yamlRuleConfigParser) Parse(data []byte) { panic(&#34;implement me&#34;) } type IRuleConfigParserFactory interface { CreateParser() IRuleConfigParser } type yamlRuleConfigParserFactory struct { } func (y yamlRuleConfigParserFactory) CreateParser() IRuleConfigParser { return yamlRuleConfigParser{} } type jsonRuleConfigParserFactory struct { } func (j jsonRuleConfigParserFactory) CreateParser() IRuleConfigParser { return jsonRuleConfigParser{} } func NewIRuleConfigParserFactory(t string) IRuleConfigParserFactory { switch t { case &#34;json&#34;: return jsonRuleConfigParserFactory{} case &#34;yaml&#34;: return yamlRuleConfigParserFactory{} } return nil }2.3 抽象工厂# 一个工厂方法可以创建相关联的多个类的时候就是抽象工厂模式。
+">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
+<meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/wiki/docs/design-pattern/2/">
+  <meta property="og:site_name" content="wiki">
+  <meta property="og:title" content="2. 工厂模式">
+  <meta property="og:description" content="2. 工厂模式# 2.1 简单工厂# 使用 NewName 的方式创建对象/接口，当它返回的是接口的时候，其实就是简单工厂模式。
+package factory type IRuleConfigParser interface { Parse(data []byte) } type jsonRuleConfigParser struct { } func (J jsonRuleConfigParser) Parse(data []byte) { panic(&#34;implement me&#34;) } type yamlRuleConfigParser struct { } func (Y yamlRuleConfigParser) Parse(data []byte) { panic(&#34;implement me&#34;) } func NewIRuleConfigParser(t string) IRuleConfigParser { switch t { case &#34;json&#34;: return jsonRuleConfigParser{} case &#34;yaml&#34;: return yamlRuleConfigParser{} } return nil }2.2 工厂方法# 当对象的创建逻辑比较复杂，不只是简单的 new 一下就可以，而是要组合其他类对象，做各种初始化操作的时候，推荐使用工厂方法模式，将复杂的创建逻辑拆分到多个工厂类中，让具体的工厂实现具体的业务逻辑，让每个工厂类都不至于过于复杂。
+package factory type IRuleConfigParser interface { Parse(data []byte) } type jsonRuleConfigParser struct { } func (J jsonRuleConfigParser) Parse(data []byte) { panic(&#34;implement me&#34;) } type yamlRuleConfigParser struct { } func (Y yamlRuleConfigParser) Parse(data []byte) { panic(&#34;implement me&#34;) } type IRuleConfigParserFactory interface { CreateParser() IRuleConfigParser } type yamlRuleConfigParserFactory struct { } func (y yamlRuleConfigParserFactory) CreateParser() IRuleConfigParser { return yamlRuleConfigParser{} } type jsonRuleConfigParserFactory struct { } func (j jsonRuleConfigParserFactory) CreateParser() IRuleConfigParser { return jsonRuleConfigParser{} } func NewIRuleConfigParserFactory(t string) IRuleConfigParserFactory { switch t { case &#34;json&#34;: return jsonRuleConfigParserFactory{} case &#34;yaml&#34;: return yamlRuleConfigParserFactory{} } return nil }2.3 抽象工厂# 一个工厂方法可以创建相关联的多个类的时候就是抽象工厂模式。">
+  <meta property="og:locale" content="zh">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="docs">
+    <meta property="article:modified_time" content="2025-08-09T23:42:00+08:00">
+
+
+  <meta itemprop="name" content="2. 工厂模式">
+  <meta itemprop="description" content="2. 工厂模式# 2.1 简单工厂# 使用 NewName 的方式创建对象/接口，当它返回的是接口的时候，其实就是简单工厂模式。
+package factory type IRuleConfigParser interface { Parse(data []byte) } type jsonRuleConfigParser struct { } func (J jsonRuleConfigParser) Parse(data []byte) { panic(&#34;implement me&#34;) } type yamlRuleConfigParser struct { } func (Y yamlRuleConfigParser) Parse(data []byte) { panic(&#34;implement me&#34;) } func NewIRuleConfigParser(t string) IRuleConfigParser { switch t { case &#34;json&#34;: return jsonRuleConfigParser{} case &#34;yaml&#34;: return yamlRuleConfigParser{} } return nil }2.2 工厂方法# 当对象的创建逻辑比较复杂，不只是简单的 new 一下就可以，而是要组合其他类对象，做各种初始化操作的时候，推荐使用工厂方法模式，将复杂的创建逻辑拆分到多个工厂类中，让具体的工厂实现具体的业务逻辑，让每个工厂类都不至于过于复杂。
+package factory type IRuleConfigParser interface { Parse(data []byte) } type jsonRuleConfigParser struct { } func (J jsonRuleConfigParser) Parse(data []byte) { panic(&#34;implement me&#34;) } type yamlRuleConfigParser struct { } func (Y yamlRuleConfigParser) Parse(data []byte) { panic(&#34;implement me&#34;) } type IRuleConfigParserFactory interface { CreateParser() IRuleConfigParser } type yamlRuleConfigParserFactory struct { } func (y yamlRuleConfigParserFactory) CreateParser() IRuleConfigParser { return yamlRuleConfigParser{} } type jsonRuleConfigParserFactory struct { } func (j jsonRuleConfigParserFactory) CreateParser() IRuleConfigParser { return jsonRuleConfigParser{} } func NewIRuleConfigParserFactory(t string) IRuleConfigParserFactory { switch t { case &#34;json&#34;: return jsonRuleConfigParserFactory{} case &#34;yaml&#34;: return yamlRuleConfigParserFactory{} } return nil }2.3 抽象工厂# 一个工厂方法可以创建相关联的多个类的时候就是抽象工厂模式。">
+  <meta itemprop="dateModified" content="2025-08-09T23:42:00+08:00">
+  <meta itemprop="wordCount" content="303">
+
+<title>2. 工厂模式 | wiki</title>
+<link rel="icon" href="/wiki/favicon.png" >
+<link rel="manifest" href="/wiki/manifest.json">
+<link rel="canonical" href="https://example.com/wiki/docs/design-pattern/2/">
+<link rel="stylesheet" href="/wiki/book.min.df034b84d0659a9814822884d0dc585d62aa27036b9a0dc056481951d3d596c6.css" integrity="sha256-3wNLhNBlmpgUgiiE0NxYXWKqJwNrmg3AVkgZUdPVlsY=" crossorigin="anonymous">
+
+
+  <script defer src="/wiki/fuse.min.js"></script>
+  <script defer src="/wiki/zh.search.min.a1096b885ee97011f7d09806d6788dd8656c58bb6ea8780504df21cb94267bd7.js" integrity="sha256-oQlriF7pcBH30JgG1niN2GVsWLtuqHgFBN8hy5Qme9c=" crossorigin="anonymous"></script>
+
+  <script defer src="/wiki/sw.min.e67149a4572dea566681c97cf77821bb08285ae36bc9376d2616a9b5e253f230.js" integrity="sha256-5nFJpFct6lZmgcl893ghuwgoWuNryTdtJhapteJT8jA=" crossorigin="anonymous"></script>
+
+
+
+  
+</head>
+<body dir="ltr" class="book-kind-page book-type-docs">
+  <input type="checkbox" class="hidden toggle" id="menu-control" />
+  <input type="checkbox" class="hidden toggle" id="toc-control" />
+  <main class="container flex">
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
+  <nav>
+<h2 class="book-brand">
+  <a class="flex align-center" href="/wiki/"><span>wiki</span>
+  </a>
+</h2>
+
+
+<div class="book-search hidden">
+  <input id="book-search-input" type="text" 
+    placeholder="搜索"
+    aria-label="搜索"
+    maxlength="64" data-hotkeys="s/" />
+  <div class="book-search-spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+<script>document.querySelector(".book-search").classList.remove("hidden")</script>
+
+
+
+
+<ul>
+    <li>
+        <a href="javascript:void(0)" onclick="hrefIndex()" rel="noopener">主页</a>
+    </li>
+    <li>
+        <a href="https://github.com/xiaobinqt" target="_blank" rel="noopener">GitHub</a>
+    </li>
+</ul>
+
+<hr>
+
+<script>
+    function hrefIndex() {
+        window.location = window.location.origin;
+    }
+</script>
+
+<ul><li><a href=""></a></li></ul>
+
+
+
+
+
+
+
+
+  
+  <ul>
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a>
+      MySQL</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/mysql/overview/" class="">
+      总览</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/mysql/sql-grammar/" class="">
+      SQL 语法</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/mysql/dbs-theory/" class="">
+      数据库系统原理</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/mysql/faq1/" class="">
+      常见问题（一）</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a>
+      Redis</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/redis/overview/" class="">
+      总览</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/redis/string/" class="">
+      STRING</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a>
+      系统设计</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/system-design/overview/" class="">
+      系统设计基础</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/system-design/distributed/" class="">
+      分布式</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/system-design/cluster/" class="">
+      集群</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/system-design/attack/" class="">
+      攻击技术</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/system-design/cache/" class="">
+      缓存</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/system-design/queue-message/" class="">
+      消息队列</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a>
+      编码实践</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/coding-practice/regex/" class="">
+      正则表达式</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/coding-practice/docker/" class="">
+      Docker</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/coding-practice/git/" class="">
+      Git</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/coding-practice/code-readability/" class="">
+      代码可读性</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/coding-practice/mac/" class="">
+      Mac</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/coding-practice/jetbrains/" class="">
+      Jetbrains</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/coding-practice/chrome/" class="">
+      Chrome</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/coding-practice/shell/" class="">
+      Shell</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a>
+      PHP</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/php/1/" class="">
+      1.1 版本区别</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a>
+      Golang</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/golang/1/" class="">
+      杂项</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a>
+      前端知识</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/frontend/html/" class="">
+      html</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/frontend/jq/" class="">
+      Jquery</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a>
+      Golang 设计模式</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/design-pattern/1/" class="">
+      1. 单例模式</a>
+  
+
+        </li>
+      
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/design-pattern/2/" class="active">
+      2. 工厂模式</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a>
+      Python</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/python/1/" class="">
+      1.1 基础知识</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+      
+        <li class="book-section-flat" >
+          
+  
+  
+
+  
+    <a href="/wiki/docs/favorite/" class="">
+      收藏夹</a>
+  
+
+          
+  <ul>
+    
+      
+        <li>
+          
+  
+  
+
+  
+    <a href="/wiki/docs/favorite/cs-learn/" class="">
+      计算机基础书籍推荐</a>
+  
+
+        </li>
+      
+    
+  </ul>
+
+        </li>
+      
+    
+  </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+
+
+
+  </div>
+</aside>
+ 
+
+    <div class="book-page">
+      <header class="book-header hidden">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/wiki/icons/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <h3>2. 工厂模式</h3>
+
+  <label for="toc-control">
+    
+    <img src="/wiki/icons/toc.svg" class="book-icon" alt="Table of Contents" />
+    
+  </label>
+</div>
+
+
+  
+  <aside class="hidden">
+    
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#2-工厂模式">2. 工厂模式</a>
+      <ul>
+        <li><a href="#21-简单工厂">2.1 简单工厂</a></li>
+        <li><a href="#22-工厂方法">2.2 工厂方法</a></li>
+        <li><a href="#23-抽象工厂">2.3 抽象工厂</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+  </aside>
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown book-article"><h1 id="2-工厂模式">2. 工厂模式<a class="anchor" href="#2-%e5%b7%a5%e5%8e%82%e6%a8%a1%e5%bc%8f">#</a></h1>
+<h2 id="21-简单工厂">2.1 简单工厂<a class="anchor" href="#21-%e7%ae%80%e5%8d%95%e5%b7%a5%e5%8e%82">#</a></h2>
+<p>使用 NewName 的方式创建对象/接口，当它<strong>返回的是接口</strong>的时候，其实就是简单工厂模式。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">factory</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">IRuleConfigParser</span> <span style="color:#66d9ef">interface</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">Parse</span>(<span style="color:#a6e22e">data</span> []<span style="color:#66d9ef">byte</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">jsonRuleConfigParser</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">J</span> <span style="color:#a6e22e">jsonRuleConfigParser</span>) <span style="color:#a6e22e">Parse</span>(<span style="color:#a6e22e">data</span> []<span style="color:#66d9ef">byte</span>) {
+</span></span><span style="display:flex;"><span>	panic(<span style="color:#e6db74">&#34;implement me&#34;</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">yamlRuleConfigParser</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">Y</span> <span style="color:#a6e22e">yamlRuleConfigParser</span>) <span style="color:#a6e22e">Parse</span>(<span style="color:#a6e22e">data</span> []<span style="color:#66d9ef">byte</span>) {
+</span></span><span style="display:flex;"><span>	panic(<span style="color:#e6db74">&#34;implement me&#34;</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">NewIRuleConfigParser</span>(<span style="color:#a6e22e">t</span> <span style="color:#66d9ef">string</span>) <span style="color:#a6e22e">IRuleConfigParser</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">switch</span> <span style="color:#a6e22e">t</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;json&#34;</span>:
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">jsonRuleConfigParser</span>{}
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;yaml&#34;</span>:
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">yamlRuleConfigParser</span>{}
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><h2 id="22-工厂方法">2.2 工厂方法<a class="anchor" href="#22-%e5%b7%a5%e5%8e%82%e6%96%b9%e6%b3%95">#</a></h2>
+<p>当对象的创建逻辑比较复杂，不只是简单的 new 一下就可以，而是要组合其他类对象，做各种初始化操作的时候，推荐使用工厂方法模式，将复杂的创建逻辑拆分到多个工厂类中，让具体的工厂实现具体的业务逻辑，让每个工厂类都不至于过于复杂。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">factory</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">IRuleConfigParser</span> <span style="color:#66d9ef">interface</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">Parse</span>(<span style="color:#a6e22e">data</span> []<span style="color:#66d9ef">byte</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">jsonRuleConfigParser</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">J</span> <span style="color:#a6e22e">jsonRuleConfigParser</span>) <span style="color:#a6e22e">Parse</span>(<span style="color:#a6e22e">data</span> []<span style="color:#66d9ef">byte</span>) {
+</span></span><span style="display:flex;"><span>	panic(<span style="color:#e6db74">&#34;implement me&#34;</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">yamlRuleConfigParser</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">Y</span> <span style="color:#a6e22e">yamlRuleConfigParser</span>) <span style="color:#a6e22e">Parse</span>(<span style="color:#a6e22e">data</span> []<span style="color:#66d9ef">byte</span>) {
+</span></span><span style="display:flex;"><span>	panic(<span style="color:#e6db74">&#34;implement me&#34;</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">IRuleConfigParserFactory</span> <span style="color:#66d9ef">interface</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">CreateParser</span>() <span style="color:#a6e22e">IRuleConfigParser</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">yamlRuleConfigParserFactory</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">y</span> <span style="color:#a6e22e">yamlRuleConfigParserFactory</span>) <span style="color:#a6e22e">CreateParser</span>() <span style="color:#a6e22e">IRuleConfigParser</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">yamlRuleConfigParser</span>{}
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">jsonRuleConfigParserFactory</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">j</span> <span style="color:#a6e22e">jsonRuleConfigParserFactory</span>) <span style="color:#a6e22e">CreateParser</span>() <span style="color:#a6e22e">IRuleConfigParser</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">jsonRuleConfigParser</span>{}
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">NewIRuleConfigParserFactory</span>(<span style="color:#a6e22e">t</span> <span style="color:#66d9ef">string</span>) <span style="color:#a6e22e">IRuleConfigParserFactory</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">switch</span> <span style="color:#a6e22e">t</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;json&#34;</span>:
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">jsonRuleConfigParserFactory</span>{}
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;yaml&#34;</span>:
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">yamlRuleConfigParserFactory</span>{}
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><h2 id="23-抽象工厂">2.3 抽象工厂<a class="anchor" href="#23-%e6%8a%bd%e8%b1%a1%e5%b7%a5%e5%8e%82">#</a></h2>
+<p>一个工厂方法可以创建<strong>相关联</strong>的多个类的时候就是抽象工厂模式。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">factory</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">IRuleConfigParser</span> <span style="color:#66d9ef">interface</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">Parse</span>(<span style="color:#a6e22e">data</span> []<span style="color:#66d9ef">byte</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">jsonRuleConfigParser</span> <span style="color:#66d9ef">struct</span>{}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">j</span> <span style="color:#a6e22e">jsonRuleConfigParser</span>) <span style="color:#a6e22e">Parse</span>(<span style="color:#a6e22e">data</span> []<span style="color:#66d9ef">byte</span>) {
+</span></span><span style="display:flex;"><span>	panic(<span style="color:#e6db74">&#34;implement me&#34;</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">ISystemConfigParser</span> <span style="color:#66d9ef">interface</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">ParseSystem</span>(<span style="color:#a6e22e">data</span> []<span style="color:#66d9ef">byte</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">jsonSystemConfigParser</span> <span style="color:#66d9ef">struct</span>{}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">j</span> <span style="color:#a6e22e">jsonSystemConfigParser</span>) <span style="color:#a6e22e">ParseSystem</span>(<span style="color:#a6e22e">data</span> []<span style="color:#66d9ef">byte</span>) {
+</span></span><span style="display:flex;"><span>	panic(<span style="color:#e6db74">&#34;implement me&#34;</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 工厂方法接口</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">IConfigParserFactory</span> <span style="color:#66d9ef">interface</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">CreateRuleParser</span>() <span style="color:#a6e22e">IRuleConfigParser</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">CreateSystemParser</span>() <span style="color:#a6e22e">ISystemConfigParser</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">jsonConfigParserFactory</span> <span style="color:#66d9ef">struct</span>{}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">j</span> <span style="color:#a6e22e">jsonConfigParserFactory</span>) <span style="color:#a6e22e">CreateRuleParser</span>() <span style="color:#a6e22e">IRuleConfigParser</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">jsonRuleConfigParser</span>{}
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">j</span> <span style="color:#a6e22e">jsonConfigParserFactory</span>) <span style="color:#a6e22e">CreateSystemParser</span>() <span style="color:#a6e22e">ISystemConfigParser</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">jsonSystemConfigParser</span>{}
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">yamlConfigParserFactory</span> <span style="color:#66d9ef">struct</span>{}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">y</span> <span style="color:#a6e22e">yamlConfigParserFactory</span>) <span style="color:#a6e22e">CreateRuleParser</span>() <span style="color:#a6e22e">IRuleConfigParser</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">yamlRuleConfigParser</span>{}
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">y</span> <span style="color:#a6e22e">yamlConfigParserFactory</span>) <span style="color:#a6e22e">CreateSystemParser</span>() <span style="color:#a6e22e">ISystemConfigParser</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">yamlSystemConfigParser</span>{}
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">yamlRuleConfigParser</span> <span style="color:#66d9ef">struct</span>{}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">y</span> <span style="color:#a6e22e">yamlRuleConfigParser</span>) <span style="color:#a6e22e">Parse</span>(<span style="color:#a6e22e">data</span> []<span style="color:#66d9ef">byte</span>) {
+</span></span><span style="display:flex;"><span>	panic(<span style="color:#e6db74">&#34;implement me&#34;</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">yamlSystemConfigParser</span> <span style="color:#66d9ef">struct</span>{}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">y</span> <span style="color:#a6e22e">yamlSystemConfigParser</span>) <span style="color:#a6e22e">ParseSystem</span>(<span style="color:#a6e22e">data</span> []<span style="color:#66d9ef">byte</span>) {
+</span></span><span style="display:flex;"><span>	panic(<span style="color:#e6db74">&#34;implement me&#34;</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 抽象工厂基于工厂方法，用一个简单工厂封装工厂方法</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 只不过一个工厂方法可创建多个相关的类</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">NewIConfigParserFactory</span>(<span style="color:#a6e22e">t</span> <span style="color:#66d9ef">string</span>) <span style="color:#a6e22e">IConfigParserFactory</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">switch</span> <span style="color:#a6e22e">t</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;json&#34;</span>:
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">jsonConfigParserFactory</span>{}
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;yaml&#34;</span>:
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">yamlConfigParserFactory</span>{}
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div></article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex flex-wrap justify-between">
+
+<div>
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+
+
+
+
+  
+  
+  
+  <div class="flex flex-wrap justify-between">
+    <span>
+    
+      <a href="/wiki/docs/design-pattern/1/" class="flex align-center">
+        <img src="/wiki/icons/backward.svg" class="book-icon" alt="Backward" />
+        <span>1. 单例模式</span>
+      </a>
+    
+    </span>
+    <span>
+    
+      <a href="/wiki/docs/python/1/" class="flex align-center">
+        <span>1.1 基础知识</span>
+        <img src="/wiki/icons/forward.svg" class="book-icon" alt="Forward" />
+      </a>
+    
+    </span>
+  </div>
+  
+
+
+ 
+        
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+        
+        
+  
+ 
+        
+  
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
+  
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#2-工厂模式">2. 工厂模式</a>
+      <ul>
+        <li><a href="#21-简单工厂">2.1 简单工厂</a></li>
+        <li><a href="#22-工厂方法">2.2 工厂方法</a></li>
+        <li><a href="#23-抽象工厂">2.3 抽象工厂</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+    </div>
+  </aside>
+  
+ 
+  </main>
+
+  
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

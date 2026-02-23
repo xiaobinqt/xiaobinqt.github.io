@@ -1,87 +1,86 @@
 <!DOCTYPE html>
 <html lang="zh" dir="ltr">
 <head>
-  <meta charset="UTF-8">
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="
-  集群
-  #
-
-
-  一、负载均衡
-  #
-
-集群中的应用服务器（节点）通常被设计成无状态，用户可以请求任何一个节点。
+<meta name="description" content="集群# 一、负载均衡# 集群中的应用服务器（节点）通常被设计成无状态，用户可以请求任何一个节点。
 负载均衡器会根据集群中每个节点的负载情况，将用户请求转发到合适的节点上。
 负载均衡器可以用来实现高可用以及伸缩性：
-
-高可用：当某个节点故障时，负载均衡器会将用户请求转发到另外的节点上，从而保证所有服务持续可用；
-伸缩性：根据系统整体负载情况，可以很容易地添加或移除节点。
-
-负载均衡器运行过程包含两个部分：
-
-根据负载均衡算法得到转发的节点；
-进行转发。
-
-
-  负载均衡算法
-  #
-
-
-  1. 轮询（Round Robin）
-  #
-
-轮询算法把每个请求轮流发送到每个服务器上。
+高可用：当某个节点故障时，负载均衡器会将用户请求转发到另外的节点上，从而保证所有服务持续可用； 伸缩性：根据系统整体负载情况，可以很容易地添加或移除节点。 负载均衡器运行过程包含两个部分：
+根据负载均衡算法得到转发的节点； 进行转发。 负载均衡算法# 1. 轮询（Round Robin）# 轮询算法把每个请求轮流发送到每个服务器上。
 下图中，一共有 6 个客户端产生了 6 个请求，这 6 个请求按 (1, 2, 3, 4, 5, 6) 的顺序发送。(1, 3, 5) 的请求会被发送到服务器 1，(2, 4, 6) 的请求会被发送到服务器 2。
-  
 该算法比较适合每个服务器的性能差不多的场景，如果有性能存在差异的情况下，那么性能较差的服务器可能无法承担过大的负载（下图的 Server 2）。
-  
-
-  2. 加权轮询（Weighted Round Robbin）
-  #
-
-加权轮询是在轮询的基础上，根据服务器的性能差异，为服务器赋予一定的权值，性能高的服务器分配更高的权值。
-例如下图中，服务器 1 被赋予的权值为 5，服务器 2 被赋予的权值为 1，那么 (1, 2, 3, 4, 5) 请求会被发送到服务器 1，(6) 请求会被发送到服务器 2。">
+2. 加权轮询（Weighted Round Robbin）# 加权轮询是在轮询的基础上，根据服务器的性能差异，为服务器赋予一定的权值，性能高的服务器分配更高的权值。
+例如下图中，服务器 1 被赋予的权值为 5，服务器 2 被赋予的权值为 1，那么 (1, 2, 3, 4, 5) 请求会被发送到服务器 1，(6) 请求会被发送到服务器 2。
+3. 最少连接（least Connections）# 由于每个请求的连接时间不一样，使用轮询或者加权轮询算法的话，可能会让一台服务器当前连接数过大，而另一台服务器的连接过小，造成负载不均衡。
+例如下图中，(1, 3, 5) 请求会被发送到服务器 1，但是 (1, 3) 很快就断开连接，此时只有 (5) 请求连接服务器 1；(2, 4, 6) 请求被发送到服务器 2，只有 (2) 的连接断开，此时 (6, 4) 请求连接服务器 2。该系统继续运行时，服务器 2 会承担过大的负载。
+">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/wiki/docs/system-design/cluster/">
   <meta property="og:site_name" content="wiki">
   <meta property="og:title" content="集群">
-  <meta property="og:description" content="集群 # 一、负载均衡 # 集群中的应用服务器（节点）通常被设计成无状态，用户可以请求任何一个节点。
+  <meta property="og:description" content="集群# 一、负载均衡# 集群中的应用服务器（节点）通常被设计成无状态，用户可以请求任何一个节点。
 负载均衡器会根据集群中每个节点的负载情况，将用户请求转发到合适的节点上。
 负载均衡器可以用来实现高可用以及伸缩性：
 高可用：当某个节点故障时，负载均衡器会将用户请求转发到另外的节点上，从而保证所有服务持续可用； 伸缩性：根据系统整体负载情况，可以很容易地添加或移除节点。 负载均衡器运行过程包含两个部分：
-根据负载均衡算法得到转发的节点； 进行转发。 负载均衡算法 # 1. 轮询（Round Robin） # 轮询算法把每个请求轮流发送到每个服务器上。
+根据负载均衡算法得到转发的节点； 进行转发。 负载均衡算法# 1. 轮询（Round Robin）# 轮询算法把每个请求轮流发送到每个服务器上。
 下图中，一共有 6 个客户端产生了 6 个请求，这 6 个请求按 (1, 2, 3, 4, 5, 6) 的顺序发送。(1, 3, 5) 的请求会被发送到服务器 1，(2, 4, 6) 的请求会被发送到服务器 2。
 该算法比较适合每个服务器的性能差不多的场景，如果有性能存在差异的情况下，那么性能较差的服务器可能无法承担过大的负载（下图的 Server 2）。
-2. 加权轮询（Weighted Round Robbin） # 加权轮询是在轮询的基础上，根据服务器的性能差异，为服务器赋予一定的权值，性能高的服务器分配更高的权值。
-例如下图中，服务器 1 被赋予的权值为 5，服务器 2 被赋予的权值为 1，那么 (1, 2, 3, 4, 5) 请求会被发送到服务器 1，(6) 请求会被发送到服务器 2。">
+2. 加权轮询（Weighted Round Robbin）# 加权轮询是在轮询的基础上，根据服务器的性能差异，为服务器赋予一定的权值，性能高的服务器分配更高的权值。
+例如下图中，服务器 1 被赋予的权值为 5，服务器 2 被赋予的权值为 1，那么 (1, 2, 3, 4, 5) 请求会被发送到服务器 1，(6) 请求会被发送到服务器 2。
+3. 最少连接（least Connections）# 由于每个请求的连接时间不一样，使用轮询或者加权轮询算法的话，可能会让一台服务器当前连接数过大，而另一台服务器的连接过小，造成负载不均衡。
+例如下图中，(1, 3, 5) 请求会被发送到服务器 1，但是 (1, 3) 很快就断开连接，此时只有 (5) 请求连接服务器 1；(2, 4, 6) 请求被发送到服务器 2，只有 (2) 的连接断开，此时 (6, 4) 请求连接服务器 2。该系统继续运行时，服务器 2 会承担过大的负载。">
   <meta property="og:locale" content="zh">
   <meta property="og:type" content="article">
     <meta property="article:section" content="docs">
     <meta property="article:modified_time" content="2025-04-20T16:31:38+08:00">
+
+
+  <meta itemprop="name" content="集群">
+  <meta itemprop="description" content="集群# 一、负载均衡# 集群中的应用服务器（节点）通常被设计成无状态，用户可以请求任何一个节点。
+负载均衡器会根据集群中每个节点的负载情况，将用户请求转发到合适的节点上。
+负载均衡器可以用来实现高可用以及伸缩性：
+高可用：当某个节点故障时，负载均衡器会将用户请求转发到另外的节点上，从而保证所有服务持续可用； 伸缩性：根据系统整体负载情况，可以很容易地添加或移除节点。 负载均衡器运行过程包含两个部分：
+根据负载均衡算法得到转发的节点； 进行转发。 负载均衡算法# 1. 轮询（Round Robin）# 轮询算法把每个请求轮流发送到每个服务器上。
+下图中，一共有 6 个客户端产生了 6 个请求，这 6 个请求按 (1, 2, 3, 4, 5, 6) 的顺序发送。(1, 3, 5) 的请求会被发送到服务器 1，(2, 4, 6) 的请求会被发送到服务器 2。
+该算法比较适合每个服务器的性能差不多的场景，如果有性能存在差异的情况下，那么性能较差的服务器可能无法承担过大的负载（下图的 Server 2）。
+2. 加权轮询（Weighted Round Robbin）# 加权轮询是在轮询的基础上，根据服务器的性能差异，为服务器赋予一定的权值，性能高的服务器分配更高的权值。
+例如下图中，服务器 1 被赋予的权值为 5，服务器 2 被赋予的权值为 1，那么 (1, 2, 3, 4, 5) 请求会被发送到服务器 1，(6) 请求会被发送到服务器 2。
+3. 最少连接（least Connections）# 由于每个请求的连接时间不一样，使用轮询或者加权轮询算法的话，可能会让一台服务器当前连接数过大，而另一台服务器的连接过小，造成负载不均衡。
+例如下图中，(1, 3, 5) 请求会被发送到服务器 1，但是 (1, 3) 很快就断开连接，此时只有 (5) 请求连接服务器 1；(2, 4, 6) 请求被发送到服务器 2，只有 (2) 的连接断开，此时 (6, 4) 请求连接服务器 2。该系统继续运行时，服务器 2 会承担过大的负载。">
+  <meta itemprop="dateModified" content="2025-04-20T16:31:38+08:00">
+  <meta itemprop="wordCount" content="256">
+
 <title>集群 | wiki</title>
 <link rel="icon" href="/wiki/favicon.png" >
 <link rel="manifest" href="/wiki/manifest.json">
 <link rel="canonical" href="https://example.com/wiki/docs/system-design/cluster/">
-<link rel="stylesheet" href="/wiki/book.min.1e8c332c823ff5970e639a0c180f0e3d074283c7f525185d3e42903a2f30e9be.css" integrity="sha256-HowzLII/9ZcOY5oMGA8OPQdCg8f1JRhdPkKQOi8w6b4=" crossorigin="anonymous">
+<link rel="stylesheet" href="/wiki/book.min.df034b84d0659a9814822884d0dc585d62aa27036b9a0dc056481951d3d596c6.css" integrity="sha256-3wNLhNBlmpgUgiiE0NxYXWKqJwNrmg3AVkgZUdPVlsY=" crossorigin="anonymous">
+
+
   <script defer src="/wiki/fuse.min.js"></script>
-  <script defer src="/wiki/zh.search.min.bf384620bb71214286832136ff0c8484c94d55a80e8ca9f83636ec7d22916bc7.js" integrity="sha256-vzhGILtxIUKGgyE2/wyEhMlNVagOjKn4NjbsfSKRa8c=" crossorigin="anonymous"></script>
+  <script defer src="/wiki/zh.search.min.a1096b885ee97011f7d09806d6788dd8656c58bb6ea8780504df21cb94267bd7.js" integrity="sha256-oQlriF7pcBH30JgG1niN2GVsWLtuqHgFBN8hy5Qme9c=" crossorigin="anonymous"></script>
 
   <script defer src="/wiki/sw.min.e67149a4572dea566681c97cf77821bb08285ae36bc9376d2616a9b5e253f230.js" integrity="sha256-5nFJpFct6lZmgcl893ghuwgoWuNryTdtJhapteJT8jA=" crossorigin="anonymous"></script>
-<!--
-Made with Book Theme
-https://github.com/alex-shpak/hugo-book
--->
+
+
+
   
 </head>
-<body dir="ltr">
+<body dir="ltr" class="book-kind-page book-type-docs">
   <input type="checkbox" class="hidden toggle" id="menu-control" />
   <input type="checkbox" class="hidden toggle" id="toc-control" />
   <main class="container flex">
-    <aside class="book-menu">
-      <div class="book-menu-content">
-        
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
   <nav>
 <h2 class="book-brand">
   <a class="flex align-center" href="/wiki/"><span>wiki</span>
@@ -90,7 +89,10 @@ https://github.com/alex-shpak/hugo-book
 
 
 <div class="book-search hidden">
-  <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
+  <input id="book-search-input" type="text" 
+    placeholder="搜索"
+    aria-label="搜索"
+    maxlength="64" data-hotkeys="s/" />
   <div class="book-search-spinner hidden"></div>
   <ul id="book-search-results"></ul>
 </div>
@@ -116,19 +118,7 @@ https://github.com/alex-shpak/hugo-book
     }
 </script>
 
-
-  
-<ul>
-  
-  <li>
-    <a href=""  target="_blank" rel="noopener">
-        
-      </a>
-  </li>
-  
-</ul>
-
-
+<ul><li><a href=""></a></li></ul>
 
 
 
@@ -147,7 +137,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <span>MySQL</span>
+    <a>
+      MySQL</a>
   
 
           
@@ -160,7 +151,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/mysql/overview/" class="">总览</a>
+    <a href="/wiki/docs/mysql/overview/" class="">
+      总览</a>
   
 
         </li>
@@ -173,7 +165,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/mysql/sql-grammar/" class="">SQL 语法</a>
+    <a href="/wiki/docs/mysql/sql-grammar/" class="">
+      SQL 语法</a>
   
 
         </li>
@@ -186,7 +179,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/mysql/dbs-theory/" class="">数据库系统原理</a>
+    <a href="/wiki/docs/mysql/dbs-theory/" class="">
+      数据库系统原理</a>
   
 
         </li>
@@ -199,7 +193,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/mysql/faq1.md/" class="">常见问题（一）</a>
+    <a href="/wiki/docs/mysql/faq1/" class="">
+      常见问题（一）</a>
   
 
         </li>
@@ -217,7 +212,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <span>Redis</span>
+    <a>
+      Redis</a>
   
 
           
@@ -230,7 +226,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/redis/overview/" class="">总览</a>
+    <a href="/wiki/docs/redis/overview/" class="">
+      总览</a>
   
 
         </li>
@@ -243,7 +240,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/redis/string/" class="">STRING</a>
+    <a href="/wiki/docs/redis/string/" class="">
+      STRING</a>
   
 
         </li>
@@ -261,7 +259,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <span>系统设计</span>
+    <a>
+      系统设计</a>
   
 
           
@@ -274,7 +273,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/system-design/overview/" class="">系统设计基础</a>
+    <a href="/wiki/docs/system-design/overview/" class="">
+      系统设计基础</a>
   
 
         </li>
@@ -287,7 +287,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/system-design/distributed/" class="">分布式</a>
+    <a href="/wiki/docs/system-design/distributed/" class="">
+      分布式</a>
   
 
         </li>
@@ -300,7 +301,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/system-design/cluster/" class="active">集群</a>
+    <a href="/wiki/docs/system-design/cluster/" class="active">
+      集群</a>
   
 
         </li>
@@ -313,7 +315,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/system-design/attack/" class="">攻击技术</a>
+    <a href="/wiki/docs/system-design/attack/" class="">
+      攻击技术</a>
   
 
         </li>
@@ -326,7 +329,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/system-design/cache/" class="">缓存</a>
+    <a href="/wiki/docs/system-design/cache/" class="">
+      缓存</a>
   
 
         </li>
@@ -339,7 +343,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/system-design/queue-message/" class="">消息队列</a>
+    <a href="/wiki/docs/system-design/queue-message/" class="">
+      消息队列</a>
   
 
         </li>
@@ -357,7 +362,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <span>编码实践</span>
+    <a>
+      编码实践</a>
   
 
           
@@ -370,7 +376,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/coding-practice/regex/" class="">正则表达式</a>
+    <a href="/wiki/docs/coding-practice/regex/" class="">
+      正则表达式</a>
   
 
         </li>
@@ -383,7 +390,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/coding-practice/docker/" class="">Docker</a>
+    <a href="/wiki/docs/coding-practice/docker/" class="">
+      Docker</a>
   
 
         </li>
@@ -396,7 +404,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/coding-practice/git/" class="">Git</a>
+    <a href="/wiki/docs/coding-practice/git/" class="">
+      Git</a>
   
 
         </li>
@@ -409,7 +418,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/coding-practice/code-readability/" class="">代码可读性</a>
+    <a href="/wiki/docs/coding-practice/code-readability/" class="">
+      代码可读性</a>
   
 
         </li>
@@ -422,7 +432,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/coding-practice/mac/" class="">Mac</a>
+    <a href="/wiki/docs/coding-practice/mac/" class="">
+      Mac</a>
   
 
         </li>
@@ -435,7 +446,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/coding-practice/jetbrains/" class="">Jetbrains</a>
+    <a href="/wiki/docs/coding-practice/jetbrains/" class="">
+      Jetbrains</a>
   
 
         </li>
@@ -448,7 +460,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/coding-practice/chrome/" class="">Chrome</a>
+    <a href="/wiki/docs/coding-practice/chrome/" class="">
+      Chrome</a>
   
 
         </li>
@@ -461,7 +474,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/coding-practice/shell/" class="">Shell</a>
+    <a href="/wiki/docs/coding-practice/shell/" class="">
+      Shell</a>
   
 
         </li>
@@ -479,7 +493,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <span>PHP</span>
+    <a>
+      PHP</a>
   
 
           
@@ -492,72 +507,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/php/1.1-versions/" class="">1.1 版本区别</a>
-  
-
-        </li>
-      
-    
-      
-        <li>
-          
-  
-  
-
-  
-    <a href="/wiki/docs/php/1.2-faq1/" class="">1.2 常见问题（一）</a>
-  
-
-        </li>
-      
-    
-      
-        <li>
-          
-  
-  
-
-  
-    <a href="/wiki/docs/php/1.3-faq2/" class="">1.3 常见问题（二）</a>
-  
-
-        </li>
-      
-    
-      
-        <li>
-          
-  
-  
-
-  
-    <a href="/wiki/docs/php/1.4-extend/" class="">1.4 PHP 扩展</a>
-  
-
-        </li>
-      
-    
-      
-        <li>
-          
-  
-  
-
-  
-    <a href="/wiki/docs/php/1.5-functions/" class="">1.5 常用函数</a>
-  
-
-        </li>
-      
-    
-      
-        <li>
-          
-  
-  
-
-  
-    <a href="/wiki/docs/php/1.6-advanced/" class="">1.6 高级用法</a>
+    <a href="/wiki/docs/php/1/" class="">
+      1.1 版本区别</a>
   
 
         </li>
@@ -575,7 +526,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <span>Golang</span>
+    <a>
+      Golang</a>
   
 
           
@@ -588,7 +540,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/golang/1.sundry/" class="">杂项</a>
+    <a href="/wiki/docs/golang/1/" class="">
+      杂项</a>
   
 
         </li>
@@ -606,7 +559,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <span>前端知识</span>
+    <a>
+      前端知识</a>
   
 
           
@@ -619,7 +573,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/frontend/html/" class="">html</a>
+    <a href="/wiki/docs/frontend/html/" class="">
+      html</a>
   
 
         </li>
@@ -632,7 +587,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/frontend/jq/" class="">Jquery</a>
+    <a href="/wiki/docs/frontend/jq/" class="">
+      Jquery</a>
   
 
         </li>
@@ -650,7 +606,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <span>Golang 设计模式</span>
+    <a>
+      Golang 设计模式</a>
   
 
           
@@ -663,7 +620,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/design-pattern/1.singleton/" class="">1. 单例模式</a>
+    <a href="/wiki/docs/design-pattern/1/" class="">
+      1. 单例模式</a>
   
 
         </li>
@@ -676,7 +634,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/design-pattern/2.factory/" class="">2. 工厂模式</a>
+    <a href="/wiki/docs/design-pattern/2/" class="">
+      2. 工厂模式</a>
   
 
         </li>
@@ -694,7 +653,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <span>Python</span>
+    <a>
+      Python</a>
   
 
           
@@ -707,7 +667,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/python/1.basic/" class="">1.1 基础知识</a>
+    <a href="/wiki/docs/python/1/" class="">
+      1.1 基础知识</a>
   
 
         </li>
@@ -725,7 +686,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/favorite/" class="">收藏夹</a>
+    <a href="/wiki/docs/favorite/" class="">
+      收藏夹</a>
   
 
           
@@ -738,7 +700,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/favorite/cs-learn/" class="">计算机基础书籍推荐</a>
+    <a href="/wiki/docs/favorite/cs-learn/" class="">
+      计算机基础书籍推荐</a>
   
 
         </li>
@@ -750,7 +713,6 @@ https://github.com/alex-shpak/hugo-book
       
     
   </ul>
-
 
 
 
@@ -772,30 +734,31 @@ https://github.com/alex-shpak/hugo-book
   <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
 
 
+
+  </div>
+</aside>
  
-      </div>
-    </aside>
 
     <div class="book-page">
-      <header class="book-header">
+      <header class="book-header hidden">
         
   <div class="flex align-center justify-between">
   <label for="menu-control">
-    <img src="/wiki/svg/menu.svg" class="book-icon" alt="Menu" />
+    <img src="/wiki/icons/menu.svg" class="book-icon" alt="Menu" />
   </label>
 
   <h3>集群</h3>
 
   <label for="toc-control">
     
-    <img src="/wiki/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    <img src="/wiki/icons/toc.svg" class="book-icon" alt="Table of Contents" />
     
   </label>
 </div>
 
 
   
-  <aside class="hidden clearfix">
+  <aside class="hidden">
     
   
 <nav id="TableOfContents">
@@ -829,14 +792,8 @@ https://github.com/alex-shpak/hugo-book
 
       
       
-  <article class="markdown book-article"><h1 id="集群">
-  集群
-  <a class="anchor" href="#%e9%9b%86%e7%be%a4">#</a>
-</h1>
-<h2 id="一负载均衡">
-  一、负载均衡
-  <a class="anchor" href="#%e4%b8%80%e8%b4%9f%e8%bd%bd%e5%9d%87%e8%a1%a1">#</a>
-</h2>
+  <article class="markdown book-article"><h1 id="集群">集群<a class="anchor" href="#%e9%9b%86%e7%be%a4">#</a></h1>
+<h2 id="一负载均衡">一、负载均衡<a class="anchor" href="#%e4%b8%80%e8%b4%9f%e8%bd%bd%e5%9d%87%e8%a1%a1">#</a></h2>
 <p>集群中的应用服务器（节点）通常被设计成无状态，用户可以请求任何一个节点。</p>
 <p>负载均衡器会根据集群中每个节点的负载情况，将用户请求转发到合适的节点上。</p>
 <p>负载均衡器可以用来实现高可用以及伸缩性：</p>
@@ -849,63 +806,36 @@ https://github.com/alex-shpak/hugo-book
 <li>根据负载均衡算法得到转发的节点；</li>
 <li>进行转发。</li>
 </ol>
-<h3 id="负载均衡算法">
-  负载均衡算法
-  <a class="anchor" href="#%e8%b4%9f%e8%bd%bd%e5%9d%87%e8%a1%a1%e7%ae%97%e6%b3%95">#</a>
-</h3>
-<h4 id="1-轮询round-robin">
-  1. 轮询（Round Robin）
-  <a class="anchor" href="#1-%e8%bd%ae%e8%af%a2round-robin">#</a>
-</h4>
+<h3 id="负载均衡算法">负载均衡算法<a class="anchor" href="#%e8%b4%9f%e8%bd%bd%e5%9d%87%e8%a1%a1%e7%ae%97%e6%b3%95">#</a></h3>
+<h4 id="1-轮询round-robin">1. 轮询（Round Robin）<a class="anchor" href="#1-%e8%bd%ae%e8%af%a2round-robin">#</a></h4>
 <p>轮询算法把每个请求轮流发送到每个服务器上。</p>
 <p>下图中，一共有 6 个客户端产生了 6 个请求，这 6 个请求按 (1, 2, 3, 4, 5, 6) 的顺序发送。(1, 3, 5) 的请求会被发送到服务器 1，(2, 4, 6) 的请求会被发送到服务器 2。</p>
 <div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221225/2ef2060efbb149509f4f4d20a163b1dd.png" width="500px"/> </div><br>
 <p>该算法比较适合每个服务器的性能差不多的场景，如果有性能存在差异的情况下，那么性能较差的服务器可能无法承担过大的负载（下图的 Server 2）。</p>
 <div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221225/6d6a3b1e64a5497e8bcabec27cec144a.png" width="500px"/> </div><br>
-<h4 id="2-加权轮询weighted-round-robbin">
-  2. 加权轮询（Weighted Round Robbin）
-  <a class="anchor" href="#2-%e5%8a%a0%e6%9d%83%e8%bd%ae%e8%af%a2weighted-round-robbin">#</a>
-</h4>
+<h4 id="2-加权轮询weighted-round-robbin">2. 加权轮询（Weighted Round Robbin）<a class="anchor" href="#2-%e5%8a%a0%e6%9d%83%e8%bd%ae%e8%af%a2weighted-round-robbin">#</a></h4>
 <p>加权轮询是在轮询的基础上，根据服务器的性能差异，为服务器赋予一定的权值，性能高的服务器分配更高的权值。</p>
 <p>例如下图中，服务器 1 被赋予的权值为 5，服务器 2 被赋予的权值为 1，那么 (1, 2, 3, 4, 5) 请求会被发送到服务器 1，(6) 请求会被发送到服务器 2。</p>
 <div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221225/864fc6d0594a4a398335bd7d85b16f19.png" width="500px"/> </div><br>
-<h4 id="3-最少连接least-connections">
-  3. 最少连接（least Connections）
-  <a class="anchor" href="#3-%e6%9c%80%e5%b0%91%e8%bf%9e%e6%8e%a5least-connections">#</a>
-</h4>
+<h4 id="3-最少连接least-connections">3. 最少连接（least Connections）<a class="anchor" href="#3-%e6%9c%80%e5%b0%91%e8%bf%9e%e6%8e%a5least-connections">#</a></h4>
 <p>由于每个请求的连接时间不一样，使用轮询或者加权轮询算法的话，可能会让一台服务器当前连接数过大，而另一台服务器的连接过小，造成负载不均衡。</p>
 <p>例如下图中，(1, 3, 5) 请求会被发送到服务器 1，但是 (1, 3) 很快就断开连接，此时只有 (5) 请求连接服务器 1；(2, 4, 6) 请求被发送到服务器 2，只有 (2) 的连接断开，此时 (6, 4) 请求连接服务器 2。该系统继续运行时，服务器 2 会承担过大的负载。</p>
 <div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221225/e44045eb93d64c419b0e3199d5bc95a6.png" width="500px"/> </div><br>
 <p>最少连接算法就是将请求发送给当前最少连接数的服务器上。</p>
 <p>例如下图中，服务器 1 当前连接数最小，那么新到来的请求 6 就会被发送到服务器 1 上。</p>
 <div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221225/b10ac4b18370487fbc2f1f18fcabd7fd.png" width="500px"/> </div><br>
-<h4 id="4-加权最少连接weighted-least-connection">
-  4. 加权最少连接（Weighted Least Connection）
-  <a class="anchor" href="#4-%e5%8a%a0%e6%9d%83%e6%9c%80%e5%b0%91%e8%bf%9e%e6%8e%a5weighted-least-connection">#</a>
-</h4>
+<h4 id="4-加权最少连接weighted-least-connection">4. 加权最少连接（Weighted Least Connection）<a class="anchor" href="#4-%e5%8a%a0%e6%9d%83%e6%9c%80%e5%b0%91%e8%bf%9e%e6%8e%a5weighted-least-connection">#</a></h4>
 <p>在最少连接的基础上，根据服务器的性能为每台服务器分配权重，再根据权重计算出每台服务器能处理的连接数。</p>
-<h4 id="5-随机算法random">
-  5. 随机算法（Random）
-  <a class="anchor" href="#5-%e9%9a%8f%e6%9c%ba%e7%ae%97%e6%b3%95random">#</a>
-</h4>
+<h4 id="5-随机算法random">5. 随机算法（Random）<a class="anchor" href="#5-%e9%9a%8f%e6%9c%ba%e7%ae%97%e6%b3%95random">#</a></h4>
 <p>把请求随机发送到服务器上。</p>
 <p>和轮询算法类似，该算法比较适合服务器性能差不多的场景。</p>
 <div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221225/511e15dc8a504280bb2f10b12caed43f.png" width="500px"/> </div><br>
-<h4 id="6-源地址哈希法-ip-hash">
-  6. 源地址哈希法 (IP Hash)
-  <a class="anchor" href="#6-%e6%ba%90%e5%9c%b0%e5%9d%80%e5%93%88%e5%b8%8c%e6%b3%95-ip-hash">#</a>
-</h4>
+<h4 id="6-源地址哈希法-ip-hash">6. 源地址哈希法 (IP Hash)<a class="anchor" href="#6-%e6%ba%90%e5%9c%b0%e5%9d%80%e5%93%88%e5%b8%8c%e6%b3%95-ip-hash">#</a></h4>
 <p>源地址哈希通过对客户端 IP 计算哈希值之后，再对服务器数量取模得到目标服务器的序号。</p>
 <p>可以保证同一 IP 的客户端的请求会转发到同一台服务器上，用来实现会话粘滞（Sticky Session）</p>
 <div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221225/54a6a1c37eae46a19e6dc8a1374c2c42.png" width="500px"/> </div><br>
-<h3 id="转发实现">
-  转发实现
-  <a class="anchor" href="#%e8%bd%ac%e5%8f%91%e5%ae%9e%e7%8e%b0">#</a>
-</h3>
-<h4 id="1-http-重定向">
-  1. HTTP 重定向
-  <a class="anchor" href="#1-http-%e9%87%8d%e5%ae%9a%e5%90%91">#</a>
-</h4>
+<h3 id="转发实现">转发实现<a class="anchor" href="#%e8%bd%ac%e5%8f%91%e5%ae%9e%e7%8e%b0">#</a></h3>
+<h4 id="1-http-重定向">1. HTTP 重定向<a class="anchor" href="#1-http-%e9%87%8d%e5%ae%9a%e5%90%91">#</a></h4>
 <p>HTTP 重定向负载均衡服务器使用某种负载均衡算法计算得到服务器的 IP 地址之后，将该地址写入 HTTP 重定向报文中，状态码为 302。客户端收到重定向报文之后，需要重新向服务器发起请求。</p>
 <p>缺点：</p>
 <ul>
@@ -914,10 +844,7 @@ https://github.com/alex-shpak/hugo-book
 </ul>
 <p>该负载均衡转发的缺点比较明显，实际场景中很少使用它。</p>
 <div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221225/1e25b534b74446199b09ceafb9722437.png" width="500px"/> </div><br>
-<h4 id="2-dns-域名解析">
-  2. DNS 域名解析
-  <a class="anchor" href="#2-dns-%e5%9f%9f%e5%90%8d%e8%a7%a3%e6%9e%90">#</a>
-</h4>
+<h4 id="2-dns-域名解析">2. DNS 域名解析<a class="anchor" href="#2-dns-%e5%9f%9f%e5%90%8d%e8%a7%a3%e6%9e%90">#</a></h4>
 <p>在 DNS 解析域名的同时使用负载均衡算法计算服务器 IP 地址。</p>
 <p>优点：</p>
 <ul>
@@ -929,10 +856,7 @@ https://github.com/alex-shpak/hugo-book
 </ul>
 <p>大型网站基本使用了 DNS 做为第一级负载均衡手段，然后在内部使用其它方式做第二级负载均衡。也就是说，域名解析的结果为内部的负载均衡服务器 IP 地址。</p>
 <div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221225/ae91c11a86a24279bed0c152bad904e6.png" width="500px"/> </div><br>
-<h4 id="3-反向代理服务器">
-  3. 反向代理服务器
-  <a class="anchor" href="#3-%e5%8f%8d%e5%90%91%e4%bb%a3%e7%90%86%e6%9c%8d%e5%8a%a1%e5%99%a8">#</a>
-</h4>
+<h4 id="3-反向代理服务器">3. 反向代理服务器<a class="anchor" href="#3-%e5%8f%8d%e5%90%91%e4%bb%a3%e7%90%86%e6%9c%8d%e5%8a%a1%e5%99%a8">#</a></h4>
 <p>反向代理服务器位于源服务器前面，用户的请求需要先经过反向代理服务器才能到达源服务器。反向代理可以用来进行缓存、日志记录等，同时也可以用来做为负载均衡服务器。</p>
 <p>在这种负载均衡转发方式下，客户端不直接请求源服务器，因此源服务器不需要外部 IP 地址，而反向代理需要配置内部和外部两套 IP 地址。</p>
 <p>优点：</p>
@@ -943,10 +867,7 @@ https://github.com/alex-shpak/hugo-book
 <ul>
 <li>所有请求和响应都需要经过反向代理服务器，它可能会成为性能瓶颈。</li>
 </ul>
-<h4 id="4-网络层">
-  4. 网络层
-  <a class="anchor" href="#4-%e7%bd%91%e7%bb%9c%e5%b1%82">#</a>
-</h4>
+<h4 id="4-网络层">4. 网络层<a class="anchor" href="#4-%e7%bd%91%e7%bb%9c%e5%b1%82">#</a></h4>
 <p>在操作系统内核进程获取网络数据包，根据负载均衡算法计算源服务器的 IP 地址，并修改请求数据包的目的 IP 地址，最后进行转发。</p>
 <p>源服务器返回的响应也需要经过负载均衡服务器，通常是让负载均衡服务器同时作为集群的网关服务器来实现。</p>
 <p>优点：</p>
@@ -957,40 +878,26 @@ https://github.com/alex-shpak/hugo-book
 <ul>
 <li>和反向代理一样，所有的请求和响应都经过负载均衡服务器，会成为性能瓶颈。</li>
 </ul>
-<h4 id="5-链路层">
-  5. 链路层
-  <a class="anchor" href="#5-%e9%93%be%e8%b7%af%e5%b1%82">#</a>
-</h4>
+<h4 id="5-链路层">5. 链路层<a class="anchor" href="#5-%e9%93%be%e8%b7%af%e5%b1%82">#</a></h4>
 <p>在链路层根据负载均衡算法计算源服务器的 MAC 地址，并修改请求数据包的目的 MAC 地址，并进行转发。</p>
 <p>通过配置源服务器的虚拟 IP 地址和负载均衡服务器的 IP 地址一致，从而不需要修改 IP 地址就可以进行转发。也正因为 IP 地址一样，所以源服务器的响应不需要转发回负载均衡服务器，可以直接转发给客户端，避免了负载均衡服务器的成为瓶颈。</p>
 <p>这是一种三角传输模式，被称为直接路由。对于提供下载和视频服务的网站来说，直接路由避免了大量的网络传输数据经过负载均衡服务器。</p>
 <p>这是目前大型网站使用最广负载均衡转发方式，在 Linux 平台可以使用的负载均衡服务器为 LVS（Linux Virtual Server）。</p>
 <p>参考：</p>
 <ul>
-<li>
-  <a href="http://www.jscape.com/blog/load-balancing-algorithms">Comparing Load Balancing Algorithms</a></li>
-<li>
-  <a href="http://slideplayer.com/slide/6599069/#">Redirection and Load Balancing</a></li>
+<li><a href="http://www.jscape.com/blog/load-balancing-algorithms">Comparing Load Balancing Algorithms</a></li>
+<li><a href="http://slideplayer.com/slide/6599069/#">Redirection and Load Balancing</a></li>
 </ul>
-<h2 id="二集群下的-session-管理">
-  二、集群下的 Session 管理
-  <a class="anchor" href="#%e4%ba%8c%e9%9b%86%e7%be%a4%e4%b8%8b%e7%9a%84-session-%e7%ae%a1%e7%90%86">#</a>
-</h2>
+<h2 id="二集群下的-session-管理">二、集群下的 Session 管理<a class="anchor" href="#%e4%ba%8c%e9%9b%86%e7%be%a4%e4%b8%8b%e7%9a%84-session-%e7%ae%a1%e7%90%86">#</a></h2>
 <p>一个用户的 Session 信息如果存储在一个服务器上，那么当负载均衡器把用户的下一个请求转发到另一个服务器，由于服务器没有用户的 Session 信息，那么该用户就需要重新进行登录等操作。</p>
-<h3 id="sticky-session">
-  Sticky Session
-  <a class="anchor" href="#sticky-session">#</a>
-</h3>
+<h3 id="sticky-session">Sticky Session<a class="anchor" href="#sticky-session">#</a></h3>
 <p>需要配置负载均衡器，使得一个用户的所有请求都路由到同一个服务器，这样就可以把用户的 Session 存放在该服务器中。</p>
 <p>缺点：</p>
 <ul>
 <li>当服务器宕机时，将丢失该服务器上的所有 Session。</li>
 </ul>
 <div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221225/fb8c2017271a43328e86bea532b2bf7c.png" width="400px"/> </div><br>
-<h3 id="session-replication">
-  Session Replication
-  <a class="anchor" href="#session-replication">#</a>
-</h3>
+<h3 id="session-replication">Session Replication<a class="anchor" href="#session-replication">#</a></h3>
 <p>在服务器之间进行 Session 同步操作，每个服务器都有所有用户的 Session 信息，因此用户可以向任何一个服务器进行请求。</p>
 <p>缺点：</p>
 <ul>
@@ -998,10 +905,7 @@ https://github.com/alex-shpak/hugo-book
 <li>同步过程占用网络带宽以及服务器处理器时间。</li>
 </ul>
 <div align="center"> <img src="https://cdn.xiaobinqt.cn/xiaobinqt.io/20221225/7dc55a5ba5f3461aa40fc30132341e99.png" width="400px"/> </div><br>
-<h3 id="session-server">
-  Session Server
-  <a class="anchor" href="#session-server">#</a>
-</h3>
+<h3 id="session-server">Session Server<a class="anchor" href="#session-server">#</a></h3>
 <p>使用一个单独的服务器存储 Session 数据，可以使用传统的 MySQL，也使用 Redis 或者 Memcached 这种内存型数据库。</p>
 <p>优点：</p>
 <ul>
@@ -1020,49 +924,72 @@ https://github.com/alex-shpak/hugo-book
         
   <div class="flex flex-wrap justify-between">
 
+<div>
 
-  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/book.wiki/commit/497b01d7b14e60cd68369b5933284910cf9b78c4" title='最后修改者 xiaobinqt | 四月 20, 2025' target="_blank" rel="noopener">
-      <img src="/wiki/svg/calendar.svg" class="book-icon" alt="" />
-      <span>四月 20, 2025</span>
-    </a>
-  </div>
+</div>
 
+<div>
 
-
-  <div>
-    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/book.wiki/tree/main/book.wiki/docs/system-design/cluster.md" target="_blank" rel="noopener">
-      <img src="/wiki/svg/edit.svg" class="book-icon" alt="" />
-      <span>编辑本页</span>
-    </a>
-  </div>
-
+</div>
 
 </div>
 
 
 
-  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+  
+  
+  
+  <div class="flex flex-wrap justify-between">
+    <span>
+    
+      <a href="/wiki/docs/system-design/distributed/" class="flex align-center">
+        <img src="/wiki/icons/backward.svg" class="book-icon" alt="Backward" />
+        <span>分布式</span>
+      </a>
+    
+    </span>
+    <span>
+    
+      <a href="/wiki/docs/system-design/attack/" class="flex align-center">
+        <span>攻击技术</span>
+        <img src="/wiki/icons/forward.svg" class="book-icon" alt="Forward" />
+      </a>
+    
+    </span>
+  </div>
+  
 
 
  
         
-      </footer>
-
-      
   
   <div class="book-comments">
 
 </div>
   
  
+        
+        
+  
+ 
+        
+  
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
 
       <label for="menu-control" class="hidden book-menu-overlay"></label>
     </div>
 
     
-    <aside class="book-toc">
-      <div class="book-toc-content">
-        
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
   
 <nav id="TableOfContents">
   <ul>
@@ -1087,15 +1014,24 @@ https://github.com/alex-shpak/hugo-book
 </nav>
 
 
+
+    </div>
+  </aside>
+  
  
-      </div>
-    </aside>
-    
   </main>
 
   
 </body>
 </html>
+
+
+
+
+
+
+
+
 
 
 

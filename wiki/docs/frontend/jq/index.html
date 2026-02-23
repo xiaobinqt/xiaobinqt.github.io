@@ -1,121 +1,71 @@
 <!DOCTYPE html>
 <html lang="zh" dir="ltr">
 <head>
-  <meta charset="UTF-8">
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="
-  Jquery
-  #
-
-
-  获取值
-  #
-
-todo..
-
-  base64 数据给前端使用
-  #
-
-后端可以用 base64 把数据传给前端，前端直接用，特别是常见的：
-
-图片
-小文件
-小段 JSON
-
-比如后端 PHP：
-&lt;?php
-$data = [
-    &#34;s3_region&#34; =&gt; &#34;us-east-2&#34;,
-    &#34;s3_bucket&#34; =&gt; &#34;avator&#34;,
-];
-// 1. 转 JSON
-$json = json_encode($data, JSON_UNESCAPED_UNICODE);
-
-// 2. 再 base64 编码
-$base64 = base64_encode($json);
-?&gt;
-&lt;input type=&#34;hidden&#34; id=&#34;s3_config&#34; value=&#34;&lt;?= $base64 ?&gt;&#34;&gt;
-JS 前端解码回来：
-const base64Str = $(&#39;#s3_config&#39;).val();
-const jsonStr = atob(base64Str);   // base64 decode
-const config = JSON.parse(jsonStr); // 解析 JSON
-
-console.log(config.s3_region); // us-east-2
-为什么用 base64？什么时候用？
-
-  
-      
-          用途
-          解释
-      
-  
-  
-      
-          避免 HTML 转义问题
-          里面即使有 &quot;、&lt;、&gt; 都不会影响 HTML
-      
-      
-          保证内容完整安全
-          base64是纯字符串，不会破坏标签结构
-      
-      
-          小数据安全传递
-          一般几 KB 以内的数据可以这样做
-      
-  
-
-
-  注意事项 ⚡
-  #
-
-
-大数据量不要 base64：因为 base64 会比原数据大 33% 左右，太大就浪费带宽。
-小段数据（JSON、短文本）非常合适。
-图片的话，小图 base64 没问题，大图最好还是用 URL。
-
-
-  页面加载时就执行
-  #
-
-如果想在 页面加载完成 时就用 jQuery 自动执行某些代码。
-最常见的方法就是用 $(document).ready() 或 $(function() {...})。">
+<meta name="description" content="Jquery# 获取值# todo..
+base64 数据给前端使用# 后端可以用 base64 把数据传给前端，前端直接用，特别是常见的：
+图片 小文件 小段 JSON 比如后端 PHP：
+&lt;?php $data = [ &#34;s3_region&#34; =&gt; &#34;us-east-2&#34;, &#34;s3_bucket&#34; =&gt; &#34;avator&#34;, ]; // 1. 转 JSON $json = json_encode($data, JSON_UNESCAPED_UNICODE); // 2. 再 base64 编码 $base64 = base64_encode($json); ?&gt; &lt;input type=&#34;hidden&#34; id=&#34;s3_config&#34; value=&#34;&lt;?= $base64 ?&gt;&#34;&gt; JS 前端解码回来：
+const base64Str = $(&#39;#s3_config&#39;).val(); const jsonStr = atob(base64Str); // base64 decode const config = JSON.parse(jsonStr); // 解析 JSON console.log(config.s3_region); // us-east-2 为什么用 base64？什么时候用？
+用途 解释 避免 HTML 转义问题 里面即使有 &#34;、&lt;、&gt; 都不会影响 HTML 保证内容完整安全 base64是纯字符串，不会破坏标签结构 小数据安全传递 一般几 KB 以内的数据可以这样做 注意事项 ⚡# 大数据量不要 base64：因为 base64 会比原数据大 33% 左右，太大就浪费带宽。 小段数据（JSON、短文本）非常合适。 图片的话，小图 base64 没问题，大图最好还是用 URL。 页面加载时就执行# 如果想在 页面加载完成 时就用 jQuery 自动执行某些代码。 最常见的方法就是用 $(document).ready() 或 $(function() {...})。
+">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/wiki/docs/frontend/jq/">
   <meta property="og:site_name" content="wiki">
   <meta property="og:title" content="Jquery">
-  <meta property="og:description" content="Jquery # 获取值 # todo..
-base64 数据给前端使用 # 后端可以用 base64 把数据传给前端，前端直接用，特别是常见的：
+  <meta property="og:description" content="Jquery# 获取值# todo..
+base64 数据给前端使用# 后端可以用 base64 把数据传给前端，前端直接用，特别是常见的：
 图片 小文件 小段 JSON 比如后端 PHP：
 &lt;?php $data = [ &#34;s3_region&#34; =&gt; &#34;us-east-2&#34;, &#34;s3_bucket&#34; =&gt; &#34;avator&#34;, ]; // 1. 转 JSON $json = json_encode($data, JSON_UNESCAPED_UNICODE); // 2. 再 base64 编码 $base64 = base64_encode($json); ?&gt; &lt;input type=&#34;hidden&#34; id=&#34;s3_config&#34; value=&#34;&lt;?= $base64 ?&gt;&#34;&gt; JS 前端解码回来：
 const base64Str = $(&#39;#s3_config&#39;).val(); const jsonStr = atob(base64Str); // base64 decode const config = JSON.parse(jsonStr); // 解析 JSON console.log(config.s3_region); // us-east-2 为什么用 base64？什么时候用？
-用途 解释 避免 HTML 转义问题 里面即使有 &#34;、&lt;、&gt; 都不会影响 HTML 保证内容完整安全 base64是纯字符串，不会破坏标签结构 小数据安全传递 一般几 KB 以内的数据可以这样做 注意事项 ⚡ # 大数据量不要 base64：因为 base64 会比原数据大 33% 左右，太大就浪费带宽。 小段数据（JSON、短文本）非常合适。 图片的话，小图 base64 没问题，大图最好还是用 URL。 页面加载时就执行 # 如果想在 页面加载完成 时就用 jQuery 自动执行某些代码。 最常见的方法就是用 $(document).ready() 或 $(function() {...})。">
+用途 解释 避免 HTML 转义问题 里面即使有 &#34;、&lt;、&gt; 都不会影响 HTML 保证内容完整安全 base64是纯字符串，不会破坏标签结构 小数据安全传递 一般几 KB 以内的数据可以这样做 注意事项 ⚡# 大数据量不要 base64：因为 base64 会比原数据大 33% 左右，太大就浪费带宽。 小段数据（JSON、短文本）非常合适。 图片的话，小图 base64 没问题，大图最好还是用 URL。 页面加载时就执行# 如果想在 页面加载完成 时就用 jQuery 自动执行某些代码。 最常见的方法就是用 $(document).ready() 或 $(function() {...})。">
   <meta property="og:locale" content="zh">
   <meta property="og:type" content="article">
     <meta property="article:section" content="docs">
     <meta property="article:modified_time" content="2025-04-28T08:49:40+08:00">
+
+
+  <meta itemprop="name" content="Jquery">
+  <meta itemprop="description" content="Jquery# 获取值# todo..
+base64 数据给前端使用# 后端可以用 base64 把数据传给前端，前端直接用，特别是常见的：
+图片 小文件 小段 JSON 比如后端 PHP：
+&lt;?php $data = [ &#34;s3_region&#34; =&gt; &#34;us-east-2&#34;, &#34;s3_bucket&#34; =&gt; &#34;avator&#34;, ]; // 1. 转 JSON $json = json_encode($data, JSON_UNESCAPED_UNICODE); // 2. 再 base64 编码 $base64 = base64_encode($json); ?&gt; &lt;input type=&#34;hidden&#34; id=&#34;s3_config&#34; value=&#34;&lt;?= $base64 ?&gt;&#34;&gt; JS 前端解码回来：
+const base64Str = $(&#39;#s3_config&#39;).val(); const jsonStr = atob(base64Str); // base64 decode const config = JSON.parse(jsonStr); // 解析 JSON console.log(config.s3_region); // us-east-2 为什么用 base64？什么时候用？
+用途 解释 避免 HTML 转义问题 里面即使有 &#34;、&lt;、&gt; 都不会影响 HTML 保证内容完整安全 base64是纯字符串，不会破坏标签结构 小数据安全传递 一般几 KB 以内的数据可以这样做 注意事项 ⚡# 大数据量不要 base64：因为 base64 会比原数据大 33% 左右，太大就浪费带宽。 小段数据（JSON、短文本）非常合适。 图片的话，小图 base64 没问题，大图最好还是用 URL。 页面加载时就执行# 如果想在 页面加载完成 时就用 jQuery 自动执行某些代码。 最常见的方法就是用 $(document).ready() 或 $(function() {...})。">
+  <meta itemprop="dateModified" content="2025-04-28T08:49:40+08:00">
+  <meta itemprop="wordCount" content="205">
+
 <title>Jquery | wiki</title>
 <link rel="icon" href="/wiki/favicon.png" >
 <link rel="manifest" href="/wiki/manifest.json">
 <link rel="canonical" href="https://example.com/wiki/docs/frontend/jq/">
-<link rel="stylesheet" href="/wiki/book.min.1e8c332c823ff5970e639a0c180f0e3d074283c7f525185d3e42903a2f30e9be.css" integrity="sha256-HowzLII/9ZcOY5oMGA8OPQdCg8f1JRhdPkKQOi8w6b4=" crossorigin="anonymous">
+<link rel="stylesheet" href="/wiki/book.min.df034b84d0659a9814822884d0dc585d62aa27036b9a0dc056481951d3d596c6.css" integrity="sha256-3wNLhNBlmpgUgiiE0NxYXWKqJwNrmg3AVkgZUdPVlsY=" crossorigin="anonymous">
+
+
   <script defer src="/wiki/fuse.min.js"></script>
-  <script defer src="/wiki/zh.search.min.bf384620bb71214286832136ff0c8484c94d55a80e8ca9f83636ec7d22916bc7.js" integrity="sha256-vzhGILtxIUKGgyE2/wyEhMlNVagOjKn4NjbsfSKRa8c=" crossorigin="anonymous"></script>
+  <script defer src="/wiki/zh.search.min.a1096b885ee97011f7d09806d6788dd8656c58bb6ea8780504df21cb94267bd7.js" integrity="sha256-oQlriF7pcBH30JgG1niN2GVsWLtuqHgFBN8hy5Qme9c=" crossorigin="anonymous"></script>
 
   <script defer src="/wiki/sw.min.e67149a4572dea566681c97cf77821bb08285ae36bc9376d2616a9b5e253f230.js" integrity="sha256-5nFJpFct6lZmgcl893ghuwgoWuNryTdtJhapteJT8jA=" crossorigin="anonymous"></script>
-<!--
-Made with Book Theme
-https://github.com/alex-shpak/hugo-book
--->
+
+
+
   
 </head>
-<body dir="ltr">
+<body dir="ltr" class="book-kind-page book-type-docs">
   <input type="checkbox" class="hidden toggle" id="menu-control" />
   <input type="checkbox" class="hidden toggle" id="toc-control" />
   <main class="container flex">
-    <aside class="book-menu">
-      <div class="book-menu-content">
-        
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
   <nav>
 <h2 class="book-brand">
   <a class="flex align-center" href="/wiki/"><span>wiki</span>
@@ -124,7 +74,10 @@ https://github.com/alex-shpak/hugo-book
 
 
 <div class="book-search hidden">
-  <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
+  <input id="book-search-input" type="text" 
+    placeholder="搜索"
+    aria-label="搜索"
+    maxlength="64" data-hotkeys="s/" />
   <div class="book-search-spinner hidden"></div>
   <ul id="book-search-results"></ul>
 </div>
@@ -150,19 +103,7 @@ https://github.com/alex-shpak/hugo-book
     }
 </script>
 
-
-  
-<ul>
-  
-  <li>
-    <a href=""  target="_blank" rel="noopener">
-        
-      </a>
-  </li>
-  
-</ul>
-
-
+<ul><li><a href=""></a></li></ul>
 
 
 
@@ -181,7 +122,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <span>MySQL</span>
+    <a>
+      MySQL</a>
   
 
           
@@ -194,7 +136,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/mysql/overview/" class="">总览</a>
+    <a href="/wiki/docs/mysql/overview/" class="">
+      总览</a>
   
 
         </li>
@@ -207,7 +150,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/mysql/sql-grammar/" class="">SQL 语法</a>
+    <a href="/wiki/docs/mysql/sql-grammar/" class="">
+      SQL 语法</a>
   
 
         </li>
@@ -220,7 +164,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/mysql/dbs-theory/" class="">数据库系统原理</a>
+    <a href="/wiki/docs/mysql/dbs-theory/" class="">
+      数据库系统原理</a>
   
 
         </li>
@@ -233,7 +178,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/mysql/faq1.md/" class="">常见问题（一）</a>
+    <a href="/wiki/docs/mysql/faq1/" class="">
+      常见问题（一）</a>
   
 
         </li>
@@ -251,7 +197,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <span>Redis</span>
+    <a>
+      Redis</a>
   
 
           
@@ -264,7 +211,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/redis/overview/" class="">总览</a>
+    <a href="/wiki/docs/redis/overview/" class="">
+      总览</a>
   
 
         </li>
@@ -277,7 +225,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/redis/string/" class="">STRING</a>
+    <a href="/wiki/docs/redis/string/" class="">
+      STRING</a>
   
 
         </li>
@@ -295,7 +244,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <span>系统设计</span>
+    <a>
+      系统设计</a>
   
 
           
@@ -308,7 +258,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/system-design/overview/" class="">系统设计基础</a>
+    <a href="/wiki/docs/system-design/overview/" class="">
+      系统设计基础</a>
   
 
         </li>
@@ -321,7 +272,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/system-design/distributed/" class="">分布式</a>
+    <a href="/wiki/docs/system-design/distributed/" class="">
+      分布式</a>
   
 
         </li>
@@ -334,7 +286,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/system-design/cluster/" class="">集群</a>
+    <a href="/wiki/docs/system-design/cluster/" class="">
+      集群</a>
   
 
         </li>
@@ -347,7 +300,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/system-design/attack/" class="">攻击技术</a>
+    <a href="/wiki/docs/system-design/attack/" class="">
+      攻击技术</a>
   
 
         </li>
@@ -360,7 +314,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/system-design/cache/" class="">缓存</a>
+    <a href="/wiki/docs/system-design/cache/" class="">
+      缓存</a>
   
 
         </li>
@@ -373,7 +328,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/system-design/queue-message/" class="">消息队列</a>
+    <a href="/wiki/docs/system-design/queue-message/" class="">
+      消息队列</a>
   
 
         </li>
@@ -391,7 +347,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <span>编码实践</span>
+    <a>
+      编码实践</a>
   
 
           
@@ -404,7 +361,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/coding-practice/regex/" class="">正则表达式</a>
+    <a href="/wiki/docs/coding-practice/regex/" class="">
+      正则表达式</a>
   
 
         </li>
@@ -417,7 +375,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/coding-practice/docker/" class="">Docker</a>
+    <a href="/wiki/docs/coding-practice/docker/" class="">
+      Docker</a>
   
 
         </li>
@@ -430,7 +389,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/coding-practice/git/" class="">Git</a>
+    <a href="/wiki/docs/coding-practice/git/" class="">
+      Git</a>
   
 
         </li>
@@ -443,7 +403,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/coding-practice/code-readability/" class="">代码可读性</a>
+    <a href="/wiki/docs/coding-practice/code-readability/" class="">
+      代码可读性</a>
   
 
         </li>
@@ -456,7 +417,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/coding-practice/mac/" class="">Mac</a>
+    <a href="/wiki/docs/coding-practice/mac/" class="">
+      Mac</a>
   
 
         </li>
@@ -469,7 +431,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/coding-practice/jetbrains/" class="">Jetbrains</a>
+    <a href="/wiki/docs/coding-practice/jetbrains/" class="">
+      Jetbrains</a>
   
 
         </li>
@@ -482,7 +445,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/coding-practice/chrome/" class="">Chrome</a>
+    <a href="/wiki/docs/coding-practice/chrome/" class="">
+      Chrome</a>
   
 
         </li>
@@ -495,7 +459,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/coding-practice/shell/" class="">Shell</a>
+    <a href="/wiki/docs/coding-practice/shell/" class="">
+      Shell</a>
   
 
         </li>
@@ -513,7 +478,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <span>PHP</span>
+    <a>
+      PHP</a>
   
 
           
@@ -526,72 +492,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/php/1.1-versions/" class="">1.1 版本区别</a>
-  
-
-        </li>
-      
-    
-      
-        <li>
-          
-  
-  
-
-  
-    <a href="/wiki/docs/php/1.2-faq1/" class="">1.2 常见问题（一）</a>
-  
-
-        </li>
-      
-    
-      
-        <li>
-          
-  
-  
-
-  
-    <a href="/wiki/docs/php/1.3-faq2/" class="">1.3 常见问题（二）</a>
-  
-
-        </li>
-      
-    
-      
-        <li>
-          
-  
-  
-
-  
-    <a href="/wiki/docs/php/1.4-extend/" class="">1.4 PHP 扩展</a>
-  
-
-        </li>
-      
-    
-      
-        <li>
-          
-  
-  
-
-  
-    <a href="/wiki/docs/php/1.5-functions/" class="">1.5 常用函数</a>
-  
-
-        </li>
-      
-    
-      
-        <li>
-          
-  
-  
-
-  
-    <a href="/wiki/docs/php/1.6-advanced/" class="">1.6 高级用法</a>
+    <a href="/wiki/docs/php/1/" class="">
+      1.1 版本区别</a>
   
 
         </li>
@@ -609,7 +511,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <span>Golang</span>
+    <a>
+      Golang</a>
   
 
           
@@ -622,7 +525,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/golang/1.sundry/" class="">杂项</a>
+    <a href="/wiki/docs/golang/1/" class="">
+      杂项</a>
   
 
         </li>
@@ -640,7 +544,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <span>前端知识</span>
+    <a>
+      前端知识</a>
   
 
           
@@ -653,7 +558,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/frontend/html/" class="">html</a>
+    <a href="/wiki/docs/frontend/html/" class="">
+      html</a>
   
 
         </li>
@@ -666,7 +572,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/frontend/jq/" class="active">Jquery</a>
+    <a href="/wiki/docs/frontend/jq/" class="active">
+      Jquery</a>
   
 
         </li>
@@ -684,7 +591,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <span>Golang 设计模式</span>
+    <a>
+      Golang 设计模式</a>
   
 
           
@@ -697,7 +605,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/design-pattern/1.singleton/" class="">1. 单例模式</a>
+    <a href="/wiki/docs/design-pattern/1/" class="">
+      1. 单例模式</a>
   
 
         </li>
@@ -710,7 +619,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/design-pattern/2.factory/" class="">2. 工厂模式</a>
+    <a href="/wiki/docs/design-pattern/2/" class="">
+      2. 工厂模式</a>
   
 
         </li>
@@ -728,7 +638,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <span>Python</span>
+    <a>
+      Python</a>
   
 
           
@@ -741,7 +652,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/python/1.basic/" class="">1.1 基础知识</a>
+    <a href="/wiki/docs/python/1/" class="">
+      1.1 基础知识</a>
   
 
         </li>
@@ -759,7 +671,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/favorite/" class="">收藏夹</a>
+    <a href="/wiki/docs/favorite/" class="">
+      收藏夹</a>
   
 
           
@@ -772,7 +685,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/wiki/docs/favorite/cs-learn/" class="">计算机基础书籍推荐</a>
+    <a href="/wiki/docs/favorite/cs-learn/" class="">
+      计算机基础书籍推荐</a>
   
 
         </li>
@@ -784,7 +698,6 @@ https://github.com/alex-shpak/hugo-book
       
     
   </ul>
-
 
 
 
@@ -806,30 +719,31 @@ https://github.com/alex-shpak/hugo-book
   <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
 
 
+
+  </div>
+</aside>
  
-      </div>
-    </aside>
 
     <div class="book-page">
-      <header class="book-header">
+      <header class="book-header hidden">
         
   <div class="flex align-center justify-between">
   <label for="menu-control">
-    <img src="/wiki/svg/menu.svg" class="book-icon" alt="Menu" />
+    <img src="/wiki/icons/menu.svg" class="book-icon" alt="Menu" />
   </label>
 
   <h3>Jquery</h3>
 
   <label for="toc-control">
     
-    <img src="/wiki/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    <img src="/wiki/icons/toc.svg" class="book-icon" alt="Table of Contents" />
     
   </label>
 </div>
 
 
   
-  <aside class="hidden clearfix">
+  <aside class="hidden">
     
   
 <nav id="TableOfContents">
@@ -863,19 +777,10 @@ https://github.com/alex-shpak/hugo-book
 
       
       
-  <article class="markdown book-article"><h1 id="jquery">
-  Jquery
-  <a class="anchor" href="#jquery">#</a>
-</h1>
-<h2 id="获取值">
-  获取值
-  <a class="anchor" href="#%e8%8e%b7%e5%8f%96%e5%80%bc">#</a>
-</h2>
+  <article class="markdown book-article"><h1 id="jquery">Jquery<a class="anchor" href="#jquery">#</a></h1>
+<h2 id="获取值">获取值<a class="anchor" href="#%e8%8e%b7%e5%8f%96%e5%80%bc">#</a></h2>
 <p>todo..</p>
-<h2 id="base64-数据给前端使用">
-  base64 数据给前端使用
-  <a class="anchor" href="#base64-%e6%95%b0%e6%8d%ae%e7%bb%99%e5%89%8d%e7%ab%af%e4%bd%bf%e7%94%a8">#</a>
-</h2>
+<h2 id="base64-数据给前端使用">base64 数据给前端使用<a class="anchor" href="#base64-%e6%95%b0%e6%8d%ae%e7%bb%99%e5%89%8d%e7%ab%af%e4%bd%bf%e7%94%a8">#</a></h2>
 <p>后端可以用 base64 把数据传给前端，前端直接用，特别是常见的：</p>
 <ul>
 <li>图片</li>
@@ -924,49 +829,31 @@ https://github.com/alex-shpak/hugo-book
       </tr>
   </tbody>
 </table>
-<h3 id="注意事项-">
-  注意事项 ⚡
-  <a class="anchor" href="#%e6%b3%a8%e6%84%8f%e4%ba%8b%e9%a1%b9-">#</a>
-</h3>
+<h3 id="注意事项-">注意事项 ⚡<a class="anchor" href="#%e6%b3%a8%e6%84%8f%e4%ba%8b%e9%a1%b9-">#</a></h3>
 <ul>
 <li><strong>大数据量不要 base64</strong>：因为 base64 会比原数据大 <strong>33% 左右</strong>，太大就浪费带宽。</li>
 <li><strong>小段数据（JSON、短文本）非常合适</strong>。</li>
 <li><strong>图片的话</strong>，小图 base64 没问题，大图最好还是用 URL。</li>
 </ul>
-<h2 id="页面加载时就执行">
-  页面加载时就执行
-  <a class="anchor" href="#%e9%a1%b5%e9%9d%a2%e5%8a%a0%e8%bd%bd%e6%97%b6%e5%b0%b1%e6%89%a7%e8%a1%8c">#</a>
-</h2>
+<h2 id="页面加载时就执行">页面加载时就执行<a class="anchor" href="#%e9%a1%b5%e9%9d%a2%e5%8a%a0%e8%bd%bd%e6%97%b6%e5%b0%b1%e6%89%a7%e8%a1%8c">#</a></h2>
 <p>如果想在 页面加载完成 时就用 <strong>jQuery</strong> 自动执行某些代码。
 最常见的方法就是用 <code>$(document).ready()</code> 或 <code>$(function() {...})</code>。</p>
-<h3 id="-最标准写法">
-  ✅ 最标准写法：
-  <a class="anchor" href="#-%e6%9c%80%e6%a0%87%e5%87%86%e5%86%99%e6%b3%95">#</a>
-</h3>
+<h3 id="-最标准写法">✅ 最标准写法：<a class="anchor" href="#-%e6%9c%80%e6%a0%87%e5%87%86%e5%86%99%e6%b3%95">#</a></h3>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#a6e22e">$</span>(document).<span style="color:#a6e22e">ready</span>(<span style="color:#66d9ef">function</span> () {
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 页面加载完成后自动执行这里的代码
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;页面加载完成，开始执行任务！&#34;</span>);
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">upload</span>(<span style="color:#ae81ff">2</span>);  <span style="color:#75715e">// 举个例子，直接执行你的 upload(2)
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>});
-</span></span></code></pre></div><h3 id="-简写版更常用">
-  ✅ 简写版（更常用）
-  <a class="anchor" href="#-%e7%ae%80%e5%86%99%e7%89%88%e6%9b%b4%e5%b8%b8%e7%94%a8">#</a>
-</h3>
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>});</span></span></code></pre></div><h3 id="-简写版更常用">✅ 简写版（更常用）<a class="anchor" href="#-%e7%ae%80%e5%86%99%e7%89%88%e6%9b%b4%e5%b8%b8%e7%94%a8">#</a></h3>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#a6e22e">$</span>(<span style="color:#66d9ef">function</span> () {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;页面加载完成！&#34;</span>);
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">upload</span>(<span style="color:#ae81ff">2</span>);
-</span></span><span style="display:flex;"><span>});
-</span></span></code></pre></div><p>页面里要先引入 jQuery：</p>
+</span></span><span style="display:flex;"><span>});</span></span></code></pre></div><p>页面里要先引入 jQuery：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>&lt;<span style="color:#f92672">script</span> <span style="color:#a6e22e">src</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;https://code.jquery.com/jquery-3.6.0.min.js&#34;</span>&gt;&lt;/<span style="color:#f92672">script</span>&gt;
-</span></span></code></pre></div><p>（一般是放在 <code>&lt;head&gt;</code> 或 <code>&lt;body&gt;</code> 结尾）</p>
+</span></span><span style="display:flex;"><span>&lt;<span style="color:#f92672">script</span> <span style="color:#a6e22e">src</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;https://code.jquery.com/jquery-3.6.0.min.js&#34;</span>&gt;&lt;/<span style="color:#f92672">script</span>&gt;</span></span></code></pre></div><p>（一般是放在 <code>&lt;head&gt;</code> 或 <code>&lt;body&gt;</code> 结尾）</p>
 <ul>
 <li><code>$(function(){})</code> 和 <code>$(document).ready(function(){})</code> 是等价的，写哪个都行。</li>
 </ul>
-<h2 id="判断页面上是否有某个元素">
-  判断页面上是否有某个元素
-  <a class="anchor" href="#%e5%88%a4%e6%96%ad%e9%a1%b5%e9%9d%a2%e4%b8%8a%e6%98%af%e5%90%a6%e6%9c%89%e6%9f%90%e4%b8%aa%e5%85%83%e7%b4%a0">#</a>
-</h2>
+<h2 id="判断页面上是否有某个元素">判断页面上是否有某个元素<a class="anchor" href="#%e5%88%a4%e6%96%ad%e9%a1%b5%e9%9d%a2%e4%b8%8a%e6%98%af%e5%90%a6%e6%9c%89%e6%9f%90%e4%b8%aa%e5%85%83%e7%b4%a0">#</a></h2>
 <p>在 jQuery 中判断页面上是否存在某个元素，通常有几种方法。可以使用 <code>.length</code> 属性来判断是否找到了匹配的元素。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">input</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">$</span>(<span style="color:#e6db74">`textarea[name=&#34;</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">lang</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;]`</span>);
 </span></span><span style="display:flex;"><span>
@@ -976,8 +863,7 @@ https://github.com/alex-shpak/hugo-book
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>} <span style="color:#66d9ef">else</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;元素不存在&#34;</span>);
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 做其他处理
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
-</span></span></code></pre></div><p><code>input.length</code>: jQuery 选择器返回的是一个 jQuery 对象，它的 <code>.length</code> 属性表示匹配的元素数量。<strong>如果 <code>.length</code> 大于 <code>0</code>，说明页面上存在该元素；否则，元素不存在</strong>。</p>
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}</span></span></code></pre></div><p><code>input.length</code>: jQuery 选择器返回的是一个 jQuery 对象，它的 <code>.length</code> 属性表示匹配的元素数量。<strong>如果 <code>.length</code> 大于 <code>0</code>，说明页面上存在该元素；否则，元素不存在</strong>。</p>
 <p>另一种方法：使用 <code>if (input)</code> 判断</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">input</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">$</span>(<span style="color:#e6db74">`textarea[name=&#34;</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">lang</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;]`</span>);
 </span></span><span style="display:flex;"><span>
@@ -985,8 +871,7 @@ https://github.com/alex-shpak/hugo-book
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;元素存在&#34;</span>);
 </span></span><span style="display:flex;"><span>} <span style="color:#66d9ef">else</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;元素不存在&#34;</span>);
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><ul>
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div><ul>
 <li><strong><code>input.length</code></strong> 判断返回的是元素集合的长度，<code>length &gt; 0</code> 表示元素存在。</li>
 <li><code>input</code> 本身是一个 jQuery 对象，通过 <code>.length</code> 可以快速判断是否找到了元素。</li>
 </ul>
@@ -998,49 +883,72 @@ https://github.com/alex-shpak/hugo-book
         
   <div class="flex flex-wrap justify-between">
 
+<div>
 
-  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/book.wiki/commit/c6a604f025334d2537221544af1ac59226a33dde" title='最后修改者 xiaobinqt | 四月 28, 2025' target="_blank" rel="noopener">
-      <img src="/wiki/svg/calendar.svg" class="book-icon" alt="" />
-      <span>四月 28, 2025</span>
-    </a>
-  </div>
+</div>
 
+<div>
 
-
-  <div>
-    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/book.wiki/tree/main/book.wiki/docs/frontend/jq.md" target="_blank" rel="noopener">
-      <img src="/wiki/svg/edit.svg" class="book-icon" alt="" />
-      <span>编辑本页</span>
-    </a>
-  </div>
-
+</div>
 
 </div>
 
 
 
-  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+  
+  
+  
+  <div class="flex flex-wrap justify-between">
+    <span>
+    
+      <a href="/wiki/docs/frontend/html/" class="flex align-center">
+        <img src="/wiki/icons/backward.svg" class="book-icon" alt="Backward" />
+        <span>html</span>
+      </a>
+    
+    </span>
+    <span>
+    
+      <a href="/wiki/docs/design-pattern/1/" class="flex align-center">
+        <span>1. 单例模式</span>
+        <img src="/wiki/icons/forward.svg" class="book-icon" alt="Forward" />
+      </a>
+    
+    </span>
+  </div>
+  
 
 
  
         
-      </footer>
-
-      
   
   <div class="book-comments">
 
 </div>
   
  
+        
+        
+  
+ 
+        
+  
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
 
       <label for="menu-control" class="hidden book-menu-overlay"></label>
     </div>
 
     
-    <aside class="book-toc">
-      <div class="book-toc-content">
-        
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
   
 <nav id="TableOfContents">
   <ul>
@@ -1065,15 +973,24 @@ https://github.com/alex-shpak/hugo-book
 </nav>
 
 
+
+    </div>
+  </aside>
+  
  
-      </div>
-    </aside>
-    
   </main>
 
   
 </body>
 </html>
+
+
+
+
+
+
+
+
 
 
 

@@ -1,186 +1,89 @@
 <!DOCTYPE html>
 <html lang="zh" dir="ltr">
 <head>
-  <meta charset="UTF-8">
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="
-  203. 移除链表元素
-  #
-
-
-  题目地址
-  #
-
-
-
-  力扣
-
-  LeetCode
-
-
-  解题思路
-  #
-
-参看 
-  https://leetcode.cn/problems/remove-linked-list-elements/solutions/813358/yi-chu-lian-biao-yuan-su-by-leetcode-sol-654m/
-
-  迭代法
-  #
-
-用 curr 表示当前节点。如果 curr 的下一个节点不为空且下一个节点的节点值等于给定的 val，则需要删除下一个节点。删除下一个节点可以通过 curr.next=curr.next.next 实现。
+<meta name="description" content="203. 移除链表元素# 题目地址# 力扣 LeetCode 解题思路# 参看 https://leetcode.cn/problems/remove-linked-list-elements/solutions/813358/yi-chu-lian-biao-yuan-su-by-leetcode-sol-654m/
+迭代法# 用 curr 表示当前节点。如果 curr 的下一个节点不为空且下一个节点的节点值等于给定的 val，则需要删除下一个节点。删除下一个节点可以通过 curr.next=curr.next.next 实现。
 如果 curr 的下一个节点的节点值不等于给定的 val，则保留下一个节点，将 curr 移动到下一个节点即可。
 当curr的下一个节点为空时，链表遍历结束，此时所有节点值等于 val 的节点都被删除。
 具体实现方面，由于链表的头节点 head 有可能需要被删除，因此创建哑节点/虚拟节点 dummyHead，令 dummyHead.next=head，初始化 curr=dummyHead，然后遍历链表进行删除操作。最终返回dummyHead.next即为删除操作后的头节点。
 为什么要用 curr=dummyHead❓，这样 curr 指向的地址跟 dummyHead 指向的地址是一样的，如果不提前赋值，那么迭代到最后dummyHead.Next就是nil，不能正确的返回头结点，所以重新赋值后，用 curr 去循环 dummyHead.Next 还是正常的。
-
-  递归法
-  #
-
-链表的定义具有递归的性质，因此链表题目常可以用递归的方法求解。
+递归法# 链表的定义具有递归的性质，因此链表题目常可以用递归的方法求解。
 递归的核心在于，我只关注我这一层要干什么，返回什么，至于我的下一层（规模减 1），我不管，我就是甩手掌柜。
 那么现在我要删除特定链表元素，我需要怎么做❓
 如果链表是nil我就直接返回，我的 next 让工具人函数去判断，当工具人函数做完判断给我之后，我按需 return，也就是如果 head.Val == val return head.Next，否则直接 return head。
-
-  具体实现
-  #
-
-
-
-Go迭代
-package main
-
-import (
-	&#34;fmt&#34;
-)
-
-func removeElements(head *ListNode, val int) *ListNode {
-	dummyHead := &amp;ListNode{
-		Val:  0,
-		Next: head,
-	}
-
-	curr := dummyHead
-	fmt.Println(dummyHead, curr)
-	for curr.Next != nil {
-		if curr.Next.Val == val {
-			curr.Next = curr.Next.Next
-			// 需要注意：这里不需要再使用 curr = curr.Next，因为指针已经移动了
-		} else {
-			curr = curr.Next
-		}
-	}
-
-	return dummyHead.Next
-}
-
-type ListNode struct {
-	Val  int
-	Next *ListNode
-}
-
-func main() {
-	x := removeElements(&amp;ListNode{
-		Val: 1,
-		Next: &amp;ListNode{
-			Val: 2,
-			Next: &amp;ListNode{
-				Val: 1,
-				Next: &amp;ListNode{
-					Val:  3,
-					Next: nil,
-				},
-			},
-		},
-	}, 1)
-
-	fmt.Println(x)
-}
-
-
-Go递归
-package main
-
-import &#34;fmt&#34;
-
-type ListNode struct {
-	Val  int
-	Next *ListNode
-}
-
-func removeElements(head *ListNode, val int) *ListNode {
-	if head == nil {
-		return head
-	}
-
-	head.Next = removeElements(head.Next, val)
-	if head.Val == val {
-		return head.Next
-	}
-
-	return head
-}
-
-func main() {
-	x := removeElements(&amp;ListNode{
-		Val: 1,
-		Next: &amp;ListNode{
-			Val: 2,
-			Next: &amp;ListNode{
-				Val: 1,
-				Next: &amp;ListNode{
-					Val:  3,
-					Next: nil,
-				},
-			},
-		},
-	}, 1)
-
-	fmt.Println(x)
-}
-
+具体实现# Go迭代
+package main import ( &#34;fmt&#34; ) func removeElements(head *ListNode, val int) *ListNode { dummyHead := &amp;ListNode{ Val: 0, Next: head, } curr := dummyHead fmt.Println(dummyHead, curr) for curr.Next != nil { if curr.Next.Val == val { curr.Next = curr.Next.Next // 需要注意：这里不需要再使用 curr = curr.Next，因为指针已经移动了 } else { curr = curr.Next } } return dummyHead.Next } type ListNode struct { Val int Next *ListNode } func main() { x := removeElements(&amp;ListNode{ Val: 1, Next: &amp;ListNode{ Val: 2, Next: &amp;ListNode{ Val: 1, Next: &amp;ListNode{ Val: 3, Next: nil, }, }, }, }, 1) fmt.Println(x) } Go递归
 ">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/leetcode/docs/easy/203/">
   <meta property="og:site_name" content="LeetCode">
   <meta property="og:title" content="203. 移除链表元素">
-  <meta property="og:description" content="203. 移除链表元素 # 题目地址 # 力扣 LeetCode 解题思路 # 参看 https://leetcode.cn/problems/remove-linked-list-elements/solutions/813358/yi-chu-lian-biao-yuan-su-by-leetcode-sol-654m/
-迭代法 # 用 curr 表示当前节点。如果 curr 的下一个节点不为空且下一个节点的节点值等于给定的 val，则需要删除下一个节点。删除下一个节点可以通过 curr.next=curr.next.next 实现。
+  <meta property="og:description" content="203. 移除链表元素# 题目地址# 力扣 LeetCode 解题思路# 参看 https://leetcode.cn/problems/remove-linked-list-elements/solutions/813358/yi-chu-lian-biao-yuan-su-by-leetcode-sol-654m/
+迭代法# 用 curr 表示当前节点。如果 curr 的下一个节点不为空且下一个节点的节点值等于给定的 val，则需要删除下一个节点。删除下一个节点可以通过 curr.next=curr.next.next 实现。
 如果 curr 的下一个节点的节点值不等于给定的 val，则保留下一个节点，将 curr 移动到下一个节点即可。
 当curr的下一个节点为空时，链表遍历结束，此时所有节点值等于 val 的节点都被删除。
 具体实现方面，由于链表的头节点 head 有可能需要被删除，因此创建哑节点/虚拟节点 dummyHead，令 dummyHead.next=head，初始化 curr=dummyHead，然后遍历链表进行删除操作。最终返回dummyHead.next即为删除操作后的头节点。
 为什么要用 curr=dummyHead❓，这样 curr 指向的地址跟 dummyHead 指向的地址是一样的，如果不提前赋值，那么迭代到最后dummyHead.Next就是nil，不能正确的返回头结点，所以重新赋值后，用 curr 去循环 dummyHead.Next 还是正常的。
-递归法 # 链表的定义具有递归的性质，因此链表题目常可以用递归的方法求解。
+递归法# 链表的定义具有递归的性质，因此链表题目常可以用递归的方法求解。
 递归的核心在于，我只关注我这一层要干什么，返回什么，至于我的下一层（规模减 1），我不管，我就是甩手掌柜。
 那么现在我要删除特定链表元素，我需要怎么做❓
 如果链表是nil我就直接返回，我的 next 让工具人函数去判断，当工具人函数做完判断给我之后，我按需 return，也就是如果 head.Val == val return head.Next，否则直接 return head。
-具体实现 # Go迭代 package main import ( &#34;fmt&#34; ) func removeElements(head *ListNode, val int) *ListNode { dummyHead := &amp;ListNode{ Val: 0, Next: head, } curr := dummyHead fmt.Println(dummyHead, curr) for curr.Next != nil { if curr.Next.Val == val { curr.Next = curr.Next.Next // 需要注意：这里不需要再使用 curr = curr.Next，因为指针已经移动了 } else { curr = curr.Next } } return dummyHead.Next } type ListNode struct { Val int Next *ListNode } func main() { x := removeElements(&amp;ListNode{ Val: 1, Next: &amp;ListNode{ Val: 2, Next: &amp;ListNode{ Val: 1, Next: &amp;ListNode{ Val: 3, Next: nil, }, }, }, }, 1) fmt.Println(x) } Go递归 package main import &#34;fmt&#34; type ListNode struct { Val int Next *ListNode } func removeElements(head *ListNode, val int) *ListNode { if head == nil { return head } head.Next = removeElements(head.Next, val) if head.Val == val { return head.Next } return head } func main() { x := removeElements(&amp;ListNode{ Val: 1, Next: &amp;ListNode{ Val: 2, Next: &amp;ListNode{ Val: 1, Next: &amp;ListNode{ Val: 3, Next: nil, }, }, }, }, 1) fmt.Println(x) }">
+具体实现# Go迭代
+package main import ( &#34;fmt&#34; ) func removeElements(head *ListNode, val int) *ListNode { dummyHead := &amp;ListNode{ Val: 0, Next: head, } curr := dummyHead fmt.Println(dummyHead, curr) for curr.Next != nil { if curr.Next.Val == val { curr.Next = curr.Next.Next // 需要注意：这里不需要再使用 curr = curr.Next，因为指针已经移动了 } else { curr = curr.Next } } return dummyHead.Next } type ListNode struct { Val int Next *ListNode } func main() { x := removeElements(&amp;ListNode{ Val: 1, Next: &amp;ListNode{ Val: 2, Next: &amp;ListNode{ Val: 1, Next: &amp;ListNode{ Val: 3, Next: nil, }, }, }, }, 1) fmt.Println(x) } Go递归">
   <meta property="og:locale" content="zh">
   <meta property="og:type" content="article">
     <meta property="article:section" content="docs">
     <meta property="article:modified_time" content="2025-04-20T17:01:44+08:00">
+
+
+  <meta itemprop="name" content="203. 移除链表元素">
+  <meta itemprop="description" content="203. 移除链表元素# 题目地址# 力扣 LeetCode 解题思路# 参看 https://leetcode.cn/problems/remove-linked-list-elements/solutions/813358/yi-chu-lian-biao-yuan-su-by-leetcode-sol-654m/
+迭代法# 用 curr 表示当前节点。如果 curr 的下一个节点不为空且下一个节点的节点值等于给定的 val，则需要删除下一个节点。删除下一个节点可以通过 curr.next=curr.next.next 实现。
+如果 curr 的下一个节点的节点值不等于给定的 val，则保留下一个节点，将 curr 移动到下一个节点即可。
+当curr的下一个节点为空时，链表遍历结束，此时所有节点值等于 val 的节点都被删除。
+具体实现方面，由于链表的头节点 head 有可能需要被删除，因此创建哑节点/虚拟节点 dummyHead，令 dummyHead.next=head，初始化 curr=dummyHead，然后遍历链表进行删除操作。最终返回dummyHead.next即为删除操作后的头节点。
+为什么要用 curr=dummyHead❓，这样 curr 指向的地址跟 dummyHead 指向的地址是一样的，如果不提前赋值，那么迭代到最后dummyHead.Next就是nil，不能正确的返回头结点，所以重新赋值后，用 curr 去循环 dummyHead.Next 还是正常的。
+递归法# 链表的定义具有递归的性质，因此链表题目常可以用递归的方法求解。
+递归的核心在于，我只关注我这一层要干什么，返回什么，至于我的下一层（规模减 1），我不管，我就是甩手掌柜。
+那么现在我要删除特定链表元素，我需要怎么做❓
+如果链表是nil我就直接返回，我的 next 让工具人函数去判断，当工具人函数做完判断给我之后，我按需 return，也就是如果 head.Val == val return head.Next，否则直接 return head。
+具体实现# Go迭代
+package main import ( &#34;fmt&#34; ) func removeElements(head *ListNode, val int) *ListNode { dummyHead := &amp;ListNode{ Val: 0, Next: head, } curr := dummyHead fmt.Println(dummyHead, curr) for curr.Next != nil { if curr.Next.Val == val { curr.Next = curr.Next.Next // 需要注意：这里不需要再使用 curr = curr.Next，因为指针已经移动了 } else { curr = curr.Next } } return dummyHead.Next } type ListNode struct { Val int Next *ListNode } func main() { x := removeElements(&amp;ListNode{ Val: 1, Next: &amp;ListNode{ Val: 2, Next: &amp;ListNode{ Val: 1, Next: &amp;ListNode{ Val: 3, Next: nil, }, }, }, }, 1) fmt.Println(x) } Go递归">
+  <meta itemprop="dateModified" content="2025-04-20T17:01:44+08:00">
+  <meta itemprop="wordCount" content="226">
+
 <title>203. 移除链表元素 | LeetCode</title>
 <link rel="icon" href="/leetcode/favicon.png" >
 <link rel="manifest" href="/leetcode/manifest.json">
 <link rel="canonical" href="https://example.com/leetcode/docs/easy/203/">
-<link rel="stylesheet" href="/leetcode/book.min.1e8c332c823ff5970e639a0c180f0e3d074283c7f525185d3e42903a2f30e9be.css" integrity="sha256-HowzLII/9ZcOY5oMGA8OPQdCg8f1JRhdPkKQOi8w6b4=" crossorigin="anonymous">
+<link rel="stylesheet" href="/leetcode/book.min.df034b84d0659a9814822884d0dc585d62aa27036b9a0dc056481951d3d596c6.css" integrity="sha256-3wNLhNBlmpgUgiiE0NxYXWKqJwNrmg3AVkgZUdPVlsY=" crossorigin="anonymous">
+
+
   <script defer src="/leetcode/fuse.min.js"></script>
-  <script defer src="/leetcode/zh.search.min.72d25a414554edacb2df5e28b1846a7af186a9d9bcc622074390b954a2d5c822.js" integrity="sha256-ctJaQUVU7ayy314osYRqevGGqdm8xiIHQ5C5VKLVyCI=" crossorigin="anonymous"></script>
+  <script defer src="/leetcode/zh.search.min.953d473ef30795232282e8d5eb1296cb310c981d3c49d45ab5c8ddbdf8b70908.js" integrity="sha256-lT1HPvMHlSMigujV6xKWyzEMmB08SdRatcjdvfi3CQg=" crossorigin="anonymous"></script>
 
   <script defer src="/leetcode/sw.min.c814046bee19bfa0279b71972af9d15919d290341d7ecdfe781d2e1113df9ad1.js" integrity="sha256-yBQEa&#43;4Zv6Anm3GXKvnRWRnSkDQdfs3&#43;eB0uERPfmtE=" crossorigin="anonymous"></script>
-<!--
-Made with Book Theme
-https://github.com/alex-shpak/hugo-book
--->
+
+
+
   
 </head>
-<body dir="ltr">
+<body dir="ltr" class="book-kind-page book-type-docs">
   <input type="checkbox" class="hidden toggle" id="menu-control" />
   <input type="checkbox" class="hidden toggle" id="toc-control" />
   <main class="container flex">
-    <aside class="book-menu">
-      <div class="book-menu-content">
-        
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
   <nav>
 <h2 class="book-brand">
   <a class="flex align-center" href="/leetcode/"><span>LeetCode</span>
@@ -189,7 +92,10 @@ https://github.com/alex-shpak/hugo-book
 
 
 <div class="book-search hidden">
-  <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
+  <input id="book-search-input" type="text" 
+    placeholder="搜索"
+    aria-label="搜索"
+    maxlength="64" data-hotkeys="s/" />
   <div class="book-search-spinner hidden"></div>
   <ul id="book-search-results"></ul>
 </div>
@@ -215,19 +121,7 @@ https://github.com/alex-shpak/hugo-book
     }
 </script>
 
-
-  
-<ul>
-  
-  <li>
-    <a href=""  target="_blank" rel="noopener">
-        
-      </a>
-  </li>
-  
-</ul>
-
-
+<ul><li><a href=""></a></li></ul>
 
 
 
@@ -246,7 +140,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/easy/" class="">Easy</a>
+    <a href="/leetcode/docs/easy/" class="">
+      Easy</a>
   
 
           
@@ -259,7 +154,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/easy/1/" class="">1. 两数之和</a>
+    <a href="/leetcode/docs/easy/1/" class="">
+      1. 两数之和</a>
   
 
         </li>
@@ -272,7 +168,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/easy/20/" class="">20. 有效的括号</a>
+    <a href="/leetcode/docs/easy/20/" class="">
+      20. 有效的括号</a>
   
 
         </li>
@@ -285,7 +182,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/easy/21/" class="">21. 合并两个有序链表</a>
+    <a href="/leetcode/docs/easy/21/" class="">
+      21. 合并两个有序链表</a>
   
 
         </li>
@@ -298,7 +196,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/easy/27/" class="">27. 移除元素</a>
+    <a href="/leetcode/docs/easy/27/" class="">
+      27. 移除元素</a>
   
 
         </li>
@@ -311,7 +210,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/easy/104/" class="">😪104. 二叉树的最大深度</a>
+    <a href="/leetcode/docs/easy/104/" class="">
+      😪104. 二叉树的最大深度</a>
   
 
         </li>
@@ -324,7 +224,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/easy/242/" class="">242. 有效的字母异位词</a>
+    <a href="/leetcode/docs/easy/242/" class="">
+      242. 有效的字母异位词</a>
   
 
         </li>
@@ -337,7 +238,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/easy/141/" class="">141. 环形链表</a>
+    <a href="/leetcode/docs/easy/141/" class="">
+      141. 环形链表</a>
   
 
         </li>
@@ -350,7 +252,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/easy/160/" class="">160. 相交链表</a>
+    <a href="/leetcode/docs/easy/160/" class="">
+      160. 相交链表</a>
   
 
         </li>
@@ -363,7 +266,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/easy/203/" class="active">203. 移除链表元素</a>
+    <a href="/leetcode/docs/easy/203/" class="active">
+      203. 移除链表元素</a>
   
 
         </li>
@@ -376,7 +280,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/easy/206/" class="">206. 反转链表</a>
+    <a href="/leetcode/docs/easy/206/" class="">
+      206. 反转链表</a>
   
 
         </li>
@@ -389,7 +294,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/easy/232/" class="">232. 用栈实现队列</a>
+    <a href="/leetcode/docs/easy/232/" class="">
+      232. 用栈实现队列</a>
   
 
         </li>
@@ -402,7 +308,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/easy/344/" class="">344. 反转字符串</a>
+    <a href="/leetcode/docs/easy/344/" class="">
+      344. 反转字符串</a>
   
 
         </li>
@@ -415,7 +322,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/easy/349/" class="">349. 两个数组的交集</a>
+    <a href="/leetcode/docs/easy/349/" class="">
+      349. 两个数组的交集</a>
   
 
         </li>
@@ -428,7 +336,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/easy/541/" class="">451. 根据字符出现频率排序</a>
+    <a href="/leetcode/docs/easy/541/" class="">
+      451. 根据字符出现频率排序</a>
   
 
         </li>
@@ -441,7 +350,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/easy/459/" class="">459. 重复的子字符串</a>
+    <a href="/leetcode/docs/easy/459/" class="">
+      459. 重复的子字符串</a>
   
 
         </li>
@@ -454,7 +364,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/easy/496/" class="">496. 下一个更大元素 I</a>
+    <a href="/leetcode/docs/easy/496/" class="">
+      496. 下一个更大元素 I</a>
   
 
         </li>
@@ -467,7 +378,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/easy/682/" class="">682. 棒球比赛</a>
+    <a href="/leetcode/docs/easy/682/" class="">
+      682. 棒球比赛</a>
   
 
         </li>
@@ -480,7 +392,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/easy/704/" class="">704. 二分查找</a>
+    <a href="/leetcode/docs/easy/704/" class="">
+      704. 二分查找</a>
   
 
         </li>
@@ -493,7 +406,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/easy/844/" class="">844. 比较含退格的字符串</a>
+    <a href="/leetcode/docs/easy/844/" class="">
+      844. 比较含退格的字符串</a>
   
 
         </li>
@@ -506,7 +420,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/easy/876/" class="">876. 链表的中间结点</a>
+    <a href="/leetcode/docs/easy/876/" class="">
+      876. 链表的中间结点</a>
   
 
         </li>
@@ -519,7 +434,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/easy/977/" class="">977. 有序数组的平方</a>
+    <a href="/leetcode/docs/easy/977/" class="">
+      977. 有序数组的平方</a>
   
 
         </li>
@@ -537,7 +453,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/medium/" class="">Medium</a>
+    <a href="/leetcode/docs/medium/" class="">
+      Medium</a>
   
 
           
@@ -550,7 +467,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/medium/15/" class="">15. 三数之和</a>
+    <a href="/leetcode/docs/medium/15/" class="">
+      15. 三数之和</a>
   
 
         </li>
@@ -563,7 +481,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/medium/18/" class="">18. 四数之和</a>
+    <a href="/leetcode/docs/medium/18/" class="">
+      18. 四数之和</a>
   
 
         </li>
@@ -576,7 +495,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/medium/19/" class="">19. 删除链表的倒数第 N 个结点</a>
+    <a href="/leetcode/docs/medium/19/" class="">
+      19. 删除链表的倒数第 N 个结点</a>
   
 
         </li>
@@ -589,7 +509,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/medium/24/" class="">24. 两两交换链表中的节点</a>
+    <a href="/leetcode/docs/medium/24/" class="">
+      24. 两两交换链表中的节点</a>
   
 
         </li>
@@ -602,7 +523,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/medium/53/" class="">53. 最大子数组和</a>
+    <a href="/leetcode/docs/medium/53/" class="">
+      53. 最大子数组和</a>
   
 
         </li>
@@ -615,7 +537,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/medium/59/" class="">59. 螺旋矩阵 II</a>
+    <a href="/leetcode/docs/medium/59/" class="">
+      59. 螺旋矩阵 II</a>
   
 
         </li>
@@ -628,7 +551,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/medium/92/" class="">92. 反转链表 II</a>
+    <a href="/leetcode/docs/medium/92/" class="">
+      92. 反转链表 II</a>
   
 
         </li>
@@ -641,7 +565,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/medium/142/" class="">142. 环形链表 II</a>
+    <a href="/leetcode/docs/medium/142/" class="">
+      142. 环形链表 II</a>
   
 
         </li>
@@ -654,7 +579,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/medium/151/" class="">151. 反转字符串中的单词</a>
+    <a href="/leetcode/docs/medium/151/" class="">
+      151. 反转字符串中的单词</a>
   
 
         </li>
@@ -667,7 +593,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/medium/155/" class="">155. 最小栈</a>
+    <a href="/leetcode/docs/medium/155/" class="">
+      155. 最小栈</a>
   
 
         </li>
@@ -680,7 +607,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/medium/209/" class="">209. 长度最小的子数组</a>
+    <a href="/leetcode/docs/medium/209/" class="">
+      209. 长度最小的子数组</a>
   
 
         </li>
@@ -693,7 +621,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/medium/454/" class="">454. 四数相加 II</a>
+    <a href="/leetcode/docs/medium/454/" class="">
+      454. 四数相加 II</a>
   
 
         </li>
@@ -706,7 +635,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/medium/707/" class="">😪707. 设计链表</a>
+    <a href="/leetcode/docs/medium/707/" class="">
+      😪707. 设计链表</a>
   
 
         </li>
@@ -724,7 +654,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/hard/" class="">Hard</a>
+    <a href="/leetcode/docs/hard/" class="">
+      Hard</a>
   
 
           
@@ -737,7 +668,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/hard/23/" class="">23. 合并 K 个升序链表</a>
+    <a href="/leetcode/docs/hard/23/" class="">
+      23. 合并 K 个升序链表</a>
   
 
         </li>
@@ -750,7 +682,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/hard/25/" class="">25. K 个一组翻转链表</a>
+    <a href="/leetcode/docs/hard/25/" class="">
+      25. K 个一组翻转链表</a>
   
 
         </li>
@@ -763,7 +696,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/hard/76/" class="">😪76. 最小覆盖子串</a>
+    <a href="/leetcode/docs/hard/76/" class="">
+      😪76. 最小覆盖子串</a>
   
 
         </li>
@@ -776,7 +710,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/hard/224/" class="">224. 基本计算器</a>
+    <a href="/leetcode/docs/hard/224/" class="">
+      224. 基本计算器</a>
   
 
         </li>
@@ -794,7 +729,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <span>剑指 Offer（一）</span>
+    <a>
+      剑指 Offer（一）</a>
   
 
           
@@ -812,7 +748,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <span>剑指 Offer（二）</span>
+    <a>
+      剑指 Offer（二）</a>
   
 
           
@@ -825,7 +762,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/finger-offer2/018/" class="">018. 有效的回文</a>
+    <a href="/leetcode/docs/finger-offer2/018/" class="">
+      018. 有效的回文</a>
   
 
         </li>
@@ -843,7 +781,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/other/" class="">其他</a>
+    <a href="/leetcode/docs/other/" class="">
+      其他</a>
   
 
           
@@ -856,7 +795,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/other/interview-08.06/" class="">😪面试题 08.06. 汉诺塔问题</a>
+    <a href="/leetcode/docs/other/interview-08/" class="">
+      😪面试题 08.06. 汉诺塔问题</a>
   
 
         </li>
@@ -869,7 +809,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/other/bubble/" class="">冒泡排序</a>
+    <a href="/leetcode/docs/other/bubble/" class="">
+      冒泡排序</a>
   
 
         </li>
@@ -881,7 +822,6 @@ https://github.com/alex-shpak/hugo-book
       
     
   </ul>
-
 
 
 
@@ -903,30 +843,31 @@ https://github.com/alex-shpak/hugo-book
   <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
 
 
+
+  </div>
+</aside>
  
-      </div>
-    </aside>
 
     <div class="book-page">
-      <header class="book-header">
+      <header class="book-header hidden">
         
   <div class="flex align-center justify-between">
   <label for="menu-control">
-    <img src="/leetcode/svg/menu.svg" class="book-icon" alt="Menu" />
+    <img src="/leetcode/icons/menu.svg" class="book-icon" alt="Menu" />
   </label>
 
   <h3>203. 移除链表元素</h3>
 
   <label for="toc-control">
     
-    <img src="/leetcode/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    <img src="/leetcode/icons/toc.svg" class="book-icon" alt="Table of Contents" />
     
   </label>
 </div>
 
 
   
-  <aside class="hidden clearfix">
+  <aside class="hidden">
     
   
 <nav id="TableOfContents">
@@ -955,51 +896,29 @@ https://github.com/alex-shpak/hugo-book
 
       
       
-  <article class="markdown book-article"><h1 id="203-移除链表元素">
-  203. 移除链表元素
-  <a class="anchor" href="#203-%e7%a7%bb%e9%99%a4%e9%93%be%e8%a1%a8%e5%85%83%e7%b4%a0">#</a>
-</h1>
-<h2 id="题目地址">
-  题目地址
-  <a class="anchor" href="#%e9%a2%98%e7%9b%ae%e5%9c%b0%e5%9d%80">#</a>
-</h2>
+  <article class="markdown book-article"><h1 id="203-移除链表元素">203. 移除链表元素<a class="anchor" href="#203-%e7%a7%bb%e9%99%a4%e9%93%be%e8%a1%a8%e5%85%83%e7%b4%a0">#</a></h1>
+<h2 id="题目地址">题目地址<a class="anchor" href="#%e9%a2%98%e7%9b%ae%e5%9c%b0%e5%9d%80">#</a></h2>
 <ul>
-<li>
-  <a href="https://leetcode.cn/problems/remove-linked-list-elements/">力扣</a></li>
-<li>
-  <a href="https://leetcode.com/problems/remove-linked-list-elements/">LeetCode</a></li>
+<li><a href="https://leetcode.cn/problems/remove-linked-list-elements/">力扣</a></li>
+<li><a href="https://leetcode.com/problems/remove-linked-list-elements/">LeetCode</a></li>
 </ul>
-<h2 id="解题思路">
-  解题思路
-  <a class="anchor" href="#%e8%a7%a3%e9%a2%98%e6%80%9d%e8%b7%af">#</a>
-</h2>
-<p>参看 
-  <a href="https://leetcode.cn/problems/remove-linked-list-elements/solutions/813358/yi-chu-lian-biao-yuan-su-by-leetcode-sol-654m/">https://leetcode.cn/problems/remove-linked-list-elements/solutions/813358/yi-chu-lian-biao-yuan-su-by-leetcode-sol-654m/</a></p>
-<h3 id="迭代法">
-  迭代法
-  <a class="anchor" href="#%e8%bf%ad%e4%bb%a3%e6%b3%95">#</a>
-</h3>
+<h2 id="解题思路">解题思路<a class="anchor" href="#%e8%a7%a3%e9%a2%98%e6%80%9d%e8%b7%af">#</a></h2>
+<p>参看 <a href="https://leetcode.cn/problems/remove-linked-list-elements/solutions/813358/yi-chu-lian-biao-yuan-su-by-leetcode-sol-654m/">https://leetcode.cn/problems/remove-linked-list-elements/solutions/813358/yi-chu-lian-biao-yuan-su-by-leetcode-sol-654m/</a></p>
+<h3 id="迭代法">迭代法<a class="anchor" href="#%e8%bf%ad%e4%bb%a3%e6%b3%95">#</a></h3>
 <p>用 <code>curr</code> 表示当前节点。如果 <code>curr</code> 的下一个节点不为空且下一个节点的节点值等于给定的 <code>val</code>，则需要删除下一个节点。删除下一个节点可以通过 <code>curr.next=curr.next.next</code> 实现。</p>
 <p>如果 <code>curr</code> 的下一个节点的节点值不等于给定的 <code>val</code>，则保留下一个节点，将 <code>curr</code> 移动到下一个节点即可。</p>
 <p>当<code>curr</code>的下一个节点为空时，链表遍历结束，此时所有节点值等于 <code>val</code> 的节点都被删除。</p>
 <p>具体实现方面，由于链表的头节点 <code>head</code> 有可能需要被删除，因此创建哑节点/虚拟节点 <code>dummyHead</code>，令 <code>dummyHead.next=head</code>，初始化 <code>curr=dummyHead</code>，然后遍历链表进行删除操作。最终返回<code>dummyHead.next</code>即为删除操作后的头节点。</p>
 <p>为什么要用 <code>curr=dummyHead</code>❓，这样 <code>curr</code> 指向的地址跟 <code>dummyHead</code> 指向的地址是一样的，如果不提前赋值，那么迭代到最后<code>dummyHead.Next</code>就是<code>nil</code>，不能正确的返回头结点，所以重新赋值后，用 <code>curr</code> 去循环 <code>dummyHead.Next</code> 还是正常的。</p>
-<h3 id="递归法">
-  递归法
-  <a class="anchor" href="#%e9%80%92%e5%bd%92%e6%b3%95">#</a>
-</h3>
+<h3 id="递归法">递归法<a class="anchor" href="#%e9%80%92%e5%bd%92%e6%b3%95">#</a></h3>
 <p>链表的定义具有递归的性质，因此链表题目常可以用递归的方法求解。</p>
 <p>递归的核心在于，我只关注我这一层要干什么，返回什么，至于我的下一层（规模减 1），我不管，我就是甩手掌柜。</p>
 <p>那么现在我要删除特定链表元素，我需要怎么做❓</p>
 <p>如果链表是<code>nil</code>我就直接返回，我的 next 让工具人函数去判断，当工具人函数做完判断给我之后，我按需 return，也就是如果 <code>head.Val == val</code> return <code>head.Next</code>，否则直接 return head。</p>
-<h2 id="具体实现">
-  具体实现
-  <a class="anchor" href="#%e5%85%b7%e4%bd%93%e5%ae%9e%e7%8e%b0">#</a>
-</h2>
+<h2 id="具体实现">具体实现<a class="anchor" href="#%e5%85%b7%e4%bd%93%e5%ae%9e%e7%8e%b0">#</a></h2>
 <div class="book-tabs">
-<input type="radio" class="toggle" name="tabs-uniqueid" id="tabs-uniqueid-0" checked="checked" />
-<label for="tabs-uniqueid-0">Go迭代</label>
-<div class="book-tabs-content markdown-inner"><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+<p><input type="radio" class="toggle" name="tabs-0" id="tabs-0-0" checked="checked" /><label for="tabs-0-0">Go迭代</label><div class="book-tabs-content markdown-inner"></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> (
 </span></span><span style="display:flex;"><span>	<span style="color:#e6db74">&#34;fmt&#34;</span>
@@ -1046,11 +965,9 @@ https://github.com/alex-shpak/hugo-book
 </span></span><span style="display:flex;"><span>	}, <span style="color:#ae81ff">1</span>)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">x</span>)
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div></div>
-<input type="radio" class="toggle" name="tabs-uniqueid" id="tabs-uniqueid-1"  />
-<label for="tabs-uniqueid-1">Go递归</label>
-<div class="book-tabs-content markdown-inner"><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div></div>
+<p><input type="radio" class="toggle" name="tabs-0" id="tabs-0-1"  /><label for="tabs-0-1">Go递归</label><div class="book-tabs-content markdown-inner"></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> <span style="color:#e6db74">&#34;fmt&#34;</span>
 </span></span><span style="display:flex;"><span>
@@ -1088,8 +1005,7 @@ https://github.com/alex-shpak/hugo-book
 </span></span><span style="display:flex;"><span>	}, <span style="color:#ae81ff">1</span>)
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">x</span>)
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div></div>
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div></div>
 </div>
 </article>
  
@@ -1099,49 +1015,72 @@ https://github.com/alex-shpak/hugo-book
         
   <div class="flex flex-wrap justify-between">
 
+<div>
 
-  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/119b1eac20b4d3d16519e79c285c429d51977e91" title='最后修改者 xiaobinqt | 四月 20, 2025' target="_blank" rel="noopener">
-      <img src="/leetcode/svg/calendar.svg" class="book-icon" alt="" />
-      <span>四月 20, 2025</span>
-    </a>
-  </div>
+</div>
 
+<div>
 
-
-  <div>
-    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/book.leetcode/docs/easy/203.md" target="_blank" rel="noopener">
-      <img src="/leetcode/svg/edit.svg" class="book-icon" alt="" />
-      <span>编辑本页</span>
-    </a>
-  </div>
-
+</div>
 
 </div>
 
 
 
-  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+  
+  
+  
+  <div class="flex flex-wrap justify-between">
+    <span>
+    
+      <a href="/leetcode/docs/easy/160/" class="flex align-center">
+        <img src="/leetcode/icons/backward.svg" class="book-icon" alt="Backward" />
+        <span>160. 相交链表</span>
+      </a>
+    
+    </span>
+    <span>
+    
+      <a href="/leetcode/docs/easy/206/" class="flex align-center">
+        <span>206. 反转链表</span>
+        <img src="/leetcode/icons/forward.svg" class="book-icon" alt="Forward" />
+      </a>
+    
+    </span>
+  </div>
+  
 
 
  
         
-      </footer>
-
-      
   
   <div class="book-comments">
 
 </div>
   
  
+        
+        
+  
+ 
+        
+  
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
 
       <label for="menu-control" class="hidden book-menu-overlay"></label>
     </div>
 
     
-    <aside class="book-toc">
-      <div class="book-toc-content">
-        
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
   
 <nav id="TableOfContents">
   <ul>
@@ -1161,15 +1100,24 @@ https://github.com/alex-shpak/hugo-book
 </nav>
 
 
+
+    </div>
+  </aside>
+  
  
-      </div>
-    </aside>
-    
   </main>
 
   
 </body>
 </html>
+
+
+
+
+
+
+
+
 
 
 

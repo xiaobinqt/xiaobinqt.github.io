@@ -6,10 +6,12 @@
 + 卫彬/男/1994
 + 手机/微信：15209272743
 + Github：[https://github.com/xiaobinqt](https://github.com/xiaobinqt)
-+ DockerHub：[https://hub.docker.com/u/xiaobinqt](https://hub.docker.com/u/xiaobinqt)
 + 个人网站：[https://www.xiaobinqt.cn](https://www.xiaobinqt.cn) / [https://xiaobinqt.github.io](https://xiaobinqt.github.io/)
 + Email：[xiaobinqt@163.com](mailto:xiaobinqt@163.com)
-+ 开源项目：[Go微信机器人](https://github.com/xiaobinqt/go-wxbot) / [豆奶签到](https://github.com/xiaobinqt/dounai-checkin)
++ 开源项目：
+    + [Go微信机器人](https://github.com/xiaobinqt/go-wxbot)
+    + [dounai-checkin](https://github.com/xiaobinqt/dounai-checkin)
+    + [K0 - 容器管理平台](https://github.com/go-k0s/k0s)
 
 ## 教育经历
 
@@ -19,39 +21,46 @@
 
 ## 个人技能
 
-+ 熟练使用 Go 语言进行项目开发，对 Slice、Map、Goroutine、Channel 有深入了解，擅长并发编程；
-+ 熟练使用 Gin、GRPC、GoFrame、Go-kratos 等 web 和微服务框架，熟悉熔断，限流，服务治理等；
-+ 深入理解 CSP 模型，深入理解 GC 垃圾回收机制和三色标记法，有过实际性能调优经验;
-+ 熟悉 MySQL 的存储引擎、事务隔离级别、锁、索引，有 MySQL 的性能调优经验;
-+ 熟悉 Redis 持久化机制、过期策略以及集群部署;
-+ 熟悉 RabbitMQ 消息队列事务消息底层原理，掌握消息丢失、消息重复等问题的解决方案;
-+ 熟练使用 Docker 和 K8S，有 CICD 经验；擅长敏捷开发；熟练使用常见的设计模式；
-+ 精通基于 LNMP 环境的编程，具备扎实的 PHP 基础知识，理解面向对象编程思想。
-+ 熟练使用 Yii、ThinkPHP 和 Laravel 等框架进行快速开发，了解基本的核心源代码，熟悉 swoole 扩展。
-+ 熟练使用 python 编写脚本。
++ 精通 Go 语言，深入理解内存模型、Slice/Map 底层实现、Goroutine 调度机制、Channel 通信原理；掌握 CSP 并发模型，深入理解 GC 三色标记算法、写屏障机制及性能调优策略；
++ 具备高并发系统设计与性能优化实战经验，掌握 HTTP/2、Protocol Buffers 序列化、服务注册发现等机制；
++ 精通 LNMP 架构开发，深入理解 PHP-FPM 运行机制、命名空间与自动加载；熟悉 Yii、ThinkPHP、Laravel 等框架核心实现，掌握依赖注入、服务容器、ORM 映射等设计模式；熟悉 Swoole 协程编程与异步 I/O；
++ 深入理解微服务架构设计，掌握服务熔断、限流、负载均衡、分布式追踪等核心机制；
++ 具备大规模分布式系统架构设计经验，熟悉服务网格概念与实践；
++ 深入理解 InnoDB 存储引擎、MVCC 多版本并发控制、事务隔离级别（RC/RR）、行锁/表锁/间隙锁机制、B+ 树索引原理；具备 SQL 性能调优、慢查询分析、分库分表设计经验；
++ 深入理解 RDB/AOF 持久化机制、LRU/LFU 过期策略、主从复制、哨兵模式、Cluster 集群架构；掌握缓存穿透/击穿/雪崩解决方案、分布式锁实现；
++ 深入理解 AMQP 协议、Exchange 路由机制、事务消息与确认机制、死信队列；掌握消息可靠性投递、幂等性设计、消息顺序性保证等解决方案
++ 熟悉 Kafka 架构设计、分区策略、副本机制、消费者组（Consumer Group）原理；具备高吞吐量消息处理系统设计经验；
++ 精通 Docker 容器化技术，熟悉 Dockerfile 优化、多阶段构建、镜像分层原理；
++ 熟悉 Kubernetes 核心概念：Pod/Deployment/Service/Ingress、资源调度、服务发现、配置管理；
++ 熟悉 Elasticsearch 全文检索、倒排索引原理、聚合查询、集群管理；
++ 具备 CI/CD 实践经验，熟悉 GitLab CI、Jenkins 等持续集成工具，掌握自动化构建、测试、部署流程；
++ 掌握常见设计模式（单例、工厂、观察者、策略等），具备良好的系统架构设计能力；
++ 熟悉 Git 版本控制、代码审查流程，具备良好的工程化实践和代码规范意识；
 
 ## 自我评价
 
 + 热爱代码，对开源抱有极大的热情，曾给多个开源项目贡献代码。有坚持做一件事的毅力和决心。
 + 良好的沟通能力，学习能力，适应能力强及团队协作意识，具有主人翁意识。
 
-## 期望职位
-
-+ 期望职位：Golang 开发 / PHP 开发
-
 ## 工作经历
 
-### [希云科技（北京）有限公司](http://xii.cloud/) （ 2021/4 ~ 2024/6）
+### [Gate大门交易平台](https://www.gate.com/) （ 2025/03 ~ ）
 
-在公司担任 Go 开发，参与研发了 [柔性开发仿真一体化项目](http://g.xii.cloud:42225/) 和 xae 项目。目前柔性开发仿真一体化项目已上线，服务于国家电网，该项目是组态化微应用开发仿真发布一体化云平台，可以帮助客户快速开发应用并部署。信创项目 xae 项目，目的是赋能企业数字化转型，快速搭建迁徙适配测试平台。
+作为后端开发人员使用 hyperf 和 go-zero 参与开发了公司主站和各个分站的 kyc/kyb，name screening 和管理后台审核业务的开发。
 
-### 北京腾讯公司 （ 2019/4 ~ 2021/4 ）
+### [希云科技（北京）有限公司](http://xii.cloud/) （ 2022/04 ~ 2025/03）
 
-在北京腾讯总部参与了星盘数据平台和烽火统一 PUSH 平台的开发。星盘数据平台使用 php 开发。PUSH 平台使用 Go 开发，主要使用了 Go 协程，channel 等提高系统整体性能和并发。
+作为核心开发成员参与研发了 [柔性开发仿真一体化项目](http://g.xii.cloud:42225/) 和 xae 项目。目前柔性开发仿真一体化项目已上线，服务于国家电网，该项目是组态化微应用开发仿真发布一体化云平台，可以帮助客户快速开发应用并部署。信创项目 xae 项目，目的是赋能企业数字化转型，快速搭建迁徙适配测试平台。
 
-### [西安维客软件科技有限公司](https://www.victtech.com/) （ 2017/4 ~ 2019/3 ）
+### 北京腾讯公司 （ 2020/04 ~ 2022/04 ）
 
-在公司担任 PHP 开发并在项目中接触到 Go，主动学习并使用 Go 开发一些小功能。主要在公司参与了 pop 商城，医疗器械租赁项目，小程序和一些 [wordpress](https://wordpress.com) 项目的开发，如 [西班牙旅游网站](http://aragontourism.cn)。
+作为星盘数据平台的后端开发人员负责改产品的开发和后期维护。该项目主要由 sodoo php 框架实现。主要负责包括需求评审，大盘数据统计，自定义数据图表和开发工作。
+
+作为核心开发人员，成功将 PUSH 中台系统从 PHP 迁移至 Golang 开发环境。利用 trpc-go 框架提升整体系统性能，对系统进行性能优化，显著提高系统的并发处理能力，集成性能检测工具，实现对系统运行状态的实时监控和故障预警。
+
+### [西安维客软件科技有限公司](https://www.victtech.com/) （ 2017/04 ~ 2020/03 ）
+
+在公司担任 PHP 开发，参与了 pop 商城，医疗器械租赁项目，小程序和一些 [wordpress](https://wordpress.com) 项目的开发，如 [西班牙旅游网站](http://aragontourism.cn)。在系统开发中主动使用 Golang 实现一些并发功能，提高项目整体性呢功能。
 
 ## 项目经验
 
@@ -129,8 +138,7 @@
 **项目成果**
 
 + 支持业务的开度更迭和稳定运行。
-+ 获取 docker，微信SDK [EasyWeChat](https://easywechat.com) 和七牛云服务的相关使用经验。
-+ 参与开源并贡献代码 [SocialiteProviders/Weixin#44bc75b7](https://github.com/SocialiteProviders/Weixin/commit/44bc75b7d98760ce32e71331f28871ccb186546a)。
++ 获取 docker，微信SDK [EasyWeChat](https://easywechat.com) 和七牛云服务的相关使用经验。参与开源并贡献代码 [SocialiteProviders/Weixin#44bc75b7](https://github.com/SocialiteProviders/Weixin/commit/44bc75b7d98760ce32e71331f28871ccb186546a)。
 
 ### 潘帕斯 pop 商城
 
