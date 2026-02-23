@@ -1,158 +1,64 @@
 <!DOCTYPE html>
 <html lang="zh" dir="ltr">
 <head>
-  <meta charset="UTF-8">
+  <!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="
-  160. 相交链表
-  #
-
-
-  题目地址
-  #
-
-
-
-  力扣
-
-  LeetCode
-
-
-  解题思路
-  #
-
-如果两个链表相交，那么相交点之后的长度是相同的。
+<meta name="description" content="160. 相交链表# 题目地址# 力扣 LeetCode 解题思路# 如果两个链表相交，那么相交点之后的长度是相同的。
 所以，我们需要做的事情是，让两个链表从距离末尾同等距离的位置开始遍历。而这个位置只能是较短链表的头结点位置。为此，需要求出两个链表的长度并消除两个链表的长度差。
-
-  具体实现
-  #
-
-
-
-Go
-package main
-
-import &#34;fmt&#34;
-
-type ListNode struct {
-	Next *ListNode
-	Val  int
-}
-
-func getIntersectionNode(headA, headB *ListNode) *ListNode {
-	if headA == nil || headB == nil {
-		return nil
-	}
-
-	var (
-		currA, currB = headA, headB
-		lenA, lenB   int
-	)
-	// 计算链表的长度
-	for currA != nil {
-		lenA&#43;&#43;
-		currA = currA.Next
-	}
-
-	for currB != nil {
-		lenB&#43;&#43;
-		currB = currB.Next
-	}
-
-	currA, currB = headA, headB
-
-	// 判断谁是最长的,把最长的赋值给 currA
-	gap := 0
-	if lenA &gt;= lenB {
-		gap = lenA - lenB
-	} else {
-		gap = lenB - lenA
-		currA, currB = currB, currA
-	}
-
-	for gap &gt; 0 { // 移动最大的位置
-		currA = currA.Next
-		gap--
-	}
-
-	// 同时移动
-	for currA != nil {
-		if currA == currB {
-			return currA // 这里 return currB 也行
-		}
-		currA = currA.Next
-		currB = currB.Next
-	}
-
-	return nil
-}
-
-func main() {
-	t := &amp;ListNode{
-		Next: &amp;ListNode{
-			Next: nil,
-			Val:  9,
-		},
-		Val: 8,
-	}
-
-	ca := &amp;ListNode{
-		Next: &amp;ListNode{
-			Next: t,
-			Val:  2,
-		},
-		Val: 1,
-	}
-
-	cb := &amp;ListNode{
-		Next: &amp;ListNode{
-			Next: &amp;ListNode{
-				Next: t,
-				Val:  5,
-			},
-			Val: 4,
-		},
-		Val: 3,
-	}
-	ret := getIntersectionNode(ca, cb)
-	fmt.Println(ret)
-}
-
-">
+具体实现# Go
+package main import &#34;fmt&#34; type ListNode struct { Next *ListNode Val int } func getIntersectionNode(headA, headB *ListNode) *ListNode { if headA == nil || headB == nil { return nil } var ( currA, currB = headA, headB lenA, lenB int ) // 计算链表的长度 for currA != nil { lenA&#43;&#43; currA = currA.Next } for currB != nil { lenB&#43;&#43; currB = currB.Next } currA, currB = headA, headB // 判断谁是最长的,把最长的赋值给 currA gap := 0 if lenA &gt;= lenB { gap = lenA - lenB } else { gap = lenB - lenA currA, currB = currB, currA } for gap &gt; 0 { // 移动最大的位置 currA = currA.Next gap-- } // 同时移动 for currA != nil { if currA == currB { return currA // 这里 return currB 也行 } currA = currA.Next currB = currB.Next } return nil } func main() { t := &amp;ListNode{ Next: &amp;ListNode{ Next: nil, Val: 9, }, Val: 8, } ca := &amp;ListNode{ Next: &amp;ListNode{ Next: t, Val: 2, }, Val: 1, } cb := &amp;ListNode{ Next: &amp;ListNode{ Next: &amp;ListNode{ Next: t, Val: 5, }, Val: 4, }, Val: 3, } ret := getIntersectionNode(ca, cb) fmt.Println(ret) } ">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#343a40">
 <meta name="color-scheme" content="light dark"><meta property="og:url" content="https://example.com/leetcode/docs/easy/160/">
   <meta property="og:site_name" content="LeetCode">
   <meta property="og:title" content="160. 相交链表">
-  <meta property="og:description" content="160. 相交链表 # 题目地址 # 力扣 LeetCode 解题思路 # 如果两个链表相交，那么相交点之后的长度是相同的。
+  <meta property="og:description" content="160. 相交链表# 题目地址# 力扣 LeetCode 解题思路# 如果两个链表相交，那么相交点之后的长度是相同的。
 所以，我们需要做的事情是，让两个链表从距离末尾同等距离的位置开始遍历。而这个位置只能是较短链表的头结点位置。为此，需要求出两个链表的长度并消除两个链表的长度差。
-具体实现 # Go package main import &#34;fmt&#34; type ListNode struct { Next *ListNode Val int } func getIntersectionNode(headA, headB *ListNode) *ListNode { if headA == nil || headB == nil { return nil } var ( currA, currB = headA, headB lenA, lenB int ) // 计算链表的长度 for currA != nil { lenA&#43;&#43; currA = currA.Next } for currB != nil { lenB&#43;&#43; currB = currB.Next } currA, currB = headA, headB // 判断谁是最长的,把最长的赋值给 currA gap := 0 if lenA &gt;= lenB { gap = lenA - lenB } else { gap = lenB - lenA currA, currB = currB, currA } for gap &gt; 0 { // 移动最大的位置 currA = currA.Next gap-- } // 同时移动 for currA != nil { if currA == currB { return currA // 这里 return currB 也行 } currA = currA.Next currB = currB.Next } return nil } func main() { t := &amp;ListNode{ Next: &amp;ListNode{ Next: nil, Val: 9, }, Val: 8, } ca := &amp;ListNode{ Next: &amp;ListNode{ Next: t, Val: 2, }, Val: 1, } cb := &amp;ListNode{ Next: &amp;ListNode{ Next: &amp;ListNode{ Next: t, Val: 5, }, Val: 4, }, Val: 3, } ret := getIntersectionNode(ca, cb) fmt.Println(ret) }">
+具体实现# Go
+package main import &#34;fmt&#34; type ListNode struct { Next *ListNode Val int } func getIntersectionNode(headA, headB *ListNode) *ListNode { if headA == nil || headB == nil { return nil } var ( currA, currB = headA, headB lenA, lenB int ) // 计算链表的长度 for currA != nil { lenA&#43;&#43; currA = currA.Next } for currB != nil { lenB&#43;&#43; currB = currB.Next } currA, currB = headA, headB // 判断谁是最长的,把最长的赋值给 currA gap := 0 if lenA &gt;= lenB { gap = lenA - lenB } else { gap = lenB - lenA currA, currB = currB, currA } for gap &gt; 0 { // 移动最大的位置 currA = currA.Next gap-- } // 同时移动 for currA != nil { if currA == currB { return currA // 这里 return currB 也行 } currA = currA.Next currB = currB.Next } return nil } func main() { t := &amp;ListNode{ Next: &amp;ListNode{ Next: nil, Val: 9, }, Val: 8, } ca := &amp;ListNode{ Next: &amp;ListNode{ Next: t, Val: 2, }, Val: 1, } cb := &amp;ListNode{ Next: &amp;ListNode{ Next: &amp;ListNode{ Next: t, Val: 5, }, Val: 4, }, Val: 3, } ret := getIntersectionNode(ca, cb) fmt.Println(ret) }">
   <meta property="og:locale" content="zh">
   <meta property="og:type" content="article">
     <meta property="article:section" content="docs">
     <meta property="article:modified_time" content="2025-04-20T17:01:44+08:00">
+
+
+  <meta itemprop="name" content="160. 相交链表">
+  <meta itemprop="description" content="160. 相交链表# 题目地址# 力扣 LeetCode 解题思路# 如果两个链表相交，那么相交点之后的长度是相同的。
+所以，我们需要做的事情是，让两个链表从距离末尾同等距离的位置开始遍历。而这个位置只能是较短链表的头结点位置。为此，需要求出两个链表的长度并消除两个链表的长度差。
+具体实现# Go
+package main import &#34;fmt&#34; type ListNode struct { Next *ListNode Val int } func getIntersectionNode(headA, headB *ListNode) *ListNode { if headA == nil || headB == nil { return nil } var ( currA, currB = headA, headB lenA, lenB int ) // 计算链表的长度 for currA != nil { lenA&#43;&#43; currA = currA.Next } for currB != nil { lenB&#43;&#43; currB = currB.Next } currA, currB = headA, headB // 判断谁是最长的,把最长的赋值给 currA gap := 0 if lenA &gt;= lenB { gap = lenA - lenB } else { gap = lenB - lenA currA, currB = currB, currA } for gap &gt; 0 { // 移动最大的位置 currA = currA.Next gap-- } // 同时移动 for currA != nil { if currA == currB { return currA // 这里 return currB 也行 } currA = currA.Next currB = currB.Next } return nil } func main() { t := &amp;ListNode{ Next: &amp;ListNode{ Next: nil, Val: 9, }, Val: 8, } ca := &amp;ListNode{ Next: &amp;ListNode{ Next: t, Val: 2, }, Val: 1, } cb := &amp;ListNode{ Next: &amp;ListNode{ Next: &amp;ListNode{ Next: t, Val: 5, }, Val: 4, }, Val: 3, } ret := getIntersectionNode(ca, cb) fmt.Println(ret) }">
+  <meta itemprop="dateModified" content="2025-04-20T17:01:44+08:00">
+  <meta itemprop="wordCount" content="204">
+
 <title>160. 相交链表 | LeetCode</title>
 <link rel="icon" href="/leetcode/favicon.png" >
 <link rel="manifest" href="/leetcode/manifest.json">
 <link rel="canonical" href="https://example.com/leetcode/docs/easy/160/">
-<link rel="stylesheet" href="/leetcode/book.min.1e8c332c823ff5970e639a0c180f0e3d074283c7f525185d3e42903a2f30e9be.css" integrity="sha256-HowzLII/9ZcOY5oMGA8OPQdCg8f1JRhdPkKQOi8w6b4=" crossorigin="anonymous">
+<link rel="stylesheet" href="/leetcode/book.min.df034b84d0659a9814822884d0dc585d62aa27036b9a0dc056481951d3d596c6.css" integrity="sha256-3wNLhNBlmpgUgiiE0NxYXWKqJwNrmg3AVkgZUdPVlsY=" crossorigin="anonymous">
+
+
   <script defer src="/leetcode/fuse.min.js"></script>
-  <script defer src="/leetcode/zh.search.min.72d25a414554edacb2df5e28b1846a7af186a9d9bcc622074390b954a2d5c822.js" integrity="sha256-ctJaQUVU7ayy314osYRqevGGqdm8xiIHQ5C5VKLVyCI=" crossorigin="anonymous"></script>
+  <script defer src="/leetcode/zh.search.min.953d473ef30795232282e8d5eb1296cb310c981d3c49d45ab5c8ddbdf8b70908.js" integrity="sha256-lT1HPvMHlSMigujV6xKWyzEMmB08SdRatcjdvfi3CQg=" crossorigin="anonymous"></script>
 
   <script defer src="/leetcode/sw.min.c814046bee19bfa0279b71972af9d15919d290341d7ecdfe781d2e1113df9ad1.js" integrity="sha256-yBQEa&#43;4Zv6Anm3GXKvnRWRnSkDQdfs3&#43;eB0uERPfmtE=" crossorigin="anonymous"></script>
-<!--
-Made with Book Theme
-https://github.com/alex-shpak/hugo-book
--->
+
+
+
   
 </head>
-<body dir="ltr">
+<body dir="ltr" class="book-kind-page book-type-docs">
   <input type="checkbox" class="hidden toggle" id="menu-control" />
   <input type="checkbox" class="hidden toggle" id="toc-control" />
   <main class="container flex">
-    <aside class="book-menu">
-      <div class="book-menu-content">
-        
+    
+<aside class="book-menu">
+  <div class="book-menu-content">
+    
   <nav>
 <h2 class="book-brand">
   <a class="flex align-center" href="/leetcode/"><span>LeetCode</span>
@@ -161,7 +67,10 @@ https://github.com/alex-shpak/hugo-book
 
 
 <div class="book-search hidden">
-  <input type="text" id="book-search-input" placeholder="搜索" aria-label="搜索" maxlength="64" data-hotkeys="s/" />
+  <input id="book-search-input" type="text" 
+    placeholder="搜索"
+    aria-label="搜索"
+    maxlength="64" data-hotkeys="s/" />
   <div class="book-search-spinner hidden"></div>
   <ul id="book-search-results"></ul>
 </div>
@@ -187,19 +96,7 @@ https://github.com/alex-shpak/hugo-book
     }
 </script>
 
-
-  
-<ul>
-  
-  <li>
-    <a href=""  target="_blank" rel="noopener">
-        
-      </a>
-  </li>
-  
-</ul>
-
-
+<ul><li><a href=""></a></li></ul>
 
 
 
@@ -218,7 +115,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/easy/" class="">Easy</a>
+    <a href="/leetcode/docs/easy/" class="">
+      Easy</a>
   
 
           
@@ -231,7 +129,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/easy/1/" class="">1. 两数之和</a>
+    <a href="/leetcode/docs/easy/1/" class="">
+      1. 两数之和</a>
   
 
         </li>
@@ -244,7 +143,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/easy/20/" class="">20. 有效的括号</a>
+    <a href="/leetcode/docs/easy/20/" class="">
+      20. 有效的括号</a>
   
 
         </li>
@@ -257,7 +157,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/easy/21/" class="">21. 合并两个有序链表</a>
+    <a href="/leetcode/docs/easy/21/" class="">
+      21. 合并两个有序链表</a>
   
 
         </li>
@@ -270,7 +171,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/easy/27/" class="">27. 移除元素</a>
+    <a href="/leetcode/docs/easy/27/" class="">
+      27. 移除元素</a>
   
 
         </li>
@@ -283,7 +185,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/easy/104/" class="">😪104. 二叉树的最大深度</a>
+    <a href="/leetcode/docs/easy/104/" class="">
+      😪104. 二叉树的最大深度</a>
   
 
         </li>
@@ -296,7 +199,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/easy/242/" class="">242. 有效的字母异位词</a>
+    <a href="/leetcode/docs/easy/242/" class="">
+      242. 有效的字母异位词</a>
   
 
         </li>
@@ -309,7 +213,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/easy/141/" class="">141. 环形链表</a>
+    <a href="/leetcode/docs/easy/141/" class="">
+      141. 环形链表</a>
   
 
         </li>
@@ -322,7 +227,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/easy/160/" class="active">160. 相交链表</a>
+    <a href="/leetcode/docs/easy/160/" class="active">
+      160. 相交链表</a>
   
 
         </li>
@@ -335,7 +241,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/easy/203/" class="">203. 移除链表元素</a>
+    <a href="/leetcode/docs/easy/203/" class="">
+      203. 移除链表元素</a>
   
 
         </li>
@@ -348,7 +255,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/easy/206/" class="">206. 反转链表</a>
+    <a href="/leetcode/docs/easy/206/" class="">
+      206. 反转链表</a>
   
 
         </li>
@@ -361,7 +269,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/easy/232/" class="">232. 用栈实现队列</a>
+    <a href="/leetcode/docs/easy/232/" class="">
+      232. 用栈实现队列</a>
   
 
         </li>
@@ -374,7 +283,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/easy/344/" class="">344. 反转字符串</a>
+    <a href="/leetcode/docs/easy/344/" class="">
+      344. 反转字符串</a>
   
 
         </li>
@@ -387,7 +297,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/easy/349/" class="">349. 两个数组的交集</a>
+    <a href="/leetcode/docs/easy/349/" class="">
+      349. 两个数组的交集</a>
   
 
         </li>
@@ -400,7 +311,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/easy/541/" class="">451. 根据字符出现频率排序</a>
+    <a href="/leetcode/docs/easy/541/" class="">
+      451. 根据字符出现频率排序</a>
   
 
         </li>
@@ -413,7 +325,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/easy/459/" class="">459. 重复的子字符串</a>
+    <a href="/leetcode/docs/easy/459/" class="">
+      459. 重复的子字符串</a>
   
 
         </li>
@@ -426,7 +339,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/easy/496/" class="">496. 下一个更大元素 I</a>
+    <a href="/leetcode/docs/easy/496/" class="">
+      496. 下一个更大元素 I</a>
   
 
         </li>
@@ -439,7 +353,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/easy/682/" class="">682. 棒球比赛</a>
+    <a href="/leetcode/docs/easy/682/" class="">
+      682. 棒球比赛</a>
   
 
         </li>
@@ -452,7 +367,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/easy/704/" class="">704. 二分查找</a>
+    <a href="/leetcode/docs/easy/704/" class="">
+      704. 二分查找</a>
   
 
         </li>
@@ -465,7 +381,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/easy/844/" class="">844. 比较含退格的字符串</a>
+    <a href="/leetcode/docs/easy/844/" class="">
+      844. 比较含退格的字符串</a>
   
 
         </li>
@@ -478,7 +395,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/easy/876/" class="">876. 链表的中间结点</a>
+    <a href="/leetcode/docs/easy/876/" class="">
+      876. 链表的中间结点</a>
   
 
         </li>
@@ -491,7 +409,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/easy/977/" class="">977. 有序数组的平方</a>
+    <a href="/leetcode/docs/easy/977/" class="">
+      977. 有序数组的平方</a>
   
 
         </li>
@@ -509,7 +428,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/medium/" class="">Medium</a>
+    <a href="/leetcode/docs/medium/" class="">
+      Medium</a>
   
 
           
@@ -522,7 +442,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/medium/15/" class="">15. 三数之和</a>
+    <a href="/leetcode/docs/medium/15/" class="">
+      15. 三数之和</a>
   
 
         </li>
@@ -535,7 +456,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/medium/18/" class="">18. 四数之和</a>
+    <a href="/leetcode/docs/medium/18/" class="">
+      18. 四数之和</a>
   
 
         </li>
@@ -548,7 +470,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/medium/19/" class="">19. 删除链表的倒数第 N 个结点</a>
+    <a href="/leetcode/docs/medium/19/" class="">
+      19. 删除链表的倒数第 N 个结点</a>
   
 
         </li>
@@ -561,7 +484,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/medium/24/" class="">24. 两两交换链表中的节点</a>
+    <a href="/leetcode/docs/medium/24/" class="">
+      24. 两两交换链表中的节点</a>
   
 
         </li>
@@ -574,7 +498,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/medium/53/" class="">53. 最大子数组和</a>
+    <a href="/leetcode/docs/medium/53/" class="">
+      53. 最大子数组和</a>
   
 
         </li>
@@ -587,7 +512,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/medium/59/" class="">59. 螺旋矩阵 II</a>
+    <a href="/leetcode/docs/medium/59/" class="">
+      59. 螺旋矩阵 II</a>
   
 
         </li>
@@ -600,7 +526,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/medium/92/" class="">92. 反转链表 II</a>
+    <a href="/leetcode/docs/medium/92/" class="">
+      92. 反转链表 II</a>
   
 
         </li>
@@ -613,7 +540,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/medium/142/" class="">142. 环形链表 II</a>
+    <a href="/leetcode/docs/medium/142/" class="">
+      142. 环形链表 II</a>
   
 
         </li>
@@ -626,7 +554,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/medium/151/" class="">151. 反转字符串中的单词</a>
+    <a href="/leetcode/docs/medium/151/" class="">
+      151. 反转字符串中的单词</a>
   
 
         </li>
@@ -639,7 +568,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/medium/155/" class="">155. 最小栈</a>
+    <a href="/leetcode/docs/medium/155/" class="">
+      155. 最小栈</a>
   
 
         </li>
@@ -652,7 +582,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/medium/209/" class="">209. 长度最小的子数组</a>
+    <a href="/leetcode/docs/medium/209/" class="">
+      209. 长度最小的子数组</a>
   
 
         </li>
@@ -665,7 +596,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/medium/454/" class="">454. 四数相加 II</a>
+    <a href="/leetcode/docs/medium/454/" class="">
+      454. 四数相加 II</a>
   
 
         </li>
@@ -678,7 +610,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/medium/707/" class="">😪707. 设计链表</a>
+    <a href="/leetcode/docs/medium/707/" class="">
+      😪707. 设计链表</a>
   
 
         </li>
@@ -696,7 +629,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/hard/" class="">Hard</a>
+    <a href="/leetcode/docs/hard/" class="">
+      Hard</a>
   
 
           
@@ -709,7 +643,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/hard/23/" class="">23. 合并 K 个升序链表</a>
+    <a href="/leetcode/docs/hard/23/" class="">
+      23. 合并 K 个升序链表</a>
   
 
         </li>
@@ -722,7 +657,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/hard/25/" class="">25. K 个一组翻转链表</a>
+    <a href="/leetcode/docs/hard/25/" class="">
+      25. K 个一组翻转链表</a>
   
 
         </li>
@@ -735,7 +671,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/hard/76/" class="">😪76. 最小覆盖子串</a>
+    <a href="/leetcode/docs/hard/76/" class="">
+      😪76. 最小覆盖子串</a>
   
 
         </li>
@@ -748,7 +685,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/hard/224/" class="">224. 基本计算器</a>
+    <a href="/leetcode/docs/hard/224/" class="">
+      224. 基本计算器</a>
   
 
         </li>
@@ -766,7 +704,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <span>剑指 Offer（一）</span>
+    <a>
+      剑指 Offer（一）</a>
   
 
           
@@ -784,7 +723,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <span>剑指 Offer（二）</span>
+    <a>
+      剑指 Offer（二）</a>
   
 
           
@@ -797,7 +737,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/finger-offer2/018/" class="">018. 有效的回文</a>
+    <a href="/leetcode/docs/finger-offer2/018/" class="">
+      018. 有效的回文</a>
   
 
         </li>
@@ -815,7 +756,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/other/" class="">其他</a>
+    <a href="/leetcode/docs/other/" class="">
+      其他</a>
   
 
           
@@ -828,7 +770,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/other/interview-08.06/" class="">😪面试题 08.06. 汉诺塔问题</a>
+    <a href="/leetcode/docs/other/interview-08/" class="">
+      😪面试题 08.06. 汉诺塔问题</a>
   
 
         </li>
@@ -841,7 +784,8 @@ https://github.com/alex-shpak/hugo-book
   
 
   
-    <a href="/leetcode/docs/other/bubble/" class="">冒泡排序</a>
+    <a href="/leetcode/docs/other/bubble/" class="">
+      冒泡排序</a>
   
 
         </li>
@@ -853,7 +797,6 @@ https://github.com/alex-shpak/hugo-book
       
     
   </ul>
-
 
 
 
@@ -875,30 +818,31 @@ https://github.com/alex-shpak/hugo-book
   <script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
 
 
+
+  </div>
+</aside>
  
-      </div>
-    </aside>
 
     <div class="book-page">
-      <header class="book-header">
+      <header class="book-header hidden">
         
   <div class="flex align-center justify-between">
   <label for="menu-control">
-    <img src="/leetcode/svg/menu.svg" class="book-icon" alt="Menu" />
+    <img src="/leetcode/icons/menu.svg" class="book-icon" alt="Menu" />
   </label>
 
   <h3>160. 相交链表</h3>
 
   <label for="toc-control">
     
-    <img src="/leetcode/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+    <img src="/leetcode/icons/toc.svg" class="book-icon" alt="Table of Contents" />
     
   </label>
 </div>
 
 
   
-  <aside class="hidden clearfix">
+  <aside class="hidden">
     
   
 <nav id="TableOfContents">
@@ -922,34 +866,19 @@ https://github.com/alex-shpak/hugo-book
 
       
       
-  <article class="markdown book-article"><h1 id="160-相交链表">
-  160. 相交链表
-  <a class="anchor" href="#160-%e7%9b%b8%e4%ba%a4%e9%93%be%e8%a1%a8">#</a>
-</h1>
-<h2 id="题目地址">
-  题目地址
-  <a class="anchor" href="#%e9%a2%98%e7%9b%ae%e5%9c%b0%e5%9d%80">#</a>
-</h2>
+  <article class="markdown book-article"><h1 id="160-相交链表">160. 相交链表<a class="anchor" href="#160-%e7%9b%b8%e4%ba%a4%e9%93%be%e8%a1%a8">#</a></h1>
+<h2 id="题目地址">题目地址<a class="anchor" href="#%e9%a2%98%e7%9b%ae%e5%9c%b0%e5%9d%80">#</a></h2>
 <ul>
-<li>
-  <a href="https://leetcode.cn/problems/intersection-of-two-linked-lists/">力扣</a></li>
-<li>
-  <a href="https://leetcode.com/problems/intersection-of-two-linked-lists/">LeetCode</a></li>
+<li><a href="https://leetcode.cn/problems/intersection-of-two-linked-lists/">力扣</a></li>
+<li><a href="https://leetcode.com/problems/intersection-of-two-linked-lists/">LeetCode</a></li>
 </ul>
-<h2 id="解题思路">
-  解题思路
-  <a class="anchor" href="#%e8%a7%a3%e9%a2%98%e6%80%9d%e8%b7%af">#</a>
-</h2>
+<h2 id="解题思路">解题思路<a class="anchor" href="#%e8%a7%a3%e9%a2%98%e6%80%9d%e8%b7%af">#</a></h2>
 <p>如果两个链表相交，那么相交点之后的长度是相同的。</p>
 <p>所以，我们需要做的事情是，让两个链表从<strong>距离末尾同等距离的位置</strong>开始遍历。而这个位置只能是较短链表的头结点位置。为此，需要求出两个链表的长度并消除两个链表的长度差。</p>
-<h2 id="具体实现">
-  具体实现
-  <a class="anchor" href="#%e5%85%b7%e4%bd%93%e5%ae%9e%e7%8e%b0">#</a>
-</h2>
+<h2 id="具体实现">具体实现<a class="anchor" href="#%e5%85%b7%e4%bd%93%e5%ae%9e%e7%8e%b0">#</a></h2>
 <div class="book-tabs">
-<input type="radio" class="toggle" name="tabs-uniqueid" id="tabs-uniqueid-0" checked="checked" />
-<label for="tabs-uniqueid-0">Go</label>
-<div class="book-tabs-content markdown-inner"><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+<p><input type="radio" class="toggle" name="tabs-0" id="tabs-0-0" checked="checked" /><label for="tabs-0-0">Go</label><div class="book-tabs-content markdown-inner"></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> <span style="color:#e6db74">&#34;fmt&#34;</span>
 </span></span><span style="display:flex;"><span>
@@ -1035,8 +964,7 @@ https://github.com/alex-shpak/hugo-book
 </span></span><span style="display:flex;"><span>	}
 </span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">ret</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">getIntersectionNode</span>(<span style="color:#a6e22e">ca</span>, <span style="color:#a6e22e">cb</span>)
 </span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">ret</span>)
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div></div>
+</span></span><span style="display:flex;"><span>}</span></span></code></pre></div></div>
 </div>
 </article>
  
@@ -1046,49 +974,72 @@ https://github.com/alex-shpak/hugo-book
         
   <div class="flex flex-wrap justify-between">
 
+<div>
 
-  <div><a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/commit/119b1eac20b4d3d16519e79c285c429d51977e91" title='最后修改者 xiaobinqt | 四月 20, 2025' target="_blank" rel="noopener">
-      <img src="/leetcode/svg/calendar.svg" class="book-icon" alt="" />
-      <span>四月 20, 2025</span>
-    </a>
-  </div>
+</div>
 
+<div>
 
-
-  <div>
-    <a class="flex align-center" href="https://github.com/xiaobinqt/xiaobinqt.github.io/tree/main/book.leetcode/docs/easy/160.md" target="_blank" rel="noopener">
-      <img src="/leetcode/svg/edit.svg" class="book-icon" alt="" />
-      <span>编辑本页</span>
-    </a>
-  </div>
-
+</div>
 
 </div>
 
 
 
-  <script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script>
+
+
+  
+  
+  
+  <div class="flex flex-wrap justify-between">
+    <span>
+    
+      <a href="/leetcode/docs/easy/141/" class="flex align-center">
+        <img src="/leetcode/icons/backward.svg" class="book-icon" alt="Backward" />
+        <span>141. 环形链表</span>
+      </a>
+    
+    </span>
+    <span>
+    
+      <a href="/leetcode/docs/easy/203/" class="flex align-center">
+        <span>203. 移除链表元素</span>
+        <img src="/leetcode/icons/forward.svg" class="book-icon" alt="Forward" />
+      </a>
+    
+    </span>
+  </div>
+  
 
 
  
         
-      </footer>
-
-      
   
   <div class="book-comments">
 
 </div>
   
  
+        
+        
+  
+ 
+        
+  
+  
+    <script>(function(){document.querySelectorAll("pre:has(code)").forEach(e=>{e.addEventListener("click",e.focus),e.addEventListener("copy",function(t){if(t.preventDefault(),navigator.clipboard){const t=window.getSelection().toString()||e.textContent;navigator.clipboard.writeText(t)}})})})()</script>
+  
+
+      </footer>
 
       <label for="menu-control" class="hidden book-menu-overlay"></label>
     </div>
 
     
-    <aside class="book-toc">
-      <div class="book-toc-content">
-        
+  
+  <aside class="book-toc">
+    <div class="book-toc-content">
+      
   
 <nav id="TableOfContents">
   <ul>
@@ -1103,15 +1054,24 @@ https://github.com/alex-shpak/hugo-book
 </nav>
 
 
+
+    </div>
+  </aside>
+  
  
-      </div>
-    </aside>
-    
   </main>
 
   
 </body>
 </html>
+
+
+
+
+
+
+
+
 
 
 
