@@ -31,7 +31,7 @@
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
 
 <link rel="canonical" href="https://www.xiaobinqt.cn/go-slice-principle/" /><link rel="prev" href="https://www.xiaobinqt.cn/escape-heap/" /><link rel="next" href="https://www.xiaobinqt.cn/go-channel-principle/" />
-<link rel="stylesheet" href="/css/main.min.css"><link rel="stylesheet" href="/css/style.min.css"><meta name="google-site-verification" content="hFkClWMTOtPBuE0lQaXNiNb707E7P6O2CwexZoSm3VQ" /><meta name="msvalidate.01" content="A961D393878F86E04112E1198500FDBD" /><meta name="baidu-site-verification" content="code-cMh5ORsrP2" /><script type="application/ld+json">{"@context": "https://schema.org","@type": "BlogPosting",
+<link rel="stylesheet" href="/css/main.min.css"><link rel="stylesheet" href="/css/style.min.d2f520f59be9c632abd037aa99eb57a1d244edaf32ad7bbaf4ae37d72a240631.css" integrity="sha256-0vUg9ZvpxjKr0DeqmetXodJE7a8yrXu69K431yokBjE="><meta name="google-site-verification" content="hFkClWMTOtPBuE0lQaXNiNb707E7P6O2CwexZoSm3VQ" /><meta name="msvalidate.01" content="A961D393878F86E04112E1198500FDBD" /><meta name="baidu-site-verification" content="code-cMh5ORsrP2" /><script type="application/ld+json">{"@context": "https://schema.org","@type": "BlogPosting",
         "headline": "Go Slice 实现原理",
         "inLanguage": "zh-CN",
         "mainEntityOfPage": {
@@ -103,6 +103,7 @@
                     href="/wiki" > wiki </a><a class="menu-item"
                     href="/leetcode" > LeetCode </a><a class="menu-item"
                     href="/links/" > 友链 </a><a class="menu-item"
+                    href="/travel/"  title="我们的旅行地图" > 足迹 </a><a class="menu-item"
                     href="/about/" > 关于 </a><a class="menu-item"
                     href="https://github.com/xiaobinqt"  title="GitHub" 
                     rel="noopener noreferrer" target="_blank" ><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
@@ -163,7 +164,7 @@
                 <button class="search-cancel" id="search-cancel-mobile">
                     取消
                 </button>
-            </div><a class="menu-item" href="/posts/" title="" >所有文章</a><a class="menu-item" href="/tags/" title="" >标签</a><a class="menu-item" href="/categories/" title="" >分类</a><a class="menu-item" href="/series/" title="" >系列</a><a class="menu-item" href="/showcase/" title="" >小册</a><a class="menu-item" href="/wiki" title="" >wiki</a><a class="menu-item" href="/leetcode" title="" >LeetCode</a><a class="menu-item" href="/links/" title="" >友链</a><a class="menu-item" href="/about/" title="" >关于</a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" 
+            </div><a class="menu-item" href="/posts/" title="" >所有文章</a><a class="menu-item" href="/tags/" title="" >标签</a><a class="menu-item" href="/categories/" title="" >分类</a><a class="menu-item" href="/series/" title="" >系列</a><a class="menu-item" href="/showcase/" title="" >小册</a><a class="menu-item" href="/wiki" title="" >wiki</a><a class="menu-item" href="/leetcode" title="" >LeetCode</a><a class="menu-item" href="/links/" title="" >友链</a><a class="menu-item" href="/travel/" title="我们的旅行地图" >足迹</a><a class="menu-item" href="/about/" title="" >关于</a><a class="menu-item" href="https://github.com/xiaobinqt" title="GitHub" 
                 rel="noopener noreferrer" target="_blank" ><i class='fab fa-github fa-fw'></i></a><button class="menu-item theme-select tw-w-full" aria-label="切换主题">
                 <svg class="icon"
     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M8 256c0 136.966 111.033 248 248 248s248-111.034 248-248S392.966 8 256 8 8 119.033 8 256zm248 184V72c101.705 0 184 82.311 184 184 0 101.705-82.311 184-184 184z"/></svg>
@@ -1531,7 +1532,10 @@
   <button id="toc-drawer-button" class="tw-block tw-bg-bgColor-secondary tw-rounded-full md:tw-hidden" style="padding: 0.6rem; line-height: 1.3rem; font-size: 1rem;">
       <svg class="icon"
     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"/></svg>
-  </button></div>
+  </button><a href="#comments" id="view-comments" class="tw-block tw-bg-bgColor-secondary tw-rounded-full" style="padding: 0.6rem; line-height: 1.3rem; font-size: 1rem;" title="查看评论">
+      <svg class="icon"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M256 32C114.6 32 0 125.1 0 240c0 49.6 21.4 95 57 130.7C44.5 421.1 2.7 466 2.2 466.5c-2.2 2.3-2.8 5.7-1.5 8.7S4.8 480 8 480c66.3 0 116-31.8 140.6-51.4 32.7 12.3 69 19.4 107.4 19.4 141.4 0 256-93.1 256-208S397.4 32 256 32z"/></svg>
+  </a></div>
 <script type="module">
         (async () => {
             const supportSpeculationRules = HTMLScriptElement.supports && HTMLScriptElement.supports("speculationrules");
@@ -1541,7 +1545,7 @@
         })();
     </script><link rel="stylesheet" href="/lib/gitalk/gitalk.min.css"><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/lightgallery/lightgallery.min.css">
         <noscript><link rel="stylesheet" href="/lib/lightgallery/lightgallery.min.css"></noscript>
-<script>window.config={"algoliasearch.min.js":"/lib/algoliasearch/algoliasearch-lite.umd.min.js","autocomplete.min.js":"/lib/autocomplete/autocomplete.min.js","comment":{"gitalk":{"admin":["xiaobinqt"],"clientID":"47b15de6c2d8a0f8d707","clientSecret":"c70556c8b3a3b38ea7c72e539ff3b37d5bc1b4f3","id":"6019fa760ec31d04c5d10d554b48fde0","owner":"xiaobinqt","repo":"xiaobinqt.github.io","title":"Go Slice 实现原理"}},"lightGallery":{"actualSize":false,"exThumbImage":"data-thumbnail","hideBarsDelay":2000,"selector":".lightgallery","speed":400,"thumbContHeight":80,"thumbWidth":80,"thumbnail":true},"search":{"algoliaAppID":"U7QBQFMJWZ","algoliaIndex":"xiaobinqt.io","algoliaSearchKey":"1679f7a929fbfff6be0d47ba33947c03","highlightTag":"em","maxResultLength":20,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"},"sharerjs":true,"table":{"sort":true}};</script><script
+<script>window.config={"algoliasearch.min.js":"/lib/algoliasearch/algoliasearch-lite.umd.min.js","autocomplete.min.js":"/lib/autocomplete/autocomplete.min.js","comment":{"gitalk":{"admin":["xiaobinqt"],"clientID":"47b15de6c2d8a0f8d707","clientSecret":"c70556c8b3a3b38ea7c72e539ff3b37d5bc1b4f3","id":"2023-10-10T00:00:00Z","owner":"xiaobinqt","repo":"xiaobinqt.github.io","title":"Go Slice 实现原理"}},"lightGallery":{"actualSize":false,"exThumbImage":"data-thumbnail","hideBarsDelay":2000,"selector":".lightgallery","speed":400,"thumbContHeight":80,"thumbWidth":80,"thumbnail":true},"search":{"algoliaAppID":"U7QBQFMJWZ","algoliaIndex":"xiaobinqt.io","algoliaSearchKey":"1679f7a929fbfff6be0d47ba33947c03","highlightTag":"em","maxResultLength":20,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"},"sharerjs":true,"table":{"sort":true}};</script><script
     src="/lib/tablesort/tablesort.min.js"
     
   ></script><script
