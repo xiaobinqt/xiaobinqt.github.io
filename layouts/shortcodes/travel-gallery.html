@@ -1,0 +1,8 @@
+{{- $label := .Get "label" | default "旅行照片" -}}
+{{- $content := .Page.RenderString (dict "display" "block") .Inner -}}
+{{- $style := resources.Get "css/travel-gallery.scss" | toCSS (dict "outputStyle" "compressed") | fingerprint "sha256" -}}
+<link rel="stylesheet" href="{{ $style.RelPermalink }}" integrity="{{ $style.Data.Integrity }}">
+<div class="travel-gallery" role="group" aria-label="{{ $label }}">
+  <span class="travel-gallery__status" aria-hidden="true">CAPTURED MOMENTS</span>
+  {{- $content -}}
+</div>

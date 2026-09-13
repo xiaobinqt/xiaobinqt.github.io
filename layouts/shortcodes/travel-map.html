@@ -1,0 +1,131 @@
+{{- $places := .Page.Params.places | default slice -}}
+{{- $config := dict "places" $places "chinaMapUrl" "/data/china-provinces.geojson" "worldMapUrl" "/data/world-countries.geojson" -}}
+{{- $script := resources.Get "js/travel-map.js" | minify | fingerprint -}}
+
+<section class="travel-map" data-travel-map aria-labelledby="travel-map-heading">
+  <div class="travel-map__intro">
+    <div>
+      <p class="travel-map__eyebrow">OUR TRAVEL LOG</p>
+      <h2 id="travel-map-heading">把走过的路，变成我们共同的坐标</h2>
+      <p class="travel-map__lede">点亮一座城，也打开一段当时的故事。选择地图上的坐标，查看去过的地方和对应游记。</p>
+    </div>
+    <div class="travel-map__stats" aria-label="旅行统计">
+      <div><strong data-stat="places">—</strong><span>次足迹</span></div>
+      <div><strong data-stat="provinces">—</strong><span>省份</span></div>
+      <div><strong data-stat="countries">—</strong><span>国家</span></div>
+      <div><strong data-stat="stories">—</strong><span>篇游记</span></div>
+    </div>
+  </div>
+
+  <div class="travel-map__view-switch" role="tablist" aria-label="切换旅行地图与年度年鉴">
+    <button class="is-active" id="travel-tab-map" type="button" role="tab" aria-selected="true" aria-controls="travel-panel-map" data-travel-view="map">
+      <span>旅行地图</span><small>MAP &amp; PLACES</small>
+    </button>
+    <button id="travel-tab-yearbook" type="button" role="tab" aria-selected="false" aria-controls="travel-panel-yearbook" data-travel-view="yearbook">
+      <span>年度年鉴</span><small>YEAR IN REVIEW</small>
+    </button>
+  </div>
+
+  <div id="travel-panel-map" class="travel-map__view-panel" role="tabpanel" aria-labelledby="travel-tab-map" data-travel-panel="map">
+  <div class="travel-map__toolbar" aria-label="足迹筛选">
+    <div class="travel-map__toolbar-groups">
+      <div class="travel-map__mode-switch" role="group" aria-label="切换地图范围">
+        <button class="is-active" type="button" data-map-mode="china" aria-pressed="true">中国</button>
+        <button type="button" data-map-mode="world" aria-pressed="false">世界</button>
+      </div>
+      <div class="travel-map__filters" role="group" aria-label="按同行人筛选">
+        <button class="is-active" type="button" data-travel-filter="all" aria-pressed="true">全部足迹</button>
+        <button type="button" data-travel-filter="together" aria-pressed="false"><i class="travel-map__legend-dot is-together"></i>我们俩</button>
+        <button type="button" data-travel-filter="me" aria-pressed="false"><i class="travel-map__legend-dot is-me"></i>我</button>
+        <button type="button" data-travel-filter="partner" aria-pressed="false"><i class="travel-map__legend-dot is-partner"></i>TA</button>
+      </div>
+    </div>
+    <button class="travel-map__clear" type="button" data-clear-province hidden>查看全国</button>
+  </div>
+
+  <div class="travel-map__workspace">
+    <div class="travel-map__canvas-wrap">
+      <div class="travel-map__canvas" data-map-canvas>
+        <svg data-map-svg viewBox="0 0 1000 720" role="img" aria-label="中国旅行足迹地图"></svg>
+        <div class="travel-map__loading" data-map-loading>
+          <i></i><span>正在展开旅行地图…</span>
+        </div>
+        <div class="travel-map__tooltip" data-map-tooltip role="status" aria-live="polite"></div>
+        <p class="travel-map__hint" data-map-hint>点击省份筛选 · 点击坐标查看故事</p>
+      </div>
+      <div class="travel-map__error" data-map-error hidden>
+        <strong>地图暂时没有展开</strong>
+        <span>下面的足迹列表仍然可以正常浏览。</span>
+      </div>
+    </div>
+
+    <aside class="travel-map__detail" data-place-detail aria-live="polite">
+      <div class="travel-map__empty-detail">
+        <span class="travel-map__compass" aria-hidden="true">⌖</span>
+        <p class="travel-map__detail-kicker">从一个坐标开始</p>
+        <h3>选择地图上的足迹</h3>
+        <p>这里会展示日期、具体地点和游记入口。</p>
+      </div>
+    </aside>
+  </div>
+
+  <div class="travel-map__journal-head">
+    <div>
+      <p class="travel-map__eyebrow">PLACES WE REMEMBER</p>
+      <h3 data-list-heading>全部足迹</h3>
+    </div>
+    <span data-result-count></span>
+  </div>
+  <div class="travel-map__list" data-place-list></div>
+  <div class="travel-map__empty" data-empty-state hidden>
+    <span>这一栏还没有坐标</span>
+    <small>换一个筛选条件看看吧。</small>
+  </div>
+  </div>
+
+  <section id="travel-panel-yearbook" class="travel-map__yearbook travel-map__view-panel" data-yearbook data-travel-panel="yearbook" role="tabpanel" aria-labelledby="travel-tab-yearbook" hidden>
+    <div class="travel-map__yearbook-head">
+      <div>
+        <p class="travel-map__yearbook-eyebrow">YEAR IN REVIEW · ANNUAL ORBIT</p>
+        <h3>把一整年的远方，折成一页年鉴</h3>
+      </div>
+      <div class="travel-map__year-tabs" data-year-tabs role="group" aria-label="选择旅行年份"></div>
+    </div>
+
+    <div data-yearbook-content>
+      <div class="travel-map__year-summary">
+        <div class="travel-map__year-copy">
+          <span data-year-label>年度旅行记录</span>
+          <h4 data-year-title>正在整理这一年的坐标…</h4>
+          <p data-year-narrative></p>
+          <small data-year-route></small>
+        </div>
+        <dl class="travel-map__year-metrics">
+          <div><dt>次出发</dt><dd data-year-stat="visits">—</dd></div>
+          <div><dt>个目的地</dt><dd data-year-stat="destinations">—</dd></div>
+          <div><dt>次并肩</dt><dd data-year-stat="together">—</dd></div>
+          <div><dt>篇游记</dt><dd data-year-stat="stories">—</dd></div>
+        </dl>
+      </div>
+
+      <div class="travel-map__year-timeline-wrap">
+        <div class="travel-map__year-timeline-head">
+          <span>01</span><strong>这一年的旅行脉冲</strong><span>12</span>
+        </div>
+        <div class="travel-map__year-timeline" data-year-timeline aria-label="按月份展示的年度足迹"></div>
+      </div>
+
+      <div class="travel-map__year-journeys" data-year-journeys aria-label="这一年的全部旅行"></div>
+    </div>
+
+    <div class="travel-map__year-empty" data-yearbook-empty hidden>
+      <strong>还没有可以生成的年度记录</strong>
+      <span>给足迹补上 YYYY-MM 格式的日期后，这里会自动出现旅行年鉴。</span>
+    </div>
+  </section>
+
+  <script class="travel-map__data" type="application/json">{{ $config | jsonify | safeJS }}</script>
+  <noscript><p class="travel-map__noscript">开启 JavaScript 后即可浏览交互地图；旅行文章仍可从本站文章列表进入。</p></noscript>
+</section>
+
+<script src="{{ $script.RelPermalink }}" integrity="{{ $script.Data.Integrity }}" defer></script>
